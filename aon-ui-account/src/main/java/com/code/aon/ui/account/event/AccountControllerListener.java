@@ -2,7 +2,7 @@ package com.code.aon.ui.account.event;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ui.account.controller.AccountController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

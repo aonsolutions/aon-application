@@ -11,12 +11,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.StreetType;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PersonFormListener extends RegistryPayMethodFormListener {
 	
@@ -27,8 +27,8 @@ public class PersonFormListener extends RegistryPayMethodFormListener {
 
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteriaAddress = new Criteria();
-			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), person.getId());
-			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), person.getId());
+			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
 			Iterator<?> addressIter = rAddressBean.getList(criteriaAddress).iterator();
 			if (addressIter.hasNext()) {
 				setMainAddress((RegistryAddress)addressIter.next());
@@ -58,7 +58,7 @@ public class PersonFormListener extends RegistryPayMethodFormListener {
 
 			IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 			Criteria criteriaMedia = new Criteria();
-			criteriaMedia.addEqualExpression(rMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), person.getId());
+			criteriaMedia.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), person.getId());
 			Iterator<?> mediaIter = rMediaBean.getList(criteriaMedia).iterator();
 			while (mediaIter.hasNext()) {
 				RegistryMedia rmedia = (RegistryMedia)mediaIter.next();
@@ -90,7 +90,7 @@ public class PersonFormListener extends RegistryPayMethodFormListener {
 
 			IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 			Criteria criteriaPayMethod = new Criteria();
-			criteriaPayMethod.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
+			criteriaPayMethod.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
 			Iterator<?> payMethodIter = rPayMethodBean.getList(criteriaPayMethod).iterator();
 			if (payMethodIter.hasNext()) {
 				RegistryPayMethod rPayMethod = (RegistryPayMethod)payMethodIter.next();

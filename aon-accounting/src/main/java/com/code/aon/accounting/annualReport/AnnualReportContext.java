@@ -16,7 +16,7 @@ import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.dao.IRegistryAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Contexto para la ejecución de la Memeria Contable o cualquier otro informe del mismo tipo.
@@ -78,7 +78,7 @@ public class AnnualReportContext {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), getCompany().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), getCompany().getId());
 				List<ITransferObject> list = bean.getList(null);
 				if (list != null && list.size() > 0 ) {
 					ITransferObject to = list.get(0);
@@ -99,8 +99,8 @@ public class AnnualReportContext {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_ID), getCompany().getId());
-				criteria.addOrder(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_PERCENT_SHARE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_ID), getCompany().getId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_PERCENT_SHARE));
 				List<?> list = bean.getList(null);
 				registryDirStaffs = (List<RegistryDirStaff>) list;
 				//TODO WARNING if 0

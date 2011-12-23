@@ -32,7 +32,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -44,7 +43,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SalaryPrintController implements ICollectionProvider, IPayrollConstants {
@@ -92,15 +91,15 @@ public class SalaryPrintController implements ICollectionProvider, IPayrollConst
 		resetCriteria();
 		Criteria criteria = controller.getCriteria();
 		if ( fromDate != null ) {
-			String alias = controller.getFieldName(IPayrollAlias.SALARY_START_DATE);
+			String alias = controller.getFieldName(IEntityAlias.SALARY_START_DATE);
 			criteria.addGreaterThanOrEqualExpression(alias, fromDate);
 		}
 		if ( toDate != null ) {
-			String alias = controller.getFieldName(IPayrollAlias.SALARY_START_DATE);
+			String alias = controller.getFieldName(IEntityAlias.SALARY_START_DATE);
 			criteria.addLessThanOrEqualExpression(alias, toDate);
 		}
 		if ((getWorkPlace() != null) && (getWorkPlace().getId() != null)) {
-			String alias = controller.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ID);
+			String alias = controller.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID);
 			criteria.addEqualExpression(alias, getWorkPlace().getId());			
 		}		
 		controller.initializeModel();
@@ -108,7 +107,7 @@ public class SalaryPrintController implements ICollectionProvider, IPayrollConst
 	
 	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		String id = controller.getFieldName(IPayrollAlias.SALARY_ID);
+		String id = controller.getFieldName(IEntityAlias.SALARY_ID);
 		ProjectionList pl = new ProjectionList( Projection.property(id) );
 		List<Integer> list = controller.getManagerBean().getList(pl, controller.getCriteria());
 		checks.clear();
@@ -129,7 +128,7 @@ public class SalaryPrintController implements ICollectionProvider, IPayrollConst
 		clearChecked();
 		controller.clearCriteria();
 		Criteria criteria = controller.getCriteria();
-		String alias = controller.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+		String alias = controller.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(alias, enterprise.getId());		
 	}
 
@@ -204,9 +203,9 @@ public class SalaryPrintController implements ICollectionProvider, IPayrollConst
 		this.showWorkPlaces = false;
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 		Criteria criteria = new Criteria();
-		String enterpriseId = bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID);
+		String enterpriseId = bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(enterpriseId, enterprise.getId());
-		criteria.addOrder(bean.getFieldName(ICompanyAlias.WORK_PLACE_DESCRIPTION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
 		if ( bean.getCount(criteria) > 1 ) {
 			List<ITransferObject> list = bean.getList(criteria);
 			this.workPlaces = new LinkedList<SelectItem>();

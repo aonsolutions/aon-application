@@ -22,30 +22,25 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.DeliveryInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -61,8 +56,8 @@ import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryController extends BasicController implements IWarehouseConstants {
 
@@ -204,15 +199,15 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if (delivery != null && delivery.getId() != null) {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
 			Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 
 				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -244,7 +239,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
 		Iterator<?> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			Series series = (Series)iter.next(); 
@@ -279,7 +274,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
@@ -305,9 +300,9 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		if (id != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {
 				Project project = (Project)iterator.next();
@@ -342,7 +337,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 				} else {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
 					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
@@ -372,20 +367,20 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	public Warehouse obtainWarehouse(Delivery delivery) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
 		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return ((DeliveryDetail)iterator.next()).getWarehouse();
 		} else if (delivery.getWorkPlace() != null) {
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), delivery.getWorkPlace().getId());
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), delivery.getWorkPlace().getId());
 			iterator = warehouseBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (Warehouse)iterator.next();
 			} else {
 				criteria = new Criteria();
-				criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+				criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 				iterator = warehouseBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					return (Warehouse)iterator.next();
@@ -413,19 +408,19 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
 		if (to.getProject() != null && to.getProject().getId() != null) {
-			criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_PROJECT_ID), to.getProject().getId());
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_PROJECT_ID), to.getProject().getId());
 		}
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
+			criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_STATUS), SalesStatus.PENDING);
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
-		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
-		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_ISSUE_DATE));
-		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_SERIES));
-		criteria.addOrder(salesBean.getFieldName(ISalesAlias.SALES_NUMBER));
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_STATUS), SalesStatus.PENDING);
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(salesBean.getFieldName(IEntityAlias.SALES_WORK_PLACE_ID), to.getWorkPlace().getId());
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_ISSUE_DATE));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_SERIES));
+		criteria.addOrder(salesBean.getFieldName(IEntityAlias.SALES_NUMBER));
 
 		getSalesTransferManager().setSalesList(salesBean.getList(criteria));
 	}
@@ -479,7 +474,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);

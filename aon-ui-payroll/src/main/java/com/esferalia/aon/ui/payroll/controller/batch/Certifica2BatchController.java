@@ -40,7 +40,7 @@ import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -157,8 +157,8 @@ public class Certifica2BatchController extends BasicController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNotNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -357,10 +357,10 @@ public class Certifica2BatchController extends BasicController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), type);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), startDate);
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), endDate);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startDate);
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endDate);
 			
 			List<ITransferObject> salaryList = bean.getList(criteria);
 			if(!salaryList.isEmpty()){
@@ -383,8 +383,8 @@ public class Certifica2BatchController extends BasicController {
 	private void checkDiskCreated() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_ATTACHMENT_CERTIFICA2BATCH_ID), ((Certifica2Batch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_ATTACHMENT_ATTACHMENT_TYPE), Certifica2BatchAttachmentType.CERTIFICA2_DOCUMENT);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_ATTACHMENT_CERTIFICA2BATCH_ID), ((Certifica2Batch)getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_ATTACHMENT_ATTACHMENT_TYPE), Certifica2BatchAttachmentType.CERTIFICA2_DOCUMENT);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			setRecorded(true);
@@ -407,7 +407,7 @@ public class Certifica2BatchController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		try {
 			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CERTIFICA2BATCH_ENTERPRISE_ID), getEnterprise().getId());			
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CERTIFICA2BATCH_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);

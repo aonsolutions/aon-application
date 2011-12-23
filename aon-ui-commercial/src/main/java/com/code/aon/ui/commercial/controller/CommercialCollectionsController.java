@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Commission;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.ProjectStatus;
@@ -28,6 +27,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.commercial</code>
@@ -278,7 +278,7 @@ public class CommercialCollectionsController {
 		activities = new LinkedList<SelectItem>();
 		IManagerBean activityBean = BeanManager.getManagerBean(CommercialActivity.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(activityBean.getFieldName(ICommercialAlias.COMMERCIAL_ACTIVITY_NAME));
+		criteria.addOrder(activityBean.getFieldName(IEntityAlias.COMMERCIAL_ACTIVITY_NAME));
 		Iterator<ITransferObject> iter = activityBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			CommercialActivity activity = (CommercialActivity)iter.next();
@@ -291,7 +291,7 @@ public class CommercialCollectionsController {
 		List<SelectItem> commissions = new LinkedList<SelectItem>();
 		IManagerBean commissionBean = BeanManager.getManagerBean(Commission.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(commissionBean.getFieldName(ICommercialAlias.COMMISSION_NAME));
+		criteria.addOrder(commissionBean.getFieldName(IEntityAlias.COMMISSION_NAME));
 		Iterator<ITransferObject> iter = commissionBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Commission commission = (Commission) iter.next();

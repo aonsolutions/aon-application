@@ -1,6 +1,5 @@
 package com.code.aon.config;
 
-import com.code.aon.config.Bank;
 
 public interface IBankAccountContainer {
 

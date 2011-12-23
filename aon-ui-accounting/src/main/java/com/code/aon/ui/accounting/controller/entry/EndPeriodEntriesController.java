@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -32,6 +31,7 @@ import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.controller.AccountCheckController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EndPeriodEntriesController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EndPeriodEntriesController.class.getName());
@@ -169,8 +169,8 @@ public class EndPeriodEntriesController {
 		getParams().setConfidentialEntryPresent(false);
 		IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getParams().getPeriod().getId());
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getParams().getPeriod().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL);
 		Number count = (Number) bean.getUniqueResult(Projection.rowCount(), criteria);
 		if (count.intValue() > 0) {
 			if (AonUtil.getRoleManager().isConfidentiality()) {
@@ -279,7 +279,7 @@ public class EndPeriodEntriesController {
 		c.setTime(initialDate);
 		c.add(Calendar.DAY_OF_MONTH, 1);
 		initialDate = c.getTime();
-		criteria.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), initialDate);
+		criteria.addEqualExpression(periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE), initialDate);
 		List<ITransferObject> list = periodBean.getList(criteria); 
 		if (list!= null && list.size() > 0) {
 			getParams().setOpeningPeriodCreationEnabled(false);
@@ -293,7 +293,7 @@ public class EndPeriodEntriesController {
 		if (!util.existsEntry(getParams().getPeriod(), AccountEntryType.OPENING, null )) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			Criteria c = new Criteria();
-			c.addLessThanExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), getParams().getPeriod().getInitiationDate());
+			c.addLessThanExpression(periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE), getParams().getPeriod().getInitiationDate());
 			if (periodBean.getList(c).size() > 0) {
 				setDisabled(true);
 				getOperatingMessages().add(OPERATING_ENTRY_ERROR);
@@ -413,7 +413,7 @@ public class EndPeriodEntriesController {
 			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			for (Integer id:getGeneratedEntries()) {
-				criteria.addOrExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), id.toString());	
+				criteria.addOrExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), id.toString());	
 			}
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);

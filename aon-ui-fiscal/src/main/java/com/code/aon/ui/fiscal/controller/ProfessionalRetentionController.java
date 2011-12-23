@@ -17,7 +17,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.fiscal.ProfessionalRetention;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.WithholdingDetailSubkey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -25,6 +24,7 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProfessionalRetentionController extends BasicController{
 	
@@ -60,8 +60,8 @@ public class ProfessionalRetentionController extends BasicController{
 		ProfessionalRetention pr = (ProfessionalRetention) getTo();
 		try {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
-			criteria.addEqualExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_DOCUMENT), pr.getDocument());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_DOCUMENT), pr.getDocument());
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			if (list != null && list.size() > 0) {
 				ProfessionalRetention old = (ProfessionalRetention) list.get(0);
@@ -84,8 +84,8 @@ public class ProfessionalRetentionController extends BasicController{
 		ProfessionalRetention pr = (ProfessionalRetention) getTo();
 		try {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
-			criteria.addEqualExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_NAME), pr.getName());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_NAME), pr.getName());
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			if (list != null && list.size() > 0) {
 				ProfessionalRetention old = (ProfessionalRetention) list.get(0);
@@ -126,10 +126,10 @@ public class ProfessionalRetentionController extends BasicController{
 			ProfessionalRetention pr = (ProfessionalRetention) getTo();
 			String condition = PERCENT + (String) suggest + PERCENT;
 			ProjectionList projectionList = new ProjectionList();
-			projectionList.add(Projection.group(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_NAME)));
+			projectionList.add(Projection.group(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_NAME)));
 			Criteria criteria = new Criteria();
-			criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_NAME), condition));
-			criteria.addEqualExpression(getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_NAME), condition));
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), pr.getEnterprise().getId());
 			List<?> list = getManagerBean().getList(projectionList, criteria); 
 			return list;
 		} catch (ManagerBeanException e) {

@@ -34,7 +34,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
@@ -109,7 +109,7 @@ public class IrpfDataController extends LinesController {
 			IrpfData data = (IrpfData) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(IrpfDataDescendients.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.IRPF_DATA_DESCENDIENTS_IRPF_DATA_ID), data.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.IRPF_DATA_DESCENDIENTS_IRPF_DATA_ID), data.getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			return list.size();
 		} catch (ManagerBeanException e) {
@@ -183,8 +183,8 @@ public class IrpfDataController extends LinesController {
 		controller.onSelect(event);
 		Contract contract = (Contract) controller.getTo();
 		try {
-			this.getCriteria().addEqualExpression(this.getFieldName(IPayrollAlias.IRPF_DATA_CONTRACT_ID), contract.getId());
-			this.getCriteria().addOrder(this.getFieldName(IPayrollAlias.IRPF_DATA_START_DATE), false);
+			this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), contract.getId());
+			this.getCriteria().addOrder(this.getFieldName(IEntityAlias.IRPF_DATA_START_DATE), false);
 			this.onSearch(event);
 			if(this.getRowCount()<=0){
 				this.onReset(event);
@@ -221,12 +221,12 @@ public class IrpfDataController extends LinesController {
 	public boolean updateIrpf() throws ManagerBeanException{
 		IManagerBean dataBean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), getParams().getContractId());
-		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContextVariable.IRPF_PERCENT.getName());
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getParams().getDate());
-		Expression expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), getParams().getContractId());
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.IRPF_PERCENT.getName());
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getParams().getDate());
+		Expression expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-		criteria.addOrder(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), false);
+		criteria.addOrder(dataBean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
 		List<ITransferObject> list = dataBean.getList(criteria);
 		ContractData existingData = (ContractData) list.get(0);
 		if(!existingData.getExpression().equals(getParams().getNewIrpf())){

@@ -29,20 +29,19 @@ import com.code.aon.groupware.CampaignProject;
 import com.code.aon.groupware.CampaignType;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.CampaignStatus;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
 import com.code.aon.project.ProjectType;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProcessLauncherWizard implements Serializable {
 
@@ -190,11 +189,11 @@ public class ProcessLauncherWizard implements Serializable {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		if (getRegistry() != null) {
-			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID),getRegistry().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID),getRegistry().getId());
 		}
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ACTIVE),true);
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID));
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE),true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		Iterator<?> iterator = bean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			Project project = (Project) iterator.next();
@@ -350,15 +349,15 @@ public class ProcessLauncherWizard implements Serializable {
 					IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 					Criteria criteria = new Criteria();
 					if (getRegistry() != null && getRegistry().getId() != null) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID),getRegistry().getId());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID),getRegistry().getId());
 					}
 					if (getProjectType() != null && getProjectType().getId() != null) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID),getProjectType().getId());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID),getProjectType().getId());
 					}
 					if (!StringUtils.isBlank(getProjectName())) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_NAME),getProjectName());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_NAME),getProjectName());
 					}
-					criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), true);
+					criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
 					List<ITransferObject> list = projectBean.getList(criteria);
 					for (ITransferObject to : list) {
 						Project d = (Project) to;
@@ -367,8 +366,8 @@ public class ProcessLauncherWizard implements Serializable {
 				} else {
 					IManagerBean bean = BeanManager.getManagerBean(ProjectActivity.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_ACTIVITY_TYPE_ID),getActivityType().getId());
-					criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_ACTIVE),true);
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ACTIVITY_TYPE_ID),getActivityType().getId());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ACTIVE),true);
 					criteria.addEqualExpression("ProjectActivity.project.active",true);
 					if (getRegistry() != null && getRegistry().getId() != null) {
 						criteria.addEqualExpression("ProjectActivity.project.registry.id", getRegistry().getId());
@@ -451,9 +450,9 @@ public class ProcessLauncherWizard implements Serializable {
 			IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 
 			Criteria criteria = new Criteria();
-			String alias = processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID);
+			String alias = processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID);
 			criteria.addEqualExpression(alias, getProcess().getId());
-			criteria.addOrder(processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+			criteria.addOrder(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
 			List<?> list = processDetailBean.getList(criteria);
 			if (list.size() == 0) {
 				String msg = "El proceso seleccionado no tiene acciones";

@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.bridge.session.LoggedUser;
@@ -37,6 +36,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityDialogController extends EmailParentController{
 
@@ -496,10 +496,10 @@ public class ActivityDialogController extends EmailParentController{
 		ActivityBasicController controller = (ActivityBasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
 		controller.setWho(getWho());
 		controller.clearCriteria();
-		controller.getCriteria().addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
-		controller.getCriteria().addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
-		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
-		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
+		controller.getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+		controller.getCriteria().addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
+		controller.getCriteria().addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
+		controller.getCriteria().addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_FROM_TIME));
 		controller.onSearch(null);
 		controller.setWho(null);
 		setNew(false);

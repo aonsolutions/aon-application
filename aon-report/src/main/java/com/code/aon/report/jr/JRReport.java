@@ -135,7 +135,6 @@ public class JRReport {
 		return dsp;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private String getCustomTemplate( String reportKey ) {
 		try {
 			String factoryName = HibernateUtil.getSessionFactoryName();
@@ -143,9 +142,9 @@ public class JRReport {
 			String name = "REPORT_" + reportKey;
 	        String select = "select app_param.value from ApplicationParameter as app_param where app_param.name = '" + name + "'";
 			Query query = session.createQuery(select);
-			List list = query.list();
+			List<String> list = query.list();
 			if (! list.isEmpty() ) {
-				return (String) list.get(0);
+				return list.get(0);
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error retrieving report app param", th );
@@ -241,31 +240,32 @@ public class JRReport {
 				IJRExporterFactory factory;
 				factory = JRExporterFactoryManager
 						.getJRExporterFactory(outputFormat);
-				Map<Object, Object> map = new HashMap<Object, Object>();
+				Map<String, Object> fillMap = new HashMap<String, Object>();
+				Map<JRExporterParameter, Object> exporterMap = new HashMap<JRExporterParameter, Object>();
 
-				factory.fillJRParametersMap(map);
+				factory.fillJRParametersMap(fillMap, exporterMap);
 
-				passDefaultParameters(map);
-				passCustomParameters(map);
-				passDynamicParameters( map );
-				boolean hasCache = passFetchModeParameters(map);
-				passNestedReports(map);
-				map.put(JRExporterParameter.OUTPUT_STREAM, out);
+				passDefaultParameters(fillMap);
+				passCustomParameters(fillMap);
+				passDynamicParameters( fillMap );
+				boolean hasCache = passFetchModeParameters(fillMap);
+				passNestedReports(fillMap);
+				exporterMap.put(JRExporterParameter.OUTPUT_STREAM, out);
 
 				if ( config.getParams() != null && config.getParams().containsKey(
 						JRParameter.REPORT_RESOURCE_BUNDLE)) {
 					String baseName = (String) config.getParams().get(
 							JRParameter.REPORT_RESOURCE_BUNDLE);
-					map.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle
+					fillMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle
 							.getBundle(baseName));
 				} else {
-					map.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
+					fillMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
 				}
 
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
 					Connection c = HibernateUtil.getSQLConnection();
-					map.put(JRParameter.REPORT_CONNECTION, c);
+					fillMap.put(JRParameter.REPORT_CONNECTION, c);
 
 					JRDataSourceProvider jrdsp  = null;
 					if (hasCache) {
@@ -279,19 +279,19 @@ public class JRReport {
 				}
 				
 				JasperReport jr = getJasperReport();
-				JasperPrint print = JasperFillManager.fillReport(jr, map, ds);
+				JasperPrint print = JasperFillManager.fillReport(jr, fillMap, ds);
 				setGeneratedPages( print.getPages().size() ); 
-				map.put(JRExporterParameter.JASPER_PRINT, print);
+				exporterMap.put(JRExporterParameter.JASPER_PRINT, print);
 				if ( LOGGER.isDebugEnabled()) {
-					debugParameters( map );
+					debugParameters( fillMap );
 				}
 				JRExporter exporter = factory.getJRExporter();
-				exporter.setParameters(map);
+				exporter.setParameters(exporterMap);
 				exporter.exportReport();
 				long  delay = (new Date()).getTime() - startDate.getTime(); 
 				LOGGER.info(" Report execution : {} seconds.",((double)(delay/1000)));
 				if (hasCache) {
-					cleanCache(map);
+					cleanCache(fillMap);
 				}
 			} else {
 				throw new ReportException("No suitable Exporter for format "
@@ -303,9 +303,9 @@ public class JRReport {
 		}
 	}
 
-	private void debugParameters(Map<Object, Object> map) {
+	private void debugParameters(Map<String, Object> map) {
 		LOGGER.debug( "Begin Parameters:" );
-		Set<Object> keys = map.keySet();
+		Set<String> keys = map.keySet();
 		for (Object key: keys){
 			Object value  = map.get(key);
 			LOGGER.debug( "\tParameter: {} ---> {}",key,value );	
@@ -313,7 +313,7 @@ public class JRReport {
 		LOGGER.debug( "End Parameters:" );
 	}
 
-	private void passDynamicParameters(Map<Object, Object> map) {
+	private void passDynamicParameters(Map<String, Object> map) {
 		if (dynParams != null) {
 			LOGGER.debug("Passing Dynamic Parameters");
 			map.putAll(dynParams);
@@ -329,8 +329,7 @@ public class JRReport {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private boolean passFetchModeParameters(Map<Object, Object> map)
-			throws ReportException {
+	private boolean passFetchModeParameters(Map<String, Object> map) throws ReportException {
 		ReportFetchMode fetchMode = null;
 		ReportConfig defaultConfig = getDefaultConfig();
 		ReportFetchMode defaultFetchMode = (defaultConfig == null) ? null
@@ -355,7 +354,7 @@ public class JRReport {
 	 * @param map
 	 *            The parameters map.
 	 */
-	private void cleanCache(Map<?,?> map) {
+	private void cleanCache(Map<String,Object> map) {
 		JRFileVirtualizer virt;
 		virt = (JRFileVirtualizer) map.get(JRParameter.REPORT_VIRTUALIZER);
 		virt.cleanup();
@@ -369,7 +368,7 @@ public class JRReport {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	protected void passNestedReports(Map<Object, Object> map)
+	protected void passNestedReports(Map<String, Object> map)
 			throws ReportException {
 		if (config.getNestedReports() != null) {
 			Map<String, JasperReport> nested = new HashMap<String, JasperReport>();
@@ -394,7 +393,7 @@ public class JRReport {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	protected void passCustomParameters(Map<Object, Object> map)
+	protected void passCustomParameters(Map<String, Object> map)
 			throws ReportException {
 		if (customParams != null) {
 			LOGGER.debug("Passing Custom Parameters");
@@ -410,7 +409,7 @@ public class JRReport {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private void passDefaultParameters(Map<Object, Object> map)
+	private void passDefaultParameters(Map<String, Object> map)
 			throws ReportException {
 		ReportConfig defaultConfig = getDefaultConfig();
 		if (defaultConfig != null && defaultConfig.getParams() != null) {

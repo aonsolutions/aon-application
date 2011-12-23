@@ -5,7 +5,6 @@ package com.code.aon.account.bridge.event;
 import java.util.List;
 
 import com.code.aon.account.bridge.LoanAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +15,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class LoanAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -38,11 +38,11 @@ public class LoanAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 			}
 			IManagerBean bean = BeanManager.getManagerBean(LoanAccount.class);
 			Integer id = loanAccount.getLoan().getId();
-			String alias = bean.getFieldName( IAccountBridgeAlias.LOAN_ACCOUNT_LOAN_ID);
+			String alias = bean.getFieldName( IEntityAlias.LOAN_ACCOUNT_LOAN_ID);
 			Criteria c = new Criteria();
 			c.addEqualExpression(alias, id);
 			if ( loanAccount.getId() != null ) {
-				String idAlias = bean.getFieldName( IAccountBridgeAlias.LOAN_ACCOUNT_ID);
+				String idAlias = bean.getFieldName( IEntityAlias.LOAN_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, loanAccount.getId());
 				c.addExpression( exp );	
 			}

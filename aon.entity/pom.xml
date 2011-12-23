@@ -8,11 +8,34 @@
 		<version>7.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.entity</artifactId>
 	<name>AON ENTITY</name>
 	<description>AON ENTITY</description>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<includes>
+						<include>META-INF/**</include>
+						<include>com/esferalia/aon/entity/**</include>
+					</includes>
+					
+					<excludes>
+						<exclude>com/code/aon/**</exclude>
+					</excludes>
+										
+					<archive>
+						<manifest>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -56,8 +79,8 @@
 						</component>
 					</components>
 					<componentProperties>
-						<packagename>com.code.aon.entity.master</packagename>
-						<reversestrategy>com.code.aon.entity.hibernate.tools.AonReverseEngineeringStrategy</reversestrategy>
+						<packagename>com.esferalia.aon.entity.master</packagename>
+						<reversestrategy>com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy</reversestrategy>
 						<revengfile>/src/main/resources/META-INF/hibernate.reveng.xml</revengfile>
 						<jdk5>true</jdk5>
 						<ejb3>true</ejb3>
@@ -65,16 +88,16 @@
 						<format>true</format>
 						<detectmanytomany>false</detectmanytomany>
 						<configurationfile>/src/main/resources/META-INF/hibernate.cfg.xml</configurationfile>
-						<exporterclass>com.code.aon.entity.hibernate.tools.AonExporter</exporterclass>
+						<exporterclass>com.esferalia.aon.entity.hibernate.tools.AonExporter</exporterclass>
 						<template>pojo/Pojo.ftl</template>
-						<templatepath>/src/main/resources/com/code/aon/entity/hibernate/tools</templatepath>
+						<templatepath>/src/main/resources/com/esferalia/aon/entity/hibernate/tools</templatepath>
 						<filepattern>{package-name}/{class-name}.java</filepattern>
 					</componentProperties>
 				</configuration>
 
 				<dependencies>
 					<dependency>
-						<groupId>com.code.aon</groupId>
+						<groupId>com.esferalia.aon</groupId>
 						<artifactId>aon.entity.common</artifactId>
 						<version>${project.version}</version>
 						<scope>compile</scope>
@@ -89,6 +112,31 @@
 						<groupId>cglib</groupId>
 						<artifactId>cglib</artifactId>
 						<version>2.1_3</version>
+						<scope>runtime</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon.mock.entity.maven.plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-mock-entities</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDir>${project.build.directory}/generated-sources/entity</outputDir>
+					<generateHibernateCfg>false</generateHibernateCfg>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.esferalia.aon</groupId>
+						<artifactId>aon.entity.common</artifactId>
+						<version>${project.version}</version>
 						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
@@ -124,6 +172,27 @@
 										<ignore></ignore>
 									</action>
 								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.esferalia.aon
+										</groupId>
+										<artifactId>
+											aon.mock.entity.maven.plugin
+										</artifactId>
+										<versionRange>
+											[7.0-SNAPSHOT,)
+										</versionRange>
+										<goals>
+											<goal>
+												generate-mock-entities
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -133,7 +202,7 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

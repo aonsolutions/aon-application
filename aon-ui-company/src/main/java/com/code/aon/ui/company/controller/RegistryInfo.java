@@ -10,8 +10,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryInfo {
 
@@ -73,8 +73,8 @@ public class RegistryInfo {
 	public static RegistryAddress getMainAddress( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), registry.getId());
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
 		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAddress) iter.next();
@@ -85,7 +85,7 @@ public class RegistryInfo {
 	private void initMedias( RegistryAddress address ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_ADDRESS_ID), address.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADDRESS_ID), address.getId());
 		for(ITransferObject to: bean.getList(criteria)){
 			RegistryMedia rmedia = (RegistryMedia)to;
 			switch (rmedia.getMediaType()) {

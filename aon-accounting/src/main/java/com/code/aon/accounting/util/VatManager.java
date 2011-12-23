@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,12 +17,12 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatManager {
 
@@ -85,7 +84,7 @@ public class VatManager {
 	private void updateAccountEntryDetail(String oldDoument, String newDocument) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DOCUMENT_NUMBER), oldDoument);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DOCUMENT_NUMBER), oldDoument);
 		List<ITransferObject> list = bean.getList(criteria);
 	    for (ITransferObject to : list ) {
 	    	AccountEntryDetail detail = (AccountEntryDetail) to;
@@ -97,31 +96,31 @@ public class VatManager {
 	private Criteria getCriteria(VatManagerParams params) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getPeriod().getInitiationDate());
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getPeriod().getDeadline());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getPeriod().getInitiationDate());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getPeriod().getDeadline());
 		if (params.getSecurityLevel() == SecurityLevel.CONFIDENTIAL ) {
-			criteria.addEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL );	
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL );	
 		} else {
-			Expression e1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL);
-			Expression e2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL));
+			Expression e1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL);
+			Expression e2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.INVOICE_SECURITY_LEVEL));
 			criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2));
 		}
 		if (params.getFromSeries() != null) {
-			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IFinanceAlias.INVOICE_SERIES), params.getFromSeries().getId());	
+			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getFromSeries().getId());	
 		}
 		if (params.getFromNumber() != null) {
-			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IFinanceAlias.INVOICE_NUMBER), params.getFromNumber());	
+			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_NUMBER), params.getFromNumber());	
 		}
 		if (params.getToSeries() != null) {
-			criteria.addLessThanOrEqualExpression( bean.getFieldName(IFinanceAlias.INVOICE_SERIES), params.getToSeries().getId());	
+			criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getToSeries().getId());	
 		}
 		if (params.getToNumber() != null) {
-			criteria.addLessThanOrEqualExpression( bean.getFieldName(IFinanceAlias.INVOICE_NUMBER), params.getToNumber());	
+			criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_NUMBER), params.getToNumber());	
 		}
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES));
-		criteria.addEqualExpression( bean.getFieldName(IFinanceAlias.INVOICE_INVESTMENT), params.isInvestment());
-		criteria.addOrder(bean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE),false);
-		criteria.addOrder(bean.getFieldName(IFinanceAlias.INVOICE_ID),false);
+		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES));
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_INVESTMENT), params.isInvestment());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE),false);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_ID),false);
 		return criteria;
 	}
 	

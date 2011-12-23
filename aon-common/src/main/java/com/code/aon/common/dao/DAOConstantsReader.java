@@ -103,7 +103,7 @@ public class DAOConstantsReader {
 			try {
 				Class.forName( name );
 			} catch (ClassNotFoundException e) {
-				LOG.error("Error cargando la clase " +name, e);				
+				LOG.warn("Error cargando la clase " +name);				
 			}
 			String parentName = attributes.getValue(PARENT_ATTRIBUTE);
 			if ( (parentName != null) && (parentName.length() > 0) ) {
@@ -111,7 +111,7 @@ public class DAOConstantsReader {
 				try {
 					Class.forName( parentName );
 				} catch (ClassNotFoundException e) {
-					LOG.error("Error cargando la clase padre " + parentName, e);				
+					LOG.warn("Error cargando la clase padre " + parentName);				
 				}
 			}
 			this.entry = new DAOConstantsEntry( name, parentName);

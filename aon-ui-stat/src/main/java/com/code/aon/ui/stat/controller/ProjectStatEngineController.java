@@ -38,13 +38,13 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.groupware.DailyTracking;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectStatEngineController {
 
@@ -313,7 +313,7 @@ public class ProjectStatEngineController {
 		IManagerBean bean = BeanManager.getManagerBean(DailyTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
-				bean.getFieldName(IGroupwareAlias.DAILY_TRACKING_PROJECT_ID),
+				bean.getFieldName(IEntityAlias.DAILY_TRACKING_PROJECT_ID),
 				project.getId());
 		List<?> list = bean.getList(criteria);
 		return (List<DailyTracking>) list;
@@ -420,10 +420,10 @@ public class ProjectStatEngineController {
 				.getManagerBean(com.code.aon.groupware.Task.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
-				taskBean.getFieldName(IGroupwareAlias.TASK_PROJECT_ID),
+				taskBean.getFieldName(IEntityAlias.TASK_PROJECT_ID),
 				getProject().getId());
 		criteria.addGreaterThanOrEqualExpression(
-				taskBean.getFieldName(IGroupwareAlias.TASK_START_DATE),
+				taskBean.getFieldName(IEntityAlias.TASK_START_DATE),
 				fromDate);
 		List<ITransferObject> list = taskBean.getList(criteria);
 		TaskSeries s1 = new TaskSeries(TaskStatus.PENDING.getName(locale));

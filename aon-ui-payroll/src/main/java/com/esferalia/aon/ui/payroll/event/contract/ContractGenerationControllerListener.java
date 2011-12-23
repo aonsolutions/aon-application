@@ -25,7 +25,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
@@ -149,13 +149,13 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
 			if(contract.getEndDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
 			} else {
-				criteria.addNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			}
 			List<ITransferObject>  list = bean.getList(criteria);
 			if(!list.isEmpty()){
@@ -175,8 +175,8 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), ((Contract)this.getController().getTo()).getId());
-				criteria.addNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), ((Contract)this.getController().getTo()).getId());
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				for(ITransferObject to: bean.getList(criteria)){
 					ContractData data = (ContractData) to;
 					contractDataMap.put(data.getName(), data.getExpression().replace('"', ' ').trim());

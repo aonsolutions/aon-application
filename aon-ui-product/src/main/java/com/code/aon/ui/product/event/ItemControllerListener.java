@@ -10,7 +10,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -22,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ItemTariffController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemControllerListener extends ControllerAdapter implements IItemConstants {
 
@@ -86,7 +86,7 @@ public class ItemControllerListener extends ControllerAdapter implements IItemCo
 			Item item = (Item)event.getController().getTo();
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+			criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
 			if (itemBean.getCount(criteria) == 0) {
 				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 				productBean.remove(item.getProduct());

@@ -29,7 +29,7 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchAttachment;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
@@ -194,8 +194,8 @@ public class LeaveBatchController extends BasicController {
 	private void checkDiskCreated() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			setRecorded(true);

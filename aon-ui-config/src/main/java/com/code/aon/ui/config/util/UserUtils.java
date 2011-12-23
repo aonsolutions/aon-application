@@ -18,13 +18,13 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class UserUtils {
 	
@@ -62,7 +62,7 @@ public class UserUtils {
 		try {
             IManagerBean bean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName(IConfigAlias.USER_LOGIN), getPrincipal().getShortName() );
+            criteria.addEqualExpression( bean.getFieldName(IEntityAlias.USER_LOGIN), getPrincipal().getShortName() );
             List<ITransferObject> list = bean.getList(criteria);
             if ( (list!=null) && (list.size() == 1) ) {
                 return (User) list.get(0);
@@ -78,14 +78,13 @@ public class UserUtils {
 		return bean;
 	}
 	
-	@SuppressWarnings("unchecked")
     public static Expression obtainUserWorkGroupsExpr(User user, String alias) {
         Expression expression = null;
         try {
             IManagerBean employeeWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(employeeWorkGroupBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_ID), user.getId());
-            Iterator iter = employeeWorkGroupBean.getList(criteria).iterator();
+            criteria.addEqualExpression(employeeWorkGroupBean.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_ID), user.getId());
+            Iterator<ITransferObject> iter = employeeWorkGroupBean.getList(criteria).iterator();
             while(iter.hasNext()) {
             	UserWorkGroup userWorkGroup = (UserWorkGroup)iter.next();
                 expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, userWorkGroup.getWorkGroup().getId()));
@@ -96,14 +95,13 @@ public class UserUtils {
         return expression;
     }
 	
-	@SuppressWarnings("unchecked")
 	public List<Scope> getCurrentUserScopes(){
 		List<Scope> scopes = new LinkedList<Scope>();
 		try {
 			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
-			Iterator iter = userScopeBean.getList(criteria).iterator();
+			criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
+			Iterator<ITransferObject> iter = userScopeBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				scopes.add(((UserScope)iter.next()).getScope());
 			}

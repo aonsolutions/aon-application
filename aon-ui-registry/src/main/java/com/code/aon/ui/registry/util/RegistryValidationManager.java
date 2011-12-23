@@ -9,8 +9,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryNote;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class RegistryValidationManager {
 
@@ -19,8 +19,8 @@ public abstract class RegistryValidationManager {
 	protected RegistryNote getRegistryObservation(Registry registry) throws ManagerBeanException {
 		IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), registry.getId());
-		criteria.addEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
+		criteria.addEqualExpression(rNoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rNoteBean.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
 		List<ITransferObject> rNoteList = rNoteBean.getList(criteria);
 		if (!rNoteList.isEmpty()) {
 			return (RegistryNote)rNoteList.iterator().next();

@@ -18,8 +18,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesInvoicingManager {
 
@@ -95,8 +95,8 @@ public class SalesInvoicingManager {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), sales.getId());
-		criteria.addOrder(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+		criteria.addOrder(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();

@@ -24,17 +24,16 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
@@ -113,8 +112,8 @@ public class EnterpriseController extends RegistryController implements ICompany
     	Enterprise enterprise = (Enterprise) getTo();
 		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
-		criteria.addOrder(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS));
+		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), enterprise.getRegistry().getId());
+		criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
 		List<ITransferObject> list = registryAddressBean.getList(criteria);
 		for (ITransferObject to : list) {
 			RegistryAddress rAddress = (RegistryAddress)to;
@@ -150,9 +149,9 @@ public class EnterpriseController extends RegistryController implements ICompany
     	WorkPlace workPlace = null;
     	IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId() );
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId() );
     	if ( (getMainAddress() != null) && (getMainAddress().getId() != null) ) {
-    		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ADDRESS_ID), getMainAddress().getId() );
+    		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ADDRESS_ID), getMainAddress().getId() );
     	}
     	List<ITransferObject> list = bean.getList(criteria);
     	if (! list.isEmpty() ) {
@@ -165,8 +164,8 @@ public class EnterpriseController extends RegistryController implements ICompany
     	RegistryDirStaff dirStaff = null;
     	IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), getEnterprise().getRegistry().getId() );
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), getEnterprise().getRegistry().getId() );
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
     	List<ITransferObject> list = bean.getList(criteria);
     	if (! list.isEmpty() ) {
     		dirStaff = (RegistryDirStaff) list.get(0);	
@@ -197,9 +196,9 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public void initLogo() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		String alias = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, getEnterprise().getId());
-		String type = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		String type = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {

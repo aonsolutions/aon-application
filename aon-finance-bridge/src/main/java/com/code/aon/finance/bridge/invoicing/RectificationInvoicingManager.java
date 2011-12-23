@@ -16,7 +16,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -26,6 +25,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RectificationInvoicingManager {
 
@@ -92,7 +92,7 @@ public class RectificationInvoicingManager {
 	private void createInvoiceAddress(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
 		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)ito;
 			InvoiceAddress rectifierAddress = new InvoiceAddress();
@@ -113,8 +113,8 @@ public class RectificationInvoicingManager {
 		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			InvoiceDetail rectifierDetail = new InvoiceDetail();
@@ -132,8 +132,8 @@ public class RectificationInvoicingManager {
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
 			if (taxDataInDetail) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
-				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_TAX_TYPE), TaxType.VAT);
+				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE), TaxType.VAT);
 				Iterator<?> iterator = invoiceTaxBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					InvoiceTax invoiceTax = (InvoiceTax)iterator.next();
@@ -149,8 +149,8 @@ public class RectificationInvoicingManager {
 	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_ID));
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_ID));
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
 			Finance rectifierFinance = new Finance();

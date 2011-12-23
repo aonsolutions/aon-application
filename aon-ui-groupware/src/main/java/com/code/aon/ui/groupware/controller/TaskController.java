@@ -19,7 +19,6 @@ import com.code.aon.groupware.ProcessDetailTransition;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.TaskSource;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.ql.Criteria;
@@ -31,6 +30,7 @@ import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaskController extends BasicController {
 
@@ -445,8 +445,8 @@ public class TaskController extends BasicController {
 		try {
 			Criteria criteria = new Criteria();
 			IManagerBean managerBean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
-			criteria.addEqualExpression(managerBean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), task.getWorkGroup().getId());
-			criteria.addEqualExpression(managerBean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ACTIVE), true);
+			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), task.getWorkGroup().getId());
+			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ACTIVE), true);
 			List<ITransferObject> list = managerBean.getList(criteria);
 			int i = 0;
 			for (ITransferObject to: list) {

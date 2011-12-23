@@ -9,10 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.registry.servlet.RegistryAttachmentServlet;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyImageServlet extends RegistryAttachmentServlet {
 
@@ -27,7 +28,6 @@ public class CompanyImageServlet extends RegistryAttachmentServlet {
 	 * @throws IOException the IO exception
 	 * @throws ServletException the servlet exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		try {
 			IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
@@ -36,8 +36,8 @@ public class CompanyImageServlet extends RegistryAttachmentServlet {
 	        int dot = path.lastIndexOf(".");
 	        String id = path.substring(slash + 1, dot);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), id);
-			List list = getManagerBean().getList(criteria);
+			criteria.addExpression(attachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID), id);
+			List<ITransferObject> list = getManagerBean().getList(criteria);
 			if (list.size() > 0) {
 				RegistryAttachment ra = (RegistryAttachment) list.get(0);
 				res.setContentType(ra.getMimeType().getName());

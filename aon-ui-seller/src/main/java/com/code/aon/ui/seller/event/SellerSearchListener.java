@@ -5,9 +5,9 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.seller.dao.ISellerAlias;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SellerSearchListener extends RegistrySearchListener {
 
@@ -31,7 +31,7 @@ public class SellerSearchListener extends RegistrySearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getSellerStatuses())) {
-			String status = getController().resolveAlias(ISellerAlias.SELLER_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.SELLER_STATUS);
 			addEnumToCriteria(criteria, status, getSellerStatuses());
 		}
 		super.completeCriteria(criteria);

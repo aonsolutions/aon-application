@@ -32,18 +32,17 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
-import com.code.aon.infoweb.dao.IInfowebAlias;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
 import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyWebInfoStyleController extends BasicController implements VelocityConstants {
 	
@@ -104,8 +103,8 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		List<SelectItem> pages = new LinkedList<SelectItem>();
 		IManagerBean pageBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(pageBean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_ACTIVE), true);
-		criteria.addOrder(pageBean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_POSITION));
+		criteria.addEqualExpression(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_ACTIVE), true);
+		criteria.addOrder(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION));
 		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
 		int default_id = 0;
 		SelectItem item = new SelectItem(default_id, "Por defecto");
@@ -130,7 +129,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			while (iter.hasNext()) {
 				String var = iter.next();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(wisBean.getFieldName(IInfowebAlias.WEB_INFO_STYLE_VARIABLE), var);
+				criteria.addEqualExpression(wisBean.getFieldName(IEntityAlias.WEB_INFO_STYLE_VARIABLE), var);
 				List<ITransferObject> list = wisBean.getList(criteria);
 				WebInfoStyle wis = new WebInfoStyle();
 				if (list.size() > 0) {
@@ -374,7 +373,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		List<SelectItem> images = new LinkedList<SelectItem>();
 		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
+		criteria.addEqualExpression(rattachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
 		List<ITransferObject> list = rattachBean.getList(criteria);
 		for (int i=0; i <list.size(); i++) {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
@@ -406,7 +405,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		try {
 			IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), new Integer(id));
+			criteria.addEqualExpression(rattachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID), new Integer(id));
 			List<ITransferObject> list = rattachBean.getList(criteria);
 			if (list.size() > 0) {
 				RegistryAttachment ra = (RegistryAttachment)list.get(0);

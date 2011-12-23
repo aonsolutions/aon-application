@@ -5,9 +5,9 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.supplier.enumeration.SupplierStatus;
 import com.code.aon.ui.registry.controller.event.RegistryPayMethodSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SupplierSearchListener extends RegistryPayMethodSearchListener {
 
@@ -31,7 +31,7 @@ public class SupplierSearchListener extends RegistryPayMethodSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getSupplierStatuses())) {
-			String status = getController().resolveAlias(ISupplierAlias.SUPPLIER_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.SUPPLIER_STATUS);
 			addEnumToCriteria(criteria, status, getSupplierStatuses());
 		}
 		super.completeCriteria(criteria);

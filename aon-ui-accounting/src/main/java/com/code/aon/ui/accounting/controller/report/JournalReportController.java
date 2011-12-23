@@ -8,7 +8,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -21,6 +20,7 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class JournalReportController extends BasicController implements IAccountingBookItem {
 
@@ -155,30 +155,30 @@ public class JournalReportController extends BasicController implements IAccount
 			if (period != null) {
 				criteria
 						.addEqualExpression(
-								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),
+								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),
 								period.getId());
 			}
 			if (getFromDate() != null) {
 				criteria
 						.addGreaterThanOrEqualExpression(
-								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
+								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
 								getFromDate());
 			}
 			if (getToDate() != null) {	
 				criteria.addLessThanOrEqualExpression(
-								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
+								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
 								getToDate());
 			}
 			if (getSecurityLevel() != null) {
-				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
 			}
-			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID));
+			getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID));
 			if (getOrder() == 0 ) {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+				getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			} else if (getOrder() == 1) {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
+				getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
 			} else {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
+				getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
@@ -226,7 +226,7 @@ public class JournalReportController extends BasicController implements IAccount
 					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
+					IEntityAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -245,9 +245,9 @@ public class JournalReportController extends BasicController implements IAccount
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria c = new Criteria();
 				if (getPeriod() != null) {
-					c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
+					c.addEqualExpression( bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
 				}
-				c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+				c.addNullExpression( bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_JOURNAL));
 				int count = bean.getCount(c);
 				setJournalCorrect(count==0);
 			}

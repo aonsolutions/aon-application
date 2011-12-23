@@ -1,8 +1,5 @@
 package com.code.aon.config;
 
-import com.code.aon.config.Bank;
-import com.code.aon.config.BankAccount;
-import com.code.aon.config.PayMethod;
 
 public interface IPayMethod {
 

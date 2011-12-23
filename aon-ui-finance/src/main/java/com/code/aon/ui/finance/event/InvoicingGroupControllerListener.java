@@ -8,7 +8,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.finance.InvoicingGroupDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -16,6 +15,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoicingGroupControllerListener extends ControllerAdapter {
 	
@@ -39,9 +39,9 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
     	try {
         	IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
         	Criteria criteria = new Criteria();
-        	criteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), group.getParent().getId());
+        	criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_PARENT_ID), group.getParent().getId());
         	if (group.getId() != null) {
-            	criteria.addNotEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_ID), group.getId());
+            	criteria.addNotEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_ID), group.getId());
         	}
         	if (invoicingGroupBean.getCount(criteria) > 0) {
         		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_PARENT_KEY);
@@ -56,7 +56,7 @@ public class InvoicingGroupControllerListener extends ControllerAdapter {
     	try {
         	IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
         	Criteria criteria = new Criteria();
-        	criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
+        	criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
         	if (invoicingGroupDetailBean.getCount(criteria) > 0) {
         		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY);
         		throw new ControllerListenerException(message);

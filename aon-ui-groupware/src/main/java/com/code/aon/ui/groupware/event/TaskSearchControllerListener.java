@@ -19,7 +19,6 @@ import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.groupware.enumeration.TaskSource;
 import com.code.aon.groupware.enumeration.TaskStatus;
@@ -41,6 +40,7 @@ import com.code.aon.ui.groupware.controller.TaskController;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaskSearchControllerListener extends ControllerSearchListener {
 
@@ -370,58 +370,58 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		TaskController controller = (TaskController) FormUtil.getController(IGroupWareConstants.TASK_CONTROLLER_NAME);
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
-			String taskHolderAlias = getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
+			String taskHolderAlias = getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
 			Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
-			Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID));
+			Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
 			Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
 			workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
 		} else {
 			if (getWorkGroup() != null) {
-				criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID), getWorkGroup().getId() ); 	
+				criteria.addEqualExpression( getFieldName(IEntityAlias.TASK_WORK_GROUP_ID), getWorkGroup().getId() ); 	
 			}
 			if (getTaskHolder() != null) {
-				criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
+				criteria.addEqualExpression( getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
 			}
 		}
 		if (isWhenEqualsWeek()) {
 			Date[] range = CommonUtil.getWeekDateRange(new Date());
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
-			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), range[0]);
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), range[1]);
 		} else if (isWhenEqualsTwoWeeks()) {
 			Date[] range = CommonUtil.getTwoWeekDateRange(new Date());
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
-			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), range[0]);
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), range[1]);
 		} else if (isWhenEqualsMonth()) {
 			Date today = new Date();
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthFirstDay(today));
-			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthLastDay(today));
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), CommonUtil.getMonthFirstDay(today));
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), CommonUtil.getMonthLastDay(today));
 		} else if (isWhenEqualsToday()) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), new Date());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), new Date());
 		} else if (isWhenEqualsBefore()) {
-			criteria.addLessThanExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), new Date());
+			criteria.addLessThanExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), new Date());
 		} else {
 			if (getFromDueDate() != null) {
-				criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), getFromDueDate());
+				criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), getFromDueDate());
 			}
 			if (getToDueDate() != null) {
-				criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), getToDueDate());
+				criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.TASK_DUE_DATE), getToDueDate());
 			}
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_REGISTRY_ID), getRegistry().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_REGISTRY_ID), getRegistry().getId());
 		}		
 		if ((getProject() != null) && (getProject().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_PROJECT_ID), getProject().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_PROJECT_ID), getProject().getId());
 		}		
 		if ((getActivityType() != null) && (getActivityType().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_ACTIVITY_TYPE_ID), getActivityType().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_ACTIVITY_TYPE_ID), getActivityType().getId());
 		}		
 		if ((getProjectType() != null) && (getProjectType().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
 		}		
 		if (isProcessTask()) {
-			criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_SOURCE), TaskSource.PROCESS );
+			criteria.addEqualExpression( getFieldName(IEntityAlias.TASK_SOURCE), TaskSource.PROCESS );
 		}
 		if ((getProcess() != null) && (getProcess().getId() != null)) {
 			criteria.addEqualExpression("Task.processTask.processDetail.process.id", getProcess().getId());
@@ -437,7 +437,7 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
         Expression expression = null;
         IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
+        criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
         List<ITransferObject> list = bean.getList(criteria);
         for (ITransferObject to: list ) {
         	TaskHolderWorkgroup thwg = (TaskHolderWorkgroup) to;
@@ -448,7 +448,7 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 
 	private void loadStatusCriteria(Criteria criteria) throws ManagerBeanException {
 		if (isStatusDeleted() || isStatusFinished() || isStatusInProgress() || isStatusPending()) {
-			String statusAlias = getFieldName(IGroupwareAlias.TASK_STATUS);
+			String statusAlias = getFieldName(IEntityAlias.TASK_STATUS);
 			// Hay que realizar una expression OR con los valores
 			// seleccionados. Como hay
 			// cuatro valores de status creamos un array con esas
@@ -483,7 +483,7 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	
 	private void loadPriorityCriteria(Criteria criteria) throws ManagerBeanException {
 		if (isHighPriority() || isLowPriority() || isNormalPriority() || isNonePriority()) {
-			String priorityAlias = getFieldName(IGroupwareAlias.TASK_PRIORITY);
+			String priorityAlias = getFieldName(IEntityAlias.TASK_PRIORITY);
 			Expression[] exps = { null, null, null, null };
 			int count = 0;
 			int inCaseCount1 = -1;

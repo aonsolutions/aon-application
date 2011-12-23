@@ -36,7 +36,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
@@ -92,16 +92,16 @@ public class LeaveBatchWizard implements Serializable {
 		Expression expr = null;
 		for(LeaveReportType t: getReportTypes()){
 			if(expr == null){
-				expr = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_TYPE), t); 
+				expr = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_TYPE), t); 
 			} else {
-				expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_TYPE), t));
+				expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_TYPE), t));
 			}
 		}
 		criteria.addExpression(expr);
-		Expression expr1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.PENDING );
-		Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.RETURNED );
+		Expression expr1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.PENDING );
+		Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.RETURNED );
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));		
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID));
 		List<RemesableLeave> list =  new LinkedList<RemesableLeave>();
 		for (ITransferObject to : bean.getList(criteria)) {
 			ContractLeaveDetail d = (ContractLeaveDetail) to;

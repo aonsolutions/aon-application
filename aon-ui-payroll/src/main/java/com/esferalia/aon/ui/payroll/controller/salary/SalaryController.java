@@ -35,13 +35,10 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseData;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
@@ -63,7 +60,7 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -208,7 +205,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
 			List<?> list = bean.getList(c);
 			return (Collection<SalaryPayment>) list;
 		}
@@ -227,7 +224,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
 			List<SalaryDeduction> list = new LinkedList<SalaryDeduction>();
 			for(ITransferObject to: bean.getList(c)){
 				SalaryDeduction d = (SalaryDeduction) to;
@@ -252,7 +249,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_EMBARGO_SALARY_ID), salary.getId());
 			embargosList = bean.getList(c);
 		}
 		List<SalaryDeduction> list = new LinkedList<SalaryDeduction>();
@@ -281,7 +278,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_COST_SALARY_ID), salary.getId());
 			List<?> list = bean.getList(c);
 			return (Collection<SalaryCost>) list;
 		}
@@ -322,9 +319,9 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		Criteria criteria = new Criteria();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
-			String registryId = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+			String registryId = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID);
 			criteria.addEqualExpression(registryId, enterprise.getRegistry().getId());
-			String typeAlias = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE);
+			String typeAlias = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE);
 			criteria.addEqualExpression(typeAlias, type);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
@@ -422,9 +419,9 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		Integer id = ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId();
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, id);
-		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		Iterator<?> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
@@ -457,7 +454,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	private ApplicationParameter getAppDefaultTemplate() throws ManagerBeanException {
 		IManagerBean dataBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
 		List<ITransferObject> list = dataBean.getList(criteria);
 		if(list.isEmpty()){
 			return null;
@@ -468,8 +465,8 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	private EnterpriseData getEnterpriseDataTemplate() throws ManagerBeanException {
 		IManagerBean dataBean = BeanManager.getManagerBean(EnterpriseData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId());
-		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId());
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
 		List<ITransferObject> list = dataBean.getList(criteria);
 		if(list.isEmpty()){
 			return null;

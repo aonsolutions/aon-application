@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetStat;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,6 +26,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AssetStatController {
 
@@ -245,39 +245,39 @@ public class AssetStatController {
 		criteria = new Criteria();
 		String identifier;
 		
-		identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
+		identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE);
 		criteria.addBetweenExpression(identifier, fromDate, toDate);
 		if(getDateRange().equals("YEAR")){
 			if(getStatType().equals("ASSET")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID);
 				criteria.addOrder(identifier);
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
 				criteria.addOrder(identifier);
 			}
 		} else if(getDateRange().equals("MONTH")){
 			if(getStatType().equals("ASSET")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_NAME);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME);
 				criteria.addEqualExpression(identifier, getAssetName());
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
 				criteria.addEqualExpression(identifier, getUserName());
 			}
 //			criteria.addEqualExpression(identifier, getName());
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
+			identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
 		} else if(getDateRange().equals("DAY")){
 			if(getStatType().equals("ASSET")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_NAME);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME);
 				criteria.addEqualExpression(identifier, getAssetName());
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
 				criteria.addEqualExpression(identifier, getUserName());
 			}
-			identifier = assetActivityBean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
+			identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE);
 			criteria.addOrder(identifier);
 		} 
 	}

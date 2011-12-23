@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.FinanceBatch;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.ql.Criteria;
@@ -22,6 +21,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FBatchControllerListener extends ControllerAdapter implements IFinanceConstants {
 	
@@ -57,7 +57,7 @@ public class FBatchControllerListener extends ControllerAdapter implements IFina
         if (fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19 || fBatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D) {
             try {
                 Criteria criteria = new Criteria();
-                criteria.addEqualExpression(fBatchController.getFieldName(IFinanceAlias.FINANCE_BATCH_ID), fBatch.getId());
+                criteria.addEqualExpression(fBatchController.getFieldName(IEntityAlias.FINANCE_BATCH_ID), fBatch.getId());
                 Date oldDate = ((FinanceBatch)fBatchController.getManagerBean().getList(criteria).get(0)).getIssueDate();
                 if (oldDate.after(fBatch.getIssueDate())) {
                     fBatch.setIssueDate(oldDate);

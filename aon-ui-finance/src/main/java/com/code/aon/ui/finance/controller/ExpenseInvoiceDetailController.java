@@ -10,11 +10,9 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,12 +22,12 @@ import com.code.aon.config.Tax;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
@@ -53,15 +51,15 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
-		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 		for (SelectItem to : expenseItemList) {
 			Item item = (Item)to.getValue();
 			if (item != null) {
-				criteria.addNotEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID), item.getId());
+				criteria.addNotEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), item.getId());
 			}
 		}
-		criteria.addOrder(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_NAME));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
 		Iterator<?> iterator = itemBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			Item item = (Item)iterator.next();
@@ -78,28 +76,28 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		if (creditorAccount != null) {
 			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE), creditorAccount.getCode());
-			String balancingAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
+			criteria.addEqualExpression(helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE), creditorAccount.getCode());
+			String balancingAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(balancingAlias, "6%"));	
-			criteria.addOrder(helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
+			criteria.addOrder(helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER), false);
 			List<ITransferObject> helperList = helperBean.getList(criteria);
 			for (ITransferObject helperTo : helperList) {
 				AccountHelper helper = (AccountHelper) helperTo;
 
 				IManagerBean pAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(pAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), helper.getBalancingAccount().getId());
-				criteria.addEqualExpression(pAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
-				criteria.addOrder(pAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_NAME));
+				criteria.addEqualExpression(pAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), helper.getBalancingAccount().getId());
+				criteria.addEqualExpression(pAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
+				criteria.addOrder(pAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_NAME));
 				List<ITransferObject> pAccountList = pAccountBean.getList(criteria);
 				for (ITransferObject pAccountTo : pAccountList) {
 					ProductAccount pAccount = (ProductAccount) pAccountTo;
 					
 					IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 					criteria = new Criteria();
-					criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_ID), pAccount.getProduct().getId());
-					criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
-					criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_STATUS), ProductStatus.ACTIVE);
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_ID), pAccount.getProduct().getId());
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
+					criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 					List<ITransferObject> itemList = itemBean.getList(criteria);
 					for (ITransferObject itemTo : itemList) {
 						Item item = (Item) itemTo;

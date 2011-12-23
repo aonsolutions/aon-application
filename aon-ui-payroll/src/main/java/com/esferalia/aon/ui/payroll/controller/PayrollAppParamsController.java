@@ -19,7 +19,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.PaymentConcept;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PayrollAppParamsController{
 	
@@ -51,7 +51,7 @@ public class PayrollAppParamsController{
 			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 			if(getParameter(SETTLE_VACATION_CONCEPT).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_VACATION_CONCEPT).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_VACATION_CONCEPT).getValue()));
 				setSettleVacationConcept((PaymentConcept) bean.getList(criteria).get(0));
 			} else {
 				setSettleVacationConcept((PaymentConcept) bean.createNewTo());
@@ -77,7 +77,7 @@ public class PayrollAppParamsController{
 			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 			if(getParameter(SETTLE_NOTICE_DAY_CONCEPT).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_NOTICE_DAY_CONCEPT).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_NOTICE_DAY_CONCEPT).getValue()));
 				setSettleNoticeDayConcept((PaymentConcept) bean.getList(criteria).get(0));
 			} else {
 				setSettleNoticeDayConcept((PaymentConcept) bean.createNewTo());
@@ -103,7 +103,7 @@ public class PayrollAppParamsController{
 			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 			if(getParameter(SETTLE_COMPENSATION_CONCEPT).getValue()!=null){
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_COMPENSATION_CONCEPT).getValue()));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_COMPENSATION_CONCEPT).getValue()));
 				setSettleCompensationConcept((PaymentConcept) bean.getList(criteria).get(0));
 			} else {
 				setSettleCompensationConcept((PaymentConcept) bean.createNewTo());

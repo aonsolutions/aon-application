@@ -26,7 +26,6 @@ import com.code.aon.groupware.ProcessDetailTransition;
 import com.code.aon.groupware.ProcessTask;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.CampaignStatus;
@@ -37,6 +36,7 @@ import com.code.aon.groupware.enumeration.TaskSource;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaskManager {
 	
@@ -102,7 +102,7 @@ public class TaskManager {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessDetailTransition.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean
-				.getFieldName(IGroupwareAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
+				.getFieldName(IEntityAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
 		List<?> list = bean.getList(criteria);
 		return (list != null && list.size()>0);
 	}
@@ -113,7 +113,7 @@ public class TaskManager {
 		ProcessDetail pd = processsTask.getProcessDetail();
 		IManagerBean bean = BeanManager.getManagerBean(ProcessDetailTransition.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL_ID), pd.getId());
 		List<?> list = bean.getList(criteria);
 		return (List<ProcessDetailTransition>) list;
 	}
@@ -160,7 +160,7 @@ public class TaskManager {
 	private ProcessTask getCurrentProcessTask(Task task) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_ID), task.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_ID), task.getId());
 		Iterator<?> iterator = bean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			ProcessTask processTask = (ProcessTask) iterator.next();
@@ -237,9 +237,9 @@ public class TaskManager {
 	private Alarm getTaskAlarm(Task task) throws ManagerBeanException {
 		IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(alarmBean.getFieldName(IGroupwareAlias.ALARM_STATUS),AlarmStatus.PENDING);
-		criteria.addEqualExpression(alarmBean.getFieldName(IGroupwareAlias.ALARM_SOURCE),AlarmSource.TASK);
-		criteria.addEqualExpression(alarmBean.getFieldName(IGroupwareAlias.ALARM_SOURCE_ID), task.getId());
+		criteria.addEqualExpression(alarmBean.getFieldName(IEntityAlias.ALARM_STATUS),AlarmStatus.PENDING);
+		criteria.addEqualExpression(alarmBean.getFieldName(IEntityAlias.ALARM_SOURCE),AlarmSource.TASK);
+		criteria.addEqualExpression(alarmBean.getFieldName(IEntityAlias.ALARM_SOURCE_ID), task.getId());
 		List<?> alarmList = alarmBean.getList(criteria);
 		if (alarmList.size() > 0) {
 			return (Alarm) alarmList.get(0);
@@ -313,10 +313,10 @@ public class TaskManager {
 	private ProcessDetail getNextProcessDetail(ProcessDetail processDetail) throws ManagerBeanException {
 		IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), processDetail.getProcess().getId());
-		criteria.addEqualExpression(processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
-		criteria.addGreaterThanExpression(processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION), processDetail.getPosition());
-		criteria.addOrder(processDetailBean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+		criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), processDetail.getProcess().getId());
+		criteria.addEqualExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
+		criteria.addGreaterThanExpression(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION), processDetail.getPosition());
+		criteria.addOrder(processDetailBean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
 		List<ITransferObject>  list = processDetailBean.getList(criteria);
 		if (list.size() > 0) {
 			return (ProcessDetail) list.get(0);
@@ -346,9 +346,9 @@ public class TaskManager {
 	private void finishCampaignIfNeeded(Campaign campaign) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_CAMPAIGN_ID), campaign.getId());
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), campaign.getId());
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0) {
 			// La campaña todavía tiene tareas activas.
@@ -432,10 +432,10 @@ public class TaskManager {
 	public Task getCurrentTask(CampaignProject cp) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_PROJECT_ID), cp.getProject().getId());
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_PROJECT_ID), cp.getProject().getId());
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0) {
 			ProcessTask processTask = (ProcessTask) list.get(0);
@@ -458,10 +458,10 @@ public class TaskManager {
 	public ProcessTask getCurrentProcessTask(CampaignProject cp) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTask.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_PROJECT_ID), cp.getProject().getId());
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
-		criteria.addNotEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), cp.getCampaign().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_PROJECT_ID), cp.getProject().getId());
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.DELETED);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_TASK_TASK_STATUS), TaskStatus.FINISHED);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0) {
 			ProcessTask processTask = (ProcessTask) list.get(0);

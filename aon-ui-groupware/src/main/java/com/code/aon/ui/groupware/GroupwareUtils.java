@@ -8,9 +8,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.groupware.TaskHolder;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class GroupwareUtils {
 
@@ -24,7 +24,7 @@ public class GroupwareUtils {
 	        }
 			IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_USER_ID), user.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), user.getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list != null && list.size() > 0) {
 				currentTaskHolder = (TaskHolder) list.get(0);

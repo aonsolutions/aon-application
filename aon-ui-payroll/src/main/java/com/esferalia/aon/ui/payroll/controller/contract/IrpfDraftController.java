@@ -59,7 +59,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -825,7 +825,7 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 		Criteria criteria = 
 			new Criteria();
 		criteria.addEqualExpression(
-				bean.getFieldName(IPayrollAlias.IRPF_RESULT_CONTRACT_ID), 
+				bean.getFieldName(IEntityAlias.IRPF_RESULT_CONTRACT_ID), 
 				contract.getId());
 
 		List<?> list = bean.getList(criteria);

@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -22,6 +21,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceSearchListener extends RegistrySearchListener {
 	
@@ -157,14 +157,14 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		super.completeCriteria( criteria );
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_TYPE), type);	
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_TYPE), type);	
 		}
 		if (getDefaultStatus() != null) {
 			InvoiceStatus status = InvoiceStatus.valueOf(getDefaultStatus()); 
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_STATUS), status);	
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), status);	
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), getRegistry().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), getRegistry().getId());
 		}		
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Invoice.lines.item.id", getItem().getId());

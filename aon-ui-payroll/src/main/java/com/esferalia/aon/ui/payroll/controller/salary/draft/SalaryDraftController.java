@@ -38,14 +38,11 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.EnterpriseData;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -71,7 +68,7 @@ import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -341,7 +338,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			SalaryDraftPaymentController c = (SalaryDraftPaymentController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_PAYMENT_CONTROLLER);
 			c.reset(false);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
@@ -357,10 +354,10 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			SalaryDraftDeductionController c = (SalaryDraftDeductionController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_DEDUCTION_CONTROLLER);
 			c.reset(false);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
-			c.getCriteria().addLessThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_START_DATE), this.getStartDate());
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), this.getEndDate());
-			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
+			c.getCriteria().addLessThanOrEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_START_DATE), this.getStartDate());
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), this.getEndDate());
+			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
 			c.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
@@ -376,8 +373,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			SalaryDraftBonusController c = (SalaryDraftBonusController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_BONUS_CONTROLLER);
 			c.reset(false);
 			c.onEditSearch(event);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), getStartDate());
-			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE), getStartDate());
+			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE));
 			c.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			c.onSearch(event);
 			c.getModel();
@@ -514,7 +511,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
-					controller.getManagerBean().getFieldName(IRegistryAlias.PERSON_ID), 
+					controller.getManagerBean().getFieldName(IEntityAlias.PERSON_ID), 
 					getPerson().getId());
 			controller.clearCriteria();
 			controller.setCriteria(criteria);
@@ -682,16 +679,16 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			IManagerBean cBean = BeanManager.getManagerBean(ContractPayment.class);
 			Contract contract = (Contract) getTo();
 			Criteria aCriteria = new Criteria();
-			aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-			aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+			aCriteria.addEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+			aCriteria.addOrder(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
 			aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			Criteria cCriteria = new Criteria();
-			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
-			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
-			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-			expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+			cCriteria.addEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			cCriteria.addOrder(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
+			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+			expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 			cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			List<?> al = aBean.getList(aCriteria);
 			List<?> cl = cBean.getList(cCriteria);
@@ -747,10 +744,10 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getStartDate());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getEndDate());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getSalaryType());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), getStartDate());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getEndDate());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), getSalaryType());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.isEmpty()){
 				this.dbSalary = null;
@@ -858,7 +855,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
 			List<?> list = bean.getList(c);
 			return (Collection<SalaryPayment>) list;
 		}
@@ -875,7 +872,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
 			List<SalaryDeduction> list = new LinkedList<SalaryDeduction>();
 			for(ITransferObject to: bean.getList(c)){
 				SalaryDeduction d = (SalaryDeduction) to;
@@ -898,7 +895,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_EMBARGO_SALARY_ID), salary.getId());
 			embargosList = bean.getList(c);
 		}
 		return getConvertedEmbarbos(embargosList) ;
@@ -931,7 +928,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		} else {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), salary.getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_COST_SALARY_ID), salary.getId());
 			List<?> list = bean.getList(c);
 			return (Collection<SalaryCost>) list;
 		}
@@ -961,7 +958,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	private ApplicationParameter getAppDefaultTemplate() throws ManagerBeanException {
 		IManagerBean dataBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), ICompanyConstants.REPORT_SALARY_DRAFT_PARAM);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), ICompanyConstants.REPORT_SALARY_DRAFT_PARAM);
 		List<ITransferObject> list = dataBean.getList(criteria);
 		if(list.isEmpty()){
 			return null;
@@ -972,8 +969,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	private EnterpriseData getEnterpriseDataTemplate() throws ManagerBeanException {
 		IManagerBean dataBean = BeanManager.getManagerBean(EnterpriseData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Contract)getTo()).getWorkPlace().getEnterprise().getId());
-		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), ICompanyConstants.REPORT_SALARY_DRAFT_PARAM);
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Contract)getTo()).getWorkPlace().getEnterprise().getId());
+		criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_NAME), ICompanyConstants.REPORT_SALARY_DRAFT_PARAM);
 		List<ITransferObject> list = dataBean.getList(criteria);
 		if(list.isEmpty()){
 			return null;
@@ -1122,7 +1119,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			Agreement agreement = level.getAgreement(); 
 
 			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), 
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_EXTRA_AGREEMENT_ID), 
 					agreement.getId());
 			
 			for(ITransferObject to: bean.getList(criteria)){
@@ -1139,13 +1136,13 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			
 			bean = BeanManager.getManagerBean(Salary.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), 
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), 
 					contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), 
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), 
 					SalaryType.EXTRA);
-			criteria.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+			criteria.addGreaterThanExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), 
 					CommonUtil.getYearFirstDay(year));
-			criteria.addLessThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+			criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.SALARY_ISSUE_DATE), 
 					CommonUtil.getYearLastDay(year));
 			
 			

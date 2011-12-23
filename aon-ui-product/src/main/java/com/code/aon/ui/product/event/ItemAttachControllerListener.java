@@ -13,7 +13,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.product.ItemAttachment;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -21,6 +20,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.product.controller.ItemAttachController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
 public class ItemAttachControllerListener extends ControllerAdapter implements IItemMessages {
@@ -32,7 +32,7 @@ public class ItemAttachControllerListener extends ControllerAdapter implements I
 			if ( iaController.getType() != null ) {
 				IManagerBean iAttachBean = iaController.getManagerBean();
 				Criteria criteria = iaController.getCriteria();
-				criteria.addEqualExpression(iAttachBean.getFieldName(IProductAlias.ITEM_ATTACHMENT_TYPE), iaController.getType());
+				criteria.addEqualExpression(iAttachBean.getFieldName(IEntityAlias.ITEM_ATTACHMENT_TYPE), iaController.getType());
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error before model Initialized",e);

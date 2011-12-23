@@ -25,7 +25,6 @@ import com.code.aon.file.tax.model.MOD303.data.Declaration;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -34,6 +33,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class MOD303Writer implements IFinanceConstants{
 	
@@ -140,8 +140,8 @@ public class MOD303Writer implements IFinanceConstants{
 	private void populateDeclarationDetail(VatTax vatTax, Declaration declaration) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
-		criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_KEY));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			VatTaxDetail detail = (VatTaxDetail) to;
@@ -262,7 +262,7 @@ public class MOD303Writer implements IFinanceConstants{
 
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDeclaration.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			VatTaxDeclaration d = (VatTaxDeclaration) to;

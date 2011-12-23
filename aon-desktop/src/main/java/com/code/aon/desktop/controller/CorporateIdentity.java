@@ -44,11 +44,11 @@ import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * @author igayarre
@@ -190,7 +190,7 @@ public class CorporateIdentity implements ICollectionProvider{
 	private RecordData recoverRecordData(Company company) throws ManagerBeanException{
     	IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), company.getId());
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), company.getId());
     	List<ITransferObject> list = bean.getList(criteria);
         if (list.size() > 0) {
             return (RecordData)list.get(0);
@@ -201,8 +201,8 @@ public class CorporateIdentity implements ICollectionProvider{
 	private RegistryAddress recoverCompanyAddress(Company company) throws ManagerBeanException{
     	IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
     	List<ITransferObject> list = bean.getList(criteria);
     	if (list.isEmpty())
     		return null;
@@ -222,8 +222,8 @@ public class CorporateIdentity implements ICollectionProvider{
 	private List<ITransferObject> recoverCompanyMedias(Company company, MediaType type_) throws ManagerBeanException{
     	IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), company.getId());
-    	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), type_);
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), company.getId());
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type_);
         return bean.getList(criteria);
 	}
 
@@ -271,7 +271,7 @@ public class CorporateIdentity implements ICollectionProvider{
 	private RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), identityReport.getCompany().getId());
+		criteria.addEqualExpression(registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), identityReport.getCompany().getId());
 		Iterator iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();

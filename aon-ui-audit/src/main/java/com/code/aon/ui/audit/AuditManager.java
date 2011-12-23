@@ -12,20 +12,19 @@ import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Session;
-import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class AuditManager implements IAuditAlias, IAuditConstants {
+public class AuditManager implements IAuditConstants {
 	
 	/** Obtiene un logger apropiado. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
@@ -50,7 +49,7 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		Application application = null;
 		String name = getApplicationName( context );
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
-		String field = applicationBean.getFieldName(APPLICATION_NAME);
+		String field = applicationBean.getFieldName(IEntityAlias.APPLICATION_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( field, name );
 		List<ITransferObject> list = applicationBean.getList(criteria);
@@ -69,7 +68,7 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		try {
             IManagerBean bean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName(IConfigAlias.USER_LOGIN), shortName );
+            criteria.addEqualExpression( bean.getFieldName(IEntityAlias.USER_LOGIN), shortName );
             List<ITransferObject> list = bean.getList(criteria);
             if ( (list!=null) && (list.size() == 1) ) {
                 return (User) list.get(0);
@@ -110,9 +109,9 @@ public class AuditManager implements IAuditAlias, IAuditConstants {
 		Action action = null;
 		IManagerBean actionBean = BeanManager.getManagerBean(Action.class);
 		Criteria criteria = new Criteria();
-		String nameField = actionBean.getFieldName(ACTION_NAME);		
+		String nameField = actionBean.getFieldName(IEntityAlias.ACTION_NAME);		
 		criteria.addEqualExpression( nameField, name );
-		String applicationField = actionBean.getFieldName(ACTION_APPLICATION_ID);		
+		String applicationField = actionBean.getFieldName(IEntityAlias.ACTION_APPLICATION_ID);		
 		criteria.addEqualExpression( applicationField, application.getId() );
 		List<ITransferObject> list = actionBean.getList(criteria);
 		if ( list.isEmpty() ) {

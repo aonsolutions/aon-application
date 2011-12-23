@@ -17,7 +17,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfRegularization;
 import com.esferalia.aon.payroll.IrpfResult;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 
 public abstract class AbstractIrpfController implements IIrpfController {
@@ -552,8 +552,8 @@ public abstract class AbstractIrpfController implements IIrpfController {
 			Contract contract = getContract();
 			IManagerBean bean = BeanManager.getManagerBean(IrpfRegularization.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.IRPF_REGULARIZATION_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), getEffectiveDate());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.IRPF_REGULARIZATION_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), getEffectiveDate());
 			List<ITransferObject> list = bean.getList(criteria);
 			return list.isEmpty() ? (IrpfRegularization) null : (IrpfRegularization) list.get(0);
 		} catch (ManagerBeanException e) {

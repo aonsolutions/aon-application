@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.AssetActivity;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,6 +17,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AssetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -58,10 +58,10 @@ public class AssetBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
 			Criteria criteria = new Criteria();
 
-			String alias = bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID);
+			String alias = bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID);
 			criteria.addEqualExpression(alias, act.getAsset().getId());
 
-			alias = bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE);
+			alias = bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE);
 			criteria.addEqualExpression(alias, act.getDate());
 
 			List<ITransferObject> lista = bean.getList(criteria);

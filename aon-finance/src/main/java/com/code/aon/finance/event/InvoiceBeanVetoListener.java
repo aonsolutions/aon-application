@@ -31,7 +31,6 @@ import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
@@ -39,6 +38,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -251,8 +251,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private boolean isRemovable(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		criteria.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
 		if (financeBean.getCount(criteria) == 0) {
 			return true;
 		}
@@ -262,7 +262,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void removeFinanceTrackings(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			financeTrackingBean.remove((FinanceTracking) iter.next());
@@ -272,7 +272,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void removeFinances(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			financeBean.remove((Finance) iter.next());
@@ -282,7 +282,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void removeInvoiceDetails(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			invoiceDetailBean.remove((InvoiceDetail) iter.next());
@@ -292,7 +292,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
 		if (iter.hasNext()) {
 			invoiceAddressBean.remove((InvoiceAddress) iter.next());
@@ -308,8 +308,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			invoiceBean.update(rectified);
 		} else {
 			Criteria criteria = new Criteria();
-			criteria.addNotEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_RECTIFICATION_INVOICE_ID), rectified.getId());
+			criteria.addNotEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_INVOICE_ID), rectified.getId());
 			if (invoiceBean.getCount(criteria) <= 1) {
 				rectified.setRectificationType(RectificationType.NONE);
 				for (ITransferObject ito : invoiceBean.getList(criteria)) {

@@ -11,8 +11,8 @@
 	<name>AON PURCHASE BRIDGE</name>
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

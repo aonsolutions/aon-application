@@ -12,8 +12,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.LinesController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryMediaController extends LinesController {
 	
@@ -25,8 +25,8 @@ public class RegistryMediaController extends LinesController {
 				Serializable masterId = getMasterController().getManagerBean().getId(master);	
 				IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), masterId);
-				c.addOrder(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), masterId);
+				c.addOrder(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
 				List<ITransferObject> list = bean.getList(c);
 				for (ITransferObject to: list) {
 					RegistryAddress address = (RegistryAddress) to;

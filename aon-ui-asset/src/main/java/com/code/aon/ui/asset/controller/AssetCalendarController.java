@@ -15,7 +15,6 @@ import javax.faces.model.ListDataModel;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
@@ -23,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AssetCalendarController extends BasicController{
 	
@@ -89,8 +89,8 @@ public class AssetCalendarController extends BasicController{
 	private void restoreCriteria() throws ManagerBeanException{
 		this.clearCriteria();
 		criteria = this.getCriteria();
-		criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getCalendarDay());
-		criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.ACCEPTED);
+		criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getCalendarDay());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.ACCEPTED);
 	}
 	
 	public List<Integer> getTimeFractionList() {

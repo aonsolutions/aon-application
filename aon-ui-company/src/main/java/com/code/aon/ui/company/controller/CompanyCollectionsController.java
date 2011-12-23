@@ -14,7 +14,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
@@ -23,7 +22,7 @@ import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyCollectionsController {
 
@@ -126,8 +125,8 @@ public class CompanyCollectionsController {
     		Company company = (Company)iterator.next();
     		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
-    		criteria.addOrder(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS));
+    		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
+    		criteria.addOrder(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS));
     		List<ITransferObject> list = registryAddressBean.getList(criteria);
     		for (ITransferObject to : list) {
     			RegistryAddress rAddress = (RegistryAddress)to;
@@ -145,8 +144,8 @@ public class CompanyCollectionsController {
     		Company company = (Company)iterator.next();
     		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
-    		criteria.addOrder(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ID));
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+    		criteria.addOrder(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ID));
     		List<ITransferObject> list = registryBankBean.getList(criteria);
     		for (ITransferObject to : list) {
     			RegistryBank rBank = (RegistryBank)to;
@@ -164,9 +163,9 @@ public class CompanyCollectionsController {
     		Company company = (Company)iterator.next();
     		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
-    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ACTIVE), true);
-    		criteria.addOrder(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ID));
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACTIVE), true);
+    		criteria.addOrder(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ID));
     		List<ITransferObject> list = registryBankBean.getList(criteria);
     		for (ITransferObject to : list) {
     			RegistryBank rBank = (RegistryBank)to;
@@ -191,9 +190,9 @@ public class CompanyCollectionsController {
     		Company company = (Company)iterator.next();
     		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
-    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
-    		criteria.addOrder(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ID));
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
+    		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ID));
     		List<ITransferObject> list = workPlaceBean.getList(criteria);
     		for (ITransferObject to : list) {
     			WorkPlace workPlace = (WorkPlace)to;
@@ -211,8 +210,8 @@ public class CompanyCollectionsController {
     		Company company = (Company)iterator.next();
     		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
-    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
     		workPlacesCount = workPlaceBean.getCount(criteria);
 		}
 		return workPlacesCount;

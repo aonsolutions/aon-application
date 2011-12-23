@@ -22,7 +22,7 @@ import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller for Inventory.
@@ -81,7 +81,7 @@ public class InventoryController extends BasicController {
 	        Session session = HibernateUtil.getSession(sessionName);
 			if (initStock){
 				Criteria c = new Criteria();
-				c.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
+				c.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
 				Iterator<?> initStockListIter = stockBean.getList(c).iterator();
 				while (initStockListIter.hasNext()){
 					Stock initStock = (Stock) initStockListIter.next();
@@ -111,8 +111,8 @@ public class InventoryController extends BasicController {
 				Item item = (Item) iter.next();
 				inventoryDetail.setItem(item);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID) ,item.getId());
-				criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID) ,warehouse.getId());
+				criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID) ,item.getId());
+				criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID) ,warehouse.getId());
 				List<?> stockList = stockBean.getList(criteria);
 				Iterator<?> stockListIter = stockList.iterator();
 				int total = 0;
@@ -127,7 +127,7 @@ public class InventoryController extends BasicController {
 			}
 			HibernateUtil.commitTransaction(sessionName);
 			this.onEditSearch(null);
-			getCriteria().addEqualExpression(inventoryBean.getFieldName(IWarehouseAlias.INVENTORY_ID), inventory.getId());
+			getCriteria().addEqualExpression(inventoryBean.getFieldName(IEntityAlias.INVENTORY_ID), inventory.getId());
 			this.onSearch(null);
 			this.getModel().setRowIndex(0);
 			this.onSelect(null);

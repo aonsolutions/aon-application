@@ -8,12 +8,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.ProcessDetailTransition;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProcessDetailControllerListener extends ControllerAdapter {
 
@@ -34,7 +34,7 @@ public class ProcessDetailControllerListener extends ControllerAdapter {
 		IController controller = event.getController();
 		try {
 			Criteria criteria = controller.getCriteria();
-			String field = controller.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION);
+			String field = controller.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION);
 			criteria.addOrder(field);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -75,7 +75,7 @@ public class ProcessDetailControllerListener extends ControllerAdapter {
 	private void checkNextDetail(ProcessDetail processDetail, String msg) throws ManagerBeanException, ControllerListenerException {
 		IManagerBean bean = BeanManager.getManagerBean(ProcessDetailTransition.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL_ID), processDetail.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL_ID), processDetail.getId());
 		List<ITransferObject> list = bean.getList(criteria); 
 		if (list != null && list.size() > 0) {
 			StringBuffer buf = new StringBuffer();

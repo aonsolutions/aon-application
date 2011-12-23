@@ -14,10 +14,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectType;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectCollectionsController {
 	
@@ -26,10 +26,10 @@ public class ProjectCollectionsController {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		if (registryId != null) {
-			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID),registryId);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID),registryId);
 		}
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			Project project = (Project) to;
@@ -42,16 +42,16 @@ public class ProjectCollectionsController {
 	public List<SelectItem> getActivityTypes(Integer projectTypeId) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
 		Criteria criteria = new Criteria();
-		Expression expr1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID)); 
+		Expression expr1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID)); 
 		if (projectTypeId != null) {
-			Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID),projectTypeId);
+			Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID),projectTypeId);
 			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		} else {
 			criteria.addExpression(expr1);
 		}
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID));
-		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		Integer oldId = null;
 		boolean first = true;
@@ -76,8 +76,8 @@ public class ProjectCollectionsController {
 		List<SelectItem> activityTypes = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACTIVITY_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			ActivityType activityType = (ActivityType) to;
@@ -95,8 +95,8 @@ public class ProjectCollectionsController {
 		List<SelectItem> projectTypes = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(ProjectType.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_TYPE_ACTIVE),true);
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_TYPE_DESCRIPTION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_TYPE_ACTIVE),true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			ProjectType type = (ProjectType) to;

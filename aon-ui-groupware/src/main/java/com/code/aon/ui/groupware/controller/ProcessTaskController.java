@@ -6,10 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProcessTaskController extends BasicController {
 	
@@ -35,8 +35,8 @@ public class ProcessTaskController extends BasicController {
 	        Integer projectId = cde.getCampaignProject().getProject().getId();
 
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(getFieldName(IGroupwareAlias.PROCESS_TASK_CAMPAIGN_ID), campaignId);
-            criteria.addEqualExpression(getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_PROJECT_ID), projectId);
+            criteria.addEqualExpression(getFieldName(IEntityAlias.PROCESS_TASK_CAMPAIGN_ID), campaignId);
+            criteria.addEqualExpression(getFieldName(IEntityAlias.PROCESS_TASK_TASK_PROJECT_ID), projectId);
 //            criteria.addOrder(getFieldName(IGroupwareAlias.PROCESS_TASK_TASK_ID));
             setCriteria(criteria);
             onSearch(null);

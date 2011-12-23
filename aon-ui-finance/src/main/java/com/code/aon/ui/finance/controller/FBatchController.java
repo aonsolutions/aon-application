@@ -21,7 +21,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -32,14 +31,12 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -60,6 +57,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
 
@@ -167,7 +165,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		if (to != null && to.getId() != null) {
 			IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), to.getId());
+			criteria.addEqualExpression(accEntryFBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), to.getId());
 			Iterator iterator = accEntryFBatchBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
@@ -189,7 +187,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_NAME));
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			PayMethod payMethod = (PayMethod) iter.next();
@@ -219,29 +217,29 @@ public class FBatchController extends BasicController implements ICollectionProv
 
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-        criteria.addGreaterThanExpression(financeController.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
+        criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
+        criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
         	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
-        		String payMethodTypeAlias = financeController.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE);
+        		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
         	} else {
-        		String payMethodTypeAlias = financeController.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE);
+        		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		Expression transferExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.BANK_TRANSFER);
                 Expression chequeExpr = ExpressionUtilities.getEqualExpression(payMethodTypeAlias, PayMethodType.CHEQUE);
                 criteria.addExpression(ExpressionUtilities.getOrExpression(transferExpr, chequeExpr));
         	}
             if ((to.getFinanceBatchType() != FinanceBatchType.AEB_58) && (to.getFinanceBatchType() != FinanceBatchType.AEB_58_D)) {
-            	criteria.addNotNullExpression(financeController.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
-            	criteria.addNotEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
+            	criteria.addNotNullExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT));
+            	criteria.addNotEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), new BankAccount());
                 if ((to.getFinanceBatchType() != FinanceBatchType.AEB_32) && (to.getFinanceBatchType() != FinanceBatchType.AEB_34)) {
-                    criteria.addLessThanOrEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
+                    criteria.addLessThanOrEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_DUE_DATE), to.getIssueDate());
                 }
             }
         }
-    	criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
-        criteria.addOrder(financeController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-        criteria.addOrder(financeController.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
+    	criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), to.getSecurityLevel());	
+        criteria.addOrder(financeController.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+        criteria.addOrder(financeController.getFieldName(IEntityAlias.FINANCE_CONCEPT));
 		return criteria;
 	}
 

@@ -9,13 +9,13 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.Registry;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 	
@@ -71,8 +71,8 @@ public class FeeInvoiceDetailRemover implements IInvoiceDetailRemover {
 	private	int obtainMaxLine(Customer customer) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), customer.getId());
-		Projection projection = Projection.max(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
+		criteria.addEqualExpression(customerFeeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_CUSTOMER_ID), customer.getId());
+		Projection projection = Projection.max(customerFeeBean.getFieldName(IEntityAlias.CUSTOMER_FEE_LINE));
 		Object value = customerFeeBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value).intValue() : 0;
 	}

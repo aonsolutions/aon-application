@@ -2,58 +2,59 @@ package com.code.aon.marketing;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.marketing.enumeration.QuestionType;
+import com.esferalia.aon.entity.master.QuestionValueDB;
 
-
-/**
- * Transfer Object that represents the user.
- * 
- * @author Consulting & Development. Aimar Tellitu - 19-sep-2008
- * @since 1.0
- * @version 1.0
- */
 @Entity
-@Table(name = "question_value")
-public class QuestionValue extends ValueQuestionHolder {
+@Table(name="question_value")
+public class QuestionValue extends QuestionValueDB implements IValueHolder {
 
-	private static final long serialVersionUID = -7135601793952520234L;
+	private static final long serialVersionUID = 1L;
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final QuestionValue o = (QuestionValue) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(getDate(), o.getDate())
-				.append(getNumber(), o.getNumber())				
-				.append(getQuestion(), o.getQuestion())
-				.append(getText(), o.getText())				
-				.isEquals();
+	@Transient
+	private Boolean getBooleanValue() {
+		if ( getNumber() != null ) {
+			return (getNumber() != 0);
 		}
-		return ObjectUtils.equals(getId(), o.getId());		
+		return null;
 	}
 	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(getDate())
-			.append(getNumber())
-			.append(getId())	
-			.append(getQuestion())			
-			.append(getText())		
-			.toHashCode();
+	@Transient
+	public boolean isBoolean() {
+		return (getNumber() != null) && (getNumber() != 0);
+	}
+	public void setBoolean(boolean b) {
+		setNumber(b ? 1.0 : 0);
 	}
 
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+	@Transient
+	public boolean isNotFilled() {
+		return (getNumber() == null) && (getDate() == null) && StringUtils.isEmpty(getText());
+	}
+	
+	public Object getValue( QuestionType type ) {
+		switch ( type ) {
+			case BOOLEAN:
+				return getBooleanValue();
+			case DATE:
+				return getDate();
+			case NUMBER:
+				return getNumber();
+			case TEXT:
+			case INFO:
+				return getText();
+		}
+		return null;
+	}
+	
+	public void copyValues( IValueHolder vh ) {
+		vh.setDate( getDate() );
+		vh.setNumber( getNumber() );
+		vh.setText( getText() );
 	}
 	
 }

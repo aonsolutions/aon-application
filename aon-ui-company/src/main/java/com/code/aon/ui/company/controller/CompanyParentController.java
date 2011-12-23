@@ -15,12 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
@@ -28,7 +28,6 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -38,6 +37,7 @@ import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the company maintenance.
@@ -429,16 +429,15 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public RegistryAddress obtainAddress() throws ManagerBeanException{
 		if(this.getTo() == null){
 			this.onLoad();
 		}
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), ((Registry)this.getTo()).getId());
-		criteria.addOrder(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
-		Iterator iter = rAddressBean.getList(criteria).iterator();
+		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), ((Registry)this.getTo()).getId());
+		criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE));
+		Iterator<ITransferObject> iter = rAddressBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAddress)iter.next();
 		}
@@ -460,9 +459,9 @@ public class CompanyParentController extends BasicController implements ICompany
 		Company company = obtainCompany();
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, company.getId());
-		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
 		return registryAttachBean.getCount(criteria) > 0;
 	}
@@ -483,13 +482,12 @@ public class CompanyParentController extends BasicController implements ICompany
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public RecordData getCompanyRecordData() throws ManagerBeanException{
 		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
 		Company company = (Company)getTo();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(recordDataBean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), company.getId());
-		Iterator iter = recordDataBean.getList(criteria, 0, 1).iterator();
+		criteria.addEqualExpression(recordDataBean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), company.getId());
+		Iterator<ITransferObject> iter = recordDataBean.getList(criteria, 0, 1).iterator();
 		if(iter.hasNext()){
 			return (RecordData)iter.next();
 		}
@@ -503,18 +501,17 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		if(this.getTo() == null){
 			this.onLoad();
 		}
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		String alias = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
 		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
-		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+		String type = registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
-		Iterator iter = registryAttachBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
 		}
@@ -680,7 +677,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * @return the master field name
 	 */
 	public String getMasterFieldName(){
-		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
+		return IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
 	
 	public void setHideHeaderContent( boolean value ) {
@@ -757,12 +754,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return appParam == null?null:(appParam.getValue() == null?null:ReportPrintOption.values()[Integer.parseInt(appParam.getValue())]);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public ApplicationParameter obtainApplicationParameter(String paramName) throws ManagerBeanException{
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), paramName);
-		Iterator iter = appParamBean.getList(criteria, 0, 1).iterator();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), paramName);
+		Iterator<ITransferObject> iter = appParamBean.getList(criteria, 0, 1).iterator();
 		if(iter.hasNext()){
 			return (ApplicationParameter)iter.next();
 		}

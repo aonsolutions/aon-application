@@ -18,7 +18,7 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.irpf.AbstractIrpfTester;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -97,7 +97,7 @@ public class IrpfTestLauncher extends AbstractIrpfLauncher {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
 					controller.getManagerBean().
-					getFieldName(IPayrollAlias.CONTRACT_ID), 
+					getFieldName(IEntityAlias.CONTRACT_ID), 
 					getContractId());
 			controller.clearCriteria();
 			controller.setCriteria(criteria);

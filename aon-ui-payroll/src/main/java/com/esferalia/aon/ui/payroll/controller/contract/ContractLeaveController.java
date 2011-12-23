@@ -31,7 +31,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.salary.ISalary;
@@ -132,8 +132,8 @@ public class ContractLeaveController extends BasicController {
 			Criteria criteria = new Criteria();
 			ContractLeave leave = null;
 			leave = (ContractLeave) getLeaveList().get(0);
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (ContractLeaveDetail) list.get(0);
@@ -208,8 +208,8 @@ public class ContractLeaveController extends BasicController {
 	private void buildLeaveList() throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_CONTRACT_ID), getContract().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_START_DATE), false);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), getContract().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), false);
 		setLeaveList(bean.getList(criteria));
 		setLeaveModel(new ListDataModel(getLeaveList()));
 	}
@@ -223,8 +223,8 @@ public class ContractLeaveController extends BasicController {
 			Criteria criteria = new Criteria();
 			ContractLeave leave = null;
 			leave = (ContractLeave) getLeaveList().get(getSelectedLeaveIndex());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
 			setLeaveDetailList(bean.getList(criteria));
 			setLeaveDetailModel(new ListDataModel(getLeaveDetailList()));
 		}
@@ -309,8 +309,8 @@ public class ContractLeaveController extends BasicController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), getContract().getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), getContract().getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list!=null && !list.isEmpty()){
 				return (ISalary) list.get(0);
@@ -366,8 +366,8 @@ public class ContractLeaveController extends BasicController {
 		// TODO este metodo sobra si el mnto se mantiene sin search ni list
 		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 		try {
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(controller.getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(controller.getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(controller.getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		} catch (ManagerBeanException e) {
 			String msg = "Error al buscar contratos.";

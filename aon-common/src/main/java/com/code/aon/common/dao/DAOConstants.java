@@ -24,7 +24,7 @@ public class DAOConstants {
 	 */
     private final static Logger LOGGER = LoggerFactory.getLogger(DAOConstants.class);
 //	private static final String RESOURCE_NAME = "/dao/constants.xml";
-	private static final String RESOURCE_NAME = "/com/code/aon/entity/master/dao/constants.xml";
+	private static final String RESOURCE_NAME = "/com/esferalia/aon/entity/master/dao/constants.xml";
 	private static Map<String,DAOConstantsEntry> DAO_CONSTANTS; 
 	private static Set<String> CHECKED_RESOURCES;	
 
@@ -43,14 +43,7 @@ public class DAOConstants {
 	 * @return The DAOConstantsEntry bound to entity Class.
 	 */
 	public static DAOConstantsEntry getDAOConstant( Class entityClass ) {
-		String entityPojo = "com.code.aon.entity.master." + entityClass.getSimpleName();
-		DAOConstantsEntry entry = getDAOConstant( entityPojo );
-		if (entry == null) {
-			entry = getDAOConstant( entityClass.getName() );
-		} else {
-			entry.setPojo(entityClass.getName());
-		}
-		return entry;
+		return getDAOConstant( entityClass.getName() );
 	}
 
 	/**
@@ -60,13 +53,7 @@ public class DAOConstants {
 	 * @return The DAOConstantsEntry bound to POJO Class name.
 	 */
 	public static DAOConstantsEntry getDAOConstant( String pojo ) {
-		DAOConstantsEntry entry = DAO_CONSTANTS.get( pojo );
-		if (entry == null) {
-			String[] tokens = StringUtils.split(pojo,".");
-			String entityPojo = "com.code.aon.entity.master." + tokens[tokens.length - 1];
-			entry = DAO_CONSTANTS.get( entityPojo  );
-		} 
-		return entry; 
+		return DAO_CONSTANTS.get( pojo );
 	}
 
 	/**
@@ -76,9 +63,7 @@ public class DAOConstants {
 	 * @return The DAOConstantsEntry bound to POJO Class name.
 	 */
 	public static DAOConstantsEntry createDAOConstant( String pojo ) {
-		String[] tokens = StringUtils.split(pojo,".");
-		String entityPojo = "com.code.aon.entity.master." + tokens[tokens.length - 1];
-		DAOConstantsEntry entry = getDAOConstant( entityPojo );
+		DAOConstantsEntry entry = getDAOConstant( pojo );
 		if ( entry == null ) {
 			//String resource = getResource( pojo );
 			if (! CHECKED_RESOURCES.contains(RESOURCE_NAME) ) {			
@@ -86,7 +71,7 @@ public class DAOConstants {
 				if ( in != null ) {
 					LOGGER.debug( RESOURCE_NAME + " found, obtaining properties" );					
 					DAOConstantsReader.parse( RESOURCE_NAME, in );
-					entry = DAO_CONSTANTS.get( entityPojo );
+					entry = DAO_CONSTANTS.get( pojo );
 				}
 				CHECKED_RESOURCES.add(RESOURCE_NAME);
 			}
@@ -116,10 +101,7 @@ public class DAOConstants {
 	 * @param entry
 	 */
 	protected static void addBeanEntry( DAOConstantsEntry entry ) {
-		String pojo = entry.getPojo();
-		String[] tokens = StringUtils.split(pojo,".");
-		String entityPojo = "com.code.aon.entity.master." + tokens[tokens.length -1];
-		DAO_CONSTANTS.put( entityPojo, entry );
+		DAO_CONSTANTS.put( entry.getPojo(), entry );
 	}
 	
 	static {

@@ -14,7 +14,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public abstract class AbstractConceptController extends BasicController {
@@ -28,7 +28,7 @@ public abstract class AbstractConceptController extends BasicController {
 				IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
 				Criteria criteria = new Criteria();
 				Date date = new Date();
-				String alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+				String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
 				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
 				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
 				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));

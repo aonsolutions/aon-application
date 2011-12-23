@@ -9,18 +9,18 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesBridgeUtil {
 
 	public Customer obtainCustomer(Offer offer) throws ManagerBeanException {
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), offer.getTarget().getRegistry().getId());
+		criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), offer.getTarget().getRegistry().getId());
 		Iterator<?> iterator = customerBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (Customer)iterator.next();

@@ -9,9 +9,9 @@ import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tas.TasItem;
-import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.project.controller.event.ProjectSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectTasSearchListener extends ProjectSearchListener {
 
@@ -66,16 +66,16 @@ public class ProjectTasSearchListener extends ProjectSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
 		if ((getTarget() != null) && (getTarget().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(ITASAlias.PROJECT_TAS_TARGET_ID), getTarget().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_TAS_TARGET_ID), getTarget().getId());			
 		}
 		if ((getTasItem() != null) && (getTasItem().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(ITASAlias.PROJECT_TAS_TAS_ITEM_ID), getTasItem().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_TAS_TAS_ITEM_ID), getTasItem().getId());			
 		}
 		if ((getTaskHolder() != null) && (getTaskHolder().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(ITASAlias.PROJECT_TAS_TASK_HOLDER_ID), getTaskHolder().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_TAS_TASK_HOLDER_ID), getTaskHolder().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getProjectStatuses())) {
-			addEnumToCriteria(criteria, getController().resolveAlias(ITASAlias.PROJECT_TAS_STATUS), getProjectStatuses());
+			addEnumToCriteria(criteria, getController().resolveAlias(IEntityAlias.PROJECT_TAS_STATUS), getProjectStatuses());
 		}
 	}
 

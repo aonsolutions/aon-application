@@ -7,7 +7,6 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.calendar.enumeration.DayType;
 
 public class CalendarCollections {
@@ -15,7 +14,6 @@ public class CalendarCollections {
 	private List<SelectItem> dayTypes;
 	private Integer monthMaxDays;
 	private List<SelectItem> monthDays;
-	private List<SelectItem> calendarSources;
 	
 	public Integer getMonthMaxDays() {
 		if(monthMaxDays==null){
@@ -71,17 +69,6 @@ public class CalendarCollections {
 			monthDays.add(item);
 		}
 		return monthDays;
-	}
-	
-	public List<SelectItem> getCalendarSources(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		calendarSources = new LinkedList<SelectItem>();
-		for (CalendarSource day : CalendarSource.values()) {
-			String name = day.getName(locale);
-			SelectItem item = new SelectItem(day, name);
-			calendarSources.add(item);
-		}
-		return calendarSources;
 	}
 	
 }

@@ -24,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.SalaryEmbargo;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractEmbargoController extends BasicController {
@@ -92,13 +92,13 @@ public class ContractEmbargoController extends BasicController {
 	protected void completeCiteria() {
 		try {
 			if(isSearchCurrent()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE), new Date());
-				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE));
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_EMBARGO_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_EMBARGO_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
 				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE), getInactiveDate());
-					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE));
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_EMBARGO_END_DATE), getInactiveDate());
+					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_EMBARGO_END_DATE));
 					getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}
@@ -119,7 +119,7 @@ public class ContractEmbargoController extends BasicController {
 			}
 			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			for(ITransferObject to: list){
 				SalaryEmbargo se = (SalaryEmbargo) to;
@@ -154,7 +154,7 @@ public class ContractEmbargoController extends BasicController {
 				embargo = (ContractEmbargo) this.getModel().getRowData();
 				IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
 				List<ITransferObject> list = bean.getList(criteria);
 				Double media = getEmbargedAmount()/list.size();
 				Double month = getPendingAmount()/media;

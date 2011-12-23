@@ -39,10 +39,10 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.lowagie.text.DocumentException;
 
 public class ReportsLauncher {
@@ -187,7 +187,7 @@ public class ReportsLauncher {
 			if (getReportTemplate() != null) {
 				IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID),getReportTemplate());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID),getReportTemplate());
 		        Iterator<?> iter = bean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					RegistryAttachment ra = (RegistryAttachment) iter.next();

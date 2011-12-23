@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.Application;
-import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -31,6 +30,7 @@ import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * The Class FavoriteOptionController.
@@ -131,9 +131,9 @@ public class ActionDeniedController implements IAuditConstants {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_USER_ID), user.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_DENIED_USER_ID), user.getId());
 			Application application = getAuditController().getApplication();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
 			return (List) bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading actions denied", e);

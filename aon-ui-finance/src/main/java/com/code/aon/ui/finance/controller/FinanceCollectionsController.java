@@ -13,7 +13,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankConcept;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.BillingPeriod;
 import com.code.aon.finance.enumeration.CreditorStatus;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -25,6 +24,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Collections controller
@@ -197,7 +197,7 @@ public class FinanceCollectionsController {
 		List<SelectItem> bankConcepts = new LinkedList<SelectItem>();
 		IManagerBean bankConceptBean = BeanManager.getManagerBean(BankConcept.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bankConceptBean.getFieldName(IFinanceAlias.BANK_CONCEPT_NAME));
+		criteria.addOrder(bankConceptBean.getFieldName(IEntityAlias.BANK_CONCEPT_NAME));
 		Iterator<ITransferObject> iter = bankConceptBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			BankConcept bankConcept = (BankConcept)iter.next();

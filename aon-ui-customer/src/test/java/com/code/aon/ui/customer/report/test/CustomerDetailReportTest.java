@@ -75,8 +75,8 @@ public class CustomerDetailReportTest extends AbsReportPrintTest{
 	}
 
 	@Override
-	protected Map<Object, Object> getParameters() {
-		Map<Object, Object> parameters = new HashMap<Object, Object>();
+	protected Map<String, Object> getParameters() {
+		Map<String, Object> parameters = new HashMap<String, Object>();
 		Company company = getCompanyController().obtainCompany();
 		parameters.put("company", company);
 		parameters.put("printHeader",getCompanyController().isPrintHeader());

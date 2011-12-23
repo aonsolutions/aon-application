@@ -14,7 +14,6 @@ import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
@@ -31,9 +30,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountingCollectionsController {
 
@@ -61,7 +60,7 @@ public class AccountingCollectionsController {
 	public String getPeriodStatusAlias() throws ManagerBeanException {
 		if (periodStatusAlias == null) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			periodStatusAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_STATUS);
+			periodStatusAlias = periodBean.getFieldName(IEntityAlias.PERIOD_STATUS);
 		}
 		return periodStatusAlias;
 	}
@@ -69,7 +68,7 @@ public class AccountingCollectionsController {
 	public String getPeriodIdAlias() throws ManagerBeanException {
 		if (periodIdAlias == null) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			periodIdAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_ID);
+			periodIdAlias = periodBean.getFieldName(IEntityAlias.PERIOD_ID);
 		}
 		return periodIdAlias;
 	}
@@ -168,7 +167,7 @@ public class AccountingCollectionsController {
 			autoConcepts = new LinkedList<SelectItem>();
 			IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION), false);
+			criteria.addOrder(conceptBean.getFieldName(IEntityAlias.AUTO_CONCEPT_DESCRIPTION), false);
 			Iterator<?> iter = conceptBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				AutoConcept concept = (AutoConcept) iter.next();
@@ -189,7 +188,7 @@ public class AccountingCollectionsController {
 				concepts = new LinkedList<String>();
 				IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 				Criteria criteria = new Criteria();
-				String field = conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION);
+				String field = conceptBean.getFieldName(IEntityAlias.AUTO_CONCEPT_DESCRIPTION);
 				criteria.addOrder(field);
 				List<ITransferObject> list = conceptBean.getList(criteria);
 				for (ITransferObject to : list) {
@@ -278,7 +277,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(loanBean.getFieldName(IAccountingAlias.LOAN_STATUS), LoanStatus.ACTIVE);
+		criteria.addEqualExpression(loanBean.getFieldName(IEntityAlias.LOAN_STATUS), LoanStatus.ACTIVE);
 		Iterator<?> iter = loanBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Loan loan = (Loan) iter.next();
@@ -347,7 +346,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> balances = new LinkedList<SelectItem>();
 		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(balanceBean.getFieldName(IAccountingAlias.BALANCE_TYPE), balanceType);
+		c.addEqualExpression(balanceBean.getFieldName(IEntityAlias.BALANCE_TYPE), balanceType);
 		Iterator<?> iter = balanceBean.getList(c).iterator();
 		while (iter.hasNext()) {
 			Balance b = (Balance) iter.next();
@@ -401,10 +400,10 @@ public class AccountingCollectionsController {
 		List<SelectItem> reportTemplates = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
 				RegistryAttachmentType.FISCAL_TEMPLATES);
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
 		Iterator<?> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {
@@ -419,10 +418,10 @@ public class AccountingCollectionsController {
 		List<SelectItem> reportTemplates = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
 				RegistryAttachmentType.FISCAL_REPORTS);
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
 		Iterator<?> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {

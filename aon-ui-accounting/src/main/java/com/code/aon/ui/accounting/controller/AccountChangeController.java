@@ -15,11 +15,9 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.InvoiceTaxAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,6 +27,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountChangeController {
 
@@ -157,14 +156,14 @@ public class AccountChangeController {
 				IManagerBean bean;
 				bean = BeanManager.getManagerBean(AccountEntryDetail.class);
 
-				String accountInit = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
-				String accountBalancing = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID);
-				String date = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
-				String accperiod = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID);
-				String security = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
-				String conceptAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CONCEPT);
-				String debitAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
-				String creditAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
+				String accountInit = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
+				String accountBalancing = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID);
+				String date = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
+				String accperiod = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID);
+				String security = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
+				String conceptAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_CONCEPT);
+				String debitAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
+				String creditAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
 
 				// Cambio de cuenta contable en apuntes.
 				Criteria criteria = new Criteria();
@@ -263,15 +262,15 @@ public class AccountChangeController {
 	private void removeRelatedInvoiceAccounts(AccountEntry accEntry) throws ManagerBeanException {
 		IManagerBean accEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), accEntry.getId());
+		criteria.addEqualExpression(accEntryInvoiceBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID), accEntry.getId());
 		Iterator<?> iterator = accEntryInvoiceBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryInvoice accEntryInvoice = (AccountEntryInvoice)iterator.next();
 
 			IManagerBean invoiceDetailAccBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_ACCOUNT_ID), initAccount.getId());
+			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
+			criteria.addEqualExpression(invoiceDetailAccBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_ACCOUNT_ID), initAccount.getId());
 			Iterator<?> iter = invoiceDetailAccBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				InvoiceDetailAccount invoiceDetailAcc = (InvoiceDetailAccount)iter.next();
@@ -281,8 +280,8 @@ public class AccountChangeController {
 			
 			IManagerBean invoiceTaxAccBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
-			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IAccountBridgeAlias.INVOICE_TAX_ACCOUNT_ACCOUNT_ID), initAccount.getId());
+			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IEntityAlias.INVOICE_TAX_ACCOUNT_INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), accEntryInvoice.getInvoice().getId());
+			criteria.addEqualExpression(invoiceTaxAccBean.getFieldName(IEntityAlias.INVOICE_TAX_ACCOUNT_ACCOUNT_ID), initAccount.getId());
 			iter = invoiceTaxAccBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				InvoiceTaxAccount invoiceTaxAcc = (InvoiceTaxAccount)iter.next();

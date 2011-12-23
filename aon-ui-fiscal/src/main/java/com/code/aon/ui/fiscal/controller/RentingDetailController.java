@@ -6,11 +6,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.fiscal.RentingDetail;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RentingDetailController extends LinesController {
 
@@ -37,9 +37,9 @@ public class RentingDetailController extends LinesController {
 			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(EXPENSE_INVOICE_CONTROLLER);
 			invoiceController.setBackAction(VIEW_NAME);
 			invoiceController.onEditSearch(event);
-			String alias0 = invoiceController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_REGISTRY_DOCUMENT);
-			String alias1 = invoiceController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_REGISTRY_NAME);
-			String alias2 = invoiceController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE);
+			String alias0 = invoiceController.getManagerBean().getFieldName(IEntityAlias.INVOICE_REGISTRY_DOCUMENT);
+			String alias1 = invoiceController.getManagerBean().getFieldName(IEntityAlias.INVOICE_REGISTRY_NAME);
+			String alias2 = invoiceController.getManagerBean().getFieldName(IEntityAlias.INVOICE_ISSUE_DATE);
 			invoiceController.getCriteria().addEqualExpression(alias0, detail.getDocument());
 			invoiceController.getCriteria().addEqualExpression(alias1, detail.getName());
 			Date startDate = detail.getRenting().getPeriod().getStartDate(detail.getRenting().getYear());

@@ -16,6 +16,11 @@ import com.code.aon.common.ITransferObject;
 public class ManagerBeanEvent extends EventObject {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5471580484072404461L;
+
+	/**
      * Construct a new <code>ManagerBeanEvent</code>.
 	 * 
 	 * @param source

@@ -10,14 +10,15 @@ import com.code.aon.commercial.CommissionCategory;
 import com.code.aon.commercial.CommissionItem;
 import com.code.aon.commercial.CommissionTypeCommission;
 import com.code.aon.commercial.OfferDetail;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.CommissionType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BasicCommissionStrategy implements ICommissionStrategy {
 	
@@ -36,21 +37,21 @@ public class BasicCommissionStrategy implements ICommissionStrategy {
 				commission = commissionType.getRate();
 				Date date = calc.getOffer().getIssueDate();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE_ID), commissionType.getId());
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(ICommercialAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_START_DATE), date);
-				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(ICommercialAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_END_DATE), date);
-				Expression nullExpr = ExpressionUtilities.getNullExpression(bean.getFieldName(ICommercialAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_END_DATE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE_ID), commissionType.getId());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_START_DATE), date);
+				Expression dateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_END_DATE), date);
+				Expression nullExpr = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(dateExpr, nullExpr));
-				criteria.addOrder(bean.getFieldName(ICommercialAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_START_DATE), false);
-				Iterator iterator = bean.getList(criteria).iterator();
+				criteria.addOrder(bean.getFieldName(IEntityAlias.COMMISSION_TYPE_COMMISSION_COMMISSION_START_DATE), false);
+				Iterator<ITransferObject> iterator = bean.getList(criteria).iterator();
 				while (iterator.hasNext()) {
 					CommissionTypeCommission to = (CommissionTypeCommission)iterator.next();
 
 					criteria = new Criteria();
-					criteria.addEqualExpression(commissionItemBean.getFieldName(ICommercialAlias.COMMISSION_ITEM_COMMISSION_ID), to.getCommission().getId());
-					criteria.addEqualExpression(commissionItemBean.getFieldName(ICommercialAlias.COMMISSION_ITEM_ITEM_ID), calc.getItem().getId());
-					criteria.addLessThanOrEqualExpression(commissionItemBean.getFieldName(ICommercialAlias.COMMISSION_ITEM_QUANTITY), calc.getQuantity());
-					criteria.addOrder(commissionItemBean.getFieldName(ICommercialAlias.COMMISSION_ITEM_QUANTITY), false);
+					criteria.addEqualExpression(commissionItemBean.getFieldName(IEntityAlias.COMMISSION_ITEM_COMMISSION_ID), to.getCommission().getId());
+					criteria.addEqualExpression(commissionItemBean.getFieldName(IEntityAlias.COMMISSION_ITEM_ITEM_ID), calc.getItem().getId());
+					criteria.addLessThanOrEqualExpression(commissionItemBean.getFieldName(IEntityAlias.COMMISSION_ITEM_QUANTITY), calc.getQuantity());
+					criteria.addOrder(commissionItemBean.getFieldName(IEntityAlias.COMMISSION_ITEM_QUANTITY), false);
 					Iterator itemIterator = commissionItemBean.getList(criteria, 0, 1).iterator();
 					if (itemIterator.hasNext()) {
 						CommissionItem commissionItem = (CommissionItem)itemIterator.next();
@@ -58,10 +59,10 @@ public class BasicCommissionStrategy implements ICommissionStrategy {
 					}
 
 					criteria = new Criteria();
-					criteria.addEqualExpression(commissionCategoryBean.getFieldName(ICommercialAlias.COMMISSION_CATEGORY_COMMISSION_ID), to.getCommission().getId());
-					criteria.addEqualExpression(commissionCategoryBean.getFieldName(ICommercialAlias.COMMISSION_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
-					criteria.addLessThanOrEqualExpression(commissionCategoryBean.getFieldName(ICommercialAlias.COMMISSION_CATEGORY_QUANTITY), calc.getQuantity());
-					criteria.addOrder(commissionCategoryBean.getFieldName(ICommercialAlias.COMMISSION_CATEGORY_QUANTITY), false);
+					criteria.addEqualExpression(commissionCategoryBean.getFieldName(IEntityAlias.COMMISSION_CATEGORY_COMMISSION_ID), to.getCommission().getId());
+					criteria.addEqualExpression(commissionCategoryBean.getFieldName(IEntityAlias.COMMISSION_CATEGORY_CATEGORY_ID), calc.getItem().getProduct().getCategory().getId());
+					criteria.addLessThanOrEqualExpression(commissionCategoryBean.getFieldName(IEntityAlias.COMMISSION_CATEGORY_QUANTITY), calc.getQuantity());
+					criteria.addOrder(commissionCategoryBean.getFieldName(IEntityAlias.COMMISSION_CATEGORY_QUANTITY), false);
 					Iterator categoryIterator = commissionCategoryBean.getList(criteria, 0, 1).iterator();
 					if (categoryIterator.hasNext()) {
 						CommissionCategory commissionCategory = (CommissionCategory)categoryIterator.next();

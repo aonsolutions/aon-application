@@ -6,7 +6,6 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -18,6 +17,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * @author Consulting & Development
@@ -33,8 +33,8 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
         try {
 	        IManagerBean accEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 	        Criteria criteria = new Criteria();
-	        criteria.addEqualExpression(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), to.getAccountPeriod().getId()); 
-	        Projection projection = Projection.max(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+	        criteria.addEqualExpression(accEntryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), to.getAccountPeriod().getId()); 
+	        Projection projection = Projection.max(accEntryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_JOURNAL));
 	        Object value = accEntryBean.getUniqueResult(projection, criteria);
 			int journal = (value != null) ? ((Integer) value).intValue() : 0;
 			to.setJournal(++journal);
@@ -56,7 +56,7 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 		try {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 	        Criteria criteria = new Criteria();
-            criteria.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), toPeriod.getId());
+            criteria.addEqualExpression(periodBean.getFieldName(IEntityAlias.PERIOD_ID), toPeriod.getId());
             Period period = (Period)periodBean.getList(criteria).get(0);
         	pFrom = period.getInitiationDate();
     		pTo = period.getDeadline();

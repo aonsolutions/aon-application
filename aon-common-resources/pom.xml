@@ -23,8 +23,70 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
 	</scm>
 
-	<build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled> 
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+	
+  	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jasperreports-maven-plugin</artifactId>
+				<version>1.0-beta-2</version>
+				<executions>
+					<execution>
+						<id>SALE INVOICE</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/saleInvoiceTemplate2</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/saleInvoiceTemplate2</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
+					<execution>
+						<id>OFFER EXTENDED</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/offerExtended</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/offerExtended</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.jasperreports</groupId>
+						<artifactId>jasperreports</artifactId>
+						<version>${jasperReportsVersion}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.ui.warehouse</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-jcl</artifactId>
+						<version>1.5.11</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -38,11 +100,43 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>jasperreports-maven-plugin</artifactId>
+										<versionRange>
+											[1.0-beta-2,)
+										</versionRange>
+										<goals>
+											<goal>compile-reports</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore/>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -50,6 +144,18 @@
 			<groupId>izenpe</groupId>
 			<artifactId>izenpesigner-applet</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.warehouse</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
@@ -106,10 +212,10 @@
 									<groupname>jboss</groupname>
 									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
 									<sources>
-                                                                                <softlinkSource>
-                                                                                        <location>/home/COMMON-RESOURCES/aon-ui-sign/izenpesigner-applet-1.0.jar</location>
-                                                                                        <destination>izenpesigner-applet.jar</destination>
-                                                                                </softlinkSource>
+										<softlinkSource>
+											<location>/home/COMMON-RESOURCES/aon-ui-sign/izenpesigner-applet-1.0.jar</location>
+											<destination>izenpesigner-applet.jar</destination>
+										</softlinkSource>
 									</sources>
 									<dependency>
 										<includes>

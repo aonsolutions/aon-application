@@ -8,7 +8,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.ItemComposition;
@@ -20,6 +19,7 @@ import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailCompositeListener extends ControllerAdapter {
 
@@ -74,7 +74,7 @@ public class InvoiceDetailCompositeListener extends ControllerAdapter {
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), registry.getId());
+			criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), registry.getId());
 			Iterator<?> iterator = customerBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				Customer customer = (Customer)iterator.next();

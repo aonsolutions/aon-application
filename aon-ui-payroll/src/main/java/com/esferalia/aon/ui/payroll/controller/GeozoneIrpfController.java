@@ -27,7 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class GeozoneIrpfController {
@@ -137,8 +137,8 @@ public class GeozoneIrpfController {
 			IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpf.class);
 			Criteria criteria = new Criteria();
 			completeCriteria(criteria);
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID));
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_START_DATE));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_ID));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE));
 			List<ITransferObject> irpfList = bean.getList(criteria);
 			for(ITransferObject to: irpfList){
 				GeozoneIrpf irpf = (GeozoneIrpf) to;
@@ -158,9 +158,9 @@ public class GeozoneIrpfController {
 		GeozoneIrpfList irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfDescendant.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
 		List<ITransferObject> descList = bean.getList(criteria);
 		List<GeozoneIrpfDescendantsList> list = new LinkedList<GeozoneIrpfDescendantsList>();
 		GeozoneIrpfDescendantsList gl = new GeozoneIrpfDescendantsList();
@@ -187,9 +187,9 @@ public class GeozoneIrpfController {
 		GeozoneIrpfList irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfHandicap.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
 		List<ITransferObject> handicapList = bean.getList(criteria);
 		List<GeozoneIrpfHandicapList> list = new LinkedList<GeozoneIrpfHandicapList>();
 		GeozoneIrpfHandicapList gl = new GeozoneIrpfHandicapList();
@@ -223,18 +223,18 @@ public class GeozoneIrpfController {
 			endCal.set(Calendar.YEAR, getYear());
 			endCal.set(Calendar.MONTH, Calendar.DECEMBER);
 			endCal.set(Calendar.DAY_OF_MONTH, 31);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
 		}
 		if(getAdministration()!=null){
 			if(getAdministration()== Administration.ALAVA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), ARABA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_ID), ARABA_ID);
 			} else if(getAdministration()== Administration.BIZKAIA){				
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), BIZKAIA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_ID), BIZKAIA_ID);
 			} else if(getAdministration()== Administration.GIPUZKOA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), GIPUZKOA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_ID), GIPUZKOA_ID);
 			} else if(getAdministration()== Administration.NAVARRA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), NAFARROA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_ID), NAFARROA_ID);
 			}
 		}
 	}

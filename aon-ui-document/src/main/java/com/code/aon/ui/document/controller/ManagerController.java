@@ -1,6 +1,6 @@
 package com.code.aon.ui.document.controller;
 
-import static com.code.aon.company.dao.ICompanyAlias.ENTERPRISE_ID;
+
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
@@ -35,6 +35,7 @@ import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ManagerController implements IEnterpriseController {
 	
@@ -112,7 +113,7 @@ public class ManagerController implements IEnterpriseController {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		List<Expression> initExpressions = new LinkedList<Expression>();
 		try {
-			String enterpriseId = controller.getFieldName(ENTERPRISE_ID);
+			String enterpriseId = controller.getFieldName(IEntityAlias.ENTERPRISE_ID);
 			Expression expr = ExpressionUtilities.getEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
 			initExpressions.add(expr);
 			controller.setInitExpressions(initExpressions);

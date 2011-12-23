@@ -16,7 +16,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
@@ -26,6 +25,7 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceFractionController implements IFinanceConstants {
 
@@ -169,7 +169,7 @@ public class FinanceFractionController implements IFinanceConstants {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				Finance finance = (Finance)iterator.next();
-				criteria.addOrExpression(financeController.getFieldName(IFinanceAlias.FINANCE_ID), finance.getId().toString());
+				criteria.addOrExpression(financeController.getFieldName(IEntityAlias.FINANCE_ID), finance.getId().toString());
 			}
 			financeController.onEditSearch(null);
 			financeController.setCriteria(criteria);

@@ -16,6 +16,11 @@ import com.code.aon.ql.Criteria;
 public class FinderBeanEvent extends EventObject {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7161090093180016154L;
+
+	/**
      * Construct a new <code>ManagerBeanEvent</code>.
 	 * 
 	 * @param source

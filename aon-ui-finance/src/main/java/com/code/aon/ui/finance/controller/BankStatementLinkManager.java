@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.BankConceptAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +27,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.StatementConcept;
@@ -43,6 +41,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementLinkManager implements IFinanceConstants {
 
@@ -159,8 +158,8 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	public boolean isTrackingLinked() throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_TRACKING);
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_TRACKING);
 		return (statementLinkBean.getCount(criteria) > 0);
 	}
 
@@ -171,16 +170,16 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	public boolean isBatchLinked() throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_BATCH);
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_BATCH);
 		return (statementLinkBean.getCount(criteria) > 0);
 	}
 
 	public boolean isTransferLinked() throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
-		criteria.addNotNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addNotNullExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
 		return (statementLinkBean.getCount(criteria) > 0);
 	}
 
@@ -218,9 +217,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public double getCheckedAmount(BankStatement statement) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
-		Projection projection = Projection.sum(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT));
+		Projection projection = Projection.sum(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT));
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
 		Double amount = (Double)statementLinkBean.getUniqueResult(projection, criteria);
 		return (amount!=null) ? CommonUtil.round(amount.doubleValue()) : 0;
 	}
@@ -367,8 +366,8 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	private void returnFinanceBatchDetail(Finance finance) throws ManagerBeanException {
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
 		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
@@ -438,7 +437,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (to.getSource() == StatementLinkSource.BANK_CONCEPT) {
 			IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bankConceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), bankAccount.getId());
+			criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), bankAccount.getId());
 			for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
 				bankConcept = ((BankConceptAccount)ito).getBankConcept();
 				break;
@@ -599,9 +598,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		Finance finance = tracking.getFinance();
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-		criteria.addLessThanExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), tracking.getId());
-		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
+		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addLessThanExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), tracking.getId());
+		criteria.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), false);
 		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			iterator.next();
@@ -610,9 +609,9 @@ public class BankStatementLinkManager implements IFinanceConstants {
 				if (batchedTracking.isBatched()) {
 					IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 					criteria = new Criteria();
-					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-					criteria.addOrder(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_ID), false);
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+					criteria.addOrder(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_ID), false);
 					for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
 						FinanceBatchDetail detail = (FinanceBatchDetail)ito;
 						detail.setStatus(FinanceStatus.PAID);
@@ -634,7 +633,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	private void cancelLinkedBankStatementLinks(int sourceId) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK_ID), sourceId);
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK_ID), sourceId);
 		for (ITransferObject ito : statementLinkBean.getList(criteria)) {
 			BankStatementLink statementLink = (BankStatementLink)ito;
 			statementLink.setLinkedBankStatementLink(null);

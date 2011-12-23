@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.TaxAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.TaxAccountType;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -23,6 +22,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 	
@@ -50,8 +50,8 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 			try {
 				IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), taxAccountType);
+				criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
+				criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TYPE), taxAccountType);
 				Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					TaxAccount taxAccount = (TaxAccount)iterator.next();

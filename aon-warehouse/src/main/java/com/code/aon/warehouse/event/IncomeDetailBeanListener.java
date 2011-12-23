@@ -15,7 +15,7 @@ import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 
@@ -26,10 +26,10 @@ public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 		IncomeDetail detail = (IncomeDetail)event.getTo();
 		IManagerBean detailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
-		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), detail.getId());
-		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
+		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), detail.getId());
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine();
 		for (ITransferObject to : list) {
@@ -50,14 +50,14 @@ public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 			IncomeDetail detail = (IncomeDetail)event.getTo();
 			IManagerBean detailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
-			criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), detail.getId());
-			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE), detail.getLine());
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
+			criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), detail.getId());
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
-				criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), detail.getId());
-				criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
+				criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), detail.getId());
+				criteria.addOrder(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
@@ -84,10 +84,10 @@ public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 
 		IManagerBean detailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
-		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), detail.getId());
-		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), detail.getIncome().getId());
+		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), detail.getId());
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine() + 1;
 		for (ITransferObject to : list) {

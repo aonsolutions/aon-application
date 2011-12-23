@@ -5,12 +5,12 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemSearchListener extends RegistrySearchListener {
 
@@ -59,7 +59,7 @@ public class ItemSearchListener extends RegistrySearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getItemStatuses())) {
-			String status = getController().resolveAlias(IProductAlias.ITEM_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.ITEM_STATUS);
 			addEnumToCriteria(criteria, status, getItemStatuses());
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {

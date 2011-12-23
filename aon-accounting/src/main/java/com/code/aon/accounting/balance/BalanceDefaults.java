@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,6 +21,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BalanceDefaults {
 	
@@ -48,7 +48,7 @@ public class BalanceDefaults {
 				IManagerBean detailBean = BeanManager.getManagerBean(BalanceDetail.class);
 				Integer id = balance.getId();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(detailBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID) , id);
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID) , id);
 				List<ITransferObject> list = detailBean.getList(criteria);
 				for (ITransferObject to : list) {
 					detailBean.remove(to);

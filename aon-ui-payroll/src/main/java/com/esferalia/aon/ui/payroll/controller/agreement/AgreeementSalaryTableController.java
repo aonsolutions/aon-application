@@ -36,7 +36,7 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -347,7 +347,7 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 			BeanManager.getManagerBean(AgreementLevel.class);
 
 		Criteria levelCriteria = new Criteria(); 
-		levelCriteria.addEqualExpression(levelMgr.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_AGREEMENT_ID), agreement.getId());
+		levelCriteria.addEqualExpression(levelMgr.getFieldName(IEntityAlias.AGREEMENT_LEVEL_AGREEMENT_ID), agreement.getId());
 		List<?> levelTos = levelMgr.getList(levelCriteria);
 		@SuppressWarnings("unchecked")
 		List<AgreementLevel> levels = 
@@ -361,11 +361,11 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 		for (AgreementLevel level : levels) {
 
 			Criteria levelDataCriteria = new Criteria(); 
-			levelDataCriteria.addEqualExpression(levelDataMgr.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), level.getId());
-			levelDataCriteria.addLessThanOrEqualExpression(levelDataMgr.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_START_DATE), startDate);
+			levelDataCriteria.addEqualExpression(levelDataMgr.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), level.getId());
+			levelDataCriteria.addLessThanOrEqualExpression(levelDataMgr.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_START_DATE), startDate);
 			levelDataCriteria.addExpression( ExpressionUtilities.getOrExpression(
-												ExpressionUtilities.getNullExpression(levelDataMgr.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_END_DATE)),
-												ExpressionUtilities.getGreaterThanOrEqualExpression(levelDataMgr.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_END_DATE), endDate))
+												ExpressionUtilities.getNullExpression(levelDataMgr.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE)),
+												ExpressionUtilities.getGreaterThanOrEqualExpression(levelDataMgr.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_END_DATE), endDate))
 											);
 			List<?> levelDataTos = 
 				levelDataMgr.getList(levelDataCriteria);

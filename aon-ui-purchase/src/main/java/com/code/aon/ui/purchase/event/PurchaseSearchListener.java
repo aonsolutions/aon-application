@@ -5,12 +5,12 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseSearchListener extends RegistrySearchListener {
 	
@@ -63,10 +63,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );		
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IPurchaseAlias.PURCHASE_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getPurchaseStatuses())) {
-			String status = getController().resolveAlias(IPurchaseAlias.PURCHASE_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.PURCHASE_STATUS);
 			addEnumToCriteria(criteria, status, getPurchaseStatuses());
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {

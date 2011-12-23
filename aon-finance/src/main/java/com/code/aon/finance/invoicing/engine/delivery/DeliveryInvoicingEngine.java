@@ -21,7 +21,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.finance.InvoicingGroupDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -36,8 +35,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	
@@ -69,39 +68,39 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
+		criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+		criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
 		if (params.getFromDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME), params.getFromDate());
+			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME), params.getFromDate());
 		}
 		if (params.getToDate() != null) {
-			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME), params.getToDate());
+			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME), params.getToDate());
 		}
 		if (params.getSeries() != null && !StringUtils.isEmpty(params.getSeries().getId())) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES), params.getSeries().getId());
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES), params.getSeries().getId());
 		}
 		if (params.getFromNumber() != null) {
-			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER), params.getFromNumber());
+			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER), params.getFromNumber());
 		}
 		if (params.getToNumber() != null) {
-			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER), params.getToNumber());
+			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER), params.getToNumber());
 		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PROJECT));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK_ACCOUNT));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER_OF_PAYMENTS));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_DAYS_TO_FIRST_PAYMENT));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_DAYS_BETWEEN_PAYMENTS));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAYMENT_DAYS));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_PROJECT));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_REGISTRY_ADDRESS));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_PAY_METHOD));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_BANK));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_BANK_ACCOUNT));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER_OF_PAYMENTS));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_DAYS_TO_FIRST_PAYMENT));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_DAYS_BETWEEN_PAYMENTS));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_PAYMENT_DAYS));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER));
 		return criteria;
 	}
 
@@ -109,17 +108,17 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	private Criteria completeCriteriaWithCustomerData(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), params.getCustomer().getId());
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), params.getCustomer().getId());
 			InvoicingGroup group = getInvoicingGroup(params.getCustomer().getRegistry());
 			if (group != null) {
 				IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
 				Expression expr = null;
 				Criteria parentCriteria = new Criteria();
-				parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
+				parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
 				Iterator iter = invoicingGroupDetailBean.getList(parentCriteria).iterator();
 				while (iter.hasNext()) {
 					InvoicingGroupDetail detail = (InvoicingGroupDetail)iter.next();
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), detail.getChild().getId()));
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), detail.getChild().getId()));
 				}
 
 				if (expr != null) {
@@ -134,7 +133,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	private InvoicingGroup getInvoicingGroup(Registry registry) throws ManagerBeanException {
 		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), registry.getId());
+		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_PARENT_ID), registry.getId());
 		Iterator iterator = invoicingGroupBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (InvoicingGroup)iterator.next();
@@ -146,7 +145,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	private InvoicingGroupDetail getInvoicingGroupDetail(Registry registry) throws ManagerBeanException {
 		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
+		criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
 		Iterator iterator = invoicingGroupDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (InvoicingGroupDetail)iterator.next();
@@ -175,7 +174,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 				if (!parentMap.containsKey(invoicingGroupDetail.getInvoicingGroup().getParent().getId())) {
 					Criteria parentCriteria = new Criteria();
 					parentCriteria.addExpression(deliveryCriteria.getExpression());
-					parentCriteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), invoicingGroupDetail.getInvoicingGroup().getParent().getId());
+					parentCriteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), invoicingGroupDetail.getInvoicingGroup().getParent().getId());
 					if (deliveryBean.getCount(parentCriteria) == 0) {
 						Customer groupCustomer = new Customer();
 						groupCustomer.setId(invoicingGroupDetail.getInvoicingGroup().getParent().getId());
@@ -275,7 +274,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		number = (number == 0 ? 1 : number);
 		while (true) {
 			Criteria criteria = new Criteria();
-			String seriesAlias = invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES);
+			String seriesAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES);
 			if (series == null || StringUtils.isEmpty(series.getId())) {
 				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
 				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, "");
@@ -283,8 +282,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			} else {
 				criteria.addEqualExpression(seriesAlias, series.getId());
 			}
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER), number);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
 			if (invoiceBean.getCount(criteria) == 0) {
 				break;
 			}
@@ -437,8 +436,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-		criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
@@ -462,8 +461,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	private	Integer calculateMaxLine(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Projection projection = Projection.max(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Projection projection = Projection.max(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 		Object value = invoiceDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) : 0;
 	}

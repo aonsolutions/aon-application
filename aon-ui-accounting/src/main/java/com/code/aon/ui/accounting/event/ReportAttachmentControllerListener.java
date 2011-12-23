@@ -5,11 +5,11 @@ import com.code.aon.faces.controller.event.AttachmentControllerListener;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.accounting.controller.report.ReportAttachmentController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ReportAttachmentControllerListener extends AttachmentControllerListener {
 	
@@ -27,10 +27,10 @@ public class ReportAttachmentControllerListener extends AttachmentControllerList
 			ReportAttachmentController rac = getReportAttachmentController(event);
 			rac.clearCriteria();
 			// Solo los de Company
-			rac.getCriteria().addEqualExpression(rac.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), rac.getCompany().getId());
+			rac.getCriteria().addEqualExpression(rac.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), rac.getCompany().getId());
 
 			// Solo los RegistryAttachmentType.FISCAL_REPORTS y RegistryAttachmentType.FISCAL_TEMPLATES
-			String typeAlias = rac.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
+			String typeAlias = rac.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 			Expression e1 = ExpressionUtilities.getEqualExpression(typeAlias, RegistryAttachmentType.FISCAL_REPORTS);
 			Expression e2 = ExpressionUtilities.getEqualExpression(typeAlias, RegistryAttachmentType.FISCAL_TEMPLATES);
 			rac.getCriteria().addExpression(ExpressionUtilities.getOrExpression(e1,e2));

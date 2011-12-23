@@ -17,7 +17,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.LeaveBatch;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -92,21 +92,21 @@ public class LeaveListController extends BasicController {
 		try {
 			LeaveBatchController controller = (LeaveBatchController) FormUtil.getController(IPayrollConstants.LEAVE_BATCH_CONTROLLER_NAME);
 			LeaveBatch batch = (LeaveBatch) controller.getTo();
-			getCriteria().addLessThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
-			getCriteria().addNotEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_STATUS),ContractLeaveStatus.BATCHED);
+			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
+			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_STATUS),ContractLeaveStatus.BATCHED);
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_PERSON_ID), getPerson().getId());			
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_PERSON_ID), getPerson().getId());			
 			}
 			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 			
 			Expression expr = null;
 			for(LeaveReportType t: getReportTypes()){
 				if(expr == null){
-					expr = ExpressionUtilities.getEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_TYPE), t); 
+					expr = ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_TYPE), t); 
 				} else {
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_TYPE), t));
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_TYPE), t));
 				}
 			}
 			if(expr!=null){

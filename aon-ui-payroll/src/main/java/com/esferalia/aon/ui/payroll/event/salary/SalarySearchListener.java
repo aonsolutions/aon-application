@@ -8,7 +8,7 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalarySearchListener extends ControllerSearchListener {
 
@@ -43,10 +43,10 @@ public class SalarySearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.SALARY_CONTRACT_PERSON_ID), getPerson().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), getPerson().getId());			
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 		}
 	}
 

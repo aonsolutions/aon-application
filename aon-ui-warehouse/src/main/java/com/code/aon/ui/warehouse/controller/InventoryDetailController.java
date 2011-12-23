@@ -18,7 +18,7 @@ import com.code.aon.ql.OrderByList;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.warehouse.Inventory;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InventoryDetailController extends LinesController implements ICollectionProvider {
 	
@@ -53,9 +53,9 @@ public class InventoryDetailController extends LinesController implements IColle
 	public void loadDetailModel(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		Criteria criteria = getCriteria();
-		criteria.addEqualExpression(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_INVENTORY_ID), getCurrentInventory().getId());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.INVENTORY_DETAIL_INVENTORY_ID), getCurrentInventory().getId());
 		if ( getCategory() != null ) {
-			String field = getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
+			String field = getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_ID);
 			criteria.addEqualExpression(field, category.getId());
 		}
 		onSearch(event);
@@ -67,8 +67,8 @@ public class InventoryDetailController extends LinesController implements IColle
 			Criteria criteria = getCriteria();
 			OrderByList oldOrderList = criteria.getOrderByList();
 			criteria.setOrderByList(null);
-			criteria.addOrder(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_NAME));
-			criteria.addOrder(getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME));
+			criteria.addOrder(getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CATEGORY_NAME));
+			criteria.addOrder(getFieldName(IEntityAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME));
 			int count = getManagerBean().getCount(getCriteria());
 			List<ITransferObject> collection = search(0, count);
 			criteria.setOrderByList( oldOrderList );

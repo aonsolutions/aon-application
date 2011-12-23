@@ -5,7 +5,6 @@ import java.util.Date;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.asset.Asset;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +13,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.asset.controller.ActivityBasicController;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityBasicSearchListener extends ControllerSearchListener{
 
@@ -78,7 +78,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 		String name = user.getShortName();
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
-		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), name);
+		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);
 		ActivityStatus[] defaultActivityStatus = {ActivityStatus.PENDING};
 		setActivityStatuses(defaultActivityStatus);
 	}
@@ -86,20 +86,20 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getAsset() != null && getAsset().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
 			setAsset(new Asset());
 		}
 		if (!ArrayUtils.isEmpty(getActivityStatuses())) {
-			String status = getController().resolveAlias(IAssetAlias.ASSET_ACTIVITY_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.ASSET_ACTIVITY_STATUS);
 			addEnumToCriteria(criteria, status, getActivityStatuses());
 			setActivityStatuses(null);
 		}
 		if(getFromDate() != null){
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromDate());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getFromDate());
 			setFromDate(null);
 		}
 		if(getToDate() != null){
-			criteria.addLessThanOrEqualExpression(getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getToDate());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getToDate());
 			setToDate(null);
 		}
 		

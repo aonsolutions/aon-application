@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
@@ -19,6 +18,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountJournalManager {
 
@@ -64,12 +64,12 @@ public class AccountJournalManager {
 					
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
 				if (securityLevel != null) {
-					criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );	
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );	
 				}
-				criteria.addOrder(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE));
-				criteria.addOrder(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENTRY_DATE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID));
 				
 				List<ITransferObject> list = bean.getList(criteria); 
 				int count = list.size();
@@ -87,12 +87,7 @@ public class AccountJournalManager {
 		        		entry.setJournal(journal);	
 		        		mustAdd = true;
 		        	}
-		        	// Como sólo se modifica el número de diario, no tiene sentido recalcular los acumulados.
-		        	entry.setRegenerateSummaryOnUpdate(false);
-		        	
 			        bean.update(entry);
-			        
-			        entry.setRegenerateSummaryOnUpdate(true);
 		        	if (mustAdd) {
 		        		journal++;
 		        	}

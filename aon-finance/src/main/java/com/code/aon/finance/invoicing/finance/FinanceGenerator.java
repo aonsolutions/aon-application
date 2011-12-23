@@ -24,7 +24,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceGenerator {
 
@@ -123,7 +123,7 @@ public class FinanceGenerator {
 	private RegistryPayMethod obtainRPayMethod(Invoice invoice) throws ManagerBeanException {
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), invoice.getRegistry().getId());
+		criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), invoice.getRegistry().getId());
 		Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 		if (iter != null) {
 			if (iter.hasNext()) {
@@ -141,7 +141,7 @@ public class FinanceGenerator {
 		Company company = (Company) companyBean.getList(null).iterator().next();
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), company.getId());
+		criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), company.getId());
 		Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (RegistryPayMethod)iter.next();

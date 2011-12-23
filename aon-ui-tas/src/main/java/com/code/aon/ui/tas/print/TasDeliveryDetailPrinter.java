@@ -13,11 +13,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TasDeliveryDetailPrinter {
 
@@ -34,9 +33,9 @@ public class TasDeliveryDetailPrinter {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), deliveryId);
-			criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ITEM_PRODUCT_TYPE));
-			criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), deliveryId);
+			criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ITEM_PRODUCT_TYPE));
+			criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 			for (ITransferObject ito : deliveryDetailBean.getList(criteria)) {
 				DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
 				Project project = deliveryDetail.getDelivery().getProject();
@@ -66,7 +65,7 @@ public class TasDeliveryDetailPrinter {
 		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		for (Integer projectId : projectMap.keySet()) {
-			criteria.addOrExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ID), projectId.toString());
+			criteria.addOrExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ID), projectId.toString());
 		}
 		for (ITransferObject ito : projectBean.getList(criteria)) {
 			deliveryDetailList.addAll(projectMap.get(((Project)ito).getId()));

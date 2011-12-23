@@ -24,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Stock;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryDetailController extends LinesController implements IWarehouseConstants {
 
@@ -131,8 +131,8 @@ public class DeliveryDetailController extends LinesController implements IWareho
 		if (to != null && to.getItem() != null && to.getItem().getId() != null) {
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), to.getItem().getId());
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), to.getWarehouse().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), to.getItem().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), to.getWarehouse().getId());
 			Iterator<?> iterator = stockBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				stock = ((Stock)iterator.next()).getQuantity();

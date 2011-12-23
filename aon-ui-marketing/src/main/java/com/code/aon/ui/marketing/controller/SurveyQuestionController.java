@@ -16,11 +16,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.SurveyQuestion;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the offer maintenance.
@@ -42,10 +42,10 @@ public class SurveyQuestionController extends BasicController implements IMarket
 		questions = new LinkedList<SelectItem>();
 		IManagerBean bean = getManagerBean();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), sq.getSurvey().getId());
-		Expression expression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_ID), sq.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), sq.getSurvey().getId());
+		Expression expression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_ID), sq.getId());
 		criteria.addExpression( expression );
-		criteria.addOrder(bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_POSITION));
 		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			SurveyQuestion question = (SurveyQuestion) iter.next();
@@ -63,7 +63,7 @@ public class SurveyQuestionController extends BasicController implements IMarket
 		questionValues = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
 		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			QuestionValue questionValue = (QuestionValue) iter.next();

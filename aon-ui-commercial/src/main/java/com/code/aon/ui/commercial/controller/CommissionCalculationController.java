@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailCommissionStatus;
 import com.code.aon.commercial.strategy.BasicCommissionStrategy;
 import com.code.aon.commercial.strategy.ICommissionStrategy;
@@ -31,6 +30,7 @@ import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommissionCalculationController {
 
@@ -135,7 +135,7 @@ public class CommissionCalculationController {
 				OfferDetailCommission offerDetailCommission;
 
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(commissionBean.getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_ID), offerDetail.getId());
+				criteria.addEqualExpression(commissionBean.getFieldName(IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_ID), offerDetail.getId());
 				Iterator<?> iterator = commissionBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					offerDetailCommission = (OfferDetailCommission)iterator.next();
@@ -187,35 +187,35 @@ public class CommissionCalculationController {
 
 	private Criteria getCriteria(boolean offerDetailCommission) throws ManagerBeanException {
 		String sellerAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SELLER_ID : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_SELLER_ID;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SELLER_ID : 
+				IEntityAlias.OFFER_DETAIL_OFFER_SELLER_ID;
 		String dateAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_ISSUE_DATE : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_ISSUE_DATE : 
+				IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE;
 		String seriesAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SERIES : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_SERIES;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SERIES : 
+				IEntityAlias.OFFER_DETAIL_OFFER_SERIES;
 		String numberAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_NUMBER : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_NUMBER;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_NUMBER : 
+				IEntityAlias.OFFER_DETAIL_OFFER_NUMBER;
 		String targetAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TARGET_ID : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_TARGET_ID;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_TARGET_ID : 
+				IEntityAlias.OFFER_DETAIL_OFFER_TARGET_ID;
 		String workPlaceAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_WORK_PLACE_ID : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_WORK_PLACE_ID;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_WORK_PLACE_ID : 
+				IEntityAlias.OFFER_DETAIL_OFFER_WORK_PLACE_ID;
 		String securityLevelAlias = offerDetailCommission ? 
-				ICommercialAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SECURITY_LEVEL : 
-				ICommercialAlias.OFFER_DETAIL_OFFER_SECURITY_LEVEL;
+				IEntityAlias.OFFER_DETAIL_COMMISSION_OFFER_DETAIL_OFFER_SECURITY_LEVEL : 
+				IEntityAlias.OFFER_DETAIL_OFFER_SECURITY_LEVEL;
 
 		IManagerBean bean = BeanManager.getManagerBean(offerDetailCommission ? OfferDetailCommission.class : OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(securityLevelAlias), isConfidential()?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL);
 		if (!offerDetailCommission) {
-			criteria.addGreaterThanExpression(bean.getFieldName(ICommercialAlias.OFFER_DETAIL_QUANTITY), new Double(0));
-			criteria.addGreaterThanExpression(bean.getFieldName(ICommercialAlias.OFFER_DETAIL_PRICE), new Double(0));
+			criteria.addGreaterThanExpression(bean.getFieldName(IEntityAlias.OFFER_DETAIL_QUANTITY), new Double(0));
+			criteria.addGreaterThanExpression(bean.getFieldName(IEntityAlias.OFFER_DETAIL_PRICE), new Double(0));
 		} else {
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.OFFER_DETAIL_COMMISSION_STATUS), OfferDetailCommissionStatus.PENDING);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.OFFER_DETAIL_COMMISSION_STATUS), OfferDetailCommissionStatus.PENDING);
 		}
 		if (getSeller() != null && getSeller().getId() != null) {
 			criteria.addEqualExpression(bean.getFieldName(sellerAlias), getSeller().getId());

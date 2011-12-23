@@ -9,8 +9,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeSearchListener extends RegistrySearchListener {
 	
@@ -63,10 +63,10 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria);
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INCOME_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getIncomeStatuses())) {
-			String status = getController().resolveAlias(IWarehouseAlias.INCOME_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.INCOME_STATUS);
 			addEnumToCriteria(criteria, status, getIncomeStatuses());
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {

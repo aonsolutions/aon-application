@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.asset.Asset;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.asset.controller.ActivityLinesController;
@@ -16,6 +15,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityLinesControllerListener extends ControllerAdapter {
 
@@ -48,14 +48,14 @@ public class ActivityLinesControllerListener extends ControllerAdapter {
 			this.getController().clearCriteria();
 			criteria = this.getController().getCriteria();
 			
-			criteria.addEqualExpression(this.getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), ((Asset)FormUtil.getController(IAssetConstants.ASSET_CONTROLLER_NAME).getTo()).getId());
-			//criteria.addOrder(this.getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
-			//criteria.addOrder(this.getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
+			criteria.addEqualExpression(this.getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), ((Asset)FormUtil.getController(IAssetConstants.ASSET_CONTROLLER_NAME).getTo()).getId());
+			//criteria.addOrder(this.getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
+			//criteria.addOrder(this.getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_FROM_TIME));
 			
 			if (toDate == null && fromDate != null ){
-				criteria.addGreaterThanOrEqualExpression(this.getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), fromDate);
+				criteria.addGreaterThanOrEqualExpression(this.getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), fromDate);
 			} else if (toDate != null && fromDate != null) {
-				criteria.addBetweenExpression(this.getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), fromDate, toDate);
+				criteria.addBetweenExpression(this.getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), fromDate, toDate);
 			} else {
 				((ActivityLinesController)this.getController()).setFromDateFilter(Calendar.getInstance().getTime());
 			}

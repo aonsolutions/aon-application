@@ -24,7 +24,6 @@ import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -33,6 +32,7 @@ import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EmailCommunicationController implements IMarketingConstants {
 	
@@ -45,9 +45,9 @@ public class EmailCommunicationController implements IMarketingConstants {
 	private List<String> getEmails( Target target ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		String mediaType = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE);
+		String mediaType = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE);
 		criteria.addEqualExpression(mediaType, MediaType.EMAIL);
-		String registryId = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+		String registryId = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID);
 		criteria.addEqualExpression(registryId, target.getRegistry().getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {

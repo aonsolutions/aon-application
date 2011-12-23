@@ -13,12 +13,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailByDeliveryPrinter {
 
@@ -35,11 +34,11 @@ public class InvoiceDetailByDeliveryPrinter {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoiceId);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoiceId);
 			if (productTypeOrder) {
-				criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
+				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
 			}
-			criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 				Delivery delivery = obtainDelivery(invoiceDetail);
@@ -80,11 +79,11 @@ public class InvoiceDetailByDeliveryPrinter {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		Criteria criteria = new Criteria();
 		for (Integer deliveryId : deliveryMap.keySet()) {
-			criteria.addOrExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ID), deliveryId.toString());
+			criteria.addOrExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ID), deliveryId.toString());
 		}
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES));
+		criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER));
 		for (ITransferObject ito : deliveryBean.getList(criteria)) {
 			invoiceDetailList.addAll(deliveryMap.get(((Delivery)ito).getId()));
 		}

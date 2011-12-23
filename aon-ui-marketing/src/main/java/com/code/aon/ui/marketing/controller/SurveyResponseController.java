@@ -4,9 +4,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the offer maintenance.
@@ -18,7 +18,7 @@ public class SurveyResponseController extends BasicController implements IMarket
 		String id = context.getExternalContext().getRequestParameterMap().get("surveyResponseId");		
 		Criteria oldCriteria = getCriteria();
 		clearCriteria();
-		getCriteria().addEqualExpression( getFieldName(IMarketingAlias.SURVEY_RESPONSE_ID), Integer.valueOf(id));
+		getCriteria().addEqualExpression( getFieldName(IEntityAlias.SURVEY_RESPONSE_ID), Integer.valueOf(id));
 		onSearch( event );
 		onSelectFirst( event );
 		setCriteria(oldCriteria);

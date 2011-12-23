@@ -25,13 +25,13 @@ import org.w3c.dom.Element;
 
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BalanceExporter {
 	private static final String ROOT = "balances";
@@ -94,7 +94,7 @@ public class BalanceExporter {
 		IManagerBean bean = BeanManager.getManagerBean(Balance.class);
 		IManagerBean beanDetail = BeanManager.getManagerBean(BalanceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IAccountingAlias.BALANCE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.BALANCE_ID));
 		Criteria criteriaDetail;
 		List<ITransferObject> list = bean.getList(criteria);
 		List<ITransferObject> listDetail;
@@ -131,8 +131,8 @@ public class BalanceExporter {
 			Element details = xmldoc.createElement(DETAILS);
 			
 			criteriaDetail = new Criteria();
-			criteriaDetail.addOrder(beanDetail.getFieldName(IAccountingAlias.BALANCE_DETAIL_ID));
-			criteriaDetail.addEqualExpression(beanDetail.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID), b.getId());
+			criteriaDetail.addOrder(beanDetail.getFieldName(IEntityAlias.BALANCE_DETAIL_ID));
+			criteriaDetail.addEqualExpression(beanDetail.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID), b.getId());
 			listDetail = beanDetail.getList(criteriaDetail);
 			for (ITransferObject det : listDetail) {
 				BalanceDetail d = (BalanceDetail) det;

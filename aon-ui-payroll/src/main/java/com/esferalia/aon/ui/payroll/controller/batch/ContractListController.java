@@ -15,7 +15,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContractBatch;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -79,13 +79,13 @@ public class ContractListController extends BasicController {
 		try {
 			ContractBatchController controller = (ContractBatchController) FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_CONTROLLER_NAME);
 			ContractBatch batch = (ContractBatch) controller.getTo();
-//			getCriteria().addLessThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
-			getCriteria().addNotEqualExpression(getFieldName(IPayrollAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
+//			getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), batch.getDate());
+			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS),ContractStatus.PROCESSED);
 			if ((getPerson() != null) && (getPerson().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PERSON_ID), getPerson().getId());			
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 			}
 			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 			
 		} catch (ManagerBeanException e) {

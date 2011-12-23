@@ -10,10 +10,10 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceReportParams {
 
@@ -170,19 +170,19 @@ public class InvoiceReportParams {
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new  Criteria();
 		if (getFromInvoiceDate() != null) {
-			criteria.addGreaterThanExpression(bean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getFromInvoiceDate());
+			criteria.addGreaterThanExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), getFromInvoiceDate());
 		}
 		if (getToInvoiceDate() != null ) {
-			criteria.addLessThanExpression(bean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getToInvoiceDate());
+			criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), getToInvoiceDate());
 		}
 		if (getFromTaxDate() != null) {
-			criteria.addGreaterThanExpression(bean.getFieldName(IFinanceAlias.INVOICE_TAX_DATE), getFromTaxDate());
+			criteria.addGreaterThanExpression(bean.getFieldName(IEntityAlias.INVOICE_TAX_DATE), getFromTaxDate());
 		}
 		if (getToTaxDate() != null) {
-			criteria.addLessThanExpression(bean.getFieldName(IFinanceAlias.INVOICE_TAX_DATE), getToTaxDate());
+			criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.INVOICE_TAX_DATE), getToTaxDate());
 		}
 		if (getSecurityLevel() != null) {
-			criteria.addEqualExpression(bean.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL), getSecurityLevel());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SECURITY_LEVEL), getSecurityLevel());
 		}
 		return criteria;
 	}

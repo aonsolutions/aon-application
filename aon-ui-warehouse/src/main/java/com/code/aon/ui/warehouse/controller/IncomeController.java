@@ -19,23 +19,19 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
 import com.code.aon.purchase.bridge.PurchaseTransferManager;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -47,8 +43,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeController extends BasicController implements IWarehouseConstants {
 
@@ -189,15 +185,15 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		if (income != null && income.getId() != null) {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 			Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 
 				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -237,7 +233,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
@@ -263,8 +259,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		if (id != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {
 				Project project = (Project)iterator.next();
@@ -291,8 +287,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), to.getId());
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), to.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
 		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
 			IncomeDetail incomeDetail = (IncomeDetail)ito;
 			incomeDetail.setProject(null);
@@ -313,7 +309,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 				} else {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
 					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
@@ -343,20 +339,20 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	public Warehouse obtainWarehouse(Income income) throws ManagerBeanException {
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return ((IncomeDetail)iterator.next()).getWarehouse();
 		} else if (income.getWorkPlace() != null) {
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), income.getWorkPlace().getId());
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), income.getWorkPlace().getId());
 			iterator = warehouseBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (Warehouse)iterator.next();
 			} else {
 				criteria = new Criteria();
-				criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+				criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 				iterator = warehouseBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					return (Warehouse)iterator.next();
@@ -384,16 +380,16 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SUPPLIER_ID), to.getSupplier().getId());
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
-			criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
+			criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_REGISTRY_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
-		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
-		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
-		criteria.addEqualExpression(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
-		criteria.addOrder(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_ISSUE_DATE));
-		criteria.addOrder(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_SERIES));
-		criteria.addOrder(purchaseBean.getFieldName(IPurchaseAlias.PURCHASE_NUMBER));
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_STATUS), PurchaseStatus.PENDING);
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SECURITY_LEVEL), to.getSecurityLevel());
+		criteria.addEqualExpression(purchaseBean.getFieldName(IEntityAlias.PURCHASE_WORK_PLACE_ID), to.getWorkPlace().getId());
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_ISSUE_DATE));
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_SERIES));
+		criteria.addOrder(purchaseBean.getFieldName(IEntityAlias.PURCHASE_NUMBER));
 
 		getPurchaseTransferManager().setPurchaseList(purchaseBean.getList(criteria));
 	}
@@ -425,7 +421,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);

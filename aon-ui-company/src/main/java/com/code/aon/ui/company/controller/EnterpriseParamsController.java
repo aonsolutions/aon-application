@@ -16,11 +16,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseData;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EnterpriseParamsController {
 	
@@ -89,7 +89,7 @@ public class EnterpriseParamsController {
 		parameters = new TreeMap<String, EnterpriseData>();
 		IManagerBean managerBean = BeanManager.getManagerBean(EnterpriseData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(managerBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), getEnterprise().getId());
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), getEnterprise().getId());
 		List<ITransferObject> list = managerBean.getList(criteria);
 		Iterator<ITransferObject> iter = list.iterator();
 		while (iter.hasNext()) {
@@ -159,8 +159,8 @@ public class EnterpriseParamsController {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
 		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Enterprise) controller.getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Enterprise) controller.getTo()).getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if(list.isEmpty()){
 			setAgreement(new EnterpriseData());

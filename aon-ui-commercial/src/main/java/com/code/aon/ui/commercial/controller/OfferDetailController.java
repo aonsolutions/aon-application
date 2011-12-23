@@ -21,11 +21,11 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferDetailController extends LinesController implements ICommercialConstants {
 
@@ -123,7 +123,7 @@ public class OfferDetailController extends LinesController implements ICommercia
 		OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();
@@ -144,7 +144,7 @@ public class OfferDetailController extends LinesController implements ICommercia
 		OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();

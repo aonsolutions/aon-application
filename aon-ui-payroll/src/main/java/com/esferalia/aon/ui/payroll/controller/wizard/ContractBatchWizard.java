@@ -32,7 +32,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
@@ -189,7 +189,7 @@ public class ContractBatchWizard {
 	private void onContractSelect(ActionEvent event) {
 		ContractController c = (ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		try {
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_STATUS), ContractStatus.PENDING);
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.PENDING);
 			c.onSearch(event);
 			c.clearCriteria();
 		} catch (ManagerBeanException e) {

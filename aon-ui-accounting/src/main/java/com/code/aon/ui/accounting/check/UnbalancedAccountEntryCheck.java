@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -13,6 +12,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class UnbalancedAccountEntryCheck implements IAccountCheck {
 
@@ -33,7 +33,7 @@ public class UnbalancedAccountEntryCheck implements IAccountCheck {
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryBean
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
+					.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
 			for (ITransferObject to: entryBean.getList(criteria)) {
 				AccountEntry entry = (AccountEntry) to;
 				double debit = 0;

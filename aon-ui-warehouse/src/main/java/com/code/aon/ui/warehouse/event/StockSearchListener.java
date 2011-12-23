@@ -6,7 +6,7 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class StockSearchListener extends ControllerSearchListener {
 
@@ -28,7 +28,7 @@ public class StockSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ((getItem() != null) && (getItem().getId() != null)) {
-			String field = getFieldName(IWarehouseAlias.STOCK_ITEM_ID);
+			String field = getFieldName(IEntityAlias.STOCK_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());			
 		}			
 	}

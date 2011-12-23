@@ -6,7 +6,14 @@
 
 <bean-config>
 
-	<bean description="">
+	<bean description="Listener para controlar el check de permite apuntes de cuentas">
+		<pojo>com.code.aon.account.Account</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.event.AccountBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="Control de cuentas">
 		<pojo>com.code.aon.config.Bank</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.config.event.BankBeanVetoListener</vetoListener>

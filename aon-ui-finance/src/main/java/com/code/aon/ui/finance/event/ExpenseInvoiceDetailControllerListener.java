@@ -13,7 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -23,6 +22,7 @@ import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControllerListener {
 
@@ -141,7 +141,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
 			Iterator<?> iterator = invoiceTaxBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				InvoiceTax invoiceTax = (InvoiceTax)iterator.next();

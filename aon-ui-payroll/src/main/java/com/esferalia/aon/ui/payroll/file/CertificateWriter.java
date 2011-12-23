@@ -51,7 +51,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.payroll.certificate.Certificate;
 import com.esferalia.aon.file.payroll.certificate.data.Cotizacion;
@@ -68,7 +67,7 @@ import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -388,8 +387,8 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SETTLE);
 			// un contracto solo puede tener un finiquito, se asume el primero de la lista
 			List<ITransferObject> list = bean.getList(criteria);
 			ContractData cd = getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
@@ -428,9 +427,9 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), enterprise.getId());
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), enterprise.getId());
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			
 			List<ITransferObject> list = bean.getList(criteria);
@@ -447,9 +446,9 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATA_CERTIFICA2BATCH_DETAIL_ID), detail.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATA_YEAR), false);
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATA_MONTH), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_CERTIFICA2BATCH_DETAIL_ID), detail.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_YEAR), false);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATA_MONTH), false);
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			// NADA, que siga con la generacion del fichero
@@ -485,7 +484,7 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -503,9 +502,9 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), period.getStart());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), period.getEnd());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), period.getStart());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), period.getEnd());
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -523,8 +522,8 @@ public class CertificateWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){

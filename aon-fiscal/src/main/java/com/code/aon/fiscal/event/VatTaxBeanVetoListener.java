@@ -11,10 +11,10 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -49,10 +49,10 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
 			if (vatTax.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_ID), vatTax.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_ID), vatTax.getId()));
 			}
 			int size = bean.getCount(c);
 			if (size > 0) {
@@ -68,10 +68,10 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
 			if (vatTax.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_ID), vatTax.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_ID), vatTax.getId()));
 			}
 			List<ITransferObject> list = bean.getList(c);
 			if (list == null || list.size() == 0) {
@@ -95,16 +95,16 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
 			if (vatTax.isComplementary()) {
-				c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_COMPLEMENTARY), true);
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_COMPLEMENTARY), true);
 			}
 			if (vatTax.isReplacement()) {
-				c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_REPLACEMENT), true);
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_REPLACEMENT), true);
 			}
 
-			c.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_NUMBER), false);
+			c.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_NUMBER), false);
 			List<ITransferObject> list = bean.getList(c);
 			if (list == null || list.size() == 0) {
 				return 1;
@@ -127,7 +127,7 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			if (vatTax != null && vatTax.getId() != null) {
 				IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
 				List<ITransferObject> list = bean.getList(c);
 				for (ITransferObject to : list) {
 					bean.remove(to);

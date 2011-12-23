@@ -24,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractBonusVariableHandler;
@@ -57,7 +57,7 @@ public class SalaryDraftBonusController extends ContractDetailVariableController
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(BonusConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.BONUS_CONCEPT_DESCRIPTION));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.BONUS_CONCEPT_DESCRIPTION));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
 				BonusConcept bc = (BonusConcept) to;
@@ -73,10 +73,10 @@ public class SalaryDraftBonusController extends ContractDetailVariableController
 		try {
 			SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			Contract contract = (Contract) master.getTo();
-			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), contract.getId());
 //			if(isSearchCurrent()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), master.getStartDate());
-				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE), master.getStartDate());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 //			}
 		} catch (ManagerBeanException e) {

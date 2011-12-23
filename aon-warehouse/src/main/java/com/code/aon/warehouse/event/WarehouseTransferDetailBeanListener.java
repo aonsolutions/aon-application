@@ -11,7 +11,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.WarehouseTransferDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class WarehouseTransferDetailBeanListener extends ManagerBeanListenerAdapter {
 
@@ -77,8 +77,8 @@ public class WarehouseTransferDetailBeanListener extends ManagerBeanListenerAdap
 	private Stock obtainStock(WarehouseTransferDetail wtd, Warehouse warehouse) throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), wtd.getItem().getId());
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), wtd.getItem().getId());
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
 		Iterator<?> iterator = stockBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (Stock)iterator.next();

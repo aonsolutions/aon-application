@@ -3,7 +3,6 @@ package com.code.aon.accounting.event;
 import java.util.Date;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -12,6 +11,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * @author Consulting & Development
@@ -41,7 +41,7 @@ public class PeriodBeanVetoListener extends ManagerBeanVetoListenerAdapter {
             IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
             Criteria criteria = new Criteria();
             if (to.getId() != null ) {
-            	criteria.addNotEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), to.getId());	
+            	criteria.addNotEqualExpression(periodBean.getFieldName(IEntityAlias.PERIOD_ID), to.getId());	
             }
             for(ITransferObject p: periodBean.getList(criteria)){
             	Period period = (Period)p;

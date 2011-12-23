@@ -24,7 +24,7 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -213,7 +213,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
 				List<ITransferObject> list = bean.getList(criteria);
 				Agreement agreement = ((PayrollWorkPlace)list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
 				if(agreement!=null){

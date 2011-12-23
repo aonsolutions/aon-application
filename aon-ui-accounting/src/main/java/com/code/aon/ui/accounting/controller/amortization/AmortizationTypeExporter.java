@@ -26,13 +26,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.code.aon.accounting.AmortizationType;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationTypeExporter {
 	private static final String ROOT = "amortizationTypes";
@@ -84,7 +84,7 @@ public class AmortizationTypeExporter {
 	public void export(OutputStream out) throws TransformerException, ManagerBeanException, ParserConfigurationException {
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationType.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IAccountingAlias.AMORTIZATION_TYPE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.AMORTIZATION_TYPE_ID));
 		List<ITransferObject> list = bean.getList(criteria);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();

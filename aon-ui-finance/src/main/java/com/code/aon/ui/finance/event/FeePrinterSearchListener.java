@@ -7,13 +7,13 @@ import java.util.GregorianCalendar;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FeePrinterSearchListener extends ControllerSearchListener {
 
@@ -66,14 +66,14 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getItem() != null) && (getItem().getId() != null) ) {
-			String field = getController().getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID);
+			String field = getController().getFieldName(IEntityAlias.CUSTOMER_FEE_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());
 		}
 		if (getBillingDateMonth() != null) {
-			criteria.addBetweenExpression(getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE), obtainFromDate(), obtainToDate());
-			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.CUSTOMER_FEE_INITIAL_DATE), obtainToDate());
-			Expression finalExp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE), obtainFromDate());
-			Expression finalExp2 = ExpressionUtilities.getNullExpression(getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE));
+			criteria.addBetweenExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_BILLING_DATE), obtainFromDate(), obtainToDate());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_INITIAL_DATE), obtainToDate());
+			Expression finalExp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_FINAL_DATE), obtainFromDate());
+			Expression finalExp2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CUSTOMER_FEE_FINAL_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(finalExp1, finalExp2));
 		}		
 	}	

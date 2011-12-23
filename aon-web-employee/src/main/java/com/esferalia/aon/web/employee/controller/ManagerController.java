@@ -1,7 +1,6 @@
 package com.esferalia.aon.web.employee.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
 
 import java.security.Principal;
 import java.util.Date;
@@ -30,10 +29,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
-import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryController;
@@ -142,7 +140,7 @@ public class ManagerController implements IPayrollConstants {
 		SalaryDraftController controller = (SalaryDraftController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 		List<Expression> initExpressions = new LinkedList<Expression>();
 		try {
-			String enterpriseId = controller.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+			String enterpriseId = controller.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			Expression expr = ExpressionUtilities.getEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
 			initExpressions.add(expr);
 			controller.setInitExpressions(initExpressions);
@@ -163,13 +161,13 @@ public class ManagerController implements IPayrollConstants {
 		try {		
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 			Criteria criteria = new Criteria();
-			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+			String endDate = bean.getFieldName(IEntityAlias.CONTRACT_END_DATE);
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			String personId = bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_ID);
+			String personId = bean.getFieldName(IEntityAlias.CONTRACT_PERSON_ID);
 			criteria.addEqualExpression(personId, this.loggedUser.getRegistry().getId());
-			String enterpriseId = bean.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+			String enterpriseId = bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			criteria.addEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
@@ -187,7 +185,7 @@ public class ManagerController implements IPayrollConstants {
 		SalaryController controller = (SalaryController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_CONTROLLER);
 		try {		
 			Criteria criteria = controller.getCriteria();
-			String contractId = controller.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID);
+			String contractId = controller.getFieldName(IEntityAlias.SALARY_CONTRACT_ID);
 			criteria.addEqualExpression( contractId, contract.getId() );			
 			controller.onSearch(null);
 		} catch (ManagerBeanException e) {

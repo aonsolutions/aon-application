@@ -11,7 +11,6 @@ import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -24,6 +23,7 @@ import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PeriodAmortizationController extends BasicController {
 
@@ -60,7 +60,7 @@ public class PeriodAmortizationController extends BasicController {
 	public void onSearch(ActionEvent event) {
 		try {
 			clearCriteria();
-			String alias = getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE);
+			String alias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE);
 			getCriteria().addGreaterThanOrEqualExpression(alias, getPeriod().getInitiationDate());
 			getCriteria().addLessThanOrEqualExpression(alias, getPeriod().getDeadline());
 			super.onSearch(event);
@@ -85,10 +85,10 @@ public class PeriodAmortizationController extends BasicController {
 			
 			double accumulated = 0.0;
 			Criteria c = new Criteria();
-			c.addEqualExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-			c.addLessThanExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getDeadline());
+			c.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+			c.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getDeadline());
 			ProjectionList pl = new ProjectionList();
-			pl.add(Projection.sum(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_ALLOCATION)));
+			pl.add(Projection.sum(getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_ALLOCATION)));
 			List<?> list = getManagerBean().getList(pl, c);
 			if (list != null && list.size() > 0 && list.get(0) != null) {
 				accumulated = (Double) list.get(0);	
@@ -234,7 +234,7 @@ public class PeriodAmortizationController extends BasicController {
 					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
+					IEntityAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);

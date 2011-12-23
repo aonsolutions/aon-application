@@ -9,40 +9,9 @@
 	<artifactId>aon.warehouse</artifactId>
 	<description>AON WAREHOUSE</description>
 	<name>AON WAREHOUSE</name>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.esferalia.aon</groupId>
-				<artifactId>aon-alias-maven-plugin</artifactId>
-				<version>7.0-SNAPSHOT</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate-alias</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<targetPackage>com.code.aon.warehouse.dao</targetPackage>
-					<targetName>IWarehouseAlias</targetName>
-					<sourcePackages>com.code.aon.warehouse</sourcePackages>
-					<excludes></excludes>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.code.aon</groupId>
-						<artifactId>aon.entity</artifactId>
-						<version>${project.version}</version>
-						<scope>compile</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

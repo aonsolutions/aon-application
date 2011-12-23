@@ -31,7 +31,6 @@ import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportContext;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
@@ -44,7 +43,6 @@ import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
@@ -53,6 +51,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.fiscal.controller.VatReportController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountingBookController implements ICollectionProvider{
 	private Period period;
@@ -470,9 +469,9 @@ public class AccountingBookController implements ICollectionProvider{
 			IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria c = new Criteria();
 			if (getPeriod() != null) {
-				c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
+				c.addEqualExpression( bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
 			}
-			c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+			c.addNullExpression( bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_JOURNAL));
 			int count = bean.getCount(c);
 			return (count==0);
 		} catch (ManagerBeanException e) {
@@ -809,7 +808,7 @@ public class AccountingBookController implements ICollectionProvider{
 		if (getReport() != null) {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID),getReport());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID),getReport());
 	        Iterator<?> iter = bean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				RegistryAttachment ra = (RegistryAttachment) iter.next();

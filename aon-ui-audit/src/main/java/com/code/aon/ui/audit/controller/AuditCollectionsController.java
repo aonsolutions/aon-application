@@ -9,13 +9,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.Application;
-import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditCollectionsController {
 
@@ -49,7 +49,7 @@ public class AuditCollectionsController {
 		applications = new LinkedList<SelectItem>();
 		IManagerBean segmentBean = BeanManager.getManagerBean(Application.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(segmentBean.getFieldName(IAuditAlias.APPLICATION_NAME));
+		criteria.addOrder(segmentBean.getFieldName(IEntityAlias.APPLICATION_NAME));
 		Iterator<ITransferObject> iter = segmentBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Application application = (Application)iter.next();

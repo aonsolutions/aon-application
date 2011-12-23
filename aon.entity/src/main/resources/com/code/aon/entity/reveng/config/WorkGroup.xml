@@ -1,3 +1,0 @@
-<table name="workgroup" class="com.code.aon.config.WorkGroup">
-	<column name="status" type="com.code.aon.config.enumeration.WorkGroupStatus" /> 
-</table>

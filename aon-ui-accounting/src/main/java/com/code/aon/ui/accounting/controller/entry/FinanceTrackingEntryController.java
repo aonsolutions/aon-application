@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -27,7 +26,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -37,6 +35,7 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingEntryController {
 
@@ -133,9 +132,9 @@ public class FinanceTrackingEntryController {
 
 	private void resetOrder(){
 		this.order = new SortOrderMap();
-		this.order.put(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE, Ordering.ASCENDING);
-		this.order.put(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
-		this.order.put(IFinanceAlias.FINANCE_TRACKING_FINANCE_CONCEPT, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_TRACKING_FINANCE_CONCEPT, Ordering.ASCENDING);
 	}
 
 	public List<SelectItem> getTypes() {
@@ -159,21 +158,21 @@ public class FinanceTrackingEntryController {
         try {
         	IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
-            String ftType = financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE);
+            criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+            String ftType = financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE);
             Expression paidExp = ExpressionUtilities.getEqualExpression(ftType, FinanceTrackingType.PAID); 
             Expression returnedExp = ExpressionUtilities.getEqualExpression(ftType, FinanceTrackingType.RETURNED); 
             criteria.addExpression(ExpressionUtilities.getOrExpression(paidExp, returnedExp));
-            criteria.addNullExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
-            criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), false);
+            criteria.addNullExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
+            criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), false);
             if (!AonUtil.getRoleManager().isConfidentiality()) {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);	
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);	
             } else {
-            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), getSecurityLevel());
+            	criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL), getSecurityLevel());
             }
-            criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
-            criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
-            criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_CONCEPT));
+            criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE));
+            criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_REFERENCE_CODE));
+            criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_CONCEPT));
             resetOrder();
             this.finances = new ListDataModel(financeTrackingBean.getList(criteria));
         } catch (ManagerBeanException e) {
@@ -252,7 +251,7 @@ public class FinanceTrackingEntryController {
 			Expression exp = null;
 			for (int i = 0;i< accountEntries.size();i++) {
 				Integer id = accountEntries.get(i);
-				Expression current = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), id);
+				Expression current = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), id);
 				if (i == 0) {
 					exp = current;
 				} else {

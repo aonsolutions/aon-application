@@ -9,8 +9,8 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliverySearchListener extends RegistrySearchListener {
 	
@@ -64,10 +64,10 @@ public class DeliverySearchListener extends RegistrySearchListener {
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
 		if (getCustomer() != null && getCustomer().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getCustomer().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), getCustomer().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getDeliveryStatuses())) {
-			String status = getController().resolveAlias(IWarehouseAlias.DELIVERY_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.DELIVERY_STATUS);
 			addEnumToCriteria(criteria, status, getDeliveryStatuses());
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {

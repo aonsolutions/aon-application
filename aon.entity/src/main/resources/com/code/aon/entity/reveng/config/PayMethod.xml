@@ -1,3 +1,0 @@
-<table name="pay_method" class="com.code.aon.config.PayMethod">
-	<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
-</table>

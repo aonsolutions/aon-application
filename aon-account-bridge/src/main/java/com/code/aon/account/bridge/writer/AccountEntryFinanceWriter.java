@@ -11,12 +11,10 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryBankStatement;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -31,7 +29,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -39,6 +36,7 @@ import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryFinanceWriter {
 
@@ -203,8 +201,8 @@ public class AccountEntryFinanceWriter {
 	public boolean canRemoveAccountEntryFinanceBatch(FinanceBatch fBatch) throws ManagerBeanException {
         IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
-        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fBatch.getId());
+        criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
         return (fBatchDetailBean.getCount(criteria) == 0);
 	}
 
@@ -215,7 +213,7 @@ public class AccountEntryFinanceWriter {
 	public void removeAccountEntryFinanceBatch(FinanceBatch fBatch, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFinanceBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fBatch.getId());
+		criteria.addEqualExpression(accountEntryFinanceBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fBatch.getId());
 		Iterator<ITransferObject> iterator = accountEntryFinanceBatchBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)iterator.next();
@@ -633,7 +631,7 @@ public class AccountEntryFinanceWriter {
 	public void removeAccountEntryFinanceTracking(FinanceTracking tracking, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
+		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
 		Iterator<ITransferObject> iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
@@ -702,7 +700,7 @@ public class AccountEntryFinanceWriter {
 	public void removeAccountEntryBankStatement(BankStatement statement, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryBankStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryBankStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), statement.getId());
+		criteria.addEqualExpression(accountEntryBankStatementBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), statement.getId());
 		Iterator<ITransferObject> iterator = accountEntryBankStatementBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)iterator.next();
@@ -766,7 +764,7 @@ public class AccountEntryFinanceWriter {
 	private void removeAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();

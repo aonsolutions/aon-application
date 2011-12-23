@@ -98,12 +98,8 @@ public class AliasWriter {
 	public void write( File file ) throws IOException {
 		write( getClassMappings(), file );
 	}
-	public void write( String[] aonClasses, File file ) throws IOException {
-		write(aonClasses,aonClasses,file );
-	}
 
-		
-	public void write( String[] entityClasses, String[] aonClasses, File file ) throws IOException {
+	public void write( String[] classes, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
 		out.write( "package " );
@@ -117,7 +113,7 @@ public class AliasWriter {
 		out.write( "import com.code.aon.common.dao.DAOConstantsEntry;" );
 		out.newLine();
 
-		for( String _class: aonClasses ) {
+		for( String _class: classes ) {
 			out.write( "import " );
 			out.write( _class );
 			out.write( ';' );
@@ -143,7 +139,7 @@ public class AliasWriter {
 		out.newLine();
 		out.newLine();
 		
-		for( String _class: entityClasses ) {
+		for( String _class: classes ) {
 			write( out, _class );
 		}
 		

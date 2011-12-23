@@ -1,30 +1,15 @@
 package com.esferalia.aon.payroll;
 
-import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.entity.master.AgreementLevelDataDB;
 import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -32,107 +17,9 @@ import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="agreement_level_data")
-public class AgreementLevelData implements ITransferObject, IExpression, IVariableData  {
+public class AgreementLevelData extends AgreementLevelDataDB implements IExpression, IVariableData  {
 
-	private static final long serialVersionUID = -530558961144928580L;
-	
-	private Integer id;
-	private AgreementLevel level;
-	private String name;
-	private String expression;
-	private Date startDate;	
-	private Date endDate;
-	
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	@ManyToOne
-    @JoinColumn( name="agreement_level", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_AGREEMENT_DATA_AGREEMENT_LEVEL")
-	@Index(name = "FK_AGREEMENT_DATA_AGREEMENT_LEVEL")
-	public AgreementLevel getLevel() {
-		return level;
-	}
-	public void setLevel(AgreementLevel level) {
-		this.level = level;
-	}
-
-	@Column(length = 16)
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	@Column(length = 128)
-	public String getExpression() {
-		return expression;
-	}
-	public void setExpression(String expression) {
-		this.expression = expression;
-	}
-	
-	@Temporal(TemporalType.DATE)
-	@Column( name = "start_date", nullable = false )
-    public Date getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column( name = "end_date" )
-    public Date getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}	
-	
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final AgreementLevelData o = (AgreementLevelData) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.level, o.level)
-				.append(this.name, o.name)
-				.append(this.expression, o.expression)
-				.append(this.startDate, o.startDate)
-				.append(this.endDate, o.endDate)
-				.isEquals();	
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)
-			.append(level)
-			.append(name)
-			.append(expression)
-			.append(startDate)
-			.append(endDate)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
+	private static final long serialVersionUID = 1L;
 	
 	@Transient
 	public ContextVariable getVariable(){

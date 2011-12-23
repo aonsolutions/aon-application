@@ -11,7 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
@@ -69,7 +69,7 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 			ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 			controller.onEditSearch(event);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID),getContractId());
+			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IEntityAlias.CONTRACT_ID),getContractId());
 			controller.clearCriteria();
 			controller.setCriteria(criteria);
 			controller.onSearch(event);

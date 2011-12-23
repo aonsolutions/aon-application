@@ -18,11 +18,11 @@ import com.code.aon.product.Catalogue;
 import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductCollectionsController {
 
@@ -109,7 +109,7 @@ public class ProductCollectionsController {
 		List<SelectItem> brands = new LinkedList<SelectItem>();
 		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(brandBean.getFieldName(IProductAlias.BRAND_NAME));
+		criteria.addOrder(brandBean.getFieldName(IEntityAlias.BRAND_NAME));
 		for (ITransferObject ito : brandBean.getList(criteria)) {
 			Brand brand = (Brand)ito;
 			SelectItem item = new SelectItem(brand, brand.getName());
@@ -134,7 +134,7 @@ public class ProductCollectionsController {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		criteria.addOrder(categoryGroupBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_GROUP_NAME));
 		for (ITransferObject ito : categoryGroupBean.getList(criteria)) {
 			groups = true;
 			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)ito;
@@ -159,8 +159,8 @@ public class ProductCollectionsController {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), groupId);
-		criteria.addOrder(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
+		criteria.addEqualExpression(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_CATEGORY_GROUP_ID), groupId);
+		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_NAME));
 		for (ITransferObject ito : categoryBean.getList(criteria)) {
 			ProductCategory category = (ProductCategory)ito;
 			SelectItem item = new SelectItem(category, category.getName());
@@ -173,8 +173,8 @@ public class ProductCollectionsController {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
-		criteria.addNullExpression(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_CATEGORY_GROUP));
-		criteria.addOrder(categoryBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_NAME));
+		criteria.addNullExpression(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_CATEGORY_GROUP));
+		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_NAME));
 		for (ITransferObject ito : categoryBean.getList(criteria)) {
 			ProductCategory category = (ProductCategory)ito;
 			SelectItem item = new SelectItem(category, category.getName());
@@ -187,7 +187,7 @@ public class ProductCollectionsController {
 		List<SelectItem> categoryGroups = new LinkedList<SelectItem>();
 		IManagerBean categoryGroupBean = BeanManager.getManagerBean(ProductCategoryGroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryGroupBean.getFieldName(IProductAlias.PRODUCT_CATEGORY_GROUP_NAME));
+		criteria.addOrder(categoryGroupBean.getFieldName(IEntityAlias.PRODUCT_CATEGORY_GROUP_NAME));
 		for (ITransferObject ito : categoryGroupBean.getList(criteria)) {
 			ProductCategoryGroup categoryGroup = (ProductCategoryGroup)ito;
 			SelectItem item = new SelectItem(categoryGroup, categoryGroup.getName());
@@ -200,7 +200,7 @@ public class ProductCollectionsController {
 		List<SelectItem> catalogues = new LinkedList<SelectItem>();
 		IManagerBean catalogueBean = BeanManager.getManagerBean(Catalogue.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(catalogueBean.getFieldName(IProductAlias.CATALOGUE_NAME));
+		criteria.addOrder(catalogueBean.getFieldName(IEntityAlias.CATALOGUE_NAME));
 		for (ITransferObject ito : catalogueBean.getList(criteria)) {
 			Catalogue catalogue = (Catalogue)ito;
 			SelectItem item = new SelectItem(catalogue,catalogue.getName());
@@ -213,8 +213,8 @@ public class ProductCollectionsController {
 		List<SelectItem> expenseItems = new LinkedList<SelectItem>();
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
-		criteria.addOrder(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_NAME));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
 		for (ITransferObject ito : itemBean.getList(criteria)) {
 			Item item = (Item)ito;
 			SelectItem selectItem = new SelectItem(item, item.getProduct().getName());

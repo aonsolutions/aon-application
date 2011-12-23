@@ -5,7 +5,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemTariff;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
@@ -14,6 +13,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemTariffControllerListener extends ControllerAdapter implements IItemMessages {
 
@@ -38,8 +38,8 @@ public class ItemTariffControllerListener extends ControllerAdapter implements I
 		try {
 			IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_ITEM_ID), itemTariff.getItem().getId());
-			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TARIFF_ID), itemTariff.getTariff().getId());
+			criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), itemTariff.getItem().getId());
+			criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TARIFF_ID), itemTariff.getTariff().getId());
 			if (itemTariffBean.getCount(criteria) > 0) {
 				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DEFINED_FOR_TARIFF_ERROR));
 			}

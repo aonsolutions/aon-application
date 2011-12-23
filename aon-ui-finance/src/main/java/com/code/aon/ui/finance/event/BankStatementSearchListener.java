@@ -7,13 +7,13 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementSearchListener extends ControllerSearchListener {
 
@@ -142,43 +142,43 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (StringUtils.isNotEmpty(getLotNumber())) {
-			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_LOT_NUMBER), getLotNumber());			
+			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_LOT_NUMBER), getLotNumber());			
 		}
 		if (getFromDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE), getFromDate());			
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_OPERATION_DATE), getFromDate());			
 		}
 		if (getToDate() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE), getToDate());			
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_OPERATION_DATE), getToDate());			
 		}
 		if (getCommonConcept() != null) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), getCommonConcept());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_COMMON_CONCEPT), getCommonConcept());			
 		}
 		if (getPayment() != null) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_PAYMENT), getPayment());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_PAYMENT), getPayment());			
 		}
 		if (StringUtils.isNotEmpty(getAmount())) {
-			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), getAmount());			
+			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), getAmount());			
 		}
 		if (StringUtils.isNotEmpty(getDescription())) {
-			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
+			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), getDescription());			
 		}
 		if (StringUtils.isNotEmpty(getComments())) {
-			criteria.addExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMENTS), getComments());			
+			criteria.addExpression(getFieldName(IEntityAlias.BANK_STATEMENT_COMMENTS), getComments());			
 		}
 		if (!ArrayUtils.isEmpty(getStatementReliabilities())) {
-			String reliability = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_RELIABILITY);
+			String reliability = getController().resolveAlias(IEntityAlias.BANK_STATEMENT_RELIABILITY);
 			addEnumToCriteria(criteria, reliability, getStatementReliabilities());
 		}
 		if (getConfidential() != null) {
 			SecurityLevel securityLevel = (getConfidential().booleanValue()) ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_SECURITY_LEVEL), securityLevel);			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_SECURITY_LEVEL), securityLevel);			
 		}
 		if (!ArrayUtils.isEmpty(getStatementStatuses())) {
-			String status = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.BANK_STATEMENT_STATUS);
 			addEnumToCriteria(criteria, status, getStatementStatuses());
 		}
-		criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID));
-		criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE));
+		criteria.addOrder(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID));
+		criteria.addOrder(getFieldName(IEntityAlias.BANK_STATEMENT_OPERATION_DATE));
 	}
 
 }

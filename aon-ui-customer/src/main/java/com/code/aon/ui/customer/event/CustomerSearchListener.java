@@ -3,11 +3,11 @@ package com.code.aon.ui.customer.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.registry.controller.event.RegistryPayMethodSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 
@@ -31,7 +31,7 @@ public class CustomerSearchListener extends RegistryPayMethodSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getCustomerStatuses())) {
-			String status = getController().resolveAlias(ICustomerAlias.CUSTOMER_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.CUSTOMER_STATUS);
 			addEnumToCriteria(criteria, status, getCustomerStatuses());
 		}
 		super.completeCriteria( criteria );

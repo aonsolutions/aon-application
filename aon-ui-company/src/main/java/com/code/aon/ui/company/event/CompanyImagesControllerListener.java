@@ -11,7 +11,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -19,6 +18,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
 public class CompanyImagesControllerListener extends ControllerAdapter implements ICompanyConstants {
@@ -27,7 +27,7 @@ public class CompanyImagesControllerListener extends ControllerAdapter implement
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			CompanyImagesController imagesController = (CompanyImagesController) event.getController();
-			String alias = imagesController.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE); 
+			String alias = imagesController.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE); 
 			Expression expression = null;
 			for( RegistryAttachmentType type : imagesController.getDisplayedTypes() ) {
 				if ( expression == null ) {

@@ -8,7 +8,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.event.FinderBeanEvent;
 import com.code.aon.common.event.IManagerBeanListener;
 import com.code.aon.common.event.IManagerBeanVetoListener;
-import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerSupport;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.event.ManagerBeanVetoListenerSupport;
@@ -105,7 +104,7 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public List<ITransferObject> getList(Criteria criteria) throws ManagerBeanException {
 		try {
-			FinderBeanEvent evt = new FinderBeanEvent( criteria );
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			List<ITransferObject> ret = dao.getList(criteria);
 			return ret;
@@ -122,7 +121,7 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public List<ITransferObject> getList(Criteria criteria, int offset, int count) throws ManagerBeanException {
 		try {
-			FinderBeanEvent evt = new FinderBeanEvent( criteria );
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			List<ITransferObject> ret = dao.getList(criteria, offset, count);
 			return ret;
@@ -135,7 +134,7 @@ public class BasicFinderBean implements IFinderBean {
 
 	public List getList(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
 		try {
-			FinderBeanEvent evt = new FinderBeanEvent( criteria );
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			List ret = dao.getList(projectionList, criteria);
 			return ret;
@@ -148,7 +147,7 @@ public class BasicFinderBean implements IFinderBean {
 
 	public Object getUniqueResult(Projection projection, Criteria criteria) throws ManagerBeanException {
 		try {
-			FinderBeanEvent evt = new FinderBeanEvent( criteria );
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			Object ret = dao.getUniqueResult(projection, criteria);
 			return ret;
@@ -182,7 +181,7 @@ public class BasicFinderBean implements IFinderBean {
 				obl = criteria.getOrderByList();
 				criteria.setOrderByList( null );
 			}
-			FinderBeanEvent evt = new FinderBeanEvent( criteria );
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			int count = dao.getCount(criteria);
 			if ( criteria != null ) {
@@ -194,6 +193,10 @@ public class BasicFinderBean implements IFinderBean {
 		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
+	}
+
+	private FinderBeanEvent getNewFinderBeanEvent(Criteria criteria) {
+		return new FinderBeanEvent(criteria==null?new Criteria():criteria);
 	}
 
 	/* 

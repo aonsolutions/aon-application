@@ -21,7 +21,6 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.SocialInsuranceEntry;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
@@ -40,6 +39,7 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SocialInsuranceEntryController {
 
@@ -238,13 +238,13 @@ public class SocialInsuranceEntryController {
 	private void loadAccountEntryController(AccountEntry entry, AccountEntry adjust) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		Expression expr1 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID),
+		Expression expr1 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID),
 				entry.getId());
 		if (adjust == null) {
 			criteria.addExpression(expr1);
 		} else {
 			Expression expr2 = ExpressionUtilities.getEqualExpression(entryController.getManagerBean()
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), adjust.getId());
+					.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), adjust.getId());
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		}
 		entryController.setCriteria(criteria);
@@ -285,10 +285,10 @@ public class SocialInsuranceEntryController {
 		try {
 			if (socialInsuranceBalance == null && getEntry().getYear() != null && getEntry().getMonth() != null) {
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntryDetail.class);
-				String dateAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
-				String typeAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE);
-				String accountAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
-				String securityLevelAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
+				String dateAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
+				String typeAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE);
+				String accountAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
+				String securityLevelAlias = bean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
 				Criteria c = new Criteria();
 				c.addBetweenExpression(dateAlias, getEntry().getFromDate(), getEntry().getToDate());
 				c.addEqualExpression(accountAlias, getSocialInsuranceAccount().getId());

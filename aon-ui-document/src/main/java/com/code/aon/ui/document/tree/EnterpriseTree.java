@@ -1,7 +1,5 @@
 package com.code.aon.ui.document.tree;
 
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_ENTERPRISE_ID;
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
@@ -42,6 +40,7 @@ import com.code.aon.ui.document.controller.EnterpriseDocumentController;
 import com.code.aon.ui.document.event.EnterpriseDocumentSearchListener;
 import com.code.aon.ui.project.controller.ProjectController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EnterpriseTree implements ICompanyConstants {
 
@@ -156,8 +155,11 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadProjects( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
-		criteria.addOrder(bean.getFieldName(PROJECT_NAME));
+// [EUKE]
+//		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_DOMAIN_ID), enterprise.getDomain().getId());
+// fin
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {

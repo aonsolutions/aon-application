@@ -9,7 +9,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ContractListListener extends ControllerAdapter {
 
@@ -30,11 +30,11 @@ public class ContractListListener extends ControllerAdapter {
 			Expression expr1;
 	    	Expression expr2;
 			if(getWorkPlace()!=null){
-				event.getController().getCriteria().addEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID), getWorkPlace().getId());
+				event.getController().getCriteria().addEqualExpression(getController().getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ID), getWorkPlace().getId());
 			}
-			event.getController().getCriteria().addLessThanOrEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_START_DATE), new Date()); 
-	    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
-	    	expr2 = ExpressionUtilities.getNullExpression(getController().getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+			event.getController().getCriteria().addLessThanOrEqualExpression(getController().getFieldName(IEntityAlias.CONTRACT_START_DATE), new Date()); 
+	    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getController().getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
+	    	expr2 = ExpressionUtilities.getNullExpression(getController().getFieldName(IEntityAlias.CONTRACT_END_DATE));
 	    	event.getController().getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );

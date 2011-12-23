@@ -3,7 +3,6 @@ package com.code.aon.ui.commercial.event;
 import java.util.List;
 
 import com.code.aon.commercial.CommercialTracking;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -14,6 +13,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Listener Added to the CommercialTrackingController.
@@ -94,7 +94,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	private void updatePreviousAction( CommercialTrackingController controller, CommercialTracking ct ) throws ManagerBeanException {
 		CommercialTracking previous = null;
 		Criteria criteria = new Criteria();
-		String alias = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_NEXT_ID);
+		String alias = controller.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_NEXT_ID);
 		criteria.addEqualExpression(alias, ct.getId());
 		List<ITransferObject> list = controller.getManagerBean().getList(criteria);
 		if (! list.isEmpty()) {

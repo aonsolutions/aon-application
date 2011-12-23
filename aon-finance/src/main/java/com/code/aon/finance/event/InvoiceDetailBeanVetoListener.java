@@ -14,11 +14,10 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
@@ -65,7 +64,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 				return (Warehouse)warehouseBean.getList(null).get(0);
 			} else {
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+				criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
 				if (warehouseBean.getCount(criteria) == 1) {
 					return (Warehouse)warehouseBean.getList(criteria).get(0);
 				}
@@ -78,7 +77,7 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	private void removeInvoiceTax(InvoiceDetail invoiceDetail) throws ManagerBeanException {
 		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID),invoiceDetail.getId());
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID),invoiceDetail.getId());
 		for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
 			invoiceTaxBean.remove((InvoiceTax)ito);
 		}

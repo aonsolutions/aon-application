@@ -10,11 +10,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.ProjectActivity;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectActivityControllerListener extends ControllerAdapter {
 	
@@ -56,7 +56,7 @@ public class ProjectActivityControllerListener extends ControllerAdapter {
 	private boolean activityTypeChanged(ProjectActivity activity) throws ManagerBeanException {
 		IManagerBean activityBean = BeanManager.getManagerBean(ProjectActivity.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_ID), activity.getId());
+		criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ID), activity.getId());
 		List<ITransferObject> list = activityBean.getList(criteria, 0, 1);
 		for (ITransferObject to:list) {
 			ProjectActivity pa = (ProjectActivity) to;

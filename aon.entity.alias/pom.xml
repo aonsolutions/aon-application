@@ -7,9 +7,10 @@
 		<version>7.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.entity.alias</artifactId>
-	<name>ENTITY ALIAS</name>
-	<description>ENTITY ALIAS</description>
+	<name>AON ENTITY ALIAS</name>
+	<description>AON ENTITY ALIAS</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -17,14 +18,13 @@
 				<artifactId>aon-alias-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
-					<!-- *** ALIAS DE AON-ACCOUNT ***	 -->
 					<execution>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate-alias</goal>
 						</goals>
 						<configuration>
-							<targetPackage>com.code.aon.entity</targetPackage>
+							<targetPackage>com.esferalia.aon.entity</targetPackage>
 							<targetName>IEntityAlias</targetName>
 							<includeGeneratedEntities>true</includeGeneratedEntities>
 							<excludes></excludes>
@@ -33,10 +33,16 @@
 				</executions>
 				<dependencies>
 					<dependency>
-						<groupId>com.code.aon</groupId>
+						<groupId>com.esferalia.aon</groupId>
 						<artifactId>aon.entity</artifactId>
 						<version>${project.version}</version>
 						<scope>compile</scope>
+					</dependency>
+					<dependency>
+						<groupId>com.esferalia.aon</groupId>
+						<artifactId>aon.entity.common</artifactId>
+						<version>${project.version}</version>
+						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -44,10 +50,18 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		<!-- Esta dependencia se introduce para que los alias puedan compilar, 
+			 para ello se utilizan los falsos pojos generados en el plugin -->
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon-alias-maven-plugin</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

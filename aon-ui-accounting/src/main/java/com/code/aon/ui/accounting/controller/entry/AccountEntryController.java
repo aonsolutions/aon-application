@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
@@ -25,7 +23,6 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
@@ -38,6 +35,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryController extends BasicController {
 	
@@ -146,14 +144,14 @@ public class AccountEntryController extends BasicController {
 	private boolean isAccountInvoice(AccountEntry entry) throws ManagerBeanException {
 		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(aeiBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
+		criteria.addEqualExpression(aeiBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
 		List<ITransferObject> list = aeiBean.getList(criteria);
 		if (list.size() > 0  ) {
 			AccountEntryInvoice aei = (AccountEntryInvoice) list.get(0);
 			IManagerBean idBean = BeanManager.getManagerBean(InvoiceDetail.class);
 //			setDocumentNumber( aei.getInvoice().getDocumentNumber() );
 			criteria = new Criteria();
-			criteria.addEqualExpression(idBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), aei.getInvoice().getId());
+			criteria.addEqualExpression(idBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), aei.getInvoice().getId());
 			List<ITransferObject> details = idBean.getList(criteria);
 			for (ITransferObject to: details) {
 				InvoiceDetail id = (InvoiceDetail) to;
@@ -283,10 +281,10 @@ public class AccountEntryController extends BasicController {
 	            Integer id = ((AccountEntry)this.getTo()).getId();
 	            IManagerBean detailsBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 	            Criteria criteria = new Criteria();
-	            criteria.addEqualExpression(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+	            criteria.addEqualExpression(detailsBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
 				ProjectionList pl = new ProjectionList();
-				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT)));
-				pl.add(Projection.sum(detailsBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT)));
+				pl.add(Projection.sum(detailsBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DEBIT)));
+				pl.add(Projection.sum(detailsBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_CREDIT)));
 				List<?> dets = detailsBean.getList(pl, criteria);
 	        	setTotalDebit(IAccountingConstants.ZERO);
 	        	setTotalCredit(IAccountingConstants.ZERO);
@@ -415,7 +413,7 @@ public class AccountEntryController extends BasicController {
    		AccountEntry entry = (AccountEntry) getTo();
 		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(aeiBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
+		criteria.addEqualExpression(aeiBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
 		List<ITransferObject> list = aeiBean.getList(criteria);
 		if (list != null && list.size() > 0 ) {
 			Invoice invoice = ((AccountEntryInvoice)list.get(0)).getInvoice();	
@@ -452,7 +450,7 @@ public class AccountEntryController extends BasicController {
     		
     		IManagerBean linesBean = BeanManager.getManagerBean(AccountEntryDetail.class);
     		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(linesBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+    		criteria.addEqualExpression(linesBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
     		List<ITransferObject> list = linesBean.getList(criteria);
     		for (ITransferObject to: list) {
     			AccountEntryDetail detail = (AccountEntryDetail) to;
@@ -471,7 +469,7 @@ public class AccountEntryController extends BasicController {
     		}
 
 			criteria = new Criteria();
-			criteria.addEqualExpression(getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), dup.getId());
+			criteria.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), dup.getId());
 			setCriteria(criteria);
 			onSearch(null);
 			getModel().setRowIndex(0);

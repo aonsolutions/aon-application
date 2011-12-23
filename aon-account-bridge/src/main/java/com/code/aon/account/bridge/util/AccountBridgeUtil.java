@@ -10,7 +10,6 @@ import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.PayMethodTypeDetailAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Loan;
 import com.code.aon.common.BeanManager;
@@ -26,6 +25,7 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.supplier.Supplier;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountBridgeUtil {
 	
@@ -42,7 +42,7 @@ public class AccountBridgeUtil {
 		try {
 			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(rBankAccountBean.getFieldName(IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID), account);
+			criteria.addExpression(rBankAccountBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID), account);
 			Iterator<ITransferObject> iter = rBankAccountBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((RegistryBankAccount)iter.next()).getRegistryBank();
@@ -57,7 +57,7 @@ public class AccountBridgeUtil {
 		try {
 			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankAccountBean.getFieldName(IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_REGISTRY_BANK_ID), rBank.getId());
+			criteria.addEqualExpression(rBankAccountBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACCOUNT_REGISTRY_BANK_ID), rBank.getId());
 			Iterator<ITransferObject> iter = rBankAccountBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				RegistryBankAccount rBankAccount = (RegistryBankAccount)iter.next();
@@ -84,7 +84,7 @@ public class AccountBridgeUtil {
 		try {
 			IManagerBean pmTypeDetailAccountBean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(pmTypeDetailAccountBean.getFieldName(IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_ACCOUNT_ID), account);
+			criteria.addExpression(pmTypeDetailAccountBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_ACCOUNT_ID), account);
 			Iterator<ITransferObject> iter = pmTypeDetailAccountBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return ((PayMethodTypeDetailAccount)iter.next()).getPayMethodTypeDetail();
@@ -98,7 +98,7 @@ public class AccountBridgeUtil {
 	public Account obtainPayMethodTypeDetailAccount(PayMethodTypeDetail payMethodTypeDetail) throws ManagerBeanException {
 		IManagerBean payMethodTypeDetailAccountBean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(payMethodTypeDetailAccountBean.getFieldName(IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID), payMethodTypeDetail.getId());
+		criteria.addEqualExpression(payMethodTypeDetailAccountBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID), payMethodTypeDetail.getId());
 		Iterator<ITransferObject> iter = payMethodTypeDetailAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			PayMethodTypeDetailAccount payMethodTypeDetailAccount = (PayMethodTypeDetailAccount)iter.next();
@@ -135,7 +135,7 @@ public class AccountBridgeUtil {
 	public CustomerAccount getCustomerIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerAccountBean.getFieldName(IAccountBridgeAlias.CUSTOMER_ACCOUNT_CUSTOMER_ID), registry.getId());
+		criteria.addEqualExpression(customerAccountBean.getFieldName(IEntityAlias.CUSTOMER_ACCOUNT_CUSTOMER_ID), registry.getId());
 		Iterator<ITransferObject> iter = customerAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			CustomerAccount customerAccount = (CustomerAccount)iter.next();
@@ -182,7 +182,7 @@ public class AccountBridgeUtil {
 	public SupplierAccount getSupplierIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(supplierAccountBean.getFieldName(IAccountBridgeAlias.SUPPLIER_ACCOUNT_SUPPLIER_ID), registry.getId());
+		criteria.addEqualExpression(supplierAccountBean.getFieldName(IEntityAlias.SUPPLIER_ACCOUNT_SUPPLIER_ID), registry.getId());
 		Iterator<ITransferObject> iter = supplierAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			SupplierAccount supplierAccount = (SupplierAccount)iter.next();
@@ -229,7 +229,7 @@ public class AccountBridgeUtil {
 	public CreditorAccount getCreditorIAccount(Registry registry) throws ManagerBeanException {
 		IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(creditorAccountBean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID), registry.getId());
+		criteria.addEqualExpression(creditorAccountBean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CREDITOR_ID), registry.getId());
 		Iterator<ITransferObject> iter = creditorAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			CreditorAccount creditorAccount = (CreditorAccount)iter.next();
@@ -273,7 +273,7 @@ public class AccountBridgeUtil {
 		try {
 			IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
+			criteria.addEqualExpression(loanAccountBean.getFieldName(IEntityAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
 			Iterator<ITransferObject> iter = loanAccountBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				LoanAccount loanAccount = (LoanAccount)iter.next();

@@ -16,8 +16,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.LinesController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryDirStaffLinesController extends LinesController {
 	
@@ -65,7 +65,7 @@ public class RegistryDirStaffLinesController extends LinesController {
 			RegistryDirStaff rds = (RegistryDirStaff) getTo();
 			String document = rds.getDocument();
 			if (StringUtils.isEmpty(rds.getName())) {
-				String docAlias = getManagerBean().getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DOCUMENT);
+				String docAlias = getManagerBean().getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DOCUMENT);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(docAlias, document);
 				List<ITransferObject> list = getManagerBean().getList(criteria);
@@ -74,7 +74,7 @@ public class RegistryDirStaffLinesController extends LinesController {
 					rds.setName( r.getName() );
 				} else {
 					IManagerBean rBean = BeanManager.getManagerBean(Registry.class);
-					docAlias = rBean.getFieldName(IRegistryAlias.REGISTRY_DOCUMENT);
+					docAlias = rBean.getFieldName(IEntityAlias.REGISTRY_DOCUMENT);
 					criteria = new Criteria();
 					criteria.addEqualExpression(docAlias, document);
 					list = rBean.getList(criteria);

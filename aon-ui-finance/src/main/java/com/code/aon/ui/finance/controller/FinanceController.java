@@ -22,13 +22,11 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.PayMethodTypeDetail;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -38,7 +36,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -49,6 +46,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceController extends FinanceListController {
 
@@ -368,19 +366,19 @@ public class FinanceController extends FinanceListController {
 	private RegistryBank obtainPaymentRegistryBank(Registry registry, Bank bank, BankAccount bankAccount) throws ManagerBeanException {
 		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
 		if (bank != null && bank.getId() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ID), bank.getId());
+			criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ID), bank.getId());
 		}
 		if (bankAccount != null && bankAccount.getValue() != null) {
-			criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
+			criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAccount);
 		}
 		Iterator<ITransferObject> iterator = registryBankBean.getList(criteria, 0, 1).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryBank)iterator.next();
 		}
 		criteria = new Criteria();
-		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(registryBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
 		iterator = registryBankBean.getList(criteria, 0, 1).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryBank)iterator.next();
@@ -413,8 +411,8 @@ public class FinanceController extends FinanceListController {
 		BankAccount bankAccount = finance.getBankAccount();
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
 		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
@@ -439,8 +437,8 @@ public class FinanceController extends FinanceListController {
 		payMethodTypeDetailList = new LinkedList<SelectItem>();
 		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_TYPE), type);
-		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
+		criteria.addEqualExpression(payMethodTypeDetailBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE_DETAIL_TYPE), type);
+		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
 		Iterator<?> iter = payMethodTypeDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			PayMethodTypeDetail payMethodTypeDetail = (PayMethodTypeDetail) iter.next();
@@ -535,8 +533,8 @@ public class FinanceController extends FinanceListController {
 	private void returnFinanceBatchDetail(Finance finance) throws ManagerBeanException {
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
 		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
@@ -568,43 +566,43 @@ public class FinanceController extends FinanceListController {
 	public void onOrderFinanceList(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByRegistry(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_REGISTRY_NAME));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_REGISTRY_NAME));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByDate(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByPayment(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_ID));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 	
 	public void onOrderFinanceListByBank(ActionEvent event) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
 		criteria.setOrderByList(null);
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_BANK_ID));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-		criteria.addOrder(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_BANK_ID));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+		criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
 		orderedList=getManagerBean().getList(criteria);
 	}
 
@@ -613,7 +611,7 @@ public class FinanceController extends FinanceListController {
 		if (!to.isEmptyInvoice()) {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), to.getInvoice().getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), to.getInvoice().getId());
 			FormUtil.getController(INVOICE_PRINTER_CONTROLLER).setCriteria(criteria);
 		}
 	}

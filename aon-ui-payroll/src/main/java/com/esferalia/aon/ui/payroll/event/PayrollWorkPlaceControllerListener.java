@@ -15,7 +15,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.enterprise.PayrollWorkPlaceController;
 
 /**
@@ -56,7 +56,7 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), workPlace.getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.isEmpty()){
 				createNewPayrollWorkPlace();

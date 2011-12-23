@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -21,6 +20,7 @@ import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesManager {
 
@@ -86,9 +86,9 @@ public class SalesManager {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_LINE));
 		Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			OfferDetail offerDetail = (OfferDetail)iterator.next();

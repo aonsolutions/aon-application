@@ -30,7 +30,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 

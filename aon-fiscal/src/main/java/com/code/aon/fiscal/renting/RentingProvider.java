@@ -17,11 +17,11 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingDetailKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RentingProvider {
 
@@ -155,9 +155,9 @@ public class RentingProvider {
 		}
 		IManagerBean bean = BeanManager.getManagerBean(Renting.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_YEAR), renting.getYear());
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ADMINISTRATION), renting.getAdministration());
-		String periodAlias = bean.getFieldName(IFiscalAlias.RENTING_PERIOD);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_YEAR), renting.getYear());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ADMINISTRATION), renting.getAdministration());
+		String periodAlias = bean.getFieldName(IEntityAlias.RENTING_PERIOD);
 
 		int i = renting.getPeriod().ordinal(); 
 		if (i == 0 ) {

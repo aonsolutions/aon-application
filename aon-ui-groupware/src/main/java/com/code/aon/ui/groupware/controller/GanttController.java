@@ -29,7 +29,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
@@ -42,6 +41,7 @@ import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class GanttController {
 
@@ -214,44 +214,44 @@ public class GanttController {
 		}
 		if (getTaskHolder() != null) {
 			if (isGroupTasksVisible()) {
-				String taskHolderAlias = bean.getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
+				String taskHolderAlias = bean.getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
 				Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
-				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, bean.getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID));
+				Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, bean.getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));
 				Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
 				workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
 				criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
 			} else {
-				criteria.addEqualExpression( bean.getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
+				criteria.addEqualExpression( bean.getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
 			}
 		}
 		
 		if (getFromStartDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_START_DATE), getFromStartDate());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.TASK_START_DATE), getFromStartDate());
 		}
 		if (getToStartDate() != null) {
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_START_DATE), getToStartDate());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.TASK_START_DATE), getToStartDate());
 		}
 		if (getFromDueDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_DUE_DATE), getFromDueDate());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.TASK_DUE_DATE), getFromDueDate());
 		}
 		if (getToDueDate() != null) {
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_DUE_DATE), getToDueDate());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.TASK_DUE_DATE), getToDueDate());
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_REGISTRY_ID), getRegistry().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_REGISTRY_ID), getRegistry().getId());
 		}		
 		if ((getProject() != null) && (getProject().getId() != null)) {
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_PROJECT_ID), getProject().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_PROJECT_ID), getProject().getId());
 		}	
-		loadStatusCriteria(bean.getFieldName(IGroupwareAlias.TASK_STATUS),criteria);
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.TASK_START_DATE));
+		loadStatusCriteria(bean.getFieldName(IEntityAlias.TASK_STATUS),criteria);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.TASK_START_DATE));
 	}
 	
     private Expression obtainTaskHolderWorkGroupsExpression(TaskHolder taskHolder, String alias) throws ManagerBeanException {
         Expression expression = null;
         IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
+        criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
         List<ITransferObject> list = bean.getList(criteria);
         for (ITransferObject to: list ) {
         	TaskHolderWorkgroup thwg = (TaskHolderWorkgroup) to;

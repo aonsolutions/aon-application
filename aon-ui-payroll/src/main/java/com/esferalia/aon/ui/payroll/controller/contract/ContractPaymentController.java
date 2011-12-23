@@ -25,6 +25,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -33,7 +34,6 @@ import com.esferalia.aon.payroll.SystemPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -90,8 +90,8 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			ContractPayment cp = (ContractPayment) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_TYPE), cp.getType());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_CODE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_TYPE), cp.getType());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_CODE));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
 				PaymentConcept pc = (PaymentConcept) to;
@@ -169,30 +169,30 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			IController master = FormUtil.getController("contract");
 			Contract contract = (Contract) master.getTo();
 			Criteria sCriteria = new Criteria();
-			sCriteria.addOrder(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_START_DATE), false);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE), new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE));
+			sCriteria.addOrder(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_START_DATE), false);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE));
 			sCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			Criteria aCriteria = null;
 			if(contract.getAgreementLevelCategory()!=null){
 				aCriteria = new Criteria();
-				aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-				aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
-				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-				expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+				aCriteria.addEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+				aCriteria.addOrder(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
 				aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			}
 			Criteria cCriteria = new Criteria();
-			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
-			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
+			cCriteria.addEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			cCriteria.addOrder(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
 			if(isSearchCurrent()){
-				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-				expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 				cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
 				if(getInactiveDate()!=null){
-					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
-					expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
+					expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 					cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}

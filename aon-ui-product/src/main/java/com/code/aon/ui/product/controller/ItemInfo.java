@@ -19,13 +19,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemInfo {
 
@@ -166,8 +165,8 @@ public class ItemInfo {
 	private void loadStock() throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), item.getId());
-		criteria.addOrder(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID));
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), item.getId());
+		criteria.addOrder(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID));
 		setStockList(stockBean.getList(criteria)); 
 		setStockModel(new ListDataModel(getStockList())); 
 	}
@@ -175,8 +174,8 @@ public class ItemInfo {
 	private void loadAlternatives() throws ManagerBeanException {
 		IManagerBean altItemBean = BeanManager.getManagerBean(ItemAlternative.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ITEM_ID), item.getId());
-		criteria.addOrder(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY));
+		criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), item.getId());
+		criteria.addOrder(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY));
 		setAlternativesList(altItemBean.getList(criteria)); 
 		setAlternativesModel(new ListDataModel(getAlternativesList()));
 	}
@@ -185,9 +184,9 @@ public class ItemInfo {
 		ItemAlternative itemAlternative = (ItemAlternative)getAlternativesModel().getRowData();
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), itemAlternative.getAlternativeItem().getId());
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), itemAlternative.getAlternativeItem().getId());
 		if (getWarehouse() != null) {
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), warehouse.getId());
 		}
 
 		double quantity = 0;

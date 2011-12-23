@@ -225,11 +225,9 @@
 			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
-	<security-role>
-		<role-name>Admin</role-name>
-		<role-name>Guest</role-name>
-		<role-name>User</role-name>
-	</security-role>
+	<security-role><role-name>Admin</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/AonCommunicator</resource-env-ref-name>
 		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>

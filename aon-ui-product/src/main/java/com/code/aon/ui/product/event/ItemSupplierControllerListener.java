@@ -5,13 +5,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemSupplier;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.ItemSupplierController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemSupplierControllerListener extends ControllerAdapter {
 
@@ -35,8 +35,8 @@ public class ItemSupplierControllerListener extends ControllerAdapter {
 	private	Integer calculateNextPriority(Item item) throws ManagerBeanException {
 		IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemSupplierBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
-		Projection projection = Projection.max(itemSupplierBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY));
+		criteria.addEqualExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
+		Projection projection = Projection.max(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 		Object value = itemSupplierBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}

@@ -4,7 +4,6 @@ import com.code.aon.account.Account;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.BankStatement;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
 import com.code.aon.ql.util.ExpressionException;
@@ -12,6 +11,7 @@ import com.code.aon.ui.finance.controller.BankStatementController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementControllerListener extends ControllerAdapter {
 
@@ -61,7 +61,7 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		controller.setOperationDate(bankStatement.getOperationDate());
 
 		try {
-			controller.getCriteria().addOrExpression(controller.getFieldName(IFinanceAlias.BANK_STATEMENT_ID), bankStatement.getId().toString());
+			controller.getCriteria().addOrExpression(controller.getFieldName(IEntityAlias.BANK_STATEMENT_ID), bankStatement.getId().toString());
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		} catch(ExpressionException e) {

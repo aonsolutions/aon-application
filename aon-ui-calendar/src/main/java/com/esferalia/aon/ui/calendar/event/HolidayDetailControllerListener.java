@@ -12,7 +12,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.calendar.Holiday;
-import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.calendar.controller.HolidayController;
 
 public class HolidayDetailControllerListener extends ControllerAdapter {
@@ -31,8 +31,8 @@ public class HolidayDetailControllerListener extends ControllerAdapter {
 		Integer masterId = ((Holiday)controller.getMasterController().getTo()).getId();
 		try {
 			controller.clearCriteria();
-			controller.getCriteria().addEqualExpression(this.getController().getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), masterId);
-			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+			controller.getCriteria().addEqualExpression(this.getController().getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), masterId);
+			controller.getCriteria().addBetweenExpression(this.getController().getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
 		} catch (ManagerBeanException e) {
 			LOGGER.error("error on HolidayDetailControllerListener");
 		}

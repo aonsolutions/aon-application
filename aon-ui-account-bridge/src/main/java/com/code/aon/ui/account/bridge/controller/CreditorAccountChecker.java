@@ -1,13 +1,12 @@
 package com.code.aon.ui.account.bridge.controller;
 
 import com.code.aon.account.bridge.CreditorAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Creditor;
-import com.code.aon.finance.dao.IFinanceAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CreditorAccountChecker extends RegistryAccountChecker  {
 
@@ -21,12 +20,12 @@ public class CreditorAccountChecker extends RegistryAccountChecker  {
 		if (creditorBean == null) {
 			creditorBean = BeanManager.getManagerBean(Creditor.class);
 		}
-		String alias = creditorBean.getFieldName(IFinanceAlias.CREDITOR_REGISTRY_NAME);
+		String alias = creditorBean.getFieldName(IEntityAlias.CREDITOR_REGISTRY_NAME);
 		return alias;
 	}
 	@Override
 	protected String getRegistryAccountIDAlias() throws ManagerBeanException {
-		String alias= getIAccountBean().getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID);
+		String alias= getIAccountBean().getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CREDITOR_ID);
 		return alias;
 	}
 

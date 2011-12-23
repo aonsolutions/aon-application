@@ -21,7 +21,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.enumeration.AlarmSource;
@@ -40,6 +39,7 @@ import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonServer;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class NoticeControllerListener extends ControllerAdapter {
 
@@ -134,8 +134,8 @@ public class NoticeControllerListener extends ControllerAdapter {
     	if (workGroupId == null) {
             IManagerBean managerBean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
-            criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
+            criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_ACTIVE), true);
+            criteria.addOrder(managerBean.getFieldName(IEntityAlias.USER_NAME));
             Iterator<ITransferObject> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 User user = (User)iterator.next();
@@ -145,8 +145,8 @@ public class NoticeControllerListener extends ControllerAdapter {
     	else {
             IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
-            criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
+            criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
+            criteria.addOrder(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_NAME));
             Iterator<ITransferObject> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();

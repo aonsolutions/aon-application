@@ -1,7 +1,6 @@
 package com.code.aon.ui.asset.event;
 
 import com.code.aon.asset.Asset;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -10,6 +9,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityBasicControllerListener extends ControllerAdapter{
 	
@@ -36,12 +36,12 @@ public class ActivityBasicControllerListener extends ControllerAdapter{
 				criteria = this.getController().getCriteria();
 				LoggedUser logged = (LoggedUser)AonUtil.getRegisteredBean("loggedUser");
 				String name = logged.getLoggedUserName();
-				criteria.addEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), name);			
+				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);			
 			} else if(!who.equals("none")){
 				criteria = this.getController().getCriteria();
 				LoggedUser logged = (LoggedUser)AonUtil.getRegisteredBean("loggedUser");
 				String name = logged.getLoggedUserName();
-				criteria.addEqualExpression(getController().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO), name);
+				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);
 			}
 		} catch (ManagerBeanException e) {
 			// nada

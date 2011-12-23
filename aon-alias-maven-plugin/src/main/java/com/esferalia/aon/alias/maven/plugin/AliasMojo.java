@@ -18,17 +18,12 @@ package com.esferalia.aon.alias.maven.plugin;
 
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -45,13 +40,14 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
  * 
  * @goal generate-alias
  * @phase process-sources
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile+runtime
  * @requiresProject
  * 
  */
 public class AliasMojo extends AbstractMojo {
 	
-	private static final String ENTITY_PACKAGE = "com.code.aon.entity.master."; 
+	private static final String ENTITY_PACKAGE = "com.esferalia.aon.entity.master."; 
+	private static final String MESSAGING_PACKAGE = "com.code.aon.messaging.";
 
 	/**
 	 * The Maven Project Object
@@ -88,12 +84,6 @@ public class AliasMojo extends AbstractMojo {
 	 * @parameter
 	 */
 	private String excludes;
-
-	/**
-	 * @parameter default-value="false"
-	 * 
-	 */
-	private Boolean includeGeneratedEntities;
 
 	/**
 	 * @parameter default-value="${project.build.directory}/generated-sources"
@@ -155,13 +145,6 @@ public class AliasMojo extends AbstractMojo {
 		this.outputDir = outputDir;
 	}
 	
-	public Boolean getIncludeGeneratedEntities() {
-		return includeGeneratedEntities;
-	}
-	public void setIncludeGeneratedEntities(Boolean includeGeneratedEntities) {
-		this.includeGeneratedEntities = includeGeneratedEntities;
-	}
-
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
@@ -182,41 +165,24 @@ public class AliasMojo extends AbstractMojo {
 			List<String> entityClasses = new LinkedList<String>();
 			
 			HibernateUtil.getSessionFactory(sessionFactoryName);
-			if (getIncludeGeneratedEntities()) {
-				Map<?,ClassMetadata> map = HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName()).getAllClassMetadata();
-				for (ClassMetadata cmd : map.values()) {
-					String entityName = cmd.getEntityName();
-					if (!entityName.startsWith(ENTITY_PACKAGE) && !entityClasses.contains(entityName)) {
-						entityClasses.add(cmd.getEntityName());
-						aonClasses.add(cmd.getEntityName());
-						getLog().info(" Entity Class Found ..: " + cmd.getEntityName());
-					}
-				}
-			} else {
-				List<String> sourceFolders = project.getCompileSourceRoots();
-				for (int i = 0; i < sourceFolders.size(); i++) {
-					List<String> sourceFolderAonClasses = getAonEntityClasses(sourceFolders.get(i));
-					aonClasses.addAll(sourceFolderAonClasses);
-					for (String aonClass : sourceFolderAonClasses) {
-						String[] tokens = StringUtils.split(aonClass, ".");
-						String entityClass = ENTITY_PACKAGE + tokens[tokens.length - 1];
-						entityClasses.add(aonClass);
-						getLog().info(" Entity Class Found ..: " + entityClass + " from " + aonClass);
-					}
+			Map<?,ClassMetadata> map = HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName()).getAllClassMetadata();
+			for (ClassMetadata cmd : map.values()) {
+				String entityName = cmd.getEntityName();
+				if (!entityName.startsWith(ENTITY_PACKAGE) &&
+					!entityName.startsWith(MESSAGING_PACKAGE) &&
+					!entityClasses.contains(entityName)) {
+					entityClasses.add(cmd.getEntityName());
+					aonClasses.add(cmd.getEntityName());
+					getLog().info(" Entity Class Found ..: " + cmd.getEntityName());
 				}
 			}
-		
 			Collections.sort(entityClasses);
 			AliasWriter writer = new AliasWriter(getTargetPackage());
 			String[] entityClassesToArray= entityClasses.toArray (new String [entityClasses.size ()]);
-			String[] aonClassesToArray = aonClasses.toArray (new String [aonClasses.size ()]);
-			writer.write(entityClassesToArray,aonClassesToArray, file);
-			getLog().info("---------------");
-			getLog().info("---------------");
-			getLog().info("Si has creado un @Entity nuevo, añádelo al hibernate.cfg del proyecto aon-aliss-maven-plugin, porque si no, NO ME ENTERO!.");
-			getLog().info("---------------");
+			writer.write(entityClassesToArray, file);
 			getLog().info("---------------");
 			getLog().info("Alias generados");
+			getLog().info("---------------");
 
 		} catch (IOException e) {
 			getLog().error(e);
@@ -226,53 +192,6 @@ public class AliasMojo extends AbstractMojo {
 			throw new MojoExecutionException(e.getMessage(), e);
 		} finally {
 			HibernateUtil.closeSession(sessionFactoryName);
-		}
-	}
-
-	private List<String> getAonEntityClasses(String sourceDir) throws IOException {
-		String[] packages = StringUtils.split(getSourcePackages(), ',');
-		List<String> classes = new LinkedList<String>();
-		for (String pack : packages ) {
-			pack = StringUtils.trim(pack);
-			String packageFolder = sourceDir + "/" + StringUtils.replace(pack,".", "/");
-			File folder = new File(packageFolder);
-			File[] files = folder.listFiles( new JavaFileFilter()); 
-			if (files != null) {
-				for (File classFile :  folder.listFiles( new JavaFileFilter())) {
-					LineNumberReader reader = new LineNumberReader(new FileReader(classFile));
-					while (reader.ready()) {
-						String line = reader.readLine();
-						if (StringUtils.contains(line, "@Entity")) {
-							String filename = FilenameUtils.removeExtension(classFile.getName());
-							if (!isExclude(filename)) {
-								classes.add(pack+ "." + filename);
-								break;
-							}
-						}
-					}
-					reader.close();
-				}
-			}
-		}
-		return classes;
-	}
-
-	private boolean isExclude(String filename) {
-		if (StringUtils.isNotBlank(getExcludes())) {
-			String[] excludePojos = StringUtils.split(getExcludes(),',');
-			for (String excludePojo: excludePojos) {
-				if (StringUtils.equals(filename, excludePojo)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public class JavaFileFilter implements FileFilter {
-		@Override
-		public boolean accept(File file) {
-			return (file.getName().toLowerCase().endsWith("java"));
 		}
 	}
 }

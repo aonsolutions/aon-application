@@ -2,12 +2,12 @@ package com.code.aon.ui.geozone.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoTree;
-import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class GeotreeParentControllerListener extends ControllerAdapter {
 
@@ -16,7 +16,7 @@ public class GeotreeParentControllerListener extends ControllerAdapter {
 		IController geotreeParentController = event.getController();
 		try {
 			Criteria criteria = geotreeParentController.getCriteria();
-			criteria.addNullExpression(geotreeParentController.getManagerBean().getFieldName(IGeoZoneAlias.GEO_TREE_PARENT));
+			criteria.addNullExpression(geotreeParentController.getManagerBean().getFieldName(IEntityAlias.GEO_TREE_PARENT));
 			geotreeParentController.setCriteria(criteria);
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e);

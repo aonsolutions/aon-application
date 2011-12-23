@@ -26,7 +26,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -58,8 +58,8 @@ public class ContractDeductionController extends ContractDetailVariableControlle
 			ContractDeduction cd = (ContractDeduction) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(DeductionConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.DEDUCTION_CONCEPT_TYPE), cd.getType());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.DEDUCTION_CONCEPT_CODE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DEDUCTION_CONCEPT_TYPE), cd.getType());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.DEDUCTION_CONCEPT_CODE));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
 				DeductionConcept pc = (DeductionConcept) to;
@@ -76,15 +76,15 @@ public class ContractDeductionController extends ContractDetailVariableControlle
 			this.clearCriteria();
 			IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 			Contract contract = (Contract) master.getTo();
-			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
 			if(isSearchCurrent()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
-				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
 				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), getInactiveDate());
-					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE), getInactiveDate());
+					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_DEDUCTION_END_DATE));
 					getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}

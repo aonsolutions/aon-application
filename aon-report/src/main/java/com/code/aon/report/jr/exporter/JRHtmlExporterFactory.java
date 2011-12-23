@@ -3,6 +3,7 @@ package com.code.aon.report.jr.exporter;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
@@ -18,24 +19,18 @@ import com.code.aon.report.ReportException;
  */
 public class JRHtmlExporterFactory implements IJRExporterFactory {
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.report.jr.exporter.IJRExporterFactory#getJRExporter()
-	 */
+	@Override
 	public JRExporter getJRExporter() {
 		return new JRHtmlExporter();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.report.jr.exporter.IJRExporterFactory#fillJRParametersMap(java.util.Map)
-	 */
-	public void fillJRParametersMap(Map<Object,Object> map) throws ReportException {
-		map
-				.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN,
-						Boolean.FALSE);
-		map.put(JRHtmlExporterParameter.HTML_HEADER, getHtmlHeader());
-		map.put(JRHtmlExporterParameter.HTML_FOOTER, getHtmlFooter());
-		map.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
-		map.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.FALSE);
+	@Override
+	public void fillJRParametersMap(Map<String,Object> fillMap, Map<JRExporterParameter,Object> exporterMap) throws ReportException {
+		exporterMap.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN,Boolean.FALSE);
+		exporterMap.put(JRHtmlExporterParameter.HTML_HEADER, getHtmlHeader());
+		exporterMap.put(JRHtmlExporterParameter.HTML_FOOTER, getHtmlFooter());
+		exporterMap.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
+		fillMap.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.FALSE);
 	}
 
 	/**

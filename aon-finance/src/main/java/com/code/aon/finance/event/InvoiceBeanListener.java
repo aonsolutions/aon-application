@@ -10,7 +10,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -18,6 +17,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -40,7 +40,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 				if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
@@ -53,7 +53,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 			for (ITransferObject ito : financeBean.getList(criteria)) {
 				Finance finance = (Finance)ito;
 				finance.setRegistry(invoice.getRegistry());

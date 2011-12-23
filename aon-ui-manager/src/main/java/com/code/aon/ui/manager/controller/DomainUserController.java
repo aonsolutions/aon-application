@@ -43,7 +43,6 @@ import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -65,6 +64,7 @@ import com.code.aon.ui.webmail.controller.SignatureController;
 import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserController extends LdapBasicController implements IManagerConstants {
 
@@ -302,7 +302,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Scope.class);
 		Criteria scopeCriteria = new Criteria();
-		scopeCriteria.addEqualExpression(bean.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
+		scopeCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION), scopeName);
 		List<ITransferObject> scopes = bean.getList(scopeCriteria);
 		if (! scopes.isEmpty() ) {
 			Scope scope = (Scope) scopes.get(0);
@@ -314,7 +314,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private void registerWorkGroup( String userUid, String workGroupName ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(WorkGroup.class);
 		Criteria wgCriteria = new Criteria();
-		wgCriteria.addEqualExpression(bean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION), workGroupName);
+		wgCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION), workGroupName);
 		List<ITransferObject> wgs = bean.getList(wgCriteria);
 		WorkGroup workGroup = null;
 		if (! wgs.isEmpty() ) {
@@ -380,7 +380,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		User user = null;
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
 		if ( list.isEmpty() ) {
 			user = initDBUser(uid);
@@ -397,8 +397,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 		IController userScopeController = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
 		IManagerBean bean = userScopeController.getManagerBean();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_SCOPE_SCOPE_ID), scope.getId());
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_ID), scope.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
 		if ( bean.getCount(criteria) == 0 ) {
 			UserScope userScope = new UserScope();
 			userScope.setScope(scope);
@@ -411,8 +411,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 		IController userWGController = FormUtil.getController(USER_WORK_GROUP_CONTROLLER_NAME);
 		IManagerBean bean = userWGController.getManagerBean();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroup.getId());
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_ID), user.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroup.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_ID), user.getId());
 		if ( bean.getCount(criteria) == 0 ) {
 			UserWorkGroup uwg = new UserWorkGroup();
 			uwg.setWorkGroup(workGroup);
@@ -464,7 +464,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	private void deactiveDBUser( String uid ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), uid);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_LOGIN), uid);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			User dbUser = (User) list.get(0);

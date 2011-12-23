@@ -9,8 +9,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.product.ItemAlternative;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemAlternativeBeanListener extends ManagerBeanListenerAdapter {
 
@@ -21,10 +21,10 @@ public class ItemAlternativeBeanListener extends ManagerBeanListenerAdapter {
 		ItemAlternative altItem = (ItemAlternative)event.getTo();
 		IManagerBean altItemBean = BeanManager.getManagerBean(ItemAlternative.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
-		criteria.addNotEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
-		criteria.addGreaterThanOrEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
-		criteria.addOrder(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY));
+		criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
+		criteria.addNotEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
+		criteria.addGreaterThanOrEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
+		criteria.addOrder(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY));
 		List<ITransferObject> list = altItemBean.getList(criteria);
 		int index = altItem.getPriority();
 		for (ITransferObject to : list) {
@@ -45,14 +45,14 @@ public class ItemAlternativeBeanListener extends ManagerBeanListenerAdapter {
 			ItemAlternative altItem = (ItemAlternative)event.getTo();
 			IManagerBean altItemBean = BeanManager.getManagerBean(ItemAlternative.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
-			criteria.addNotEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
-			criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
+			criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
+			criteria.addNotEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
+			criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
 			if (altItemBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
-				criteria.addNotEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
-				criteria.addOrder(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY));
+				criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
+				criteria.addNotEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
+				criteria.addOrder(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY));
 				List<ITransferObject> list = altItemBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
@@ -75,10 +75,10 @@ public class ItemAlternativeBeanListener extends ManagerBeanListenerAdapter {
 		ItemAlternative altItem = (ItemAlternative)evt.getTo();
 		IManagerBean altItemBean = BeanManager.getManagerBean(ItemAlternative.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
-		criteria.addNotEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
-		criteria.addGreaterThanOrEqualExpression(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
-		criteria.addOrder(altItemBean.getFieldName(IProductAlias.ITEM_ALTERNATIVE_PRIORITY));
+		criteria.addEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ITEM_ID), altItem.getItem().getId());
+		criteria.addNotEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_ID), altItem.getId());
+		criteria.addGreaterThanOrEqualExpression(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY), altItem.getPriority());
+		criteria.addOrder(altItemBean.getFieldName(IEntityAlias.ITEM_ALTERNATIVE_PRIORITY));
 		List<ITransferObject> list = altItemBean.getList(criteria);
 		int index = altItem.getPriority() + 1;
 		for (ITransferObject to : list) {

@@ -12,6 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<jasperReportsVersion>4.1.2</jasperReportsVersion>
 	</properties>
 
 	<modules>
@@ -33,7 +34,7 @@
 		<module>aon-ui-db-manager</module>
 		<module>aon-maven-plugin</module>
 		<module>aon-sql-payroll</module>
-
+		
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
@@ -55,7 +56,9 @@
 		<module>aon-ui-manager</module>
 
 		<!-- ENTITY -->
+<!--
 		<module>aon-account</module>
+-->
 		<module>aon-company</module>
 		<module>aon-config</module>
 		<module>aon-customer</module>
@@ -180,6 +183,7 @@
 		<module>aon-web-ebackoffice</module>
 		<module>aon-web-ecommerce</module>
 -->
+		<module>aon.mock.entity.maven.plugin</module>
 	</modules>
 
 	<scm>

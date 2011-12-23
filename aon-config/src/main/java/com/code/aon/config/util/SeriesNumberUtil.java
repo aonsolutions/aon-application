@@ -12,8 +12,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Clase de utilidad para la manipulación de la serie y el número de los
@@ -33,7 +33,7 @@ public class SeriesNumberUtil {
 	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
 		Iterator<ITransferObject> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (Series)iter.next();

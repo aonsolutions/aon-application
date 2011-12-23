@@ -19,7 +19,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class FanListController extends BasicController {
@@ -83,14 +83,14 @@ public class FanListController extends BasicController {
 			if(list!=null && !list.isEmpty()){
 				for(ITransferObject to: list){
 					FanBatchDetail d = (FanBatchDetail) to;
-					getCriteria().addNotEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
+					getCriteria().addNotEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ID), d.getCcc().getId());
 				}
 			}
 			if(getGeozone()!=null){
-				getCriteria().addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_GEOZONE_ID), getGeozone().getId());
+				getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_GEOZONE_ID), getGeozone().getId());
 			}
 			if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-				getCriteria().addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());			
+				getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());			
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);

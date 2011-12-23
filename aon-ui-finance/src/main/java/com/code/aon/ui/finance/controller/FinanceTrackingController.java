@@ -5,11 +5,9 @@ import java.util.Iterator;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,7 +17,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
@@ -28,6 +25,7 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingController extends LinesController implements IFinanceConstants {
 
@@ -84,7 +82,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 				} else if (tracking.isRecorded() && AonUtil.getRoleManager().isAccountingOperator()) {
 					IManagerBean entryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
+					criteria.addEqualExpression(entryFinanceTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
 					Iterator<?> iterator = entryFinanceTrackingBean.getList(criteria).iterator();
 					if (iterator.hasNext()) {
 						AccountEntryFinanceTracking entryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
@@ -92,7 +90,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 						IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 						AccountEntry entry = entryFinanceTracking.getAccountEntry();
 						criteria = new Criteria();
-						criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+						criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
 						return (entryDetailBean.getCount(criteria) <= 2);
 					}
 				}
@@ -128,9 +126,9 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		Finance finance = tracking.getFinance();
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-		criteria.addLessThanExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), tracking.getId());
-		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
+		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addLessThanExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), tracking.getId());
+		criteria.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), false);
 		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			iterator.next();
@@ -139,9 +137,9 @@ public class FinanceTrackingController extends LinesController implements IFinan
 				if (batchedTracking.isBatched()) {
 					IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 					criteria = new Criteria();
-					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-					criteria.addOrder(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_ID), false);
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+					criteria.addOrder(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_ID), false);
 					for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
 						FinanceBatchDetail detail = (FinanceBatchDetail)ito;
 						detail.setStatus(FinanceStatus.PAID);
@@ -168,7 +166,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	private FinanceBatch obtainFinanceBatch(FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), tracking.getFinance().getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IEntityAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), tracking.getFinance().getId());
 		for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
 			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)ito;
 			if (tracking.getDescription().indexOf(": " + fBatchDetail.getFinanceBatch().getId() + " - ") >= 0) {

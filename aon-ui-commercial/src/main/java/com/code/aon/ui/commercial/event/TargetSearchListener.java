@@ -10,7 +10,6 @@ import org.hibernate.Session;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
@@ -24,6 +23,7 @@ import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetSearchListener extends RegistrySearchListener implements ICommercialConstants {
 
@@ -94,7 +94,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getTargetStatuses())) {
-			String status = getController().resolveAlias(ICommercialAlias.TARGET_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.TARGET_STATUS);
 			addEnumToCriteria(criteria, status, getTargetStatuses());
 		}
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {

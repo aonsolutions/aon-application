@@ -8,7 +8,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class WarehouseBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -30,9 +30,9 @@ public class WarehouseBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 				Criteria criteria = new Criteria();
 				if (warehouse.getId() != null) {
-					criteria.addNotEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_ID), warehouse.getId());
+					criteria.addNotEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_ID), warehouse.getId());
 				}
-				criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), warehouse.getWorkPlace().getId());
+				criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), warehouse.getWorkPlace().getId());
 				if (warehouseBean.getCount(criteria) > 0) {
 					throw new ManagerBeanVetoListenerException("El Centro de Trabajo ya tiene Almacen asignado.");
 				}

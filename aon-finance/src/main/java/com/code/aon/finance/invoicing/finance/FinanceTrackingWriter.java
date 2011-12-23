@@ -14,10 +14,10 @@ import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingWriter {
 
@@ -61,9 +61,9 @@ public class FinanceTrackingWriter {
     	try {
 			IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), type);
-			criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID),false);
+			criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+			criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), type);
+			criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID),false);
 			Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria,0,1).iterator();
 			if(iter.hasNext()){
 				FinanceTracking tracking = (FinanceTracking)iter.next();
@@ -77,8 +77,8 @@ public class FinanceTrackingWriter {
 	public static boolean isLastTracking(FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
-		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
+		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
+		criteria.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), false);
 		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			FinanceTracking financeTracking = (FinanceTracking)iterator.next();
@@ -94,8 +94,8 @@ public class FinanceTrackingWriter {
 	private static int getReturnedTimes(Finance finance) throws ManagerBeanException {
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
+		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
 		return (trackingBean.getCount(criteria));
 	}
 

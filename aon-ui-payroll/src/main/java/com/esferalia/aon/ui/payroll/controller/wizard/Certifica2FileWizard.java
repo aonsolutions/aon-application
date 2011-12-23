@@ -37,7 +37,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.file.CertificateWriter;
 
@@ -290,16 +290,16 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
 			Criteria criteria = new Criteria();
 			if (getFromDate() != null) {
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE),getFromDate());
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATE),getFromDate());
 			}
 			if (getToDate() != null) {
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE),getToDate());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATE),getToDate());
 			}
 			if (!ArrayUtils.isEmpty(getStatus())) {
-				String status = bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_STATUS);
+				String status = bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_STATUS);
 				addEnumToCriteria(criteria, status, getStatus());
 			}
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE), false);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATE), false);
 			List<?> list = bean.getList(criteria);
 			setBatchList((List<Certifica2Batch>) list);
 		} catch (ManagerBeanException e) {

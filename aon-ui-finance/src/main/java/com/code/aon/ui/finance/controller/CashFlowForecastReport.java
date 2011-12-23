@@ -20,7 +20,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +27,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.CashFlowForecast;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -42,6 +40,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class CashFlowForecastReport {
@@ -276,7 +275,7 @@ public class CashFlowForecastReport {
 			if  ("Pr.".equals(cfr.getType())) {
 				CashFlowForecastController cffc = (CashFlowForecastController) FormUtil.getController(IFinanceConstants.CASH_FLOW_FORECAST_CONTROLLER_NAME);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(cffc.getManagerBean().getFieldName(IFinanceAlias.CASH_FLOW_FORECAST_ID), cfr.getId());
+				criteria.addEqualExpression(cffc.getManagerBean().getFieldName(IEntityAlias.CASH_FLOW_FORECAST_ID), cfr.getId());
 				cffc.setCriteria(criteria);
 				cffc.onSearch(null);
 				cffc.getModel().setRowIndex(0);
@@ -286,7 +285,7 @@ public class CashFlowForecastReport {
 				FinanceController fc = (FinanceController) FormUtil.getController(IFinanceConstants.FINANCE_CONTROLLER_NAME);
 				fc.setPayment(cfr.isPayment());
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(fc.getManagerBean().getFieldName(IFinanceAlias.FINANCE_ID), cfr.getId());
+				criteria.addEqualExpression(fc.getManagerBean().getFieldName(IEntityAlias.FINANCE_ID), cfr.getId());
 				fc.setCriteria(criteria);
 				fc.onSearch(null);
 				fc.getModel().setRowIndex(0);
@@ -418,8 +417,8 @@ public class CashFlowForecastReport {
 	private List<CashFlowReport> loadCashFlows() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(CashFlowForecast.class);
 		Criteria c = new Criteria();
-		String fromDateAlias = bean.getFieldName(IFinanceAlias.CASH_FLOW_FORECAST_START_DATE);
-		String toDateAlias = bean.getFieldName(IFinanceAlias.CASH_FLOW_FORECAST_DUE_DATE);
+		String fromDateAlias = bean.getFieldName(IEntityAlias.CASH_FLOW_FORECAST_START_DATE);
+		String toDateAlias = bean.getFieldName(IEntityAlias.CASH_FLOW_FORECAST_DUE_DATE);
 		c.addLessThanOrEqualExpression(fromDateAlias, getToDate());
 		Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(toDateAlias, getFromDate());
 		Expression exp2 = ExpressionUtilities.getNullExpression(toDateAlias);
@@ -495,12 +494,12 @@ public class CashFlowForecastReport {
 	private Collection<? extends CashFlowReport> loadPendingFinances() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
 		List<CashFlowReport> flows = new LinkedList<CashFlowReport>();		
 		if (!isPendingFinanceIncluded()) {
-			c.addGreaterThanOrEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), getFromDate());	
+			c.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), getFromDate());	
 		}
-		c.addLessThanOrEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), getToDate());
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), getToDate());
 		List<ITransferObject> list = bean.getList(c);
 		for (ITransferObject to:list) {
 			Finance finance = (Finance) to;
@@ -550,10 +549,10 @@ public class CashFlowForecastReport {
 	private Collection<? extends CashFlowReport> loadReturnedFinances() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Finance.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
 		List<CashFlowReport> flows = new LinkedList<CashFlowReport>();		
 		List<ITransferObject> list = bean.getList(c);
-		c.addLessThanOrEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), getToDate());
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), getToDate());
 		for (ITransferObject to:list) {
 			Finance finance = (Finance) to;
 			CashFlowReport cfr = new CashFlowReport();

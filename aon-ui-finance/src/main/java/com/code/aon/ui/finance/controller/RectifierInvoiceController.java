@@ -21,12 +21,10 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -35,6 +33,7 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RectifierInvoiceController implements IFinanceConstants {
 
@@ -254,8 +253,8 @@ public class RectifierInvoiceController implements IFinanceConstants {
 	private String obtainRectificationSeries() throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_RECTIFICATION), new Boolean(true));
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
 		if (seriesBean.getCount(criteria) == 1) {
 			return ((Series)seriesBean.getList(criteria).get(0)).getId();
 		}
@@ -299,7 +298,7 @@ public class RectifierInvoiceController implements IFinanceConstants {
 
 			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), firstRectifierId, rectifier.getId());
+			criteria.addBetweenExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), firstRectifierId, rectifier.getId());
 			invoiceController.onEditSearch(event);
 			invoiceController.setCriteria(criteria);
 			invoiceController.onSearch(event);

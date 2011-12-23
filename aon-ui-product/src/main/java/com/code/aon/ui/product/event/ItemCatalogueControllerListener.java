@@ -9,7 +9,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.CatalogueItem;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -18,6 +17,7 @@ import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ProductCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemCatalogueControllerListener extends ControllerAdapter implements IItemMessages, IItemConstants {
 
@@ -42,8 +42,8 @@ public class ItemCatalogueControllerListener extends ControllerAdapter implement
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_ITEM_ID), catalogueItem.getItem().getId());
-			criteria.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueItem.getCatalogue().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_ID), catalogueItem.getItem().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueItem.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
 				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DEFINED_FOR_CATALOGUE_ERROR));
 			}

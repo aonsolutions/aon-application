@@ -25,12 +25,12 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxManager {
 
@@ -297,8 +297,8 @@ public class VatTaxManager {
 		}
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), params.getYear());
-		String periodAlias = bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), params.getYear());
+		String periodAlias = bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD);
 
 		int i = params.getPeriod().ordinal(); 
 		if (i == 0 ) {
@@ -348,7 +348,7 @@ public class VatTaxManager {
 		VatTaxDetailComparator comparator = new VatTaxDetailComparator();
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_ID), params.getVatTax().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), params.getVatTax().getId());
 		List<?> list = bean.getList(criteria);
 		List<VatTaxDetail> details = (List<VatTaxDetail>) list;
 		Collections.sort(details, comparator);
@@ -360,11 +360,11 @@ public class VatTaxManager {
 	public List<VatTaxDetail>  getPeriodDeclaredDetails(VatTaxDetail detail) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), detail.getVatTax().getYear());
-		criteria.addLessThanExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), detail.getVatTax().getPeriod());
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_KEY), detail.getKey());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), detail.getVatTax().getYear());
+		criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), detail.getVatTax().getPeriod());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY), detail.getKey());
 		if (detail.getKey().isPercentVisible()) {
-			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_PERCENT), detail.getPercent());	
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_PERCENT), detail.getPercent());	
 		}
 		List<?> list = bean.getList(criteria);
 		return (List<VatTaxDetail>) list;

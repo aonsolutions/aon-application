@@ -23,7 +23,7 @@ import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -114,10 +114,10 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 			this.clearCriteria();
 			IController master = FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			Contract contract = (Contract) master.getTo();
-			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
 			if(isSearchCurrent()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			}
 		} catch (ManagerBeanException e) {

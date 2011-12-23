@@ -9,20 +9,18 @@ import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountControllerCascadeListener extends ControllerAdapter {
 
@@ -64,7 +62,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	private int obtainAccountEntryDetailCount(Account account) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), account.getId());
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), account.getId());
 		return accountEntryDetailBean.getCount(criteria); 
 	}
 	
@@ -73,20 +71,20 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 			String prefix = account.getCode().substring(0, 5);
 			if(prefix.equals(AccountConstants.BANK_ACCOUNT_PREFIX)){
 				IManagerBean bankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
-				deleteLink(bankAccountBean, IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID, account.getId());
+				deleteLink(bankAccountBean, IEntityAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID, account.getId());
 			}else if(prefix.equals(AccountConstants.CUSTOMER_ACCOUNT_PREFIX)){
 				IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
-				deleteLink(customerAccountBean, IAccountBridgeAlias.CUSTOMER_ACCOUNT_ACCOUNT_ID, account.getId());
+				deleteLink(customerAccountBean, IEntityAlias.CUSTOMER_ACCOUNT_ACCOUNT_ID, account.getId());
 			}else if(prefix.equals(AccountConstants.SUPPLIER_ACCOUNT_PREFIX)){
 				IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
-				deleteLink(supplierAccountBean, IAccountBridgeAlias.SUPPLIER_ACCOUNT_ACCOUNT_ID, account.getId());
+				deleteLink(supplierAccountBean, IEntityAlias.SUPPLIER_ACCOUNT_ACCOUNT_ID, account.getId());
 			}else if(prefix.equals(AccountConstants.CREDITOR_ACCOUNT_PREFIX)){
 				IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
-				deleteLink(creditorAccountBean, IAccountBridgeAlias.CREDITOR_ACCOUNT_ACCOUNT_ID, account.getId());
+				deleteLink(creditorAccountBean, IEntityAlias.CREDITOR_ACCOUNT_ACCOUNT_ID, account.getId());
 			} 
 			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), account.getId());
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_ACCOUNT_ID), account.getId());
 			List<?> list = productAccountBean.getList(criteria);
 			Iterator<?> iter = list.iterator();
 			while (iter.hasNext()) {

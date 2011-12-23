@@ -20,12 +20,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.InvoiceFinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceFinanceControllerListener extends ControllerAdapter {
 
@@ -89,7 +89,7 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 	private RegistryPayMethod obtainRegistryPayMethod(Registry registry) throws ManagerBeanException {
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), registry.getId());
 		Iterator<?> iterator = rPayMethodBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryPayMethod)iterator.next();
