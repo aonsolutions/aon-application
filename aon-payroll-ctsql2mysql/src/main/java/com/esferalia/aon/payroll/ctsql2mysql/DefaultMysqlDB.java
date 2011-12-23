@@ -402,7 +402,18 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				null );		// TODO: ¿ Calendar ? 
 		
 		
-		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
+		super.insertCustomer(
+				registry,
+				null, 
+				false, 
+				false,
+				null,
+				status,
+				null,  
+				scope,
+				false, 
+				true,
+				true);
 
 		super.insertTarget(registry, null, (short) 0, false, false, (short)0, status, scope );
 		

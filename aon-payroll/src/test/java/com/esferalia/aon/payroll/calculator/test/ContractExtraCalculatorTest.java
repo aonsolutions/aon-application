@@ -72,8 +72,9 @@ public class ContractExtraCalculatorTest extends AbstractSalaryCalculatorTest{
 	protected Criteria getCriteria() {
 		Criteria criteria =  
 				super.getCriteria();
+		/*
 		criteria.addEqualExpression(SalaryColumns.EMPLOYEE_DOCUMENT, 
-				"08968656J" /*"00839733A"*/);
+				"08968656J" ); */ 
 		return criteria;
 	}
 	

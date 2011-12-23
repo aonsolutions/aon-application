@@ -3,20 +3,28 @@
  */
 package com.esferalia.aon.payroll.calculator.test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
@@ -28,14 +36,63 @@ import com.esferalia.aon.salary.expression.Period;
  * @author rtrepiana
  *
  */
-public class ContractSalaryCalculatorTest extends AbstractCalculatorTest{
+public class ContractSalaryCalculatorTest {
 	
+	final static Logger LOGGER = 
+		LoggerFactory.getLogger(ContractSalaryCalculatorTest.class);
 	
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	public static void debug ( String format, Object ...args){
+		LOGGER.debug(format, args);
+	}
+	public static void info ( String format, Object ...args){
+		LOGGER.info(format, args);
+	}
+	public static void error ( String format, Object ...args){
+		LOGGER.error(format, args);
+	}
+	ex
+	private Connection connection;
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		String url = "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org?autoReconnect=true";
+		String usr = "dbuser"; 
+		String psw = "serubd2000";
+		Class.forName("com.mysql.jdbc.Driver");
+		connection = DriverManager.getConnection(url,usr ,psw );
+}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@After
+	public void tearDown() throws Exception {
+		connection.close();
+	}
+
 	/**
 	 * Test method for {@link com.esferalia.aon.payroll.calculator.ContractSalaryCalculator#calculate(com.esferalia.aon.salary.calculator.ISalaryCalculatorContext)}.
 	 * @throws com.code.aon.ql.util.ExpressionException 
 	 */
-	public void testSalary() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
+	@Test
+	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
 
 		SQLSalaryBuilderTester salaryBuilderTester = 
 			new SQLSalaryBuilderTester(connection);
@@ -47,29 +104,30 @@ public class ContractSalaryCalculatorTest extends AbstractCalculatorTest{
 		
 		SimpleDateFormat dateFormat = 
 			new SimpleDateFormat("dd/MM/yyyy");
-		Date start = dateFormat.parse("01/01/2011");
-		Date end = dateFormat.parse("31/01/2011");
+		Date start = dateFormat.parse("01/02/2011");
+		Date end = dateFormat.parse("28/02/2011");
 		
 		Period period = new Period(start, end); //getStartAndEndDate();
 		
-		info("testSalary {}:{}",period.getStart(), period.getEnd());
+		info("testCalculate {}:{}",period.getStart(), period.getEnd());
 		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
 				CustomerStatus.ACTIVE );
 		
+		//criteria.addEqualExpression("person_registry.document", "01096976Z"); // ???
 		
-		//criteria.addEqualExpression("person_registry.document", "51367458V");
-		
+		//criteria.addEqualExpression("person_registry.document", "47307311Z"); // ???
+		//criteria.addEqualExpression("person_registry.document", "51930889V"); // ???		
+		//criteria.addEqualExpression("person_registry.document", "05853279D"); // MAYOR DE 65		
+		//criteria.addEqualExpression("person_registry.document", "05414599P"); //DIAS DE BAJA...
 		
 		SQLContractSalaryCalculatorContext sqlCtx = 
 			new SQLContractSalaryCalculatorContext(connection, 
 					period.getStart(), 
 					period.getEnd(),
-					period.getEnd(), //Calendar.getInstance().getTime(),
-					criteria, 
-					ISQLContractSalaryCalculatorContext.OLDER);
-		
+					Calendar.getInstance().getTime(),
+					criteria );
 		
 		int count ;
 		for ( count = 0;  sqlCtx.next() ; count++ ) {
@@ -91,6 +149,7 @@ public class ContractSalaryCalculatorTest extends AbstractCalculatorTest{
 		}
 		info("salarys {} ",count);
 	}
+	
 	
 	private Period getStartAndEndDate() 
 	throws SQLException {

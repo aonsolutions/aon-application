@@ -23,7 +23,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 	
 	
 	public static String formatCode(String cdg) {
-		return String.format("P%s", cdg );
+		return cdg == null || cdg.trim().isEmpty() ? null : String.format("P%s", cdg );
 	}
 	
 	

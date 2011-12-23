@@ -23,7 +23,6 @@ import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler.AbstractVariableData;
 
 public class ContractDeductionVariableHandler extends ContractDetailVariableHandler {
 	
@@ -35,7 +34,7 @@ public class ContractDeductionVariableHandler extends ContractDetailVariableHand
 
 	@Override
 	public void resetVariable() {
-		setData(new AbstractVariableData());
+		setData(new VariableData());
 		getData().setVariableData(new ContractData());
 		((ContractData)getData().getVariableData()).setContract(((ContractDeduction) getController().getTo()).getContract());
 		
@@ -57,7 +56,7 @@ public class ContractDeductionVariableHandler extends ContractDetailVariableHand
 						List<ITransferObject> list = existingContractData(s, contract);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
-								AbstractVariableData data = new AbstractVariableData();
+								VariableData data = new VariableData();
 								data.setVariableData((IVariableData) to);
 								dataList.add(data);
 							}
@@ -75,7 +74,7 @@ public class ContractDeductionVariableHandler extends ContractDetailVariableHand
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							
 							
-							AbstractVariableData d = new AbstractVariableData();
+							VariableData d = new VariableData();
 							d.setVariableData((IVariableData) data);
 							if(o==null){
 								undefined.add(d);

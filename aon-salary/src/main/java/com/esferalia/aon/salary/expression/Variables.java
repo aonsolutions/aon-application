@@ -253,7 +253,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 
 	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end) 
-		throws UndefinedVariableException
+		throws UndefinedVariablesException
 	{
 		List<PeriodMap> list =
 			new LinkedList<PeriodMap>();
@@ -264,7 +264,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		for (String var : vars) {
 			List<Period> varPeriods = getPeriods(var);
 			if ( varPeriods == null ) {
-				continue;//throw new UndefinedVariableException(var);
+				continue;//throw new UndefinedVariablesException(var);
 			}
 			List<Period> intersectedPeriods = 
 				Period.intersect(periods, varPeriods);

@@ -141,6 +141,8 @@ public enum ContextVariable implements IResourceable{
 	
 	;
 	
+	public static final String CONTEXT = "CONTEXT";
+
 	public static final String CHECK = "CHECK";
 	public static final String MONTHS = "MESES";
 	public static final String WARNING = "AVISO";

@@ -64,6 +64,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
 	
+	public static final String SALE_INVOICE_REPORT_KEY_PARAM = "REPORT_saleInvoice";
+	
 	/** The attach. */
 	private RegistryAttachment attach;
 	
@@ -114,6 +116,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private ReportPrintOption printInternetData;
 	
 	private boolean smartCard;
+	
+	private boolean customReportTemplate;
 
     /**
      * Gets the company label.
@@ -652,6 +656,14 @@ public class CompanyParentController extends BasicController implements ICompany
 	public void setSmartCard(boolean smartCard) {
 		this.smartCard = smartCard;
 	}
+	
+	public boolean isCustomReportTemplate() {
+		return customReportTemplate;
+	}
+
+	public void setCustomReportTemplate(boolean customReportTemplate) {
+		this.customReportTemplate = customReportTemplate;
+	}
 
 	/**
 	 * Gets the child bean.
@@ -734,6 +746,11 @@ public class CompanyParentController extends BasicController implements ICompany
 	public boolean obtainSmartCard() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+	
+	public void searchCustomReportTemplate() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
+		setCustomReportTemplate(appParam != null);
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(ApplicationParameter appParam) {

@@ -32,7 +32,6 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
-import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler.AbstractVariableData;
 
 public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 
@@ -59,7 +58,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 						List<ITransferObject> list = existingAgreementData(s, agreement);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
-								AbstractVariableData data = new AbstractVariableData();
+								VariableData data = new VariableData();
 								data.setVariableData((IVariableData) to);
 								dataList.add(data);
 							}
@@ -72,17 +71,8 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 							data.setAgreement(agreement);
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
-//							data.setEndDate(agreement.getEndDate()!=null?contract.getEndDate():endCal.getTime());
-//							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), data.getEndDate(), data.getEndDate());
-//							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-//							if(o==null){
-//								undefined.add(data);
-//							} else {
-//								data.setExpression(o.toString());
-//								dataList.add(data);
-//							}
 							if(!isSystemVariable(data)){
-								AbstractVariableData d = new AbstractVariableData();
+								VariableData d = new VariableData();
 								d.setVariableData((IVariableData) data);
 								undefined.add(d);
 							}
@@ -94,11 +84,6 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 					setUndefinedVariablesModel(new ListDataModel(undefined));
 				}
 			}
-//		} catch (SalaryException e) {
-//			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -172,7 +157,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	}
 	@Override
 	protected void resetVariable() {
-		setData(new AbstractVariableData());
+		setData(new VariableData());
 		getData().setVariableData(new AgreementData());
 		((AgreementData)getData().getVariableData()).setAgreement(((AgreementPayment) getController().getTo()).getAgreement());
 	}

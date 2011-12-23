@@ -39,7 +39,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedObject;
-import com.esferalia.aon.salary.expression.UndefinedVariableException;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractPaymentController extends ContractDetailVariableController {
@@ -232,7 +232,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 					return true;
 				}
 			}
-		} catch (UndefinedVariableException uve) {
+		} catch (UndefinedVariablesException uve) {
 			return false;
 		} catch (ExpressionException e) {
 			return false;

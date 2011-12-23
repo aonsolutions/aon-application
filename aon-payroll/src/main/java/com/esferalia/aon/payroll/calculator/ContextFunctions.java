@@ -20,6 +20,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.InvalidVariables;
 
 public class ContextFunctions {
 
@@ -28,7 +29,7 @@ public class ContextFunctions {
 
 	public static void isDef(String name, String msg, ExpressionContext context) throws CheckException{
 		if ( !context.isDef(name) ) {
-			throw new InvalidVariable(name, msg);
+			throw new InvalidVariables(msg, name);
 		}
 	}
 
@@ -40,7 +41,7 @@ public class ContextFunctions {
 
 	public static void checkVar(String name, boolean condition, String msg) throws CheckException{
 		if ( !condition ) {
-			throw new InvalidVariable(name, msg);
+			throw new InvalidVariables(msg, name );
 		}
 	}
 
@@ -151,8 +152,6 @@ public class ContextFunctions {
 
 		try {
 			
-			context.addVariable("CONTEXT", context, startDate, endDate);
-			
 			Method isDef =  ContextFunctions.class.getMethod(
 					"isDef", 
 					String.class,
@@ -164,8 +163,9 @@ public class ContextFunctions {
 			context.addVariable( "ISDEF" , isDefStub, startDate, endDate);
 		
 			String functionScript =  
-					String.format("%s = def(variable, msg) { ISDEF( variable, msg, CONTEXT) };", 
-							ContextVariable.ISDEF);
+					String.format("%s = def(variable, msg) { ISDEF(variable, msg, %s) };", 
+							ContextVariable.ISDEF, 
+							ContextVariable.CONTEXT);
 			
 			context.eval(functionScript, startDate, endDate);
 		
@@ -180,7 +180,7 @@ public class ContextFunctions {
 		loadCheckVarFunction(context, startDate, endDate);
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
-		//loadIsDefFunction(context, startDate, endDate);
+		loadIsDefFunction(context, startDate, endDate);
 	}
 	
 	
