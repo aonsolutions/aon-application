@@ -202,7 +202,7 @@
 									<directory>/home/COMMON-RESOURCES/aon-report</directory>
 									<sources>
 										<source>
-											<location>templates</location>
+											<location>${project.build.directory}/templates</location>
 										</source>
 									</sources>
 								</mapping>
