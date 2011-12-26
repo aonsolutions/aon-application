@@ -16,6 +16,7 @@
 
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.Bank"/>
+		<mapping class="com.code.aon.config.Domain"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.Scope"/>
 
