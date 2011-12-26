@@ -79,6 +79,7 @@
 	  <module>aon-marketing</module>
 	  <module>aon-purchase-bridge</module>
 	  <module>aon-tas</module>
+	  <module>aon-pms</module>
 
     <!-- UI MODULES -->
 	  <module>aon-ui-audabridge</module>
@@ -118,6 +119,7 @@
 
     <!-- GENERATED -->
 	  <module>aon-audabridge-api</module>
+	  <module>aon-pms-api</module>
 
     <!-- UTILITY -->
 	  <module>aon-file-format</module>
@@ -154,6 +156,7 @@
 	  <module>aon-web-publisher</module>
 	  <module>aon-web-webmail</module>
 	  <module>aon-web-document</module>
+	  <module>aon-web-pms</module>
   
     <!-- OTHER -->
  	  <module>aon-payroll-ctsql2mysql</module>
