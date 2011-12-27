@@ -196,15 +196,15 @@ public class BasicFinderBean implements IFinderBean {
 	}
 
 	private FinderBeanEvent getNewFinderBeanEvent(Criteria criteria) {
-		return new FinderBeanEvent(criteria==null?new Criteria():criteria);
+		return new FinderBeanEvent(criteria==null?new Criteria():criteria,getPOJOClass());
 	}
 
 	/* 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IFinderBean#getPOJOClass()
 	 */
-	public Class getPOJOClass() {
-		return dao.getPOJOClass();
+	public Class<ITransferObject> getPOJOClass() {
+		return (Class<ITransferObject>) dao.getPOJOClass();
 	}
 
 	/*
