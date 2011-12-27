@@ -16,24 +16,15 @@ package com.esferalia.aon.mock.entity;
  *********************************************************************
  */
 
+
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Table;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
-
 import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -49,13 +40,13 @@ import freemarker.template.Template;
 /**
  * @author ecastellano
  * 
- * @goal generate-mock-entities
- * @phase generate-sources
+ * @goal generate-test-entities
+ * @phase generate-test-sources
  * @requiresDependencyResolution compile+runtime
  * @requiresProject
  * 
  */
-public class AonMockEntityMojo extends AbstractMojo {
+public class AonTestEntityMojo extends AbstractMojo {
 	
 	/**
 	 * The Maven Project Object
@@ -136,27 +127,16 @@ public class AonMockEntityMojo extends AbstractMojo {
 				Map<String, Object> additionalContext = new HashMap<String, Object>();
 				String aonPackage = ClassUtils.getPackageName(clazz);
 				String aonEntity = ClassUtils.getShortClassName(clazz);
-				String generatedEntity = aonEntity + AonExporter.CLASS_SUFFIX;
 				additionalContext.put("aonPackage", aonPackage);
 				additionalContext.put("aonEntity", aonEntity);
-				additionalContext.put("generatedPackage", AonExporter.ENTITY_PACKAGE);
-				if ("EnterpriseUser".equals(aonEntity)) {
-					generatedEntity = "UserDB";
-				}
-				additionalContext.put("generatedEntity", generatedEntity);	
 				additionalContext.put("date", new Date().toString());
-				String tableAnnotation =  getTableAnnotation(generatedEntity);
-				boolean hasUniqueConstraint = StringUtils.contains(tableAnnotation,"UniqueConstraint");
-				additionalContext.put("table",StringUtils.defaultIfEmpty(tableAnnotation, ""));
-				additionalContext.put("hasUniqueConstraint",hasUniqueConstraint);
 				Configuration cfg = new Configuration();
 				cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
-				Template tpl = cfg.getTemplate("aon/Pojo.ftl");
-				File packageDir = new File(getOutputDir(), aonPackage.replace('.', '/'));
+				Template tpl = cfg.getTemplate("aon/TestEntity.ftl");
+				File packageDir = new File(getOutputDir(), "com/esferalia/aon/test");
 				packageDir.mkdirs();
-				File file  = new File(packageDir, aonEntity + ".java");
+				File file  = new File(packageDir, "TestEntity" + aonEntity + ".java");
 				FileWriter output = new FileWriter(file);
-				getLog().info(" Processing mock entity ..: " + aonPackage + "." + aonEntity + ".java");
 				tpl.process(additionalContext, output);			
 			}
 			if (isGenerateHibernateCfg()) {
@@ -171,41 +151,11 @@ public class AonMockEntityMojo extends AbstractMojo {
 				FileWriter output = new FileWriter(file);
 				tpl.process(additionalContext, output);			
 			}
+			
 		}
 		catch(Exception e) {
 			throw new MojoExecutionException(e.getMessage(),e);
 		}		
-	}
-
-	private String getTableAnnotation(String generatedEntity) throws IOException {
-		File entityFile = new File (getOutputDir() + "/" 
-					+ StringUtils.replace(AonExporter.ENTITY_PACKAGE, ".", "/") 
-					+ "/" + generatedEntity + ".java");
-		String table = null;
-		if (entityFile.canRead()) {
-			LineNumberReader reader = new LineNumberReader(new FileReader(entityFile));
-			while (reader.ready()) {
-				String line = reader.readLine();
-				if (StringUtils.isNotBlank(line) && StringUtils.contains(line, "@Table")) {
-					table = line;
-					break;
-				}
-			}
-			reader.close();
-		} else {
-			ClassPool pool = ClassPool.getDefault();
-			try {
-				CtClass clazz = pool.get(AonExporter.ENTITY_PACKAGE + "." + generatedEntity);
-				Object ann = clazz.getAnnotation(Table.class);
-				table = ann.toString();
-			} catch (ClassNotFoundException e) {
-				getLog().warn(e);
-			} catch (NotFoundException e) {
-				getLog().warn(e);
-			}
-			
-		}
-		return table;
 	}
 
 }

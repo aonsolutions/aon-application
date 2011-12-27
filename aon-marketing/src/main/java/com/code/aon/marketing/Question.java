@@ -20,12 +20,7 @@ public class Question extends QuestionDB{
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, mappedBy = "question")
-	@org.hibernate.annotations.Cascade( {
-			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<QuestionValue> values = new LinkedList<QuestionValue>();	
+	private List<QuestionValue> values;	
 	
     public Question() {
     	setActive(true);
@@ -35,6 +30,11 @@ public class Question extends QuestionDB{
 		return StringUtils.defaultString(getAlias(), getText());
 	}
 
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "question")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 	public List<QuestionValue> getValues() {
 		return this.values;
 	}

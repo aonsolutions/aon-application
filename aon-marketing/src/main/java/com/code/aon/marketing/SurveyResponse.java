@@ -1,6 +1,5 @@
 package com.code.aon.marketing;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,13 +15,13 @@ public class SurveyResponse extends SurveyResponseDB {
 
 	private static final long serialVersionUID = 1L;
 
+	private List<SurveyResponseDetail> details;	
+	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REMOVE }, mappedBy = "surveyResponse")
 	@org.hibernate.annotations.Cascade( {
 			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<SurveyResponseDetail> details = new LinkedList<SurveyResponseDetail>();	
-	
 	public List<SurveyResponseDetail> getDetails() {
 		return details;
 	}

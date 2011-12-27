@@ -14,10 +14,5 @@ import com.esferalia.aon.entity.master.FanBatchDB;
 public class FanBatch extends FanBatchDB {
 	
 	private static final long serialVersionUID = 1L;
-
-    @Temporal(TemporalType.TIMESTAMP)
-	public Date getDate() {
-		return super.getDate();
-	}
 	
 }

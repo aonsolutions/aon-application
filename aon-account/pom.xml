@@ -11,7 +11,7 @@
 	<name>AON ACCOUNT</name>
 	<dependencies>
 		<dependency>
-			<groupId>com.code.aon</groupId>
+			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.entity.alias</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

@@ -1,6 +1,5 @@
 package com.code.aon.marketing;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,17 +15,17 @@ public class MarketingCampaign extends MarketingCampaignDB {
 
 	private static final long serialVersionUID = 1978353768291679400L;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, mappedBy = "campaign")
-	@org.hibernate.annotations.Cascade( {
-			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<MarketingAction> actions = new LinkedList<MarketingAction>();	
+	private List<MarketingAction> actions;	
 
     public MarketingCampaign() {
     	setActive( true );
     }
 
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "campaign")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 	public List<MarketingAction> getActions() {
 		return actions;
 	}

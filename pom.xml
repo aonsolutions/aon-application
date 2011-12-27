@@ -56,9 +56,6 @@
 		<module>aon-ui-manager</module>
 
 		<!-- ENTITY -->
-<!--
-		<module>aon-account</module>
--->
 		<module>aon-company</module>
 		<module>aon-config</module>
 		<module>aon-customer</module>
@@ -90,6 +87,7 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
+		<module>aon.test.entity</module>
 
 		<!-- UI MODULES -->
 		<module>aon-ui-audabridge</module>

@@ -113,12 +113,12 @@ public class AliasWriter {
 		out.write( "import com.code.aon.common.dao.DAOConstantsEntry;" );
 		out.newLine();
 
-		for( String _class: classes ) {
-			out.write( "import " );
-			out.write( _class );
-			out.write( ';' );
-			out.newLine();
-		}
+//		for( String _class: classes ) {
+//			out.write( "import " );
+//			out.write( _class );
+//			out.write( ';' );
+//			out.newLine();
+//		}
 		
 		out.newLine();
 		out.write( "/** " );
@@ -169,9 +169,10 @@ public class AliasWriter {
 		String classAliasConstant =  format( entry.getName() ) + "_ENTRY";
 		out.write( "\tDAOConstantsEntry " );
 		out.write( classAliasConstant );
-		out.write( " = DAOConstants.getDAOConstant(" );
-		out.write( entry.getName() );
-		out.write( ".class);" );
+		
+		out.write( " = DAOConstants.getDAOConstantFromAlias(\"" );
+		out.write( entry.getPojo() );
+		out.write( "\");" );
 		out.newLine();
 		out.newLine();
 	

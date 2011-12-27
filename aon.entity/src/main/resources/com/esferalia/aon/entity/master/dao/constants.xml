@@ -115,6 +115,11 @@
 		<alias names="id,scope_id,user_id,scope_description"/>
 		<hibernate names="id,scope.id,user.id,scope.description"/>
 	</bean>
+	
+	<bean class="com.code.aon.config.User">
+		<alias names="active,domain_id,id,login,name,password,registry,enterprise"/>
+		<hibernate names="active,domain.id,id,login,name,password,registry,enterprise"/>
+	</bean>
 			
 	<!-- ** AON CUSTOMER  **************************************************** -->
 	<bean class="com.code.aon.customer.Customer">
@@ -319,7 +324,7 @@
 	</bean>
 
 	<!-- ** AON REGISTRY  **************************************************** -->
-	<bean class="com.code.aon.registry.Person" sqlName="person">
+	<bean class="com.code.aon.person.Person" sqlName="person">
 		<alias names="birthDate,gender,id,maritalStatus,registry_id,socialSecurityNumber,name,firstSurname,secondSurname,registry_document,registry_documentCountry,registry_documentType"/>
 		<hibernate names="birthDate,gender,id,maritalStatus,registry.id,socialSecurityNumber,name,firstSurname,secondSurname,registry.document,registry.documentCountry,registry.documentType"/>
 	</bean>

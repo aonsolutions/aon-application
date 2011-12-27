@@ -17,18 +17,18 @@ public class Survey extends SurveyDB {
 
 	private static final long serialVersionUID = 1L;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, mappedBy = "survey")
-	@org.hibernate.annotations.Cascade( {
-			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<SurveyQuestion> questions = new LinkedList<SurveyQuestion>();	
+	private List<SurveyQuestion> questions;	
 	
     public Survey() {
     	setCreationDate( new Date() );
     	setActive( true );
     }
   
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "survey")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
 	public List<SurveyQuestion> getQuestions() {
 		return this.questions;
 	}

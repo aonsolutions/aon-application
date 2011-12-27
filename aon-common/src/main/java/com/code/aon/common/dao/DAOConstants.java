@@ -1,11 +1,13 @@
 package com.code.aon.common.dao;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class DAOConstants {
 	private static final String RESOURCE_NAME = "/com/esferalia/aon/entity/master/dao/constants.xml";
 	private static Map<String,DAOConstantsEntry> DAO_CONSTANTS; 
 	private static Set<String> CHECKED_RESOURCES;	
+	private static String EMPTY = "";
 
 	/**
 	 * Reset the DAO Constants Entry information.
@@ -53,7 +56,21 @@ public class DAOConstants {
 	 * @return The DAOConstantsEntry bound to POJO Class name.
 	 */
 	public static DAOConstantsEntry getDAOConstant( String pojo ) {
-		return DAO_CONSTANTS.get( pojo );
+		return DAO_CONSTANTS.get( pojo ); 
+				 
+	}
+
+	public static DAOConstantsEntry getDAOConstantFromAlias( String pojo ) {
+		DAOConstantsEntry entry = DAO_CONSTANTS.get( pojo ); 
+		if (entry == null) {
+			entry = new DAOConstantsEntry(pojo, null);
+			String[] mockBeanNames = new String[100];
+			Arrays.fill(mockBeanNames,EMPTY);
+			entry.setBeanAliasNames(mockBeanNames);
+			LOGGER.warn(pojo + " is not in the classpath, mock alias provided!" );
+		}
+		return entry; 
+				 
 	}
 
 	/**

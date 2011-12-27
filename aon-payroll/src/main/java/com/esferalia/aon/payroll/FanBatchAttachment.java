@@ -10,7 +10,7 @@ import com.code.aon.config.IScopable;
 import com.esferalia.aon.entity.master.FanBatchAttachmentDB;
 
 @Entity
-@Table(name="fan_batch_detail")
+@Table(name="fan_batch_attach")
 public class FanBatchAttachment extends FanBatchAttachmentDB implements IAttachment, IScopable {
 
 	private static final long serialVersionUID = 1L;
