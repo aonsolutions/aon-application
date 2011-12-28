@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.9.8" />
+	<property name="version" value="2.0.0" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -478,6 +478,7 @@
 				<attribute name="Implementation-Version" value="${version}"/> 
 				<attribute name="Implementation-Vendor" value="${vendor}"/>
 			</manifest>
+			<!--
     		<fileset dir="${commons.beanutils.home}">
 				<include name="${commons.beanutils.jar}"/>
 			</fileset>
@@ -496,6 +497,7 @@
     		<fileset dir="${org.jboss.slf4j.home}">
 				<include name="${org.jboss.slf4j.jar}"/>
 			</fileset>
+			-->
     		<fileset dir="${aon.ldap.home}">
 				<include name="aon.ldap-${aon.ldap.version}.jar"/>
 			</fileset>			
