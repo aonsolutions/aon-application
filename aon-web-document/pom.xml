@@ -52,12 +52,6 @@
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.company</artifactId>
-			<version>${pom.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
@@ -67,6 +61,34 @@
 			<artifactId>aon.ui.document</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
-		</dependency>	
+			<exclusions>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.report</artifactId>
+				</exclusion>
+			</exclusions>			
+		</dependency>
+		<!--
+		<dependency>
+		    <groupId>com.code.aon</groupId>
+		    <artifactId>aon-dbutils</artifactId>
+		    <version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>     
+
+		<dependency>
+		    <groupId>com.code.aon</groupId>
+		    <artifactId>aon-master</artifactId>
+		    <version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>     
+			
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.11</version>
+			<scope>provided</scope>
+		</dependency> 
+		-->
 	</dependencies>
 </project>

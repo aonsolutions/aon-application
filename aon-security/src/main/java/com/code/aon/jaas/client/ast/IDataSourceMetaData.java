@@ -12,10 +12,10 @@ import java.util.Properties;
 
 public interface IDataSourceMetaData extends INode {
 
-	static final String URL = "url";
-	static final String DRIVER_CLASS = "driverClassName";
-	static final String USER = "username";
-	static final String PASSWORD = "password";
+	public static final String URL = "hibernate.connection.url";
+	public static final String DRIVER_CLASS = "hibernate.connection.driver_class";
+	public static final String USER = "hibernate.connection.username";
+	public static final String PASSWORD = "hibernate.connection.password";
 
 	/**
 	 * The DataSource URL.

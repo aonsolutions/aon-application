@@ -3,6 +3,8 @@
  */
 package com.code.aon.jaas.vendor.jboss;
 
+import java.util.Properties;
+
 /**
  * MBean interface.
  * @since 1.0
@@ -62,4 +64,11 @@ public interface JBossMainDeployerMBean extends org.jboss.system.ServiceMBean {
     */
   void removeLoginModule(java.lang.String name) throws com.code.aon.jaas.deployment.DeploymentException;
 
+  /**
+   * Gets the Data Source connection properties.
+   *
+   * @param principal the principal
+   * @return the DSMD properties
+   */
+  Properties getConnectionProperties(String domainName, String application);
 }

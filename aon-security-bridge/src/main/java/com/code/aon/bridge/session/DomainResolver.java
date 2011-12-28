@@ -17,7 +17,17 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 	
 	public static final String CONTROLLER_NAME = "domainResolver";
 	
-    private static boolean isIPAddress( String host ) {
+	private boolean skipLdap;
+	
+    public boolean isSkipLdap() {
+		return skipLdap;
+	}
+
+	public void setSkipLdap(boolean skipLdap) {
+		this.skipLdap = skipLdap;
+	}
+
+	private static boolean isIPAddress( String host ) {
     	return IPAddressUtil.isIPv4LiteralAddress(host) || IPAddressUtil.isIPv6LiteralAddress(host);
     }
     
@@ -26,10 +36,10 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     	Name dn = NameResolver.getDomainDN(host);
     	return ldap.exists(dn, DOMAIN);
     }
-    
-    public static String getDomain( HttpServletRequest request ) {
+
+    public static String getDomain( HttpServletRequest request, boolean skipLdap ) {
     	String host = request.getServerName();
-    	if (! isIPAddress(host) ) {
+    	if (! (skipLdap || isIPAddress(host)) ) {
     		if (! existsDomain(host) ) {
     			String domain = StringUtils.substringAfter(host, ".");
     			while (! StringUtils.isBlank(domain) ) {
@@ -44,10 +54,14 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     	return host;    	
     }
     
+    public static String getDomain( HttpServletRequest request ) {
+    	return getDomain(request, false);
+    }
+    
     public String getDomain() {
     	FacesContext ctx = FacesContext.getCurrentInstance();
     	HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-    	return getDomain(request);
+    	return getDomain(request, skipLdap);
     }
     
 }

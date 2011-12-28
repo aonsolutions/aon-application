@@ -3,7 +3,6 @@
  */
 package com.code.aon.jaas.vendor.jboss;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,7 +27,7 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	
 	SecurityLdap getSecurityLdap();
 	
-	Properties getDSMDProperties(Principal principal);
+	Properties getConnectionProperties(String domainName, String application);
 	
 	Properties getLdapProperties();
 	

@@ -1,11 +1,14 @@
 package com.code.aon.ui.util;
 
+import static com.code.aon.common.util.BeanServerUtil.CONNECTION_METHOD_NAME;
+import static com.code.aon.common.util.BeanServerUtil.MAIN_DEPLOYER;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
-import javax.naming.Name;
+import javax.management.MBeanServer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,16 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.DomainResolver;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.NameResolver;
+import com.code.aon.common.util.BeanServerUtil;
 
 /**
  * Default implementation of the factory for creating Hibernate Configuration objects.
  */
-public class DataSourceUtil implements IAonObjectClasses, ILdapConstants {
+public class DataSourceUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceUtil.class.getName());
 
@@ -70,34 +69,18 @@ public class DataSourceUtil implements IAonObjectClasses, ILdapConstants {
      * @return the dB properties
      */
     public static Properties getDBProperties( String domain, String context ) {
-    	Properties properties = new Properties();
     	String application = getApplicationId(context);
     	LOGGER.info( "Domain: " + domain + " Application: " + application );
-    	BasicLdap ldap = new BasicLdap();
-    	Name domainApplicationDN = NameResolver.getDomainApplicationDN(domain, application);
-		Entry domainApplication = ldap.get( domainApplicationDN, DOMAIN_APPLICATION );
-		if ( domainApplication != null ) {
-			if ( domainApplication.containsKey(DATA_SOURCE_ATTRIBUTE) ) {
-				String dataSourceValue = domainApplication.getAsString(DATA_SOURCE_ATTRIBUTE);
-				Name dataSourceDN = NameResolver.getName(dataSourceValue);
-				Entry dataSource = ldap.get( dataSourceDN, DB_CONNECTION );
-				if ( dataSource != null ) {
-					String userName = dataSource.getAsString(USER_ID_ATTRIBUTE);
-					properties.put(Environment.USER, userName);
-					byte[] password = dataSource.getAsByteArray(USER_PASSWORD_ATTRIBUTE);
-					properties.put(Environment.PASS, new String(password));
-					String url = dataSource.getAsString(LABELED_URI_ATTRIBUTE);
-					properties.put(Environment.URL, url);
-					String driverClassName = dataSource.getAsString(DRIVER_CLASS_NAME_ATTRIBUTE);
-					properties.put(Environment.DRIVER, driverClassName);
-				} else {
-					LOGGER.error( "DataSource not found: " + dataSourceDN );
-				}
-			}
-		} else {
-			LOGGER.error( "Domain Application not found: " + domainApplicationDN );
-		}
-    	return properties;
+    	
+    	MBeanServer server = BeanServerUtil.getMBeanServer();
+		Object[] params = { domain, application };
+		String[] sig = { String.class.getName(), String.class.getName() }; 	
+		try {
+			return (Properties) server.invoke( MAIN_DEPLOYER, CONNECTION_METHOD_NAME, params, sig );
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e );
+		} 
+    	return null;
     }
 
     /**
