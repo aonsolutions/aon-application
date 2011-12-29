@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -307,7 +307,7 @@
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
+				<reportElement key="subreport-1" positionType="Float" x="52" y="138" width="483" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false))]]></dataSourceExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
@@ -352,7 +352,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-3" positionType="Float" x="0" y="210" width="535" height="29">
+				<reportElement key="subreport-3" positionType="Float" x="52" y="210" width="483" height="29">
 					<printWhenExpression><![CDATA[new Boolean($F{finances}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
