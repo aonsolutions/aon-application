@@ -1,7 +1,6 @@
 package com.esferalia.aon.web.employee.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.esferalia.aon.ui.calendar.controller.ICalendarConstants.CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME;
 
 import java.security.Principal;
 import java.util.Date;
@@ -14,7 +13,6 @@ import javax.faces.event.AbortProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,6 +22,8 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -33,7 +33,6 @@ import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
-import com.esferalia.aon.ui.calendar.controller.CalendarHolidayDataController;
 import com.esferalia.aon.ui.calendar.controller.ICalendarConstants;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryController;
@@ -55,7 +54,7 @@ public class ManagerController implements IPayrollConstants {
 		this.principal = resolvePrincipal();
 		this.loggedUser = resolveUser();
 		initWebmail();
-		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
 		if ( isEnterprise() ) {
 			initEnterprise();
 		} else {
