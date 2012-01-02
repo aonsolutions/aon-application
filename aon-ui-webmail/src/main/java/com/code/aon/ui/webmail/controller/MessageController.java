@@ -1,5 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +50,6 @@ import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.AonException;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -60,6 +61,7 @@ import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -498,7 +500,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     	if ( ! StringUtils.isEmpty(account.getDisplayName()) ) {
     		personal = account.getDisplayName();
     	} else {
-        	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
+    		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
         	personal = loggedUser.getLoggedUserName();    	    		
     	}
     	return MimeUtility.encodeText(personal);
@@ -1043,8 +1045,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			TemplateHelper th = getVelocityHelper().getTemplateHelper();
 			FacesContext context = FacesContext.getCurrentInstance();
 			th.putInContext("contextPath", context.getExternalContext().getRequestContextPath());
-			LoggedUser loggerUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
-			th.putInContext("username", loggerUser.getLoggedUserName());
+			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
+			th.putInContext("username", loggedUser.getLoggedUserName());
 			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
 			th.putInContext("nowDate", df.format(new Date()));
 			Locale locale = AonUtil.getCurrentLocale();

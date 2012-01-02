@@ -7,17 +7,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.management.MBeanServer;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.util.BeanServerUtil;
+import com.code.aon.ui.common.controller.DomainResolver;
 
 /**
  * Default implementation of the factory for creating Hibernate Configuration objects.
@@ -27,26 +27,14 @@ public class DataSourceUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceUtil.class.getName());
 
 	/**
-	 * Gets the application id.
-	 * 
-	 * @param context the context
-	 * @return the application id
-	 */
-	public static String getApplicationId( String context ) {
-		return StringUtils.removeStart(context, "/");
-	}
-	
-	/**
 	 * Gets the dB properties.
 	 * 
 	 * @return the dB properties
 	 */
 	public static Properties getDBProperties() {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
-    	String domain = resolver.getDomain();
-    	FacesContext ctx = FacesContext.getCurrentInstance();
-    	String context = ctx.getExternalContext().getRequestContextPath();
-    	return DataSourceUtil.getDBProperties(domain, context);
+    	ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+    	HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+    	return DataSourceUtil.getDBProperties(request);
 	}
 	
 	/**
@@ -57,21 +45,19 @@ public class DataSourceUtil {
 	 */
 	public static Properties getDBProperties( HttpServletRequest request ) {
     	String domain = DomainResolver.getDomain(request);
-    	String context = request.getContextPath();
-    	return DataSourceUtil.getDBProperties(domain, context);
+    	String application = DomainResolver.getApplication(request.getContextPath());
+    	return DataSourceUtil.getDBProperties(domain, application);
 	}	
 	
     /**
      * Gets the dB properties.
      * 
      * @param domain the domain
-     * @param context the context
+     * @param application the context
      * @return the dB properties
      */
-    public static Properties getDBProperties( String domain, String context ) {
-    	String application = getApplicationId(context);
+    public static Properties getDBProperties( String domain, String application ) {
     	LOGGER.info( "Domain: " + domain + " Application: " + application );
-    	
     	MBeanServer server = BeanServerUtil.getMBeanServer();
 		Object[] params = { domain, application };
 		String[] sig = { String.class.getName(), String.class.getName() }; 	

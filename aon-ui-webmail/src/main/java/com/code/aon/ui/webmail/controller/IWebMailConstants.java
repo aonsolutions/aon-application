@@ -37,7 +37,6 @@ public interface IWebMailConstants {
 	String BEAN_AUTOCOMPLETEEMAIL = "autoCompleteEmailBean";
 	String BEAN_MULTISELECTIONEMAIL = "multiSelectionEmailBean";
 	String BEAN_SPAM = "spam";
-	String BEAN_LOGGED_USER = "loggedUser";
 
 	// ************************************************************
 	// CONFIG

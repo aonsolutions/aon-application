@@ -1,5 +1,7 @@
 package com.code.aon.ui.common.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+
 import java.io.IOException;
 
 import javax.faces.context.ExternalContext;
@@ -13,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -21,6 +22,8 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class LoggedInCheck implements PhaseListener {
 
+	private static final long serialVersionUID = 2066812258680315064L;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(LoggedInCheck.class);
 	
 	@Override
@@ -55,7 +58,7 @@ public class LoggedInCheck implements PhaseListener {
 	}
 
 	private boolean loggedIn() {
-		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
         return loggedUser.isLogged();
     }
 }

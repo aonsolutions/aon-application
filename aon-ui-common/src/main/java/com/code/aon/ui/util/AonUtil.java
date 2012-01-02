@@ -1,5 +1,8 @@
 package com.code.aon.ui.util;
 
+import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -15,6 +18,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +101,7 @@ public class AonUtil {
 	 * @return the configuration controller
 	 */
 	public static ConfigurationController getConfigurationController() {
-		return AonUtil.getConfigurationController("aonConfiguration");
+		return (ConfigurationController) AonUtil.getRegisteredBean(CONFIGURATION_CONTROLLER_NAME);
 	}
 
 	/**
@@ -124,7 +128,8 @@ public class AonUtil {
 	 * @return the value
 	 */
 	public static boolean isBeanValue( String beanName, String property ) {
-		return (Boolean) getBeanValue(beanName, property);
+		Object value = getBeanValue(beanName, property);
+		return (value != null) ? (Boolean) value : false; 
 	}
 	
 	/**
@@ -150,18 +155,6 @@ public class AonUtil {
 	public static RoleManager getRoleManager() {
 		return (RoleManager) AonUtil.getRegisteredBean("aonRole");
 
-	}
-
-	/**
-	 * Gets the configuration controller.
-	 * 
-	 * @param name
-	 *            the name
-	 * 
-	 * @return the configuration controller
-	 */
-	private static ConfigurationController getConfigurationController(String name) {
-		return (ConfigurationController) AonUtil.getRegisteredBean(name);
 	}
 
 	/**
@@ -618,5 +611,16 @@ public class AonUtil {
 				StringUtils.contains(userAgent, "iPod") ||
 				StringUtils.contains(userAgent, "iPhone");
 	}    
-	
+
+    /**
+     * Checks if is skip ldap.
+     *
+     * @return true, if is skip ldap
+     */
+    public static boolean isSkipLdap() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		String value = fc.getExternalContext().getInitParameter(SKIP_LDAP);		
+		return BooleanUtils.toBoolean(value);
+	}
+    
 }

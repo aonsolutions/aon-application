@@ -10,26 +10,12 @@
 		</resource-bundle>
 	</application>
 	
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!-- ***************** FAILED LOGIN ******************** --> 
 	<managed-bean>
 		<managed-bean-name>failedLogin</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.bridge.session.FailedLogin
 		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ***************** DOMAIN RESOLVER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>domainResolver</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.DomainResolver</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	

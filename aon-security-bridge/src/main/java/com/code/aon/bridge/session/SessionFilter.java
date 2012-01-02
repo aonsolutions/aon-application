@@ -3,6 +3,8 @@
  */
 package com.code.aon.bridge.session;
 
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.AON_LAST_EXCEPTION_KEY;
+
 import java.io.IOException;
 import java.security.Principal;
 
@@ -61,7 +63,7 @@ public class SessionFilter implements Filter {
 					if ( jsf_sequence != null && jsf_sequence > 1 ) {
 						AuthenticationLoginException failed = 
 							(AuthenticationLoginException) console.invoke( oname, IOperation.GET_LASTLOGIN_EXCEPTION, new Object[] {IConsoleAdmin.EMPTY_STRING}, new String[] {String.class.getName()} );
-						httpRequest.setAttribute( FailedLogin.AON_LAST_EXCEPTION_KEY, failed );
+						httpRequest.setAttribute( AON_LAST_EXCEPTION_KEY, failed );
 					}
 				}
 			}
