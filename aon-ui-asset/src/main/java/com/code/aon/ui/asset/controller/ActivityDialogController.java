@@ -1,5 +1,7 @@
 package com.code.aon.ui.asset.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -22,7 +24,6 @@ import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -32,6 +33,7 @@ import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -289,7 +291,7 @@ public class ActivityDialogController extends EmailParentController{
 	public void onInitializeRequest(ActionEvent event) {
 		onInitialize(event);
 		setRequest(true);
-		String user = ((LoggedUser)AonUtil.getRegisteredBean("loggedUser")).getLoggedUserName();
+		String user = ((LoggedUser)AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME)).getLoggedUserName();
 		setWho(user);
 	}
 
