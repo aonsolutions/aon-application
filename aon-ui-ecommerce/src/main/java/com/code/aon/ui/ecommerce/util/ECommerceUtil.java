@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.util;
 
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,7 +10,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +17,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.ecommerce.controller.ConfigController;
 import com.code.aon.ui.ecommerce.controller.ShopItemsController;
 import com.code.aon.ui.util.AonUtil;
@@ -89,12 +91,10 @@ public class ECommerceUtil implements IECommerceConstants{
 //		return accountPeriods;
 //	}
 	
-private static final String DOMAIN_RESOLVER = "domainResolver";
-	
 	public static String getDomain(){
 //		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 //		return user.getDomain();
-		DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER);
+		DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
     	String domain = resolver.getDomain();
 		return domain;
 	}
