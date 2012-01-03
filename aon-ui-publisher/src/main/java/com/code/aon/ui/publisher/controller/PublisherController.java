@@ -1,5 +1,7 @@
 package com.code.aon.ui.publisher.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -8,11 +10,11 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.DefaultLogger;
 import com.code.aon.common.ILogger;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.publisher.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -51,7 +53,7 @@ public class PublisherController implements IPublisherConstants {
 	
 	private String getDomain() {
 		if ( domain == null ) {
-			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 			AuthPrincipal principal = loggedUser.getPrincipal();
 			domain = PathUtil.getDomainSuffix(principal.getDomain());
 		}
