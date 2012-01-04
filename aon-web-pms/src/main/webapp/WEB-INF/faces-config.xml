@@ -53,20 +53,12 @@
 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>menu_commercial</from-outcome>
-			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
+			<from-outcome>menu_hotel</from-outcome>
+			<to-view-id>/facelet/menu/hotel.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_sales</from-outcome>
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_purchase</from-outcome>
-			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_expenses</from-outcome>
-			<to-view-id>/facelet/menu/expenses.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
