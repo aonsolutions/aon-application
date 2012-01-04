@@ -24,13 +24,13 @@
 					<aon:outputLabel for="ProjectReservationRoom_item" value="#{pmsBundle.pms_room_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-				<aon:selectOneMenu id="ProjectReservationRoom_item"
-					value="#{controller.to.item}" rendered="#{formEdit}" required="#{true}">
+				<aon:selectOneMenu id="ProjectReservationRoom_item" value="#{controller.to.item}" 
+					rendered="#{formEdit}" required="#{true}">
 					<f:selectItems value="#{pmsCollections.roomItems}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu id="ProjectReservationRoom_item-New"
-						value="#{controller.to.item}" rendered="#{formNew}" required="#{true}">
+					<aon:selectOneMenu id="ProjectReservationRoom_item-New" value="#{controller.to.item}" 
+						rendered="#{formNew}" required="#{true}">
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
 				</f:facet>
