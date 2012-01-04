@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationRoom_roomIndex" value="#{bundle.aon_order}" />
+				</f:facet>
+				<aon:outputText value="#{to.roomIndex}" rendered="#{formList or formEdit}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationRoom_item" value="#{pmsBundle.pms_room_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
+				<aon:selectOneMenu id="ProjectReservationRoom_item"
+					value="#{controller.to.item}" rendered="#{formEdit}" required="#{true}">
+					<f:selectItems value="#{pmsCollections.roomItems}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="ProjectReservationRoom_item-New"
+						value="#{controller.to.item}" rendered="#{formNew}" required="#{true}">
+						<f:selectItems value="#{pmsCollections.roomItems}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationRoom_nights" value="#{pmsBundle.pms_nights}" />
+				</f:facet>
+				<aon:outputText value="#{to.nights}" rendered="#{formList}" />
+				<aon:inputText id="ProjectReservationRoom_nights" value="#{controller.to.nights}"
+					rendered="#{formEdit}" size="5" maxlength="2" />
+				<f:facet name="footer">
+					<aon:inputText id="ProjectReservationRoom_nights-New" value="#{controller.to.nights}"
+						rendered="#{formNew}" size="5" maxlength="2" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationRoom_adults" value="#{pmsBundle.pms_adults}" />
+				</f:facet>
+				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
+				<aon:inputText id="ProjectReservationRoom_adults" value="#{controller.to.adults}"
+					rendered="#{formEdit}" size="5" maxlength="2" />
+				<f:facet name="footer">
+					<aon:inputText id="ProjectReservationRoom_adults-New" value="#{controller.to.adults}"
+						rendered="#{formNew}" size="5" maxlength="2" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationRoom_children" value="#{pmsBundle.pms_children}" />
+				</f:facet>
+				<aon:outputText value="#{to.children}" rendered="#{formList}" />
+				<aon:inputText id="ProjectReservationRoom_children" value="#{controller.to.children}"
+					rendered="#{formEdit}" size="5" maxlength="2" />
+				<f:facet name="footer">
+					<aon:inputText id="ProjectReservationRoom_children-New" value="#{controller.to.children}"
+						rendered="#{formNew}" size="5" maxlength="2" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

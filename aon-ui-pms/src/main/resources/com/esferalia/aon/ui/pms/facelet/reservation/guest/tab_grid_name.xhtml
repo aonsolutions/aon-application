@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div style="width: 100%;">
+		<aon:panelGrid columns="2" columnClasses="aon-italic,">
+			<aon:outputLabel for="ProjectReservationGuest_name" value="#{bundle.aon_name}"/>
+			<aon:inputText id="ProjectReservationGuest_name#{suffix}" styleClass="aon-margin-left aon-form-input-text"
+				value="#{controller.to.name}" required="true" size="30" maxlength="64" />
+
+			<aon:outputLabel for="ProjectReservationGuest_surname" value="#{bundle.aon_surname}"/>
+			<aon:inputText id="ProjectReservationGuest_surname#{suffix}" styleClass="aon-margin-left aon-form-input-text"
+				value="#{controller.to.surname}" required="true" size="30" maxlength="64" />
+		</aon:panelGrid>
+ 	</aon:div>
+</ui:composition>

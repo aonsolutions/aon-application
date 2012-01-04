@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="reservationForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
+				<ui:param name="controller" value="#{reservation}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipSaveButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipRemoveButton" value="true" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="ProjectReservation_hotel_id" value="#{pmsBundle.pms_hotel}" />
+					<aon:outputText	value="#{reservation.to.hotel.name}" />
+
+					<aon:outputLabel for="ProjectReservation_id" value="#{pmsBundle.pms_reservation_id}" />
+					<aon:outputText	value="#{reservation.to.id}" />
+
+					<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
+					<aon:outputText	value="#{reservation.to.code}" />
+
+					<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
+					<aon:outputText	value="#{reservation.to.startDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputLabel for="ProjectReservation_endDate" value="#{pmsBundle.pms_checkOut}" />
+					<aon:outputText	value="#{reservation.to.endDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputLabel for="ProjectReservation_agency" value="#{pmsBundle.pms_agency}" />
+					<aon:outputText	value="#{reservation.to.agency.registry.fullName}" />
+
+					<aon:outputLabel for="ProjectReservation_company" value="#{pmsBundle.pms_company}" />
+					<aon:outputText	value="#{reservation.to.company.registry.fullName}" />
+
+					<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark}" />
+					<aon:outputText	value="#{reservation.to.remarks}" />
+
+					<aon:outputLabel for="ProjectReservation_total" value="#{bundle.aon_amount}" />
+					<aon:outputText	value="#{reservation.to.total}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+
+				</aon:panelGrid>
+
+				<aon:panelTabSet id="reservationTab" selectedTab="#{reservation.selectedTab}">
+					<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">
+						<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/room/tab_grid.xhtml">
+							<ui:param name="controller" value="#{reservationRoom}" />
+						</ui:include>
+					</aon:panelTab>
+
+					<aon:panelTab id="service" label="#{pmsBundle.pms_services}">
+						<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/service/tab_grid.xhtml">
+							<ui:param name="controller" value="#{reservationService}" />
+						</ui:include>
+					</aon:panelTab>
+
+					<aon:panelTab id="guest" label="#{pmsBundle.pms_guests}">
+						<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/guest/tab_grid.xhtml">
+							<ui:param name="controller" value="#{reservationGuest}" />
+						</ui:include>
+					</aon:panelTab>
+				</aon:panelTabSet>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+	</ui:define>
+</ui:composition>
