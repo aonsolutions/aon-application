@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.20</version>
+		<version>6.21-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.file.tax</artifactId>
-	<version>6.20</version>
+	<version>6.21-SNAPSHOT</version>
 	<description>AON FILE TAX</description>
 	<name>AON FILE TAX</name>
 	<dependencies>

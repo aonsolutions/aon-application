@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.20</version>
+		<version>6.21-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.tgc</groupId>
 	<artifactId>tgc.ui.payroll</artifactId>
-	<version>6.20</version>
+	<version>6.21-SNAPSHOT</version>
 	<description>TGC UI PAYROLL</description>
 	<name>TGC UI PAYROLL</name>
 	<dependencies>
