@@ -113,6 +113,7 @@
 	</background>
 	<title>
 		<band height="85" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="71" y="4" width="108" height="79" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printLogo}]]></printWhenExpression>
