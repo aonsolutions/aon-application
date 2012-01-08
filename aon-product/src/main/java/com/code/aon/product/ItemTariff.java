@@ -17,11 +17,11 @@ public class ItemTariff extends ItemTariffDB implements IPriceable {
 	private static final long serialVersionUID = 1L;
 
 	public void setProfitPercent(double profitPercent) {
-		setProfitPercent( CommonUtil.round(profitPercent, 3));
+		super.setProfitPercent( CommonUtil.round(profitPercent, 3));
 	}
 
     public void setPrice(double price) {
-        setPrice( CommonUtil.round(price, 4));
+        super.setPrice( CommonUtil.round(price, 4));
     }
 
     @Transient

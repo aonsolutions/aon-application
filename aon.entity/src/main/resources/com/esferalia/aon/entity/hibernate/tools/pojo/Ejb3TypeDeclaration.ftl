@@ -7,5 +7,7 @@
 <#if pojo.getDeclarationName()=="ItemDB">
 @${pojo.importType("javax.persistence.Inheritance")}(strategy=${pojo.importType("javax.persistence.InheritanceType")}.JOINED)
 </#if>
+<#if aonExporter.hasRegistryPrimaryKeyJoinColumn(pojo)>@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}(name="registry")
+</#if>
 </#if>
 </#if> 

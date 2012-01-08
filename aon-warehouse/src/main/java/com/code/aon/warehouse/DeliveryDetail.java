@@ -16,7 +16,7 @@ public class DeliveryDetail extends DeliveryDetailDB implements ICalculable, ISt
 	private static final long serialVersionUID = 1L;
 
 	public void setPrice(double price) {
-        setPrice(CommonUtil.round(price, 4));
+        super.setPrice(CommonUtil.round(price, 4));
 	}
 
 	@Transient

@@ -28,7 +28,7 @@ public class IncomeDetail extends IncomeDetailDB implements ICalculable, IStocka
 	private final static Logger LOGGER = LoggerFactory.getLogger(IncomeDetail.class);
 
 	public void setPrice(double price) {
-        setPrice( CommonUtil.round(price, 4) );
+        super.setPrice( CommonUtil.round(price, 4) );
 	}
 	
 	@Transient

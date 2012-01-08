@@ -50,7 +50,7 @@ public class Offer extends OfferDB implements IHeaderObject, ICalculableContaine
 	}
 	
     public void setPaymentDays(String paymentDays) {
-        setPaymentDays( paymentDays );
+        super.setPaymentDays( paymentDays );
         StringTokenizer strTknzr = new StringTokenizer(getPaymentDays(),DELIM);
     	int[] values = new int[strTknzr.countTokens()];
     	for (int i = 0; i < values.length; i++){

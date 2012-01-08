@@ -21,18 +21,22 @@
 
 		<!-- LIB MODULES -->
 		<module>aon-external-libs</module>
+	
+		<!-- MAVEN PLUGINS -->
+		<module>aon-alias-maven-plugin</module>
+		<module>aon-maven-plugin</module>
+		<module>aon.mock.entity.maven.plugin</module>
+		<module>aon.test.entity.maven.plugin</module>
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>
 		<module>aon.entity.common</module>
 		<module>aon.entity</module>
-		<module>aon-alias-maven-plugin</module>
 		<module>aon.entity.alias</module>
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
 		<module>aon-ui-dbutils</module>
 		<module>aon-ui-db-manager</module>
-		<module>aon-maven-plugin</module>
 		<module>aon-sql-payroll</module>
 		
 		<!-- FRAMEWORK -->
@@ -181,7 +185,6 @@
 		<module>aon-web-ebackoffice</module>
 		<module>aon-web-ecommerce</module>
 -->
-		<module>aon.mock.entity.maven.plugin</module>
 	</modules>
 
 	<scm>

@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 
-public enum LiquidationType implements IResourceable, IStringEnum {
+public enum LiquidationType implements IResourceable {
 	
 	L00("L00"),
 	L02("L02"),
@@ -43,7 +43,6 @@ public enum LiquidationType implements IResourceable, IStringEnum {
       	this.value = value;
   	}
 	    
-    @Override
 	public String getValue() {
 		return value;
 	}

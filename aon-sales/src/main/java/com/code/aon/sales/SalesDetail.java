@@ -18,7 +18,7 @@ public class SalesDetail extends SalesDetailDB implements ICalculable {
     private double transfered;
 
     public void setPrice(double price) {
-        setPrice( CommonUtil.round(price, 4) );
+        super.setPrice( CommonUtil.round(price, 4) );
     }
 	@Transient
 	public double getPendingQuantity() {

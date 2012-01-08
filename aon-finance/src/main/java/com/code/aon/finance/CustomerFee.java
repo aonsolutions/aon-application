@@ -21,7 +21,7 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 	private static final long serialVersionUID = 113912434021805866L;
 
     public void setPrice(double price) {
-        setPrice( CommonUtil.round(price, 4) );
+        super.setPrice( CommonUtil.round(price, 4) );
     }
     @Transient
 	public Month getBillingDateMonth() {
@@ -36,7 +36,7 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 	public void setBillingDateMonth(Month month) {
 		Calendar calendar = new GregorianCalendar();
 		calendar.set(getBillingDateYear(), month.getValue(), 1);
-		setBillingDate(calendar.getTime());
+		super.setBillingDate(calendar.getTime());
 	}
 
 	@Transient
@@ -53,7 +53,7 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 	public void setBillingDateYear(int billingDateYear) {
 		Calendar calendar = new GregorianCalendar();
 		calendar.set(billingDateYear, getBillingDateMonth().getValue(), 1);
-		setBillingDate(calendar.getTime());
+		super.setBillingDate(calendar.getTime());
 	}
 
 	@Override

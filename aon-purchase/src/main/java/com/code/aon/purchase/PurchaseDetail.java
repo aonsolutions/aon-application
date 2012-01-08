@@ -30,7 +30,7 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	private double transfered;
 
     public void setPrice(double price) {
-        setPrice( CommonUtil.round(price, 4));
+        super.setPrice( CommonUtil.round(price, 4));
     }
 
     @Transient

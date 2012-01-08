@@ -50,7 +50,7 @@ public class Delivery extends DeliveryDB implements IHeaderObject, ICalculableCo
 	}
 
     public void setPaymentDays(String paymentDays) {
-        setPaymentDays( paymentDays );
+        super.setPaymentDays( paymentDays );
         StringTokenizer strTknzr = new StringTokenizer(getPaymentDays(),DELIM);
     	int[] values = new int[strTknzr.countTokens()];
     	for (int i = 0; i < values.length; i++){

@@ -26,11 +26,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Table;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
+
+import javax.persistence.Table;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;

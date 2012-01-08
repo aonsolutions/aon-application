@@ -495,6 +495,8 @@
 		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
 		<column name="family_situation" type="com.esferalia.aon.payroll.enumeration.FamilySituation"/>
 		<column name="descendient_count" type="java.lang.Integer"/>
+		<column name="contract_type" exclude="true"/>
+		<column name="ceuta_melilla" exclude="true"/>
 	</table>
 	<table name="irpf_data_ascendants">
 		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
@@ -506,6 +508,8 @@
 	</table>
 	<table name="irpf_regularization">
 		<column name="reason" type="com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason"/>
+		<column name="prior_in_ceuta_melilla" exclude="true"/>
+		<column name="prior_deduct_home_loan" exclude="true"/>
 	</table>
 	<table name="irpf_result">
 		<column name="descendents_minor_3_total" type="java.lang.Integer"/>
@@ -583,6 +587,11 @@
 		<column name="line" type="int"/>
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="source" type="com.code.aon.finance.enumeration.InvoiceSource"/>
+	</table>
+	<table name="invoice_tax">
+		<column name="tax_type" type="com.code.aon.config.enumeration.TaxType"/>
+		<column name="vat_deduction_type" type="com.code.aon.config.enumeration.VatDeductionType"/>
+		<column name="withholding_type" type="com.code.aon.config.enumeration.WithholdingType"/>
 	</table>
 	<table name="invoicing_group">
 		<foreign-key constraint-name="FK_INVOICING_GROUP_REGISTRY">
@@ -1025,6 +1034,10 @@
 	</table>
 	<table name="system_cost">
 		<column name="type" type="java.lang.Integer"/>
+		<column name="expression" type="text"/>
+	</table>
+	<table name="system_data">
+		<column name="expression" type="text"/>
 	</table>
 	<table name="system_deduction">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
