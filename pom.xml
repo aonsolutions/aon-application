@@ -58,6 +58,7 @@
 		<module>aon-jsf-bridge</module>
 		<module>aon-manager</module>
 		<module>aon-ui-manager</module>
+	  <module>aon-pms</module>
 
 		<!-- ENTITY -->
 		<module>aon-company</module>
@@ -126,6 +127,7 @@
 		<module>aon-ui-warehouse</module>
 		<module>aon-ui-tas</module>
 		<module>aon-ui-document</module>
+	  	<module>aon-pms-api</module>
 
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
@@ -138,30 +140,32 @@
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
 
-		<!-- CMS MODULES -->
-
-
 		<!-- WEB MODULES -->
 		<module>aon-desktop</module>
+		<module>aon-web-payroll</module>
+		<module>aon-web-employee</module>
+		<module>aon-web-smb</module>
 		<module>aon-web-account</module>
 		<module>aon-web-asset</module>
 		<module>aon-web-commercial</module>
 		<module>aon-web-communicator</module>
 		<module>aon-web-consultant</module>
-		<module>aon-web-document</module>
-		<module>aon-web-employee</module>
+		<module>aon-web-project</module>
+		<module>aon-web-ebackoffice</module>
+		<module>aon-web-ecommerce</module>
 		<module>aon-web-enterprise</module>
 		<module>aon-web-finance</module>
+		<module>aon-web-fiscal</module>
 		<module>aon-web-gta</module>
 		<module>aon-web-infoweb</module>
 		<module>aon-web-manager</module>
-		<module>aon-web-payroll</module>
-		<module>aon-web-project</module>
 		<module>aon-web-publisher</module>
-		<module>aon-web-smb</module>
 		<module>aon-web-webmail</module>
-
+		<module>aon-web-document</module>
+		<module>aon-web-pms</module>
+  
 		<!-- OTHER -->
+		<module>aon-payroll-ctsql2mysql</module>
 		<module>aon-common-resources</module>
 		<module>tgc-ui-payroll</module>
 
@@ -173,8 +177,6 @@
 		<module>aon-ui-cms</module>
 		<module>aon-web-cms</module>
 		
-		<module>aon-payroll-ctsql2mysql</module>
-
 		******************
 		MODULOS DEPRECADOS 
 		******************
