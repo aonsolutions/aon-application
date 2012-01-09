@@ -1,20 +1,18 @@
 package com.esferalia.aon.gwt.employee.server;
 
-import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.PERSON;
 import static com.esferalia.aon.payroll.sql.SQLConstants.RADDRESS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
+import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,16 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.util.JRLoader;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -52,20 +40,13 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
-import com.code.aon.report.config.ReportConfig;
-import com.code.aon.report.jr.JRReport;
-import com.code.aon.report.jr.JRReportFactory;
-import com.code.aon.report.jr.exporter.IJRExporterFactory;
-import com.code.aon.report.jr.exporter.JRExporterFactoryManager;
-import com.code.aon.report.jr.exporter.JRHtmlExporterFactory;
 import com.code.aon.ui.report.controller.ReportManager;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.employee.client.EmployeesService;
 import com.esferalia.aon.gwt.employee.shared.Employee;
 import com.esferalia.aon.gwt.employee.shared.Enterprise;
 import com.esferalia.aon.gwt.employee.shared.Salary;
 import com.esferalia.aon.gwt.employee.shared.Workplace;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
@@ -73,7 +54,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RaddressColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.web.employee.controller.ManagerController;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -116,7 +96,7 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
-					beanManager.getFieldName(IPayrollAlias.SALARY_ID),
+					beanManager.getFieldName(IEntityAlias.SALARY_ID),
 					salary.getId());
 			List<ITransferObject> list = beanManager.getList(criteria);
 			com.esferalia.aon.payroll.Salary aonSalary = (com.esferalia.aon.payroll.Salary) list
