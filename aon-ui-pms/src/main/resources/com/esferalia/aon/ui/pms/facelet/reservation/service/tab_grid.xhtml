@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_serviceIndex" value="#{bundle.aon_order}" />
+				</f:facet>
+				<aon:outputText value="#{to.serviceIndex}" rendered="#{formList or formEdit}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_effectiveDate" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.effectiveDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="ProjectReservationService_effectiveDate" value="#{controller.to.effectiveDate}" 
+					rendered="#{formEdit}" inputSize="8" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="ProjectReservationService_effectiveDate-New" value="#{controller.to.effectiveDate}" 
+						rendered="#{formNew}" inputSize="8" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="Item_id" value="#{pmsBundle.pms_service}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{controller.to.item}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+					<ui:param name="lookupInputOnFocus" value="ProjectReservationService_description" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupReRender" 
+						value="reservationServiceItemEdit,ProjectReservationService_quantity,ProjectReservationService_price,
+								ProjectReservationService_taxableBase" />
+					<aon:methodParam name="lookupChangeListener"
+						value="#{controller.onItemChanged}" type="lookupChangeListener" />
+				</ui:include>
+				<aon:panelGroup id="reservationServiceItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+					<aon:inputText id="ProjectReservationService_description" 
+						value="#{controller.to.description}" size="60" maxlength="64"
+						rendered="#{controller.to.item != null and controller.to.item.id != null}" />
+				</aon:panelGroup>
+				<f:facet name="footer">
+					<aon:div rendered="#{formNew}">
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.item}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+							<ui:param name="lookupInputOnFocus" value="ProjectReservationService_description-New" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" 
+								value="reservationServiceItemNew,ProjectReservationService_quantity-New,ProjectReservationService_price-New,
+										ProjectReservationService_taxableBase-New" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{controller.onItemChanged}" type="lookupChangeListener" />
+						</ui:include>
+						<aon:panelGroup id="reservationServiceItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+							<aon:inputText id="ProjectReservationService_description-New" 
+								value="#{controller.to.description}" size="60" maxlength="64"
+								rendered="#{controller.to.item != null and controller.to.item.id != null}" />
+						</aon:panelGroup>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_quantity" value="#{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="ProjectReservationService_quantity" value="#{controller.to.quantity}"
+					rendered="#{formEdit}" size="5" required="true" 
+					valueChangeListener="#{controller.onQuantityChanged}" 
+					reRender="ProjectReservationService_price,ProjectReservationService_taxableBase"
+					focus="ProjectReservationService_price" /> 
+				<f:facet name="footer">
+					<aon:inputText id="ProjectReservationService_quantity-New" value="#{controller.to.quantity}"
+						rendered="#{formNew}" size="5" required="true"
+						valueChangeListener="#{controller.onQuantityChanged}" 
+						reRender="ProjectReservationService_price-New,ProjectReservationService_taxableBase-New"
+						focus="ProjectReservationService_price-New" /> 
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_price" value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.price}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="ProjectReservationService_price" value="#{controller.to.price}"
+					rendered="#{formEdit}" size="5" required="true"  
+					valueChangeListener="#{controller.onPriceChanged}" 
+					reRender="ProjectReservationService_taxableBase"
+					focus="ProjectReservationService_taxableBase" /> 
+				<f:facet name="footer">
+					<aon:inputText id="ProjectReservationService_price-New" value="#{controller.to.price}"
+						rendered="#{formNew}" size="5" required="true"  
+						valueChangeListener="#{controller.onPriceChanged}" 
+						reRender="ProjectReservationService_taxableBase-New"
+						focus="ProjectReservationService_taxableBase-New" /> 
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_taxableBase" value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.taxableBase}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:outputText id="ProjectReservationService_taxableBase" value="#{controller.to.taxableBase}"
+					rendered="#{formEdit}"> 
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<f:facet name="footer">
+					<aon:outputText id="ProjectReservationService_taxableBase-New" value="#{controller.to.taxableBase}"
+						rendered="#{formNew}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

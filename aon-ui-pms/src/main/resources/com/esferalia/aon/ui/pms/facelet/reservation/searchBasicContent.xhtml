@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="ProjectReservation_project_id" 
+		value="#{pmsBundle.pms_reservation_id}" />
+	<aon:div>
+		<aon:inputText id="ProjectReservation_project_id"
+			valueChangeListener="#{controller.addExpression}"
+			size="20" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_code" 
+		value="#{pmsBundle.pms_reservation_code}" />
+	<aon:div>
+		<aon:inputText id="ProjectReservation_code"
+			valueChangeListener="#{controller.addExpression}"
+			size="20" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_startDate" 
+		value="#{pmsBundle.pms_checkIn}" />
+	<aon:div>
+		<aon:selectInputDate id="ProjectReservation_startDate"
+			valueChangeListener="#{controller.addEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_endDate" 
+		value="#{pmsBundle.pms_checkOut}" />
+	<aon:div>
+		<aon:selectInputDate id="ProjectReservation_endDate"
+			valueChangeListener="#{controller.addEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.agency}" />
+		<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
+
+	<aon:outputText value="#{bundle.aon_status}"/>
+	<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
+		<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
+	</aon:selectManyCheckbox>							
+
+</ui:composition>

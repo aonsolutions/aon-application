@@ -5,25 +5,15 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<c:if test="#{aonRole.commercialOperator}">
-			<aon:commandLink id="commercial"
-				value="#{commercialBundle.commercial_module_group}"
-				action="menu_commercial" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-commercial" />
-		</c:if>
+		<aon:commandLink id="hotel"
+			value="#{pmsBundle.pms_hotel_group}"
+			action="menu_hotel" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-company" />
 		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
 				action="menu_sales" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-sales" />
-			<aon:commandLink id="purchase"
-				value="#{appBundle.menu_purchase}"
-				action="menu_purchase" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-purchase" />
-			<aon:commandLink id="expenses"
-				value="#{productBundle.product_expense_module}"
-				action="menu_expenses" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-expenses" />
 			<aon:commandLink id="treasury"
 				value="#{financeBundle.finance_menu_group}"
 				action="menu_treasury" immediate="true"

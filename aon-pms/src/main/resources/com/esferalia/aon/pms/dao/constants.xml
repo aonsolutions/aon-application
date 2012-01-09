@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.esferalia.aon.pms.ProjectReservation" sqlName="project_reservation">
+		<alias names="id,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,endDate,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,tariff_id,taxableBase,vatQuota,otherTaxQuota,total,remarks,status"/>
+		<hibernate names="id,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,endDate,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,tariff.id,taxableBase,vatQuota,otherTaxQuota,total,remarks,status"/>
+	</bean>
+</dao>

@@ -93,6 +93,7 @@
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
 		<module>aon.test.entity</module>
+	  <module>aon-ui-pms</module>
 
 		<!-- UI MODULES -->
 		<module>aon-ui-audabridge</module>
