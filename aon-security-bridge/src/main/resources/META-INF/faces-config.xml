@@ -14,7 +14,7 @@
 	<managed-bean>
 		<managed-bean-name>failedLogin</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.bridge.session.FailedLogin
+			com.code.aon.bridge.controller.FailedLogin
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
