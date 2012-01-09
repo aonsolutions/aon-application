@@ -162,7 +162,10 @@
 		<module>aon-web-webmail</module>
 		<module>aon-web-document</module>
 		<module>aon-web-pms</module>
-  
+
+		<!-- GWT MODULES -->
+		<module>aon-gwt-employee</module>
+
 		<!-- OTHER -->
 		<module>aon-payroll-ctsql2mysql</module>
 		<module>aon-common-resources</module>
