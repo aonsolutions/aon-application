@@ -4,7 +4,6 @@
 package com.code.aon.jaas.vendor.jboss;
 
 import java.net.URL;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import org.jboss.system.ServiceMBeanSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
@@ -97,15 +95,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		return this.ldapProperties;
 	}
 	
-	public Properties getDSMDProperties(Principal principal) {
-		AuthPrincipal p = null;
-		if ( principal instanceof AuthPrincipal ) {
-			p = (AuthPrincipal) principal; 
-		} else {
-			p = new AuthPrincipal(principal.getName());
-		}
-		String domainName = p.getDomain();
-		String application = ldap.getApplicationId( p.getContext() );
+	public Properties getConnectionProperties(String domainName, String application) {
 		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainName, application);
 		if ( domainApplication != null ) {
 			return domainApplication.getDataSourceMetaData().getProperties();

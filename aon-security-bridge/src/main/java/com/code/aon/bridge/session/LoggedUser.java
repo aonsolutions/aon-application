@@ -31,6 +31,16 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	
 	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
+	private boolean skipLdap;
+	
+    public boolean isSkipLdap() {
+		return skipLdap;
+	}
+
+	public void setSkipLdap(boolean skipLdap) {
+		this.skipLdap = skipLdap;
+	}	
+	
 	public LoggedUser() {
 		this.principal = Utils.getAuthPrincipal();
 		if ( (principal != null) && (!IConstants.UNAUTHENTICATED_IDENTITY.equals(principal.getName())) ) {
@@ -40,19 +50,23 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	}
 
 	private Entry getAonUser( AuthPrincipal principal ) {
-		BasicLdap ldap = new BasicLdap();
-		Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-		if ( ldap.exists(dn, USER) ) {
-			return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );	
+		if (! skipLdap ) {
+			BasicLdap ldap = new BasicLdap();
+			Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
+			if ( ldap.exists(dn, USER) ) {
+				return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );	
+			}
 		}
 		return null;
 	}		
 
 	private Entry getAonDomain( AuthPrincipal principal ) {
-		BasicLdap ldap = new BasicLdap();
-		Name dn = NameResolver.getDomainDN(principal.getDomain());
-		if ( ldap.exists(dn, DOMAIN) ) {
-			return ldap.get(dn, DOMAIN, PARENT_DOMAIN_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+		if (! skipLdap ) {
+			BasicLdap ldap = new BasicLdap();
+			Name dn = NameResolver.getDomainDN(principal.getDomain());
+			if ( ldap.exists(dn, DOMAIN) ) {
+				return ldap.get(dn, DOMAIN, PARENT_DOMAIN_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );
+			}			
 		}
 		return null;
 	}		

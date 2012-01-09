@@ -3,10 +3,12 @@ package com.code.aon.jaas.vendor.jboss;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.management.ObjectName;
 import javax.security.auth.login.AppConfigurationEntry;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.IConstants;
+import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IOption;
 import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.client.xml.ApplicationsRenderer;
@@ -49,6 +52,8 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 
 	/** Application Main deployer. */
 	MainDeployer support = new MainDeployer();
+	
+	private Properties connectionProperties;
 
 	/**
 	 * Constructor.
@@ -188,6 +193,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 */
 	protected void startService() throws Exception {
 		generateXMLFile();
+		initDSMDProperties();
 		super.startService();
 	}
 
@@ -249,6 +255,55 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 		entries[0] = new AppConfigurationEntry(code, flag, options);
 		return entries;
 	}
+	
+	private void initDSMDProperties() {
+		this.connectionProperties = new Properties();
+		ApplicationsStorage as = null;
+		try {
+			InputStream in = getConfigResource(null).openStream();
+			as = (ApplicationsStorage) AstLoader.getInstance().parse( 0, in );
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (AstException e) {
+			e.printStackTrace();
+		}
+		if ( as != null )  {
+			Map<String, IOption> options = as.options();
+			if ( options.containsKey(IDataSourceMetaData.USER) ) {
+				IOption op = options.get(IDataSourceMetaData.USER);
+				this.connectionProperties.put(op.getName(), op.getValue());
+			}
+			if ( options.containsKey(IDataSourceMetaData.PASSWORD) ) {
+				IOption op = options.get(IDataSourceMetaData.PASSWORD);
+				this.connectionProperties.put(op.getName(), op.getValue());
+			}
+			if ( options.containsKey(IDataSourceMetaData.URL) ) {
+				IOption op = options.get(IDataSourceMetaData.URL);
+				this.connectionProperties.put(op.getName(), op.getValue());
+			}
+			if ( options.containsKey(IDataSourceMetaData.DRIVER_CLASS) ) {
+				IOption op = options.get(IDataSourceMetaData.DRIVER_CLASS);
+				this.connectionProperties.put(op.getName(), op.getValue());
+			}			
+		}
+	}
+	
+	public Properties getConnectionProperties(String domainName, String application) {
+		if (! this.connectionProperties.isEmpty() ) {
+			return this.connectionProperties;
+		} else {
+			try {
+				ObjectName oname = new ObjectName(JBossLdapMBean.OBJECT_NAME);
+				Object[] params = { domainName, application };
+				String[] sig = { String.class.getName(), String.class.getName() };
+				return (Properties) getServer().invoke(oname, "getConnectionProperties", params, sig);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}	
 
 	static {
 		VendorFactoryManager.register(new JBossFactory());
