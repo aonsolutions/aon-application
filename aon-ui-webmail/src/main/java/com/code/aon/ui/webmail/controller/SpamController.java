@@ -31,7 +31,7 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.Contact;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonListEmail;
@@ -109,7 +109,7 @@ public class SpamController extends BasicLdap implements IWebMailConstants {
 		return NameResolver.getUserDN( principal.getDomain(), principal.getShortName() );
 	}
 	
-	public void updateSpamEnabled( MailAccount mailAccount ) {
+	public void updateSpamEnabled( IMailAccount mailAccount ) {
 		this.spamEnabled = false;
 		if ( mailAccount.isDefault() ) {
 			Name userDN = getUserDN();

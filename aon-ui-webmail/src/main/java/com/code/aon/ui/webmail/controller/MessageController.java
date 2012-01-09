@@ -68,7 +68,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
@@ -115,7 +115,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
     private String returnAction = NAVIGATION_FOLDER;
     
-    private MailAccount senderMailAccount;
+    private IMailAccount senderMailAccount;
     
     private String messageBody;
     
@@ -495,7 +495,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     
     //*******************************************************************************************
     
-    private String getPersonal( MailAccount account ) throws UnsupportedEncodingException {
+    private String getPersonal( IMailAccount account ) throws UnsupportedEncodingException {
     	String personal = null;
     	if ( ! StringUtils.isEmpty(account.getDisplayName()) ) {
     		personal = account.getDisplayName();
@@ -995,30 +995,30 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
     }
 	
-	public MailAccount getSenderMailAccount() {
+	public IMailAccount getSenderMailAccount() {
 		return senderMailAccount;
 	}
 
-	public void setSenderMailAccount(MailAccount senderMailAccount) {
+	public void setSenderMailAccount(IMailAccount senderMailAccount) {
 		this.senderMailAccount = senderMailAccount;
 	}
 	
 	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null) {
-			updateContent( (MailAccount) event.getNewValue() );
+			updateContent( (IMailAccount) event.getNewValue() );
 		}
 	}	
 	
-	private boolean includeSignature( MailAccount mailAccount ) {
-		return (!skipSignature) && (!AonUtil.isAppleDevice()) && (mailAccount.getSignature() != null);
+	private boolean includeSignature( IMailAccount mailAccount ) {
+		return (!skipSignature) && (!AonUtil.isAppleDevice()) && (mailAccount.getISignature() != null);
 	}
 	
-	private void updateContent( MailAccount mailAccount ) {
+	private void updateContent( IMailAccount mailAccount ) {
 		if ( includeSignature(mailAccount) ) {
 			if ( isAppendSignature() ) {
-				content = StringUtils.defaultString(messageBody) + mailAccount.getSignature().getSignature();
+				content = StringUtils.defaultString(messageBody) + mailAccount.getISignature().getSignature();
 			} else {
-				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);	
+				content = mailAccount.getISignature().getSignature() + StringUtils.defaultString(messageBody);	
 			}
 		} else {
 			content = StringUtils.defaultString(messageBody);	

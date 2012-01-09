@@ -4,11 +4,16 @@ import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_DUPLICATED;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_USED;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.convert.Converter;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
@@ -27,25 +32,16 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class SignatureController extends LdapBasicController implements IWebMailConstants {
+public class SignatureController extends LdapBasicController implements ISignatureController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(SignatureController.class);
 
-	private List<SelectItem> signatures;
-	
-	private boolean richTextEnabled = true;
-	
-	public boolean isRichTextEnabled() {
-		return richTextEnabled;
-	}
-
-	public void setRichTextEnabled(boolean richTextEnabled) {
-		this.richTextEnabled = richTextEnabled;
-	}
+	private Converter converter;
 	
 	protected String getDuplicatedMessage( String name ) {
 		return AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_DUPLICATED, name);
@@ -100,18 +96,28 @@ public class SignatureController extends LdapBasicController implements IWebMail
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 
-	public List<SelectItem> getSignatures() {
-		return signatures;
+	@Override
+	public Converter getConverter() {
+		if ( converter == null ) {
+			this.converter = new LdapTransferObjectConverter(this);			
+		}
+		return converter;
 	}
 
-	public void updateSignatureList() throws ManagerBeanException {
-		this.signatures = new LinkedList<SelectItem>();
-		Iterator<ITransferObject> iter = getManagerBean().getList(getCriteria()).iterator();
-		while(iter.hasNext()){
-			Signature signature = (Signature)iter.next();
-			SelectItem item = new SelectItem(signature.getId(),signature.getName());
-			this.signatures.add(item);
-		}
+	@Override
+	public List<SelectItem> getSignatures() {
+		List<SelectItem> signatures = new LinkedList<SelectItem>();
+		try {		
+			Iterator<ITransferObject> iter = getManagerBean().getList(getCriteria()).iterator();
+			while(iter.hasNext()){
+				Signature signature = (Signature)iter.next();
+				SelectItem item = new SelectItem(signature, signature.getName());
+				signatures.add(item);
+			}
+		} catch (ManagerBeanException e) {
+            LOGGER.error(">>>> getSignatures", e);
+		}		
+		return signatures;
 	}
 
 	@SuppressWarnings("unchecked")

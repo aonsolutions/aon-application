@@ -71,28 +71,30 @@
 
 		<aon:div id="mailAccountDiv">
 			<aon:outputText value="#{webmail.server.account.email}"
-				rendered="#{!mailAccount.showMailAccountList}"
+				rendered="#{!mailConfig.showMailAccountList}"
 				styleClass="aon-icon-tree-root aon-icon"/>
-			<h:panelGrid columns="2" rendered="#{mailAccount.showMailAccountList}">
-				<aon:selectOneMenu 			
-					valueChangeListener="#{mailAccount.onChangeMailAccount}"
-					converter="#{mailAccount.converter}"
-					value="#{mailAccount.currentAccount}" >
-					<f:selectItems value="#{mailAccount.mailAccounts}" />
-					<a4j:support ajaxSingle="true" event="onchange" reRender="aonContent"
-						onsubmit="Richfaces.showModalPanel('waitProccess')" />	
-				</aon:selectOneMenu>
-				<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
-					title="#{bundle.aon_cancel}"
-					styleClass="aon-icon-commandButton aon-icon-cancel aon-margin-left">
-					<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{false}" />
-				</aon:commandButton>
-			</h:panelGrid>			
+			<c:if test="#{mailConfig.showMailAccountList}">
+				<h:panelGrid columns="2" >
+					<aon:selectOneMenu 			
+						valueChangeListener="#{mailConfig.onChangeMailAccount}"
+						converter="#{mailConfig.mailAccountConverter}"
+						value="#{mailConfig.currentAccount}" >
+						<f:selectItems value="#{mailConfig.mailAccounts}" />
+						<a4j:support ajaxSingle="true" event="onchange" reRender="aonContent"
+							onsubmit="Richfaces.showModalPanel('waitProccess')" />	
+					</aon:selectOneMenu>
+					<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
+						title="#{bundle.aon_cancel}"
+						styleClass="aon-icon-commandButton aon-icon-cancel aon-margin-left">
+						<f:setPropertyActionListener target="#{mailConfig.showMailAccountList}" value="#{false}" />
+					</aon:commandButton>
+				</h:panelGrid>			
+			</c:if>
 			<aon:commandButton reRender="mailAccountDiv" ajaxSingle="true"
-				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailAccount.showMailAccountList)}"
+				rendered="#{(mailAccount.model.rowCount &gt; 1) and (!mailConfig.showMailAccountList)}"
+				actionListener="#{mailConfig.onSelectMailAccount}"
 				title="#{webmailBundle.webmail_mailAccount_select}" value="&#160;"
 				styleClass="aon-icon-commandButton aon-icon-dropDown">
-				<f:setPropertyActionListener target="#{mailAccount.showMailAccountList}" value="#{true}" />
 			</aon:commandButton>			
 		</aon:div>	
 	    

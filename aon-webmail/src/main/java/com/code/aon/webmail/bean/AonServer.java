@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.PropertiesUtil;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.sun.mail.imap.IMAPStore;
 
@@ -37,12 +37,12 @@ public class AonServer implements IMailConstants {
 
     private Session session;
 
-    private MailAccount account;
+    private IMailAccount account;
     
     private boolean quotaAware;
     
     /** Creates a new instance of Server */
-    public AonServer(MailAccount account){
+    public AonServer(IMailAccount account){
         setAccount( account );
         Properties properties = calculateProperties( account );
         this.session = Session.getInstance(properties);
@@ -98,7 +98,7 @@ public class AonServer implements IMailConstants {
         return store != null && store.isConnected();
     }
 
-    private static Properties calculateProperties( MailAccount account ) {
+    private static Properties calculateProperties( IMailAccount account ) {
         Properties values = System.getProperties();
         if (account.isIncomingSsl()) {
         	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
@@ -207,7 +207,7 @@ public class AonServer implements IMailConstants {
     	sendMessage(message.getMessage());
     }
 
-    private static Transport getTransport( Session session, MailAccount account ) throws MessagingException {
+    private static Transport getTransport( Session session, IMailAccount account ) throws MessagingException {
         Transport transport;
         if (account.isOutgoingSsl()) {
             transport = session.getTransport(SMTPS);
@@ -257,11 +257,11 @@ public class AonServer implements IMailConstants {
 	/**
 	 * @return the account
 	 */
-	public MailAccount getAccount() {
+	public IMailAccount getAccount() {
 		return account;
 	}
     
-	public void setAccount(MailAccount account) {
+	public void setAccount(IMailAccount account) {
 		this.account = account;
 	}
 
@@ -321,7 +321,7 @@ public class AonServer implements IMailConstants {
     	}
     }
     
-    public static boolean test( MailAccount account, boolean receive, boolean send ) {
+    public static boolean test( IMailAccount account, boolean receive, boolean send ) {
     	boolean ok = true;
         Store store = null;
         Transport transport = null;

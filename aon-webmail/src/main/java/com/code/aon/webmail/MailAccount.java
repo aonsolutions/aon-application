@@ -21,10 +21,8 @@ import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 
 @EntryObject(mainObjectClass=MAIL_ACCOUNT, objectClasses={TOP})
-public class MailAccount implements ILdapTransferObject {
+public class MailAccount implements ILdapTransferObject, IMailAccount {
 	
-	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
-
 	private static final long serialVersionUID = 3319001240608653621L;
 
 	// ident
@@ -85,6 +83,8 @@ public class MailAccount implements ILdapTransferObject {
     private boolean defaultAccount;
     
     private String displayName;
+    
+    private boolean enterpriseAccount;
     
 	/**
 	 * Gets the name.
@@ -330,6 +330,16 @@ public class MailAccount implements ILdapTransferObject {
 		this.signature = signature;
 	}
 	
+	@Override
+	public ISignature getISignature() {
+		return getSignature();
+	}
+
+	@Override
+	public void setISignature(ISignature signature) {
+		setSignature( (Signature) signature );
+	}
+
 	public boolean isDefault() {
 		return StringUtils.equalsIgnoreCase(DEFAULT_MAIL_ACCOUNT_NAME, getName());
 	}
@@ -387,6 +397,15 @@ public class MailAccount implements ILdapTransferObject {
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}	
+
+	@Override
+	public boolean isEnterpriseAccount() {
+		return enterpriseAccount;
+	}
+
+	public void setEnterpriseAccount(boolean enterpriseAccount) {
+		this.enterpriseAccount = enterpriseAccount;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

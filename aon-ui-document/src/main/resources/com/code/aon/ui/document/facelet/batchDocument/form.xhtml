@@ -64,7 +64,9 @@
 
 		</aon:form>
 
-		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+			<ui:param name="disableContacts" value="true" />
+		</ui:include>
 
 	</ui:define>
 </ui:composition>

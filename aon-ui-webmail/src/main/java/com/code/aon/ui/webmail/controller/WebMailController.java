@@ -36,9 +36,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.Signature;
-import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
 import com.code.aon.webmail.dao.IWebMailAlias;
@@ -104,9 +103,9 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return server;
 	}
 
-	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {	
-		boolean checkDomainAccounts = AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY); 
-		MailAccount mailAccount = WebmailUtil.getMailAccount(user.getDomain(),user.getShortName(), checkDomainAccounts);
+	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		IMailAccount mailAccount = mailConfig.getDefaultMailAccount();
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{
@@ -114,13 +113,13 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		}
 	}
 
-	public void initBasic(MailAccount mailAccount) throws MessagingException {
+	public void initBasic(IMailAccount mailAccount) throws MessagingException {
 		server = new AonServer(mailAccount);
 		server.connect();
 		server.createBasicFolders();
 	}
 	
-	public void init(MailAccount mailAccount) throws MessagingException {
+	public void init(IMailAccount mailAccount) throws MessagingException {
 		initBasic(mailAccount);
 		createDefaultSignature(mailAccount);
 		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
@@ -137,8 +136,8 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
     	return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
     }
     
-    private void createDefaultSignature(MailAccount mailAccount){
-    	if ( mailAccount.getSignature() == null ) {
+    private void createDefaultSignature(IMailAccount mailAccount){
+    	if ( mailAccount.getISignature() == null ) {
     		try {
     			Signature signature = null;
     			String name = Utils.getAuthPrincipal().getDomain();
@@ -162,7 +161,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 					signatureBean.insert(signature);					
 				}
 				IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
-				mailAccount.setSignature(signature);
+				mailAccount.setISignature(signature);
 				mailAccountBean.update(mailAccount);
     		} catch (ManagerBeanException e) {
     			LOGGER.error( e.getMessage(), e );
@@ -211,37 +210,39 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	private void initConfig(AuthPrincipal principal) {
 		this.maxAttachmentSize = -1;
 		this.rejectedExtensions = Collections.emptyList();
-		BasicLdap ldap = new BasicLdap();
-		Name userDN = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
-		if ( ldap.exists(userDN, IAonObjectClasses.USER) ) {
-			Entry user = ldap.get( userDN, IAonObjectClasses.USER, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-			if ( (user != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
-				if ( user.containsKey(REJECTED_EXTENSIONS) ) {
-					this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
+		setEnableDragAndDrop(!AonUtil.isChrome());
+		if (! AonUtil.isSkipLdap() ) {
+			BasicLdap ldap = new BasicLdap();
+			Name userDN = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
+			if ( ldap.exists(userDN, IAonObjectClasses.USER) ) {
+				Entry user = ldap.get( userDN, IAonObjectClasses.USER, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
+				if ( (user != null) && user.hasObjectClass(WEBMAIL_CONFIG) ) {
+					if ( user.containsKey(REJECTED_EXTENSIONS) ) {
+						this.rejectedExtensions = (List) user.get(REJECTED_EXTENSIONS);
+					}
+					if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
+						this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
+					}
+				}			
+			}
+			if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
+				Name domainDN = NameResolver.getDomainDN(principal.getDomain());	
+				if ( ldap.exists(domainDN, IAonObjectClasses.DOMAIN) ) {
+					Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
+					if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
+						if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
+							this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
+						}
+						if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
+							this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
+						}
+					}				
 				}
-				if ( user.containsKey(MAX_ATTACHMENT_SIZE) ) {
-					this.maxAttachmentSize = user.toInteger(MAX_ATTACHMENT_SIZE);
-				}
+			}
+			for( int i = 0; i < rejectedExtensions.size(); i++ ) {
+				rejectedExtensions.set(i, rejectedExtensions.get(i).toLowerCase());
 			}			
 		}
-		if ( (maxAttachmentSize == -1) || rejectedExtensions.isEmpty() ) {
-			Name domainDN = NameResolver.getDomainDN(principal.getDomain());	
-			if ( ldap.exists(domainDN, IAonObjectClasses.DOMAIN) ) {
-				Entry domain = ldap.get( domainDN, IAonObjectClasses.DOMAIN, ILdapConstants.OBJECT_CLASS_ATTRIBUTE, REJECTED_EXTENSIONS, MAX_ATTACHMENT_SIZE);
-				if ( (domain != null) && domain.hasObjectClass(WEBMAIL_CONFIG) ) {
-					if ( rejectedExtensions.isEmpty() && domain.containsKey(REJECTED_EXTENSIONS) ) {
-						this.rejectedExtensions = (List) domain.get(REJECTED_EXTENSIONS);
-					}
-					if ( (maxAttachmentSize == -1) && domain.containsKey(MAX_ATTACHMENT_SIZE) ) {
-						this.maxAttachmentSize = domain.toInteger(MAX_ATTACHMENT_SIZE);
-					}
-				}				
-			}
-		}
-		for( int i = 0; i < rejectedExtensions.size(); i++ ) {
-			rejectedExtensions.set(i, rejectedExtensions.get(i).toLowerCase());
-		}
-		setEnableDragAndDrop(!AonUtil.isChrome());
 	}
 
 	public String isValidFile( AonFile file ) {
