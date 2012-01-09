@@ -12,11 +12,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-//import com.code.aon.ui.config.util.UserUtils;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.dao.IPmsAlias;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
@@ -74,7 +72,7 @@ public class PmsCollectionsController {
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(1));
+		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(1));
 		for (ITransferObject ito : itemBean.getList(criteria)) {
 			Item item = (Item)ito;
 			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
