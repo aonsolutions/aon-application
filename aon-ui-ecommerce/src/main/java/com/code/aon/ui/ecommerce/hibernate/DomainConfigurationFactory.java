@@ -1,5 +1,7 @@
 package com.code.aon.ui.ecommerce.hibernate;
 
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
+
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
@@ -10,7 +12,6 @@ import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.dao.hibernate.DefaultConfigurationFactory;
 import com.code.aon.common.dao.hibernate.IConfigurationFactory;
 import com.code.aon.ldap.BasicLdap;
@@ -18,6 +19,7 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -89,7 +91,7 @@ public class DomainConfigurationFactory extends DefaultConfigurationFactory impl
      * @param configuration the configuration
      */
     protected void completeConfiguration( Configuration configuration ) {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
     	String domain = resolver.getDomain();
     	FacesContext ctx = FacesContext.getCurrentInstance();
     	String context = ctx.getExternalContext().getRequestContextPath();
