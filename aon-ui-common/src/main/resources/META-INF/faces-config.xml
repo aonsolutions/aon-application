@@ -47,27 +47,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** EXCEPTION HANDLER ****************** -->
-	<managed-bean>
-		<managed-bean-name>exceptionBean</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.ExceptionBean
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>commonCollections</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.common.controller.CommonCollections</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  *************** NULL ITEM ***************** -->
-	<managed-bean>
-		<managed-bean-name>nullItem</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.common.controller.NullSelectItemController 
-		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 
 	<!--  **** ROLE MANAGER **** -->
@@ -78,7 +62,21 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+		
+	<!-- ***************** LOGGED USER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>loggedUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.LoggedUser</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ***************** DOMAIN RESOLVER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>domainResolver</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.DomainResolver</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
 
 	<!-- *************************************** -->
 	<!-- ************ NAVIGATION *************** -->

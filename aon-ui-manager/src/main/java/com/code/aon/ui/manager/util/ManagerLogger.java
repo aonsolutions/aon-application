@@ -1,5 +1,6 @@
 package com.code.aon.ui.manager.util;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.BUNDLE_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.LOGGER_SCRIPT;
 import static com.code.aon.ui.manager.controller.IManagerConstants.MANAGER_CONTROLLER_NAME;
@@ -17,13 +18,13 @@ import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
@@ -86,8 +87,8 @@ public class ManagerLogger {
 	}
 	
 	public ManagerLogger( String toEmails ) {
-		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
-		loggedUser = _loggedUser.getPrincipal();
+		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
+		loggedUser = lu.getPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
 			MailAccount account = getMailAccount();

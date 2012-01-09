@@ -309,4 +309,9 @@
 	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
 	</resource-env-ref>
 
+	<context-param>
+		<param-name>com.code.aon.skipLdap</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 </web-app>

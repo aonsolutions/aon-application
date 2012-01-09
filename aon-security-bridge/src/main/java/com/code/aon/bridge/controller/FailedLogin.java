@@ -1,7 +1,11 @@
 /**
  * 
  */
-package com.code.aon.bridge.session;
+package com.code.aon.bridge.controller;
+
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.AON_LAST_EXCEPTION_KEY;
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.LOGIN_ERROR_DEFAULT;
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.LOGIN_ERROR_PREFFIX;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -31,14 +35,8 @@ import com.code.aon.ldap.NameResolver;
  */
 public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 
-	protected static final String AON_LAST_EXCEPTION_KEY = "AON_LAST_EXCEPTION_KEY";
-	
     /** Obtains the SessionFilter Logger. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(FailedLogin.class);
-	
-	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
-	
-	private static final String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 	
 	private static final int DEFAULT_STATUS = 10;
 

@@ -1,4 +1,4 @@
-package com.code.aon.bridge.session;
+package com.code.aon.ui.common.controller;
 
 import java.util.AbstractMap;
 import java.util.Set;
@@ -16,31 +16,31 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.util.AonUtil;
 
+/**
+ * The Class LoggedUser.
+ */
 public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 
-	public static final String LOGGED_USER = "loggedUser";
-	
+	/** The logged. */
 	private boolean logged;
 	
+	/** The user name. */
 	private String userName;
 	
+	/** The company name. */
 	private String companyName;
 	
+	/** The principal. */
 	private AuthPrincipal principal;
 	
+	/** The Constant USER_IN_ROLE. */
 	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
-	private boolean skipLdap;
-	
-    public boolean isSkipLdap() {
-		return skipLdap;
-	}
-
-	public void setSkipLdap(boolean skipLdap) {
-		this.skipLdap = skipLdap;
-	}	
-	
+	/**
+	 * Instantiates a new logged user.
+	 */
 	public LoggedUser() {
 		this.principal = Utils.getAuthPrincipal();
 		if ( (principal != null) && (!IConstants.UNAUTHENTICATED_IDENTITY.equals(principal.getName())) ) {
@@ -49,8 +49,14 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 		}
 	}
 
+	/**
+	 * Gets the aon user.
+	 *
+	 * @param principal the principal
+	 * @return the aon user
+	 */
 	private Entry getAonUser( AuthPrincipal principal ) {
-		if (! skipLdap ) {
+		if (! AonUtil.isSkipLdap() ) {
 			BasicLdap ldap = new BasicLdap();
 			Name dn = NameResolver.getUserDN(principal.getDomain(), principal.getShortName());
 			if ( ldap.exists(dn, USER) ) {
@@ -60,8 +66,14 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 		return null;
 	}		
 
+	/**
+	 * Gets the aon domain.
+	 *
+	 * @param principal the principal
+	 * @return the aon domain
+	 */
 	private Entry getAonDomain( AuthPrincipal principal ) {
-		if (! skipLdap ) {
+		if (! AonUtil.isSkipLdap() ) {
 			BasicLdap ldap = new BasicLdap();
 			Name dn = NameResolver.getDomainDN(principal.getDomain());
 			if ( ldap.exists(dn, DOMAIN) ) {
@@ -71,6 +83,11 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 		return null;
 	}		
 	
+    /**
+     * Inits the variables.
+     *
+     * @param principal the principal
+     */
     private void initVariables( AuthPrincipal principal ) {
     	Entry user = getAonUser( principal );
     	if ( user != null ) {
@@ -95,34 +112,72 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
        	}
     }
 
+    /**
+     * Checks if is logged.
+     *
+     * @return true, if is logged
+     */
     public boolean isLogged(){
     	return logged;
     }    
         
+    /**
+     * Gets the logged user name.
+     *
+     * @return the logged user name
+     */
     public String getLoggedUserName() {
         return userName;
     }    
 
+    /**
+     * Sets the logged user name.
+     *
+     * @param userName the new logged user name
+     */
     public void setLoggedUserName( String userName ) {
         this.userName = userName;
     }    
     
+    /**
+     * Gets the company name.
+     *
+     * @return the company name
+     */
     public String getCompanyName(){
     	return companyName;
     }
     
+	/**
+	 * Sets the company name.
+	 *
+	 * @param companyName the new company name
+	 */
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
 
+	/**
+	 * Gets the user in role.
+	 *
+	 * @return the user in role
+	 */
 	public FakeMap getUserInRole() {
 		return USER_IN_ROLE;
 	}
 
+	/**
+	 * Gets the principal.
+	 *
+	 * @return the principal
+	 */
 	public AuthPrincipal getPrincipal() {
 		return principal;
 	}
 
+	/**
+	 * The Class FakeMap.
+	 */
 	@SuppressWarnings("unchecked")
 	private static class FakeMap extends AbstractMap<String,Boolean> {
 		

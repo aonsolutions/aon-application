@@ -1,6 +1,7 @@
 package com.code.aon.ui.document.controller;
 
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
@@ -17,7 +18,6 @@ import javax.naming.Name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -29,6 +29,8 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.event.IControllerListener;
@@ -60,7 +62,7 @@ public class ManagerController implements IEnterpriseController {
 			initEnterprise();
 		}
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
-		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 		dm.setShow(false);
@@ -144,7 +146,7 @@ public class ManagerController implements IEnterpriseController {
 		mailAccount.onSearch(null);
 		LdapBasicController signature = (LdapBasicController) AonUtil.getRegisteredBean(BEAN_SIGNATURE);
 		signature.updateBaseDN(dn);
-		signature.onSearch(null);	
+		signature.onSearch(null);
 	}
 	
 }

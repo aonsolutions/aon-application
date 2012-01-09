@@ -6,6 +6,10 @@ package com.code.aon.ui.common;
  */
 public interface ICommonConstants {
 
+	// ************************************************************
+	// MESSAGES
+	// ************************************************************
+	
 	/** Default Bundle */
 	String DEFAULT_BUNDLE = "bundle";
 
@@ -30,15 +34,6 @@ public interface ICommonConstants {
 	/** The document size message. */
 	String DOCUMENT_SIZE_MESSAGE = "aon_document_size_message";	
 	
-	/** The hide header links. */
-	String HIDE_HEADER_LINKS = "hideHeaderLinks";
-
-	/** The hide menu bar. */
-	String HIDE_MENU_BAR = "hideMenuBar";
-
-	/** Logout action listener. */
-	String ON_LOGOUT = "onLogout";
-	
 	/** The ID. */
 	String ID = "aon_id";
 	
@@ -56,5 +51,35 @@ public interface ICommonConstants {
 	
 	/** The DATE. */
 	String DATE = "aon_date";
+	
+	// ************************************************************
+	// BEAN
+	// ************************************************************
+
+	/** The aonConfiguration controller. */
+	String CONFIGURATION_CONTROLLER_NAME = "aonConfiguration";
+	
+	/** The loggedUser controller. */
+	String LOGGED_USER_CONTROLLER_NAME = "loggedUser";
+	
+	/** The domainResolver controller. */
+	String DOMAIN_RESOLVER_CONTROLLER_NAME = "domainResolver";
+	
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+	
+	/** The Skip LDAP property. */
+	String SKIP_LDAP = "com.code.aon.skipLdap";	
+	
+	/** The hide header links. */
+	String HIDE_HEADER_LINKS = "hideHeaderLinks";
+
+	/** The hide menu bar. */
+	String HIDE_MENU_BAR = "hideMenuBar";
+
+	/** Logout action listener. */
+	String ON_LOGOUT = "onLogout";
+	
 	
 }

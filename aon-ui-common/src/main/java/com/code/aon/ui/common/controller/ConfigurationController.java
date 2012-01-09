@@ -18,7 +18,6 @@ import java.util.jar.Manifest;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.naming.Name;
 import javax.servlet.http.HttpSession;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -27,8 +26,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -40,15 +37,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.code.aon.bridge.session.LoggedUser;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.Classpath;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
@@ -64,8 +55,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
 	private static final String APPLICATION_VERSION = "applicationVersion";
-	
-	private static final String DATA_BASE_VERSION = "databaseVersion";
 	
 	private static final String BUILD_NUMBER = "buildNumber";
 	
@@ -104,7 +93,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			bean = loadBeanConfiguration( document );
 		}		
 		initApplicationVersion();
-		initDataBaseVersion();
 	}
 
 	/**
@@ -192,46 +180,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			LOGGER.warn("Imposible determinar la versión");
 		}
 	}
-	
-	/**
-	 * Checks for data source.
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean hasDataSource() {
-		BasicLdap ldap = new BasicLdap();
-		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
-		AuthPrincipal principal = loggedUser.getPrincipal();
-		if ( principal != null ) {
-			String application = StringUtils.removeStart(principal.getContext(), "/");
-			Name dn = NameResolver.getDomainApplicationDN(principal.getDomain(), application);
-			Entry entry = ldap.get(dn, DOMAIN_APPLICATION, DATA_SOURCE_ATTRIBUTE );
-			return (entry != null) && entry.containsKey(DATA_SOURCE_ATTRIBUTE);
-		}
-		return false;
-	}
-	
-	/**
-	 * Calculate database version.
-	 * 
-	 */
-	private void initDataBaseVersion() {
-		try {
-			if ( hasDataSource() ) {
-		    	String name = HibernateUtil.getSessionFactoryName();
-		        Session session = HibernateUtil.getSession(name);
-		        SQLQuery query = session.createSQLQuery("SELECT version_number FROM db_version");
-		        List<?> list = query.list();
-		        if (! list.isEmpty() ) {
-		        	String dbVersion = (String) list.get(0);
-		        	getProperties().put(DATA_BASE_VERSION, dbVersion );
-		        }
-		        HibernateUtil.closeSession(name);
-			}
-		} catch (Throwable e) {
-			LOGGER.warn("Imposible determinar la versión");
-		}
-	}	
 	
     /**
      * Gets the current date.

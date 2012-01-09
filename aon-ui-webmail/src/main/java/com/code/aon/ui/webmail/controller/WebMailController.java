@@ -1,5 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -18,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -30,6 +31,7 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
@@ -147,7 +149,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 				if ( list.size() == 1) {
 					signature = (Signature) list.get(0);
 				} else {
-					LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);					
+					LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);					
 		    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		            ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale); 
 		        	signature = new Signature();

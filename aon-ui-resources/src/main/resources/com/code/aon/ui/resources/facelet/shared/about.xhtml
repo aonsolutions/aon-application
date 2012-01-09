@@ -52,8 +52,8 @@
 									</aon:outputFormat>
 								</c:if>
 								<aon:outputFormat style="color: #000;" value="#{bundle.aon_db_version}"
-									rendered="#{aonConfiguration.properties.databaseVersion != null}" >
-									<f:param value="#{aonConfiguration.properties.databaseVersion}" />
+									rendered="#{dbUptodate.currentVersion != null}" >
+									<f:param value="#{dbUptodate.currentVersion}" />
 								</aon:outputFormat>
 								<aon:outputFormat style="color: #000;" value="#{bundle.aon_session_id}" >
 									<f:param value="#{aonConfiguration.sessionId}" />

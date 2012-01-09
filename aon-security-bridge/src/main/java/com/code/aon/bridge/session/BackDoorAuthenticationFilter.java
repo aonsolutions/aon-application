@@ -72,7 +72,7 @@ public class BackDoorAuthenticationFilter implements Filter, IConstants {
 	}
 	
 	private String getUserName( AuthPrincipal principal, HttpServletRequest httpRequest) {
-		String domain = DomainResolver.getDomain(httpRequest);
+		String domain = httpRequest.getServerName();
 		String username = principal.getShortName() + IConstants.IDENTITY_SEPARATOR 
 			+ domain + httpRequest.getContextPath();
 		return username;

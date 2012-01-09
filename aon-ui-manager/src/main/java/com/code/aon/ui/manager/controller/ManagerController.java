@@ -1,5 +1,6 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
 
 import java.io.BufferedReader;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -44,6 +44,7 @@ import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.ManagerLogger;
@@ -232,7 +233,7 @@ public class ManagerController implements IManagerConstants {
 	
 	private Domain calculateCurrentDomain() {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
 		String name = domainResolver.getDomain();		
 		try {
 			IManagerBean bean = controller.getManagerBean();

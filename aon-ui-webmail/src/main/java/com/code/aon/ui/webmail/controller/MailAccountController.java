@@ -4,6 +4,7 @@ import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -388,7 +389,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	
 	private List<SelectItem> getDomainMailAccounts() {
 		if ( domainMailAccounts == null ) {
-			DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+			DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
 			Name dn = NameResolver.getDomainDN( domainResolver.getDomain() );
 			this.domainMailAccounts = getMailAccounts(dn);
 		}
