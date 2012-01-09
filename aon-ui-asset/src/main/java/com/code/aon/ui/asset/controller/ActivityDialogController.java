@@ -37,7 +37,7 @@ import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
 
 public class ActivityDialogController extends EmailParentController{
@@ -346,7 +346,7 @@ public class ActivityDialogController extends EmailParentController{
 		AuthPrincipal user = Utils.getAuthPrincipal();
 		String domain = user.getDomain();
 		String login = user.getShortName();
-		MailAccount mailAccount;
+		IMailAccount mailAccount;
 		try {
 			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
 		} catch (ManagerBeanException e) {
