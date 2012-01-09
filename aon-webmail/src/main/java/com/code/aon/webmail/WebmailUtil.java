@@ -49,11 +49,11 @@ public class WebmailUtil {
 		return null;
 	}
 	
-    public static MailAccount getDefaultAccount( String domain, String user ) throws ManagerBeanException {
+    public static IMailAccount getDefaultAccount( String domain, String user ) throws ManagerBeanException {
     	return getDefaultAccount(domain, user, false);
     }
 
-    public static MailAccount getDefaultAccount( String domain, String user, boolean first ) throws ManagerBeanException {
+    public static IMailAccount getDefaultAccount( String domain, String user, boolean first ) throws ManagerBeanException {
     	LdapDAO dao = getMailAccountDAO(domain, user);
     	if ( dao != null ) {
     		return getDefaultAccount(dao, first);
@@ -61,11 +61,11 @@ public class WebmailUtil {
 		return null;
     }    
    
-    public static MailAccount getDefaultAccount( String domain ) throws ManagerBeanException {
+    public static IMailAccount getDefaultAccount( String domain ) throws ManagerBeanException {
     	return getDefaultAccount(domain, false);
     }
 
-    public static MailAccount getDefaultAccount( String domain, boolean first ) throws ManagerBeanException {
+    public static IMailAccount getDefaultAccount( String domain, boolean first ) throws ManagerBeanException {
     	LdapDAO dao = getMailAccountDAO(domain);
     	if ( dao != null ) {
     		return getDefaultAccount(dao, first);
@@ -73,7 +73,7 @@ public class WebmailUtil {
 		return null;
     }        
     
-    private static MailAccount getDefaultAccount( LdapDAO dao, boolean first ) throws ManagerBeanException {
+    private static IMailAccount getDefaultAccount( LdapDAO dao, boolean first ) throws ManagerBeanException {
 		IManagerBean bean = new BasicManagerBean(dao);
 		Criteria defaultCriteria = new Criteria();
 		defaultCriteria.addEqualExpression(bean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_DEFAULT_ACCOUNT), Boolean.TRUE);
@@ -118,8 +118,8 @@ public class WebmailUtil {
     	return null;
     }
     
-    public static MailAccount getMailAccount( String domain, String user, boolean checkDomainAccounts ) throws ManagerBeanException {
-		MailAccount mailAccount = WebmailUtil.getDefaultAccount(domain, user, true);
+    public static IMailAccount getMailAccount( String domain, String user, boolean checkDomainAccounts ) throws ManagerBeanException {
+		IMailAccount mailAccount = WebmailUtil.getDefaultAccount(domain, user, true);
 		if ( (mailAccount == null) && checkDomainAccounts ) {
 			mailAccount = WebmailUtil.getDefaultAccount(domain, true);
 		}

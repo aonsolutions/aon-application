@@ -30,7 +30,7 @@ import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonServer;
 
@@ -60,9 +60,9 @@ public class ManagerLogger {
 	
 	private boolean configured;
 	
-	private MailAccount getMailAccount() throws ManagerBeanException {
+	private IMailAccount getMailAccount() throws ManagerBeanException {
 		boolean accountTested = false;
-		MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), true);
+		IMailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), true);
 		if ( account != null ) {
 			accountTested = true;
 			if ( AonServer.test(account, false, true) ) {
@@ -91,7 +91,7 @@ public class ManagerLogger {
 		loggedUser = lu.getPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
-			MailAccount account = getMailAccount();
+			IMailAccount account = getMailAccount();
 			if ( account != null ) {
 				Address from = InternetAddress.parse(account.getEmail())[0];
 				this.sender = new EmailSender(from, account);

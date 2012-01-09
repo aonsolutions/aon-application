@@ -19,13 +19,12 @@ import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
 	
@@ -74,7 +73,7 @@ public class InvoicePrintController extends InvoiceController implements IFinanc
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		String subject = messageController.getSubject();
 		String content = messageController.getContent();
-		MailAccount account = messageController.getSenderMailAccount();
+		IMailAccount account = messageController.getSenderMailAccount();
 		try {
 			emailUtil.changeMailAccount(account);
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
