@@ -7,6 +7,7 @@ import static com.code.aon.ldap.ILdapConstants.MAX_DOCUMENT_SIZE_ATTRIBUTE;
 import static com.code.aon.ldap.ILdapConstants.MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE;
 import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
 import static com.code.aon.ui.common.ICommonConstants.DOCUMENT_SIZE_MESSAGE;
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
 
 import javax.naming.Name;
 
@@ -15,12 +16,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 
 public abstract class BatchAttachController extends AttachmentController {
@@ -47,7 +48,7 @@ public abstract class BatchAttachController extends AttachmentController {
 	}
 
 	private void init() {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
     	String domainName = resolver.getDomain();
 		Name domainDN = NameResolver.getDomainDN(domainName);
 		boolean documentManagement = false;
