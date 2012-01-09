@@ -2,6 +2,7 @@ package com.code.aon.ui.config.event;
 
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.ILdapConstants.ACTIVE_ATTRIBUTE;
+import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,13 +12,13 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -31,7 +32,7 @@ public class UserLoookupListener extends ControllerAdapter {
 	private String application;
 	
 	public UserLoookupListener() {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
     	this.domain = resolver.getDomain();			
     	this.application = StringUtils.removeStart(UserUtils.getInstance().getPrincipal().getContext(), "/" );
 	}
