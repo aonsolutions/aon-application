@@ -2581,10 +2581,10 @@ CREATE TABLE `contract_payment` (
 
 CREATE TABLE `cost_profile` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion',
   `cost` double NOT NULL default '0' COMMENT 'Costo por hora',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   PRIMARY KEY  (`id`),
   KEY `IDX_COST_PROFILE_DOMAIN` (`domain`),
   CONSTRAINT `FK_COST_PROFILE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
