@@ -36,6 +36,9 @@
 	<report id="invoiceTaxBreakDown" description="Invoice Tax report">
 		<template path="/com/code/aon/web/gta/report/invoiceTaxBreakDown.jasper"/>
 	</report>
+	<report id="invoiceFinances" description="Invoice Finances report">
+		<template path="/com/code/aon/web/gta/report/invoiceFinances.jasper"/>
+	</report>
 
 	<!--  *********  Formulario de Albaran de Venta desde el Mantenimiento ********* -->
 	<report id="delivery" description="Delivery report">
