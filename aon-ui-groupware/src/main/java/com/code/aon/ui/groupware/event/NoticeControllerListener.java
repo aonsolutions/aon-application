@@ -34,7 +34,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.NoticeController;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonMessage;
@@ -168,7 +168,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 		String content = "DE: " + notice.getSource() + "\nEMPRESA: " + notice.getCompany() + "\nTELEFONO: " + notice.getPhone() + "\nASUNTO: " + notice.getSubject();
 		
 		try {
-			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 			AonServer server = new AonServer(mailAccount);
 			server.createBasicFolders();
 			InternetAddress iafrom = new InternetAddress(from, username);
