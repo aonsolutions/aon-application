@@ -33,13 +33,6 @@ CREATE TABLE `project_reservation_room_detail` (
 
 ALTER TABLE `project` ADD `reservation` tinyint(1) default '0' COMMENT 'Indica si se trata de una Reserva' AFTER `dossier`;
 
-ALTER TABLE `asset` DROP COLUMN `description`;
-
-ALTER TABLE `asset_activity` DROP COLUMN `why`;
-ALTER TABLE `asset_activity` DROP COLUMN `who`;
-ALTER TABLE `asset_activity` DROP COLUMN `from_time`;
-ALTER TABLE `asset_activity` DROP COLUMN `to_time`;
-
 CREATE TABLE `room` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
