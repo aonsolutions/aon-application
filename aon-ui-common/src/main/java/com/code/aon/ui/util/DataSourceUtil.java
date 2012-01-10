@@ -57,7 +57,7 @@ public class DataSourceUtil {
      * @return the dB properties
      */
     public static Properties getDBProperties( String domain, String application ) {
-    	LOGGER.info( "Domain: " + domain + " Application: " + application );
+    	LOGGER.info( "Domain: {}, Application: {}", domain, application );
     	MBeanServer server = BeanServerUtil.getMBeanServer();
 		Object[] params = { domain, application };
 		String[] sig = { String.class.getName(), String.class.getName() }; 	
