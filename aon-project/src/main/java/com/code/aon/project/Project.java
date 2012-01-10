@@ -42,6 +42,7 @@ public class Project implements ITransferObject, IEnterprise {
 	private boolean tas;
 	private boolean commercial;
 	private boolean dossier;
+	private boolean reservation;
 	private boolean active;
 
 	public Project() {
@@ -138,6 +139,13 @@ public class Project implements ITransferObject, IEnterprise {
 		this.dossier = dossier;
 	}	
 	
+	public boolean isReservation() {
+		return reservation;
+	}
+	public void setReservation(boolean reservation) {
+		this.reservation = reservation;
+	}	
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -165,6 +173,7 @@ public class Project implements ITransferObject, IEnterprise {
 				.append(this.commercial, o.commercial)
 				.append(this.date, o.date)
 				.append(this.dossier, o.dossier)
+				.append(this.reservation, o.reservation)
 				.append(this.name, o.name)
 				.append(this.tas, o.tas)
 				.append(this.active, o.active)
@@ -183,6 +192,7 @@ public class Project implements ITransferObject, IEnterprise {
 			.append(commercial)
 			.append(date)
 			.append(dossier)
+			.append(reservation)
 			.append(name)
 			.append(id)			
 			.append(tas)

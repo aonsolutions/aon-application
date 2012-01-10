@@ -111,10 +111,16 @@ public interface IProjectAlias {
 	String  PROJECT_REGISTRY_ID = PROJECT_ENTRY.getAliasNames()[9];
 
 	/** 
+	* Alias value: Project_reservation
+	* Hibernate value: Project.reservation
+	*/
+	String  PROJECT_RESERVATION = PROJECT_ENTRY.getAliasNames()[10];
+
+	/** 
 	* Alias value: Project_tas
 	* Hibernate value: Project.tas
 	*/
-	String  PROJECT_TAS = PROJECT_ENTRY.getAliasNames()[10];
+	String  PROJECT_TAS = PROJECT_ENTRY.getAliasNames()[11];
 
 
 

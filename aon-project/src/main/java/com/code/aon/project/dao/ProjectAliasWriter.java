@@ -13,7 +13,7 @@ import com.code.aon.project.ProjectType;
 public class ProjectAliasWriter {
 
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/ecastellano/AON-PROJECT/aon-project/src/main/java/com/code/aon/project/dao/IProjectAlias.java");
+		File file = new File("/AON-TRUNK/aon-project/src/main/java/com/code/aon/project/dao/IProjectAlias.java");
 		String[] classes = new String[] { 
 			ActivityType.class.getName(),
 	        Project.class.getName(),
