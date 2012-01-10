@@ -13,10 +13,12 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.customer.Customer;
 
 @Entity
 @Table(name="hotel")
@@ -26,9 +28,9 @@ public class Hotel implements ITransferObject, IScopable {
 
 	private Integer id;
 	private String code;
-	private String name;
     private Scope scope;
     private WorkPlace workPlace;
+    private Customer customer;
 	private boolean active;
 
     @Id
@@ -49,14 +51,6 @@ public class Hotel implements ITransferObject, IScopable {
 		this.code = code;
 	}
 
-	@Column(name="name", length = 64, nullable = false)
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	@ManyToOne
     @JoinColumn(name="scope", nullable = false)
     public Scope getScope() {
@@ -68,11 +62,21 @@ public class Hotel implements ITransferObject, IScopable {
 	
 	@ManyToOne
     @JoinColumn(name="workplace", nullable = false)
+    @AonPOJOInitializationInvalidateRestoreNull
     public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
+	}
+	
+	@ManyToOne
+    @JoinColumn(name="customer")
+    public Customer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 	
 	@Column(nullable = true)
@@ -93,7 +97,7 @@ public class Hotel implements ITransferObject, IScopable {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
 				.append(this.code, o.code)			
-				.append(this.name, o.name)
+				.append(this.customer, o.customer)
 				.append(this.scope, o.scope)
 				.append(this.workPlace, o.workPlace)
 				.isEquals();
@@ -106,8 +110,8 @@ public class Hotel implements ITransferObject, IScopable {
 		return new HashCodeBuilder()
 			.append(active)
 			.append(code)
+			.append(customer)
 			.append(id)
-			.append(name)
 			.append(scope)
 			.append(workPlace)
 			.toHashCode();

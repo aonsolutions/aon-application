@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -18,10 +19,12 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.product.Item;
+import com.code.aon.product.strategy.ICalculable;
+import com.code.aon.product.util.DiscountExpression;
 
 @Entity
 @Table(name="project_reservation_service")
-public class ProjectReservationService implements ITransferObject {
+public class ProjectReservationService implements ITransferObject, ICalculable {
 
 	private static final long serialVersionUID = -2595051575335189544L;
 
@@ -113,7 +116,17 @@ public class ProjectReservationService implements ITransferObject {
         this.taxableBase = taxableBase;
     }
 
-	@Override
+    @Transient
+    public DiscountExpression getDiscountExpression() {
+    	return new DiscountExpression("0.0");
+    }
+
+    @Transient
+    public double getTaxes() {
+    	return 0;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;

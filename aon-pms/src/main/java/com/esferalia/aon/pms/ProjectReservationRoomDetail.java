@@ -13,20 +13,19 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import com.code.aon.asset.AssetActivity;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.product.Item;
 
 @Entity
-@Table(name="project_reservation_room")
-public class ProjectReservationRoom implements ITransferObject {
+@Table(name="project_reservation_room_detail")
+public class ProjectReservationRoomDetail implements ITransferObject {
 
 	private static final long serialVersionUID = -2595051575335189544L;
 
 	private Integer id;
-	private ProjectReservation projectReservation;
-	private int roomIndex;
-    private Item item;
+	private ProjectReservationRoom projectReservationRoom;
+    private AssetActivity assetActivity;
 
     @Id
 	@GeneratedValue
@@ -39,31 +38,23 @@ public class ProjectReservationRoom implements ITransferObject {
 	}
 
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="project_reservation", nullable=false)
-	public ProjectReservation getProjectReservation() {
-		return projectReservation;
+	@JoinColumn(name="project_reservation_room", nullable=false)
+	public ProjectReservationRoom getProjectReservationRoom() {
+		return projectReservationRoom;
 	}
 
-	public void setProjectReservation(ProjectReservation projectReservation) {
-		this.projectReservation = projectReservation;
+	public void setProjectReservationRoom(ProjectReservationRoom projectReservationRoom) {
+		this.projectReservationRoom = projectReservationRoom;
 	}
-
-    @Column(name="room_index", nullable=false)
-    public int getRoomIndex() {
-        return roomIndex;
-    }
-    public void setRoomIndex(int roomIndex) {
-        this.roomIndex = roomIndex;
-    }
 
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="item", nullable=false)
-	public Item getItem() {
-		return item;
+	@JoinColumn(name="asset_activity", nullable=false)
+	public AssetActivity getAssetActivity() {
+		return assetActivity;
 	}
 
-	public void setItem(Item item) {
-		this.item = item;
+	public void setAssetActivity(AssetActivity assetActivity) {
+		this.assetActivity = assetActivity;
 	}
 
 	@Override
@@ -71,12 +62,11 @@ public class ProjectReservationRoom implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final ProjectReservationRoom o = (ProjectReservationRoom) obj;
+		final ProjectReservationRoomDetail o = (ProjectReservationRoomDetail) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.item, o.item)
-				.append(this.projectReservation, o.projectReservation)
-				.append(this.roomIndex, o.roomIndex)
+				.append(this.assetActivity, o.assetActivity)
+				.append(this.projectReservationRoom, o.projectReservationRoom)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -86,9 +76,8 @@ public class ProjectReservationRoom implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)
-			.append(item)
-			.append(projectReservation)
-			.append(roomIndex)
+			.append(assetActivity)
+			.append(projectReservationRoom)
 			.toHashCode();
 	}
 

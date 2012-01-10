@@ -6,6 +6,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 
 /** 
@@ -21,10 +22,10 @@ public interface IPmsAlias {
 	DAOConstantsEntry HOTEL_ENTRY = DAOConstants.getDAOConstant(Hotel.class);
 
 	/** 
-	* Alias value: Hotel_active
-	* Hibernate value: Hotel.active
+	* Alias value: Hotel_id
+	* Hibernate value: Hotel.id
 	*/
-	String  HOTEL_ACTIVE = HOTEL_ENTRY.getAliasNames()[0];
+	String  HOTEL_ID = HOTEL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: Hotel_code
@@ -33,28 +34,34 @@ public interface IPmsAlias {
 	String  HOTEL_CODE = HOTEL_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Hotel_id
-	* Hibernate value: Hotel.id
-	*/
-	String  HOTEL_ID = HOTEL_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Hotel_name
-	* Hibernate value: Hotel.name
-	*/
-	String  HOTEL_NAME = HOTEL_ENTRY.getAliasNames()[3];
-
-	/** 
 	* Alias value: Hotel_scope_id
 	* Hibernate value: Hotel.scope.id
 	*/
-	String  HOTEL_SCOPE_ID = HOTEL_ENTRY.getAliasNames()[4];
+	String  HOTEL_SCOPE_ID = HOTEL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Hotel_workPlace_id
 	* Hibernate value: Hotel.workPlace.id
 	*/
-	String  HOTEL_WORK_PLACE_ID = HOTEL_ENTRY.getAliasNames()[5];
+	String  HOTEL_WORK_PLACE_ID = HOTEL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Hotel_workPlace_description
+	* Hibernate value: Hotel.workPlace.description
+	*/
+	String  HOTEL_WORK_PLACE_DESCRIPTION = HOTEL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Hotel_customer_id
+	* Hibernate value: Hotel.customer.id
+	*/
+	String  HOTEL_CUSTOMER_ID = HOTEL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Hotel_active
+	* Hibernate value: Hotel.active
+	*/
+	String  HOTEL_ACTIVE = HOTEL_ENTRY.getAliasNames()[6];
 
 
 
@@ -300,46 +307,53 @@ public interface IPmsAlias {
 	DAOConstantsEntry PROJECT_RESERVATION_ROOM_ENTRY = DAOConstants.getDAOConstant(ProjectReservationRoom.class);
 
 	/** 
-	* Alias value: ProjectReservationRoom_adults
-	* Hibernate value: ProjectReservationRoom.adults
-	*/
-	String  PROJECT_RESERVATION_ROOM_ADULTS = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: ProjectReservationRoom_children
-	* Hibernate value: ProjectReservationRoom.children
-	*/
-	String  PROJECT_RESERVATION_ROOM_CHILDREN = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: ProjectReservationRoom_id
 	* Hibernate value: ProjectReservationRoom.id
 	*/
-	String  PROJECT_RESERVATION_ROOM_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[2];
+	String  PROJECT_RESERVATION_ROOM_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: ProjectReservationRoom_item_id
 	* Hibernate value: ProjectReservationRoom.item.id
 	*/
-	String  PROJECT_RESERVATION_ROOM_ITEM_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: ProjectReservationRoom_nights
-	* Hibernate value: ProjectReservationRoom.nights
-	*/
-	String  PROJECT_RESERVATION_ROOM_NIGHTS = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[4];
+	String  PROJECT_RESERVATION_ROOM_ITEM_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ProjectReservationRoom_projectReservation_id
 	* Hibernate value: ProjectReservationRoom.projectReservation.id
 	*/
-	String  PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[5];
+	String  PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProjectReservationRoom_roomIndex
 	* Hibernate value: ProjectReservationRoom.roomIndex
 	*/
-	String  PROJECT_RESERVATION_ROOM_ROOM_INDEX = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[6];
+	String  PROJECT_RESERVATION_ROOM_ROOM_INDEX = PROJECT_RESERVATION_ROOM_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProjectReservationRoomDetail entity.
+	*/ 
+	DAOConstantsEntry PROJECT_RESERVATION_ROOM_DETAIL_ENTRY = DAOConstants.getDAOConstant(ProjectReservationRoomDetail.class);
+
+	/** 
+	* Alias value: ProjectReservationRoomDetail_assetActivity_id
+	* Hibernate value: ProjectReservationRoomDetail.assetActivity.id
+	*/
+	String  PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ID = PROJECT_RESERVATION_ROOM_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProjectReservationRoomDetail_id
+	* Hibernate value: ProjectReservationRoomDetail.id
+	*/
+	String  PROJECT_RESERVATION_ROOM_DETAIL_ID = PROJECT_RESERVATION_ROOM_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProjectReservationRoomDetail_projectReservationRoom_id
+	* Hibernate value: ProjectReservationRoomDetail.projectReservationRoom.id
+	*/
+	String  PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID = PROJECT_RESERVATION_ROOM_DETAIL_ENTRY.getAliasNames()[2];
 
 
 

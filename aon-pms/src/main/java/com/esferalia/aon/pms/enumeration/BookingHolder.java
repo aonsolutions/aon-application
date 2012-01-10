@@ -7,9 +7,9 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum BookingHolder implements IResourceable {
 
+	GUEST,
 	AGENCY,
-	COMPANY,
-	GUEST;
+	COMPANY;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.pms.i18n.messages";
