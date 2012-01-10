@@ -14,7 +14,7 @@ import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
@@ -35,7 +35,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 		if ( app != null ) {
 			try {
 				AuthPrincipal user = Utils.getAuthPrincipal();
-				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+				IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 				server = new AonServer(mailAccount);
 				server.connect();
 				updateMailSummaryModel();
