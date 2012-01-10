@@ -5,6 +5,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.esferalia.aon.entity.master.AssetActivityDB;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name="asset_activity")
@@ -13,7 +17,7 @@ public class AssetActivity extends AssetActivityDB {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean check;
-	
+
 	@Transient
 	public boolean isCheck() {
 		return check;
