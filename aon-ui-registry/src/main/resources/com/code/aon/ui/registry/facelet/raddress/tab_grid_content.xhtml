@@ -8,11 +8,19 @@
 
 	<aon:div style="width: 100%;">
 		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-italic,aon-panelGrid-even" align="center">
+			<aon:outputLabel for="RegistryAddress_addressType" value="#{bundle.aon_type}" 
+				rendered="#{controller.to.addressType != null}" />
+			<aon:selectOneMenu id="RegistryAddress_addressType#{sufix}" styleClass="aon-margin-left aon-form-input-text"
+				value="#{controller.to.addressType}" rendered="#{controller.to.addressType != null}">
+				<f:selectItems value="#{registryCollections.addressTypes}" />
+			</aon:selectOneMenu>
+
 			<aon:outputLabel for="RegistryAddress_alias" value="#{bundle.aon_alias}"/>
 			<aon:inputText id="RegistryAddress_alias#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 				value="#{controller.to.alias}" size="18" maxlength="15" />
 
-			<aon:outputLabel for="RegistryAddress_streetType" value="#{registryBundle.registry_address}" styleClass="aon-italic"/>
+
+			<aon:outputLabel for="RegistryAddress_address" value="#{registryBundle.registry_address}" styleClass="aon-italic"/>
 			<aon:div>
 				<aon:selectOneMenu id="RegistryAddress_streetType#{sufix}" styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.streetType}">
