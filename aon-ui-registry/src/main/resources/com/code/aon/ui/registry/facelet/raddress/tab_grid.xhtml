@@ -7,15 +7,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 
 		<ui:define name="columns">
 			<f:facet name="footer">
 				<rich:columnGroup  rendered="#{formNew}">
 					<aon:column>
 					</aon:column>
-					<rich:column colspan="4" style="padding-left: 50px;">
+					<rich:column colspan="5" style="padding-left: 50px;">
 						<ui:include src="tab_grid_content.xhtml">
 							<ui:param name="sufix" value="-New" />
 						</ui:include>
@@ -24,8 +23,8 @@
 					</aon:column>
 				</rich:columnGroup>
 			</f:facet>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" colspan="4" rendered="#{formEdit}">
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" colspan="5" rendered="#{formEdit}">
 				<ui:include src="tab_grid_content.xhtml">
 					<ui:param name="sufix" value="" />
 				</ui:include>
@@ -57,6 +56,13 @@
 					<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" />
 				</f:facet>
 				<aon:outputText value="#{to.geozone.name}"/>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-70 aon-nowrap" rendered="#{formList}">
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryAddress_addressType" value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.addressType}" />
 			</aon:column>
 
 		</ui:define>
