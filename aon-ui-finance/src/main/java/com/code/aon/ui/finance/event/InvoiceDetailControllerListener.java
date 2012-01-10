@@ -35,8 +35,8 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 
 			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
-			if (compCollections.getWorkPlacesCount() == 1) {
-				WorkPlace workPlace = (WorkPlace)compCollections.getWorkPlaces().get(0).getValue();
+			if (compCollections.getCurrentUserWorkPlacesCount() == 1) {
+				WorkPlace workPlace = (WorkPlace)compCollections.getCurrentUserWorkPlaces().get(0).getValue();
 				invoiceDetail.setWorkPlace(workPlace);
 			}
 		} catch (ManagerBeanException e) {

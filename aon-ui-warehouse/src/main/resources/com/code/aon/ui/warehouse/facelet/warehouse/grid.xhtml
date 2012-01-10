@@ -54,14 +54,14 @@
 									value="#{controller.to.workPlace}"
 									rendered="#{formEdit}">
 									<f:selectItem itemLabel="-" value="#{null}" />
-									<f:selectItems value="#{companyCollections.workPlaces}" />
+									<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="Warehouse_workPlace-New" required="true" 
 										value="#{controller.to.workPlace}"
 										rendered="#{formNew}">
 										<f:selectItem itemLabel="-" value="#{null}" />
-										<f:selectItems value="#{companyCollections.workPlaces}" />
+										<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>

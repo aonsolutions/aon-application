@@ -13,16 +13,19 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
+import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.ui.config.util.UserUtils;
 
 public class CompanyCollectionsController {
 
@@ -182,16 +185,16 @@ public class CompanyCollectionsController {
 	public void setWorkPlace( WorkPlace workPlace ) {
 	}
 
-	public List<SelectItem> getWorkPlaces() throws ManagerBeanException {
+	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
-    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-    	Iterator<?> iterator = companyBean.getList(null).iterator();
-    	if(iterator.hasNext()) {
-    		Company company = (Company)iterator.next();
+		CompanyUtil companyUtil = new CompanyUtil();
+		Enterprise company = companyUtil.getActiveEnterprise();
+		if (company != null) {
     		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
     		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
     		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ID));
     		List<ITransferObject> list = workPlaceBean.getList(criteria);
     		for (ITransferObject to : list) {
@@ -202,16 +205,16 @@ public class CompanyCollectionsController {
 		return workPlaces;
 	}	
 
-	public int getWorkPlacesCount() throws ManagerBeanException {
+	public int getCurrentUserWorkPlacesCount() throws ManagerBeanException {
 		int workPlacesCount = 0;
-		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-    	Iterator<?> iterator = companyBean.getList(null).iterator();
-    	if(iterator.hasNext()) {
-    		Company company = (Company)iterator.next();
+		CompanyUtil companyUtil = new CompanyUtil();
+		Enterprise company = companyUtil.getActiveEnterprise();
+		if (company != null) {
     		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
     		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
+			UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_SCOPE_ID));
     		workPlacesCount = workPlaceBean.getCount(criteria);
 		}
 		return workPlacesCount;

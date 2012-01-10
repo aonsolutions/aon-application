@@ -266,7 +266,7 @@
 				</aon:column>
 			</c:if>
 
-			<c:if test="#{companyCollections.workPlacesCount > 1}">
+			<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
@@ -275,12 +275,12 @@
 						rendered="#{formList}" />
 					<aon:selectOneMenu id="CustomerFee_workPlace" 
 						value="#{controller.to.workPlace}"	rendered="#{formEdit}">
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="CustomerFee_workPlace-New"
 							value="#{controller.to.workPlace}"	rendered="#{formNew}">
-							<f:selectItems value="#{companyCollections.workPlaces}" />
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>

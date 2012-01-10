@@ -121,7 +121,7 @@
 						<aon:selectOneMenu id="ProjectTas_workPlace" 
 							value="#{controller.to.workPlace}"
 							disabled="#{controller.finished}">
-							<f:selectItems value="#{companyCollections.workPlaces}" />
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="ProjectTas_status" value="#{bundle.aon_status}" />

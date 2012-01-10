@@ -72,7 +72,7 @@
 		value="#{companyCollections.workPlace}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{companyCollections.workPlaces}" />
+		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>					
 
 	<aon:outputLabel for="ProjectTas_comments"

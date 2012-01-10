@@ -26,7 +26,7 @@ public class DeliveryControllerListener extends ControllerAdapter implements IWa
 		try {
 			((Delivery)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 			((Delivery)controller.getTo()).setStatus(DeliveryStatus.PENDING);
-			((Delivery)controller.getTo()).setWorkPlace((WorkPlace)((SelectItem)companyColls.getWorkPlaces().get(0)).getValue());
+			((Delivery)controller.getTo()).setWorkPlace((WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue());
 			controller.setAddresses(null);
 			controller.setProjects(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Delivery)controller.getTo()));

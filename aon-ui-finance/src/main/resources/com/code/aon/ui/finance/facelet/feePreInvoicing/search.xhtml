@@ -83,7 +83,7 @@
 					<aon:selectOneMenu id="CustomerFee_WorkPlace"
 						value="#{preInvoicing.invoicingParams.workPlace}">
 						<f:selectItem itemLabel="-" itemValue="#{null}" />
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:div>
