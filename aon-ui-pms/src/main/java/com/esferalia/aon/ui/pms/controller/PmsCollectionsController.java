@@ -14,7 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
-//import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.dao.IPmsAlias;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -35,7 +35,9 @@ public class PmsCollectionsController {
 		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-//		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IPmsAlias.HOTEL_SCOPE_ID));
+		criteria.addEqualExpression(hotelBean.getFieldName(IPmsAlias.HOTEL_ACTIVE), new Boolean(true));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IPmsAlias.HOTEL_SCOPE_ID));
+		criteria.addOrder(hotelBean.getFieldName(IPmsAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {
 			Hotel hotel = (Hotel)ito;
 			SelectItem item = new SelectItem(hotel, hotel.getWorkPlace().getDescription());

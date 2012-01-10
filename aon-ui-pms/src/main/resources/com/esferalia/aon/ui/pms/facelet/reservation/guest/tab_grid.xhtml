@@ -16,12 +16,13 @@
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationGuest_guestIndex" value="#{bundle.aon_order}" />
 				</f:facet>
-				<aon:outputText value="#{to.guestIndex}" rendered="#{formList or formEdit}" />
+				<aon:outputText id="ProjectReservationGuest_guestIndex" value="#{to.guestIndex}" 
+					rendered="#{formList or formEdit}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_fullName" value="#{pmsBundle.pms_guest}" />
+					<aon:outputLabel value="#{pmsBundle.pms_guest}" />
 				</f:facet>
 				<aon:outputText value="#{to.fullName}" rendered="#{formList}" />
 				<aon:div rendered="#{formEdit}">
@@ -66,7 +67,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_fullAddress" value="#{bundle.aon_address}" />
+					<aon:outputLabel value="#{bundle.aon_address}" />
 				</f:facet>
 				<aon:outputText value="#{to.fullAddress}" rendered="#{formList}">
 					<aon:abbreviateConverter maxWidth="50" />

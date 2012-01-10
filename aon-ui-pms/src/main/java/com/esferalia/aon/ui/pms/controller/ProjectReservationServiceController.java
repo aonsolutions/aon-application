@@ -1,19 +1,31 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.Date;
+
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationService;
 
 public class ProjectReservationServiceController extends LinesController {
 
+	private IPriceStrategy priceStrategy;
+	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public void onItemChanged(LookupChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		double price = 0;
-		double taxableBase = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			reservationService.setItem(item);
@@ -21,31 +33,39 @@ public class ProjectReservationServiceController extends LinesController {
 			if (reservationService.getQuantity() == 0) {
 				reservationService.setQuantity(1);
 			}
-			price = item.getPrice();
-			taxableBase = CommonUtil.round(reservationService.getQuantity() * price);
+			Date date = (reservationService.getEffectiveDate() != null) ? reservationService.getEffectiveDate() : new Date();
+			ProjectReservationController master = (ProjectReservationController)getMasterController();
+			Tariff tariff = ((ProjectReservation)master.getTo()).getTariff();
+			reservationService.setPrice(getPriceStrategy().getUnitPrice(reservationService, date, tariff));
+			reservationService.setTaxableBase(getPriceStrategy().getBasePrice(reservationService));
 		}
-		reservationService.setPrice(price);
-		reservationService.setTaxableBase(taxableBase);
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		double taxableBase = 0;
-		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Double quantity = (Double)event.getNewValue();
-			taxableBase = CommonUtil.round(quantity * reservationService.getPrice());
+		if (reservationService.getItem() != null && reservationService.getItem().getId() != null) {
+			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+				reservationService.setQuantity((Double)event.getNewValue());
+	
+				Date date = (reservationService.getEffectiveDate() != null) ? reservationService.getEffectiveDate() : new Date();
+				ProjectReservationController master = (ProjectReservationController)getMasterController();
+				Tariff tariff = ((ProjectReservation)master.getTo()).getTariff();
+				reservationService.setPrice(getPriceStrategy().getUnitPrice(reservationService, date, tariff));
+			} else {
+				reservationService.setQuantity(1);
+			}
 		}
-		reservationService.setTaxableBase(taxableBase);
+		reservationService.setTaxableBase(getPriceStrategy().getBasePrice(reservationService));
 	}	
 
 	public void onPriceChanged(ValueChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		double taxableBase = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Double price = (Double)event.getNewValue();
-			taxableBase = CommonUtil.round(reservationService.getQuantity() * price);
+			reservationService.setPrice((Double)event.getNewValue());
+		} else {
+			reservationService.setPrice(0);
 		}
-		reservationService.setTaxableBase(taxableBase);
+		reservationService.setTaxableBase(getPriceStrategy().getBasePrice(reservationService));
 	}	
 
 }
