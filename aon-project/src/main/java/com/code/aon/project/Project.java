@@ -23,5 +23,4 @@ public class Project extends ProjectDB {
 	public boolean isExtended() {
 		return (isCommercial() || isTas());
 	}
-	
 }
