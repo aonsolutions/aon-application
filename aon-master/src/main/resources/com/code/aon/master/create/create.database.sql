@@ -1274,6 +1274,7 @@ CREATE TABLE `app_param` (
 CREATE TABLE `asset` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Activo',
   `name` varchar(10) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre corto del Activo',
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_DOMAIN` (`domain`),
@@ -1289,6 +1290,10 @@ CREATE TABLE `asset_activity` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
   `date` date NOT NULL COMMENT 'Fecha de la Actividad',
+  `from_time` datetime NOT NULL COMMENT 'Hora de inicio de la Actividad',
+  `to_time` datetime NOT NULL COMMENT 'Hora final de la Actividad',
+  `who` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Quien solicita el Activo',
+  `why` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Motivo de solicitud del Activo',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Estado de la Solicitud',
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_ACTIVITY_ASSET` (`asset`),
