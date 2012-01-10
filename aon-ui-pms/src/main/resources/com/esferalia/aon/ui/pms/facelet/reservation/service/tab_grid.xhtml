@@ -16,7 +16,8 @@
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationService_serviceIndex" value="#{bundle.aon_order}" />
 				</f:facet>
-				<aon:outputText value="#{to.serviceIndex}" rendered="#{formList or formEdit}" />
+				<aon:outputText id="ProjectReservationService_serviceIndex" value="#{to.serviceIndex}" 
+					rendered="#{formList or formEdit}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
@@ -28,12 +29,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate id="ProjectReservationService_effectiveDate" value="#{controller.to.effectiveDate}" 
-					rendered="#{formEdit}" inputSize="8" required="true"
+					rendered="#{formEdit}" required="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}" />
 				<f:facet name="footer">
 					<aon:selectInputDate id="ProjectReservationService_effectiveDate-New" value="#{controller.to.effectiveDate}" 
-						rendered="#{formNew}" inputSize="8" required="true"
+						rendered="#{formNew}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
@@ -120,14 +121,12 @@
 				<aon:inputText id="ProjectReservationService_price" value="#{controller.to.price}"
 					rendered="#{formEdit}" size="5" required="true"  
 					valueChangeListener="#{controller.onPriceChanged}" 
-					reRender="ProjectReservationService_taxableBase"
-					focus="ProjectReservationService_taxableBase" /> 
+					reRender="ProjectReservationService_taxableBase" /> 
 				<f:facet name="footer">
 					<aon:inputText id="ProjectReservationService_price-New" value="#{controller.to.price}"
 						rendered="#{formNew}" size="5" required="true"  
 						valueChangeListener="#{controller.onPriceChanged}" 
-						reRender="ProjectReservationService_taxableBase-New"
-						focus="ProjectReservationService_taxableBase-New" /> 
+						reRender="ProjectReservationService_taxableBase-New" /> 
 				</f:facet>
 			</aon:column>
 

@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="hotelForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_hotel_module}" />
+				<ui:param name="controller" value="#{hotel}" />
+				<ui:param name="skipSearchButton" value="true" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="Hotel_code"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="Hotel_code" 
+						value="#{hotel.to.code}" required="true"
+						size="8" maxlength="16" />
+
+					<aon:outputLabel for="Hotel_workPlace_description"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Hotel_workPlace_description" 
+						value="#{hotel.to.workPlace.description}" required="true"
+						size="40" maxlength="64" />
+
+					<aon:outputLabel for="Hotel_scope" 
+						value="#{configBundle.config_scope}" />
+					<aon:selectOneMenu id="Hotel_scope"
+						value="#{hotel.to.scope}" required="#{true}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Hotel_workPlace_address"
+						value="#{bundle.aon_address}" />
+					<aon:div>
+						<aon:selectOneMenu id="Hotel_workPlace_streetType" 
+							value="#{hotel.to.workPlace.address.streetType}" required="true">
+							<f:selectItems value="#{registryCollections.streetTypes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="Hotel_workPlace_address"
+							value="#{hotel.to.workPlace.address.address}" required="true"
+							style="margin-left: 5px;" size="32" maxlength="128" />
+						<aon:outputLabel for="Hotel_workPlace_number" styleClass="aon-italic aon-margin-left"
+							value="#{bundle.aon_number}" />
+						<aon:inputText id="Hotel_workPlace_number"
+							value="#{hotel.to.workPlace.address.number}" required="true"
+							style="margin-left: 5px;" size="5" maxlength="12" />
+					</aon:div>
+
+					<aon:outputLabel for="Hotel_workPlace_address2" 
+						value="#{registryBundle.registry_address_detail}" />
+					<aon:div>
+						<aon:inputText id="Hotel_workPlace_address2"
+							value="#{hotel.to.workPlace.address.address2}"
+							size="32" maxlength="128" />
+						<aon:inputText id="Hotel_workPlace_address3"
+							value="#{hotel.to.workPlace.address.address3}"
+							style="margin-left: 5px;" size="37" maxlength="128" />
+					</aon:div>
+
+					<aon:outputLabel for="Hotel_workPlace_city"
+						value="#{registryBundle.registry_city}" />
+					<aon:inputText id="Hotel_workPlace_city"
+						value="#{hotel.to.workPlace.address.city}" required="true"
+						size="30" maxlength="64" />
+
+					<aon:outputLabel for="Hotel_workPlace_zip"
+						value="#{registryBundle.registry_zip}" />
+					<aon:inputText id="Hotel_workPlace_zip"
+						value="#{hotel.to.workPlace.address.zip}" required="true"
+						size="16" maxlength="16" />
+
+					<aon:outputLabel for="Hotel_workPlace_geozone"
+						value="#{registryBundle.registry_geozone}" />
+					<aon:selectOneMenu id="Hotel_workPlace_geozone"
+						value="#{hotel.to.workPlace.address.geozone}"
+						styleClass="aon-form-selectOneMenu-field">
+						<f:selectItems value="#{geozoneCollections.geoTrees}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Customer_id" value="#{pmsBundle.pms_direct_customer}" />
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{hotel.to.customer}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
+					<aon:outputLabel for="Hotel_active" 
+						value="#{bundle.aon_active}" />
+					<aon:selectOneRadio id="Hotel_active"
+						value="#{hotel.to.active}" required="#{true}">
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneRadio>				
+
+				</aon:panelGrid>
+			</aon:div>
+				
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+	</ui:define>
+</ui:composition>

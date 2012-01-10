@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
+		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+		<aon:div>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{pmsBundle.pms_reservation_data}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formBasic.xhtml" />
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+
+		</aon:div>
+
+		<aon:div>
+			<aon:div styleClass="aon-group aon-vertical-align-bottom">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{pmsBundle.pms_reservation_customers}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<a4j:region>
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formCustomers.xhtml" />
+
+							</aon:panelGrid>
+						</a4j:region>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{pmsBundle.pms_reservation_prices}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<a4j:region>
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formPrices.xhtml" />
+
+							</aon:panelGrid>
+						</a4j:region>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:panelGrid>
+	 
+</ui:composition>
