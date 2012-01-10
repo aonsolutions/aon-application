@@ -41,9 +41,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.asset</artifactId>
+			<artifactId>aon.ui.audit</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+		</dependency>	
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.asset</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>

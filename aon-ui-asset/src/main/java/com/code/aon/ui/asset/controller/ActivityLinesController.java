@@ -91,7 +91,7 @@ public class ActivityLinesController extends LinesController {
 		cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(fromTimeHours));
 		cal.set(Calendar.MINUTE, Integer.parseInt(fromTimeMins));
 		cal.set(Calendar.SECOND, 0);
-		((AssetActivity)this.getTo()).setFromTime(cal.getTime());
+//		((AssetActivity)this.getTo()).setFromTime(cal.getTime());
 	}
 
 	public void buildToTime() {
@@ -99,7 +99,7 @@ public class ActivityLinesController extends LinesController {
 		cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(toTimeHours));
 		cal.set(Calendar.MINUTE, Integer.parseInt(toTimeMins));
 		cal.set(Calendar.SECOND, 0);
-		((AssetActivity)this.getTo()).setToTime(cal.getTime());
+//		((AssetActivity)this.getTo()).setToTime(cal.getTime());
 	}
 
 	public void setControllerTime() {
@@ -109,8 +109,8 @@ public class ActivityLinesController extends LinesController {
 		Calendar fromTime = new GregorianCalendar();
 		Calendar toTime = new GregorianCalendar();
 		
-		fromTime.setTime(to.getFromTime());
-		toTime.setTime(to.getToTime());
+//		fromTime.setTime(to.getFromTime());
+//		toTime.setTime(to.getToTime());
 		
 		this.setFromTimeHours(((Integer)fromTime.get(Calendar.HOUR_OF_DAY)).toString());
 		this.setFromTimeMins(((Integer)fromTime.get(Calendar.MINUTE)).toString());

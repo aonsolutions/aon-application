@@ -449,10 +449,10 @@ public class ActivityDialogController extends EmailParentController{
 					if(isSelectedDay(cal)){
 						AssetActivity to = new AssetActivity();
 						to.setDate(cal.getTime());
-						to.setFromTime(getFromTime());
-						to.setToTime(getToTime());
-						to.setWho(getWho());
-						to.setWhy(getWhy());
+//						to.setFromTime(getFromTime());
+//						to.setToTime(getToTime());
+//						to.setHolder(getWho());
+//						to.setComments(getWhy());
 						to.setAsset(getAsset());
 						if(isRequest()){
 							to.setStatus(ActivityStatus.PENDING);
@@ -498,10 +498,10 @@ public class ActivityDialogController extends EmailParentController{
 		ActivityBasicController controller = (ActivityBasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
 		controller.setWho(getWho());
 		controller.clearCriteria();
-		controller.getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
-		controller.getCriteria().addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
-		controller.getCriteria().addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
-		controller.getCriteria().addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_FROM_TIME));
+		controller.getCriteria().addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+		controller.getCriteria().addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
+		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+//		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
 		controller.onSearch(null);
 		controller.setWho(null);
 		setNew(false);
