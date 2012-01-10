@@ -9,6 +9,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 
 public class PmsAliasWriter {
@@ -20,6 +21,7 @@ public class PmsAliasWriter {
 			ProjectReservation.class.getName(),
 			ProjectReservationGuest.class.getName(),
 			ProjectReservationRoom.class.getName(),
+			ProjectReservationRoomDetail.class.getName(),
 			ProjectReservationService.class.getName()
 		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());

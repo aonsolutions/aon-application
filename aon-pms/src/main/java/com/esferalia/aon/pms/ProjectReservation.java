@@ -287,6 +287,11 @@ public class ProjectReservation implements ITransferObject {
 	}
 
 	@Transient
+	public boolean isActive() {
+		return getStatus() == ReservationStatus.ACTIVE;
+	}
+
+	@Transient
 	public String getGuestFullName() throws ManagerBeanException {
 		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 		Criteria criteria = new Criteria();

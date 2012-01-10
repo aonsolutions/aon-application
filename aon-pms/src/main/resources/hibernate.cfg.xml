@@ -14,6 +14,10 @@
 	
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
+		<!-- AON-ASSET Mapping files -->
+		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetActivity"/>
+
 		<!-- AON-CALENDAR Mapping files -->
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
 		<mapping class="com.esferalia.aon.calendar.Holiday"/>
@@ -41,6 +45,7 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
 
 		<!-- AON-PROJECT Mapping files -->	
