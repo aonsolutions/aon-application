@@ -14,6 +14,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.asset</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>

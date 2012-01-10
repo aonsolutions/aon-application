@@ -15,8 +15,11 @@ import javax.faces.model.ListDataModel;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.AssetType;
+import com.code.aon.asset.Feature;
 import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
+import com.code.aon.asset.enumeration.ViewerType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -34,6 +37,35 @@ public class AssetCalendarController extends BasicController{
 	private List<Integer> timeFractionList = new ArrayList<Integer>();
 	private List<Integer> hoursList = new ArrayList<Integer>();
 	
+	private ViewerType viewerType;
+	private AssetType assetType;
+	private Feature feature;
+	
+	
+	public Feature getFeature() {
+		return feature;
+	}
+
+	public void setFeature(Feature feature) {
+		this.feature = feature;
+	}
+
+	public ViewerType getViewerType() {
+		return viewerType;
+	}
+
+	public void setViewerType(ViewerType viewerType) {
+		this.viewerType = viewerType;
+	}
+	
+	public AssetType getAssetType() {
+		return assetType;
+	}
+
+	public void setAssetType(AssetType assetType) {
+		this.assetType = assetType;
+	}
+
 	public boolean isFractionCell() {
 		return fractionCell;
 	}
@@ -165,18 +197,18 @@ public class AssetCalendarController extends BasicController{
 			while(!exist && it.hasNext()){
 				DayAssetList dait = it.next();
 				
-				if(dait.getAsset().getName().equals(aa.getAsset().getName())){
-					position = fractionPosition(aa.getFromTime());
-					numIterations = fractionIterations(aa.getFromTime(), aa.getToTime());
-					for(int i=0; i<numIterations;i++){
-						dait.getFractions().set(position+i,new Fraction(true));
-					}
-					dait.getFractions().get(position).setFirst(true);
-					dait.getFractions().get(position).setActivity(aa);
-					exist = true;
-				} else {
-					dait.getFractions().add(new Fraction(false));
-				}
+//				if(dait.getAsset().getName().equals(aa.getAsset().getName())){
+//					position = fractionPosition(aa.getFromTime());
+//					numIterations = fractionIterations(aa.getFromTime(), aa.getToTime());
+//					for(int i=0; i<numIterations;i++){
+//						dait.getFractions().set(position+i,new Fraction(true));
+//					}
+//					dait.getFractions().get(position).setFirst(true);
+//					dait.getFractions().get(position).setActivity(aa);
+//					exist = true;
+//				} else {
+//					dait.getFractions().add(new Fraction(false));
+//				}
 			}
 		}
 	}
@@ -211,8 +243,7 @@ public class AssetCalendarController extends BasicController{
 		if ((hourFractions + minuteFractions) >= 0) {
 			return hourFractions + minuteFractions;
 		} else {
-			throw new AbortProcessingException(
-					"Fraction start time out of bound");
+			throw new AbortProcessingException("Fraction start time out of bound");
 		}
 	}
 	

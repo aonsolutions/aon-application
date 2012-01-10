@@ -32,6 +32,31 @@
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservationTable"
+										value="#{pmsBundle.pms_reservationTable_module}"
+										action="reservationTable_form" >
+										<aon:actionListener method="#{reservationTable.onInitialize}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="room"
+										value="#{pmsBundle.pms_room_module}"
+										action="room_search" >
+										<aon:actionListener method="#{room.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="feature" 
+									value="#{assetBundle.asset_feature_module}"
+									action="feature_grid" >
+								</aon:commandLink>
+							</aon:div>
+							
 						</aon:panelGrid>
 					</aon:panelGroup>
 						

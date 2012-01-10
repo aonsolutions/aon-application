@@ -3,6 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 	
+	<!-- *************** MESSAGE BUNDLE ***************** -->
 	<application>
 		<message-bundle>com.code.aon.ui.common.i18n.messages
 		</message-bundle>
@@ -30,9 +31,7 @@
 		</managed-property>		
 	</managed-bean>
 
-	<!--  *************** 
-		AON CONFIGURATION
-		***************** -->
+	<!--  *************** AON CONFIGURATION ***************** -->
 	<managed-bean>
 		<managed-bean-name>aonConfiguration</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.common.controller.ConfigurationController
@@ -46,5 +45,18 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- *************************************** -->
+	<!-- ************ NAVIGATION *************** -->
+	<!-- *************************************** -->
+
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>
 	
 </faces-config>

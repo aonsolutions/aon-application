@@ -8,6 +8,7 @@ import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.Room;
 
 /** 
 * Interface for holding entity properties constants.
@@ -415,6 +416,37 @@ public interface IPmsAlias {
 	* Hibernate value: ProjectReservationService.taxableBase
 	*/
 	String  PROJECT_RESERVATION_SERVICE_TAXABLE_BASE = PROJECT_RESERVATION_SERVICE_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for Room entity.
+	*/ 
+	DAOConstantsEntry ROOM_ENTRY = DAOConstants.getDAOConstant(Room.class);
+
+	/** 
+	* Alias value: Room_asset_id
+	* Hibernate value: Room.asset.id
+	*/
+	String  ROOM_ASSET_ID = ROOM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Room_hotel_id
+	* Hibernate value: Room.hotel.id
+	*/
+	String  ROOM_HOTEL_ID = ROOM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Room_id
+	* Hibernate value: Room.id
+	*/
+	String  ROOM_ID = ROOM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Room_item_id
+	* Hibernate value: Room.item.id
+	*/
+	String  ROOM_ITEM_ID = ROOM_ENTRY.getAliasNames()[3];
 
 
 }

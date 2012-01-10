@@ -38,14 +38,50 @@
 			<property-name>defaultOrder</property-name>
 			<value>Hotel_workPlace_description</value>
 		</managed-property>				
+	</managed-bean>
+	
+	<!-- ************* ROOM ***************** -->
+	<managed-bean>
+		<managed-bean-name>room</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.Room</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>room</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Room_asset_name</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{hotelControllerListener}</value>
+				<value>#{roomSearch}</value>
+				<value>#{roomControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>roomControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.RoomControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>roomSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.RoomSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>hotelControllerListener</managed-bean-name>
@@ -312,6 +348,13 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ********** RESERVATION TABLE VIEWER ********** -->
+	<managed-bean>
+		<managed-bean-name>reservationTable</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationTableController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
   	<!-- =================== Hotel ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -323,6 +366,22 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+  	<!-- =================== Room ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>room_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/room/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>room_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/room/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>room_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/room/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
 
   	<!-- =================== Reservation ================= -->
 	<navigation-rule>
@@ -339,5 +398,14 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservation/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
+	
+  	<!-- =================== Reservation Table ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>reservationTable_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationTable/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	
 </faces-config>

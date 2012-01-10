@@ -5,6 +5,10 @@ import java.io.IOException;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.AssetFeature;
+import com.code.aon.asset.AssetInterval;
+import com.code.aon.asset.AssetType;
+import com.code.aon.asset.Feature;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
@@ -23,6 +27,10 @@ public class AssetAliasWriter {
 		String[] classes = new String[] {
 				Asset.class.getName(),
 				AssetActivity.class.getName(),
+				AssetFeature.class.getName(),
+				AssetInterval.class.getName(),
+				AssetType.class.getName(),
+				Feature.class.getName(),
 			};
 		AliasWriter writer = new AliasWriter("com.code.aon.asset.dao");
 		HibernateUtil.getSessionFactory(null);

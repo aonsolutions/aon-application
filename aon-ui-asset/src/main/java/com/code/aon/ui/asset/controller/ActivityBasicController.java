@@ -86,7 +86,7 @@ public class ActivityBasicController extends BasicController{
 		cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(fromTimeHours));
 		cal.set(Calendar.MINUTE, Integer.parseInt(fromTimeMins));
 		cal.set(Calendar.SECOND, 0);
-		((AssetActivity)this.getTo()).setFromTime(cal.getTime());
+//		((AssetActivity)this.getTo()).setFromTime(cal.getTime());
 	}
 
 	public void buildToTime() {
@@ -94,15 +94,15 @@ public class ActivityBasicController extends BasicController{
 		cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(toTimeHours));
 		cal.set(Calendar.MINUTE, Integer.parseInt(toTimeMins));
 		cal.set(Calendar.SECOND, 0);
-		((AssetActivity)this.getTo()).setToTime(cal.getTime());
+//		((AssetActivity)this.getTo()).setToTime(cal.getTime());
 	}
 
 	public void setControllerTime() {
 		AssetActivity to = (AssetActivity)this.getTo(); 
 		Calendar fromTime = new GregorianCalendar();
 		Calendar toTime = new GregorianCalendar();
-		fromTime.setTime(to.getFromTime());
-		toTime.setTime(to.getToTime());
+//		fromTime.setTime(to.getFromTime());
+//		toTime.setTime(to.getToTime());
 		this.setFromTimeHours(((Integer)fromTime.get(Calendar.HOUR_OF_DAY)).toString());
 		this.setFromTimeMins(((Integer)fromTime.get(Calendar.MINUTE)).toString());
 		this.setToTimeHours(((Integer)toTime.get(Calendar.HOUR_OF_DAY)).toString());
@@ -179,21 +179,21 @@ public class ActivityBasicController extends BasicController{
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getWhoList() {
 		List<SelectItem> whoList = new LinkedList<SelectItem>();
-		try {
-			Projection projection = Projection.group(getManagerBean().getFieldName(IAssetAlias.ASSET_ACTIVITY_WHO));
-			ProjectionList pl = new ProjectionList();
-			pl.add(projection);
-			Object valueList = getManagerBean().getList(pl, null);
-			ArrayList<String> list = (ArrayList<String>) valueList; 
-			for (String who : list) {
-				String name = who;
-				SelectItem item = new SelectItem(who, name);
-				whoList.add(item);
-			}
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		try {
+//			Projection projection = Projection.group(getManagerBean().getFieldName(IAssetAlias.ASSET_ACTIVITY_HOLDER));
+//			ProjectionList pl = new ProjectionList();
+//			pl.add(projection);
+//			Object valueList = getManagerBean().getList(pl, null);
+//			ArrayList<String> list = (ArrayList<String>) valueList; 
+//			for (String who : list) {
+//				String name = who;
+//				SelectItem item = new SelectItem(who, name);
+//				whoList.add(item);
+//			}
+//		} catch (ManagerBeanException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
 		return whoList;
 	}
 	

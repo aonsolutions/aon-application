@@ -19,6 +19,7 @@
 	margin: 0;
 	/*width: 5px;*/
 	border-bottom: 0;
+	background-color: 000;
 }
 #aonContent\3A reservationForm\3A assetActivityCalendar td div {
 	margin: 10px 0;
@@ -31,18 +32,33 @@
 	background-color: gray;
 }
 
+.no-padding {
+	padding: 0;
+}
 .calendar-header{
+	font-size: small;
+	color: gray;	
+}
+.calendar-sub-header{
 	font-size: xx-small;
 	color: gray;	
 }
 .reserved-cell {
 	background-color: #FFA54F;
+	display: block;
 }
 .available-cell {
+	background-color: #FFFFFF;
+	display: block;
+}
+.weekend-cell {
 	background-color: #C0C0C0;
+	display: block;
 }
 
 .calendar-panelGrid tr td{
 	vertical-align:top;
 }
-
+.font-small{
+	font-size: small;
+}

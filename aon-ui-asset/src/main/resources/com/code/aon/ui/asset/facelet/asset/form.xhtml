@@ -15,15 +15,14 @@
 				<ui:param name="toolbarTitle"
 					value="#{assetBundle.asset_asset_module}" />
 				<ui:param name="controller" value="#{asset}" />
-				<aon:valueParam name="skipSearchButton" default="#{true}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="assetTable" columns="2" width="100%">
-					<aon:outputLabel value="#{assetBundle.asset_asset_name}" />
+					<aon:outputLabel value="#{bundle.aon_name}" />
 					<aon:inputText id="asset_name" value="#{asset.to.name}" 
-						size="8" required="#{true}">
+						size="15" required="#{true}">
 						<f:validateLength maximum="10" />
 					</aon:inputText>
 
@@ -32,8 +31,22 @@
 						size="70" required="#{true}">
 						<f:validateLength maximum="64" />
 					</aon:inputText>
+					
+					<!--  
+					<ui:include src="/com/code/aon/ui/asset/facelet/assetType/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{asset.to.assetType}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+					-->
 				</aon:panelGrid>
 
+				<aon:panel rendered="#{!asset.new}">
+					<f:facet name="header">
+						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
+					</f:facet>
+					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" />
+				</aon:panel>
+					
 				<aon:panel id="assetRequestData" rendered="#{!asset.new}">
 					<f:facet name="header">
 						<aon:outputLabel value="#{assetBundle.asset_asset_requests}" />
@@ -72,5 +85,9 @@
 				
 			</aon:div>
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{assetTypeLookup}" />
+		<aon:lookupButtonPopup lookup="#{featureLookup}" />
+		
 	</ui:define>
 </ui:composition>

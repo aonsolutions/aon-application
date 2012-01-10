@@ -23,6 +23,14 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
+		<!-- AON-ASSET Mapping files --> 
+		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetFeature"/>
+		<mapping class="com.code.aon.asset.AssetActivity"/>
+		<mapping class="com.code.aon.asset.AssetType"/>
+		<mapping class="com.code.aon.asset.AssetInterval"/>
+		<mapping class="com.code.aon.asset.Feature"/>
+		
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 
@@ -235,6 +243,7 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.Room"/>
 
 	</session-factory>
 

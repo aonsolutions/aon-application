@@ -47,6 +47,7 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.Room"/>
 
 		<!-- AON-PROJECT Mapping files -->	
 		<mapping class="com.code.aon.project.Project"/>

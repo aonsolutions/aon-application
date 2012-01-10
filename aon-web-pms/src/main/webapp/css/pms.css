@@ -100,3 +100,15 @@
 	color: #285E9C; 
 	text-decoration: underline;
 }
+
+.no-padding {
+	padding: 0;
+}
+.reserved-cell {
+	background-color: #FFA54F;
+	display: block;
+}
+.available-cell {
+	background-color: #FFFFFF;
+	display: block;
+}

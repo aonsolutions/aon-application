@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="activityForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="controller" value="#{room}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="roomTable" columns="2" width="100%">
+					<aon:outputLabel for="room_name" value="#{bundle.aon_name}" />
+					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
+						size="15" required="#{true}">
+						<f:validateLength maximum="10" />
+					</aon:inputText>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+					<aon:selectOneMenu 
+						value="#{room.to.hotel}" >
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{bundle.aon_type}" />
+					<aon:selectOneMenu 
+						value="#{room.to.item}" >
+						<f:selectItems value="#{pmsCollections.roomItems}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+				
+				<aon:panel rendered="#{!room.new}">
+					<f:facet name="header">
+						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
+					</f:facet>
+					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" />
+				</aon:panel>
+				
+			</aon:div>
+		</aon:form>
+		
+<!--  
+		<aon:lookupButtonPopup lookup="#{assetTypeLookup}" />
+		<aon:lookupButtonPopup lookup="#{featureLookup}" />
+-->
+		
+	</ui:define>
+</ui:composition>

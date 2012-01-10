@@ -25,7 +25,19 @@
  
 		<!-- AON-ASSET Mapping files --> 
 		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetFeature"/>
 		<mapping class="com.code.aon.asset.AssetActivity"/>
+		<mapping class="com.code.aon.asset.AssetType"/>
+		<mapping class="com.code.aon.asset.AssetInterval"/>
+		<mapping class="com.code.aon.asset.Feature"/>
+		
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
 
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>

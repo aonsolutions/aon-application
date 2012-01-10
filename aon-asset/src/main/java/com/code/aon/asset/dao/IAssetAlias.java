@@ -4,6 +4,10 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.AssetFeature;
+import com.code.aon.asset.AssetInterval;
+import com.code.aon.asset.AssetType;
+import com.code.aon.asset.Feature;
 
 /** 
 * Interface for holding entity properties constants.
@@ -49,10 +53,10 @@ public interface IAssetAlias {
 	String  ASSET_ACTIVITY_ASSET_ID = ASSET_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: AssetActivity_asset_name
-	* Hibernate value: AssetActivity.asset.name
+	* Alias value: AssetActivity_comments
+	* Hibernate value: AssetActivity.comments
 	*/
-	String  ASSET_ACTIVITY_ASSET_NAME = ASSET_ACTIVITY_ENTRY.getAliasNames()[1];
+	String  ASSET_ACTIVITY_COMMENTS = ASSET_ACTIVITY_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: AssetActivity_date
@@ -67,34 +71,134 @@ public interface IAssetAlias {
 	String  ASSET_ACTIVITY_FROM_TIME = ASSET_ACTIVITY_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: AssetActivity_holder
+	* Hibernate value: AssetActivity.holder
+	*/
+	String  ASSET_ACTIVITY_HOLDER = ASSET_ACTIVITY_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: AssetActivity_id
 	* Hibernate value: AssetActivity.id
 	*/
-	String  ASSET_ACTIVITY_ID = ASSET_ACTIVITY_ENTRY.getAliasNames()[4];
+	String  ASSET_ACTIVITY_ID = ASSET_ACTIVITY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AssetActivity_status
 	* Hibernate value: AssetActivity.status
 	*/
-	String  ASSET_ACTIVITY_STATUS = ASSET_ACTIVITY_ENTRY.getAliasNames()[5];
+	String  ASSET_ACTIVITY_STATUS = ASSET_ACTIVITY_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AssetActivity_toTime
 	* Hibernate value: AssetActivity.toTime
 	*/
-	String  ASSET_ACTIVITY_TO_TIME = ASSET_ACTIVITY_ENTRY.getAliasNames()[6];
+	String  ASSET_ACTIVITY_TO_TIME = ASSET_ACTIVITY_ENTRY.getAliasNames()[7];
+
+
 
 	/** 
-	* Alias value: AssetActivity_who
-	* Hibernate value: AssetActivity.who
-	*/
-	String  ASSET_ACTIVITY_WHO = ASSET_ACTIVITY_ENTRY.getAliasNames()[7];
+	* DAOConstantsEntry for AssetFeature entity.
+	*/ 
+	DAOConstantsEntry ASSET_FEATURE_ENTRY = DAOConstants.getDAOConstant(AssetFeature.class);
 
 	/** 
-	* Alias value: AssetActivity_why
-	* Hibernate value: AssetActivity.why
+	* Alias value: AssetFeature_asset_id
+	* Hibernate value: AssetFeature.asset.id
 	*/
-	String  ASSET_ACTIVITY_WHY = ASSET_ACTIVITY_ENTRY.getAliasNames()[8];
+	String  ASSET_FEATURE_ASSET_ID = ASSET_FEATURE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AssetFeature_feature_id
+	* Hibernate value: AssetFeature.feature.id
+	*/
+	String  ASSET_FEATURE_FEATURE_ID = ASSET_FEATURE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AssetFeature_id
+	* Hibernate value: AssetFeature.id
+	*/
+	String  ASSET_FEATURE_ID = ASSET_FEATURE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AssetInterval entity.
+	*/ 
+	DAOConstantsEntry ASSET_INTERVAL_ENTRY = DAOConstants.getDAOConstant(AssetInterval.class);
+
+	/** 
+	* Alias value: AssetInterval_description
+	* Hibernate value: AssetInterval.description
+	*/
+	String  ASSET_INTERVAL_DESCRIPTION = ASSET_INTERVAL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AssetInterval_endTime
+	* Hibernate value: AssetInterval.endTime
+	*/
+	String  ASSET_INTERVAL_END_TIME = ASSET_INTERVAL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AssetInterval_id
+	* Hibernate value: AssetInterval.id
+	*/
+	String  ASSET_INTERVAL_ID = ASSET_INTERVAL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AssetInterval_interval
+	* Hibernate value: AssetInterval.interval
+	*/
+	String  ASSET_INTERVAL_INTERVAL = ASSET_INTERVAL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AssetInterval_startTime
+	* Hibernate value: AssetInterval.startTime
+	*/
+	String  ASSET_INTERVAL_START_TIME = ASSET_INTERVAL_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for AssetType entity.
+	*/ 
+	DAOConstantsEntry ASSET_TYPE_ENTRY = DAOConstants.getDAOConstant(AssetType.class);
+
+	/** 
+	* Alias value: AssetType_assetInterval_id
+	* Hibernate value: AssetType.assetInterval.id
+	*/
+	String  ASSET_TYPE_ASSET_INTERVAL_ID = ASSET_TYPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AssetType_id
+	* Hibernate value: AssetType.id
+	*/
+	String  ASSET_TYPE_ID = ASSET_TYPE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AssetType_name
+	* Hibernate value: AssetType.name
+	*/
+	String  ASSET_TYPE_NAME = ASSET_TYPE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Feature entity.
+	*/ 
+	DAOConstantsEntry FEATURE_ENTRY = DAOConstants.getDAOConstant(Feature.class);
+
+	/** 
+	* Alias value: Feature_id
+	* Hibernate value: Feature.id
+	*/
+	String  FEATURE_ID = FEATURE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Feature_name
+	* Hibernate value: Feature.name
+	*/
+	String  FEATURE_NAME = FEATURE_ENTRY.getAliasNames()[1];
 
 
 }
