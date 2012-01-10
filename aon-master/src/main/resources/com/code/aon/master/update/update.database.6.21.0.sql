@@ -354,7 +354,7 @@ ALTER TABLE `contract_payment` ADD `domain` int(4) NOT NULL default '1' COMMENT 
 ALTER TABLE `contract_payment` ADD KEY `IDX_CONTRACT_PAYMENT_DOMAIN` (`domain`);
 ALTER TABLE `contract_payment` ADD CONSTRAINT `FK_CONTRACT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`);
 
-ALTER TABLE `cost_profile` ADD `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio';
+ALTER TABLE `cost_profile` ADD `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio' AFTER `id`;
 ALTER TABLE `cost_profile` ADD KEY `IDX_COST_PROFILE_DOMAIN` (`domain`);
 ALTER TABLE `cost_profile` ADD CONSTRAINT `FK_COST_PROFILE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`);
 
