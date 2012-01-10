@@ -62,34 +62,40 @@ public interface ICompanyAlias {
 	String  COMPANY_NATIONALITY = COMPANY_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Company_securityLevel
+	* Hibernate value: Company.securityLevel
+	*/
+	String  COMPANY_SECURITY_LEVEL = COMPANY_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Company_type
 	* Hibernate value: Company.type
 	*/
-	String  COMPANY_TYPE = COMPANY_ENTRY.getAliasNames()[7];
+	String  COMPANY_TYPE = COMPANY_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Company_EInvoice
 	* Hibernate value: Company.EInvoice
 	*/
-	String  COMPANY_EINVOICE = COMPANY_ENTRY.getAliasNames()[8];
+	String  COMPANY_EINVOICE = COMPANY_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Company_active
 	* Hibernate value: Company.active
 	*/
-	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[9];
+	String  COMPANY_ACTIVE = COMPANY_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Company_surcharge
 	* Hibernate value: Company.surcharge
 	*/
-	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[10];
+	String  COMPANY_SURCHARGE = COMPANY_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Company_withholding
 	* Hibernate value: Company.withholding
 	*/
-	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[11];
+	String  COMPANY_WITHHOLDING = COMPANY_ENTRY.getAliasNames()[12];
 
 
 
@@ -133,6 +139,12 @@ public interface ICompanyAlias {
 	* Hibernate value: WorkPlace.id
 	*/
 	String  WORK_PLACE_ID = WORK_PLACE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: WorkPlace_scope_id
+	* Hibernate value: WorkPlace.scope.id
+	*/
+	String  WORK_PLACE_SCOPE_ID = WORK_PLACE_ENTRY.getAliasNames()[6];
 
 
 

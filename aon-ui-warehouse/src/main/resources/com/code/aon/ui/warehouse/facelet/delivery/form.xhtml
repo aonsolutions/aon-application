@@ -180,7 +180,7 @@
 						disabled="#{!delivery.pending}"
 						valueChangeListener="#{delivery.onWorkPlaceChanged}" 
 						reRender="Delivery_warehouse">
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Delivery_defaultPayMethod" 

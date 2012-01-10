@@ -202,7 +202,7 @@
 					<aon:selectOneMenu id="Sales_workPlace" 
 						value="#{sales.to.workPlace}"
 						disabled="#{!sales.pending}">
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Sales_defaultPayMethod" 

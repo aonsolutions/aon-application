@@ -103,6 +103,7 @@ public class UserUtils {
 			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
+			criteria.addOrder(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_SCOPE_DESCRIPTION));
 			Iterator iter = userScopeBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				scopes.add(((UserScope)iter.next()).getScope());
@@ -112,4 +113,21 @@ public class UserUtils {
 		}
 		return scopes;
 	}
+
+	public void addScopeFilterToCriteria(Criteria criteria, String alias) throws ManagerBeanException {
+		Expression scopeExpression = null;
+		for(Scope scope : getCurrentUserScopes()) {
+			if (scopeExpression == null) {
+				scopeExpression = ExpressionUtilities.getEqualExpression(alias, scope.getId());				
+			} else {
+				Expression expression = ExpressionUtilities.getEqualExpression(alias, scope.getId());
+				scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
+			}
+		}
+
+		if (scopeExpression != null) {
+			criteria.addExpression(scopeExpression);
+		}
+	}	
+
 }

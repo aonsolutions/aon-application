@@ -294,7 +294,7 @@
 					<aon:selectOneMenu id="Offer_workPlace" 
 						value="#{offer.to.workPlace}"
 						disabled="#{offer.readOnly}">
-						<f:selectItems value="#{companyCollections.workPlaces}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Offer_tariff" 

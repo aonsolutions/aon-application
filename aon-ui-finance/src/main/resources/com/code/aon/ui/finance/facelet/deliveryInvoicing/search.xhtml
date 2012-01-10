@@ -95,7 +95,7 @@
 						<aon:selectOneMenu id="Invoicing_WorkPlace"
 							value="#{deliveryInvoicing.params.workPlace}">
 							<f:selectItem itemLabel="-" itemValue="#{null}" />
-							<f:selectItems value="#{companyCollections.workPlaces}" />
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>
 					</aon:panelGrid>
 				</aon:panel>

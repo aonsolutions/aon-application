@@ -40,8 +40,8 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 
 			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
-			if (compCollections.getWorkPlacesCount() == 1) {
-				WorkPlace workPlace = (WorkPlace)compCollections.getWorkPlaces().get(0).getValue();
+			if (compCollections.getCurrentUserWorkPlacesCount() == 1) {
+				WorkPlace workPlace = (WorkPlace)compCollections.getCurrentUserWorkPlaces().get(0).getValue();
 				customerFee.setWorkPlace(workPlace);
 			}
 		} catch (ManagerBeanException e) {

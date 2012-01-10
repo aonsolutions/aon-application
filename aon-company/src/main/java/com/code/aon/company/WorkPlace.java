@@ -18,12 +18,14 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.Scope;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.registry.RegistryAddress;
 
 @Entity
 @Table(name="workplace")
-public class WorkPlace implements ITransferObject {
+public class WorkPlace implements ITransferObject, IScopable {
 
 	private static final long serialVersionUID = 5078033612665053464L;
 
@@ -35,12 +37,18 @@ public class WorkPlace implements ITransferObject {
     private Enterprise enterprise; 	
 	/** Working place address */
     private RegistryAddress address;
+	/** Working place scope */
+    private Scope scope;
 	/** Economic Agreement */
     private Administration economicAgreement;
     /** Indicates if the working place is currently active. */
 	private boolean active;
 
-    @Id
+	public WorkPlace() {
+		setActive(true);
+	}
+
+	@Id
 	@GeneratedValue
 	@Column(nullable=false)
 	public Integer getId() {
@@ -81,6 +89,17 @@ public class WorkPlace implements ITransferObject {
 		this.address = address;
 	}
 
+	@ManyToOne
+    @JoinColumn(name="scope", nullable = false)
+    @ForeignKey(name = "FK_WORKPLACE_SCOPE")
+    @Index(name = "IDX_WORKPLACE_SCOPE")    
+    public Scope getScope() {
+		return scope;
+	}
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
 	@Column(nullable = true)
 	public boolean isActive() {
 		return active;
@@ -110,6 +129,7 @@ public class WorkPlace implements ITransferObject {
 				.append(this.description, o.description)
 				.append(this.economicAgreement, o.economicAgreement)
 				.append(this.enterprise, o.enterprise)
+				.append(this.scope, o.scope)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -124,6 +144,7 @@ public class WorkPlace implements ITransferObject {
 			.append(economicAgreement)
 			.append(enterprise)
 			.append(id)
+			.append(scope)
 			.toHashCode();
 	}
 

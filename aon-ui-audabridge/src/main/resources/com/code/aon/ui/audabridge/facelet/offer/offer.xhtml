@@ -89,7 +89,7 @@
 									
 									<aon:outputLabel for="Offer_workPlace" value="#{companyBundle.company_workplace}" />
 									<aon:selectOneMenu id="Offer_workPlace" required="true" value="#{audabridgeOffer.offer.workPlace}">
-										<f:selectItems value="#{companyCollections.workPlaces}" />
+										<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 									</aon:selectOneMenu>
 									
 									
