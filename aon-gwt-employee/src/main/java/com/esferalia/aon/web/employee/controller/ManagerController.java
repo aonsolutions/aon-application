@@ -28,7 +28,7 @@ import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
@@ -114,7 +114,7 @@ public class ManagerController implements IPayrollConstants {
 	private void initWebmail() {
 		try {
 			WebMailController controller = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			MailAccount mailAccount = WebmailUtil.getDefaultAccount(this.principal.getDomain(), true);
+			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(this.principal.getDomain(), true);
 			if (mailAccount!=null) {
 				controller.init(mailAccount);
 			}		
