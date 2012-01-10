@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,9 +15,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 /**
  * Entity class for representing an asset activity.
@@ -30,25 +34,26 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "asset_activity")
 public class AssetActivity implements ITransferObject {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -767738401305249724L;
 	
 	private Integer id;
+	
 	private Date date;
+	
 	private Date fromTime;
+	
 	private Date toTime;
-	private String who;
-	private String why;
+	
+	private String holder;
+	
+	private String comments;
+	
 	private Asset asset;
+	
 	private ActivityStatus status;
+	
 	private boolean check;
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="id", nullable=false, length=4)
@@ -60,10 +65,6 @@ public class AssetActivity implements ITransferObject {
 		this.id = id;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Temporal(TemporalType.DATE)
 	@Column(name="date", nullable=false, length=10)
 	public Date getDate() {
@@ -74,11 +75,7 @@ public class AssetActivity implements ITransferObject {
 		this.date = date;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	//@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="from_time", nullable=false)
 	public Date getFromTime() {
 		return fromTime;
@@ -88,11 +85,7 @@ public class AssetActivity implements ITransferObject {
 		this.fromTime = fromTime;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	//@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="to_time", nullable=false)
 	public Date getToTime() {
 		return toTime;
@@ -102,34 +95,28 @@ public class AssetActivity implements ITransferObject {
 		this.toTime = toTime;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Column(name="who", length=20)
-	public String getWho() {
-		return who;
+	@Column(name="who", length=32)
+	public String getHolder() {
+		return holder;
 	}
 
-	public void setWho(String who) {
-		this.who = who;
+	public void setHolder(String holder) {
+		this.holder = holder;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Column(name="why", length=128)
-	public String getWhy() {
-		return why;
+	public String getComments() {
+		return comments;
 	}
 
-	public void setWhy(String why) {
-		this.why = why;
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="asset", nullable=false )
+	@ManyToOne
+	@JoinColumn(name="asset", nullable = false, updatable = false )
+	@ForeignKey(name = "FK_ASSET_ACTIVITY_ASSET")
+	@Index(name = "IDX_ASSET_ACTIVITY_ASSET")
 	public Asset getAsset() {
 		return this.asset;
 	}
@@ -145,28 +132,44 @@ public class AssetActivity implements ITransferObject {
 	public void setStatus(ActivityStatus status) {
 		this.status = status;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-			return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final AssetActivity o = (AssetActivity) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.date,o.date)
+				.append(this.fromTime,o.fromTime)
+				.append(this.toTime,o.toTime)
+				.append(this.holder,o.holder)
+				.append(this.comments,o.comments)
+				.append(this.asset,o.asset)
+				.append(this.status,o.status)
+				.isEquals();
 		}
-		if (obj instanceof AssetActivity) {
-			AssetActivity o = (AssetActivity) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id)
+			.append(date)
+			.append(fromTime)
+			.append(toTime)
+			.append(holder)
+			.append(comments)
+			.append(asset)
+			.append(status)
+			.toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return id != null ? this.getClass().hashCode() + id.hashCode() : super
-				.hashCode();
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}
 
 	@Transient
