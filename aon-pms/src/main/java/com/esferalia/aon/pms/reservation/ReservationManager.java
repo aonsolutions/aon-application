@@ -90,8 +90,8 @@ public class ReservationManager implements IReservationConstants {
 		reservation.setVatQuota(0);
 		reservation.setOtherTaxQuota(0);
 		reservation.setTotal(0);
-		reservation.setComments(null);
-		reservation.setStatus(ReservationStatus.PENDING);
+		reservation.setRemarks(null);
+		reservation.setStatus(ReservationStatus.ACTIVE);
 
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		//reservationBean.insert(reservation);
