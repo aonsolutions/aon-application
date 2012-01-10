@@ -205,6 +205,8 @@ public class AonExporter extends GenericExporter{
 		//AON-ASSET   
 		map.put("Asset","com.code.aon.asset.Asset");
 		map.put("AssetActivity","com.code.aon.asset.AssetActivity");
+		map.put("AssetFeature","com.code.aon.asset.AssetFeature");
+		map.put("Feature","com.code.aon.asset.Feature");
 
 		//AON-AUDIT   
 		map.put("Action","com.code.aon.audit.Action");
@@ -430,6 +432,14 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectActivity","com.code.aon.project.ProjectActivity");
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
+		//AON-PMS
+        map.put("Hotel","com.esferalia.aon.pms.Hotel");
+        map.put("ProjectReservation","com.esferalia.aon.pms.ProjectReservation");
+        map.put("ProjectReservationGuest","com.esferalia.aon.pms.ProjectReservationGuest");
+        map.put("ProjectReservationRoom","com.esferalia.aon.pms.ProjectReservationRoom");
+        map.put("ProjectReservationRoomDetail","com.esferalia.aon.pms.ProjectReservationRoomDetail");
+        map.put("ProjectReservationService","com.esferalia.aon.pms.ProjectReservationService");
+		
 		//AON-PURCHASE  
 		map.put("Purchase","com.code.aon.purchase.Purchase");
 		map.put("PurchaseDetail","com.code.aon.purchase.PurchaseDetail");
@@ -467,6 +477,10 @@ public class AonExporter extends GenericExporter{
 		map.put("Model","com.code.aon.tas.Model");
 		map.put("ProjectTas","com.code.aon.tas.ProjectTas");
 		map.put("TasItem","com.code.aon.tas.TasItem");
+
+		//AON-WEBMAIL 
+		map.put("MailAccount","com.code.aon.webmail.db.MailAccount");
+		map.put("Signature","com.code.aon.webmail.db.Signature");
 
 		//AON-WAREHOUSE 
 		map.put("Delivery","com.code.aon.warehouse.Delivery");

@@ -34,9 +34,9 @@ public class PmsCollectionsController {
 		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IPmsAlias.HOTEL_ACTIVE), new Boolean(true));
-		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IPmsAlias.HOTEL_SCOPE_ID));
-		criteria.addOrder(hotelBean.getFieldName(IPmsAlias.HOTEL_WORK_PLACE_DESCRIPTION));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {
 			Hotel hotel = (Hotel)ito;
 			SelectItem item = new SelectItem(hotel, hotel.getWorkPlace().getDescription());

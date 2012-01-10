@@ -2,9 +2,6 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.INVALID_NAME;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_NAME;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_SOURCE;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_SOURCE_ID;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -22,6 +19,7 @@ import com.code.aon.ui.common.converter.MappedTransferObjectConverter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.enumeration.MailSource;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class MailDBController extends BasicController {
 
@@ -67,8 +65,8 @@ public abstract class MailDBController extends BasicController {
 	private void updateCriteria() throws ManagerBeanException {
 		clearCriteria();
 		Criteria criteria = getCriteria();
-		criteria.addEqualExpression(SIGNATURE_SOURCE, this.source);
-		criteria.addEqualExpression(SIGNATURE_SOURCE_ID, this.sourceId);		
+		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE ), this.source);
+		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE_ID ), this.sourceId);		
 	}
 	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
@@ -85,8 +83,8 @@ public abstract class MailDBController extends BasicController {
 	
 	private boolean exists( String name ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(SIGNATURE_SOURCE, this.source);
-		criteria.addEqualExpression(SIGNATURE_NAME, name);		
+		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE ), this.source);
+		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_NAME ), name);		
 		return getManagerBean().getCount(criteria) > 0;
 	}
 	

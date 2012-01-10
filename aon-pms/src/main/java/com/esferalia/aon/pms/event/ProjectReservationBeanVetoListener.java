@@ -5,12 +5,9 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.company.Enterprise;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -21,7 +18,6 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
-    	to.getProject().setEnterprise(obtainEnterprise());
     	to.getProject().setProjectType(null);
     	to.getProject().setDate(to.getStartDate());
     	to.getProject().setRegistry(obtainProjectReservationRegistry(to));
@@ -38,15 +34,6 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
 	    to.getProject().setName(obtainProjectReservationName(to));
     	to.getProject().setReservation(true);
     	to.getProject().setActive(to.getStatus() == ReservationStatus.ACTIVE);
-    }
-
-    private Enterprise obtainEnterprise() throws ManagerBeanVetoListenerException {
-    	try {
-	    	CompanyUtil companyUtil = new CompanyUtil();
-	    	return companyUtil.getActiveEnterprise();
-    	} catch (ManagerBeanException e) {
-    		throw new ManagerBeanVetoListenerException(e.getMessage(), e);
-    	}
     }
 
     private Registry obtainProjectReservationRegistry(ProjectReservation to) {

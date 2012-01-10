@@ -11,10 +11,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.dao.IPmsAlias;
 
@@ -40,7 +40,7 @@ public class ReservationUtils {
 		String alias = agencyInfo.getUniqueID().getID();
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ALIAS), alias);
+		criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ALIAS), alias);
 		Customer agency = (Customer)customerBean.getList(criteria).get(0);
 		if (agency == null) {
 			Registry registry = new Registry();

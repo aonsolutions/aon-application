@@ -8,8 +8,8 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryAddressBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -30,9 +30,9 @@ public class RegistryAddressBeanVetoListener extends ManagerBeanVetoListenerAdap
     		if (to.getAddressType() != AddressType.DELEGATION) { 
 				IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID ), to.getRegistry().getId());
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID ), to.getRegistry().getId());
 				if (to.getId() != null) {
-					c.addNotEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ID ), to.getId());	
+					c.addNotEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ID ), to.getId());	
 				}
 				
 		    	if (to.getAddressType() == null) {
@@ -43,7 +43,7 @@ public class RegistryAddressBeanVetoListener extends ManagerBeanVetoListenerAdap
 	    				to.setAddressType(AddressType.MAIN);
 	    			}
 		    	} else if (to.getAddressType() == AddressType.MAIN) {
-	    			c.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE ), AddressType.MAIN);
+	    			c.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE ), AddressType.MAIN);
 	    			int count = bean.getCount(c);
 	    			if (count>0) {
 	    				throw new ManagerBeanVetoListenerException("Sólo puede haber una dirección principal y ya se ha definido.");  

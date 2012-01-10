@@ -20,10 +20,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.db.Signature;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SignatureDBController extends MailDBController implements ISignatureController {
 
@@ -56,11 +56,11 @@ public class SignatureDBController extends MailDBController implements ISignatur
 	}
 	
 	private boolean checkRemovable( Signature signature ) {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(MailAccount.MAIL_ACCOUNT_SOURCE, getSource());
-		criteria.addEqualExpression(MailAccount.MAIL_ACCOUNT_SIGNATURE_ID, signature.getId());
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(MailAccount.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_SOURCE), getSource());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_SIGNATURE_ID), signature.getId());
 			if ( bean.getCount(criteria) > 0 ) {
 				AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, SIGNATURE_USED, signature.getName() );
 				return false;

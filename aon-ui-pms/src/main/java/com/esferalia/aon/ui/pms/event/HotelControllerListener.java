@@ -32,17 +32,17 @@ public class HotelControllerListener extends ControllerAdapter {
 		Hotel hotel = (Hotel)event.getController().getTo();
 		try {
 			CompanyUtil companyUtil = new CompanyUtil();
-			Enterprise company = companyUtil.getActiveEnterprise();
+//			Enterprise company = companyUtil.getActiveEnterprise();
 
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			RegistryAddress rAddress = hotel.getWorkPlace().getAddress();
 			rAddress.setId(null);
-			rAddress.setRegistry(company.getRegistry());
+//			rAddress.setRegistry(company.getRegistry());
 			rAddress = (RegistryAddress)rAddressBean.insert(hotel.getWorkPlace().getAddress());
 
 			IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 			WorkPlace workPlace = hotel.getWorkPlace();
-			workPlace.setEnterprise(company);
+//			workPlace.setEnterprise(company);
 			workPlace.setAddress(rAddress);
 			workPlace.setScope(hotel.getScope());
 			workPlace.setActive(hotel.isActive());

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<!--
 
+
+
+		************************************************************************************** 
+		*****                                                                            ***** 
+		*****             CONSERVA EL ORDEN ALFABETICO DE LAS TABLAS                     ***** 
+		*****                                                                            ***** 
+		**************************************************************************************
+		
+		
+		 
+ -->
 <hibernate-reverse-engineering>
 	<type-mapping>
 		<sql-type jdbc-type="BIT" not-null="false" hibernate-type="boolean"/>
@@ -58,6 +70,7 @@
 	<!--  *********************************** -->
 	<!--  *********** AON-ACCOUNT *********** -->
 	<!--  *********************************** -->
+
 	<table name="account">
 		<column name="entryEnabled" type="boolean" />
 		<column name="level" type="int" />
@@ -80,6 +93,8 @@
 		</foreign-key>
 	</table>
 	
+	<table name="account_entry_fbatch" class="com.esferalia.aon.entity.master.AccountEntryFinanceBatch" />
+
 	<table name="account_helper">
 		<column name="counter" type="java.lang.Integer"/>
 		<foreign-key constraint-name="FK_ACCOUNT_HELPER_ACCOUNT">
@@ -90,32 +105,36 @@
 		</foreign-key>
 	</table>
 	
-	<table name="account_entry_fbatch" class="com.esferalia.aon.entity.master.AccountEntryFinanceBatch" />
 	<table name="account_period" class="com.esferalia.aon.entity.master.Period">
 		<column name="status" type="com.code.aon.accounting.enumeration.AccountPeriodStatus"/>
 	</table>
+
 	<table name="agreement_level_data">
 		<foreign-key constraint-name="FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL">
 			<many-to-one property="level" />
 		</foreign-key>
 	</table>
+
 	<table name="agreement_level_data">
 		<foreign-key constraint-name="FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL">
 			<many-to-one property="level" />
 		</foreign-key>
 	</table>
+
 	<table name="agreement_payment">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
 		<column name="salary_type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
 	</table>
+
 	<table name="alarm">
 		<column name="description" type="text"/>
 		<column name="source" type="com.code.aon.groupware.enumeration.AlarmSource"/>
 		<column name="status" type="com.code.aon.groupware.enumeration.AlarmStatus"/>
 		<column name="priority" type="com.code.aon.groupware.enumeration.Priority"/>
 	</table>
+
 	<table name="amortization">
 		<column name="fee_period" type="com.code.aon.accounting.enumeration.AmortizationPeriod"/>
 		<column name="amount" type="java.lang.Double"/>
@@ -131,12 +150,14 @@
 			<many-to-one property="allocationAccount" />
 		</foreign-key>
 	</table>
+
 	<table name="amortization_detail">
 		<column name="status" type="com.code.aon.accounting.enumeration.AmortizationDetailStatus"/>
 		<column name="coefficient" type="java.lang.Double"/>
 		<column name="allocation" type="java.lang.Double"/>
 		<column name="fiscal_allocation" type="java.lang.Double"/>
 	</table>
+
 	<table name="amortization_type">
 		<column name="percentage" type="java.lang.Double"/>
 		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT">
@@ -149,19 +170,27 @@
 			<many-to-one property="allocationAccount" />
 		</foreign-key>
 	</table>
+
 	<table name="app_param" class="com.esferalia.aon.entity.master.ApplicationParameter" />
+
 	<table name="application">
 		<column name="audit_level" type="com.code.aon.audit.enumeration.AuditLevel"/>	
 	</table>
+
 	<table name="asset_activity">
 		<column name="status" type="com.code.aon.asset.enumeration.ActivityStatus"/>
+		<column name="who" property="holder"/>
+		<column name="why" property="comments"/>
 	</table>
+
 	<table name="balance">
 		<column name="type" type="com.code.aon.accounting.enumeration.BalanceType"/>
 	</table>
+
 	<table name="balance_detail">
 		<column name="accounts" type="text"/>
 	</table>
+
 	<table name="bank_statement">
 		<column name="status" type="com.code.aon.finance.enumeration.StatementStatus"/>
 		<column name="common_concept" type="com.code.aon.finance.enumeration.StatementConcept"/>
@@ -169,6 +198,7 @@
 		<column name="comments" type="text"/>
 		<column name="document" type="int"/>
 	</table>
+
 	<table name="bank_statement_link">
 		<column name="source" type="com.code.aon.finance.enumeration.StatementLinkSource"/>
 		<column name="status" type="com.code.aon.finance.enumeration.StatementLinkStatus"/>
@@ -176,6 +206,7 @@
 			<many-to-one property="linkedBankStatementLink"/>
 		</foreign-key>
 	</table>
+
 	<table name="calendar">
 		<column name="comments" type="text" />
 		<column name="monday" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
@@ -186,9 +217,11 @@
 		<column name="saturday" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
 		<column name="sunday" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
 	</table>
+
 	<table name="calendar_holiday">
 		<column name="day_type" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
 	</table>
+
 	<table name="calendar_period">
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="start_day" type="java.lang.Integer"/>
@@ -201,24 +234,30 @@
 		<column name="saturday" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
 		<column name="sunday" type="com.esferalia.aon.calendar.enumeration.DayType"/>	
 	</table>
+
 	<table name="campaign">
 		<column name="status" type="com.code.aon.groupware.enumeration.CampaignStatus"/>
 	</table>
+
 	<table name="cashflow_forecast" class="com.esferalia.aon.entity.master.CashFlowForecast">
 		<column name="payment_day" type="int"/>
 	</table>
+
 	<table name="catalogue_category">
 		<foreign-key constraint-name="FK_CATALOGUE_CATEGORY_PCATEGORY">
 			<many-to-one property="category" />
 		</foreign-key>
 	</table>
+
 	<table name="certifica2_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
+
 	<table name="certifica2_batch_attach" class="com.esferalia.aon.entity.master.Certifica2BatchAttachment">
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+
 	<table name="certifica2_batch_data">
 		<column name="year" type="java.lang.Integer"/>
 		<column name="month" type="java.lang.Integer"/>
@@ -226,22 +265,29 @@
 		<column name="cgc_contribution_base" type="java.lang.Double"/>
 		<column name="unemployment_contribution_base" type="java.lang.Double"/>
 	</table>
+
 	<table name="certifica2_batch_detail">
 		<column name="suspension_cause_code" property="suspensionCause" type="com.esferalia.aon.payroll.enumeration.SuspensionCause"/>
 	</table>
+
 	<table name="cnae" class="com.esferalia.aon.entity.master.CNAE" />
+
 	<table name="cnae2009" class="com.esferalia.aon.entity.master.CNAE2009" />
+
 	<table name="cnae2009_rate" class="com.esferalia.aon.entity.master.CNAE2009Rate">
 		<foreign-key constraint-name="FK_CNAE2009_RATE_CNAE2009">
 			<many-to-one property="cnae2009" />
 		</foreign-key>
 	</table>
+
 	<table name="cno" class="com.esferalia.aon.entity.master.CNO" />
+
 	<table name="commercial_term">
 		<column name="term_general" property="general" />
 		<column name="line" type="int" />
 		<column name="description" type="text" />
 	</table>
+
 	<table name="commercial_tracking">
 		<column name="comments" type="text"/>
 		<column name="status" type="com.code.aon.commercial.enumeration.CommercialTrackingStatus"/>
@@ -255,16 +301,19 @@
 			<many-to-one property="project" />
 		</foreign-key>
 	</table>
+
 	<table name="commission_category">
 		<foreign-key constraint-name="FK_COMMISSION_CATEGORY_CATEGORY">
 			<many-to-one property="category" />
 		</foreign-key>
 	</table>
+
 	<table name="company">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
 		</primary-key>
 	</table>
+
 	<table name="contract">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
 		<column name="ss_regime" property="regimeType" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
@@ -275,25 +324,31 @@
 			<many-to-one property="activity"/>
 		</foreign-key>
 	</table>	
+
 	<table name="contract_attach" class="com.esferalia.aon.entity.master.ContractAttachment">
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.ContractAttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+
 	<table name="contract_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
+
 	<table name="contract_batch_attach" class="com.esferalia.aon.entity.master.ContractBatchAttachment">
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+
 	<table name="contract_calendar_event">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.ContractCalendarEventType"/>
 	</table>
+
 	<table name="contract_deduction">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean"/>
 	</table>
+
 	<table name="contract_leave">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.LeaveType"/>
 		<column name="discharge_cause" type="com.esferalia.aon.payroll.enumeration.DischargeCause"/>
@@ -301,17 +356,20 @@
 			<many-to-one property="parent"/>
 		</foreign-key>
 	</table>
+
 	<table name="contract_leave_detail">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.LeaveReportType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.ContractLeaveStatus"/>
 		<column name="confirm_order" type="java.lang.Integer"/>
 	</table>
+
 	<table name="contract_payment">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
 		<column name="salary_type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
 	</table>
+
 	<table name="creditor">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -319,6 +377,7 @@
 		<column name="status" type="com.code.aon.finance.enumeration.CreditorStatus"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType" />
 	</table>
+
 	<table name="customer">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -327,18 +386,22 @@
 		<column name="status" type="com.code.aon.customer.enumeration.CustomerStatus"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType"/>
 	</table>
+
 	<table name="customer_fee">
 		<column name="line" type="int"/>
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="period" type="com.code.aon.finance.enumeration.BillingPeriod"/>
 	</table>
+
 	<table name="daily_tracking">
 		<column name="comments" type="text"/>
 	</table>
+
 	<table name="deduction_concept">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 		<column name="description_decorable" type="boolean"/>
 	</table>
+
 	<table name="delivery">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
@@ -350,10 +413,12 @@
 		<column name="comments" type="text" />
 		<column name="remarks" type="text" />
 	</table>
+
 	<table name="delivery_detail">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="line" type="java.lang.Integer"/>
 	</table>
+
 	<table name="domain">
 		<meta attribute="extra-import">com.code.aon.common.domain.IDomainPojo</meta>
 		<meta attribute="implements">IDomainPojo&lt;Domain&gt;</meta>
@@ -362,11 +427,13 @@
 			<many-to-one property="parent" />
 		</foreign-key>
 	</table>
+
 	<table name="enterprise">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
 		</primary-key>
 	</table>
+
 	<table name="enterprise_activity">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.EnterpriseActivityType" />
 		<foreign-key constraint-name="FK_ENTERPRISE_ACTIVITY_CNAE">
@@ -376,6 +443,7 @@
 			<many-to-one property="cnae2009" />
 		</foreign-key>
 	</table>
+
 	<table name="enterprise_ccc" class="com.esferalia.aon.entity.master.EnterpriseCCC">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.CCCType"/>
 		<foreign-key constraint-name="FK_ENTERPRISE_CCC_GEOZONE">
@@ -385,26 +453,32 @@
 			<many-to-one property="activity" />
 		</foreign-key>
 	</table>
+
 	<table name="fan_batch">
 		<column name="liquidation_type" type="com.esferalia.aon.payroll.enumeration.LiquidationType"/>
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
+
 	<table name="fan_batch_attach" class="com.esferalia.aon.entity.master.FanBatchAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType"/>
 	</table>
+
 	<table name="fan_batch_detail">
 		<foreign-key constraint-name="FK_FAN_BATCH_DETAIL_ENTERPRISE_CCC">
 			<many-to-one property="ccc"/>
 		</foreign-key>
 	</table>
+
 	<table name="fbatch" class="com.esferalia.aon.entity.master.FinanceBatch">
 		<column name="type" property="financeBatchType" type="com.code.aon.finance.enumeration.FinanceBatchType"/>
 		<column name="status" property="financeBatchStatus" type="com.code.aon.finance.enumeration.FinanceBatchStatus"/>
 	</table>
+
 	<table name="fbatch_detail" class="com.esferalia.aon.entity.master.FinanceBatchDetail">
 		<column name="status" type="com.code.aon.finance.enumeration.FinanceStatus"/>
 	</table>
+
 	<table name="finance">
 		<column name="rdocument" property="registryDocument"/>
 		<column name="rname" property="registryName"/>
@@ -413,20 +487,24 @@
 		<column name="status" property="financeStatus" type="com.code.aon.finance.enumeration.FinanceStatus"/>
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 	</table>
+
 	<table name="finance_tracking">
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
 	</table>
+
 	<table name="fs_mod347" class="com.esferalia.aon.entity.master.Mod347">
 		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
 		<column name="status" type="com.code.aon.fiscal.enumeration.Mod347Status"/>
 		<column name="comments" type="text"/>
 		<column name="year" type="java.lang.Integer"/>
 	</table>
+
 	<table name="fs_mod347_detail" class="com.esferalia.aon.entity.master.Mod347Detail">
 		<column name="type" type="com.code.aon.fiscal.enumeration.Mod347Type"/>
 		<column name="country" type="com.code.aon.common.enumeration.Country"/>
 		<column name="amount" type="java.lang.Double"/>
 	</table>
+
 	<table name="fs_prof_retention" class="com.esferalia.aon.entity.master.ProfessionalRetention">
 		<column name="withholding_key" property="key" type="com.code.aon.fiscal.enumeration.WithholdingDetailKey"/>
 		<column name="withholding_subkey" property="subkey" type="com.code.aon.fiscal.enumeration.WithholdingDetailSubkey"/>
@@ -436,6 +514,7 @@
 		<column name="percent" type="java.lang.Double" />
 		<column name="quota" type="java.lang.Double" />
 	</table>
+
 	<table name="fs_renting" class="com.esferalia.aon.entity.master.Renting">
 		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>		
 		<column name="status" type="com.code.aon.fiscal.enumeration.RentingStatus"/>		
@@ -443,16 +522,19 @@
 		<column name="comments" type="text"/>
 		<column name="year" type="java.lang.Integer"/>
 	</table>
+
 	<table name="fs_renting_detail" class="com.esferalia.aon.entity.master.RentingDetail">
 		<column name="type" type="com.code.aon.fiscal.enumeration.RentingDetailKind"/>
 		<column name="accrual_period" type="int"/>
 	</table>
+
 	<table name="fs_vat" class="com.esferalia.aon.entity.master.VatTax">
 		<column name="status" type="com.code.aon.fiscal.enumeration.VatTaxStatus"/>		
 		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>
 		<column name="comments" type="text"/>
 		<column name="year" type="java.lang.Integer"/>
 	</table>
+
 	<table name="fs_vat_declaration" class="com.esferalia.aon.entity.master.VatTaxDeclaration">
 		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
 		<column name="status" type="com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus"/>
@@ -460,6 +542,7 @@
 		<column name="prev_deposit" property="previousDeposit"/>
 		<column name="prev_pay_back" property="previousPayBack"/>
 	</table>
+
 	<table name="fs_vat_detail" class="com.esferalia.aon.entity.master.VatTaxDetail">
 		<column name="vat_key" property="key" type="com.code.aon.fiscal.enumeration.VatTaxKey"/>
 		<column name="adj_taxable_base" property="taxableBaseAdjust"/>
@@ -475,69 +558,26 @@
 		<column name="res_quota" property="quotaResult"/>
 		<column name="res_deductible_quota" property="deductibleQuotaResult"/>
 	</table>
+
 	<table name="geozone_irpf">
 		<foreign-key constraint-name="FK_GEOZONE_IRPF_GEOZONE">
 			<many-to-one property="geozone"/>
 		</foreign-key>
 	</table>
+
 	<table name="geozone_irpf_descendant">
 		<column name="descendant" type="java.lang.Integer"/>
 	</table>
+
 	<table name="geozone_irpf_handicap">
 		<column name="handicap" type="java.lang.Integer"/>
 	</table>
+
 	<table name="iattach" class="com.esferalia.aon.entity.master.ItemAttachment">
 		<column name="type" type="com.code.aon.product.enumeration.AttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
-	<table name="irpf_data">
-		<column name="deduct_home_loan" type="com.esferalia.aon.payroll.enumeration.DeductHomeLoan"/>
-		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
-		<column name="family_situation" type="com.esferalia.aon.payroll.enumeration.FamilySituation"/>
-		<column name="descendient_count" type="java.lang.Integer"/>
-		<column name="contract_type" exclude="true"/>
-		<column name="ceuta_melilla" exclude="true"/>
-	</table>
-	<table name="irpf_data_ascendants">
-		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
-		<column name="another_descendient" type="boolean"/>
-	</table>
-	<table name="irpf_data_descendients">
-		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
-		<column name="another_descendient" type="boolean"/>
-	</table>
-	<table name="irpf_regularization">
-		<column name="reason" type="com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason"/>
-		<column name="prior_in_ceuta_melilla" exclude="true"/>
-		<column name="prior_deduct_home_loan" exclude="true"/>
-	</table>
-	<table name="irpf_result">
-		<column name="descendents_minor_3_total" type="java.lang.Integer"/>
-		<column name="descendents_minor_3_entirely" type="java.lang.Integer"/>
-		<column name="descendents_remainder_total" type="java.lang.Integer"/>
-		<column name="descendents_remainder_entirely" type="java.lang.Integer"/>
-		<column name="descendents_33_65_total" type="java.lang.Integer"/>
-		<column name="descendents_33_65_entirely" type="java.lang.Integer"/>
-		<column name="descendents_moving_total" type="java.lang.Integer"/>
-		<column name="descendents_moving_entirely" type="java.lang.Integer"/>
-		<column name="descendents_65_total" type="java.lang.Integer"/>
-		<column name="descendents_65_entirely" type="java.lang.Integer"/>
-		<column name="descendents_first" type="java.lang.Integer"/>
-		<column name="descendents_second" type="java.lang.Integer"/>
-		<column name="descendents_third" type="java.lang.Integer"/>
-		<column name="descendents_fourth_subsequent_total" type="java.lang.Integer"/>
-		<column name="descendents_fourth_subsequent_entirely" type="java.lang.Integer"/>
-		<column name="ascendents_minor_75_total" type="java.lang.Integer"/>
-		<column name="ascendents_minor_75_entirely" type="java.lang.Integer"/>
-		<column name="ascendents_mayor_75_total" type="java.lang.Integer"/>
-		<column name="ascendents_mayor_75_entirely" type="java.lang.Integer"/>
-		<column name="ascendents_33_65_total" type="java.lang.Integer"/>
-		<column name="ascendents_33_65_entirely" type="java.lang.Integer"/>
-		<column name="ascendents_moving_total" type="java.lang.Integer"/>
-		<column name="ascendents_moving_entirely" type="java.lang.Integer"/>
-		<column name="ascendents_65_total" type="java.lang.Integer"/>
-		<column name="ascendents_65_entirely" type="java.lang.Integer"/>
-	</table>
+
 	<table name="income">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
@@ -549,16 +589,19 @@
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
 	</table>
+
 	<table name="income_detail">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="line" type="java.lang.Integer"/>
 	</table>
+
 	<table name="inventory">
 		<foreign-key foreign-table="warehouse">
 			<column-ref local-column="warehouse" foreign-column="id"/>
 			<many-to-one property="warehouse"/>
 		</foreign-key>
 	</table>
+
 	<table name="invoice">
 		<column name="status" type="com.code.aon.finance.enumeration.InvoiceStatus"/>
 		<column name="type" type="com.code.aon.finance.enumeration.InvoiceType"/>
@@ -574,51 +617,101 @@
 			<many-to-one property="rectificationInvoice"/>
 		</foreign-key>
 	</table>
+
 	<table name="invoice_address">
 		<column name="street_type" type="com.code.aon.registry.enumeration.StreetType"/>
 		<foreign-key constraint-name="FK_INVOICE_ADDRESS_GEOZONE">
 			<many-to-one property="geozone" />
 		</foreign-key>
 	</table>
+
 	<table name="invoice_attach" class="com.esferalia.aon.entity.master.InvoiceAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+
 	<table name="invoice_detail">
 		<column name="line" type="int"/>
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="source" type="com.code.aon.finance.enumeration.InvoiceSource"/>
 	</table>
+
 	<table name="invoice_tax">
 		<column name="tax_type" type="com.code.aon.config.enumeration.TaxType"/>
 		<column name="vat_deduction_type" type="com.code.aon.config.enumeration.VatDeductionType"/>
 		<column name="withholding_type" type="com.code.aon.config.enumeration.WithholdingType"/>
 	</table>
+
 	<table name="invoicing_group">
 		<foreign-key constraint-name="FK_INVOICING_GROUP_REGISTRY">
 			<many-to-one property="parent"/>
 		</foreign-key>
-	</table>
-	<table name="invoicing_group">
 		<foreign-key constraint-name="FK_INVOICING_GROUP_DETAIL_REGISTRY">
 			<many-to-one property="child"/>
 		</foreign-key>
 	</table>
+
 	<table name="irpf_data">
+		<column name="deduct_home_loan" type="com.esferalia.aon.payroll.enumeration.DeductHomeLoan"/>
+		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
+		<column name="family_situation" type="com.esferalia.aon.payroll.enumeration.FamilySituation"/>
+		<column name="descendient_count" type="java.lang.Integer"/>
+		<column name="contract_type" exclude="true"/>
+		<column name="ceuta_melilla" exclude="true"/>
 		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
 		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
 	</table>
+
+	<table name="irpf_data_ascendants">
+		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
+		<column name="another_descendient" type="boolean"/>
+	</table>
+
+	<table name="irpf_data_descendients">
+		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
+		<column name="another_descendient" type="boolean"/>
+	</table>
+
+	<table name="irpf_regularization">
+		<column name="reason" type="com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason"/>
+		<column name="prior_in_ceuta_melilla" exclude="true"/>
+		<column name="prior_deduct_home_loan" exclude="true"/>
+	</table>
+
 	<table name="irpf_result">
+		<column name="descendents_33_65_total" property="descendents33_65Total" type="java.lang.Integer"/>
+		<column name="descendents_33_65_entirely" property="descendents33_65Entirely"  type="java.lang.Integer"/>
+		<column name="ascendents_33_65_total" property="ascendents33_65Total" type="java.lang.Integer"/>
+		<column name="ascendents_33_65_entirely" property="ascendents33_65Entirely"  type="java.lang.Integer"/>
+		<column name="descendents_minor_3_total" type="java.lang.Integer"/>
+		<column name="descendents_minor_3_entirely" type="java.lang.Integer"/>
+		<column name="descendents_remainder_total" type="java.lang.Integer"/>
+		<column name="descendents_remainder_entirely" type="java.lang.Integer"/>
+		<column name="descendents_moving_total" type="java.lang.Integer"/>
+		<column name="descendents_moving_entirely" type="java.lang.Integer"/>
+		<column name="descendents_65_total" type="java.lang.Integer"/>
+		<column name="descendents_65_entirely" type="java.lang.Integer"/>
+		<column name="descendents_first" type="java.lang.Integer"/>
+		<column name="descendents_second" type="java.lang.Integer"/>
+		<column name="descendents_third" type="java.lang.Integer"/>
+		<column name="descendents_fourth_subsequent_total" type="java.lang.Integer"/>
+		<column name="descendents_fourth_subsequent_entirely" type="java.lang.Integer"/>
+		<column name="ascendents_minor_75_total" type="java.lang.Integer"/>
+		<column name="ascendents_minor_75_entirely" type="java.lang.Integer"/>
+		<column name="ascendents_mayor_75_total" type="java.lang.Integer"/>
+		<column name="ascendents_mayor_75_entirely" type="java.lang.Integer"/>
+		<column name="ascendents_moving_total" type="java.lang.Integer"/>
+		<column name="ascendents_moving_entirely" type="java.lang.Integer"/>
+		<column name="ascendents_65_total" type="java.lang.Integer"/>
+		<column name="ascendents_65_entirely" type="java.lang.Integer"/>
 		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
 		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
-		<column name="descendents_33_65_total" property="descendents33_65Total"/>
-		<column name="descendents_33_65_entirely" property="descendents33_65Entirely"/>
-		<column name="ascendents_33_65_total" property="ascendents33_65Total"/>
-		<column name="ascendents_33_65_entirely" property="ascendents33_65Entirely"/>
 	</table>
+
 	<table name="item">
 		<column name="status" type="com.code.aon.product.enumeration.ProductStatus" />
 		<column name="description" type="text"/>
-	</table>	
+	</table>
+		
 	<table name="item_alternative">
 		<column name="priority" type="java.lang.Integer" />
 		<foreign-key constraint-name="FK_ITEM_ALTERNATIVE_ITEM">
@@ -628,6 +721,7 @@
 			<many-to-one property="alternativeItem" />
 		</foreign-key>
 	</table>
+	
 	<table name="item_composition">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="sequence" type="int" />
@@ -638,17 +732,22 @@
 			<many-to-one property="item" />
 		</foreign-key>
 	</table>
+	
 	<table name="item_supplier">
 		<column name="priority" type="java.lang.Integer" />
 	</table>
+	
 	<table name="item_tariff">
 		<column name="type" type="com.code.aon.product.enumeration.ItemTariffType" />
 	</table>
+	
 	<table name="item_warehouse">
 		<column name="stock_min" type="java.lang.Double"/>
 		<column name="stock_max" type="java.lang.Double"/>
 	</table>
+	
 	<table name="geozone" class="com.esferalia.aon.entity.master.GeoZone" />
+	
 	<table name="geotree" class="com.esferalia.aon.entity.master.GeoTree">
 		<foreign-key constraint-name="FK_GEOTREE_PARENT_GEOZONE">
 			<many-to-one property="parent"/>
@@ -657,32 +756,48 @@
 			<many-to-one property="child"/>
 		</foreign-key>
 	</table>
+	
 	<table name="leave_batch">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.FileStatus"/>
 	</table>
+	
 	<table name="leave_batch_attach" class="com.esferalia.aon.entity.master.LeaveBatchAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 		<column name="type" property="attachmentType" type="com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType"/>
 	</table>
+	
 	<table name="loan">
 		<column name="status" type="com.code.aon.accounting.enumeration.LoanStatus"/>
 		<column name="fee_amount" type="java.lang.Double"/>
 	</table>
+	
+	<table name="mail_account">
+		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
+		<column name="replyto_mail" property="replyToMail" />
+		<column name="incoming_port" type="int"/>
+		<column name="outgoing_port" type="int"/>
+		<column name="source_id" type="java.lang.Integer"/>
+		<column name="password" property="passwordString"/>
+	</table>
+	
+	<table name="message_content">
+		<column name="content" type="text"/>
+	</table>
+
 	<table name="message_log" class="com.esferalia.aon.entity.master.Message">
 		<column name="message_parts" type="java.lang.Integer"/>
 		<foreign-key constraint-name="FK_MESSAGE_LOG_MESSAGE_CONTENT">
 			<many-to-one property="content" />
 		</foreign-key>
 	</table>
-	<table name="message_content">
-		<column name="content" type="text"/>
-	</table>
+
 	<table name="mk_action" class="com.esferalia.aon.entity.master.MarketingAction">
 		<column name="media_type" type="com.code.aon.marketing.enumeration.ActionMediaType"/>
 		<foreign-key constraint-name="FK_MK_ACTION_MK_CAMPAIGN">
 			<many-to-one property="campaign" />
 		</foreign-key>
 	</table>
+	
 	<table name="mk_action_target" class="com.esferalia.aon.entity.master.ActionTarget">
 		<column name="comments" type="text"/>
 		<column name="status" type="com.code.aon.marketing.enumeration.ActionTargetStatus"/>
@@ -690,16 +805,20 @@
 			<many-to-one property="action" />
 		</foreign-key>
 	</table>
+	
 	<table name="mk_campaign" class="com.esferalia.aon.entity.master.MarketingCampaign" />
+	
 	<table name="mk_template" class="com.esferalia.aon.entity.master.Template">
 		<column name="data" type="text"/>
 	</table>
+	
 	<table name="note">
 		<column name="note" type="text"/>
 		<foreign-key constraint-name="FK_NOTE_USER">
 			<many-to-one property="owner" />
 		</foreign-key>
 	</table>
+	
 	<table name="notice">
 		<column name="status" type="com.code.aon.groupware.enumeration.NoticeStatus"/>
 		<column name="type" type="com.code.aon.groupware.enumeration.NoticeType"/>
@@ -712,11 +831,7 @@
 			<many-to-one property="recipient" />
 		</foreign-key>
 	</table>
-	<table name="payment_concept">
-		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
-		<column name="description_decorable" type="boolean" />
-	</table>
-	<table name="payroll_workplace" class="com.esferalia.aon.entity.master.PayrollWorkPlace" />
+	
 	<table name="offer">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
@@ -733,22 +848,27 @@
 			<many-to-one property="address" />
 		</foreign-key>
 	</table>
+	
 	<table name="offer_attach" class="com.esferalia.aon.entity.master.OfferAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+	
 	<table name="offer_detail">
 		<column name="status" type="com.code.aon.commercial.enumeration.OfferDetailStatus" />
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="line" type="java.lang.Integer"/>
 	</table>
+	
 	<table name="offer_detail_commission">
 		<column name="status" type="com.code.aon.commercial.enumeration.OfferDetailCommissionStatus" />
 	</table>
+	
 	<table name="offer_term">
 		<column name="term_general" property="general" />
 		<column name="description" type="text"/>
 		<column name="line" type="int"/>
 	</table>
+	
 	<table name="question">
 		<column name="question_text" property="text" />
 		<column name="type" type="com.code.aon.marketing.enumeration.QuestionType"/>
@@ -763,11 +883,22 @@
 	<table name="pay_method">
 		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
 	</table>
-	<table name="pm_type_detail" class="com.esferalia.aon.entity.master.PayMethodTypeDetail">
-		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
+	<table name="payment_concept">
+		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
+		<column name="description_decorable" type="boolean" />
 	</table>
-	<table name="pcategory" class="com.esferalia.aon.entity.master.ProductCategory" />
+	
+	<table name="payroll_workplace" class="com.esferalia.aon.entity.master.PayrollWorkPlace" />
+	
+	<table name="pcategory" class="com.esferalia.aon.entity.master.ProductCategory">
+		<column name="detail_pattern" property="itemPattern"/>
+		<foreign-key constraint-name="FK_PCATEGORY_PCATEGORY_GROUP">
+			<many-to-one property="group" />
+		</foreign-key>
+	</table>
+	
 	<table name="pcategory_group" class="com.esferalia.aon.entity.master.ProductCategoryGroup" />
+	
 	<table name="pcategory_tree" class="com.esferalia.aon.entity.master.ProductCategoryTree">
 		<foreign-key constraint-name="FK_PCATEGORY_TREE_PARENT_PCATEGORY">
 			<many-to-one property="parent" />
@@ -776,6 +907,7 @@
 			<many-to-one property="child" />
 		</foreign-key>
 	</table>
+	
 	<table name="person">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -784,7 +916,13 @@
 		<column name="marital_status" type="com.code.aon.person.enumeration.MaritalStatus"/>
 		<column name="social_security_num" property="socialSecurityNumber" />
 	</table>
+	
+	<table name="pm_type_detail" class="com.esferalia.aon.entity.master.PayMethodTypeDetail">
+		<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
+	</table>
+	
 	<table name="pm_type_detail_account" class="com.esferalia.aon.entity.master.PayMethodTypeDetailAccount" />
+	
 	<table name="process_detail">
 		<column name="date_reference" type="com.code.aon.groupware.enumeration.DateReference"/>
 		<column name="priority" type="com.code.aon.groupware.enumeration.Priority"/>
@@ -795,6 +933,7 @@
 			<many-to-one property="workgroup" />
 		</foreign-key>
 	</table>
+	
 	<table name="process_detail_transition">
 		<foreign-key constraint-name="FK_PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL">
 			<many-to-one property="nextProcessDetail" />
@@ -803,18 +942,7 @@
 			<many-to-one property="processDetail" />
 		</foreign-key>
 	</table>
-	<table name="project_commercial">
-		<column name="status" type="com.code.aon.commercial.enumeration.ProjectStatus"/>
-		<column name="source" type="com.code.aon.commercial.enumeration.ProjectSource"/>
-		<column name="comments" type="text"/>
-	</table>	
-	<table name="project_tas">
-		<column name="status" type="com.code.aon.tas.enumeration.ProjectStatus"/>
-		<column name="comments" type="text"/>
-	</table>
-	<table name="product_account">
-		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
-	</table>	
+		
 	<table name="product">
 		<column name="status" type="com.code.aon.product.enumeration.ProductStatus"/>
 		<column name="type" type="com.code.aon.product.enumeration.ProductType"/>
@@ -828,30 +956,34 @@
 			<many-to-one property="category" />
 		</foreign-key>
 	</table>
-	<table name="pcategory">
-		<column name="detail_pattern" property="itemPattern"/>
-		<foreign-key constraint-name="FK_PCATEGORY_PCATEGORY_GROUP">
-			<many-to-one property="group" />
-		</foreign-key>
+	
+	<table name="product_account">
+		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
 	</table>
-	<table name="pcategory_tree">
-		<foreign-key constraint-name="FK_PCATEGORY_TREE_CHILD_PCATEGORY">
-			<many-to-one property="child" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_PCATEGORY_TREE_PARENT_PCATEGORY">
-			<many-to-one property="parent" />
-		</foreign-key>
-	</table>
+	
 	<table name="project_commercial">
 		<primary-key>
 			<key-column name="project" property="id" type="java.lang.Integer"/>
 		</primary-key>
+		<column name="status" type="com.code.aon.commercial.enumeration.ProjectStatus"/>
+		<column name="source" type="com.code.aon.commercial.enumeration.ProjectSource"/>
+		<column name="comments" type="text"/>
 	</table>
-	<table name="project_tas">
+		
+	<table name="project_reservation">
 		<primary-key>
 			<key-column name="project" property="id" type="java.lang.Integer"/>
 		</primary-key>
 	</table>
+	
+	<table name="project_tas">
+		<primary-key>
+			<key-column name="project" property="id" type="java.lang.Integer"/>
+		</primary-key>
+		<column name="status" type="com.code.aon.tas.enumeration.ProjectStatus"/>
+		<column name="comments" type="text"/>
+	</table>
+	
 	<table name="purchase">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
@@ -868,11 +1000,13 @@
 			<many-to-one property="registryAddress" />
 		</foreign-key>
 	</table>
+	
 	<table name="purchase_detail">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="status" type="com.code.aon.purchase.enumeration.PurchaseDetailStatus" />
 		<column name="line" type="java.lang.Integer" />
 	</table>
+	
 	<table name="raddress" class="com.esferalia.aon.entity.master.RegistryAddress">
 		<column name="type" property="addressType" type="com.code.aon.registry.enumeration.AddressType"/>
 		<column name="street_type" type="com.code.aon.registry.enumeration.StreetType"/>
@@ -880,15 +1014,29 @@
 			<many-to-one property="geozone" />
 		</foreign-key>
 	</table>
+	
 	<table name="raddinfo" class="com.esferalia.aon.entity.master.RegistryAddInfo" />
+	
+	<table name="rattach" class="com.esferalia.aon.entity.master.RegistryAttachment">
+		<column name="type" property="registryAttachmentType" type="com.code.aon.registry.enumeration.RegistryAttachmentType" />
+		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+	</table>
+
+	<table name="rbank" class="com.esferalia.aon.entity.master.RegistryBank">
+		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
+	</table>
+	
+	<table name="rbank_account" class="com.esferalia.aon.entity.master.RegistryBankAccount" />
+
+	<table name="rdir_staff" class="com.esferalia.aon.entity.master.RegistryDirStaff">
+		<column name="shareholder" property="shareHolder" />
+		<column name="share_number" type="int"/>
+	</table>
+
 	<table name="record_data" class="com.esferalia.aon.entity.master.RecordData">
 		<foreign-key constraint-name="FK_RECORD_DATA_RATTACH">
 			<many-to-one property="attach" />
 		</foreign-key>
-	</table>
-	<table name="rattach" class="com.esferalia.aon.entity.master.RegistryAttachment">
-		<column name="type" property="registryAttachmentType" type="com.code.aon.registry.enumeration.RegistryAttachmentType" />
-		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
 	
 	<table name="registry">
@@ -898,25 +1046,18 @@
 		<column name="type" type="com.code.aon.registry.enumeration.RegistryType"/>
 	</table>
 	
-	<table name="rbank" class="com.esferalia.aon.entity.master.RegistryBank">
-		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
-	</table>
-	
-	<table name="rbank_account" class="com.esferalia.aon.entity.master.RegistryBankAccount" />
-	<table name="rdir_staff" class="com.esferalia.aon.entity.master.RegistryDirStaff">
-		<column name="shareholder" property="shareHolder" />
-		<column name="share_number" type="int"/>
-	</table>
 	<table name="rmedia" class="com.esferalia.aon.entity.master.RegistryMedia">
 		<column name="media" property="mediaType" type="com.code.aon.registry.enumeration.MediaType"/>
 		<foreign-key constraint-name="FK_RMEDIA_RADDRESS">
 			<many-to-one property="address" />
 		</foreign-key>
 	</table>
+
 	<table name="rnote" class="com.esferalia.aon.entity.master.RegistryNote">
 		<column name="note_type" property="notetype" type="com.code.aon.registry.enumeration.NoteType"/>
 		<column name="comments" type="text" />
 	</table>
+	
 	<table name="rpaymethod" class="com.esferalia.aon.entity.master.RegistryPayMethod">
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
 		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>
@@ -926,6 +1067,7 @@
 			<many-to-one property="payment" />
 		</foreign-key>
 	</table>
+	
 	<table name="rrelationship" class="com.esferalia.aon.entity.master.RegistryRelationship">
 		<foreign-key constraint-name="FK_RRELATIONSHIP_REGISTRY">
 			<many-to-one property="registry" />
@@ -938,13 +1080,16 @@
 			<many-to-one property="relationship" />
 		</foreign-key>
 	</table>
+	
 	<table name="rsegment" class="com.esferalia.aon.entity.master.RegistrySegment" />
+	
 	<table name="seller">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
 		</primary-key>
 		<column name="status" type="com.code.aon.seller.enumeration.SellerStatus"/>
 	</table>
+	
 	<table name="salary">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
@@ -965,15 +1110,19 @@
 		<column name="non_hextra_base" type="java.lang.Double" property="nonEstructuralOvertimeBase" />
 		<column name="pro_ext_base" type="java.lang.Double" property="extraPayProration" />
 	</table>
+	
 	<table name="salary_cost">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	</table>
+	
 	<table name="salary_deduction">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	</table>
+	
 	<table name="salary_payment">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	</table>
+	
 	<table name="sales">
 		<column name="pos" exclude="true"/>
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
@@ -990,14 +1139,23 @@
 			<many-to-one property="shippingAddress" />
 		</foreign-key>
 	</table>
+	
 	<table name="sales_detail">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="status" type="com.code.aon.sales.enumeration.SalesDetailStatus" />
 		<column name="line" type="java.lang.Integer" />
 	</table>
+	
+	<table name="signature">
+		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
+		<column name="signature" type="text"/>
+		<column name="source_id" type="java.lang.Integer"/>
+	</table>
+
 	<table name="stock">
 		<column name="quantity" type="java.lang.Double"/>
 	</table>
+	
 	<table name="supplier">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -1032,24 +1190,29 @@
 			<many-to-one property="surveyQuestion" />
 		</foreign-key>
 	</table>
+	
 	<table name="system_cost">
 		<column name="type" type="java.lang.Integer"/>
 		<column name="expression" type="text"/>
 	</table>
+	
 	<table name="system_data">
 		<column name="expression" type="text"/>
 	</table>
+	
 	<table name="system_deduction">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.DeductionType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean"/>
 	</table>
+	
 	<table name="system_payment">
 		<column name="type" type="com.esferalia.aon.salary.enumeration.PaymentType"/>
 		<column name="salary_type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
 	</table>
+	
 	<table name="target">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -1058,17 +1221,21 @@
 		<column name="advertising" type="com.code.aon.commercial.enumeration.Advertising"/>
 		<column name="transaction" type="com.code.aon.config.enumeration.InvoiceTransactionType"/>
 	</table>
+	
 	<table name="target_item">
 		<column name="status" type="com.code.aon.commercial.enumeration.TargetItemStatus"/>
 	</table>
+	
 	<table name="target_seller">
 		<column name="status" type="com.code.aon.commercial.enumeration.TargetSellerStatus"/>
 	</table>
+	
 	<table name="target_profile">
 		<column name="value_text" property="text" />
 		<column name="value_date" property="date" />
 		<column name="value_number" property="number" type="java.lang.Double"/>
 	</table>
+	
 	<table name="target_supplier">
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
 		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>
@@ -1076,10 +1243,12 @@
 		<column name="pymnt_days" property="paymentDays" />
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 	</table>
+	
 	<table name="tas_item">
 		<column name="add_info" type="text"/>
 		<column name="description" type="text"/>
 	</table>
+	
 	<table name="task">
 		<column name="comments" type="text" />
 		<column name="percent" type="int" />
@@ -1094,21 +1263,24 @@
 			<many-to-one property="sender"/>
 		</foreign-key>
 	</table>
+	
 	<table name="task_holder">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
 		</primary-key>
 		<column name="type" type="com.code.aon.groupware.enumeration.TaskHolderType" /> 
 	</table>
+	
 	<table name="tax" class="com.esferalia.aon.entity.master.Tax">
 		<column name="tax_type" property="type" type="com.code.aon.config.enumeration.TaxType" /> 
 		<column name="vat_deduction_type" property="vatDeductionType" type="com.code.aon.config.enumeration.VatDeductionType" /> 
 		<column name="withholding_type" property="withholdingType" type="com.code.aon.config.enumeration.WithholdingType" /> 
 	</table>
+	
 	<table name="tax_account">
 		<column name="type" type="com.code.aon.account.bridge.enumeration.TaxAccountType"/>
 	</table>
-	<table name="user_workgroup" class="com.esferalia.aon.entity.master.UserWorkGroup" />
+	
 	<table name="user">
 		<column name="enterprise" exclude="true"/>
 		<column name="registry" exclude="true"/>
@@ -1119,6 +1291,9 @@
 			<many-to-one exclude="true"/>
 		</foreign-key>
 	</table>
+	
+	<table name="user_workgroup" class="com.esferalia.aon.entity.master.UserWorkGroup" />
+	
 	<table name="warehouse_transfer">
 		<column name="comments" type="text"/>
 		<foreign-key constraint-name="FK_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE">
@@ -1128,27 +1303,32 @@
 			<many-to-one property="targetWarehouse"/>
 		</foreign-key>
 	</table>
+	
 	<table name="web_info">
 		<column name="commercial_description" type="text"/>
 		<column name="schedule" type="text"/>
 	</table>
+	
 	<table name="web_info_page">
 		<column name="type" type="com.code.aon.infoweb.enumeration.WebInfoPageType"/>
 		<column name="position" type="java.lang.Integer"/>
 	</table>
+	
 	<table name="web_info_page_detail">
 		<column name="content" type="text"/>
 		<column name="layout" type="com.code.aon.infoweb.enumeration.WebInfoLayoutType"/>
 	</table>
+	
 	<table name="web_info_page_resource">
 		<foreign-key constraint-name="FK_WEB_INFO_PAGE_RESOURCE_RATTACH">
 			<many-to-one property="rattach" />
 		</foreign-key>
 	</table>
-	<table name="workactivity" class="com.esferalia.aon.entity.master.WorkActivity" />
+	
 	<table name="workgroup" class="com.esferalia.aon.entity.master.WorkGroup">
 		<column name="status" type="com.code.aon.config.enumeration.WorkGroupStatus" /> 
 	</table>
+	
 	<table name="workplace" class="com.esferalia.aon.entity.master.WorkPlace">
 		<column name="economicAgreement" type="com.code.aon.config.enumeration.Administration"/>
 		<foreign-key constraint-name="FK_WORKPLACE_RADDRESS">
