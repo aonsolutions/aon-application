@@ -41,7 +41,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.EmailSender;
-import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -53,10 +53,10 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	
 	private Company company;
 
-	private MailAccount getDefaultMailAccount( AuthPrincipal user ) {		
+	private IMailAccount getDefaultMailAccount( AuthPrincipal user ) {		
 		String domain = user.getDomain();
 		String login = user.getShortName();
-		MailAccount mailAccount;
+		IMailAccount mailAccount;
 		try {
 			mailAccount = WebmailUtil.getDefaultAccount(domain,login);
 		} catch (ManagerBeanException e) {
@@ -76,7 +76,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	public EmailSender getEmailSender() throws UnsupportedEncodingException {
 		if ( this.sender == null ) {
 			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-			MailAccount mailAccount = getDefaultMailAccount( user );
+			IMailAccount mailAccount = getDefaultMailAccount( user );
 			if ( mailAccount != null ) {
 				changeMailAccount(mailAccount);
 			} else {
@@ -88,7 +88,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		return this.sender;
 	}
 	
-    private String getPersonal( MailAccount account ) throws UnsupportedEncodingException {
+    private String getPersonal( IMailAccount account ) throws UnsupportedEncodingException {
     	String personal = null;
     	if ( ! StringUtils.isEmpty(account.getDisplayName()) ) {
     		personal = account.getDisplayName();
@@ -98,7 +98,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
     	return MimeUtility.encodeText(personal);
     }	
 	
-	public void changeMailAccount(MailAccount mailAccount) throws UnsupportedEncodingException {
+	public void changeMailAccount(IMailAccount mailAccount) throws UnsupportedEncodingException {
 		Address from = new InternetAddress( mailAccount.getEmail(), getPersonal(mailAccount) );
 		this.sender = new EmailSender( from, mailAccount );							
 	}
