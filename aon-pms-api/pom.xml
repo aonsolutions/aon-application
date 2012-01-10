@@ -14,7 +14,29 @@
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>
+									${project.build.directory}/generated-sources
+								</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>1.10</version>
 				<executions>
 					<execution>
 						<goals>
@@ -24,12 +46,40 @@
 							<wsdlUrls>
 								<wsdlUrl>http://xmlgatewaytest.tradyso.com/xmlgateway/xmlpush/PMS_Tradyso.wsdl</wsdlUrl>
 							</wsdlUrls>
+							<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 							<packageName>com.esferalia.aon.pms</packageName>
+							<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<version>2.3.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+						<configuration>
+							<schemaDirectory>src/main/xsd/</schemaDirectory>
+							<sourceGenerationDirectory>${project.build.directory}/generated-sources</sourceGenerationDirectory>
+							<classGenerationDirectory>${project.build.directory}/classes</classGenerationDirectory>
+							<staleFile>${project.build.directory}/generated-sources/staleFlag/xmlbeans/.staleFlag</staleFile>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build> 
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>
  
