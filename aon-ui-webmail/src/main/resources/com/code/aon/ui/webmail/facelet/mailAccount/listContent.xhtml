@@ -20,7 +20,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputText value="#{webmailBundle.webmail_mailAccount_name}" />
+						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
 					<aon:outputText value="#{to.name}" />
 				</aon:column>
@@ -34,7 +34,7 @@
 				
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputText value="#{webmailBundle.webmail_mailAccount_email}" />
+						<aon:outputText value="#{bundle.aon_email}" />
 					</f:facet>
 					<aon:outputText value="#{to.email}" />
 				</aon:column>
@@ -49,15 +49,15 @@
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText
-							value="#{webmailBundle.webmail_mailAccount_active}" />
+							value="#{webmailBundle.webmail_mailAccount_type}" />
 					</f:facet>
 					<aon:outputText
 						value="#{webmailBundle.webmail_mailAccount_user_account}"
-						rendered="#{controller.currentEditable}">
+						rendered="#{mailConfig.currentMailAccountEditable}">
 					</aon:outputText>
 					<aon:outputText
 						value="#{webmailBundle.webmail_mailAccount_system_account}"
-						rendered="#{!controller.currentEditable}" />
+						rendered="#{!mailConfig.currentMailAccountEditable}" />
 				</aon:column>
 
 				<c:if test="#{!skipDefaultAccountColumn}">	
@@ -70,7 +70,7 @@
 							onmouseout="enableRowSelector();" >
 							<aon:commandLink
 								rendered="#{!to.defaultAccount}" 
-								actionListener="#{controller.onSetDefault}" >
+								actionListener="#{mailConfig.onSetDefault}" >
 								<aon:outputText value="&#160;"
 									styleClass="aon-icon aon-icon-check" />							
 							</aon:commandLink>
@@ -90,11 +90,11 @@
 							onmouseout="enableRowSelector();" >
 							<aon:outputText
 								value="#{webmailBundle.webmail_signature_active}"
-								rendered="#{controller.currentToActiveAccount}" />
+								rendered="#{mailConfig.activeMailAccount}" />
 							<aon:commandButton id="mailAccountChange"
-								rendered="#{!controller.currentToActiveAccount}"
+								rendered="#{!mailConfig.activeMailAccount}"
 								title="#{webmailBundle.webmail_mailAccountChange}"
-								action="mailAccount_list" actionListener="#{controller.onChangeServer}"
+								action="mailAccount_list" actionListener="#{mailConfig.onChangeServer}"
 								value="#{webmailBundle.webmail_mailAccountChange}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								styleClass="aon-icon-commandButton aon-icon-predetermine">

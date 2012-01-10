@@ -15,7 +15,7 @@
 		<aon:panelGrid columns="2" width="100%" columnClasses="aon-panelGrid-odd aon-width-100,aon-panelGrid-even">
 	
 			<aon:outputLabel for="Signature_name"
-				value="#{webmailBundle.webmail_signature_name}" />
+				value="#{bundle.aon_name}" />
 			<aon:inputText id="Signature_name"
 				validator="#{controller.idCheck}"
 				size="60" maxlength="45" required="true"
@@ -26,13 +26,13 @@
 			<aon:div style="width:98%">
 				<a4j:region>
 					<aon:selectBooleanCheckbox id="Signature_signature_richTextEnabled"
-						value="#{controller.richTextEnabled}" >
+						value="#{mailConfig.richTextEnabled}" >
 						<a4j:support reRender="Signature_signature" event="onclick"	/>
 					</aon:selectBooleanCheckbox>
 					<aon:outputLabel for="Signature_signature_richTextEnabled"
 						value="#{webmailBundle.webmail_richtext_enabled}" />	
 					<aon:inputRichText id="Signature_signature"
-						viewMode="#{controller.richTextEnabled?'visual':'source'}"
+						viewMode="#{mailConfig.richTextEnabled?'visual':'source'}"
 						value="#{controller.to.signature}"
 						height="400" width="640" configuration="tinyMCE" > 
 					</aon:inputRichText>																		

@@ -17,21 +17,21 @@ public class EmailSender {
 	
 	private AonServer server;
 	
-	private MailAccount mailAccount;
+	private IMailAccount mailAccount;
 	
 	private Address from;
 	
-	public EmailSender( Address from, MailAccount mailAccount ) {
+	public EmailSender( Address from, IMailAccount mailAccount ) {
 		setFrom( from );
 		setMailAccount( mailAccount );
 		this.server = new AonServer(mailAccount);
 	}
 
-	public MailAccount getMailAccount() {
+	public IMailAccount getMailAccount() {
 		return mailAccount;
 	}
 
-	public void setMailAccount(MailAccount mailAccount) {
+	public void setMailAccount(IMailAccount mailAccount) {
 		this.mailAccount = mailAccount;
 	}
 

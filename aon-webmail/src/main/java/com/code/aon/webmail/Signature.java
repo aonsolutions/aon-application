@@ -17,7 +17,7 @@ import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 
 @EntryObject(mainObjectClass=SIGNATURE, objectClasses={TOP})
-public class Signature implements ILdapTransferObject {
+public class Signature implements ILdapTransferObject, ISignature {
 
 	private static final long serialVersionUID = 714322089783136934L;
 

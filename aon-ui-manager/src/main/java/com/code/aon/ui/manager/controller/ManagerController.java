@@ -1,7 +1,7 @@
 package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,7 +50,7 @@ import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
-import com.code.aon.ui.webmail.controller.MailAccountController;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 
 public class ManagerController implements IManagerConstants {
 	
@@ -269,8 +269,8 @@ public class ManagerController implements IManagerConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
-		MailAccountController mac = (MailAccountController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT);
-		mac.setSystemAccountEditable(true);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		mailConfig.setSystemAccountEditable(true);
 	}
 
 	private void initNormalUser() {

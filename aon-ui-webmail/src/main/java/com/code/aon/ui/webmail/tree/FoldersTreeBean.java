@@ -18,13 +18,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.FolderController;
-import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
-import com.code.aon.webmail.bean.IMailConstants;
 
 public class FoldersTreeBean implements IWebMailConstants {
 

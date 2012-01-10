@@ -6,19 +6,19 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.ISignature;
 
 public class SignatureControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		if ( WebMailController.isConnectable() ) {		
-			Signature signature = (Signature) event.getController().getTo(); 
+			ISignature signature = (ISignature) event.getController().getTo(); 
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-			MailAccount account = wmc.getServer().getAccount();
-			if ( signature.getId().equals(account.getSignature().getId()) ) {
-				account.setSignature(signature);
+			IMailAccount account = wmc.getServer().getAccount();
+			if ( signature.equals(account.getISignature()) ) {
+				account.setISignature(signature);
 			}
 		}
 	}

@@ -1,0 +1,59 @@
+package com.code.aon.ui.webmail.controller;
+
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_DUPLICATED;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.IMailAccount;
+import com.code.aon.webmail.db.MailAccount;
+
+public class MailAccountDBController extends MailDBController implements IMailAccountController {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(MailAccountDBController.class);
+	
+	@Override
+	protected String getDuplicatedMessage( String name ) {
+		return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_DUPLICATED, name);
+	}		
+	
+	@Override
+	protected String getToName() {
+		IMailAccount account = (IMailAccount) getTo();
+		return account.getName();
+	}
+
+	@Override
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		MailAccount account = (MailAccount) getTo();
+		account.setSource(getSource());
+		account.setSourceId(getSourceId());
+	}
+
+	@Override
+	public List<SelectItem> getMailAccounts() {
+		List<SelectItem> accounts = new LinkedList<SelectItem>();
+		try {		
+			for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
+				MailAccount account = (MailAccount) to;
+				SelectItem item = new SelectItem(account, account.getName());
+				accounts.add(item);				
+			}
+		} catch (ManagerBeanException e) {
+            LOGGER.error(">>>> getMailAccounts", e);
+		}		
+		return accounts;
+	}	
+	
+}
