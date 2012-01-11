@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ldap</artifactId>
-			<version>6.19</version>
+			<version>6.20</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
