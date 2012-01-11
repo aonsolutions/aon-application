@@ -258,10 +258,20 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		}
 	}	
 		
-	public List<SelectItem> getParentDomains() {
+	public List<SelectItem> getAllParentDomains() {
 		return parentDomains;
 	}
 
+	public List<SelectItem> getParentDomains() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for( SelectItem item : parentDomains ) {
+			if (! getDomain().equals(item.getValue()) ) {
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	
 	public Converter getConverter() {
 		if ( converter == null ) {
 			this.converter = new LdapTransferObjectConverter(this);			

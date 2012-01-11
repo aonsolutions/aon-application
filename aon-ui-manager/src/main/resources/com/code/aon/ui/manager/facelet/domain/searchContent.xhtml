@@ -37,7 +37,7 @@
 					converter="#{controller.converter}"
 					valueChangeListener="#{controller.addDomainEqualExpression}" >
 					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{controller.parentDomains}" />
+					<f:selectItems value="#{controller.allParentDomains}" />
 				</aon:selectOneMenu>
 			</c:if>
 			
