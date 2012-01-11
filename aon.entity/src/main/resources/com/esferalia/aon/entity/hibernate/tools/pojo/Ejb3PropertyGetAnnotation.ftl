@@ -20,25 +20,25 @@ ${pojo.generateAnnIdGenerator()}
 <#elseif property.getName()=="workPlace" && pojo.getDeclarationName()=="HotelDB">	@${pojo.importType("javax.persistence.ManyToOne")}
     @javax.persistence.JoinColumn(name="workplace", nullable = false)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
-<#elseif property.getName()=="payMethodTypeDetail" && pojo.getDeclarationName()=="PayMethodTypeDetailAccountDB">	@${pojo.importType("javax.persistence.ManyToOne")}(fetch=FetchType.EAGER)
+<#elseif property.getName()=="payMethodTypeDetail" && pojo.getDeclarationName()=="PayMethodTypeDetailAccountDB">	@${pojo.importType("javax.persistence.ManyToOne")}(fetch=${pojo.importType("javax.persistence.FetchType")}.EAGER)
     @javax.persistence.JoinColumn(name="pm_type_detail", nullable=false)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
 <#elseif property.getName()=="content" && pojo.getDeclarationName()=="MessageDB">	@${pojo.importType("javax.persistence.ManyToOne")}(cascade = {${pojo.importType("javax.persistence.CascadeType")}.ALL} )
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE} )
 	@javax.persistence.JoinColumn(name="message_content")
-<#elseif property.getName()=="rattach" && pojo.getDeclarationName()=="WebInfoPageResourceDB">	@${pojo.importType("javax.persistence.OneToOne")}(fetch = FetchType.EAGER)
+<#elseif property.getName()=="rattach" && pojo.getDeclarationName()=="WebInfoPageResourceDB">	@${pojo.importType("javax.persistence.OneToOne")}(fetch = ${pojo.importType("javax.persistence.FetchType")}.EAGER)
 	@${pojo.importType("javax.persistence.JoinColumn")}( name="rattach" )
-<#elseif property.getName()=="webInfoPage" && pojo.getDeclarationName()=="WebInfoPageDetailDB">	@${pojo.importType("javax.persistence.OneToOne")}(fetch = FetchType.EAGER)	
+<#elseif property.getName()=="webInfoPage" && pojo.getDeclarationName()=="WebInfoPageDetailDB">	@${pojo.importType("javax.persistence.OneToOne")}(fetch = ${pojo.importType("javax.persistence.FetchType")}.EAGER)	
 	@${pojo.importType("javax.persistence.JoinColumn")}( name="web_info_page",nullable=false )
 <#elseif property.getName()=="address" && pojo.getDeclarationName()=="WorkPlaceDB">	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-	@JoinColumn(name="address", nullable = false)
+	@javax.persistence.JoinColumn(name="address", nullable = false)
 <#elseif property.getName()=="enterprise" && pojo.getDeclarationName()=="EnterpriseDataDB">	@${pojo.importType("javax.persistence.OneToOne")}
-	@JoinColumn(name="enterprise", nullable=false)
+	@javax.persistence.JoinColumn(name="enterprise", nullable=false)
 <#elseif property.getName()=="enterprise" && pojo.getDeclarationName()=="EnterpriseActivityDB">	@${pojo.importType("javax.persistence.OneToOne")}
-    @JoinColumn(name="enterprise", nullable = false, updatable = false )
+    @javax.persistence.JoinColumn(name="enterprise", nullable = false, updatable = false )
 <#elseif property.getName()=="activity" && pojo.getDeclarationName()=="EnterpriseCCCDB">	@${pojo.importType("javax.persistence.OneToOne")}
-	@JoinColumn(name="enterprise_activity", nullable = false)
+	@javax.persistence.JoinColumn(name="enterprise_activity", nullable = false)
 <#elseif property.getName()=="registry" && hasRegistryPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}	

@@ -157,7 +157,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		Criteria criteria = new Criteria();
 // [EUKE]
 //		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_DOMAIN_ID), enterprise.getDomain().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_DOMAIN), enterprise.getDomain());
 // fin
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();

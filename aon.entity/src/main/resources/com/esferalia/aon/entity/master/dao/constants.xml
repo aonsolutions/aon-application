@@ -113,8 +113,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.config.User">
-		<alias names="active,domain_id,id,login,name,password,registry,enterprise"/>
-		<hibernate names="active,domain.id,id,login,name,password,registry,enterprise"/>
+		<alias names="active,domain,id,login,name,password,registry,enterprise"/>
+		<hibernate names="active,domain,id,login,name,password,registry,enterprise"/>
 	</bean>
 			
 	<!-- ** AON CUSTOMER  **************************************************** -->

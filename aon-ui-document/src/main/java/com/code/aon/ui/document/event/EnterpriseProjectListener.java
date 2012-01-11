@@ -48,8 +48,8 @@ public class EnterpriseProjectListener extends ControllerAdapter {
 // [EUKE]
 //					String enterpriseId = event.getController().getFieldName(IEntityAlias.PROJECT_ENTERPRISE_ID);
 //					criteria.addEqualExpression(enterpriseId, enterprise.getId());						
-					String enterpriseId = event.getController().getFieldName(IEntityAlias.PROJECT_DOMAIN_ID);
-					criteria.addEqualExpression(enterpriseId, enterprise.getDomain().getId());						
+					String enterpriseId = event.getController().getFieldName(IEntityAlias.PROJECT_DOMAIN);
+					criteria.addEqualExpression(enterpriseId, enterprise.getDomain());						
 					// fin		
 				} catch (ManagerBeanException e) {
 					throw new ControllerListenerException(e.getMessage(), e);

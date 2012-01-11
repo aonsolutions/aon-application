@@ -14,22 +14,21 @@ import com.code.aon.registry.Registry;
 
 public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-	private static final String DOMAIN_ID_PROPERTY = ".domain.id";
+	private static final String DOMAIN_PROPERTY = ".domain";
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		IDomain<Domain> iDomain =  (IDomain<Domain>) evt.getTo();
+		IDomain iDomain =  (IDomain) evt.getTo();
 		System.out.println("DOMAIN LISTENER ..:" + iDomain.getClass().getName());
-		if (iDomain.getDomain() == null || iDomain.getDomain().getId() == null) {
-			System.out.println("DOMAIN LISTENER ..(domain)..: " + getCurrentDomain().getId());
+		if (iDomain.getDomain() == 0) {
+			System.out.println("DOMAIN LISTENER ..(domain)..: " + getCurrentDomain());
 			iDomain.setDomain(getCurrentDomain());
 		}
 		if (!Registry.class.equals(iDomain.getClass()) 
 			&& IRegistry.class.isAssignableFrom(iDomain.getClass())) {
-			System.out.println("DOMAIN LISTENER ..(registry)..: " + getCurrentDomain().getId());
+			System.out.println("DOMAIN LISTENER ..(registry)..: " + getCurrentDomain());
 			Registry registry = ((IRegistry) iDomain).getRegistry();
-			if (registry.getDomain() == null || registry.getDomain().getId() == null) {
+			if (registry.getDomain() == 0) {
 				registry.setDomain(getCurrentDomain());
 			}
 		}
@@ -38,15 +37,16 @@ public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException {
 		String className  = evt.getEntityClass().getSimpleName();
-		String alias = className + DOMAIN_ID_PROPERTY;
-		evt.getCriteria().addEqualExpression(alias, getCurrentDomain().getId());
+		String alias = className + DOMAIN_PROPERTY;
+		evt.getCriteria().addEqualExpression(alias, getCurrentDomain());
 	}
 
 	/* TODO Implementar correctamente esta funcionalidad */
-	private Domain getCurrentDomain() throws ManagerBeanVetoListenerException {
+	/* Esto tiene que desaparecer YA! */
+	private Integer getCurrentDomain() throws ManagerBeanVetoListenerException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			return (Domain) bean.getList(null).get(0);
+			return ((Domain) bean.getList(null).get(0)).getId();
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException("No existe Domain.");
 		}

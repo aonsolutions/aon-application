@@ -6,7 +6,6 @@
 		<version>7.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.document</artifactId>
 	<description>AON UI DOCUMENT</description>
 	<name>AON UI DOCUMENT</name>

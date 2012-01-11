@@ -6,9 +6,6 @@ package com.code.aon.company;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -19,7 +16,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.domain.IDomain;
-import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -33,7 +29,7 @@ import com.code.aon.registry.Registry;
 @Entity
 @Table(name="company")
 @PrimaryKeyJoinColumn(name="registry")
-public class Company extends Registry implements ITaxInfo, IDomain<Domain> {
+public class Company extends Registry implements ITaxInfo,IDomain {
 
 	private static final long serialVersionUID = -4187068086094343444L;
 
@@ -49,7 +45,7 @@ public class Company extends Registry implements ITaxInfo, IDomain<Domain> {
 	/** Indicates if the company works with e-Invoice. */
     private boolean eInvoice;
     
-    private Domain domain;
+    private int domain;
     
 	/**
 	 * Checks if is active.
@@ -137,12 +133,11 @@ public class Company extends Registry implements ITaxInfo, IDomain<Domain> {
 		return InvoiceTransactionType.NATIONAL;
 	}
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="domain", nullable=false)
-	public Domain getDomain() {
+	@Column(name="domain", nullable=false)
+	public int getDomain() {
 		return this.domain;
 	}
-	public void setDomain(Domain domain) {
+	public void setDomain(int domain) {
 		this.domain = domain;
 	}
 
