@@ -855,10 +855,10 @@ CREATE TABLE `action` (
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Accion',
   `application_id` int(4) NOT NULL COMMENT 'Aplicacion a la que pertenece la Accion',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_ACTION_DOMAIN_NAME_APPLICATION` (`domain`,`name`,`application_id`),
   KEY `IDX_ACTION_NAME` (`name`),
   KEY `IDX_ACTION_APPLICATION` (`application_id`),
   KEY `IDX_ACTION_DOMAIN` (`domain`),
+  KEY `IDX_ACTION_NAME_APPLICATION` (`name`,`application_id`),
   CONSTRAINT `FK_ACTION_APPLICATION` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
   CONSTRAINT `FK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de una Applicacion';
