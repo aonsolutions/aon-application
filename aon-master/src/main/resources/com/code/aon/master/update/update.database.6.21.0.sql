@@ -64,7 +64,7 @@ ALTER TABLE `action` ADD `domain` int(4) NOT NULL default '1' COMMENT 'Identific
 ALTER TABLE `action` ADD KEY `IDX_ACTION_DOMAIN` (`domain`);
 ALTER TABLE `action` ADD CONSTRAINT `FK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`);
 ALTER TABLE `action` DROP KEY `IDX_ACTION`;
-ALTER TABLE `action` ADD UNIQUE KEY `IDX_UNQ_ACTION_DOMAIN_NAME_APPLICATION` (`domain`,`name`,`application_id`);
+ALTER TABLE `action` ADD KEY `IDX_ACTION_NAME_APPLICATION` (`name`,`application_id`);
 
 ALTER TABLE `action_denied` ADD `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio' AFTER `id`;
 ALTER TABLE `action_denied` ADD KEY `IDX_ACTION_DENIED_DOMAIN` (`domain`);
