@@ -8,9 +8,9 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationService;
-import com.esferalia.aon.pms.dao.IPmsAlias;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationServiceController;
 
 public class ProjectReservationServiceControllerListener extends ControllerAdapter {
@@ -29,8 +29,8 @@ public class ProjectReservationServiceControllerListener extends ControllerAdapt
 
 	private	int calculateNextIndex(IManagerBean bean, ProjectReservation reservation) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPmsAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
-		Projection projection = Projection.max(bean.getFieldName(IPmsAlias.PROJECT_RESERVATION_SERVICE_SERVICE_INDEX));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
+		Projection projection = Projection.max(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_SERVICE_INDEX));
 		Object value = bean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}

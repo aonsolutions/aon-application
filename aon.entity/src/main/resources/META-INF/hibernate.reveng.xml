@@ -974,6 +974,27 @@
 		<primary-key>
 			<key-column name="project" property="id" type="java.lang.Integer"/>
 		</primary-key>
+		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
+		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
+		<column name="remarks" type="text"/>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_AGENCY">
+			<many-to-one property="agency" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_COMPANY">
+			<many-to-one property="company" />
+		</foreign-key>
+	</table>
+	
+	<table name="project_reservation_guest">
+		<column name="guest_index" type="int"/>
+	</table>
+	
+	<table name="project_reservation_room">
+		<column name="room_index" type="int"/>
+	</table>
+	
+	<table name="project_reservation_service">
+		<column name="service_index" type="int"/>
 	</table>
 	
 	<table name="project_tas">
@@ -1058,6 +1079,12 @@
 		<column name="comments" type="text" />
 	</table>
 	
+	<table name="room">
+		<primary-key>
+			<key-column name="asset" property="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
+
 	<table name="rpaymethod" class="com.esferalia.aon.entity.master.RegistryPayMethod">
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
 		<column name="days_to_first_pymnt" property="daysToFirstPayment" type="int"/>

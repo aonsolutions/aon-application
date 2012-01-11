@@ -78,6 +78,9 @@ import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.SystemCost;
+import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -370,6 +373,9 @@ public class AonTestEntityMojo extends AbstractMojo {
 		if (CalendarPeriod.class.equals(clazz) && "setStartDay".equals(method.getName())) return "1";
 		if (CommercialTerm.class.equals(clazz) && "setLine".equals(method.getName())) return "1";
 		if (ItemSupplier.class.equals(clazz) && "setPriority".equals(method.getName())) return "1";
+		if (ProjectReservationGuest.class.equals(clazz) && "setGuestIndex".equals(method.getName())) return "1";
+		if (ProjectReservationRoom.class.equals(clazz) && "setRoomIndex".equals(method.getName())) return "1";
+		if (ProjectReservationService.class.equals(clazz) && "setServiceIndex".equals(method.getName())) return "1";
 		return null;
 	}
 

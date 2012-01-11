@@ -43,10 +43,6 @@
 	</bean>
 	
 	<!-- ** AON ASSET **************************************************** -->
-	<bean class="com.code.aon.asset.AssetActivity" sqlName="asset_activity">
-		<alias names="asset_id,asset_name,date,fromTime,id,status,toTime,who,why" />
-		<hibernate names="asset.id,asset.name,date,fromTime,id,status,toTime,who,why" />
-	</bean>
 
 	<!-- ** AON AUDIT  **************************************************** -->
 	<bean class="com.code.aon.audit.ActionDenied" sqlName="action_denied">

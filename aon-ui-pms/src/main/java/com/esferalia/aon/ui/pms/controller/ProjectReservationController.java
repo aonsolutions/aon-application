@@ -11,8 +11,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.dao.IPmsAlias;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ProjectReservationController extends BasicController {
@@ -108,8 +108,8 @@ public class ProjectReservationController extends BasicController {
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
-		getCriteria().addEqualExpression(getFieldName(IPmsAlias.PROJECT_RESERVATION_START_DATE), new Date());
-		getCriteria().addEqualExpression(getFieldName(IPmsAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
 		onSearch(event);
 	}
 

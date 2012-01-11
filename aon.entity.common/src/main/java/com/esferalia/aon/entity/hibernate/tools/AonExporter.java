@@ -58,6 +58,7 @@ public class AonExporter extends GenericExporter{
 		}
 		additionalContext.put("hasProjectPrimaryKeyJoinColumn", hasProjectPrimaryKeyJoinColumn(pojo) );	
 		additionalContext.put("hasRegistryPrimaryKeyJoinColumn", hasRegistryPrimaryKeyJoinColumn(pojo));	
+		additionalContext.put("hasAssetPrimaryKeyJoinColumn", hasAssetPrimaryKeyJoinColumn(pojo));
 		additionalContext.put("hasPrimaryKeyJoinColumn", hasRegistryPrimaryKeyJoinColumn(pojo) || hasProjectPrimaryKeyJoinColumn(pojo));
 		additionalContext.put("isConfidentialable", isConfidentialable);
 		additionalContext.put("isDomainContainer", isDomainContainer);
@@ -67,16 +68,23 @@ public class AonExporter extends GenericExporter{
 	
 	public boolean hasRegistryPrimaryKeyJoinColumn(POJOClass pojo) {
 		Property idProperty = pojo.getIdentifierProperty();
-		Iterator iter = idProperty.getColumnIterator();
+		Iterator<?> iter = idProperty.getColumnIterator();
 		Column id = (Column) iter.next();
 		return "registry".equals(id.getName());
 	}
 
 	public boolean hasProjectPrimaryKeyJoinColumn(POJOClass pojo) {
 		Property idProperty = pojo.getIdentifierProperty();
-		Iterator iter = idProperty.getColumnIterator();
+		Iterator<?> iter = idProperty.getColumnIterator();
 		Column id = (Column) iter.next();
 		return "project".equals(id.getName());
+	}
+
+	public boolean hasAssetPrimaryKeyJoinColumn(POJOClass pojo) {
+		Property idProperty = pojo.getIdentifierProperty();
+		Iterator<?> iter = idProperty.getColumnIterator();
+		Column id = (Column) iter.next();
+		return "asset".equals(id.getName());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -98,56 +106,8 @@ public class AonExporter extends GenericExporter{
 			}
 		}
 		super.exportPOJO(additionalContext, pojo);
-		//generateChildPojoIfNeeded(additionalContext, pojo);
 	}
-/*
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void generateChildPojoIfNeeded(Map additionalContext, POJOClass pojo) {
-		if (ENTITY_PACKAGE.equals( pojo.getPackageName() )) {
-			TemplateProducer producer = new TemplateProducer(getTemplateHelper(),getArtifactCollector());
-			String aonEntity = getAonEntity(pojo.getPackageName() + "." + pojo.getShortName());
-			String aonPackage = ClassUtils.getPackageName(aonEntity);  
-			additionalContext.put("aonPackage", aonPackage);
-			additionalContext.put("aonEntity", ClassUtils.getShortClassName(aonEntity));
-			additionalContext.put("generatedPackage", pojo.getPackageName());
-			additionalContext.put("generatedEntity", pojo.getShortName());
-			
-			
-			String filename = StringHelper.replace(getFilePattern(), "{class-name}", ClassUtils.getShortClassName(aonEntity)); 
-			String packageLocation = StringHelper.replace(aonPackage,".", "/");
-			filename = StringHelper.replace(filename, "{package-name}", packageLocation);
-			String template = "aon/Pojo.ftl";
-			producer.produce(additionalContext, template, new File(getOutputDirectory(),filename), template, pojo.toString());
-
-			// 
-			// ÑAPA ---> UserEnterprise debe desaparecer con el login nuevo.
-			// En el caso de la tabla User se generan dos pojo User y EnterpriseUser
-			//
-			if ("User".equals(ClassUtils.getShortClassName(aonEntity))) {
-				aonEntity = getAonEntity(pojo.getPackageName() + ".EnterpriseUser");
-				aonPackage = ClassUtils.getPackageName(aonEntity);  
-				additionalContext.put("aonPackage", aonPackage);
-				additionalContext.put("aonEntity", ClassUtils.getShortClassName(aonEntity));
-				additionalContext.put("generatedPackage", pojo.getPackageName());
-				additionalContext.put("generatedEntity", pojo.getShortName());
-				
-				filename = StringHelper.replace(getFilePattern(), "{class-name}", ClassUtils.getShortClassName(aonEntity)); 
-				packageLocation = StringHelper.replace(aonPackage,".", "/");
-				filename = StringHelper.replace(filename, "{package-name}", packageLocation);
-				template = "aon/Pojo.ftl";
-				producer.produce(additionalContext, template, new File(getOutputDirectory(),filename), template, pojo.toString());
-				
-				additionalContext.put("aonPackage", aonPackage);
-				additionalContext.put("aonEntity", ClassUtils.getShortClassName(aonEntity));
-				additionalContext.put("generatedPackage", pojo.getPackageName());
-				additionalContext.put("generatedEntity", pojo.getShortName());
-				
-			}
-			// END
-			
-		}
-	}
-*/
+	
 	private String getAonEntity(String entity) {
 		if (entity.startsWith( ENTITY_PACKAGE )) {
 			String entitySimpleName = ClassUtils.getShortClassName(entity);
@@ -439,7 +399,8 @@ public class AonExporter extends GenericExporter{
         map.put("ProjectReservationRoom","com.esferalia.aon.pms.ProjectReservationRoom");
         map.put("ProjectReservationRoomDetail","com.esferalia.aon.pms.ProjectReservationRoomDetail");
         map.put("ProjectReservationService","com.esferalia.aon.pms.ProjectReservationService");
-		
+        map.put("Room","com.esferalia.aon.pms.Room");
+        
 		//AON-PURCHASE  
 		map.put("Purchase","com.code.aon.purchase.Purchase");
 		map.put("PurchaseDetail","com.code.aon.purchase.PurchaseDetail");

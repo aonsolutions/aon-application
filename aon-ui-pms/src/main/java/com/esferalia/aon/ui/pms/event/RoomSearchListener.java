@@ -5,8 +5,8 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.dao.IPmsAlias;
 
 public class RoomSearchListener extends ControllerSearchListener {
 
@@ -38,10 +38,10 @@ public class RoomSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IPmsAlias.ROOM_HOTEL_ID), getHotel().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
 		}
 		if (getItem() != null && getItem().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IPmsAlias.ROOM_ITEM_ID), getItem().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
 		}
 	}
 

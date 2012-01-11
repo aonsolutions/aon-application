@@ -498,9 +498,9 @@ public class ActivityDialogController extends EmailParentController{
 		ActivityBasicController controller = (ActivityBasicController) FormUtil.getController(IAssetConstants.ACTIVITY_BASIC_CONTROLLER_NAME);
 		controller.setWho(getWho());
 		controller.clearCriteria();
-		controller.getCriteria().addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
-		controller.getCriteria().addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
-		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+		controller.getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAsset().getId());
+		controller.getCriteria().addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getFromTime(),getToTime());
+		controller.getCriteria().addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
 //		controller.getCriteria().addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_FROM_TIME));
 		controller.onSearch(null);
 		controller.setWho(null);

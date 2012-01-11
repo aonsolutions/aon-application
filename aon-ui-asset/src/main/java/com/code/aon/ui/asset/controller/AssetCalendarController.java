@@ -17,7 +17,6 @@ import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.asset.enumeration.ViewerType;
 import com.code.aon.common.BeanManager;

@@ -2,17 +2,23 @@
 <#if pojo.hasIdentifierProperty()>
 <#if property.equals(clazz.identifierProperty)>
 ${pojo.generateAnnIdGenerator()}
-<#if aonExporter.hasRegistryPrimaryKeyJoinColumn(pojo)>	@javax.persistence.GeneratedValue(generator="registry_id")
+<#if hasRegistryPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="registry_id")
 	@org.hibernate.annotations.GenericGenerator(name="registry_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="registry")})
 </#if>
-<#if aonExporter.hasProjectPrimaryKeyJoinColumn(pojo)>	@javax.persistence.GeneratedValue(generator="project_id")
+<#if hasProjectPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="project_id")
 	@org.hibernate.annotations.GenericGenerator(name="project_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="project")})
+</#if>
+<#if hasAssetPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="asset_id")
+	@org.hibernate.annotations.GenericGenerator(name="asset_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="asset")})
 </#if>
 </#if>
 </#if>
 <#if property.getName()=="product" && pojo.getDeclarationName()=="ItemDB">	@${pojo.importType("javax.persistence.ManyToOne")}
     @javax.persistence.JoinColumn(name="product", nullable=false)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
+<#elseif property.getName()=="workPlace" && pojo.getDeclarationName()=="HotelDB">	@${pojo.importType("javax.persistence.ManyToOne")}
+    @javax.persistence.JoinColumn(name="workplace", nullable = false)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
 <#elseif property.getName()=="payMethodTypeDetail" && pojo.getDeclarationName()=="PayMethodTypeDetailAccountDB">	@${pojo.importType("javax.persistence.ManyToOne")}(fetch=FetchType.EAGER)
     @javax.persistence.JoinColumn(name="pm_type_detail", nullable=false)
@@ -33,10 +39,13 @@ ${pojo.generateAnnIdGenerator()}
     @JoinColumn(name="enterprise", nullable = false, updatable = false )
 <#elseif property.getName()=="activity" && pojo.getDeclarationName()=="EnterpriseCCCDB">	@${pojo.importType("javax.persistence.OneToOne")}
 	@JoinColumn(name="enterprise_activity", nullable = false)
-<#elseif property.getName()=="registry" && hasPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
+<#elseif property.getName()=="registry" && hasRegistryPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}	
-<#elseif property.getName()=="project" && hasPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
+<#elseif property.getName()=="project" && hasProjectPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}	
+<#elseif property.getName()=="asset" && hasAssetPrimaryKeyJoinColumn>	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}	
 <#elseif c2h.isManyToOne(property)>	${pojo.generateManyToOneAnnotation(property)}

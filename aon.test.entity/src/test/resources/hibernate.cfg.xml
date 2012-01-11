@@ -46,6 +46,7 @@
     	<mapping class="com.code.aon.registry.RegistryAddress"/>
     	<mapping class="com.code.aon.account.bridge.InvoiceTaxAccount"/>
     	<mapping class="com.code.aon.groupware.Task"/>
+    	<mapping class="com.code.aon.webmail.db.MailAccount"/>
     	<mapping class="com.code.aon.accounting.Period"/>
     	<mapping class="com.code.aon.sales.Sales"/>
     	<mapping class="com.code.aon.audit.ActionFavorite"/>
@@ -111,6 +112,7 @@
     	<mapping class="com.code.aon.account.bridge.ProductAccount"/>
     	<mapping class="com.code.aon.product.ProductCategory"/>
     	<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>
+    	<mapping class="com.code.aon.webmail.db.Signature"/>
     	<mapping class="com.code.aon.warehouse.Income"/>
     	<mapping class="com.code.aon.fiscal.VatTax"/>
     	<mapping class="com.code.aon.registry.RegistryRelationship"/>
@@ -151,9 +153,12 @@
     	<mapping class="com.code.aon.account.bridge.PayMethodTypeDetailAccount"/>
     	<mapping class="com.code.aon.account.bridge.BankConceptAccount"/>
     	<mapping class="com.code.aon.commercial.OfferAttachment"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+    	<mapping class="com.esferalia.aon.pms.Room"/>
     	<mapping class="com.code.aon.product.ProductCategoryGroup"/>
     	<mapping class="com.esferalia.aon.payroll.CNO"/>
     	<mapping class="com.code.aon.warehouse.Inventory"/>
+    	<mapping class="com.code.aon.asset.Feature"/>
     	<mapping class="com.code.aon.groupware.TaskHolder"/>
     	<mapping class="com.code.aon.infoweb.WebInfoPageResource"/>
     	<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
@@ -161,6 +166,7 @@
     	<mapping class="com.code.aon.tas.ProjectTas"/>
     	<mapping class="com.code.aon.finance.InvoiceTax"/>
     	<mapping class="com.esferalia.aon.payroll.ContractData"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
     	<mapping class="com.code.aon.marketing.MarketingCampaign"/>
     	<mapping class="com.code.aon.finance.InvoicingGroupDetail"/>
     	<mapping class="com.esferalia.aon.payroll.AgreementData"/>
@@ -196,11 +202,14 @@
     	<mapping class="com.code.aon.groupware.ProcessDetailTransition"/>
     	<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
     	<mapping class="com.code.aon.finance.BankStatementLink"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
     	<mapping class="com.code.aon.marketing.SurveyQuestion"/>
     	<mapping class="com.code.aon.messaging.Message"/>
     	<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
     	<mapping class="com.code.aon.config.Tax"/>
+    	<mapping class="com.esferalia.aon.pms.Hotel"/>
     	<mapping class="com.code.aon.sales.SalesDetail"/>
+    	<mapping class="com.code.aon.asset.AssetFeature"/>
     	<mapping class="com.code.aon.config.CommissionType"/>
     	<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
     	<mapping class="com.code.aon.config.CNAE"/>
@@ -241,6 +250,7 @@
     	<mapping class="com.code.aon.registry.Relationship"/>
     	<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
     	<mapping class="com.code.aon.accounting.AccountHelper"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
     	<mapping class="com.code.aon.warehouse.Warehouse"/>
     	<mapping class="com.code.aon.finance.BankStatement"/>
     	<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
@@ -265,6 +275,7 @@
     	<mapping class="com.code.aon.groupware.JobType"/>
     	<mapping class="com.esferalia.aon.payroll.IrpfData"/>
     	<mapping class="com.code.aon.supplier.Supplier"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
     	<mapping class="com.code.aon.finance.InvoiceAddress"/>
     	<mapping class="com.code.aon.infoweb.WebInfoPage"/>
     	<mapping class="com.code.aon.config.PayMethod"/>

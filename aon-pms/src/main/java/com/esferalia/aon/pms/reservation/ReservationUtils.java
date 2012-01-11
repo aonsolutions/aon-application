@@ -16,14 +16,13 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.dao.IPmsAlias;
 
 public class ReservationUtils {
 
 	public Hotel obtainHotel(String hotelCode) throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IPmsAlias.HOTEL_CODE), hotelCode);
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_CODE), hotelCode);
 		return (Hotel)hotelBean.getList(criteria).get(0);
 	}
 

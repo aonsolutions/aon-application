@@ -258,8 +258,15 @@ public class AssetStatController {
 			}
 		} else if(getDateRange().equals("MONTH")){
 			if(getStatType().equals("ASSET")){
-				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME);
-				criteria.addEqualExpression(identifier, getAssetName());
+				// ****************************************
+				// ****************************************
+				// ****************************************
+				// ¡¡¡ESTE ALIAS SE HA QUITADO DEL CONSTANS!!!
+				//identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME);
+				//criteria.addEqualExpression(identifier, getAssetName());
+				// ****************************************
+				// ****************************************
+				// ****************************************
 			}
 			if(getStatType().equals("USER")){
 				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER);

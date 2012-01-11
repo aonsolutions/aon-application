@@ -38,6 +38,7 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		return className;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String foreignKeyToEntityName(String keyname,
 			TableIdentifier fromTable, List fromColumnNames,
@@ -52,28 +53,25 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		return entityName; 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean excludeForeignKeyAsCollection(String keyname,
 			TableIdentifier fromTable, List fromColumns,
 			TableIdentifier referencedTable, List referencedColumns) {
-		if ("FK_ACCOUNT_ENTRY_DETAIL_ACC_ENTRY".equals(keyname)) {
-			return false;
-		} else if ("fk_amortization_detail_amortization".equals(keyname)) {
-			return false;
-		} 
 		return true;
 	}
 	
 	@Override
 	public String getTableIdentifierStrategyName(TableIdentifier tableIdentifier) {
 		Properties properties = getTableIdentifierProperties(tableIdentifier);
-		if (properties != null && (properties.contains("registry") || properties.contains("project"))) {
+		if (properties != null && (properties.contains("registry") || properties.contains("project") || properties.contains("asset"))) {
 			return FOREIGN;	
 		}
 		return super.getTableIdentifierStrategyName(tableIdentifier);
 	}
 
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Map tableToMetaAttributes(TableIdentifier tableIdentifier) {
 		Map<String,MetaAttribute> map = super.tableToMetaAttributes(tableIdentifier);

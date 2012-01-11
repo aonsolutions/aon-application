@@ -8,7 +8,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.pms.dao.IPmsAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ProjectReservationSearchListener extends ControllerSearchListener {
@@ -42,10 +42,10 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getAgency() != null && getAgency().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IPmsAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getReservationStatuses())) {
-			String status = getController().resolveAlias(IPmsAlias.PROJECT_RESERVATION_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
 		}
 	}

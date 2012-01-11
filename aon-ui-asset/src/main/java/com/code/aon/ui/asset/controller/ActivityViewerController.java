@@ -19,7 +19,6 @@ import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ViewerType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -31,6 +30,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityViewerController {
 	
@@ -420,9 +420,9 @@ public class ActivityViewerController {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
-				criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
-				criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
+				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
 				List<ITransferObject> activityList = bean.getList(criteria);
 				if(!activityList.isEmpty()){
 					for(ITransferObject to: activityList){
@@ -449,9 +449,9 @@ public class ActivityViewerController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
-			criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
-			criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
+			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
 			List<ITransferObject> activityList = bean.getList(criteria);
 			if(!activityList.isEmpty()){
 				for(ITransferObject to: activityList){
