@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.asset</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>			
 		<dependency>
