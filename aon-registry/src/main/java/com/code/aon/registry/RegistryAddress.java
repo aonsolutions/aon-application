@@ -183,6 +183,11 @@ public class RegistryAddress implements ITransferObject, IAddress {
   		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 25): getAlias();
     }
 
+    @Transient
+    public boolean isMainAddress() {
+  		return getAddressType() == AddressType.MAIN;
+    }
+
     @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
