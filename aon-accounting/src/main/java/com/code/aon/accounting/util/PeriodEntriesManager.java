@@ -241,7 +241,7 @@ public class PeriodEntriesManager {
 		sw.append(period.getId());
 		sw.append("'");
 		if (accountEntryType == AccountEntryType.OPERATING) {
-			sw.append(" AND (account.id LIKE '6%' OR account.id LIKE '7%')");
+			sw.append(" AND (account.code LIKE '6%' OR account.code LIKE '7%')");
 		}
 		if (securityLevel == SecurityLevel.CONFIDENTIAL) {
 			sw.append(" AND accountEntry.securityLevel = ");;
