@@ -51,8 +51,9 @@ public class BeanConfigManager {
 	public void addBeanConfiguration(BeanConfig config) throws ManagerBeanException {
 		if (!beans.containsKey(config.getPojoClass())) {
             beans.put(config.getPojoClass(), config);
-            LOGGER.info("Registered bean configuration {}", config.getPojoClass());
+            LOGGER.debug("Registered bean configuration {}", config.getPojoClass());
         } else {
+        	LOGGER.debug("Merging listeners for {}", config.getPojoClass());
         	mergeListeners(beans.get(config.getPojoClass()),config);
         }
 	}
@@ -69,14 +70,14 @@ public class BeanConfigManager {
 		}
 		if (target.getListeners() != null) {
 			for (String listener:target.getListeners() ) {
-				if (original.getListeners() != null && !original.getListeners().contains(listener)) {
+				if (original.getListeners() == null || (original.getListeners() != null && !original.getListeners().contains(listener))) {
 					original.addListener(listener);
 				}
 			}
 		}
 		if (target.getVetoListeners() != null) {
 			for (String vetoListener:target.getVetoListeners() ) {
-				if (original.getVetoListeners() != null && !original.getVetoListeners().contains(vetoListener)) {
+				if (original.getVetoListeners() == null || (original.getVetoListeners() != null && !original.getVetoListeners().contains(vetoListener))) {
 					original.addVetoListener(vetoListener);
 				}
 			}
@@ -186,6 +187,26 @@ public class BeanConfigManager {
 				Class c = Class.forName(vetoListenerClass);
 				IManagerBeanVetoListener vetoListener = (IManagerBeanVetoListener) c.newInstance();
 				bean.addManagerBeanVetoListener(vetoListener);
+			}
+		}
+	}
+	
+	public static void printBeansConfig() {
+		for (BeanConfig config : beans.values()) {
+			int listeners = config.getListeners() == null?0:config.getListeners().size();
+			int vetoListeners = config.getVetoListeners() == null?0:config.getVetoListeners().size();
+			LOGGER.info( config.getPojo() + "(" + listeners + " listeners, " + vetoListeners + " vetoListeners)");
+			if (listeners > 0 ) {
+				LOGGER.info( "\t Listeners");
+				for (String listener : config.getListeners()) {
+					LOGGER.info( "\t\t" + listener );
+				}
+			}
+			if (config.getVetoListeners() != null && config.getVetoListeners().size() > 0 ) {
+				LOGGER.info( "\t Veto Listeners");
+				for (String vetoListener : config.getVetoListeners()) {
+					LOGGER.info( "\t\t" + vetoListener);
+				}
 			}
 		}
 	}

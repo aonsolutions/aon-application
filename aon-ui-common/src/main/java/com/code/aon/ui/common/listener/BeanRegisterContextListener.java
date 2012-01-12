@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.bean.BeanConfigManager;
 import com.code.aon.common.bean.BeanConfigParser;
 import com.code.aon.common.util.Classpath;
 

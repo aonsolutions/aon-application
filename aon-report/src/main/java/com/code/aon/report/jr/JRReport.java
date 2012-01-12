@@ -245,8 +245,17 @@ public class JRReport {
 				Map<JRExporterParameter, Object> exporterMap = new HashMap<JRExporterParameter, Object>();
 				
 				for (int i = 0; i < params.length; i++) {
-					map.putAll(params[i]);
+					for (Object key : params[i].keySet() ) {
+						if (key instanceof JRExporterParameter ) {
+							exporterMap.put( (JRExporterParameter) key , params[i].get(key));
+						} else if (key instanceof String ) {
+							fillMap.put( (String) key , params[i].get(key));							
+						} else {
+							LOGGER.warn("No sé qué hacer con el parámetro ..: " + key);
+						}
+					}
 				}
+				
 				factory.fillJRParametersMap(fillMap, exporterMap);
 
 				passDefaultParameters(fillMap);
