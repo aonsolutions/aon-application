@@ -176,7 +176,7 @@ public class Employees extends Composite
 	
 	private void onSalariesSelected(StateListIterator<Salary> salaries) {
 		Salary salary = salaries.current();
-		employeesService.getSalaryReceiptHTML(salary, new AsyncCallback<String>() {
+		employeesService.getSalaryReceiptHTML(salary, 1.30f, new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub

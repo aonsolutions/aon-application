@@ -209,7 +209,8 @@ public class ManagerController implements IPayrollConstants {
 	}
 	
 	private void initWorker() {
-		this.homeTemplate = "/com/esferalia/aon/ui/payroll/facelet/salary/list.xhtml";
+		//this.homeTemplate = "/com/esferalia/aon/ui/payroll/facelet/salary/list.xhtml";
+		this.homeTemplate = "/com/esferalia/aon/ui/employee/facelet/salary/list.xhtml";
 		Contract contract = getContract();
 		initWorkerSalaries( contract );
 		initWorkerCalendar( contract );
