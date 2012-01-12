@@ -4,6 +4,7 @@
 package com.code.aon.jaas.vendor.jboss;
 
 import java.net.URL;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import org.jboss.system.ServiceMBeanSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IApplication;
+import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.IOption;
@@ -95,10 +98,48 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		return this.ldapProperties;
 	}
 	
+	private  Properties convertProperties( Properties properties ) {
+		Properties dsmdProperties = null;
+		if ( properties != null ) {
+			dsmdProperties = new Properties();
+			dsmdProperties.put("username", properties.get(IDataSourceMetaData.USER));
+			dsmdProperties.put("password", properties.get(IDataSourceMetaData.PASSWORD));
+			dsmdProperties.put("url", properties.get(IDataSourceMetaData.URL));
+			dsmdProperties.put("driverClassName", properties.get(IDataSourceMetaData.DRIVER_CLASS));			
+		}
+		return dsmdProperties;
+	}
+
+	/* 
+	 * Solo se mantiene para la compatiblidad de proyectos antiguos con el aon-academy
+	 */
+	@Deprecated
+	public Properties getDSMDProperties(Principal principal) {
+		AuthPrincipal p = null;
+		if ( principal instanceof AuthPrincipal ) {
+			p = (AuthPrincipal) principal; 
+		} else {
+			p = new AuthPrincipal(principal.getName());
+		}
+		String domainName = p.getDomain();
+		String application = ldap.getApplicationId( p.getContext() );
+		Properties properties = getConnectionProperties(domainName, application);
+		return convertProperties(properties);
+	}
+	
 	public Properties getConnectionProperties(String domainName, String application) {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Retrieving DataSource properties for: DOMAIN[{}], APPLICATION[]{}", domainName, application );
+		}
+		IDataSourceMetaData dsmd = null;
 		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainName, application);
 		if ( domainApplication != null ) {
-			return domainApplication.getDataSourceMetaData().getProperties();
+			dsmd = domainApplication.getDataSourceMetaData();
+		}
+		if ( dsmd != null ) {
+			return dsmd.getProperties();
+		} else {
+			LOGGER.error("DataSource properties not found for: DOMAIN[{}], APPLICATION[]{}", domainName, application );
 		}
 		return null;
 	}
