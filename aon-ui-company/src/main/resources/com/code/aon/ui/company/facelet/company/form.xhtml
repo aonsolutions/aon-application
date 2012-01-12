@@ -132,7 +132,7 @@
 												<aon:selectBooleanCheckbox id="Company_print_record_data"
 													value="#{company.printRecordData}" />
 											</aon:panelGrid>
-											<c:if test="#{!company.customReportTemplate}">
+											<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams and !company.customReportTemplate}">
 												<aon:panelGrid columns="2" style="width:100%">
 													<aon:outputLabel for="Company_invoice_template"
 														value="#{companyBundle.company_saleInvoice_template}" />
