@@ -64,6 +64,7 @@ import com.esferalia.aon.gwt.employee.shared.Employee;
 import com.esferalia.aon.gwt.employee.shared.Enterprise;
 import com.esferalia.aon.gwt.employee.shared.Salary;
 import com.esferalia.aon.gwt.employee.shared.Workplace;
+import com.esferalia.aon.gwt.employee.shared.Salary.Type;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -73,6 +74,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RaddressColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.web.employee.controller.ManagerController;
@@ -87,7 +89,7 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 
 	public Enterprise getEnterprise() throws IllegalArgumentException {
 		try {
-			Integer registryID = getRegistryID();
+			Integer registryID = getEnterpriseID();
 			Connection connection = getConnection();
 			return getEnterprise(registryID, connection);
 		} catch (SQLException e) {
@@ -99,13 +101,26 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			Connection connection = getConnection();
-			return getSalaries(connection, employee);
+			if ( employee != null ) {
+				return getSalaries(connection, employee.getId());
+			}
+			else {
+				Integer personId = getPersonID();
+				Integer enterpriseId = getEnterpriseID();
+				List<Integer> contractIds = 
+						getContractIDs(connection, enterpriseId, personId);
+				List<Salary> salaries = new LinkedList<Salary>();
+				for (Integer contractId : contractIds) {
+					salaries.addAll(getSalaries(connection, contractId));
+				}
+				return salaries;
+			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	public String getSalaryReceiptHTML(Salary salary)
+	public String getSalaryReceiptHTML(Salary salary, float zoomRatio)
 			throws IllegalArgumentException {
 
 		try {
@@ -123,17 +138,17 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 					.get(0);
 
 			ReportManager reportManager = new ReportManager();
-			
-			//parametersMap.put(JRHtmlExporterParameter.ZOOM_RATIO, 1.5f);
-			
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			
 			reportManager.setCollectionProvider(new SingleCollectionProvider(
 					aonSalary));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-			reportManager.execute(out, IPayrollConstants.SALARY_REPORT);
+			
+			
+			Map<Object, Object> parameters = 
+					new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			reportManager.execute(out, IPayrollConstants.SALARY_REPORT, parameters);
 
 			return out.toString();
 
@@ -187,7 +202,7 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 		}
 	}
 
-	private List<Salary> getSalaries(Connection connection, Employee employee)
+	private List<Salary> getSalaries(Connection connection, Integer contractId)
 			throws SQLException {
 
 		ResultSet rs = null;
@@ -199,13 +214,21 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 					+ "." + SalaryColumns.CONTRACT + " = ?";
 
 			stmt = connection.prepareStatement(sql);
-			stmt.setInt(1, employee.getId());
+			stmt.setInt(1, contractId);
 			rs = stmt.executeQuery();
 
 			List<Salary> salaries = new LinkedList<Salary>();
 			while (rs.next()) {
 				Salary salary = new Salary();
-				salary.setId(rs.getInt(tableCol(SALARY, SalaryColumns.ID)));
+				salary.setId(rs.getInt(SalaryColumns.ID));
+				
+				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
+				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
+				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
+				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
+				
+				salary.setType(getSalaryType((Integer) rs.getObject(SalaryColumns.TYPE)));
+				
 				salaries.add(salary);
 			}
 
@@ -219,8 +242,8 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 			}
 		}
 	}
-
-
+	
+	
 	private Enterprise getEnterprise(Integer registryID, Connection connection)
 			throws SQLException {
 
@@ -274,7 +297,62 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 		return request.getSession(false);
 	}
 
-	private Integer getRegistryID() {
+	private Integer getPersonID ( ) {
+		HttpSession session = getSession();
+		ManagerController controller = (ManagerController) session
+				.getAttribute(ManagerController.CONTROLLER_NAME);
+
+		EnterpriseUser enterpriseUser = controller.getLoggedUser();
+
+		Registry registry = enterpriseUser.getRegistry();
+		
+		com.code.aon.company.Enterprise aonEnterprise = enterpriseUser
+				.getEnterprise();
+		
+		
+		return registry.getId();
+	}
+	
+	
+	private List<Integer> getContractIDs(Connection connection, Integer enterpriseID, Integer personId)
+		throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+
+		try {
+			String sql = "SELECT * " + 
+					" FROM " + CONTRACT +
+					", " + WORKPLACE +
+					" WHERE " + CONTRACT + "." +  ContractColumns.WORKPLACE + " = " + WORKPLACE + "." + WorkplaceColumns.ID + 
+					" AND " + CONTRACT + "." + ContractColumns.PERSON + " = ? "+
+					" AND " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " = ? ";
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, personId);
+			stmt.setInt(2, enterpriseID);
+			rs = stmt.executeQuery();
+			
+			List<Integer> ids = new LinkedList<Integer>();
+			
+			while ( rs.next() ) {
+				ids.add(rs.getInt(tableCol(CONTRACT, ContractColumns.ID)));
+			}
+			return ids;
+
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+
+		
+	}
+
+
+	private Integer getEnterpriseID() {
 		HttpSession session = getSession();
 		ManagerController controller = (ManagerController) session
 				.getAttribute(ManagerController.CONTROLLER_NAME);
@@ -313,6 +391,21 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 			return false;
 		}
 		return one.equals(another);
+	}
+	
+	
+	private static Salary.Type getSalaryType(Integer ordinal) {
+		if ( ordinal == null || ordinal < 0 ) { 
+			return null;
+		}
+		
+		Salary.Type types [] = Salary.Type.values();
+		
+		if ( ordinal >= types.length ) {
+			return null;
+		}
+		
+		return types[ordinal];
 	}
 
 	private static String tableCol(String table, String col) {

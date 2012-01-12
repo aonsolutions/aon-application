@@ -15,6 +15,6 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
-	void getSalaryReceiptHTML(Salary salary, AsyncCallback<String> callback)
+	void getSalaryReceiptHTML(Salary salary, float zoomRatio, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 }

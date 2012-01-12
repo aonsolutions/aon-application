@@ -16,5 +16,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface EmployeesService extends RemoteService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
-	String getSalaryReceiptHTML(Salary salary) throws IllegalArgumentException;
+	String getSalaryReceiptHTML(Salary salary, float zoomRatio) throws IllegalArgumentException;
 }
