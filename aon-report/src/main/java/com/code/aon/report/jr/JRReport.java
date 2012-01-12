@@ -226,13 +226,14 @@ public class JRReport {
 	 *            The criteria of the data.
 	 * @param collection
 	 *            The collection of the data.
-	 * 
+	 * @param params 
+	 * 			  Sets export parameters from a specified map.
 	 * @return The outcome.
 	 * @throws ReportException
 	 *             Si se produce algún error. If an error ocurred.
 	 */
 	public String run(OutputFormat outputFormat, OutputStream out,
-			ResourceBundle bundle, Criteria criteria, Collection<?> collection) throws ReportException {
+			ResourceBundle bundle, Criteria criteria, Collection<?> collection, Map<Object,Object>... params) throws ReportException {
 		try {
 			setGeneratedPages( 0 );
 			if (JRExporterFactoryManager.accept(outputFormat)) {
@@ -242,7 +243,10 @@ public class JRReport {
 						.getJRExporterFactory(outputFormat);
 				Map<String, Object> fillMap = new HashMap<String, Object>();
 				Map<JRExporterParameter, Object> exporterMap = new HashMap<JRExporterParameter, Object>();
-
+				
+				for (int i = 0; i < params.length; i++) {
+					map.putAll(params[i]);
+				}
 				factory.fillJRParametersMap(fillMap, exporterMap);
 
 				passDefaultParameters(fillMap);

@@ -215,7 +215,7 @@ public class ReportManager {
 	 * @throws DAOException
 	 */
 	@SuppressWarnings("unchecked")
-	public String execute(OutputStream os, String reportKey) throws ReportException {
+	public String execute(OutputStream os, String reportKey, Map<Object,Object>... params) throws ReportException {
 
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
@@ -242,7 +242,7 @@ public class ReportManager {
 				LOGGER.debug("Dynamic params set!");
 			}
 
-			String out = report.run(outputFormat, os, getBundle(), criteria, collection);
+			String out = report.run(outputFormat, os, getBundle(), criteria, collection, params);
 			report.setCustomParams(null);
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
@@ -251,6 +251,7 @@ public class ReportManager {
 			}
 			return out;
 		} catch (Throwable t) {
+			t.printStackTrace();
 			LOGGER.error(t.getMessage(), t);
 			try {
 				HibernateUtil.rollbackTransaction(sessionFactoryName);
