@@ -100,7 +100,7 @@ public class CompanyDisplay {
 	private Configuration getConfiguration( Properties dbs ) {
 		AnnotationConfiguration configuration = null;
 		Properties properties = (dbs != null) ? dbs : DataSourceUtil.getDBProperties();
-		if (! properties.isEmpty() ) {
+		if ( (properties != null) && (!properties.isEmpty()) ) {
 			configuration = new AnnotationConfiguration();
 			configuration.addProperties(properties);
 			configuration.configure(HIBERNATE_CONFIGURATION_FILE);			
