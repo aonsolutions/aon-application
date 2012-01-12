@@ -5,8 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Name;
@@ -19,6 +21,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +53,10 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private EntityMetadata metadata;
 	
 	private Name baseDN;
+	
+	private Map<Name,ITransferObject> cache = new HashMap<Name, ITransferObject>();
+	
+	private int cacheHit;
 
 	/**
 	 * Instantiates a new ldap dao.
@@ -260,7 +267,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
 		for( PropertyInfo info : metadata.getMappings()) {
 			try {
@@ -366,9 +373,15 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private Object convert( Object value, PropertyInfo info ) throws DAOException {
 		Object result = null;
 		if ( info.isTransferObject() ) {
-			IDAO dao = getDAO(info);
 			Name id = NameResolver.getName( value.toString() );
-			result = dao.get( id );								
+			result = cache.get(id);
+			if ( result == null ) {
+				IDAO dao = getDAO(info);
+				result = dao.get( id );
+				cache.put( id, (ITransferObject) result );
+			} else {
+				cacheHit++;
+			}
 		} else if ( info.isName() ) {
 			result = NameResolver.getName( ObjectUtils.toString(value) );
 		} else if (  Boolean.class.isAssignableFrom(info.getBaseClass()) ) {
@@ -420,11 +433,18 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	}
 	
 	private List<ITransferObject> convertList( List<Entry> list ) throws DAOException {
+		StopWatch sw = new StopWatch();
+		sw.start();
+		cache.clear();
+		cacheHit = 0;
 		List<ITransferObject> tos = new ArrayList<ITransferObject>();
 		for( Entry entry : list ) {
 			ITransferObject to = convert(entry);
 			tos.add(to);
+			cache.put( entry.getDN(), to);
 		}
+		sw.stop();			
+		LOGGER.info( "Convert type: {}, size: {}, cache hit: {}, time: {}", new Object[]{getPOJOClass(), list.size(), cacheHit, sw.toString()} );			
 		return tos;
 	}
 	
@@ -536,8 +556,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		throw new UnsupportedOperationException("Not supported!");
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List getList(ProjectionList projectionList, Criteria criteria)
+	public List<ITransferObject> getList(ProjectionList projectionList, Criteria criteria)
 			throws DAOException {
 		throw new UnsupportedOperationException("Not supported!");
 	}

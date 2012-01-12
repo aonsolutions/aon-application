@@ -113,7 +113,9 @@ public class AonServer implements IMailConstants {
         	values.remove(MAIL_IMAP_PORT);
         	values.remove(MAIL_IMAP_SOCKET_FACTORY_PORT);
         }
-        values.setProperty(MAIL_HOST, account.getHost());
+        if (! StringUtils.isEmpty(account.getHost())) {
+            values.setProperty(MAIL_HOST, account.getHost());	
+        }
         Properties override = PropertiesUtil.getProperties(WEBMAIL_PROPERTIES, DEFAULT_PROPERTIES);
         values.putAll(override);
     	return values;
