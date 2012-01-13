@@ -3820,7 +3820,6 @@ CREATE TABLE `item_composition` (
   `quantity` double(15,3) default '0.000' COMMENT 'Cantidad del componente',
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del componente',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_ITEM_COMPOSITION` (`item`,`composition_item`),
   KEY `IDX_ITEM_COMPOSITION_ITEM` (`item`),
   KEY `IDX_ITEM_COMPOSITION_COMPOSITION` (`composition_item`),
   CONSTRAINT `FK_ITEM_COMPOSITION_COMPOSITION` FOREIGN KEY (`composition_item`) REFERENCES `item` (`id`),
