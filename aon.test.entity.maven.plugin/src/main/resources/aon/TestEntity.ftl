@@ -24,6 +24,9 @@ public class TestEntity${aonEntity} implements ITestEntity<${aonEntity}> {
 		${aonEntity} to = new ${aonEntity}();
 		fillData(to);
 		to = (${aonEntity}) bean.insert(to);
+	<#if aonEntity == "Domain">
+		System.out.println( "Domain ID" + to.getId() );
+	</#if>
 	<#if aonEntity == "Account">
 		to = new ${aonEntity}();
 		fillData(to);

@@ -59,7 +59,6 @@ public class AonExporter extends GenericExporter{
 		additionalContext.put("hasProjectPrimaryKeyJoinColumn", hasProjectPrimaryKeyJoinColumn(pojo) );	
 		additionalContext.put("hasRegistryPrimaryKeyJoinColumn", hasRegistryPrimaryKeyJoinColumn(pojo));	
 		additionalContext.put("hasAssetPrimaryKeyJoinColumn", hasAssetPrimaryKeyJoinColumn(pojo));
-		additionalContext.put("hasPrimaryKeyJoinColumn", hasRegistryPrimaryKeyJoinColumn(pojo) || hasProjectPrimaryKeyJoinColumn(pojo));
 		additionalContext.put("isConfidentialable", isConfidentialable);
 		additionalContext.put("isDomainContainer", isDomainContainer);
 		additionalContext.put("aonExporter", this);

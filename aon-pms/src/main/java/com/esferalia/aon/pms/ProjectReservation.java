@@ -10,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.project.IProject;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
@@ -18,7 +19,7 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 @Entity
 @Table(name="project_reservation")
 @PrimaryKeyJoinColumn(name="project")
-public class ProjectReservation extends ProjectReservationDB {
+public class ProjectReservation extends ProjectReservationDB implements IProject{
 
 	private static final long serialVersionUID = 1L;
 

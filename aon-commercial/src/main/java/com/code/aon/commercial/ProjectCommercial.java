@@ -9,11 +9,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.commercial.enumeration.ProjectStatus;
+import com.code.aon.project.IProject;
 import com.esferalia.aon.entity.master.ProjectCommercialDB;
 
 @Entity
 @Table(name="project_commercial")
-public class ProjectCommercial extends ProjectCommercialDB {
+public class ProjectCommercial extends ProjectCommercialDB implements IProject{
 
 	private static final long serialVersionUID = 1L;
 

@@ -56,7 +56,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.asset</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -164,7 +164,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>

@@ -41,6 +41,7 @@ public class TestEntities {
 	
 	@Test
 	public void test() throws ManagerBeanException, NotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+/*		
 		ClassPool pool = ClassPool.getDefault(); 
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		HibernateUtil.getSessionFactory(sessionFactoryName);
@@ -81,6 +82,7 @@ public class TestEntities {
 		for (String className:entityClasses) {
 			testEntity(className);
 		}
+*/		
 	}
 
 	private void loadBeanListeners() throws IOException, ManagerBeanException {

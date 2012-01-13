@@ -17,6 +17,7 @@ package com.esferalia.aon.test.entity;
  */
 
 
+
 import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.Method;
@@ -49,6 +50,7 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.Invoice;
@@ -62,6 +64,7 @@ import com.code.aon.messaging.Message;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.product.ItemSupplier;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.sales.SalesDetail;
@@ -85,6 +88,7 @@ import com.esferalia.aon.pms.ProjectReservationService;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+
 
 /**
  * @author ecastellano
@@ -300,6 +304,7 @@ public class AonTestEntityMojo extends AbstractMojo {
 	}
 
 	private String hasSpecialAttribute(Class<?> clazz, Method method) {
+		if (Domain.class.equals(clazz) && "setId".equals(method.getName())) return "1";
 		if (VatTax.class.equals(clazz) && "setComplementary".equals(method.getName())) return "false"; 
 		if (VatTax.class.equals(clazz) && "setReplacement".equals(method.getName())) return "false"; 
 		if (Mod347.class.equals(clazz) && "setComplementary".equals(method.getName())) return "false"; 
@@ -373,6 +378,10 @@ public class AonTestEntityMojo extends AbstractMojo {
 		if (CalendarPeriod.class.equals(clazz) && "setStartDay".equals(method.getName())) return "1";
 		if (CommercialTerm.class.equals(clazz) && "setLine".equals(method.getName())) return "1";
 		if (ItemSupplier.class.equals(clazz) && "setPriority".equals(method.getName())) return "1";
+		if (Project.class.equals(clazz) && "setTas".equals(method.getName())) return "false";
+		if (Project.class.equals(clazz) && "setCommercial".equals(method.getName())) return "false";
+		if (Project.class.equals(clazz) && "setDossier".equals(method.getName())) return "false";
+		if (Project.class.equals(clazz) && "setReservation".equals(method.getName())) return "false";
 		if (ProjectReservationGuest.class.equals(clazz) && "setGuestIndex".equals(method.getName())) return "1";
 		if (ProjectReservationRoom.class.equals(clazz) && "setRoomIndex".equals(method.getName())) return "1";
 		if (ProjectReservationService.class.equals(clazz) && "setServiceIndex".equals(method.getName())) return "1";
@@ -381,7 +390,7 @@ public class AonTestEntityMojo extends AbstractMojo {
 
 	private boolean isSuitableSetter(Class<?> clazz,Method method) {
 		if (!method.getName().startsWith("set")) return false;
-		if ("setId".equals(method.getName())) return false;
+		if ("setId".equals(method.getName()) && (!Domain.class.equals(clazz))) return false;
 		if ("setDomain".equals(method.getName())) return false;
 		Class<?>[] parameters = method.getParameterTypes();
 		if (parameters == null) return false;

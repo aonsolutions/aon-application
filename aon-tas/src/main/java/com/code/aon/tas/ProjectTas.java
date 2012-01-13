@@ -14,6 +14,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.project.IProject;
 import com.code.aon.ql.Criteria;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -21,7 +22,7 @@ import com.esferalia.aon.entity.master.ProjectTasDB;
 
 @Entity
 @Table(name="project_tas")
-public class ProjectTas extends ProjectTasDB implements IHeaderObject {
+public class ProjectTas extends ProjectTasDB implements IHeaderObject, IProject {
 
 	private static final long serialVersionUID = 1L;
 

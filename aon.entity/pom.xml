@@ -23,40 +23,9 @@
 						<include>META-INF/**</include>
 						<include>com/esferalia/aon/entity/**</include>
 						<include>com/code/aon/registry/I**</include>
+						<include>com/code/aon/project/I**</include>
+						<include>com/code/aon/asset/I**</include>
 					</includes>
-					
-					<excludes>
-						<exclude>com.code.aon.account/**</exclude>
-						<exclude>com.code.aon.account.bridge/**</exclude>
-						<exclude>com.code.aon.accounting/**</exclude>
-						<exclude>com.code.aon.asset/**</exclude>
-						<exclude>com.code.aon.audit/**</exclude>
-						<exclude>com.code.aon.commercial/**</exclude>
-						<exclude>com.code.aon.company/**</exclude>
-						<exclude>com.code.aon.config/**</exclude>
-						<exclude>com.code.aon.customer/**</exclude>
-						<exclude>com.code.aon.finance/**</exclude>
-						<exclude>com.code.aon.fiscal/**</exclude>
-						<exclude>com.code.aon.geozone/**</exclude>
-						<exclude>com.code.aon.groupware/**</exclude>
-						<exclude>com.code.aon.infoweb/**</exclude>
-						<exclude>com.code.aon.marketing/**</exclude>
-						<exclude>com.code.aon.messaging/**</exclude>
-						<exclude>com.code.aon.person/**</exclude>
-						<exclude>com.code.aon.product/**</exclude>
-						<exclude>com.code.aon.project/**</exclude>
-						<exclude>com.code.aon.purchase/**</exclude>
-						<exclude>com.code.aon.registry/C**</exclude>
-						<exclude>com.code.aon.registry/R**</exclude>
-						<exclude>com.code.aon.registry/S**</exclude>
-						<exclude>com.code.aon.sales/**</exclude>
-						<exclude>com.code.aon.seller/**</exclude>
-						<exclude>com.code.aon.supplier/**</exclude>
-						<exclude>com.code.aon.tas/**</exclude>
-						<exclude>com.code.aon.warehouse/**</exclude>
-						<exclude>com.esferalia.aon.calendar/**</exclude>
-						<exclude>com.esferalia.aon.payroll/**</exclude>
-					</excludes>
 										
 					<archive>
 						<manifest>

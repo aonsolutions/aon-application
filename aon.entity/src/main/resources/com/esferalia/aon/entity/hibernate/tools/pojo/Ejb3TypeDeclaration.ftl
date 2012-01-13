@@ -9,5 +9,9 @@
 </#if>
 <#if aonExporter.hasRegistryPrimaryKeyJoinColumn(pojo)>@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}(name="registry")
 </#if>
+<#if aonExporter.hasProjectPrimaryKeyJoinColumn(pojo)>@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}(name="project")
+</#if>
+<#if aonExporter.hasAssetPrimaryKeyJoinColumn(pojo)>@${pojo.importType("javax.persistence.PrimaryKeyJoinColumn")}(name="asset")
 </#if>
 </#if> 
+</#if>
