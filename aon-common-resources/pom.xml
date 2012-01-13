@@ -67,6 +67,42 @@
 							<xmlValidation>true</xmlValidation>
 						</configuration>
 					</execution>
+					<execution>
+						<id>ELECTROMEDICAL</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/electromedical</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/electromedical</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
+					<execution>
+						<id>MEDISER</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/mediser</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/mediser</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
+					<execution>
+						<id>SALE INVOICE GT EUS</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/saleInvoiceGtEus</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/saleInvoiceGtEus</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>

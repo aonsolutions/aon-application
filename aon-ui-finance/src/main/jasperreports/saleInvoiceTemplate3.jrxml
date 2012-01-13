@@ -97,11 +97,10 @@
 + ($P{recordData}.getSheet().isEmpty()?"":", Hoja " + $P{recordData}.getSheet())
 + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
 + ($P{printNif}.name().equals( "LEFT_SIDE" ) ?
-    $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
+    ", " + $R{aon_company_document} + ": "
     +$P{company}.getDocumentCountry() + "-"
     +$P{company}.getDocument()
-    : "")
-+ "."]]></textFieldExpression>
+    : "")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-8" x="583" y="559" width="4" height="1"/>
@@ -141,7 +140,6 @@
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document} + ": "
-+ $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $P{company}.getDocumentCountry() + "-"
 + $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
@@ -531,11 +529,10 @@ $P{address}.getFullAddress()
 + ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"
 +  " - "
 + "T: " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + "F: " + $P{fax}.getValue())
-: "")
-]]></textFieldExpression>
+: "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-56" x="73" y="24" width="481" height="10"/>
+				<reportElement key="textField-56" x="71" y="24" width="481" height="10"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
