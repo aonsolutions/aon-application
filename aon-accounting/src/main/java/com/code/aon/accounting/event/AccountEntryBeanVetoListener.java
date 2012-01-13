@@ -104,24 +104,18 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 				Period period = (Period) periodBean.get(to.getAccountPeriod().getId());
 				AccountingUtil au = new AccountingUtil();
 				if (to.getType() == AccountEntryType.OPENING) {
+					if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
+						throw new ManagerBeanVetoListenerException("Existe un asiento de explotación en el ejericio");
+					}
+					if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
+						throw new ManagerBeanVetoListenerException("Existe un asiento de cierre en el ejericio");
+					}
 					if (au.existsEntry(period, AccountEntryType.OPENING, null, to.getId())) {
 						// Si después de borrar apertura, existe otro apertura, se mantiene el estado.
 						period.setStatus(AccountPeriodStatus.OPENING);
 					} else {
 						// Si después de borrar apertura, no existe otro apertura.
 						period.setStatus(AccountPeriodStatus.ACTIVE);	
-					}
-					if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
-						// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
-						period.setStatus(AccountPeriodStatus.OPERATING);
-					} else {
-						if (au.existsEntry(period, AccountEntryType.OPENING, null)) {
-							// Si después de borrar explotación, existe apertura.
-							period.setStatus(AccountPeriodStatus.OPENING);	
-						} else {
-							// Si después de borrar explotación, no existe apertura.
-							period.setStatus(AccountPeriodStatus.ACTIVE);	
-						}
 					}
 				} else if (to.getType() == AccountEntryType.CLOSING) {
 					if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
@@ -139,6 +133,22 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 								// Si después de borrar cierre, no existe explotación ni apertura.
 								period.setStatus(AccountPeriodStatus.ACTIVE);	
 							}
+						}
+					}
+				} else if (to.getType() == AccountEntryType.OPERATING) {
+					if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
+						throw new ManagerBeanVetoListenerException("Existe un asiento de cierre en el ejericio");
+					}
+					if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
+						// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
+						period.setStatus(AccountPeriodStatus.OPERATING);	
+					} else {
+						if (au.existsEntry(period, AccountEntryType.OPENING, null)) {
+							// Si después de borrar explotación, existe apertura.
+							period.setStatus(AccountPeriodStatus.OPENING);
+						} else {
+							// Si después de borrar cierre, no existe apertura.
+							period.setStatus(AccountPeriodStatus.ACTIVE);	
 						}
 					}
 				}

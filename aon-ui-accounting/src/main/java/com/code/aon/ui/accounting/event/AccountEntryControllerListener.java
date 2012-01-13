@@ -5,6 +5,7 @@ import java.util.Date;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -77,6 +78,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     @Override
     public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
         try {
+        	checkEntryTypeBeforeRemove(event);
             index = event.getController().getModel().getRowIndex();
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e);
@@ -131,4 +133,29 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     	c.refreshTotals();
     	c.calculateUpdatableFlag();
     }
+    
+	public void checkEntryTypeBeforeRemove(ControllerEvent event) throws ControllerListenerException, ManagerBeanException {
+		AccountEntry to = (AccountEntry) event.getController().getTo();
+		if (to.getType() == AccountEntryType.OPENING || 
+			to.getType() == AccountEntryType.OPERATING || 
+			to.getType() == AccountEntryType.CLOSING) {
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			Period period = (Period) periodBean.get(to.getAccountPeriod().getId());
+			AccountingUtil au = new AccountingUtil();
+			if (to.getType() == AccountEntryType.OPENING) {
+				if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
+					throw new ControllerListenerException("Existe un asiento de explotación en el ejericio");
+				}
+				if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
+					throw new ControllerListenerException("Existe un asiento de cierre en el ejericio");
+				}
+			} else if (to.getType() == AccountEntryType.OPERATING) {
+				if (au.existsEntry(period, AccountEntryType.CLOSING, null, to.getId())) {
+					throw new ControllerListenerException("Existe un asiento de cierre en el ejericio");
+				}
+			}
+		}
+	}
+    
+        
 }

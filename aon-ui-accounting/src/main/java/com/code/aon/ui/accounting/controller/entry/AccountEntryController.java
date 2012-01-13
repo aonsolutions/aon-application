@@ -111,7 +111,7 @@ public class AccountEntryController extends BasicController {
 		boolean flag = false;
 		try {
 			AccountPeriodStatus st = entry.getAccountPeriod().getStatus(); 
-            if (st == AccountPeriodStatus.INACTIVE || st == AccountPeriodStatus.CLOSED) {
+            if (st == AccountPeriodStatus.INACTIVE || st == AccountPeriodStatus.CLOSED || st == AccountPeriodStatus.OPERATING) {
             	setPeriodActive(false);
             } else {
     			flag = isManual();
