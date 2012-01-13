@@ -95,8 +95,6 @@ ALTER TABLE `item` DROP KEY `idx_item_prdt`;
 ALTER TABLE `item` ADD KEY `IDX_ITEM_PRODUCT` (`product`);
 ALTER TABLE `item` ADD CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`);
 
-ALTER TABLE `item_composition` ADD UNIQUE KEY `IDX_UNQ_ITEM_COMPOSITION` (`item`,`composition_item`);
-
 ALTER TABLE `item_tariff` ADD UNIQUE KEY `IDX_UNQ_ITEM_TARIFF` (`item`,`tariff`);
 
 ALTER TABLE `leave_batch_attach` DROP FOREIGN KEY `FK_LEAVE_BATCH_ATTACH_LEAVE_BATCH`;
