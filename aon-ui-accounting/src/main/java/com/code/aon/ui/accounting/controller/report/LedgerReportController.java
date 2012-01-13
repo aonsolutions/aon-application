@@ -169,10 +169,10 @@ public class LedgerReportController extends BasicController implements IAccounti
 						getSecurityLevel());
 			}
 			if (!StringUtils.isBlank(getAccount())) {
-				criteria.addExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), getAccount());
+				criteria.addExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE), getAccount());
 			}
 			getCriteria().addOrder(
-					getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID));
+					getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE));
 			if ("1".equals(getOrder()) ) {
 				getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
 				getCriteria().addOrder(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
