@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 public class BasicLdap {
 
+	private static final String CONNECT_POOL = "com.sun.jndi.ldap.connect.pool";
+
 	private static final String SHA_ALGORITHM = "SHA";
 
 	/**
@@ -32,6 +34,9 @@ public class BasicLdap {
 
 	public BasicLdap(Properties properties) {
 		this.properties = properties;
+		if ( (this.properties != null) && (!this.properties.containsKey(CONNECT_POOL)) ) {
+			this.properties.put(CONNECT_POOL, Boolean.TRUE.toString());
+		}
 	}
 
 	public BasicLdap() {
