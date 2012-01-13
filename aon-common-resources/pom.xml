@@ -116,6 +116,11 @@
 						<version>${project.version}</version>
 					</dependency>
 					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.ui.finance</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-jcl</artifactId>
 						<version>1.5.11</version>
@@ -190,6 +195,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.warehouse</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.finance</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
