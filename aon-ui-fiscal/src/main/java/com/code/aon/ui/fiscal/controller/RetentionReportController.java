@@ -158,7 +158,8 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
-		return (Collection) getDetailModel().getWrappedData();
+//		return (Collection) getDetailModel().getWrappedData();
+		return (Collection) getGroupedModel().getWrappedData();
 	}
 
 	@Override

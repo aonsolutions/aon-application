@@ -24,7 +24,20 @@
 						value="#{bundle.aon_back}"
 						action="retention_report_detail" 
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-						accesskey="#{bundle.aon_key_cancel}" />			
+						accesskey="#{bundle.aon_key_cancel}" />	
+					<aon:htmlCommandLink id="retentionBook-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="retentionBookGrouped" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>							
+					<aon:htmlCommandLink id="retentionBook-report"
+						value="#{bundle.aon_listing}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="retentionBookGrouped" />
+					</aon:htmlCommandLink>		
 				</ui:define>
 			</ui:decorate>
 
