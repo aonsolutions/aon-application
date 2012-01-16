@@ -236,4 +236,101 @@ public class RetentionCollection {
 
 	}
 	
+	public List<Retention> getGroupedRetentionDetailList(RetentionCollectionParameters params, InvoiceReportOrder order) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			StringWriter stmt = new StringWriter();
+			stmt.append(" SELECT i.rdocument,i.rname,SUM(id.taxable_base) ");
+			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) IVA");
+			stmt.append("  FROM invoice_tax it ");
+			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
+			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
+			stmt.append(" WHERE i.type != 1 and it.tax_type = 2");
+			if (params.getFromInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date >= ?");
+			}
+			if (params.getToInvoiceDate() != null) {
+				stmt.append(" AND i.issue_date <= ?");
+			}
+			if (!StringUtils.isEmpty(params.getFromSeries())) {
+				stmt.append(" AND i.series >= ?");
+			}
+			if (!StringUtils.isEmpty(params.getToSeries())) {
+				stmt.append(" AND i.series <= ?");
+			}
+			if (params.getFromNumber() != null) {
+				stmt.append(" AND i.number >= ?");
+			}
+			if (params.getToNumber() != null) {
+				stmt.append(" AND i.number <= ?");
+			}
+			if (params.getPercent() != null) {
+				stmt.append(" AND it.percentage = ?");
+			}
+			if (params.getWithholdingType() != null) {
+				stmt.append(" AND it.withholding_type = ?");	
+			}
+			if (params.getSecurityLevel() != null) {
+				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
+			}
+			stmt.append(" GROUP BY i.rdocument,i.rname");
+			stmt.append(" ORDER BY i.rdocument,i.rname");
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			int i = 0;
+			if (params.getFromInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getFromInvoiceDate().getTime()));
+			}
+			if (params.getToInvoiceDate() != null) {
+				ps.setDate(++i, new java.sql.Date( params.getToInvoiceDate().getTime()));
+			}
+			if (!StringUtils.isEmpty(params.getFromSeries())) {
+				ps.setString(++i, params.getFromSeries());
+			}
+			if (!StringUtils.isEmpty(params.getToSeries())) {
+				ps.setString(++i, params.getToSeries());
+			}
+			if (params.getFromNumber() != null) {
+				ps.setInt(++i, params.getFromNumber());
+			}
+			if (params.getToNumber() != null) {
+				ps.setInt(++i, params.getToNumber());
+			}
+			if (params.getPercent() != null) {
+				ps.setDouble(++i, params.getPercent());
+			}
+			if (params.getWithholdingType() != null) {
+				ps.setInt(++i, params.getWithholdingType().ordinal());
+			}
+			rs = ps.executeQuery();
+			List<Retention> rets = new LinkedList<Retention>();
+			while (rs.next()) {
+				Retention ret = new Retention();
+				ret.setDocument(rs.getString(1));
+				ret.setName(rs.getString(2));
+				ret.setBase(rs.getDouble(3));
+				ret.setQuota(rs.getDouble(4));
+				rets.add(ret);
+			}
+			return rets;
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+
+	}
 }

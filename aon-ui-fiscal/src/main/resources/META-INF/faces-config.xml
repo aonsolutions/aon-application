@@ -477,6 +477,10 @@
 			<from-outcome>retention_report_detail</from-outcome>
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/detailList.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>retention_report_detail_grouped</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/retention/groupedDetailList.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<!-- =================== VAT REPORT ================= -->

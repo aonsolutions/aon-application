@@ -36,6 +36,7 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 	private List<Retention> summary;
 	private DataModel model;
 	private DataModel detailModel;
+	private DataModel groupedModel;
 	private String title;
 
 	public List<Retention> getSummary() {
@@ -63,6 +64,14 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 
 	public void setDetailModel(DataModel detailModel) {
 		this.detailModel = detailModel;
+	}
+
+	public DataModel getGroupedModel() {
+		return groupedModel;
+	}
+
+	public void setGroupedModel(DataModel groupedModel) {
+		this.groupedModel = groupedModel;
 	}
 
 	public RetentionCollectionParameters getParams() {
@@ -234,6 +243,17 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 			RetentionCollection vc = new RetentionCollection();
 			List<Retention> list = vc.getRetentionDetailList(getParams(),getOrder());
 			setDetailModel(new ListDataModel(list));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+	
+	public void onGroupedDetail(ActionEvent event) {
+		try {
+			RetentionCollection vc = new RetentionCollection();
+			List<Retention> list = vc.getGroupedRetentionDetailList(getParams(),getOrder());
+			setGroupedModel(new ListDataModel(list));
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
