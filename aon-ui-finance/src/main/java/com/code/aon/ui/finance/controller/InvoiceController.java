@@ -57,6 +57,7 @@ import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.ExtendedPageDataModel;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.sign.controller.ISignatureController;
@@ -523,12 +524,12 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
+		Invoice invoice = getInvoice();
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			Invoice invoice = getInvoice();
 			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().recordAndUpdateInvoice(invoice);
 			HibernateUtil.commitTransaction(sessionName);
@@ -539,6 +540,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				String msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
+			// --- Si se ha producido algún error, se carga de nuevo la factura de la BD.
+			synchronizeErrorPojo(invoice);		
+			// ---
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
@@ -548,17 +552,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
-	
+
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException{
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Invoice invoice = getInvoice();
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			
-			Invoice invoice = getInvoice();
 			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().unrecordAndUpdateInvoice(invoice);
 
@@ -580,6 +584,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				String msg = "Unable to rollback transaction!";
 				LOGGER.error(msg, e);
 			}
+			// --- Si se ha producido algún error, se carga de nuevo la factura de la BD.
+			synchronizeErrorPojo(invoice);		
+			// ---
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
@@ -589,6 +596,23 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	private void synchronizeErrorPojo(Invoice errorInvoice) throws ManagerBeanException {
+		Invoice restoredInvoice = (Invoice) getManagerBean().get(errorInvoice.getId()) ; 
+		setTo(restoredInvoice);
+		if (getModel() instanceof ExtendedPageDataModel) {
+			List<ITransferObject> list = (List<ITransferObject>)getModel().getWrappedData();
+			for (int i=0; i < list.size(); i++) {
+				Invoice listInvoice = (Invoice) list.get(i);
+				if (listInvoice.getId().equals(restoredInvoice.getId())) {
+					list.set(i,restoredInvoice);
+					break;
+				}
+			}
+		}
+	}
+	
 
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = getInvoice();
