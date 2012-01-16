@@ -28,6 +28,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
@@ -225,6 +226,22 @@ public class AccountEntryInvoiceWriter {
 			basesPerAccount.put(account, new Double(base));
 			insertInvoiceDetailAccount(invoiceDetail, account);
 		}
+
+		if (basesPerAccount.size() > 1) {
+			double diffBase = invoice.getTaxableBase();
+			Iterator<Account> iter = basesPerAccount.keySet().iterator();
+			while (iter.hasNext()) {
+				Account account = (Account)iter.next();
+				double base = CommonUtil.round(basesPerAccount.get(account).doubleValue());
+				if (iter.hasNext()) {
+					basesPerAccount.put(account, new Double(base));
+					diffBase = CommonUtil.round(diffBase - base);
+				} else {
+					basesPerAccount.put(account, new Double(diffBase));
+				}
+			}
+		}
+
 		return basesPerAccount;
 	}
 
