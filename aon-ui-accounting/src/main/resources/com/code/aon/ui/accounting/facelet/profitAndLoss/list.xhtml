@@ -159,13 +159,13 @@
 							<aon:column styleClass="aon-width-100">
 								<aon:commandLink immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
-									styleClass="aon-dataTable-link" action="account_statement_list">
+									styleClass="aon-dataTable-link" action="account_statement_account_list">
 									<f:setPropertyActionListener value="#{to.id}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />
 									<aon:outputText value="#{to.id}" />
 									<f:setPropertyActionListener value="profit_and_loss_list"
-										target="#{statement.backAction}" />
+										target="#{trialBalance.backAction}" />
 								</aon:commandLink>
 							</aon:column>
 	
@@ -207,13 +207,13 @@
 							<aon:column>
 								<aon:commandLink immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
-									styleClass="aon-dataTable-link" action="account_statement_list">
+									styleClass="aon-dataTable-link" action="account_statement_account_list">
 									<f:setPropertyActionListener value="#{to.id}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />
 									<aon:outputText value="#{to.id}" />
 									<f:setPropertyActionListener value="profit_and_loss_list"
-										target="#{statement.backAction}" />
+										target="#{trialBalance.backAction}" />
 								</aon:commandLink>
 							</aon:column>
 	
