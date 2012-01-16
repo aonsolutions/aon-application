@@ -159,14 +159,37 @@ public class InvoiceIntegrityController {
 		checkAll(false);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void checkAll(boolean check) {
-		@SuppressWarnings("unchecked")
 		List<BreakDown> list =  (List<BreakDown>) getBreakDownModel().getWrappedData();
+		int i = 0;
 		for (BreakDown b : list) {
 			b.setChecked(check);
+			i++;
 		}
 	}
 	
+	public void onPreviewCheckAll(ActionEvent event) {
+		previewCheckAll(true);
+	}
+	public void onPreviewUnCheckAll(ActionEvent event) {
+		previewCheckAll(false);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void previewCheckAll(boolean check) {
+		List<Preview> list =  (List<Preview>) getModel().getWrappedData();
+		int i = 0;
+		for (Preview p : list) {
+			p.setChecked(check);
+			i++;
+		}
+		// El scroll de pantalla es de 20, de notifica al usuario que hay más filas
+		if (i > 20) {
+			AonUtil.addInfoMessage("Se han " + (check?"marcado":"desmarcado") + " " + i + " filas");	
+		}
+	}
+
 	
 	public void onBreakDown(ActionEvent event) {
 		PreparedStatement ps = null;
@@ -219,6 +242,7 @@ public class InvoiceIntegrityController {
 	public class Preview {
 		int id;
 		int count;
+		boolean checked;
 		String document;
 		DocumentType documentType;
 		String documentCountry;
@@ -230,6 +254,12 @@ public class InvoiceIntegrityController {
 		}
 		public void setId(int id) {
 			this.id = id;
+		}
+		public boolean isChecked() {
+			return checked;
+		}
+		public void setChecked(boolean checked) {
+			this.checked = checked;
 		}
 		public int getCount() {
 			return count;
@@ -264,6 +294,24 @@ public class InvoiceIntegrityController {
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	public void onUpdatePreview(ActionEvent event) {
+		try {
+			List<Preview> list =  (List<Preview>) getModel().getWrappedData();
+			for (Preview p : list) {
+				if (p.isChecked()) {
+					setRegistry( p.getId());
+					onBreakDown(event);
+					onCheckAll(event);
+					onUpdate(event);
+				}
+			}
+		} finally {
+			onPreview(event);	
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	public void onUpdate(ActionEvent event) {
 		PreparedStatement ips = null;
 		PreparedStatement fps = null;

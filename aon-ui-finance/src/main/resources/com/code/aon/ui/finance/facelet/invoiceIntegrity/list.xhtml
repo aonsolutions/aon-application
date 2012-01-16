@@ -35,6 +35,16 @@
 
 			<aon:div id="invoiceData" styleClass="aon-scroll-area">
 
+				<aon:div id="closingMessagesContainer"
+					style="background-color:#f6f5e3; border: solid green 1px; padding:5px; padding-left:50px; margin: 10px;; width: 90%;">
+					<aon:div>
+						<aon:outputText value="#{financeBundle.finance_integrity_msg}"/>
+					</aon:div>
+					<aon:div style="color:red;margin-top:10px;">
+						<aon:outputText value="#{financeBundle.finance_integrity_warning}"/>
+					</aon:div>
+				</aon:div>
+
 				<aon:dataTable id="invoiceList" value="#{invoiceIntegrity.breakDownModel}"
 					rows="20" var="to" rendered="#{invoiceIntegrity.breakDownModel.rowCount > 0}">
 
@@ -80,9 +90,9 @@
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_document} (#{financeBundle.finance_invoice})" />
 						</f:facet>
-						<aon:outputText value="#{to.invoiceDocumentCountry}" style="#{to.sameDocumentCountry};"/>
+						<aon:outputText value="#{to.invoiceDocumentCountry}" style="#{to.sameDocumentCountry?'color:inherit;':'color:red'};"/>
 						<aon:outputText value=" - " />
-						<aon:outputText value="#{to.invoiceDocumentType}" style="#{to.sameDocumentType};"/>
+						<aon:outputText value="#{to.invoiceDocumentType}" style="#{to.sameDocumentType?'color:inherit;':'color:red'};"/>
 						<aon:outputText value=" - " />
 						<aon:outputText value="#{to.invoiceDocument}" style="#{to.sameDocument?'color:inherit;':'color:red'};"/>
 					</aon:column>
