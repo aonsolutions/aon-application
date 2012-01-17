@@ -171,6 +171,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 		WorkPlace workPlace = new WorkPlace();
 		workPlace.setEnterprise(enterprise);
+		workPlace.setScope(enterprise.getScope());
 		workPlace.setDescription(ICompanyConstants.PRINCIPAL);
 		workPlace.setAddress(address);
 		workPlace.setActive(true);
