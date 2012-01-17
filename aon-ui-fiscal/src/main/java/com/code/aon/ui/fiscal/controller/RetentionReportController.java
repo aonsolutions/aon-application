@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -155,11 +156,15 @@ public class RetentionReportController implements ICollectionProvider, IFinanceM
 		return this.title;	
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
-//		return (Collection) getDetailModel().getWrappedData();
-		return (Collection) getGroupedModel().getWrappedData();
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String reportKey = ctx.getExternalContext().getRequestParameterMap().get("reportKey");
+		if (reportKey != null && reportKey.equals("retentionBookGrouped")) {
+			return (Collection) getGroupedModel().getWrappedData();	
+		}
+		return (Collection) getDetailModel().getWrappedData();
 	}
 
 	@Override
