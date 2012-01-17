@@ -331,3 +331,14 @@ ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_RADDRESS` FOREIGN KEY (`add
 UPDATE `db_version` SET `version_number` = '6.20.2';
 
 COMMIT;
+
+
+SET @isPrint = (SELECT `value` FROM `app_param` WHERE `name` = 'APP_PRINT_HEADER_PARAM');
+SET @isHeader = (SELECT COUNT(`value`) FROM `app_param` WHERE `name` = 'APP_PRINT_HEADER_PARAM' AND `value` = 'true');
+
+INSERT INTO `app_param` (`name`, `value`) VALUES ('APP_PRINT_LOGO_PARAM',@isPrint) ON DUPLICATE KEY UPDATE `value` = `value`;
+INSERT INTO `app_param` (`name`, `value`) VALUES ('APP_PRINT_NAME_PARAM',@isHeader) ON DUPLICATE KEY UPDATE `value` = `value`;
+INSERT INTO `app_param` (`name`, `value`) VALUES ('APP_PRINT_NIF_PARAM',@isHeader) ON DUPLICATE KEY UPDATE `value` = `value`;
+INSERT INTO `app_param` (`name`, `value`) VALUES ('APP_PRINT_ADDRESS_PARAM',@isHeader) ON DUPLICATE KEY UPDATE `value` = `value`;
+
+COMMIT;
