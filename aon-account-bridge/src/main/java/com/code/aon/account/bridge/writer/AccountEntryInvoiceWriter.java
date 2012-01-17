@@ -19,7 +19,9 @@ import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -84,12 +86,26 @@ public class AccountEntryInvoiceWriter {
 	public void unrecordInvoice(Invoice invoice) throws ManagerBeanException {
 		for (ITransferObject ito : obtainAccountEntryInvoices(invoice)) {
 			AccountEntryInvoice accEntryInvoice = (AccountEntryInvoice)ito;
+			checkPeriod(accEntryInvoice.getAccountEntry());
 			removeAccountEntryInvoice(accEntryInvoice);
 			removeInvoiceDetailAccounts(accEntryInvoice.getInvoice());
 			removeInvoiceTaxAccounts(accEntryInvoice.getInvoice());
 		}
 	}
 
+	private void checkPeriod(AccountEntry accountEntry) throws ManagerBeanException {
+		Period period = accountEntry.getAccountPeriod();
+		if (period.getStatus() == AccountPeriodStatus.CLOSED) {
+			throw new ManagerBeanException("No se puede eliminar el apunte de un ejercicio cerrado (" + period.getName() + ").");
+		}
+		if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
+			throw new ManagerBeanException("No se puede eliminar el apunte de un ejercicio inactivo (" + period.getName() + ").");
+		}
+		if (period.getStatus() == AccountPeriodStatus.OPERATING) {
+			throw new ManagerBeanException("No se puede eliminar el apunte, pues ya se ha hecho el asiento de explotación en el ejercicio (" + period.getName() + ").");
+		}
+	}
+	
 	public Invoice recordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
