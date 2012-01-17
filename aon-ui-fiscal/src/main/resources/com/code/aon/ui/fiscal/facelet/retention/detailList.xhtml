@@ -39,6 +39,13 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="retentionBook" />
 					</aon:htmlCommandLink>
+					
+					<aon:commandButton id="groupedDetail"
+						styleClass="aon-finding-toolbar-item aon-icon-tree" 
+						value="Agrupar por NIF/R.Social"
+						requestDelay="100" actionListener="#{retentionReport.onGroupedDetail}" 
+						action="retention_report_detail_grouped" />
+					
 				</ui:define>
 			</ui:decorate>
 
