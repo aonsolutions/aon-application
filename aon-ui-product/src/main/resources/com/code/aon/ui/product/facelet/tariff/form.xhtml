@@ -18,9 +18,13 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
+					<aon:outputLabel for="Tariff_code" value="#{bundle.aon_id}" />
+					<aon:inputText id="Tariff_code" value="#{tariff.to.code}"
+						required="#{true}" size="5" maxlength="8" />
+
 					<aon:outputLabel for="Tariff_name" value="#{productBundle.product_tariff}" />
 					<aon:inputText id="Tariff_name" value="#{tariff.to.name}"
-						required="#{true}" size="40" />
+						required="#{true}" size="40" maxlength="32" />
 				</aon:panelGrid>
 
 				<c:if test="#{!tariff.new}">
