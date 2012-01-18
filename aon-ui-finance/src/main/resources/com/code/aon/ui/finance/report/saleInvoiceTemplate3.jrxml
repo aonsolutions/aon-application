@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -236,9 +236,9 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="106" splitType="Stretch">
+		<band height="147" splitType="Stretch">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="71" y="80" width="235" height="26"/>
+				<reportElement key="textField-55" x="71" y="121" width="235" height="26"/>
 				<box rightPadding="10">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -252,7 +252,7 @@
 + ($F{rectifier} ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-35" x="306" y="30" width="246" height="13"/>
+				<reportElement key="textField-35" x="306" y="54" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -265,7 +265,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-36" x="306" y="43" width="246" height="13"/>
+				<reportElement key="textField-36" x="306" y="67" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -278,7 +278,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="306" y="10" width="246" height="16"/>
+				<reportElement key="textField-34" x="306" y="34" width="246" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -291,7 +291,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-37" x="306" y="56" width="246" height="13"/>
+				<reportElement key="textField-37" x="306" y="80" width="246" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -304,7 +304,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-51" x="453" y="93" width="99" height="13"/>
+				<reportElement key="textField-51" x="453" y="134" width="99" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -318,7 +318,7 @@
 +$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-52" mode="Opaque" x="453" y="80" width="99" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-52" mode="Opaque" x="453" y="121" width="99" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -331,7 +331,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-48" mode="Opaque" x="306" y="80" width="75" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-48" mode="Opaque" x="306" y="121" width="75" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -344,7 +344,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-47" x="306" y="93" width="75" height="13"/>
+				<reportElement key="textField-47" x="306" y="134" width="75" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -357,7 +357,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-50" mode="Opaque" x="382" y="80" width="70" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-50" mode="Opaque" x="382" y="121" width="70" height="13" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -370,7 +370,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField-49" x="382" y="93" width="70" height="13"/>
+				<reportElement key="textField-49" x="382" y="134" width="70" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
