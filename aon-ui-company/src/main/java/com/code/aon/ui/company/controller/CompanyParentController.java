@@ -609,6 +609,10 @@ public class CompanyParentController extends BasicController implements ICompany
 		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue();
 	}
 	
+	public String getInvoicePrintTemplateValue(){
+		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue().replaceFirst("saleInvoice", "invoicePrint");
+	}
+	
 	public boolean isPrintLogo() {
 		return printLogo;
 	}

@@ -23,26 +23,13 @@
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 					</aon:commandButton>											
-					<aon:htmlCommandLink id="invoicePrint-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="invoicePrint" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>											
 					<aon:htmlCommandLink id="invoicePrint-report"
 						value="#{financeBundle.finance_invoice_module}" target="_blank"
 						action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="invoicePrint" />
+						<f:param name="reportKey" value="#{company.invoicePrintTemplateValue}" />
 					</aon:htmlCommandLink>
-
-					<aon:htmlCommandLink id="receipt-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="receipt" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>											
 					<aon:htmlCommandLink id="receipt-report"
 						value="#{financeBundle.finance_receipts}" target="_blank"
 						action="#{report.onExecute}"

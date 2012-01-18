@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="304"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -115,7 +115,7 @@
 			<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="71" y="4" width="108" height="79" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printLogo}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printLogo}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -128,7 +128,7 @@
 			</image>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="382" y="28" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printNif}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printNif}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -146,7 +146,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-24" x="382" y="71" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -161,7 +161,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-26" x="382" y="47" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,7 +176,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="382" y="15" width="170" height="13">
-					<printWhenExpression><![CDATA[$P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printName}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -191,7 +191,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="382" y="59" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printAddress}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -206,7 +206,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="251" y="59" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -221,7 +221,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="251" y="71" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printInternetData}.name().equals( "HEADER" )]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
