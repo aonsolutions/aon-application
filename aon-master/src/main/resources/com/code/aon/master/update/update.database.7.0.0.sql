@@ -64,7 +64,9 @@ CREATE TABLE `room` (
 ALTER TABLE `series` CHANGE `id` `code` varchar(5) COLLATE 'latin1_spanish_ci' NOT NULL COMMENT 'Serie';
 ALTER TABLE `series` DROP PRIMARY KEY;
 ALTER TABLE `series` ADD `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico' FIRST, ADD PRIMARY KEY (`id`);
-ALTER TABLE `series` ADD `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito' AFTER `domain`;
+ALTER TABLE `series` ADD `scope` int(4) default NULL COMMENT 'Identificador del Ambito' AFTER `domain`;
+UPDATE `series` SET `scope` = (SELECT MIN(`id`) FROM `scope`);
+ALTER TABLE `series` MODIFY `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito';
 ALTER TABLE `series` ADD INDEX `IDX_SERIES_SCOPE` (`scope`);
 ALTER TABLE `series` ADD CONSTRAINT `FK_SERIES_SCOPE` FOREIGN KEY (`scope`)  REFERENCES `scope` (`id`);
 
