@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -136,10 +136,9 @@
 	</title>
 	<pageHeader>
 		<band height="117" splitType="Stretch">
-			<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Top" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="21" y="1" width="489" height="75" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printLogo}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printLogo}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -157,7 +156,9 @@
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="21" y="94" width="489" height="10"/>
+				<reportElement key="textField-56" x="21" y="94" width="489" height="10">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,7 +177,9 @@ $P{address}.getFullAddress()
 : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="21" y="81" width="489" height="10"/>
+				<reportElement key="textField-56" x="21" y="81" width="489" height="10">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -195,7 +198,9 @@ $P{address}.getFullAddress()
     : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="21" y="104" width="489" height="10"/>
+				<reportElement key="textField-56" x="21" y="104" width="489" height="10">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

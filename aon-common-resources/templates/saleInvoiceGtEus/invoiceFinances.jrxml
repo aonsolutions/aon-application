@@ -36,7 +36,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Ordaintzeko era / " + $R{finance_payMethod}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ordaintze era / " + $R{finance_payMethod}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-7" mode="Opaque" x="160" y="0" width="180" height="15" forecolor="#FFFFFF" backcolor="#999999"/>

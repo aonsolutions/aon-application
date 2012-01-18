@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="151"/>
+	<property name="ireport.x" value="304"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -100,10 +100,9 @@
 	</title>
 	<pageHeader>
 		<band height="80" splitType="Stretch">
-			<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true" onErrorType="Blank">
 				<reportElement key="image-1" positionType="Float" mode="Opaque" x="5" y="0" width="244" height="75" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printLogo}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{printHeader} && $P{printLogo}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -115,7 +114,9 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-47" x="445" y="6" width="88" height="13"/>
+				<reportElement key="textField-47" x="445" y="6" width="88" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -128,7 +129,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-48" x="397" y="6" width="48" height="13"/>
+				<reportElement key="textField-48" x="397" y="6" width="48" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -141,7 +144,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField-49" x="445" y="19" width="88" height="13"/>
+				<reportElement key="textField-49" x="445" y="19" width="88" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -154,7 +159,9 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-50" x="397" y="19" width="48" height="13"/>
+				<reportElement key="textField-50" x="397" y="19" width="48" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -167,7 +174,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-51" x="445" y="32" width="88" height="13"/>
+				<reportElement key="textField-51" x="445" y="32" width="88" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -180,7 +189,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" x="397" y="32" width="48" height="13"/>
+				<reportElement key="textField-52" x="397" y="32" width="48" height="13">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -193,7 +204,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="287" y="6" width="101" height="20"/>
+				<reportElement key="textField-55" x="287" y="6" width="101" height="20">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -206,7 +219,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="287" y="26" width="101" height="20"/>
+				<reportElement key="textField-55" x="287" y="26" width="101" height="20">
+					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

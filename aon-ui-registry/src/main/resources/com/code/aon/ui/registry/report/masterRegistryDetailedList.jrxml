@@ -310,7 +310,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{defaultAddress}.getAddress()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{defaultAddress}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-18" positionType="Float" mode="Opaque" x="567" y="1" width="26" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
