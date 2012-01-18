@@ -991,6 +991,8 @@
 	
 	<table name="project_reservation_room">
 		<column name="room_index" type="int"/>
+		<column name="adults" type="int"/>
+		<column name="children" type="int"/>
 	</table>
 	
 	<table name="project_reservation_service">

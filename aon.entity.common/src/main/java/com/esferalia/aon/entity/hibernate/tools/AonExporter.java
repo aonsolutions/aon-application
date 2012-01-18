@@ -398,6 +398,7 @@ public class AonExporter extends GenericExporter{
         map.put("ProjectReservationRoom","com.esferalia.aon.pms.ProjectReservationRoom");
         map.put("ProjectReservationRoomDetail","com.esferalia.aon.pms.ProjectReservationRoomDetail");
         map.put("ProjectReservationService","com.esferalia.aon.pms.ProjectReservationService");
+        map.put("ProjectReservationServiceDetail","com.esferalia.aon.pms.ProjectReservationServiceDetail");
         map.put("Room","com.esferalia.aon.pms.Room");
         
 		//AON-PURCHASE  

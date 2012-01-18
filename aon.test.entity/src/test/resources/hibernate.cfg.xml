@@ -251,6 +251,7 @@
     	<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
     	<mapping class="com.code.aon.accounting.AccountHelper"/>
     	<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
     	<mapping class="com.code.aon.warehouse.Warehouse"/>
     	<mapping class="com.code.aon.finance.BankStatement"/>
     	<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
