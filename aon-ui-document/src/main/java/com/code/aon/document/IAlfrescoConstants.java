@@ -99,6 +99,13 @@ public interface IAlfrescoConstants {
 
 	String REFERENCE_DATE_LONG = AON_MODEL + REFERENCE_DATE;
 	
+	String GROUP_AUTHORITY_TYPE = "GROUP";
+	
+	String USER_AUTHORITY_TYPE = "USER";
+	
+	String ALFRESCO_ADMINISTRATORS = "ALFRESCO_ADMINISTRATORS";
+	
+	String ENTERPRISE_PREFFIX = "EMPRESA-";
 
 	// ************************************************************
 	// MESSAGES

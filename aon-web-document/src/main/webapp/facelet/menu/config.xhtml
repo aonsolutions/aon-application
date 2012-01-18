@@ -25,24 +25,20 @@
 								<aon:outputText value="#{bundle.aon_configuration}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alfrescoCategoryGroup" 
-										action="alfrescoCategoryGroup_list" 
-										actionListener="#{alfrescoCategoryGroup.onSearch}" 
-										value="#{registryBundle.registry_category}" />
-								</aon:div>		
+								<c:if test="#{manager.administrator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="alfrescoCategoryGroup" 
+											action="alfrescoCategoryGroup_list" 
+											actionListener="#{alfrescoCategoryGroup.onSearch}" 
+											value="#{registryBundle.registry_category}" />
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project_type"
 										action="projectType_list"
 										actionListener="#{projectType.onSearch}"
 										value="#{projectBundle.project_project_type}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="activity_type"
-										action="activityTypeStandalone_grid"
-										actionListener="#{activityTypeStandalone.onSearch}"
-										value="#{projectBundle.project_activity_type}" />
-								</aon:div>												
 							</aon:div>
 						</aon:panelGrid>
 					

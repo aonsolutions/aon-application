@@ -171,6 +171,47 @@
 		</managed-property>		
 	</managed-bean>	
 	
+	<!-- ************* ENTERPRISE USER ***************** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseUser</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.EnterpriseUserController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.EnterpriseUser</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>enterpriseUser</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>EnterpriseUser_login</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{enterpriseUserControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>enterpriseUserControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.event.EnterpriseUserControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>					
+	
+	
 	<!-- =================== Enterprise Document ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -208,6 +249,10 @@
 		<navigation-case>
 			<from-outcome>project_formTree</from-outcome>
 			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/projectFormTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseUsers</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseUser/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

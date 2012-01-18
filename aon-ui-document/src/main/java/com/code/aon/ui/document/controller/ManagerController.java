@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
+import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -44,31 +45,39 @@ public class ManagerController implements IEnterpriseController {
 	
 	public static final String CONTROLLER_NAME = "manager";
 
-	private AuthPrincipal principal;
-	
 	private EnterpriseUser loggedUser;
 	
 	private IControllerListener projectListener;
 	
 	private String homeTemplate = "/homepage.xhtml";
 	
+	private AlfrescoUserManager userManager;
+	
+	private boolean administrator;
+	
 	public ManagerController() {
-		this.principal = resolvePrincipal();
-		this.loggedUser = resolveUser();
+		AuthPrincipal principal = resolvePrincipal();
+		this.loggedUser = resolveUser( principal );
 		if ( isMainEnterprise() ) {
 			initWebmail();
 		} else {
 			initEnterprise();
 		}
+		this.userManager = new AlfrescoUserManager(loggedUser.getLogin(), loggedUser.getPassword());
+		this.administrator = this.userManager.isAlfrescoAdministrator(loggedUser.getLogin());
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 		dm.setShow(false);
 	}
-	
-	public AuthPrincipal getPrincipal() {
-		return principal;
+
+	public boolean isAdministrator() {
+		return administrator;
+	}
+
+	public AlfrescoUserManager getUserManager() {
+		return userManager;
 	}
 
 	public EnterpriseUser getLoggedUser() {
@@ -86,11 +95,11 @@ public class ManagerController implements IEnterpriseController {
 		return user;
 	}
 	
-	private EnterpriseUser resolveUser() {
+	private EnterpriseUser resolveUser( AuthPrincipal principal ) {
 		try {
             IManagerBean bean = BeanManager.getManagerBean(EnterpriseUser.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_login"), getPrincipal().getShortName() );
+            criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_login"), principal.getShortName() );
             List<ITransferObject> list = bean.getList(criteria);
             if (! list.isEmpty() ) {
                 return (EnterpriseUser) list.get(0);
@@ -101,7 +110,7 @@ public class ManagerController implements IEnterpriseController {
     			throw new AbortProcessingException(message);
             }
         } catch (ManagerBeanException e) {
-        	LOGGER.error( "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
+        	LOGGER.error( "Error obtaining the USER related with the logged user: " + principal, e);
         }
         return null;		
 	}

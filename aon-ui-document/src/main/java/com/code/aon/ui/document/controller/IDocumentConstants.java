@@ -10,17 +10,10 @@ public interface IDocumentConstants {
 	
 	String INPUT_SEARCH_TEXT = "document_input_search_text";
 	
-	// ************************************************************
-	// BEAN
-	// ************************************************************
-	String COLLECTIONS_CONTROLLER_NAME = "companyCollections";
-
-	String COMPANY_CONTROLLER_NAME = "company";	
-
-	String WORK_ACTIVITY_CONTROLLER_NAME = "workActivity";
-
+	String USER_DUPLICATED = "document_user_duplicated";
 	
-
+	String NEW_PASSWORD_ERROR = "document_new_passwd_error";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
@@ -36,5 +29,7 @@ public interface IDocumentConstants {
 	String ENTERPRISE_DOCUMENT_SEARCH = "enterpriseDocumentSearch";
 	
 	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
+
+	String ENTERPRISE_USER_CONTROLLER_NAME = "enterpriseUser";
 	
 }
