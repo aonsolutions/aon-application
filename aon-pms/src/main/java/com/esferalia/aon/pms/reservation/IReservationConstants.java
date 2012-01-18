@@ -12,13 +12,31 @@ public interface IReservationConstants {
 	String PERCENT = "Percent";
 	String AMOUNT = "Amount";
 	String BOOKING_HOLDER = "BookingHolder";
+	String VAT_TAX = "IVA";
+	String OTHER_TAX = "Others";
 	
-	String CREATE_RESERVATION = "A";
+	String ADD_RESERVATION = "A";
 	String MODIFY_RESERVATION = "M";
 	String CANCEL_RESERVATION = "B";
 	
+	String CRO_SOURCE = "2";
+
 	String AGENCY_TYPE = "5";
 	String COMPANY_TYPE = "4";
 	String IATA = "IATA";
+	String COMPANY = "COMPANY";
+	String CRO = "CRO";
+	String AGENCY_REBATE = "S";
 
+	String GUEST_HOLDER = "C";
+	String AGENCY_HOLDER = "A";
+	String COMPANY_HOLDER = "E";
+
+	String CHILDREN_COUNT = "8";
+
+	String SERVICE_TYPE = "ServiceType";
+	String SERVICE_TYPE_ROOM = "H";
+
+	String TRADYSO = "Tradyso";
+	String GPS = "Gps";
 }

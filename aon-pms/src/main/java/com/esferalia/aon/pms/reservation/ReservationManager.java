@@ -1,26 +1,59 @@
 package com.esferalia.aon.pms.reservation;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.opentravel.ota.x2003.x05.AmountType;
+import org.opentravel.ota.x2003.x05.CommentType.Comment;
+import org.opentravel.ota.x2003.x05.ErrorType;
+import org.opentravel.ota.x2003.x05.HotelReservationIDsType;
+import org.opentravel.ota.x2003.x05.HotelReservationIDsType.HotelReservationID;
 import org.opentravel.ota.x2003.x05.HotelReservationType;
 import org.opentravel.ota.x2003.x05.HotelReservationsType;
 import org.opentravel.ota.x2003.x05.OTAHotelResNotifRQDocument;
-import org.opentravel.ota.x2003.x05.TPAExtensionsType;
+import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument;
+import org.opentravel.ota.x2003.x05.OTAHotelResNotifRSDocument.OTAHotelResNotifRS;
+import org.opentravel.ota.x2003.x05.POSType;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
+import org.opentravel.ota.x2003.x05.ResGlobalInfoType;
 import org.opentravel.ota.x2003.x05.ResGuestsType.ResGuest;
+import org.opentravel.ota.x2003.x05.RoomStaysType.RoomStay;
+import org.opentravel.ota.x2003.x05.ServicesType.Service;
+import org.opentravel.ota.x2003.x05.SourceType;
+import org.opentravel.ota.x2003.x05.TPAExtensionsType;
+import org.opentravel.ota.x2003.x05.TaxType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.code.aon.asset.AssetActivity;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationManager implements IReservationConstants {
 
 	private ReservationUtils reservationUtils;
+	private IPriceStrategy priceStrategy;
+	private Map<String, Integer> successMap;
 
 	public ReservationUtils getReservationUtils() {
 		if (reservationUtils == null) {
@@ -29,80 +62,416 @@ public class ReservationManager implements IReservationConstants {
 		return reservationUtils;
 	}
 
+	public IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public String processReservation(String reservationXml) {
+		successMap = new HashMap<String, Integer>();
 		try {
 			OTAHotelResNotifRQDocument document = OTAHotelResNotifRQDocument.Factory.parse(reservationXml);
-			HotelReservationsType reservationsType = document.getOTAHotelResNotifRQ().getHotelReservations();
-			for (int i=0; i<reservationsType.sizeOfHotelReservationArray(); i++) {
-				processReservation(reservationsType.getHotelReservationArray(i));
+			if (document.validate()) {
+				POSType posType = document.getOTAHotelResNotifRQ().getPOS();
+				HotelReservationsType reservationsType = document.getOTAHotelResNotifRQ().getHotelReservations();
+				for (int i=0; i<reservationsType.sizeOfHotelReservationArray(); i++) {
+					getReservationUtils().init();
+					ProjectReservation reservation = processReservation(reservationsType.getHotelReservationArray(i), posType);
+					successMap.put(reservation.getCode(), reservation.getId());
+				}
+			} else {
+				throw new ReservationException("Invalid message", 395);
 			}
+			return reservationSuccess();
+		} catch (ReservationException ex) {
+			return reservationError(ex);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			return reservationError(ex);
 		}
+	}
 
+	private ProjectReservation processReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
+		String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
+		if (actionType.equals(ADD_RESERVATION)) {
+			return addReservation(reservationType, posType);
+		} else if (actionType.equals(MODIFY_RESERVATION)) {
+			return modifyReservation(reservationType, posType);
+		} else if (actionType.equals(CANCEL_RESERVATION)) {
+			return cancelReservation(reservationType);
+		}
 		return null;
 	}
 
-	private void processReservation(HotelReservationType reservationType) throws ManagerBeanException {
-		String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
-		if (actionType.equals(CREATE_RESERVATION)) {
-			createReservation(reservationType);
-		} else if (actionType.equals(MODIFY_RESERVATION)) {
-			modifyReservation(reservationType);
-		} else if (actionType.equals(CANCEL_RESERVATION)) {
-			cancelReservation(reservationType);
+	private ProjectReservation addReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
+		ProjectReservation reservation = obtainReservation(reservationType);
+		if (reservation == null) {
+			reservation = new ProjectReservation();
+			createReservation(reservationType, posType, reservation);
+			return reservation;
+		} else {
+			throw new ReservationException("Reservation already exists", reservation.getCode(), 127);
 		}
 	}
 
-	private void createReservation(HotelReservationType reservationType) throws ManagerBeanException {
-		String hotel = reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode();
+	private ProjectReservation modifyReservation(HotelReservationType reservationType, POSType posType) throws ManagerBeanException, ReservationException {
+		ProjectReservation reservation = obtainReservation(reservationType);
+		if (reservation != null) {
+			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
+				if (modificationAvailable(reservation)) {
+					removeReservationService(reservation);
+					removeReservationRoom(reservation);
+					removeReservationGuest(reservation);
+	
+					createReservation(reservationType, posType, reservation);
+					return reservation;
+				} else {
+					throw new ReservationException("Reservation in use, can not be modified", reservation.getCode(), 255);
+				}
+			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+				throw new ReservationException("Reservation already cancelled", reservation.getCode(), 95);
+			} else {
+				throw new ReservationException("Reservation in use, can not be modified", reservation.getCode(), 255);
+			}
+		} else {
+			String reservationCode = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
+			throw new ReservationException("No Reservations found with search criteria", reservationCode, 284);
+		}
+	}
+
+	private ProjectReservation cancelReservation(HotelReservationType reservationType) throws ManagerBeanException, ReservationException {
+		ProjectReservation reservation = obtainReservation(reservationType);
+		if (reservation != null) {
+			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
+				removeReservationServiceDetail(reservation);
+				removeReservationRoomDetail(reservation);
+				cancelReservation(reservation);
+				return reservation;
+			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+				throw new ReservationException("Reservation already cancelled", reservation.getCode(), 95);
+			} else {
+				throw new ReservationException("Reservation in use, can not be cancelled", reservation.getCode(), 255);
+			}
+		} else {
+			String reservationCode = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
+			throw new ReservationException("No Reservations found with search criteria", reservationCode, 284);
+		}
+	}
+
+	private void createReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
 		String reservationId = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
-		String creationDate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, DATE);
-		String creationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
-		Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
-		Date checkOut = reservationType.getResGlobalInfo().getTimeSpan().getEnd().getTime();
-		ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
-		String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
-		ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, null);
-		String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
-		String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
-		String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
-		double taxableBase = reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue();
-		double vatQuota = reservationType.getResGlobalInfo().getTotal().getTaxes().getTaxArray(0).getAmount().doubleValue();
-		double total = reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue();
-		
-		ProjectReservation reservation = new ProjectReservation();
-		//reservation.setHotel(getReservationUtils().obtainHotel(hotel));
-		reservation.setCode(reservationId);
-		reservation.setCreationDate(getReservationUtils().obtainCreationDate(creationDate, creationTime));
-		reservation.setStartDate(checkIn);
-		reservation.setEndDate(checkOut);
-		reservation.setSeller(null);
-		reservation.setAgency(null);
-		reservation.setAgencyCommissionPercent(0);
-		reservation.setAgencyCommissionAmount(0);
-		reservation.setAgencyRebate(false);
-		reservation.setCompany(null);
-		reservation.setDiscountPercent(0);
-		reservation.setDiscountAmount(0);
-		reservation.setBookingHolder(null);
-		reservation.setTaxableBase(0);
-		reservation.setVatQuota(0);
-		reservation.setOtherTaxQuota(0);
-		reservation.setTotal(0);
-		reservation.setRemarks(null);
-		reservation.setStatus(ReservationStatus.ACTIVE);
+		try {
+			String hotelCode = reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode();
+			String creationDate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, DATE);
+			String creationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
+			Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
+			Date checkOut = reservationType.getResGlobalInfo().getTimeSpan().getEnd().getTime();
+			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
+			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
+			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
+			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, null);
+			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
+			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
+			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
+			double taxableBase = reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue();
+			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
+			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
+			double total = reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue();
+			String remarks =  findComments(reservationType.getResGlobalInfo());
 
+			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
+			getReservationUtils().setDomain(hotel.getDomain());
+
+			reservation.setHotel(hotel);
+			reservation.setCode(reservationId);
+			reservation.setStartDate(checkIn);
+			reservation.setEndDate(checkOut);
+			reservation.setSeller(getReservationUtils().obtainSeller(sellerSource));
+			reservation.setAgency(getReservationUtils().obtainAgency(agencyInfo));
+			reservation.setAgencyCommissionPercent(getReservationUtils().obtainAgencyCommissionPercent(agencyInfo));
+			reservation.setAgencyCommissionAmount(getReservationUtils().obtainAgencyCommissionAmount(agencyInfo));
+			reservation.setAgencyRebate(agencyRebate != null && agencyRebate.equals(AGENCY_REBATE));
+			reservation.setCompany(getReservationUtils().obtainCompany(companyInfo));
+			reservation.setDiscountPercent((discountPercent != null) ? Double.parseDouble(discountPercent) : 0);
+			reservation.setDiscountAmount((discountAmount != null) ? Double.parseDouble(discountAmount) : 0);
+			reservation.setBookingHolder(getReservationUtils().obtainBookingHolder(bookingHolder));
+			reservation.setTaxableBase(taxableBase);
+			reservation.setVatQuota(vatQuota);
+			reservation.setOtherTaxQuota(otherTaxQuota);
+			reservation.setTotal(total);
+			reservation.setRemarks(remarks);
+			reservation.setCrs(true);
+			reservation.setStatus(ReservationStatus.ACTIVE);
+
+			getReservationUtils().fillProject(reservation);
+			reservation.getProject().setDomain(hotel.getDomain());
+			reservation.setDomain(hotel.getDomain());
+
+			getReservationUtils().verifySellerEntity(reservation, sellerSource);
+			getReservationUtils().verifyAgencyEntity(reservation, agencyInfo);
+			getReservationUtils().verifyCompanyEntity(reservation, companyInfo);
+
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			if (reservation.getId() == null) {
+				reservation.setCreationDate(getReservationUtils().obtainCreationDate(creationDate, creationTime));
+				reservation = (ProjectReservation)reservationBean.insert(reservation);
+			} else {
+				reservation.setModificationDate(new Date());
+				reservation = (ProjectReservation)reservationBean.update(reservation);
+			}
+
+			createReservationGuest(reservationType, reservation);
+			createReservationRoom(reservationType, reservation);
+			createReservationService(reservationType, reservation);
+		} catch(Exception ex) {
+			String actionType = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), ACTION, TYPE);
+			if (actionType.equals(ADD_RESERVATION)) {
+				try {
+					removeReservationService(reservation);
+					removeReservationRoom(reservation);
+					removeReservationGuest(reservation);
+					removeReservation(reservation);
+				} catch (ManagerBeanException exc) {
+				}
+			}
+
+			if (ex instanceof ReservationException) {
+				ReservationException rex = (ReservationException)ex;
+				rex.setRecord(reservationId);
+				throw rex;
+			} else {
+				throw new ReservationException("Unknown error", reservationId, 1);
+			}
+		}
+	}
+
+	private void createReservationGuest(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		for (int i=0; i<reservationType.getResGuests().sizeOfResGuestArray(); i++) {
+			ResGuest guest = reservationType.getResGuests().getResGuestArray(i);
+			if (StringUtils.isNotEmpty(guest.getResGuestRPH()) && guest.getProfiles().sizeOfProfileInfoArray() > 0) {
+				ProjectReservationGuest reservationGuest = new ProjectReservationGuest();
+				reservationGuest.setProjectReservation(reservation);
+				reservationGuest.setDomain(getReservationUtils().getDomain());
+				reservationGuest.setGuestIndex(Integer.parseInt(guest.getResGuestRPH()));
+				reservationGuest.setSurname(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getSurname());
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfGivenNameArray() > 0) {
+					reservationGuest.setName(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getGivenNameArray(0));
+				}
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfNamePrefixArray() > 0) {
+					reservationGuest.setTreatment(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getNamePrefixArray(0));
+				}
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfEmailArray() > 0) {
+					reservationGuest.setEmail(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getEmailArray(0).getStringValue());
+				}
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfTelephoneArray() > 0) {
+					reservationGuest.setPhone(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getTelephoneArray(0).getPhoneNumber());
+				}
+				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().sizeOfAddressArray() > 0) {
+					reservationGuest.setAddress(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getAddressLineArray(0));
+					reservationGuest.setZip(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getPostalCode());
+					reservationGuest.setCity(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCityName());
+					reservationGuest.setProvince(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getStateProv().getStringValue());
+					reservationGuest.setCountry(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName().getCode());
+				}
+				reservationGuestBean.insert(reservationGuest);
+			}
+		}
+	}
+
+	private void createReservationRoom(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		for (int i=0; i<reservationType.getRoomStays().sizeOfRoomStayArray(); i++) {
+			RoomStay stay = reservationType.getRoomStays().getRoomStayArray(i);
+			if (stay.getRoomTypes() != null && stay.getRoomTypes().sizeOfRoomTypeArray() > 0) {
+				for (int j=0; j<stay.getRoomTypes().getRoomTypeArray(0).getNumberOfUnits(); j++) {
+					ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
+					reservationRoom.setProjectReservation(reservation);
+					reservationRoom.setDomain(getReservationUtils().getDomain());
+					reservationRoom.setRoomIndex(stay.getIndexNumber());
+					reservationRoom.setItem(getReservationUtils().obtainRoomItem(stay.getRoomTypes().getRoomTypeArray(0).getRoomTypeCode()));
+					if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
+						reservationRoom.setTariff(getReservationUtils().obtainTariff(stay.getRatePlans().getRatePlanArray(0).getRatePlanCode()));
+					}
+					if (j == 0 && stay.getGuestCounts() != null && stay.getGuestCounts().sizeOfGuestCountArray() > 0) {
+						for (int k=0; k<stay.getGuestCounts().sizeOfGuestCountArray(); k++) {
+							String type = stay.getGuestCounts().getGuestCountArray(k).getAgeQualifyingCode();
+							if (type != null && type.equals(CHILDREN_COUNT)) {
+								reservationRoom.setChildren(stay.getGuestCounts().getGuestCountArray(k).getCount());
+							} else {
+								reservationRoom.setAdults(stay.getGuestCounts().getGuestCountArray(k).getCount());
+							}
+						}
+					}
+					reservationRoomBean.insert(reservationRoom);
+				}
+			}
+		}
+	}
+
+	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		for (int i=0; i<reservationType.getServices().sizeOfServiceArray(); i++) {
+			Service service = reservationType.getServices().getServiceArray(i);
+			ProjectReservationService reservationService = new ProjectReservationService();
+			reservationService.setProjectReservation(reservation);
+			reservationService.setDomain(getReservationUtils().getDomain());
+			reservationService.setServiceIndex(Integer.parseInt(service.getServiceRPH()));
+			reservationService.setItem(getReservationUtils().obtainServiceItem(service.getServiceInventoryCode()));
+			reservationService.setDescription(reservationService.getItem().getProduct().getName());
+			reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
+
+			boolean serviceRoom = false;
+			for (int j=0; j<service.getServiceDetails().getComments().sizeOfCommentArray(); j++) {
+				Comment comment = service.getServiceDetails().getComments().getCommentArray(j);
+				if (comment.getName().equals(SERVICE_TYPE) && comment.getTextArray(0).equals(SERVICE_TYPE_ROOM)) {
+					serviceRoom = true;
+					break;
+				}
+			}
+
+			for (int j=0; j<service.sizeOfPriceArray(); j++) {
+				AmountType price = service.getPriceArray(j);
+				if (price.getEffectiveDate() != null) {
+					Calendar currentCalendar = price.getEffectiveDate();
+					ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
+					reservationServiceDetail.setProjectReservationService(reservationService);
+					reservationServiceDetail.setDomain(getReservationUtils().getDomain());
+					reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());
+					reservationServiceDetail.setQuantity(price.getNumberOfUnits());
+					reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
+					reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
+					reservationServiceDetailBean.insert(reservationServiceDetail);
+
+					if (serviceRoom) {
+						currentCalendar.add(Calendar.DATE, 1);
+						Calendar nextCalendar = new GregorianCalendar();
+						nextCalendar.setTime(reservation.getEndDate());
+						if (service.getPriceArray(j+1) != null) {
+							nextCalendar = service.getPriceArray(j+1).getEffectiveDate();
+						}
+
+						while (currentCalendar.compareTo(nextCalendar) < 0) {
+							reservationServiceDetail = new ProjectReservationServiceDetail();
+							reservationServiceDetail.setProjectReservationService(reservationService);
+							reservationServiceDetail.setDomain(getReservationUtils().getDomain());
+							reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());
+							reservationServiceDetail.setQuantity(price.getNumberOfUnits());
+							reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
+							reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
+							reservationServiceDetailBean.insert(reservationServiceDetail);
+							
+							currentCalendar.add(Calendar.DATE, 1);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private ProjectReservation obtainReservation(HotelReservationType reservationType) throws ManagerBeanException {
+		String reservationId = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-		//reservationBean.insert(reservation);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservationId);
+		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS), new Boolean(true));
+		if (reservationBean.getCount(criteria) > 0) {
+			return (ProjectReservation)reservationBean.getList(criteria).get(0);
+		}
+		return null;
 	}
 
-	private void modifyReservation(HotelReservationType reservationType) {
-		
+	private boolean modificationAvailable(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, reservation.getId());
+		return (reservationRoomDetailBean.getCount(criteria) == 0);
 	}
 
-	private void cancelReservation(HotelReservationType reservationType) {
+	private void removeReservationService(ProjectReservation reservation) throws ManagerBeanException {
+		removeReservationServiceDetail(reservation);
 		
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject service : reservationServiceBean.getList(criteria)) {
+			ProjectReservationService reservationService = (ProjectReservationService)service;
+			reservationServiceBean.remove(reservationService);
+		}
+	}
+
+	private void removeReservationRoom(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject room : reservationRoomBean.getList(criteria)) {
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)room;
+			reservationRoomBean.remove(reservationRoom);
+		}
+	}
+
+	private void removeReservationGuest(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject guest : reservationGuestBean.getList(criteria)) {
+			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)guest;
+			reservationGuestBean.remove(reservationGuest);
+		}
+	}
+
+	private void removeReservation(ProjectReservation reservation) throws ManagerBeanException {
+		if (reservation.getId() != null) {
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			reservationBean.remove(reservation);
+			
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			projectBean.remove(reservation.getProject());
+		}
+	}
+
+	private void removeReservationServiceDetail(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, reservation.getId());
+		for (ITransferObject serviceDetail : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)serviceDetail;
+			reservationServiceDetailBean.remove(reservationServiceDetail);
+		}
+	}
+
+	private void removeReservationRoomDetail(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, reservation.getId());
+		for (ITransferObject roomDetail : reservationRoomDetailBean.getList(criteria)) {
+			ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)roomDetail;
+			reservationRoomDetailBean.remove(reservationRoomDetail);
+			assetActivityBean.remove(reservationRoomDetail.getAssetActivity());
+		}
+	}
+
+	private void cancelReservation(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setModificationDate(new Date());
+		reservationBean.update(reservation);
+	}
+
+	private SourceType findPosSource(SourceType[] sources, String type) {
+		for (int i=0; i<sources.length; i++) {
+			SourceType source = sources[i];
+			if (source.getRequestorID() != null && source.getRequestorID().getType() != null && source.getRequestorID().getType().equals(type)) {
+				return source;
+			}
+		}
+		return null;
 	}
 
 	private ProfileInfo findProfileInfo(ResGuest[] guests, String type, String context) {
@@ -136,6 +505,32 @@ public class ReservationManager implements IReservationConstants {
 		return null;
 	}
 
+	private String findComments(ResGlobalInfoType resGlobalInfoType) {
+		String comments = "";
+		if (resGlobalInfoType.getComments() != null) {
+			for (int i=0; i<resGlobalInfoType.getComments().sizeOfCommentArray(); i++) {
+				Comment comment = resGlobalInfoType.getComments().getCommentArray(i);
+				for (int j=0; j<comment.sizeOfTextArray(); j++) {
+					comments += comment.getTextArray(j).getStringValue() + " ";
+				}
+			}
+		}
+		return comments;
+	}
+
+	private double findTaxQuota(ResGlobalInfoType resGlobalInfoType, String type) {
+		double taxQuota = 0;
+		if (resGlobalInfoType.getTotal().getTaxes() != null) {
+			for (int i=0; i<resGlobalInfoType.getTotal().getTaxes().sizeOfTaxArray(); i++) {
+				TaxType taxType = resGlobalInfoType.getTotal().getTaxes().getTaxArray(i);
+				if (taxType.getTaxDescriptionArray(0) != null && taxType.getTaxDescriptionArray(0).getTextArray(0).getStringValue().equals(type)) {
+					taxQuota = taxType.getAmount().doubleValue();
+				}
+			}
+		}
+		return taxQuota;
+	}
+
 	private Node findNode(Node parent, String nodeName, boolean deep) {
 		Node nodeFound = null;
 
@@ -166,6 +561,37 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 		return null;
+	}
+
+	private String reservationSuccess() {
+		OTAHotelResNotifRSDocument document = OTAHotelResNotifRSDocument.Factory.newInstance();
+		OTAHotelResNotifRS response = document.addNewOTAHotelResNotifRS();
+		response.addNewSuccess();
+		HotelReservationIDsType reservationIds = response.addNewHotelReservations().addNewHotelReservation().addNewResGlobalInfo().addNewHotelReservationIDs();
+		for (String reservationCode : successMap.keySet()) {
+			HotelReservationID reservationId1 = reservationIds.addNewHotelReservationID();
+			reservationId1.setResIDSource(TRADYSO);
+			reservationId1.setResIDValue(reservationCode);
+
+			HotelReservationID reservationId2 = reservationIds.addNewHotelReservationID();
+			reservationId2.setResIDSource(GPS);
+			reservationId2.setResIDValue(successMap.get(reservationCode).toString());
+		}
+		return document.toString();
+	}
+
+	private String reservationError(Exception ex) {
+		return reservationError(new ReservationException(ex.getMessage(), 1));
+	}
+
+	private String reservationError(ReservationException ex) {
+		OTAHotelResNotifRSDocument document = OTAHotelResNotifRSDocument.Factory.newInstance();
+		OTAHotelResNotifRS response = document.addNewOTAHotelResNotifRS();
+		ErrorType errorType = response.addNewErrors().addNewError();
+		errorType.setType(Integer.toString(ex.getType()));
+		errorType.setRecordID(ex.getRecord());
+		errorType.setStringValue(ex.getMessage());
+		return document.toString();
 	}
 
 }
