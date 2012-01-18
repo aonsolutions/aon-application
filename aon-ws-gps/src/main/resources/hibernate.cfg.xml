@@ -1,0 +1,64 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="show_sql">true</property>		
+		<property name="connection.url">jdbc:mysql://db1:3306/grupoplayasol-com?autoReconnect=true</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.password">serubd2000</property>		
+ 
+		<mapping package="com.code.aon.common.dao.hibernate.type"/>
+
+    	<mapping class="com.code.aon.asset.Asset"/>
+    	<mapping class="com.code.aon.asset.AssetActivity"/>
+    	<mapping class="com.code.aon.company.Enterprise"/>
+    	<mapping class="com.code.aon.company.WorkPlace"/>
+    	<mapping class="com.code.aon.config.Bank"/>
+    	<mapping class="com.code.aon.config.CommissionType"/>
+    	<mapping class="com.code.aon.config.Domain"/>
+    	<mapping class="com.code.aon.config.PayMethod"/>
+    	<mapping class="com.code.aon.config.Scope"/>
+    	<mapping class="com.code.aon.config.Tariff"/>
+    	<mapping class="com.code.aon.config.Tax"/>
+    	<mapping class="com.code.aon.customer.Customer"/>
+    	<mapping class="com.code.aon.geozone.GeoZone"/>
+    	<mapping class="com.code.aon.product.Brand"/>
+    	<mapping class="com.code.aon.product.Item"/>
+    	<mapping class="com.code.aon.product.ItemSupplier"/>
+    	<mapping class="com.code.aon.product.Product"/>
+    	<mapping class="com.code.aon.product.ProductCategory"/>
+    	<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+    	<mapping class="com.code.aon.project.Project"/>
+    	<mapping class="com.code.aon.project.ProjectType"/>
+    	<mapping class="com.code.aon.registry.Category"/>
+    	<mapping class="com.code.aon.registry.Registry"/>
+    	<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+    	<mapping class="com.code.aon.registry.RegistryAddress"/>
+    	<mapping class="com.code.aon.registry.RegistryAttachment"/>
+    	<mapping class="com.code.aon.registry.RegistryBank"/>
+    	<mapping class="com.code.aon.registry.RegistryMedia"/>
+    	<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+    	<mapping class="com.code.aon.registry.RegistrySegment"/>
+    	<mapping class="com.code.aon.registry.Segment"/>
+    	<mapping class="com.code.aon.seller.Seller"/>
+    	<mapping class="com.code.aon.supplier.Supplier"/>
+
+    	<mapping class="com.esferalia.aon.calendar.Calendar"/>
+    	<mapping class="com.esferalia.aon.calendar.Holiday"/>
+    	<mapping class="com.esferalia.aon.pms.Hotel"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+    	<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+    	<mapping class="com.esferalia.aon.pms.Room"/>
+		
+	</session-factory>
+
+</hibernate-configuration>
