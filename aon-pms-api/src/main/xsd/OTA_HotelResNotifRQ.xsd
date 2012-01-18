@@ -4,6 +4,7 @@
 	<xs:annotation>
 		<xs:documentation xml:lang="en">All Schema files in the OTA specification are made available according to the terms defined by the OTA License Agreement at http://www.opentravel.org/ota_downloads_form.cfm</xs:documentation>
 	</xs:annotation>
+	<!-- **************************** OTA_HotelResNotifRQ ************************************** -->
 	<xs:element name="OTA_HotelResNotifRQ">
 		<xs:annotation>
 			<xs:documentation xml:lang="en">Hotel Reservation Notif Request supports the functionality of updating other systems with reservation data. The message assumes a push model, with the originating system pushing the data to another system.  The originating system would usually be a booking source, such as a Global Distribution System (GDS), a Central Reservation System (CRS) or some other agent of the hotel.</xs:documentation>
@@ -9684,4 +9685,154 @@ Refer to OTA Code List Travel Sector (TVS).
 			</xs:annotation>
 		</xs:attribute>
 	</xs:attributeGroup>
+
+
+	<!-- **************************** OTA_HotelResNotifRS ************************************** -->
+	<xs:element name="OTA_HotelResNotifRS">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Returns acknowledgement that the reservation has been successfully received, or includes warnings from business processing rules or errors if the request did not succeed. It may optionally include the updated reservation data.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element name="Success" type="SuccessType"/>
+						<xs:element name="Warnings" type="WarningsType" minOccurs="0"/>
+						<xs:element name="HotelReservations" type="HotelReservationsType" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element name="Errors" type="ErrorsType"/>
+				</xs:choice>
+				<xs:element name="POS" type="POS_Type" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attributeGroup ref="OTA_PayloadStdAttributes"/>
+			<xs:attribute name="ResResponseType" type="TransactionStatusType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SuccessType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Standard way to indicate successful processing of an OTA message. Returning an empty element of this type indicates success.</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="WarningsType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Collection of warnings.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Warning" type="WarningType" maxOccurs="999">
+				<xs:annotation>
+					<xs:documentation>Used in conjunction with the Success element to define a business error. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WarningType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Standard way to indicate successful processing of an OTA message, but one in which warnings are generated</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="FreeTextType">
+				<xs:attribute name="Type" type="OTA_CodeType" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">The Warning element MUST contain the Type attribute that uses a recommended set of values to indicate the warning type. The validating XSD can expect to accept values that it has NOT been explicitly coded for and process them by using Type ="Unknown".  Refer to OTA Code List Error Warning Type (EWT).</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="ErrorWarningAttributeGroup">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">Details of the warning.</xs:documentation>
+					</xs:annotation>
+				</xs:attributeGroup>
+				<xs:attribute name="RPH" type="RPH_Type" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">Reference Place Holder used as an index for this warning.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="ErrorsType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">A collection of errors that occurred during the processing of a message.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Error" type="ErrorType" maxOccurs="99">
+				<xs:annotation>
+					<xs:documentation>An error that occurred during the processing of a message.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ErrorType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Standard way to indicate that an error occurred during the processing of an OTA message</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="FreeTextType">
+				<xs:attribute name="Type" type="OTA_CodeType" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">The Error element MUST contain the Type attribute that uses a recommended set of values to indicate the error type. The validating XSD can expect to accept values that it has NOT been explicitly coded for and process them by using Type ="Unknown".  Refer to OTA Code List Error Warning Type (EWT).</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="ErrorWarningAttributeGroup">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">Details of the error.</xs:documentation>
+					</xs:annotation>
+				</xs:attributeGroup>
+				<xs:attribute name="NodeList" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">An XPath expression that selects all the nodes whose data caused this error.  Further, this expression should have an 	additional contraint which contains the data of the node.  This will provide the offending data back to systems that cannot maintain the original message. </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="TransactionStatusType">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">To specify a status to the transaction, usually in the response message, of the action specifed in the request message.	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Pending"/>
+			<xs:enumeration value="Cancelled"/>
+			<xs:enumeration value="Modified"/>
+			<xs:enumeration value="Committed"/>
+			<xs:enumeration value="Ignored"/>
+			<xs:enumeration value="On Hold"/>
+			<xs:enumeration value="Unsuccessful"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:attributeGroup name="ErrorWarningAttributeGroup">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">Used to identify an application error by either text, code, or by an online description and also to give the status, tag, and/or identification of the record that may have caused the error.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="ShortText" type="StringLength1to64" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">An abbreviated version of the error in textual format.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Code" type="OTA_CodeType" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">If present, this refers to a table of coded values exchanged between applications to identify errors or warnings. Refer to OTA Code List Error Codes (ERR).</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="DocURL" type="xs:anyURI" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">If present, this URL refers to an online description of the error that occurred.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Status" type="StringLength1to64" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">If present, recommended values are those enumerated in the OTA_ErrorRS, (NotProcessed | Incomplete | Complete | Unknown) however, the data type is designated as string data, recognizing that trading partners may identify additional status conditions not included in the enumeration.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Tag" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">If present, this attribute may identify an unknown or misspelled tag that caused an error in processing. It is recommended that the Tag attribute use XPath notation to identify the location of a tag in the event that more than one tag of the same name is present in the document. Alternatively, the tag name alone can be used to identify missing data [Type=ReqFieldMissing].</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="RecordID" type="StringLength1to64" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">If present, this attribute allows for batch processing and the identification of the record that failed amongst a group of records. This value may contain a concatenation of a unique failed transaction ID with specific record(s) associated with that transaction.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+
 </xs:schema>
