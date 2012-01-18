@@ -13,6 +13,7 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_hotel_module}" />
 				<ui:param name="controller" value="#{hotel}" />
 				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipResetButton" value="#{companyCollections.currentUserEnterprisesCount == 0}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -30,6 +31,15 @@
 					<aon:inputText id="Hotel_workPlace_description" 
 						value="#{hotel.to.workPlace.description}" required="true"
 						size="40" maxlength="64" />
+
+					<aon:outputLabel for="Hotel_workPlace_enterprise" 
+						value="#{pmsBundle.pms_enterprise}"
+						rendered="#{companyCollections.currentUserEnterprisesCount > 1}" />
+					<aon:selectOneMenu id="Hotel_workPlace_enterprise"
+						value="#{hotel.to.workPlace.enterprise}" required="#{true}"
+						rendered="#{companyCollections.currentUserEnterprisesCount > 1}">
+						<f:selectItems value="#{companyCollections.currentUserEnterprises}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Hotel_scope" 
 						value="#{configBundle.config_scope}" />

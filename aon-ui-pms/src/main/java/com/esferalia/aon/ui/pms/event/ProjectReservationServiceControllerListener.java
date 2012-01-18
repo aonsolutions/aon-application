@@ -19,7 +19,7 @@ public class ProjectReservationServiceControllerListener extends ControllerAdapt
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationServiceController controller = (ProjectReservationServiceController)event.getController();
 		ProjectReservationService to = (ProjectReservationService)controller.getTo();
-		to.setTaxableBase(CommonUtil.round(to.getQuantity() * to.getPrice()));
+		//to.setTaxableBase(CommonUtil.round(to.getQuantity() * to.getPrice()));
 		try {
 			to.setServiceIndex(calculateNextIndex(controller.getManagerBean(), to.getProjectReservation()));
 		} catch (ManagerBeanException e) {

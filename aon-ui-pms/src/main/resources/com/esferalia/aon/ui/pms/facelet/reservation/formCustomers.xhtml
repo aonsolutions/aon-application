@@ -23,7 +23,7 @@
 
 	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
 	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-		required="#{true}">
+		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}">
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
 	</aon:selectOneMenu>
 

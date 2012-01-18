@@ -90,4 +90,12 @@
 			timeZone="#{timeZoneController.timeZoneId}" />
 	</aon:outputText>
 
+	<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificationDate}"
+		rendered="#{!reservation.new and reservation.to.modificationDate != null}" />
+	<aon:outputText id="ProjectReservation_modificationDate" value="#{reservation.to.modificationDate}" 
+		rendered="#{!reservation.new and reservation.to.modificationDate != null}">
+		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+	</aon:outputText>
+
 </ui:composition>

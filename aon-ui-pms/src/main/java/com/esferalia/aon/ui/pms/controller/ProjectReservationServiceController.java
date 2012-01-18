@@ -24,7 +24,7 @@ public class ProjectReservationServiceController extends LinesController {
 		return priceStrategy;
 	}
 
-	public void onItemChanged(LookupChangeEvent event) {
+	/*public void onItemChanged(LookupChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
@@ -66,6 +66,6 @@ public class ProjectReservationServiceController extends LinesController {
 			reservationService.setPrice(0);
 		}
 		reservationService.setTaxableBase(getPriceStrategy().getBasePrice(reservationService));
-	}	
+	}*/	
 
 }

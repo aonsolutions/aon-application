@@ -29,7 +29,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		reservation.setStartDate(new Date());
 		reservation.setEndDate(DateUtils.addDays(new Date(), 1));
-		reservation.setCreationDate(new Date());
+		reservation.setCrs(false);
 		reservation.setStatus(ReservationStatus.ACTIVE);
 	}
 
@@ -37,6 +37,12 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		controller.resetNights();
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservation reservation = (ProjectReservation)event.getController().getTo();
+		reservation.setCreationDate(new Date());
 	}
 
 	@Override
@@ -50,6 +56,12 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservation reservation = (ProjectReservation)event.getController().getTo();
+		reservation.setModificationDate(new Date());
 	}
 
 	private void insertProjectReservationGuest(ProjectReservation reservation, String name, String surname) throws ManagerBeanException {

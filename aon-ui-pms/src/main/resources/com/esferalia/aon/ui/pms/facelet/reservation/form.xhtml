@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
-				<ui:param name="skipSaveButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipSaveButton" value="#{!reservation.active or !aonRole.saleOperator}" />
 				<ui:param name="skipRemoveButton" value="true" />
 			</ui:decorate>
 

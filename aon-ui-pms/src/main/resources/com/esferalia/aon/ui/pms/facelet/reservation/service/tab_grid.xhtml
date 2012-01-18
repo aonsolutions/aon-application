@@ -9,6 +9,8 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipResetButton" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipLineEdition" value="#{!reservation.active or !aonRole.saleOperator}" />
 
 		<ui:define name="columns">
 
@@ -20,6 +22,7 @@
 					rendered="#{formList or formEdit}" />
 			</aon:column>
 
+<!-- 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationService_effectiveDate" value="#{bundle.aon_date}" />
@@ -39,7 +42,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 				</f:facet>
 			</aon:column>
-
+ -->
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="Item_id" value="#{pmsBundle.pms_service}" />
@@ -90,6 +93,7 @@
 				</f:facet>
 			</aon:column>
 
+<!-- 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationService_quantity" value="#{bundle.aon_quantity}" />
@@ -148,7 +152,7 @@
 					</aon:outputText>
 				</f:facet>
 			</aon:column>
-
+ -->
 		</ui:define>
 	</ui:decorate>
 

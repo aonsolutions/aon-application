@@ -21,6 +21,13 @@
 		<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 	</aon:outputText>
 
+	<aon:outputLabel for="ProjectReservation_otherTaxQuota" value="#{pmsBundle.pms_other_tax}"
+		rendered="#{!reservation.new}" />
+	<aon:outputText	id="ProjectReservation_otherTaxQuota" value="#{reservation.to.otherTaxQuota}"
+		rendered="#{!reservation.new}">
+		<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+	</aon:outputText>
+
 	<aon:outputLabel for="ProjectReservation_total" value="#{bundle.aon_total}"
 		rendered="#{!reservation.new}" />
 	<aon:outputText	id="ProjectReservation_total" value="#{reservation.to.total}"

@@ -11,6 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -76,12 +77,26 @@ public class PmsCollectionsController {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), new Integer(1));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
 		for (ITransferObject ito : itemBean.getList(criteria)) {
 			Item item = (Item)ito;
 			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
 			roomItems.add(roomItem);
 		}
 		return roomItems;
+	}
+
+	public List<SelectItem> getTariffs() throws ManagerBeanException {
+		List<SelectItem> tariffs = new LinkedList<SelectItem>();
+		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(tariffBean.getFieldName(IEntityAlias.TARIFF_NAME));
+		for (ITransferObject ito : tariffBean.getList(criteria)) {
+			Tariff tariff = (Tariff)ito;
+			SelectItem item = new SelectItem(tariff, tariff.getCode() + " - " + tariff.getName());
+			tariffs.add(item);
+		}
+		return tariffs;
 	}
 
 }
