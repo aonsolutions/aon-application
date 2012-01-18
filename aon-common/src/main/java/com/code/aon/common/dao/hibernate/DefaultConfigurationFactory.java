@@ -3,6 +3,8 @@ package com.code.aon.common.dao.hibernate;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 
+import com.code.aon.common.domain.DomainEntityListener;
+
 /**
  * Default implementation of the factory for creating Hibernate Configuration objects.
  */
@@ -42,6 +44,7 @@ public class DefaultConfigurationFactory implements IConfigurationFactory {
 		} else {
 			configuration.configure();
 		}
+        configuration.setListener("pre-insert", new DomainEntityListener());
 		return configuration;
 	}
 

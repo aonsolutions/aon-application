@@ -19,6 +19,7 @@ public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	@Override
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+/*		
 		IDomain iDomain =  (IDomain) evt.getTo();
 		Integer currentDomain = DomainManager.getCurrentDomain();
 		System.out.println("DOMAIN LISTENER ..:" + iDomain.getClass().getName());
@@ -48,6 +49,7 @@ public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				asset.setDomain(currentDomain);
 			}
 		}
+*/
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainEntityListener;
 
 /**
  * Hibernate utilities class.
