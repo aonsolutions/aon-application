@@ -103,7 +103,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		if ( param == null ) {
 			param = new ApplicationParameter();
 			param.setName(paramName);
-		} else if ( value.getValue().equals(param.getValue()) ) {
+		} else if ( (value != null) && value.getValue().equals(param.getValue()) ) {
 			update = false;
 		}
 		if ( update ) {
