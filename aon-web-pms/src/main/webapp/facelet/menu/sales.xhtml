@@ -44,6 +44,16 @@
 											action="bank-sales"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-sales" 
+											action="tariff_list-sales" actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-sales" 
+											action="catalogue_search-sales" actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>								
 								</c:if>																											
 							</aon:div>
 						</aon:panelGrid>
