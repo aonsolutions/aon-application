@@ -503,7 +503,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public ISalaryProxy getSalaryProxy() {
-		return new SQLSalaryProxy(getId());
+		return new SQLSalaryProxy(getId(), getDomain());
 	}
 
 	@Override
@@ -757,6 +757,7 @@ public class SQLContractSalaryCalculatorContext implements
 		return getInt(SQLConstants.CONTRACT, ContractColumns.ID);
 	}
 	
+	
 	public Integer getCnae2009() {
 		Object cna2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, 
 				EnterpriseActivityColumns.CNAE2009);
@@ -857,6 +858,11 @@ public class SQLContractSalaryCalculatorContext implements
 		return connection;
 	}
 
+	protected  Integer getAgreement() {
+		Object value = getObject(SQLConstants.AGREEMENT_LEVEL, AgreementLevelColumns.AGREEMENT);
+		return value == null ? null : ( Integer ) value ;
+	}
+
 	//----------------------------------------------------------------------------------------
 	// don't look it's private
 	//----------------------------------------------------------------------------------------
@@ -928,10 +934,9 @@ public class SQLContractSalaryCalculatorContext implements
 		this.cleaveStmt.setDate(2, toSqlDate( this.endDate) );
 		this.cleaveStmt.setDate(3, toSqlDate( this.startDate) );
 	}
-
-
-	protected  Integer getAgreement() {
-		Object value = getObject(SQLConstants.AGREEMENT_LEVEL, AgreementLevelColumns.AGREEMENT);
+	
+	private  Integer getDomain() {
+		Object value = getObject(SQLConstants.CONTRACT, ContractColumns.DOMAIN);
 		return value == null ? null : ( Integer ) value ;
 	}
 

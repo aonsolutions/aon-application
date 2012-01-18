@@ -1207,11 +1207,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		}
 	}
 	
-	private void saveSalary() throws SalaryException {
-		Session session = 
-				getHibernateSession4Class(Salary.class);
-	
-		session.saveOrUpdate(salary);
+	private void saveSalary() throws ManagerBeanException {
+		BeanManager.getManagerBean(Salary.class).insertOrUpdate(( Salary ) salary);
 	}
 
 	private Session getHibernateSession4Class(Class clazz) {
