@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
 import com.code.aon.company.enumeration.ReportPrintOption;
@@ -176,11 +177,41 @@ public class CompanyCollectionsController {
     	return banks;
     }
 
+    public Enterprise getEnterprise() {
+		return null;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+	}
+
+	public List<SelectItem> getCurrentUserEnterprises() throws ManagerBeanException {
+		List<SelectItem> enterprises = new LinkedList<SelectItem>();
+   		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+   		Criteria criteria = new Criteria();
+   		UserUtils.getInstance().addScopeFilterToCriteria(criteria, enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_SCOPE_ID));
+    	criteria.addOrder(enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_NAME));
+    	List<ITransferObject> list = enterpriseBean.getList(criteria);
+    	for (ITransferObject to : list) {
+    		Enterprise enterprise = (Enterprise)to;
+    		enterprises.add(new SelectItem(enterprise, enterprise.getRegistry().getFullName()));
+    	}
+		return enterprises;
+	}	
+
+	public int getCurrentUserEnterprisesCount() throws ManagerBeanException {
+		int enterprisesCount = 0;
+		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+		Criteria criteria = new Criteria();
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_SCOPE_ID));
+		enterprisesCount = enterpriseBean.getCount(criteria);
+		return enterprisesCount;
+	}
+	
     public WorkPlace getWorkPlace() {
 		return null;
 	}
 
-	public void setWorkPlace( WorkPlace workPlace ) {
+	public void setWorkPlace(WorkPlace workPlace) {
 	}
 
 	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
@@ -189,7 +220,7 @@ public class CompanyCollectionsController {
    		Criteria criteria = new Criteria();
    		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
    		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
-    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ID));
+    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
     	List<ITransferObject> list = workPlaceBean.getList(criteria);
     	for (ITransferObject to : list) {
     		WorkPlace workPlace = (WorkPlace)to;
