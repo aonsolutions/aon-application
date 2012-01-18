@@ -252,7 +252,7 @@ public class ConfigCollectionsController {
 		return getSeries(true, IEntityAlias.SERIES_RECTIFICATION);
 	}	
 
-	public List<SelectItem> getSeries(boolean onlyId, String typeAlias) throws ManagerBeanException {
+	public List<SelectItem> getSeries(boolean onlyCode, String typeAlias) throws ManagerBeanException {
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
@@ -261,15 +261,11 @@ public class ConfigCollectionsController {
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
-		criteria.addOrder(seriesBean.getFieldName(IEntityAlias.SERIES_ID));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID));
+		criteria.addOrder(seriesBean.getFieldName(IEntityAlias.SERIES_CODE));
 		for (ITransferObject ito : seriesBean.getList(criteria)) {
 			Series serie = (Series)ito;
-			SelectItem item;
-			if (onlyId) {
-				item = new SelectItem(serie.getId(), serie.getId()); 
-			} else {
-				item = new SelectItem(serie, serie.getId());
-			} 
+			SelectItem item = new SelectItem(onlyCode?serie.getCode():serie, serie.getCode());
 			series.add(item);
 		}
 		return series;

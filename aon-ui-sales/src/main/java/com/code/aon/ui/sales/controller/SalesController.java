@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -15,14 +16,15 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -269,7 +271,7 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
 		if (this.getTo() != null) {
 			((Sales)this.getTo()).setNumber(number);
 			((Sales)this.getTo()).setSecurityLevel(securityLevel);
@@ -278,21 +280,6 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
     	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
 	}
 
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
@@ -372,7 +359,6 @@ public class SalesController extends BasicController implements ISalesConstants 
 		getManagerBean().initializePOJO(to);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Sales)this.getTo()).getPayMethod() != null && ((Sales)this.getTo()).getPayMethod().getId() != null) {
@@ -384,7 +370,7 @@ public class SalesController extends BasicController implements ISalesConstants 
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}
@@ -448,20 +434,10 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
-		setDeliverySeries(obtainDeliverySeries(to.getSeries()));
+		setDeliverySeries(SeriesUtil.ensureDeliverySeries(to.getSeries()));
 		setDeliveryNumber(obtainMaxDeliveryNumber(getDeliverySeries()));
 		setDeliveryDate(new Date());
 		setDeliveryWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
-	}
-
-	private String obtainDeliverySeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isDelivery()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -485,34 +461,30 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return null;
 	}
 
-	public void onDelivery(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
-		DeliveryManager deliveryManager = new DeliveryManager();
-		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse());
+	public void onDelivery(ActionEvent event) {
+		try {
+			Sales to = (Sales)this.getTo();
+			DeliveryManager deliveryManager = new DeliveryManager();
+			Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse());
 
-		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
-		deliveryController.onEditSearch(event);
-		deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IEntityAlias.DELIVERY_ID), delivery.getId());
-		deliveryController.onSearch(event);
-		deliveryController.getModel().setRowIndex(0);
-		deliveryController.onSelect(event);
+			IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
+			deliveryController.onEditSearch(event);
+			deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IEntityAlias.DELIVERY_ID), delivery.getId());
+			deliveryController.onSearch(event);
+			deliveryController.getModel().setRowIndex(0);
+			deliveryController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo grabar el albarán. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
-		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
 		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
-	}
-
-	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isInvoice()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -525,17 +497,23 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		Sales to = (Sales)this.getTo();
-		SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+	public void onInvoice(ActionEvent event) {
+		try {
+			Sales to = (Sales)this.getTo();
+			SalesInvoicingManager invoicingManager = new SalesInvoicingManager();
+			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onEditSearch(event);
+			invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+			invoiceController.onSearch(event);
+			invoiceController.getModel().setRowIndex(0);
+			invoiceController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo grabar la factura. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {

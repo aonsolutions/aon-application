@@ -324,7 +324,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistryDocumentType(registry.getDocumentType());
 		invoice.setRegistryDocumentCountry(registry.getDocumentCountry());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()));
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getCode());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
@@ -341,7 +341,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistryDocumentType(group.getParent().getDocumentType());
 		invoice.setRegistryDocumentCountry(group.getParent().getDocumentCountry());
 		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) );
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getCode());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
@@ -390,12 +390,12 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		while (true) {
 			Criteria criteria = new Criteria();
 			String seriesAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES);
-			if (series == null || StringUtils.isEmpty(series.getId())) {
+			if (series == null || StringUtils.isEmpty(series.getCode())) {
 				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
 				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, "");
 				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));
 			} else {
-				criteria.addEqualExpression(seriesAlias, series.getId());
+				criteria.addEqualExpression(seriesAlias, series.getCode());
 			}
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER), number);
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);

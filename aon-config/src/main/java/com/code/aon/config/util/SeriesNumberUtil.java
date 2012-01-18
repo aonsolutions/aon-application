@@ -30,10 +30,10 @@ public class SeriesNumberUtil {
 	 * @param seriesId Id de la serie hay que devolver.
 	 * @return la Serie.
 	 */
-	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
+	public static Series obtainSeries(String seriesCode) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_CODE), seriesCode);
 		Iterator<ITransferObject> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (Series)iter.next();

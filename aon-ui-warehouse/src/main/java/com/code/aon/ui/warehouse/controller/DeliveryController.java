@@ -21,8 +21,8 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -225,7 +225,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
 		if (this.getTo() != null) {
 			((Delivery)this.getTo()).setNumber(number);
 			((Delivery)this.getTo()).setSecurityLevel(securityLevel);
@@ -234,20 +234,6 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
     	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
-		Iterator<?> iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
 	}
 
 	public void customerData(LookupChangeEvent event) throws ManagerBeanException {
@@ -442,19 +428,9 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
-		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
 		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
-	}
-
-	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isInvoice()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {

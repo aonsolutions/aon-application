@@ -14,8 +14,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -61,19 +61,13 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	public boolean isSeriesActive() throws ManagerBeanException {
-		String seriesId = getInvoice().getSeries();
-		if (StringUtils.isEmpty(seriesId)) {
-			return true;
-		} else {
-			IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-			Series series = (Series)seriesBean.get(seriesId);
-			return (series != null && series.isActive());
-		}
+		String seriesCode = getInvoice().getSeries();
+		return (StringUtils.isEmpty(seriesCode)?true:SeriesUtil.isSeriesActive(seriesCode));
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
 		if (getInvoice() != null) {
 			getInvoice().setNumber(number);
 			getInvoice().setSecurityLevel(securityLevel);
@@ -84,21 +78,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
-		Iterator iterator = seriesBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			Series series = (Series)iterator.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
 	}
 
 	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {

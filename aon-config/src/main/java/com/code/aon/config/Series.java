@@ -7,7 +7,7 @@ import com.esferalia.aon.entity.master.SeriesDB;
 
 @Entity
 @Table(name="series")
-public class Series extends SeriesDB {
+public class Series extends SeriesDB implements IScopable{
 	
 	private static final long serialVersionUID = 1L;
 	

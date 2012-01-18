@@ -76,8 +76,8 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		if (params.getToDate() != null) {
 			criteria.addLessThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME), params.getToDate());
 		}
-		if (params.getSeries() != null && !StringUtils.isEmpty(params.getSeries().getId())) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES), params.getSeries().getId());
+		if (params.getSeries() != null && !StringUtils.isEmpty(params.getSeries().getCode())) {
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES), params.getSeries().getCode());
 		}
 		if (params.getFromNumber() != null) {
 			criteria.addGreaterThanOrEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER), params.getFromNumber());
@@ -275,12 +275,12 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		while (true) {
 			Criteria criteria = new Criteria();
 			String seriesAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES);
-			if (series == null || StringUtils.isEmpty(series.getId())) {
+			if (series == null || StringUtils.isEmpty(series.getCode())) {
 				Expression nullExpr = ExpressionUtilities.getNullExpression(seriesAlias);
 				Expression blankExpr = ExpressionUtilities.getEqualExpression(seriesAlias, "");
 				criteria.addExpression(ExpressionUtilities.getOrExpression(nullExpr, blankExpr));
 			} else {
-				criteria.addEqualExpression(seriesAlias, series.getId());
+				criteria.addEqualExpression(seriesAlias, series.getCode());
 			}
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER), number);
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
@@ -392,7 +392,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		if (group.getParent().getId().equals(delivery.getCustomer().getId())) {
 			invoice.setRegistryAddress(delivery.getRegistryAddress());
 		}
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getCode());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));
@@ -412,7 +412,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		invoice.setRegistryDocumentCountry(registry.getDocumentCountry());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) );
 		invoice.setRegistryAddress(delivery.getRegistryAddress());
-		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getId());
+		invoice.setSeries(params.getInvoiceSeries()==null?null:params.getInvoiceSeries().getCode());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(getSecurityLevel(params.isConfidential()));

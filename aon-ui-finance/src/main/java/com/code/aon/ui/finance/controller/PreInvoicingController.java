@@ -60,7 +60,7 @@ public class PreInvoicingController implements ICollectionProvider {
 		engine.setInvoicingDAO(new CustomerFeePreInvoicingDAO());
 		engine.setInvoicingFeedBack(new ConsoleInvoicingFeedBack());
 		Series series = new Series();
-		series.setId("PRE");
+		series.setCode("PRE");
 		Calendar calendar = new GregorianCalendar();
 		calendar.set(invoicingParams.getYear(), invoicingParams.getMonth().ordinal(), 1);
 		invoicingParams.setInvoiceSeries(series);
@@ -69,14 +69,13 @@ public class PreInvoicingController implements ICollectionProvider {
 		engine.invoice(invoicingParams);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	@Override
+	public Collection<?> getCollection() {
 		return engine.getInvoicingDAO().getCollection();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return this.getCollection();
 	}
 

@@ -70,7 +70,7 @@ public class VatManager {
 	    for (ITransferObject to : list ) {
 	    	Invoice invoice = (Invoice) to;
 	    	String oldDoument = invoice.getDocumentNumber();
-	    	invoice.setSeries(params.getSeries().getId());
+	    	invoice.setSeries(params.getSeries().getCode());
 	    	invoice.setNumber(i);
 	    	invoice = (Invoice) bean.update(invoice);
 	    	String newDocument = invoice.getDocumentNumber();
@@ -106,13 +106,13 @@ public class VatManager {
 			criteria.addExpression( ExpressionUtilities.getOrExpression(e1, e2));
 		}
 		if (params.getFromSeries() != null) {
-			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getFromSeries().getId());	
+			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getFromSeries().getCode());	
 		}
 		if (params.getFromNumber() != null) {
 			criteria.addGreaterThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_NUMBER), params.getFromNumber());	
 		}
 		if (params.getToSeries() != null) {
-			criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getToSeries().getId());	
+			criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_SERIES), params.getToSeries().getCode());	
 		}
 		if (params.getToNumber() != null) {
 			criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.INVOICE_NUMBER), params.getToNumber());	
@@ -165,20 +165,20 @@ public class VatManager {
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
-			ps.setString(++i, params.getSeries().getId());
+			ps.setString(++i, params.getSeries().getCode());
 			ps.setInt(++i, params.getFirstNumber());
 			ps.setInt(++i, (params.getFirstNumber() + params.getCount() - 1));
 			ps.setDate(++i, new java.sql.Date(params.getPeriod().getInitiationDate().getTime()) );
 			ps.setDate(++i, new java.sql.Date(params.getPeriod().getDeadline().getTime()) );
 			ps.setInt(++i, params.getSecurityLevel().ordinal() );
 			if (params.getFromSeries() != null) {
-				ps.setString(++i, params.getFromSeries().getId());
+				ps.setString(++i, params.getFromSeries().getCode());
 			}
 			if (params.getFromNumber() != null) {
 				ps.setInt(++i, params.getFromNumber());
 			}
 			if (params.getToSeries() != null) {
-				ps.setString(++i, params.getToSeries().getId());
+				ps.setString(++i, params.getToSeries().getCode());
 			}
 			if (params.getToSeries() != null) {
 				ps.setInt(++i, params.getToNumber());

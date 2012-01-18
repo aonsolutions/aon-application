@@ -130,7 +130,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		if (series == null) {
 			criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series.getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series.getCode());
 		}
 		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER));

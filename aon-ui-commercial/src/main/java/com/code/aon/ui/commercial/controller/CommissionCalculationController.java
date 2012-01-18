@@ -226,8 +226,8 @@ public class CommissionCalculationController {
 		if (getToDate() != null) {
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(dateAlias), getToDate());
 		}
-		if (getSeries() != null && getSeries().getId() != null) {
-			criteria.addEqualExpression(bean.getFieldName(seriesAlias), getSeries().getId());
+		if (getSeries() != null && getSeries().getCode() != null) {
+			criteria.addEqualExpression(bean.getFieldName(seriesAlias), getSeries().getCode());
 		}
 		if (getFromNumber() != null) {
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(numberAlias), getFromNumber());

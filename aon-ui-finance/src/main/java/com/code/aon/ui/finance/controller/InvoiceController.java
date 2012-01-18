@@ -12,7 +12,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +25,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
@@ -348,20 +347,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
-		setRectificationSeries(obtainRectificationSeries(getInvoice().getSeries()));
+		setRectificationSeries(SeriesUtil.ensureRectificationSeries(getInvoice().getSeries()));
 		setRectificationNumber(obtainMaxRectificationNumber(getRectificationSeries()));
 		setRectificationDate(new Date());
 		setRectificationCause(null);
-	}
-
-	private String obtainRectificationSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isRectification()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {

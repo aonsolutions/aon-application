@@ -3,6 +3,9 @@ package com.code.aon.sales.bridge;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -11,6 +14,8 @@ import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
@@ -24,6 +29,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalesManager.class.getName());
+	
 	private SalesBridgeUtil salesBridgeUtil;
 
 	public SalesBridgeUtil getSalesBridgeUtil() {
@@ -34,10 +41,37 @@ public class SalesManager {
 	}
 
 	public Sales salesOrder(Offer offer, String series, int number, Date issueDate) throws ManagerBeanException {
-		updateOfferStatus(offer);
-		Sales sales = createSales(offer, series, number, issueDate);
-		createSalesDetails(sales, offer);
-		return sales;
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+			
+			updateOfferStatus(offer);
+			Sales sales = createSales(offer, series, number, issueDate);
+			createSalesDetails(sales, offer);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+			
+			return sales;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	private void updateOfferStatus(Offer offer) throws ManagerBeanException {

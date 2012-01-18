@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -33,8 +34,8 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
@@ -351,8 +352,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		String series = (String) event.getNewValue();
+		int number = obtainMaxNumber(series);
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel( series );
 		Offer offer = getOffer();
 		if (offer != null) {
 			offer.setNumber(number);
@@ -362,21 +364,6 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
     	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
 	}
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
@@ -453,7 +440,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		getManagerBean().initializePOJO(to);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadCommercial(Integer id) throws ManagerBeanException {
 		if (id != null) {
 			Offer offer = getOffer();
@@ -466,7 +452,7 @@ public class OfferController extends BasicController implements ISignatureContro
 			Expression endNullExpr = ExpressionUtilities.getNullExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_END_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
 			criteria.addOrder(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_START_DATE));
-			Iterator iter = targetSellerBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = targetSellerBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				offer.setSeller(((TargetSeller)iter.next()).getSeller());
 			} else {
@@ -476,7 +462,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			Offer offer = getOffer();
@@ -489,7 +474,7 @@ public class OfferController extends BasicController implements ISignatureContro
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}
@@ -633,19 +618,9 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setSalesSeries(obtainSalesSeries(to.getSeries()));
+		setSalesSeries(SeriesUtil.ensureSalesSeries(to.getSeries()));
 		setSalesNumber(obtainMaxSalesNumber(getSalesSeries()));
 		setSalesDate(new Date());
-	}
-
-	private String obtainSalesSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isSales()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onSalesSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -656,34 +631,29 @@ public class OfferController extends BasicController implements ISignatureContro
 		return SeriesNumberUtil.obtainNumber(seriesId, "Sales");
 	}
 
-	public void onSales(ActionEvent event) throws ManagerBeanException {
-		Offer to = getOffer();
-		SalesManager salesManager = new SalesManager();
-		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
-
-		IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
-		salesController.onEditSearch(event);
-		salesController.getCriteria().addEqualExpression(salesController.getFieldName(IEntityAlias.SALES_ID), sales.getId());
-		salesController.onSearch(event);
-		salesController.getModel().setRowIndex(0);
-		salesController.onSelect(event);
+	public void onSales(ActionEvent event) {
+		try {
+			Offer to = getOffer();
+			SalesManager salesManager = new SalesManager();
+			Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
+			IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
+			salesController.onEditSearch(event);
+			salesController.getCriteria().addEqualExpression(salesController.getFieldName(IEntityAlias.SALES_ID), sales.getId());
+			salesController.onSearch(event);
+			salesController.getModel().setRowIndex(0);
+			salesController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo grabar el pedido. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
 		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
-	}
-
-	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isInvoice()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -696,17 +666,23 @@ public class OfferController extends BasicController implements ISignatureContro
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		Offer to = getOffer();
-		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+	public void onInvoice(ActionEvent event)  {
+		try {
+			Offer to = getOffer();
+			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
+			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onEditSearch(event);
+			invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+			invoiceController.onSearch(event);
+			invoiceController.getModel().setRowIndex(0);
+			invoiceController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo generar la factura. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
@@ -741,20 +717,10 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onProjectTasShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setProjectTasSeries(obtainProjectTasSeries(to.getSeries()));
+		setProjectTasSeries(SeriesUtil.ensureProjectTasSeries(to.getSeries()));
 		setProjectTasNumber(obtainMaxProjectTasNumber(getProjectTasSeries()));
 		setProjectTasDate(new Date());
 		setProjectTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
-	}
-
-	private String obtainProjectTasSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isTas()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onProjectTasSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
