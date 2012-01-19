@@ -344,9 +344,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		if (!ObjectUtils.equals(delivery.getCustomer(), previousDelivery.getCustomer())) {
 			return false;
 		}
-		if (!ObjectUtils.equals(delivery.getProject(), previousDelivery.getProject())) {
+		/*if (!ObjectUtils.equals(delivery.getProject(), previousDelivery.getProject())) {
 			return false;
-		}
+		}*/
 		if (!ObjectUtils.equals(delivery.getRegistryAddress(), previousDelivery.getRegistryAddress())) {
 			return false;
 		}
