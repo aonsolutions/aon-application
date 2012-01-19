@@ -923,6 +923,10 @@
 	
 	<table name="pm_type_detail_account" class="com.esferalia.aon.entity.master.PayMethodTypeDetailAccount" />
 	
+	<table name="pos_shift">
+		<column name="shift" type="int"/>
+	</table>
+		
 	<table name="process_detail">
 		<column name="date_reference" type="com.code.aon.groupware.enumeration.DateReference"/>
 		<column name="priority" type="com.code.aon.groupware.enumeration.Priority"/>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
+				<ui:param name="controller" value="#{posShift}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="posShiftPanel" columns="2" >
+				
+					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+					<aon:selectOneMenu 
+						value="#{posShift.hotel}" >
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true">
+						</a4j:support>
+						<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true">
+						</a4j:support>
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel value="#{pmsBundle.pms_pos}" />
+					<aon:selectOneMenu 
+						value="#{posShift.to.pos}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{posShift.posList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
+					<aon:selectOneMenu 
+						value="#{posShift.to.shift}" >
+						<f:selectItem itemLabel=" 1 " itemValue="1" />
+						<f:selectItem itemLabel=" 2 " itemValue="2" />
+						<f:selectItem itemLabel=" 3 " itemValue="3" />
+						<f:selectItem itemLabel=" 4 " itemValue="4" />
+						<f:selectItem itemLabel=" 5 " itemValue="5" />
+						<f:selectItem itemLabel=" 6 " itemValue="6" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel 
+						value="#{bundle.aon_date_from}" />
+					<aon:selectInputDate  
+						value="#{posShift.to.startTime}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel 
+						value="#{bundle.aon_date_to}" />
+					<aon:selectInputDate  
+						value="#{posShift.to.endTime}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
+					<aon:inputText value="#{posShift.to.initialAmount}" >
+						<f:validateDoubleRange minimum="0.0" />
+					</aon:inputText>
+					
+				</aon:panelGrid>
+				
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div rendered="#{posShift.to!=null and posShift.to.endTime!=null}">
+				<!--  
+				<aon:panel label="Arqueo -i18n-" rendered="#{posClosing.posShift.id!=null}">
+				</aon:panel>
+					<ui:decorate template="/com/esferalia/aon/ui/pms/facelet/posClosing/count_grid.xhtml">
+						<ui:param name="controller" value="#{posShiftCount}" />
+					</ui:decorate>
+				-->
+				
+					<aon:panelTabSet id="countTab">
+						<aon:panelTab label="Arqueo -i18n-">
+							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posClosing/count_grid.xhtml">
+								<ui:param name="controller" value="#{posShiftCount}" />
+							</ui:include>
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</aon:div>
+			
+			</aon:div>
+		</aon:form>
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posClosing/calculatorModal.xhtml" >
+			<ui:param name="controller" value="#{posShift}" />								
+		</ui:include>
+		
+	</ui:define>
+</ui:composition>

@@ -54,6 +54,43 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+
+					<aon:panelGroup>
+						<aon:panelGrid id="group_pos"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-book aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_pos_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pos" 
+										action="pos_search" actionListener="#{pos.onEditSearch}"
+										value="#{pmsBundle.pms_pos_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="posShift" 
+										action="posShift_search" actionListener="#{posShift.onEditSearch}"
+										value="#{pmsBundle.pms_posShift_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pos_opening" 
+										action="posOpening_form" actionListener="#{posOpening.onInit}"
+										value="#{pmsBundle.pms_posOpening_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="pos_closing" 
+										action="posClosing_form" actionListener="#{posClosing.onInit}"
+										value="#{pmsBundle.pms_posClosing_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+							
+						</aon:panelGrid>
+					</aon:panelGroup>
 						
 				</h:panelGrid>
 			</aon:div>

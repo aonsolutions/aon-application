@@ -12,10 +12,11 @@
 		<aon:div styleClass="aon-panelGrid-search-info">
 			<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
 		</aon:div>	
+		
 		<aon:div styleClass="aon-text-center aon-margin-bottom" >
 			<aon:commandButton id="prev" ignoreDupResponses="true"
 				value="Anterior"
-				reRender="dayActivities, filter"
+				reRender="availableRoomTable, filter"
 				styleClass="aon-commandButton font-small"
 				actionListener="#{controller.decreaseStartDate}" />
 			<aon:selectOneMenu 
@@ -27,7 +28,7 @@
 			</aon:selectOneMenu>
 			<aon:commandButton id="next" ignoreDupResponses="true"
 				value="Siguiente"
-				reRender="dayActivities, filter"
+				reRender="availableRoomTable, filter"
 				styleClass="aon-commandButton font-small"
 				actionListener="#{controller.increaseStartDate}" />
 		</aon:div>
@@ -41,10 +42,10 @@
 					value="#{controller.filterParams.hotel}" >
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-					<a4j:support event="onchange" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="onchange" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
-					<a4j:support event="oninputchanged" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="oninputchanged" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
 				</aon:selectOneMenu>
@@ -56,10 +57,10 @@
 					inputSize="10" renderAsPopup="true" enableManualInput="true"
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
-					<a4j:support event="onchanged" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="onchanged" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
-					<a4j:support event="oninputchange" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="oninputchange" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
 				</aon:selectInputDate>
@@ -68,10 +69,10 @@
 				<h:panelGrid columns="2" >
 					<rich:inputNumberSpinner 
 						value="#{controller.filterParams.assetAvailability}" inputSize="2" >
-						<a4j:support event="onchange" reRender="dayActivities" ignoreDupResponses="true">
+						<a4j:support event="onchange" reRender="availableRoomTable" ignoreDupResponses="true">
 							<aon:actionListener method="#{controller.reloadViewer}" />
 						</a4j:support>
-						<a4j:support event="oninputchanged" reRender="dayActivities" ignoreDupResponses="true">
+						<a4j:support event="oninputchanged" reRender="availableRoomTable" ignoreDupResponses="true">
 							<aon:actionListener method="#{controller.reloadViewer}" />
 						</a4j:support>
 			  		</rich:inputNumberSpinner>
@@ -84,10 +85,10 @@
 					value="#{controller.filterParams.item}" >
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{pmsCollections.roomItems}" />
-					<a4j:support event="onchange" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="onchange" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
-					<a4j:support event="oninputchanged" reRender="dayActivities" ignoreDupResponses="true">
+					<a4j:support event="oninputchanged" reRender="availableRoomTable" ignoreDupResponses="true">
 						<aon:actionListener method="#{controller.reloadViewer}" />
 					</a4j:support>
 				</aon:selectOneMenu>
@@ -95,12 +96,6 @@
 				<aon:outputText value="&#160;" />
 				<hr />
 				
-				<!--  
-				<ui:include src="/com/code/aon/ui/asset/facelet/assetType/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{controller.assetType}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-				</ui:include>
-				-->
 				<aon:outputLabel 
 					value="#{assetBundle.asset_features}" />
 				<aon:div>
@@ -110,12 +105,12 @@
 					</aon:selectManyCheckbox>
 					<aon:commandButton id="addFeature" ignoreDupResponses="true"
 						value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
-						reRender="dayActivities, filter" 
+						reRender="availableRoomTable, filter" 
 						actionListener="#{controller.reloadViewer}" />
 				</aon:div>
 			
 		</aon:panelGrid>
-		
+
 	</aon:div>	
 		
 </ui:composition>

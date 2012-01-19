@@ -51,5 +51,10 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationTable/roomOccupationModal.xhtml" >
+			<ui:param name="controller" value="#{reservationRoom}" />								
+		</ui:include>
+		
 	</ui:define>
 </ui:composition>

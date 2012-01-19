@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="PosShiftCount_payMethod" value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.payMethod.name}" rendered="#{formList}" />
+				<aon:selectOneMenu id="PosShiftCount_payMethod" rendered="#{formEdit}" 
+					value="#{to.payMethod}" >
+					<f:selectItems value="#{configCollections.payMethods}" />
+					<a4j:support event="onchange" reRender="PosShiftCount_amount" ignoreDupResponses="true" />
+					<a4j:support event="oninputchanged" reRender="PosShiftCount_amount" ignoreDupResponses="true" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="PosShiftCount_payMethod-New" rendered="#{formNew}" 
+						value="#{controller.to.payMethod}" >
+						<f:selectItems value="#{configCollections.payMethods}" />
+						<a4j:support event="onchange" reRender="PosShiftCount_amount-New" ignoreDupResponses="true" />
+						<a4j:support event="oninputchanged" reRender="PosShiftCount_amount-New" ignoreDupResponses="true" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="PosShiftCount_amount" value="#{bundle.aon_amount}" />
+				</f:facet>
+				<aon:outputText value="#{to.amount}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:div id="PosShiftCount_amount" rendered="#{formEdit}">
+					<aon:inputText 
+						value="#{to.amount}" >
+						<f:validateDoubleRange minimum="0.0" />
+					</aon:inputText>
+					<aon:commandButton 
+						reRender="showCalculatorWindow"
+						rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
+						styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+						actionListener="#{posShift.onShowCalculatorWindow}" >
+						<f:setPropertyActionListener target="#{posShift.showCalculatorWindow}"
+							value="#{true}" />								
+					</aon:commandButton>
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div id="PosShiftCount_amount-New" rendered="#{formNew}">
+						<aon:inputText  
+							value="#{controller.to.amount}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow"
+							rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posShift.onShowCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posShift.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

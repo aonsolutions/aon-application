@@ -45,6 +45,21 @@ public class PmsCollectionsController {
 		}
 		return currentUserHotels;
 	}
+	
+	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
+		List<SelectItem> currentUserWorkPlaces = new LinkedList<SelectItem>();
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
+		for (ITransferObject ito : hotelBean.getList(criteria)) {
+			Hotel hotel = (Hotel)ito;
+			SelectItem item = new SelectItem(hotel.getWorkPlace(), hotel.getWorkPlace().getDescription());
+			currentUserWorkPlaces.add(item);
+		}
+		return currentUserWorkPlaces;
+	}
 
 	public List<SelectItem> getReservationStatuses() {
 		if (reservationStatuses == null) {

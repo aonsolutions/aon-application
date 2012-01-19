@@ -38,12 +38,12 @@ public class ActivityBasicControllerListener extends ControllerAdapter{
 				criteria = this.getController().getCriteria();
 				LoggedUser logged = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 				String name = logged.getLoggedUserName();
-				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER), name);			
+				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);			
 			} else if(!who.equals("none")){
 				criteria = this.getController().getCriteria();
 				LoggedUser logged = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 				String name = logged.getLoggedUserName();
-				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER), name);
+				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);
 			}
 		} catch (ManagerBeanException e) {
 			// nada

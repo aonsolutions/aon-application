@@ -33,6 +33,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.Room;
 
 public class ReservationTableController {
 	
@@ -44,6 +45,7 @@ public class ReservationTableController {
 	
 	private FilterParams filterParams;
 
+	private Room room;
 	
 	public FilterParams getFilterParams() {
 		if(filterParams == null){
@@ -101,6 +103,14 @@ public class ReservationTableController {
 		getSelectedAssetActivity();
 	}
 	
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
 	public boolean isPrintWeekend(){
 		AssetRack r;
 		try {
@@ -115,7 +125,8 @@ public class ReservationTableController {
 		return false;
 	}
 	
-	private void loadFilterParams( ProjectReservationRoom reservation ){
+	public void loadFilterParams( ProjectReservationRoom reservation ){
+		getFilterParams().setHotel(reservation.getProjectReservation().getHotel());
 		getFilterParams().setViewerStartDate(reservation.getProjectReservation().getStartDate());
 		Integer availabilityDays = (int)CommonUtil.getDaysBetweenDates(reservation.getProjectReservation().getStartDate(), reservation.getProjectReservation().getEndDate());
 		getFilterParams().setAssetAvailability(availabilityDays);
@@ -126,6 +137,14 @@ public class ReservationTableController {
 	// ACTION LISTENERS
 	/////////////////////////////
 	
+	public void onSelectRoomModal(ActionEvent event) {
+		try {
+			AssetRack ar = (AssetRack)getAssetModel().getRowData();
+			setRoom((Room) BeanManager.getManagerBean(Room.class).get(ar.getAsset().getId()));
+		} catch (ManagerBeanException e) {
+			// TODO 
+		}
+	}
 	public void increaseStartDate(ActionEvent event) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getFilterParams().getViewerStartDate());
@@ -188,7 +207,7 @@ public class ReservationTableController {
 		if( getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 ){
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(getFilterParams().getViewerStartDate());
-			availableClause = "AND Room.id not in (select asset from asset_activity where date BETWEEN '";
+			availableClause = "AND Room.asset not in (select asset from asset_activity where date BETWEEN '";
 			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
 			availableClause += "AND '";
 			cal.add(Calendar.DAY_OF_MONTH, getFilterParams().getAssetAvailability()-1);
@@ -196,6 +215,19 @@ public class ReservationTableController {
 			availableClause += " )";
 			availableClause += " ";
 		}
+		
+//		String availableClause = null;
+//		if( getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 ){
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(getFilterParams().getViewerStartDate());
+//			availableClause = "AND Room.asset not in (select asset from project_reservation_room_detail where effective_date BETWEEN '";
+//			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
+//			availableClause += "AND '";
+//			cal.add(Calendar.DAY_OF_MONTH, getFilterParams().getAssetAvailability()-1);
+//			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
+//			availableClause += " )";
+//			availableClause += " ";
+//		}
 		
 		String itemClause = null;
 		if( getFilterParams().getItem() != null && getFilterParams().getItem().getId() != null ){
@@ -250,7 +282,7 @@ public class ReservationTableController {
 		
 		String sqlSelect = "SELECT Room.* "
 			+ " FROM room as Room "
-			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.id "
+			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset "
 			+ "WHERE 1 = 1 "
 			+ (featureClause == null ? "" : featureClause) 
 			+ (availableClause == null ? "" : availableClause) 

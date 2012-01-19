@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posShiftList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
+				<ui:param name="controller" value="#{posShift}" />
+			</ui:include>
+ 
+
+			<aon:div styleClass="aon-scroll-area">
+				
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{posShift}" />
+					
+					<ui:define name="columns">
+ 
+						<aon:column alias="PosShift.pos.workPlace.name" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_hotel}" />
+							</f:facet>
+							<aon:outputText value="#{to.pos.workPlace.description}" />
+						</aon:column>
+ 
+						<aon:column alias="PosShift.pos.name" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.pos.name}" />
+						</aon:column>
+	
+						<aon:column alias="PosShift.shift"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_shift}" />
+							</f:facet>
+							<aon:outputText value="#{to.shift}" />
+						</aon:column>
+						
+						<aon:column alias="PosShift.startTime"
+							styleClass="aon-editDataTable-dateColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date_from}" />
+							</f:facet>
+							<aon:outputText value="#{to.startTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="PosShift.endTime"
+							styleClass="aon-editDataTable-dateColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date_to}" />
+							</f:facet>
+							<aon:outputText value="#{to.endTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="PosShift.initialAmount"
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.initialAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+						</aon:column>
+	
+	
+					</ui:define>
+				</ui:decorate>
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -38,7 +38,7 @@
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
-
+			
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationRoom_tariff" value="#{productBundle.product_tariff}" />
@@ -83,6 +83,25 @@
 					<aon:inputText id="ProjectReservationRoom_children-New" value="#{controller.to.children}"
 						rendered="#{formNew}" required="#{true}"
 						size="2" maxlength="2" /> 
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputLabel value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;" rendered="#{formList}" />
+				<aon:commandButton id="roomOccupationPopupButton"
+					rendered="#{formEdit}"	
+					reRender="showRoomOccupationWindow"
+					actionListener="#{controller.onShowRoomOccupationModal}"
+					styleClass="aon-editDataTable-button aon-icon-info"
+					title="#{pmsBundle.pms_roomOccupation}-" >
+					<f:setPropertyActionListener target="#{controller.showRoomOccupationWindow}"
+						value="#{true}" />								
+				</aon:commandButton>
+				<f:facet name="footer">
+					<aon:outputText value="&#160;" rendered="#{formNew}" />
 				</f:facet>
 			</aon:column>
 

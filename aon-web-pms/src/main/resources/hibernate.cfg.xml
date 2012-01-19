@@ -240,6 +240,9 @@
 				
 		<!-- AON-PMS Mapping files -->	
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
+		<mapping class="com.esferalia.aon.pms.Pos"/>
+		<mapping class="com.esferalia.aon.pms.PosShift"/>
+		<mapping class="com.esferalia.aon.pms.PosShiftCount"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
