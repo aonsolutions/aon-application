@@ -10,7 +10,6 @@
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-pms</artifactId>
 	<packaging>war</packaging>
-	<version>7.0-SNAPSHOT</version>
 	<description>AON WEB PMS</description>
 	<name>AON WEB PMS</name>
 	<properties>
