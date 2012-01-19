@@ -10,7 +10,6 @@
     <servlet>
         <servlet-name>ReservationService</servlet-name>
         <servlet-class>com.esferalia.aon.pms.reservation.service.AonPmsSoap</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>ReservationService</servlet-name>
