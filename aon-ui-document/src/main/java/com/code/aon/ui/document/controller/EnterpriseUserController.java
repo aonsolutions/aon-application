@@ -129,13 +129,25 @@ public class EnterpriseUserController extends BasicController {
 			throw new AbortProcessingException( message );
 		}		
 		EnterpriseUser user = (EnterpriseUser) getTo();
-		user.setPassword(newPassword);
+		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 		try {
+			mc.getUserManager().changePassword(user.getLogin(), null, newPassword);
+			user.setPassword(newPassword);
 			getManagerBean().update(user);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onChangePassword",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		// flushPasswordCache();
+	}
+	
+	public boolean isAdministrator() throws ManagerBeanException {
+		EnterpriseUser user = (EnterpriseUser) getTo();
+		if ( user != null ) {
+			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+			return mc.getUserManager().isAlfrescoAdministrator(user.getLogin());			
+		}
+		return false;
 	}
 	
 }
