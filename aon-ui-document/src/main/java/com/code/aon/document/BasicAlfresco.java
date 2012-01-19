@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.alfresco.webservice.accesscontrol.AccessControlServiceSoapBindingStub;
+import org.alfresco.webservice.administration.AdministrationServiceSoapBindingStub;
 import org.alfresco.webservice.classification.ClassificationServiceSoapBindingStub;
 import org.alfresco.webservice.content.Content;
 import org.alfresco.webservice.content.ContentServiceSoapBindingStub;
@@ -93,6 +95,14 @@ public class BasicAlfresco {
 
 	protected ClassificationServiceSoapBindingStub getClassificationService() {
 		return WebServiceFactory.getClassificationService();
+	}
+
+	protected AdministrationServiceSoapBindingStub getAdministrationService() {
+		return WebServiceFactory.getAdministrationService();
+	}
+
+	protected AccessControlServiceSoapBindingStub getAccessControlService() {
+		return WebServiceFactory.getAccessControlService();
 	}
 	
 	public Reference getReference( String path ) {

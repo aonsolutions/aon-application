@@ -22,6 +22,10 @@
 					<f:setPropertyActionListener
 						target="#{enterprise.backActionListener}" value="enterpriseTree.onBack" />
 				</aon:commandButton>
+				<aon:commandButton id="users"
+					value="#{documentBundle.document_users}" immediate="true"
+					action="enterpriseUsers" actionListener="#{enterpriseUser.onInit}"
+					styleClass="aon-finding-toolbar-item aon-icon-user"/>				
 				<aon:commandButton id="resetDocument"
 					title="#{bundle.aon_key_new_accelerator}"
 					value="#{documentBundle.document_new_document}"
