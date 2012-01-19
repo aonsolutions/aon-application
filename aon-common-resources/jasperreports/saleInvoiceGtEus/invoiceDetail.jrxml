@@ -216,7 +216,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Kopurua/" + $R{aon_quantity}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Kopurua/" + "Ctdad."]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
