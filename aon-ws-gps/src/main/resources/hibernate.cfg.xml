@@ -7,11 +7,21 @@
 	<session-factory>
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="show_sql">true</property>		
+		<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 		<property name="connection.url">jdbc:mysql://db1:3306/grupoplayasol-com?autoReconnect=true</property>		
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="connection.password">serubd2000</property>		
  
+		<!-- C3P0 Stuff -->
+		<property name="hibernate.c3p0.acquire_increment">1</property>
+		<property name="hibernate.c3p0.idle_test_period">1900</property>
+		<property name="hibernate.c3p0.timeout">3600</property>
+		<property name="hibernate.c3p0.max_size">30</property>
+		<property name="hibernate.c3p0.min_size">1</property>
+		<property name="hibernate.c3p0.max_statements">0</property>
+		<property name="hibernate.c3p0.preferredTestQuery">select 1;</property>
+
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
     	<mapping class="com.code.aon.asset.Asset"/>
