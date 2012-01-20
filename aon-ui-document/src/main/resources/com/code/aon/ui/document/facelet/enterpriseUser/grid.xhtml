@@ -15,6 +15,7 @@
 					<ui:param name="toolbarDescription" value="#{enterprise.to.registry.name}" />
 					<ui:param name="controller" value="#{enterpriseUser}" />
 					<ui:param name="skipResetButton" value="#{!manager.administrator}" />
+					<ui:param name="skipRemoveButton" value="#{enterpriseUser.administrator}" />
 					<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="back"
 							title="#{bundle.aon_key_cancel_accelerator}"
@@ -37,6 +38,7 @@
 						<ui:param name="controller" value="#{enterpriseUser}" />
 						<ui:param name="skipLineEdition" value="#{!manager.administrator}" />
 						<ui:param name="skipResetButton" value="#{!manager.administrator}" />
+						<ui:param name="skipRemoveButton" value="#{true}" />
 						<ui:define name="columns">
 				
 							<aon:column alias="EnterpriseUser.login"
@@ -46,7 +48,7 @@
 								</f:facet>
 								<aon:outputText value="#{to.login}" />
 								<f:facet name="footer">
-									<aon:inputText id="EnterpriseUser_login-New" rendered="#{formNew}"
+									<aon:inputText id="EnterpriseUser_login" rendered="#{formNew}"
 										size="20" maxlength="16" required="true" 
 										validator="#{enterpriseUser.idCheck}"
 										value="#{controller.to.login}" />
