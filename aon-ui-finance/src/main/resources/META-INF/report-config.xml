@@ -112,9 +112,9 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
-		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
-		<nested-report report="invoiceFinances"/>
+		<nested-report report="invoiceFinancesDefault"/>
 	</report>
 	<report id="invoiceDetail" description="Detalle de la factura">
 		<template path="/com/code/aon/ui/finance/report/invoiceDetail.jasper"/>
@@ -124,6 +124,12 @@
 	</report>
 	<report id="invoiceFinances" description="invoice Finances">
 		<template path="/com/code/aon/ui/finance/report/invoiceFinances.jasper"/>
+	</report>
+	<report id="invoiceDetailDefault" description="Detalle de la factura">
+		<template path="/com/code/aon/ui/finance/report/invoiceDetailDefault.jasper"/>
+	</report>
+	<report id="invoiceFinancesDefault" description="invoice Finances">
+		<template path="/com/code/aon/ui/finance/report/invoiceFinancesDefault.jasper"/>
 	</report>
 	
 	<report id="saleInvoiceTemplate1" description="Fee Invoice's Report Template1">
