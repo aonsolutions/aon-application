@@ -16,7 +16,7 @@ public class AccountEntryDetail extends AccountEntryDetailDB {
 	public void setDebit(double debit) {
 		if (debit != 0) {
 			if (debit < 0) {
-				setCredit(CommonUtil.round(0 - CommonUtil.round(debit)));
+				super.setCredit(CommonUtil.round(0 - CommonUtil.round(debit)));
 				debit = 0;
 			} else {
 				super.setCredit(0);
