@@ -105,7 +105,7 @@ public class AccountEntryDetail implements ITransferObject {
 	public void setDebit(double debit) {
 		if (debit != 0) {
 			if (debit < 0) {
-				setCredit(CommonUtil.round(0-debit));
+				setCredit(CommonUtil.round(0 - CommonUtil.round(debit)));
 				debit = 0;
 			} else {
 				setCredit(0);
@@ -121,7 +121,7 @@ public class AccountEntryDetail implements ITransferObject {
 	public void setCredit(double credit) {
 		if (credit != 0) {
 			if (credit < 0) {
-				setDebit(CommonUtil.round(0-credit));
+				setDebit(CommonUtil.round(0 - CommonUtil.round(credit)));
 				credit = 0;
 			} else {
 				setDebit(0);
