@@ -30,12 +30,15 @@ public class ConnectionProvider {
 	public static final String CONNECTION_METHOD_OLD_NAME = "getDSMDProperties";
 	
 	private static Properties convertProperties( Properties properties ) {
-		Properties hibernateProperties = new Properties();
-		hibernateProperties.put(Environment.USER, properties.get("username"));
-		hibernateProperties.put(Environment.PASS, properties.get("password"));
-		hibernateProperties.put(Environment.URL, properties.get("url"));
-		hibernateProperties.put(Environment.DRIVER, properties.get("driverClassName"));
-		return hibernateProperties;
+		if ( properties != null ) {
+			Properties hibernateProperties = new Properties();
+			hibernateProperties.put(Environment.USER, properties.get("username"));
+			hibernateProperties.put(Environment.PASS, properties.get("password"));
+			hibernateProperties.put(Environment.URL, properties.get("url"));
+			hibernateProperties.put(Environment.DRIVER, properties.get("driverClassName"));
+			return hibernateProperties;
+		}
+		return null;
 	}	
 
 	private static BasicPrincipal getBasicPrincipal( Principal principal ) {
