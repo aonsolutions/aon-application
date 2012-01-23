@@ -18,7 +18,7 @@ CREATE TABLE `domain` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
 
 INSERT IGNORE INTO `domain` VALUES (1, 'DOMINIO PRINCIPAL', NULL, 1);
-UPDATE `domain` SET `name` = (SELECT `name` FROM `registry` WHERE `id` IN (SELECT `registry` FROM `company`));
+UPDATE `domain` SET `name` = (SELECT `name` FROM `registry` WHERE `id` IN (SELECT `registry` FROM `company`)) WHERE 1 = (SELECT COUNT(*) FROM `company`);
 
 ALTER TABLE `account` ADD `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio' AFTER `id`;
 ALTER TABLE `account` ADD KEY `IDX_ACCOUNT_DOMAIN` (`domain`);
