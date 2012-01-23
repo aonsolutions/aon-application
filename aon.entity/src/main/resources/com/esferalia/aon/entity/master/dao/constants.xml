@@ -264,12 +264,12 @@
 		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.GeozoneIrpfDescendant">
-		<alias names="descendant,geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozone_id,id,percent"/>
-		<hibernate names="descendant,geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozone.id,id,percent"/>
+		<alias names="descendant,geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozoneCode,id,percent"/>
+		<hibernate names="descendant,geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozoneCode,id,percent"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.GeozoneIrpfHandicap">
-		<alias names="geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozone_id,handicap,id,percent"/>
-		<hibernate names="geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozone.id,handicap,id,percent"/>
+		<alias names="geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozoneCode,handicap,id,percent"/>
+		<hibernate names="geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozoneCode,handicap,id,percent"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.PayrollWorkPlace">
 		<alias     names="id,agreement_id,calendar_id,enterpriseActivity_id,workPlace_id,workPlace_enterprise_id"/>
