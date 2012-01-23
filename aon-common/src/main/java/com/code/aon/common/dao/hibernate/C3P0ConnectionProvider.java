@@ -1,30 +1,21 @@
 package com.code.aon.common.dao.hibernate;
 
-import static com.code.aon.common.util.BeanServerUtil.CONNECTION_METHOD_NAME;
-import static com.code.aon.common.util.BeanServerUtil.MAIN_DEPLOYER;
-
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ReflectionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
 import org.hibernate.connection.DatasourceConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.util.BeanServerUtil;
+import com.code.aon.common.util.ConnectionProvider;
 
 /**
  * A strategy for obtaining JDBC connections.
@@ -58,7 +49,7 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 			throw new HibernateException(msg);
 		}
 		try {
-			Properties connectionProperties = getConnectionProperties(props);
+			Properties connectionProperties = ConnectionProvider.getDBProperties(getPrincipal());
 			LOGGER.info( "Connection properties: {}", connectionProperties );
 			props.putAll( connectionProperties );
 			super.configure(props);			
@@ -105,37 +96,10 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 		}
 	}
 
-	/**
-	 * Gets the connection properties.
-	 * 
-	 * @param props the props
-	 * 
-	 * @return the connection properties
-	 * @throws NamingException 
-	 * @throws MalformedObjectNameException 
-	 * @throws ReflectionException 
-	 * @throws MBeanException 
-	 * @throws InstanceNotFoundException 
-	 */
-	private Properties getConnectionProperties(Properties props) throws NamingException, InstanceNotFoundException, ReflectionException, MBeanException {
-		Principal principal = getPrincipal();
-    	Object[] params = getParams(principal);
-		String[] sig = { String.class.getName(), String.class.getName() };
-    	MBeanServer server = BeanServerUtil.getMBeanServer();		
-		return (Properties) server.invoke( MAIN_DEPLOYER, CONNECTION_METHOD_NAME, params, sig );
-	}
-
 	private Principal getPrincipal() throws NamingException {
 		InitialContext ic = new InitialContext();
 		Subject subject = (Subject) ic.lookup(SECURITY_SUBJECT);
 		return subject.getPrincipals().iterator().next();
-	}
-	
-	private Object[] getParams( Principal principal ) {
-		String name = principal.getName();
-		String domain = StringUtils.substringBetween(name, "@", "/");
-		String context = StringUtils.substringAfter(name, "/");
-		return new Object[] { domain, context };
 	}
 
 }

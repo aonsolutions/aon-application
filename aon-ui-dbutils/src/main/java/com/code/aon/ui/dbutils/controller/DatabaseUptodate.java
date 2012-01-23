@@ -7,6 +7,7 @@ import java.util.Properties;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
 import com.code.aon.ui.util.AonUtil;
@@ -25,7 +26,7 @@ public class DatabaseUptodate {
 	
 	private Connection getConnection() {
 		Properties properties = DataSourceUtil.getDBProperties();
-		return DataSourceUtil.getConnection(properties);
+		return ConnectionProvider.getConnection(properties);
 	}
 	
 	public String getCurrentVersion() {
