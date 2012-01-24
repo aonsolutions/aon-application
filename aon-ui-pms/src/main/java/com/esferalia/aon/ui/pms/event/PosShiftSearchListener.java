@@ -48,7 +48,8 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getId());			
+			//TODO porque no se genera este alias
+//			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getId());			
 		}
 		if (getPos() != null && getPos().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.POS_SHIFT_POS_ID), getPos().getId());			
