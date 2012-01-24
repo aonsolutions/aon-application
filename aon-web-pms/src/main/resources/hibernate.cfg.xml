@@ -239,6 +239,7 @@
 		<mapping class="com.code.aon.audit.Session"/>								
 				
 		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.Department"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
 		<mapping class="com.esferalia.aon.pms.Pos"/>
 		<mapping class="com.esferalia.aon.pms.PosShift"/>
@@ -247,7 +248,10 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.Proposal"/>
+		<mapping class="com.esferalia.aon.pms.ProposalDetail"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>
+		<mapping class="com.esferalia.aon.pms.WorkplaceDepartment"/>
 
 	</session-factory>
 
