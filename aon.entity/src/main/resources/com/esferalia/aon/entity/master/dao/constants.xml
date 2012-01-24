@@ -297,7 +297,11 @@
 		<alias names="id,domain,projectReservationService_id,projectReservationService_projectReservation_id,projectReservationRoomDetail_id,effectiveDate,quantity,price,taxableBase"/>
 		<hibernate names="id,domain,projectReservationService.id,projectReservationService.projectReservation.id,projectReservationRoomDetail.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
-
+	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
+		<alias names="domain,endTime,id,initialAmount,pos_id,pos_workPlace_id,shift,startTime,user"/>
+		<hibernate names="domain,endTime,id,initialAmount,pos.id,pos.workPlace.id,shift,startTime,user"/>
+	</bean>
+	
 	<!-- ** AON PRODUCT  **************************************************** -->
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
 		<alias names="id,catalogue_id,catalogue_name,category_id,quantity,discount,category_name" />
