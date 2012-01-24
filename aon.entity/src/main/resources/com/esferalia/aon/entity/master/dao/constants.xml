@@ -300,7 +300,7 @@
 	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
 		<alias names="domain,endTime,id,initialAmount,pos_id,pos_workPlace_id,shift,startTime,user"/>
 		<hibernate names="domain,endTime,id,initialAmount,pos.id,pos.workPlace.id,shift,startTime,user"/>
-	</bean>
+	</bean> 
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
