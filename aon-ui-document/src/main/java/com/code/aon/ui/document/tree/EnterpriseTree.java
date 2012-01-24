@@ -185,10 +185,11 @@ public class EnterpriseTree implements ICompanyConstants {
 		rootNode.addChild( etd.getKey(), enterpriseNode );
 		try {
 			loadProjects(enterpriseNode, enterprise);
-			if ( (document != null) && (document.getId() != null) ) {
-				onSelectTreeDocument(null, document.getId());
-				TreeNode<EnterpriseTreeData> node = getTreeNode(document);
+			if ( (getDocument() != null) && (getDocument().getId() != null) ) {
+				onSelectTreeDocument(null, getDocument().getId());
+				TreeNode<EnterpriseTreeData> node = getTreeNode(getDocument());
 				selectTreeNode(node);			
+				setDocument(null);
 			} else {
 				setCurrentNode( enterpriseNode );	
 			}
@@ -278,7 +279,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		setDocument( (EnterpriseDocument) edc.getModel().getRowData() );
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ec.setTreeView(true);
-		ec.select(event, document.getEnterprise() );			
+		ec.select(event, getDocument().getEnterprise() );			
 	}
 	
 	private TreeNode<EnterpriseTreeData> getTreeNode( Project project ) {
@@ -305,10 +306,12 @@ public class EnterpriseTree implements ICompanyConstants {
 			while ( i.hasNext() ) {
 				Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
 				EnterpriseTreeData etd = entry.getValue().getData();
-				if ( etd.getId().equals(ed.getId()) ) {
-					return entry.getValue();
+				if ( etd.getType() == EnterpriseTreeType.DOCUMENT ) {
+					Reference id = (Reference) etd.getId();
+					if ( BasicAlfresco.equals(id, ed.getId()) ) {
+						return entry.getValue();
+					}
 				}
-				
 			}			
 		}
 		return null;

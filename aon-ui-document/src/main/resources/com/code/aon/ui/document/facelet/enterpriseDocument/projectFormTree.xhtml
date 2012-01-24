@@ -23,7 +23,7 @@
 					<aon:outputText value="#{project.to.id}" />
 		
 					<aon:outputText value="#{bundle.aon_active}" />
-					<aon:outputText value="&#160;" style="background-position-y: 3px;"
+					<aon:outputText value="&#160;" style="background-position: 5px 2px;"
 						styleClass="#{(project.to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'} aon-padding-bottom" />
 
 					<aon:outputText value="#{bundle.aon_name}" />
@@ -46,19 +46,19 @@
 					
 					<c:if test="#{project.to.commercial}">
 						<aon:outputText value="#{projectBundle.project_commercial}" />
-						<aon:outputText value="&#160;" style="background-position-y: 3px;"
+						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
 							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
 					</c:if>
 
 					<c:if test="#{project.to.tas}">
 						<aon:outputText value="#{projectBundle.project_tas}" />
-						<aon:outputText value="&#160;" style="background-position-y: 3px;"
+						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
 							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
 					</c:if>
 
 					<c:if test="#{project.to.dossier}">
 						<aon:outputText value="#{projectBundle.project_dossier}" />
-						<aon:outputText value="&#160;" style="background-position-y: 3px;"
+						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
 							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
 					</c:if>
 		

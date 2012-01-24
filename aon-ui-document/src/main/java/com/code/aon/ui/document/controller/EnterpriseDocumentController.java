@@ -50,7 +50,7 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentController.class);
 	
-	private AlfrescoDAO alfrescoDAO;
+	private EnterpriseDocumentDAO alfrescoDAO;
 	
 	private BasicManagerBean alfrescoManagerBean;
 	
@@ -77,9 +77,16 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			EnterpriseUser user = mc.getLoggedUser();
 			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
 			this.alfrescoDAO = new EnterpriseDocumentDAO(user.getLogin(), user.getPassword(), acc.getAlfrescoDAO());
+			this.alfrescoDAO.setParentEnterprise(mc.getParentEnterprise());			
+			String path = this.alfrescoDAO.getEnterprisePath(mc.getEnterprise());
+			this.alfrescoDAO.setPath(path);
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
 		return this.alfrescoManagerBean;
+	}
+	
+	public EnterpriseDocumentDAO getAlfrescoDAO() {
+		return alfrescoDAO;
 	}
 
 	@Override

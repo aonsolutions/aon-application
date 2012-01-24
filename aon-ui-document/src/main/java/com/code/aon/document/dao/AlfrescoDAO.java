@@ -93,7 +93,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		Reference reference = getReference(path);
 		setParentReference( getReferenceToParent(reference) );		
 	}
-	
+
 	public ParentReference getParentReference() {
 		return parentReference;
 	}
@@ -109,7 +109,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	}
 
 	protected String getQueryPath() {
-		return "TYPE:\"" + TYPE_CONTENT + "\" AND PATH:\"" + getParentReference().getPath() + "/*\"";
+		return "TYPE:\"" + TYPE_CONTENT + "\" AND PATH:\"" + getParentReference().getPath() + "//*\"";
 	}
 	
 	private String getQueryExpression( Criteria criteria ){
@@ -183,7 +183,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	private void addContent( ParentReference parent, IAlfrescoTransferObject ato ) throws ContentFault, RemoteException {
 
 		// Asignamos un nombre para el nodo que vamos a crea en company_home
-		String _name = StringUtils.replace(ato.getName(), " ", "_");
+		String _name = normalizeNodeName(ato.getName());
 		parent.setChildName(Constants.createQNameString(Constants.NAMESPACE_CONTENT_MODEL, _name));
 		
 		// Comienza la construcción de nodo
