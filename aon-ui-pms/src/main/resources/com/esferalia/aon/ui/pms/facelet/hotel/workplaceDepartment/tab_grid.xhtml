@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		
+		<ui:define name="columns">
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkplaceDepartment_department" value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.department.name}" rendered="#{formList}" />
+				<aon:selectOneMenu id="WorkplaceDepartment_department" value="#{to.department}" 
+					rendered="#{formEdit}" required="#{true}">
+					<f:selectItems value="#{pmsCollections.departments}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="WorkplaceDepartment_department-New" value="#{controller.to.department}" 
+						rendered="#{formNew}" required="#{true}">
+						<f:selectItems value="#{pmsCollections.departments}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkplaceDepartment_catalogue" value="#{productBundle.product_catalogue}" />
+				</f:facet>
+				<aon:outputText value="#{to.catalogue.name}" rendered="#{formList}" />
+				<aon:selectOneMenu id="WorkplaceDepartment_catalogue" value="#{to.catalogue}" 
+					rendered="#{formEdit}" required="#{true}">
+					<f:selectItems value="#{productCollections.catalogues}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="WorkplaceDepartment_catalogue-New" value="#{controller.to.catalogue}" 
+						rendered="#{formNew}" required="#{true}">
+						<f:selectItems value="#{productCollections.catalogues}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkplaceDepartment_active" value="#{bundle.aon_active}" />
+				</f:facet>
+				<aon:div styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}" rendered="#{formList}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectOneRadio id="WorkplaceDepartment_active" rendered="#{formEdit}"
+					value="#{to.active}" required="#{true}">
+					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+				</aon:selectOneRadio>
+				<f:facet name="footer">
+					<aon:selectOneRadio id="WorkplaceDepartment_active-New" rendered="#{formNew}"
+						value="#{controller.to.active}" required="#{true}">
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+					</aon:selectOneRadio>
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
