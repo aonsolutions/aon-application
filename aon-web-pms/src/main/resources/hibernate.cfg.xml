@@ -247,7 +247,9 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
 		<mapping class="com.esferalia.aon.pms.Proposal"/>
 		<mapping class="com.esferalia.aon.pms.ProposalDetail"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>

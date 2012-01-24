@@ -10,11 +10,24 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="skipResetButton" value="#{!reservation.active or !aonRole.saleOperator}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="skipRemoveButton" value="#{true}" />
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="Service-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{reservation.active and aonRole.saleOperator}"
+				actionListener="#{controller.onSelect}"
+				reRender="aonContent"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
 
 		<ui:define name="columns">
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationService_serviceIndex" value="#{bundle.aon_order}" />
 				</f:facet>
@@ -22,28 +35,7 @@
 					rendered="#{formList or formEdit}" />
 			</aon:column>
 
-<!-- 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_effectiveDate" value="#{bundle.aon_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.effectiveDate}" rendered="#{formList}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:selectInputDate id="ProjectReservationService_effectiveDate" value="#{controller.to.effectiveDate}" 
-					rendered="#{formEdit}" required="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}" />
-				<f:facet name="footer">
-					<aon:selectInputDate id="ProjectReservationService_effectiveDate-New" value="#{controller.to.effectiveDate}" 
-						rendered="#{formNew}" required="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</f:facet>
-			</aon:column>
- -->
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel for="Item_id" value="#{pmsBundle.pms_service}" />
 				</f:facet>
@@ -92,8 +84,86 @@
 					</aon:div>
 				</f:facet>
 			</aon:column>
+		</ui:define>
+
+		<ui:define name="endFormListContent">
+			<rich:subTable id="serviceDetailTable" 
+				rendered="#{!controller.showServiceDetail}"
+				value="#{controller.serviceDetailList}" var="serviceDetail">
+
+				<c:if test="#{reservation.active and aonRole.saleOperator}">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+						<aon:outputText value="&#160;" />
+					</aon:column>
+				</c:if>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:outputText value="&#160;" />
+				</aon:column>
+
+				<aon:column colspan="2"
+					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:panelGrid columns="5" columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-150, aon-noborder aon-width-150, 
+													aon-noborder aon-width-150, aon-noborder aon-width-auto">
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
+							<aon:outputText value="#{serviceDetail.effectiveDate}" styleClass="aon-italic">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_quantity}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{serviceDetail.quantity}" styleClass="aon-italic">
+								<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_price}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{serviceDetail.price}" styleClass="aon-italic">
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_amount}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{serviceDetail.taxableBase}" styleClass="aon-italic">
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{serviceDetail.projectReservationRoomDetail.assetActivity.asset.name}" styleClass="aon-italic"
+								rendered="#{serviceDetail.projectReservationRoomDetail != null}" />
+							<aon:outputText value="--" styleClass="aon-italic"
+								rendered="#{serviceDetail.projectReservationRoomDetail == null}" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:column>
+
+			</rich:subTable>
+		</ui:define>
 
 <!-- 
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel for="ProjectReservationService_effectiveDate" value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.effectiveDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:selectInputDate id="ProjectReservationService_effectiveDate" value="#{controller.to.effectiveDate}" 
+					rendered="#{formEdit}" required="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="ProjectReservationService_effectiveDate-New" value="#{controller.to.effectiveDate}" 
+						rendered="#{formNew}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+				</f:facet>
+			</aon:column>
+
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="ProjectReservationService_quantity" value="#{bundle.aon_quantity}" />
@@ -153,7 +223,6 @@
 				</f:facet>
 			</aon:column>
  -->
-		</ui:define>
 	</ui:decorate>
 
 </ui:composition>

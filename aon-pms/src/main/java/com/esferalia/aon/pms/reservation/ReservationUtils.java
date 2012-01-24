@@ -3,12 +3,16 @@ package com.esferalia.aon.pms.reservation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.SourceType;
 
+import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +29,10 @@ import com.code.aon.seller.enumeration.SellerStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
@@ -70,7 +78,7 @@ public class ReservationUtils implements IReservationConstants {
 		companyUnknown = false;
 	}
 
-	public void fillProject(ProjectReservation reservation) {
+	public void fillProject(ProjectReservation reservation) throws ManagerBeanException {
 		if (reservation.getProject() == null) {
 			reservation.setProject(new Project());
 		}
@@ -82,20 +90,78 @@ public class ReservationUtils implements IReservationConstants {
 		reservation.getProject().setActive(reservation.getStatus() == ReservationStatus.ACTIVE);
 	}
 
-    private Registry obtainProjectReservationRegistry(ProjectReservation to) {
-    	if (to.getBookingHolder() == BookingHolder.AGENCY && to.getAgency() != null && to.getAgency().getId() != null) {
-    		return to.getAgency().getRegistry();
-    	} else if (to.getBookingHolder() == BookingHolder.COMPANY && to.getCompany() != null && to.getCompany().getId() != null) {
-    		return to.getCompany().getRegistry();
+    private Registry obtainProjectReservationRegistry(ProjectReservation reservation) {
+    	if (reservation.getBookingHolder() == BookingHolder.AGENCY && reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+    		return reservation.getAgency().getRegistry();
+    	} else if (reservation.getBookingHolder() == BookingHolder.COMPANY && reservation.getCompany() != null && reservation.getCompany().getId() != null) {
+    		return reservation.getCompany().getRegistry();
     	}
-    	return to.getHotel().getCustomer().getRegistry();
+    	return reservation.getHotel().getCustomer().getRegistry();
     }
 
-    private String obtainProjectReservationName(ProjectReservation to) {
+    private String obtainProjectReservationName(ProjectReservation reservation) throws ManagerBeanException {
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    	String dates = formatter.format(to.getStartDate()) + "-" + formatter.format(to.getEndDate());
-    	String sellerName = (to.getSeller() != null && to.getSeller().getId() != null) ? " - " + to.getSeller().getRegistry().getFullName() : "";
-    	return StringUtils.abbreviate(dates + " " + to.getCode() + sellerName, 64);
+    	String dates = formatter.format(reservation.getStartDate()) + "-" + formatter.format(reservation.getEndDate());
+    	return StringUtils.abbreviate(dates + " " + reservation.getCode() + " " + reservation.getGuestFullName(), 64);
+    }
+
+    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room) throws ManagerBeanException {
+    	Date startDate = reservationRoom.getProjectReservation().getStartDate();
+    	Date endDate = reservationRoom.getProjectReservation().getEndDate();
+    	insertProjectReservationRoomDetails(reservationRoom, startDate, endDate, room);
+    }
+
+	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService) throws ManagerBeanException {
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+		criteria.addEqualExpression(alias, reservationRoom.getId());
+		for (ITransferObject roomDetail : reservationRoomDetailBean.getList(criteria)) {
+			ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)roomDetail;
+			criteria = new Criteria();
+			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID);
+			criteria.addEqualExpression(alias, reservationRoomDetail.getId());
+			for (ITransferObject serviceDetail : reservationServiceDetailBean.getList(criteria)) {
+				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)serviceDetail;
+				if (removeService) {
+					reservationServiceDetailBean.remove(reservationServiceDetail);
+				} else {
+					reservationServiceDetail.setProjectReservationRoomDetail(null);
+					reservationServiceDetailBean.update(reservationServiceDetail);
+				}
+			}
+			reservationRoomDetailBean.remove(reservationRoomDetail);
+			if (reservationRoomDetail.getAssetActivity() != null) {
+				assetActivityBean.remove(reservationRoomDetail.getAssetActivity());
+			}
+		}
+	}
+
+    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
+    	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+    	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+    	Date effectiveDate = fromDate;
+		while (effectiveDate.compareTo(toDate) < 0) {
+			AssetActivity assetActivity = new AssetActivity();
+			assetActivity.setAsset(room.getAsset());
+			assetActivity.setDate(effectiveDate);
+			assetActivity.setFromTime(effectiveDate);
+			assetActivity.setToTime(effectiveDate);
+			assetActivity.setStatus(ActivityStatus.BUSY);
+			assetActivity = (AssetActivity)assetActivityBean.insert(assetActivity);
+
+			ProjectReservationRoomDetail reservationRoomDetail = new ProjectReservationRoomDetail();
+			reservationRoomDetail.setProjectReservationRoom(reservationRoom);
+			reservationRoomDetail.setAssetActivity(assetActivity);
+			reservationRoomDetailBean.insert(reservationRoomDetail);
+
+			Calendar nextCalendar = new GregorianCalendar();
+			nextCalendar.setTime(effectiveDate);
+			nextCalendar.add(Calendar.DATE, 1);
+			effectiveDate = nextCalendar.getTime();
+		}
     }
 
     public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {

@@ -30,7 +30,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.code.aon.asset.AssetActivity;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -144,7 +143,7 @@ public class ReservationManager implements IReservationConstants {
 		ProjectReservation reservation = obtainReservation(reservationType);
 		if (reservation != null) {
 			if (reservation.getStatus() == ReservationStatus.ACTIVE || reservation.getStatus() == ReservationStatus.BLOCKED) {
-				removeReservationRoomDetail(reservation, true);
+				removeReservationRoomDetail(reservation);
 				cancelReservation(reservation);
 				return reservation;
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
@@ -399,8 +398,8 @@ public class ReservationManager implements IReservationConstants {
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject service : reservationServiceBean.getList(criteria)) {
-			ProjectReservationService reservationService = (ProjectReservationService)service;
+		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+			ProjectReservationService reservationService = (ProjectReservationService)ito;
 			reservationServiceBean.remove(reservationService);
 		}
 	}
@@ -409,8 +408,8 @@ public class ReservationManager implements IReservationConstants {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject room : reservationRoomBean.getList(criteria)) {
-			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)room;
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
 			reservationRoomBean.remove(reservationRoom);
 		}
 	}
@@ -419,8 +418,8 @@ public class ReservationManager implements IReservationConstants {
 		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
-		for (ITransferObject guest : reservationGuestBean.getList(criteria)) {
-			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)guest;
+		for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
+			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
 			reservationGuestBean.remove(reservationGuest);
 		}
 	}
@@ -440,32 +439,19 @@ public class ReservationManager implements IReservationConstants {
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
-		for (ITransferObject serviceDetail : reservationServiceDetailBean.getList(criteria)) {
-			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)serviceDetail;
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
 			reservationServiceDetailBean.remove(reservationServiceDetail);
 		}
 	}
 
-	private void removeReservationRoomDetail(ProjectReservation reservation, boolean unlinkService) throws ManagerBeanException {
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
-		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+	private void removeReservationRoomDetail(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
-		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
-		criteria.addEqualExpression(alias, reservation.getId());
-		for (ITransferObject roomDetail : reservationRoomDetailBean.getList(criteria)) {
-			ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)roomDetail;
-			if (unlinkService) {
-				criteria = new Criteria();
-				alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID);
-				criteria.addEqualExpression(alias, reservationRoomDetail.getId());
-				for (ITransferObject serviceDetail : reservationServiceDetailBean.getList(criteria)) {
-					ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)serviceDetail;
-					reservationServiceDetailBean.remove(reservationServiceDetail);
-				}
-			}
-			reservationRoomDetailBean.remove(reservationRoomDetail);
-			assetActivityBean.remove(reservationRoomDetail.getAssetActivity());
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, true);
 		}
 	}
 

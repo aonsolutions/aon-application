@@ -1,5 +1,6 @@
 package com.esferalia.aon.pms.event;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
@@ -12,14 +13,22 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
     	ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.fillProject(to);
+    	try {
+    		reservationUtils.fillProject(to);
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
+    	}
     }
 
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
     	ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.fillProject(to);
+    	try {
+    		reservationUtils.fillProject(to);
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
+    	}
     }
 
 }

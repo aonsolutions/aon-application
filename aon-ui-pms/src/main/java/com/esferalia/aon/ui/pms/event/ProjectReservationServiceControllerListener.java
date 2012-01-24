@@ -2,7 +2,6 @@ package com.esferalia.aon.ui.pms.event;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -19,7 +18,6 @@ public class ProjectReservationServiceControllerListener extends ControllerAdapt
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationServiceController controller = (ProjectReservationServiceController)event.getController();
 		ProjectReservationService to = (ProjectReservationService)controller.getTo();
-		//to.setTaxableBase(CommonUtil.round(to.getQuantity() * to.getPrice()));
 		try {
 			to.setServiceIndex(calculateNextIndex(controller.getManagerBean(), to.getProjectReservation()));
 		} catch (ManagerBeanException e) {

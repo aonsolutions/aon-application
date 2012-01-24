@@ -14,8 +14,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ui.config.util.UserUtils;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Department;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
@@ -46,20 +46,13 @@ public class PmsCollectionsController {
 		}
 		return currentUserHotels;
 	}
-	
-	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
-		List<SelectItem> currentUserWorkPlaces = new LinkedList<SelectItem>();
+
+	public int getCurrentUserHotelsCount() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
-		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
-		for (ITransferObject ito : hotelBean.getList(criteria)) {
-			Hotel hotel = (Hotel)ito;
-			SelectItem item = new SelectItem(hotel.getWorkPlace(), hotel.getWorkPlace().getDescription());
-			currentUserWorkPlaces.add(item);
-		}
-		return currentUserWorkPlaces;
+		return hotelBean.getCount(criteria);
 	}
 
 	public List<SelectItem> getReservationStatuses() {

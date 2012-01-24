@@ -319,6 +319,14 @@
 					<key>id</key>
 					<value>projectReservation.id</value>
 				</map-entry>
+				<map-entry>
+					<key>startDate</key>
+					<value>projectReservation.startDate</value>
+				</map-entry>
+				<map-entry>
+					<key>endDate</key>
+					<value>projectReservation.endDate</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>
@@ -368,6 +376,14 @@
 					<key>id</key>
 					<value>projectReservation.id</value>
 				</map-entry>
+				<map-entry>
+					<key>startDate</key>
+					<value>projectReservation.startDate</value>
+				</map-entry>
+				<map-entry>
+					<key>endDate</key>
+					<value>projectReservation.endDate</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>
@@ -416,6 +432,14 @@
 				<map-entry>
 					<key>id</key>
 					<value>projectReservation.id</value>
+				</map-entry>
+				<map-entry>
+					<key>startDate</key>
+					<value>projectReservation.startDate</value>
+				</map-entry>
+				<map-entry>
+					<key>endDate</key>
+					<value>projectReservation.endDate</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

@@ -7,25 +7,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
-	<aon:outputText	id="ProjectReservation_guest" value="#{reservation.to.guestFullName}" 
-		styleClass="aon-bold" rendered="#{!reservation.new}" />
-	<aon:div rendered="#{reservation.new}">
-		<aon:outputLabel for="ProjectReservation_guestName" value="#{bundle.aon_name}"
-			styleClass="aon-margin-left aon-margin-right aon-italic" />
-		<aon:inputText id="ProjectReservation_guestName" value="#{reservation.guestName}" 
-			size="30" maxlength="64" required="#{true}" />
-		<aon:outputLabel for="ProjectReservation_guestSurname" value="#{bundle.aon_surname}"
-			styleClass="aon-margin-left aon-margin-right aon-italic" />
-		<aon:inputText id="ProjectReservation_guestSurname" value="#{reservation.guestSurname}" 
-			size="30" maxlength="64" required="#{true}" />
-	</aon:div>
-
-	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
-	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}">
-		<f:selectItems value="#{pmsCollections.bookingHolders}" />
-	</aon:selectOneMenu>
+	<aon:outputLabel for="Seller_id" value="#{pmsBundle.pms_seller}" />
+	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{reservation.to.seller}" />
+		<ui:param name="lookupDisabled" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipLabel" value="#{true}" />
+		<ui:param name="skipNewButton" value="#{!aonRole.saleOperator}" />
+		<ui:param name="skipGoToButton" value="#{!aonRole.saleOperator}" />
+	</ui:include>
 
 	<aon:outputLabel for="Customer_id-Agency" value="#{pmsBundle.pms_agency}" />
 	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
@@ -46,6 +35,26 @@
 		<ui:param name="skipNewButton" value="#{!aonRole.financeOperator}" />
 		<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
 	</ui:include>
+
+	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
+	<aon:outputText	id="ProjectReservation_guest" value="#{reservation.to.guestFullName}" 
+		styleClass="aon-bold" rendered="#{!reservation.new}" />
+	<aon:div rendered="#{reservation.new}">
+		<aon:outputLabel for="ProjectReservation_guestName" value="#{bundle.aon_name}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_guestName" value="#{reservation.guestName}" 
+			size="30" maxlength="64" required="#{true}" />
+		<aon:outputLabel for="ProjectReservation_guestSurname" value="#{bundle.aon_surname}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_guestSurname" value="#{reservation.guestSurname}" 
+			size="30" maxlength="64" required="#{true}" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
+	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
+		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}">
+		<f:selectItems value="#{pmsCollections.bookingHolders}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_room" value="#{pmsBundle.pms_room_type}" 
 		rendered="#{reservation.new}" />

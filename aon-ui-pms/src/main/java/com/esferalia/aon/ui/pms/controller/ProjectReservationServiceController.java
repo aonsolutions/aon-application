@@ -1,17 +1,20 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.Date;
+import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
+import javax.faces.event.ActionEvent;
 
-import com.code.aon.config.Tariff;
-import com.code.aon.product.Item;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 
 public class ProjectReservationServiceController extends LinesController {
 
@@ -23,6 +26,40 @@ public class ProjectReservationServiceController extends LinesController {
 		}
 		return priceStrategy;
 	}
+
+	@Override
+	public void onReset(ActionEvent arg0) {
+	}
+
+	@Override
+	public void onSelect(ActionEvent event) {
+	}
+
+	public boolean isShowServiceDetail() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			ProjectReservationService service = (ProjectReservationService)getModel().getRowData();
+			return service.isShowServiceDetail();
+		}
+		return false;
+	}
+
+	public List<ITransferObject> getServiceDetailList() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			ProjectReservationService service = (ProjectReservationService)getModel().getRowData();
+			return getServiceDetailList(service);
+		}
+		return null;
+	}
+
+	private List<ITransferObject> getServiceDetailList(ProjectReservationService service) throws ManagerBeanException {
+		IManagerBean serviceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(serviceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID), service.getId());
+		criteria.addOrder(serviceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
+		return serviceDetailBean.getList(criteria);
+	}
+
+
 
 	/*public void onItemChanged(LookupChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();

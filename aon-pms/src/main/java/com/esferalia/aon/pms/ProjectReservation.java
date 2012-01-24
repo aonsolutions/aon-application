@@ -31,6 +31,18 @@ public class ProjectReservation extends ProjectReservationDB implements IProject
 	public boolean isActive() {
 		return getStatus() == ReservationStatus.ACTIVE;
 	}
+	@Transient
+	public boolean isBlocked() {
+		return getStatus() == ReservationStatus.BLOCKED;
+	}
+	@Transient
+	public boolean isCancelled() {
+		return getStatus() == ReservationStatus.CANCELLED;
+	}
+	@Transient
+	public boolean isFinished() {
+		return getStatus() == ReservationStatus.FINISHED;
+	}
 
 	@Transient
 	public String getGuestFullName() throws ManagerBeanException {

@@ -3,16 +3,19 @@ package com.esferalia.aon.ui.pms.controller;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -32,23 +35,23 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
 
 public class ReservationTableController {
 	
+	private FilterParams filterParams;
+	private Room availableRoom;
+	private List<SelectItem> availableRoomList;
+
+
 	private AssetActivity selectedAssetActivity;
-	
 	private DataModel assetModel;
-	
 	private List<AssetDay> assetDayList = new ArrayList<AssetDay>();
 	
-	private FilterParams filterParams;
-
-	private Room room;
-	
 	public FilterParams getFilterParams() {
-		if(filterParams == null){
+		if (filterParams == null) {
 			filterParams = new FilterParams();
 		}
 		return filterParams;
@@ -57,6 +60,120 @@ public class ReservationTableController {
 	public void setFilterParams(FilterParams filterParams) {
 		this.filterParams = filterParams;
 	}
+
+	public Room getAvailableRoom() {
+		return availableRoom;
+	}
+
+	public void setAvailableRoom(Room availableRoom) {
+		this.availableRoom = availableRoom;
+	}
+
+	public List<SelectItem> getAvailableRoomList() throws ManagerBeanException {
+		if (availableRoomList == null) {
+			availableRoomList = new LinkedList<SelectItem>();
+			for (Object obj : obtainAvailableRoomList()) {
+				Room room = (Room)BeanManager.getManagerBean(Room.class).get((Integer)obj);
+				SelectItem selectItem = new SelectItem(room, room.getAsset().getName());
+				availableRoomList.add(selectItem);
+			}
+
+			if (availableRoom == null && availableRoomList.size() > 0) {
+				availableRoom = (Room)availableRoomList.get(0).getValue();
+			}
+		}
+		return availableRoomList;
+	}
+
+	public void setAvailableRoomList(List<SelectItem> availableRoomList) {
+		this.availableRoomList = availableRoomList;
+	}
+
+	public int getAvailableRoomCount() throws ManagerBeanException {
+		return getAvailableRoomList().size();
+	}
+	
+	public void onInitializeRoomList(ProjectReservationRoom reservationRoom) {
+		setAvailableRoom(null);
+		setAvailableRoomList(null);
+		resetFilterParams(reservationRoom);
+	}
+
+	public void onFilter(ActionEvent event) {
+		setAvailableRoom(null);
+		setAvailableRoomList(null);
+	}
+
+	public void onItemFilterChanged(ValueChangeEvent event) {
+		setAvailableRoom(null);
+		setAvailableRoomList(null);
+	}
+
+	private void resetFilterParams(ProjectReservationRoom reservationRoom) {
+		ProjectReservation reservation = reservationRoom.getProjectReservation();
+		setFilterParams(null);
+		getFilterParams().setHotel(reservation.getHotel());
+		getFilterParams().setItem(reservationRoom.getItem());
+		getFilterParams().setViewerStartDate(reservation.getStartDate());
+		getFilterParams().setAssetAvailability((int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()));
+	}
+	
+	private List<?> obtainAvailableRoomList() {
+		String whereClause = "WHERE";
+		if (getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null) {
+			whereClause += " Room.hotel = " + getFilterParams().getHotel().getId();
+		} else {
+			whereClause += " Room.hotel IS NOT NULL";
+		}
+		if (getFilterParams().getItem() != null && getFilterParams().getItem().getId() != null) {
+			whereClause += " AND Room.item = " + getFilterParams().getItem().getId();
+		}
+		if (!StringUtils.isEmpty(getFilterParams().getName())) {
+			whereClause += " AND Room.asset IN (SELECT id FROM asset WHERE name LIKE :name)";
+		}
+		if (getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 && getFilterParams().getViewerStartDate() != null) {
+			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE date BETWEEN :start AND :end)";
+		}
+		if (getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0) {
+			String featureClause = null;
+			for (Integer id : getFilterParams().getFeatureFilter()) {
+				if (featureClause == null) {
+					featureClause = " AND (AssetFeature.feature = " + id.toString();
+				} else {
+					featureClause += " OR AssetFeature.feature = " + id.toString();
+				}
+			}
+			if (featureClause != null) {
+				whereClause += featureClause + ")";
+			}
+		}
+		
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		String sqlSelect = "SELECT Room.asset " +
+							"FROM room as Room " +
+							"LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset " +
+							whereClause +
+							" GROUP BY Room.asset" +
+							" ORDER BY Room.asset";
+		Query sqlQuery = session.createSQLQuery(sqlSelect);
+		if (!StringUtils.isEmpty(getFilterParams().getName())) {
+			sqlQuery.setString("name", getFilterParams().getName() + "%");
+		}
+		if (getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 && getFilterParams().getViewerStartDate() != null) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(getFilterParams().getViewerStartDate());
+			sqlQuery.setDate("start", calendar.getTime());
+			calendar.add(Calendar.DATE, getFilterParams().getAssetAvailability() - 1);
+			sqlQuery.setDate("end", calendar.getTime());
+		}
+		return sqlQuery.list();
+	}
+
+
+
+
+
+
 
 	public List<AssetDay> getAssetDay(){
 		return assetDayList;
@@ -103,14 +220,6 @@ public class ReservationTableController {
 		getSelectedAssetActivity();
 	}
 	
-	public Room getRoom() {
-		return room;
-	}
-
-	public void setRoom(Room room) {
-		this.room = room;
-	}
-
 	public boolean isPrintWeekend(){
 		AssetRack r;
 		try {
@@ -125,26 +234,10 @@ public class ReservationTableController {
 		return false;
 	}
 	
-	public void loadFilterParams( ProjectReservationRoom reservation ){
-		getFilterParams().setHotel(reservation.getProjectReservation().getHotel());
-		getFilterParams().setViewerStartDate(reservation.getProjectReservation().getStartDate());
-		Integer availabilityDays = (int)CommonUtil.getDaysBetweenDates(reservation.getProjectReservation().getStartDate(), reservation.getProjectReservation().getEndDate());
-		getFilterParams().setAssetAvailability(availabilityDays);
-		getFilterParams().setItem(reservation.getItem());
-	}
-	
 	/////////////////////////////
 	// ACTION LISTENERS
 	/////////////////////////////
 	
-	public void onSelectRoomModal(ActionEvent event) {
-		try {
-			AssetRack ar = (AssetRack)getAssetModel().getRowData();
-			setRoom((Room) BeanManager.getManagerBean(Room.class).get(ar.getAsset().getId()));
-		} catch (ManagerBeanException e) {
-			// TODO 
-		}
-	}
 	public void increaseStartDate(ActionEvent event) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(getFilterParams().getViewerStartDate());
@@ -189,113 +282,9 @@ public class ReservationTableController {
 	}
 	
 	public void initializeRackAssetModel() throws ManagerBeanException {
-
-		String featureClause = null;
-		if( getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0 ){
-			for( Integer id : getFilterParams().getFeatureFilter() ) {
-				if ( featureClause == null ) {
-					featureClause = "AssetFeature.feature = ";
-				} else {
-					featureClause += "OR AssetFeature.feature = ";
-				}
-				featureClause += id + " ";
-			}
-			featureClause = "AND (" + featureClause + ") ";
-		}
-		
-		String availableClause = null;
-		if( getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 ){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(getFilterParams().getViewerStartDate());
-			availableClause = "AND Room.asset not in (select asset from asset_activity where date BETWEEN '";
-			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-			availableClause += "AND '";
-			cal.add(Calendar.DAY_OF_MONTH, getFilterParams().getAssetAvailability()-1);
-			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-			availableClause += " )";
-			availableClause += " ";
-		}
-		
-//		String availableClause = null;
-//		if( getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 ){
-//			Calendar cal = Calendar.getInstance();
-//			cal.setTime(getFilterParams().getViewerStartDate());
-//			availableClause = "AND Room.asset not in (select asset from project_reservation_room_detail where effective_date BETWEEN '";
-//			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-//			availableClause += "AND '";
-//			cal.add(Calendar.DAY_OF_MONTH, getFilterParams().getAssetAvailability()-1);
-//			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-//			availableClause += " )";
-//			availableClause += " ";
-//		}
-		
-		String itemClause = null;
-		if( getFilterParams().getItem() != null && getFilterParams().getItem().getId() != null ){
-			itemClause = "AND Room.item = ";
-			itemClause += getFilterParams().getItem().getId();
-			itemClause += " ";
-		}
-		
-		String hotelClause = null;
-		if( getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null ){
-			hotelClause = "AND Room.hotel = ";
-			hotelClause += getFilterParams().getHotel().getId();
-			hotelClause += " ";
-		}
-		
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		
-//		String select = "SELECT Asset "
-//			+ "FROM AssetActivity as AssetActivity LEFT JOIN AssetActivity.asset as Asset, " 
-//			+ "AssetFeature as AssetFeature RIGHT JOIN AssetFeature.asset as Asset "
-//			+ "WHERE 1 = 1 "
-//			+ (featureClause == null ? "" : featureClause) 
-//			+ (availableClause == null ? "" : availableClause) 
-//			+ "GROUP BY Asset.id "
-//			+ "ORDER BY Asset.id"
-//			;
-//		Query query = session.createQuery(select);
-//		
-//		String sqlSelect = "SELECT Asset.* "
-//			+ " FROM (asset as Asset "
-//			+ " LEFT JOIN asset_activity as AssetActivity on AssetActivity.asset = Asset.id) "
-//			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Asset.id "
-//			
-////			+ " FROM (asset_activity as AssetActivity  "
-////			+ " RIGHT JOIN asset as Asset on AssetActivity.asset = Asset.id) "
-////			+ " RIGHT JOIN asset_feature as AssetFeature on AssetFeature.asset = Asset.id "
-//	
-//			+ "WHERE 1 = 1 "
-//			
-//			+ (featureClause == null ? "" : featureClause) 
-//			
-//			+ (availableClause == null ? "" : availableClause) 
-//			
-////			+ " AND   CommercialTracking.date >= '"
-////			+ new java.sql.Date(this.params.getFromDate().getTime())
-////			+ "' AND CommercialTracking.date <= '"
-////			+ new java.sql.Date(this.params.getToDate().getTime())
-//			+ "GROUP BY Asset.id "
-//			+ "ORDER BY Asset.id, AssetActivity.day asc"
-//
-//			;
-		
-		String sqlSelect = "SELECT Room.* "
-			+ " FROM room as Room "
-			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset "
-			+ "WHERE 1 = 1 "
-			+ (featureClause == null ? "" : featureClause) 
-			+ (availableClause == null ? "" : availableClause) 
-			+ (itemClause == null ? "" : itemClause) 
-			+ (hotelClause == null ? "" : hotelClause) 
-			+ "GROUP BY Room.asset "
-			+ "ORDER BY Room.asset"
-			;
-		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		
 		List<AssetRack> list = new LinkedList<AssetRack>();
-		for(Object to: sqlQuery.list()){
-			Asset a = getAsset((Integer)(((Object[])to)[0]));
+		for(Object to: obtainAvailableRoomList()){
+			Asset a = getAsset((Integer)to);
 			AssetRack r = new AssetRack();
 			r.setAsset(a);
 			r.setAssetDayModel(new ListDataModel(buildAssetDayList(a)));
@@ -431,57 +420,71 @@ public class ReservationTableController {
 		}
 		
 	}
-	
+
+
 	public class FilterParams {
+		private Hotel hotel;
+		private Item item;
+		private String name;
 		private Date viewerStartDate;
 		private Integer startDateIncrease;
 		private Integer assetAvailability;
 		private Integer[] featureFilter;
-		private Item item;
-		private Hotel hotel;
-		
-		public FilterParams(){
+
+		public FilterParams() {
 			viewerStartDate = new Date();
 			assetAvailability = 0;
 		}
 		
-		public Item getItem() {
-			return item;
-		}
-		public void setItem(Item item) {
-			this.item = item;
-		}
-		public Integer[] getFeatureFilter() {
-			return featureFilter;
-		}
-		public void setFeatureFilter(Integer[] featureFilter) {
-			this.featureFilter = featureFilter;
-		}
-		public Integer getAssetAvailability() {
-			return assetAvailability;
-		}
-		public void setAssetAvailability(Integer assetAvailability) {
-			this.assetAvailability = assetAvailability;
-		}
-		public Integer getStartDateIncrease() {
-			return startDateIncrease;
-		}
-		public void setStartDateIncrease(Integer startDateIncrease) {
-			this.startDateIncrease = startDateIncrease;
-		}
-		public Date getViewerStartDate() {
-			return viewerStartDate;
-		}
-		public void setViewerStartDate(Date viewerStartDate) {
-			this.viewerStartDate = viewerStartDate;
-		}
 		public Hotel getHotel() {
 			return hotel;
 		}
 		public void setHotel(Hotel hotel) {
 			this.hotel = hotel;
 		}
-		
+
+		public Item getItem() {
+			return item;
+		}
+		public void setItem(Item item) {
+			this.item = item;
+		}
+
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public Date getViewerStartDate() {
+			return viewerStartDate;
+		}
+		public void setViewerStartDate(Date viewerStartDate) {
+			this.viewerStartDate = viewerStartDate;
+		}
+
+		public Integer getStartDateIncrease() {
+			return startDateIncrease;
+		}
+		public void setStartDateIncrease(Integer startDateIncrease) {
+			this.startDateIncrease = startDateIncrease;
+		}
+
+		public Integer getAssetAvailability() {
+			return assetAvailability;
+		}
+		public void setAssetAvailability(Integer assetAvailability) {
+			this.assetAvailability = assetAvailability;
+		}
+
+		public Integer[] getFeatureFilter() {
+			return featureFilter;
+		}
+		public void setFeatureFilter(Integer[] featureFilter) {
+			this.featureFilter = featureFilter;
+		}
+
 	}
-		
+
 }

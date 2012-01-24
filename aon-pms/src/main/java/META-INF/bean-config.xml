@@ -13,4 +13,11 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="">
+		<pojo>com.esferalia.aon.pms.ProjectReservationRoom</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationRoomBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 </bean-config>

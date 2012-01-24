@@ -12,11 +12,9 @@ import com.code.aon.common.enumeration.IStringEnum;
  */
 public enum ActivityStatus implements IResourceable, IStringEnum {
 
-	PENDING("0"),
-	ACCEPTED("1"),
-	REFUSED("2"),
-	DISABLED("3")
-	;
+	BUSY("0"),
+	MAINTENANCE("1"),
+	OUT_OF_ORDER("2");
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.asset.i18n.messages";

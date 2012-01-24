@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showRoomDetailWindow">
+		<c:if test="#{controller.showRoomDetailWindow}">
+			<rich:modalPanel id="roomDetailModalPanel" 
+				height="420" width="720" rendered="#{controller.showRoomDetailWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{pmsBundle.pms_room_assign}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onCancel}"
+							reRender="aonContent" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showRoomDetailWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="roomDetailFrom">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="roomDetail-assign"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{controller.to.roomNumber == null ? (pmsBundle.pms_room_assign) : (bundle.aon_save)}"
+										actionListener="#{controller.onAssignRoom}">
+										<rich:componentControl for="roomDetailModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showRoomDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+									<aon:commandButton id="roomDetail-cancel"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										value="#{pmsBundle.pms_room_assign_cancel}"
+										rendered="#{controller.to.roomNumber != null}"
+										actionListener="#{controller.onCancelRoom}"
+										reRender="showRoomDetailWindow" immediate="true">
+										<f:setPropertyActionListener
+											target="#{reservationTable.availableRoomList}"
+											value="#{null}" />
+									</aon:commandButton>	
+									<aon:commandButton id="roomDetail-remove"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										value="#{pmsBundle.pms_remove_stay}"
+										rendered="#{!reservation.to.crs}"
+										actionListener="#{controller.onRemoveReservationRoom}">
+										<rich:componentControl for="roomDetailModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showRoomDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+									<aon:commandButton id="roomDetail-back"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}" 
+										actionListener="#{controller.onCancel}"
+										reRender="aonContent" immediate="true">
+										<f:setPropertyActionListener
+											target="#{controller.showRoomDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid columns="2" columnClasses="aon-margin-top aon-width-350, aon-vertical-align-top aon-padding-left aon-width-all">
+										<aon:panelGrid columns="2" styleClass="aon-width-all">
+
+											<aon:outputLabel for="ProjectReservationRoom_item"
+												value="#{pmsBundle.pms_room_type}" />
+											<aon:selectOneMenu id="ProjectReservationRoom_item" 
+												value="#{reservationTable.filterParams.item}" required="#{true}"
+												disabled="#{controller.to.roomNumber != null}"
+												valueChangeListener="#{reservationTable.onItemFilterChanged}"
+												reRender="ProjectReservationRoomAvailability">
+												<f:selectItems value="#{pmsCollections.roomItems}" />
+											</aon:selectOneMenu>
+
+											<aon:outputLabel for="ProjectReservationRoom_tariff"
+												value="#{productBundle.product_tariff}" />
+											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
+												value="#{controller.to.tariff}" required="#{true}"
+												disabled="#{!aonRole.saleOperator}">
+												<f:selectItems value="#{pmsCollections.tariffs}" />
+											</aon:selectOneMenu>
+
+											<aon:outputLabel for="ProjectReservationRoom_adults"
+												value="#{pmsBundle.pms_adults}" />
+											<aon:inputText id="ProjectReservationRoom_adults" 
+												value="#{controller.to.adults}" required="#{true}"
+												size="2" maxlength="2" />
+
+											<aon:outputLabel for="ProjectReservationRoom_children"
+												value="#{pmsBundle.pms_children}" />
+											<aon:inputText id="ProjectReservationRoom_children" 
+												value="#{controller.to.children}" required="#{true}"
+												size="2" maxlength="2" />
+
+											<aon:outputLabel for="ProjectReservationRoom_room"
+												value="#{pmsBundle.pms_available_rooms}"
+												rendered="#{controller.to.roomNumber == null}" />
+											<aon:div id="ProjectReservationRoomAvailability" 
+												rendered="#{controller.to.roomNumber == null}">
+												<aon:outputText value="#{pmsBundle.pms_no_room_available_msg}"
+													rendered="#{reservationTable.availableRoomCount == 0}" />
+												<aon:selectOneListbox id="ProjectReservationRoom_room" size="5"
+													value="#{reservationTable.availableRoom}"
+													rendered="#{reservationTable.availableRoomCount > 0}">
+													<f:selectItems value="#{reservationTable.availableRoomList}" />
+												</aon:selectOneListbox>
+											</aon:div>
+
+											<aon:outputLabel value="#{pmsBundle.pms_room_number}"
+												rendered="#{controller.to.roomNumber != null}" />
+											<aon:outputText value="#{controller.to.roomNumber}"
+												rendered="#{controller.to.roomNumber != null}" />
+
+										</aon:panelGrid>
+
+										<aon:div id="ProjectReservationRoomFilters" styleClass="aon-panelGrid-search aon-text-center"
+											rendered="#{controller.to.roomNumber == null}" >
+											<aon:div>
+												<aon:outputText value="#{pmsBundle.pms_room_number}" styleClass="aon-italic aon-margin-right" />
+												<aon:inputText value="#{reservationTable.filterParams.name}" 
+													size="3" maxlength="10" />
+											</aon:div>
+											<aon:selectManyCheckbox layout="pageDirection" 
+												value="#{reservationTable.filterParams.featureFilter}">
+												<f:selectItems value="#{reservationTable.featuresList}" />
+											</aon:selectManyCheckbox>
+											<aon:commandButton id="addFeature" ignoreDupResponses="true"
+												value="#{bundle.aon_filter}" styleClass="aon-margin-top"
+												actionListener="#{reservationTable.onFilter}"
+												reRender="ProjectReservationRoomAvailability,ProjectReservationRoomFilters" />
+										</aon:div>
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

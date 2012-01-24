@@ -19,10 +19,24 @@
 		rendered="#{!reservation.new}" />
 	<aon:div rendered="#{!reservation.new}">
 		<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-			<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" styleClass="aon-bold"
+			<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" styleClass="aon-bold aon-margin-right"
 				rendered="#{!reservation.new}" />
-			<aon:outputText value="#{reservation.to.status}" styleClass="aon-bold"
-				rendered="#{!reservation.new}"  />
+			<aon:div>
+				<aon:outputText value="#{reservation.to.status}" styleClass="aon-bold"
+					rendered="#{!reservation.new}"  />
+				<aon:commandButton id="block" value="&#160;"
+					actionListener="#{reservation.onBlock}"
+					title="#{pmsBundle.pms_to_block}"
+					immediate="true" rendered="#{!reservation.new and reservation.active and aonRole.saleOperator}"
+					styleClass="aon-icon-commandButton aon-icon-lock aon-margin-left">
+				</aon:commandButton>										
+				<aon:commandButton id="unblock" value="&#160;"
+					actionListener="#{reservation.onUnblock}"
+					title="#{pmsBundle.pms_to_unblock}"
+					immediate="true" rendered="#{reservation.blocked and aonRole.saleOperator}"
+					styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+				</aon:commandButton>										
+			</aon:div>
 		</aon:panelGrid>
 	</aon:div>
 
@@ -69,32 +83,23 @@
 			focus="Seller_id" />
 	</aon:selectInputDate>
 
-	<aon:outputLabel for="Seller_id" value="#{pmsBundle.pms_seller}" />
-	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{reservation.to.seller}" />
-		<ui:param name="lookupDisabled" value="#{!reservation.active or !aonRole.saleOperator}" />
-		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="skipNewButton" value="#{!aonRole.saleOperator}" />
-		<ui:param name="skipGoToButton" value="#{!aonRole.saleOperator}" />
-	</ui:include>
-
 	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark}" />
 	<aon:inputTextarea id="ProjectReservation_remarks" value="#{reservation.to.remarks}"
-		cols="80" rows="3" disabled="#{!reservation.active or !aonRole.saleOperator}" />
+		cols="80" rows="4" disabled="#{!reservation.active or !aonRole.saleOperator}" />
 
 	<aon:outputLabel for="ProjectReservation_creationDate" value="#{pmsBundle.pms_reservation_creationDate}"
 		rendered="#{!reservation.new}" />
 	<aon:outputText id="ProjectReservation_creationDate" value="#{reservation.to.creationDate}" 
 		rendered="#{!reservation.new}">
-		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+		<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 			timeZone="#{timeZoneController.timeZoneId}" />
 	</aon:outputText>
 
-	<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificationDate}"
+	<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificacionDate}"
 		rendered="#{!reservation.new and reservation.to.modificationDate != null}" />
 	<aon:outputText id="ProjectReservation_modificationDate" value="#{reservation.to.modificationDate}" 
 		rendered="#{!reservation.new and reservation.to.modificationDate != null}">
-		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+		<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 			timeZone="#{timeZoneController.timeZoneId}" />
 	</aon:outputText>
 

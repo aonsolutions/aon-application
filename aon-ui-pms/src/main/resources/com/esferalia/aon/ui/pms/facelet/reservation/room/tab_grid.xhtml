@@ -10,102 +10,130 @@
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 		<ui:param name="skipResetButton" value="#{!reservation.active or !aonRole.saleOperator}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="skipNewSaveButton" value="#{true}" />
+		<ui:param name="skipNewCancelButton" value="#{true}" />
+		<ui:param name="skipSaveButton" value="#{true}" />
+		<ui:param name="skipCancelButton" value="#{true}" />
+		<ui:param name="skipRemoveButton" value="#{true}" />
+		<ui:param name="resetButtonReRender" value="showRoomDetailWindow" />					
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="Room-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{reservation.active}"
+				actionListener="#{controller.onSelect}"
+				reRender="showRoomDetailWindow"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+				<f:setPropertyActionListener target="#{controller.showRoomDetailWindow}"
+					value="#{true}" />								
+			</aon:commandLink>
+		</ui:define>
 
 		<ui:define name="columns">
-
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationRoom_roomIndex" value="#{bundle.aon_order}" />
+					<aon:outputLabel value="#{bundle.aon_order}" />
 				</f:facet>
-				<aon:outputText id="ProjectReservationRoom_roomIndex" value="#{to.roomIndex}" 
-					rendered="#{formList or formEdit}" />
+				<aon:outputText value="#{to.roomIndex}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationRoom_item" value="#{pmsBundle.pms_room_type}" />
+					<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
 				</f:facet>
-				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-				<aon:selectOneMenu id="ProjectReservationRoom_item" value="#{controller.to.item}" 
-					rendered="#{formEdit}" required="#{true}">
-					<f:selectItems value="#{pmsCollections.roomItems}" />
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="ProjectReservationRoom_item-New" value="#{controller.to.item}" 
-						rendered="#{formNew}" required="#{true}">
-						<f:selectItems value="#{pmsCollections.roomItems}" />
-					</aon:selectOneMenu>
-				</f:facet>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
-			
+
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationRoom_tariff" value="#{productBundle.product_tariff}" />
+					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
 				</f:facet>
-				<aon:outputText value="#{to.tariff.code} - #{to.tariff.name}" rendered="#{formList}" />
-				<aon:selectOneMenu id="ProjectReservationRoom_tariff" value="#{controller.to.tariff}" 
-					rendered="#{formEdit}" required="#{true}">
-					<f:selectItems value="#{pmsCollections.tariffs}" />
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="ProjectReservationRoom_tariff-New" value="#{controller.to.tariff}" 
-						rendered="#{formNew}" required="#{true}">
-						<f:selectItems value="#{pmsCollections.tariffs}" />
-					</aon:selectOneMenu>
+				<aon:outputText value="#{to.roomNumber}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel value="#{productBundle.product_tariff}" />
 				</f:facet>
+				<aon:outputText value="#{to.tariff.code} - #{to.tariff.name}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationRoom_adults" value="#{pmsBundle.pms_adults}" />
+					<aon:outputLabel value="#{pmsBundle.pms_adults}" />
 				</f:facet>
-				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
-				<aon:inputText id="ProjectReservationRoom_adults" value="#{controller.to.adults}"
-					rendered="#{formEdit}" required="#{true}"
-					size="2" maxlength="2" /> 
-				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationRoom_adults-New" value="#{controller.to.adults}"
-						rendered="#{formNew}" required="#{true}"
-						size="2" maxlength="2" /> 
-				</f:facet>
+				<aon:outputText value="#{to.adults}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationRoom_children" value="#{pmsBundle.pms_children}" />
+					<aon:outputLabel value="#{pmsBundle.pms_children}" />
 				</f:facet>
-				<aon:outputText value="#{to.children}" rendered="#{formList}" />
-				<aon:inputText id="ProjectReservationRoom_children" value="#{controller.to.children}"
-					rendered="#{formEdit}" required="#{true}"
-					size="2" maxlength="2" /> 
-				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationRoom_children-New" value="#{controller.to.children}"
-						rendered="#{formNew}" required="#{true}"
-						size="2" maxlength="2" /> 
-				</f:facet>
+				<aon:outputText value="#{to.children}" />
 			</aon:column>
+		</ui:define>
 
-			<aon:column styleClass="aon-editDataTable-iconColumn">
-				<f:facet name="header">
-					<aon:outputLabel value="&#160;" />
-				</f:facet>
-				<aon:outputText value="&#160;" rendered="#{formList}" />
-				<aon:commandButton id="roomOccupationPopupButton"
-					rendered="#{formEdit}"	
-					reRender="showRoomOccupationWindow"
-					actionListener="#{controller.onShowRoomOccupationModal}"
-					styleClass="aon-editDataTable-button aon-icon-info"
-					title="#{pmsBundle.pms_roomOccupation}-" >
-					<f:setPropertyActionListener target="#{controller.showRoomOccupationWindow}"
-						value="#{true}" />								
-				</aon:commandButton>
-				<f:facet name="footer">
-					<aon:outputText value="&#160;" rendered="#{formNew}" />
-				</f:facet>
-			</aon:column>
+		<ui:define name="endFormListContent">
+			<aon:div>
+				<aon:commandButton id="showRoomDetailTable"
+					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
+					title="#{pmsBundle.pms_tobreakdown}"
+					rendered="#{to.roomNumber != null and !to.showRoomDetail}" 
+					actionListener="#{controller.onShowRoomDetails}"
+					reRender="#{dataTableId}" />
+				<aon:commandButton id="hideRoomDetailTable"
+					value="&#160;" styleClass="aon-icon-index aon-noborder"
+					title="#{financeBundle.finance_hide}"
+					rendered="#{to.roomNumber != null and to.showRoomDetail}" 
+					actionListener="#{controller.onHideRoomDetails}"
+					reRender="#{dataTableId}" />
+			</aon:div>
+			<rich:subTable id="roomDetailTable" 
+				rendered="#{controller.showRoomDetail}"
+				value="#{controller.roomDetailList}" var="roomDetail">
+
+				<c:if test="#{reservation.active and aonRole.saleOperator}">
+					<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+						<aon:outputText value="&#160;" />
+					</aon:column>
+				</c:if>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:outputText value="&#160;" />
+				</aon:column>
+
+				<aon:column colspan="6"
+					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:panelGrid columns="3" columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-150, aon-noborder aon-width-auto">
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
+							<aon:outputText value="#{roomDetail.assetActivity.date}" styleClass="aon-italic">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right"
+								rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}" />
+							<aon:outputText value="#{roomDetail.room.hotel.workPlace.description}" styleClass="aon-italic"
+								rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}" />
+							<aon:outputText value="&#160;" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:column>
+
+			</rich:subTable>
 
 		</ui:define>
+
 	</ui:decorate>
 
 </ui:composition>

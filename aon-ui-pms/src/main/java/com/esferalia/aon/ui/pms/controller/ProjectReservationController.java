@@ -107,10 +107,27 @@ public class ProjectReservationController extends BasicController {
 		return reservation.isActive();
 	}
 
+	public boolean isBlocked() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return reservation.isBlocked();
+	}
+
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
 		onSearch(event);
+	}
+
+	public void onBlock(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setStatus(ReservationStatus.BLOCKED);
+		accept(event);
+	}
+	
+	public void onUnblock(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setStatus(ReservationStatus.ACTIVE);
+		accept(event);
 	}
 
 }

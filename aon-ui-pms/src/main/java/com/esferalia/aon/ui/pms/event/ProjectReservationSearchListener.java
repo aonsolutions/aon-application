@@ -9,12 +9,22 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
+	private Hotel hotel;
 	private Customer agency;
 	private ReservationStatus[] reservationStatuses;
+
+	public Hotel getHotel() {
+		return hotel;
+	}
+
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
+	}
 
 	public Customer getAgency() {
 		return agency;
@@ -34,6 +44,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
+		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE};
 		setReservationStatuses(defaultReservationStatus);
@@ -41,6 +52,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		if (getHotel() != null && getHotel().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
+		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
 		}

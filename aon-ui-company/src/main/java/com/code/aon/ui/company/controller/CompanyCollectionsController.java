@@ -199,12 +199,10 @@ public class CompanyCollectionsController {
 	}	
 
 	public int getCurrentUserEnterprisesCount() throws ManagerBeanException {
-		int enterprisesCount = 0;
 		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
 		Criteria criteria = new Criteria();
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_SCOPE_ID));
-		enterprisesCount = enterpriseBean.getCount(criteria);
-		return enterprisesCount;
+		return enterpriseBean.getCount(criteria);
 	}
 	
     public WorkPlace getWorkPlace() {
@@ -230,13 +228,11 @@ public class CompanyCollectionsController {
 	}	
 
 	public int getCurrentUserWorkPlacesCount() throws ManagerBeanException {
-		int workPlacesCount = 0;
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
-		workPlacesCount = workPlaceBean.getCount(criteria);
-		return workPlacesCount;
+		return workPlaceBean.getCount(criteria);
 	}
 	
 }
