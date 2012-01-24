@@ -41,99 +41,11 @@
 				value="#{controller.assetModel.rowData.assetDayModel.wrappedData}" var="day" index="idx"	>
 
 				<aon:div styleClass="#{(day.activity.id!=null)?'reserved-cell':'available-cell'}">
-<!--  
-					<aon:outputText value="&#160;&#160;&#160;" />
-					<a4j:support event="onclick" reRender="filter" >
-					      	<f:setPropertyActionListener target="#{controller.selectedAssetActivity}"
-							value="#{day.activity}" />	
-						<aon:actionListener method="#{controller.onSelectActivity}" />
-					</a4j:support>
--->
-					
-						<aon:commandLink 
-							reRender="filter"
-							actionListener="#{controller.onSelectActivity}"
-							value="&#160;"
-							style="padding-right: 5px;padding-left: 18px"
-							styleClass="aon-bold " >
-							
-						</aon:commandLink>
-						<!-- 
-						<aon:commandLink action="reservationTable_form" 
-							styleClass="aon-icon-home"
-							value="&#160;" >
-							<a4j:support event="onclick" reRender="filter" >
-							      	<f:setPropertyActionListener target="#{controller.selectedAssetActivity}"
-									value="#{day.activity}" />	
-								<aon:actionListener method="#{controller.onSelectActivity}" />
-							</a4j:support>
-						</aon:commandLink>
-						-->
-												
-					
-					
-					<!--  
-					<c:if test="#{aonConfiguration.bean.alarm.showPending}">
-						<aon:commandLink id="pendingAlarms"
-							title="#{alarm.pendingAlarmTitle}"
-							value="(#{alarm.pendingCount})"
-							rendered="#{alarm.pendingCount &gt; 0}"
-							action="alarm_list" actionListener="#{alarm.onInit}" 
-							style="padding-right: 5px;padding-left: 18px"
-							styleClass="aon-bold aon-icon-alarm-pending" />					
-					</c:if>
-					<aon:commandLink action="home" 
-						actionListener="#{homeActionListener}" 
-						title="#{bundle.aon_home}"
-						styleClass="aon-icon-home"
-						value="&#160;" />
-					-->
-					
 					
 				</aon:div>
 			
 			</rich:columns>
 			
-				<!--  
-			<rich:columns styleClass="aon-editDataTable-textColumn no-padding" 
-				value="#{controller.assetModel.rowData.assetDayModel.wrappedData}" var="day" index="idx"	>
-
-				<c:forEach items="#{list.fractions}" var="fraction" >
-					<aon:div styleClass="#{(fraction.reserved)?'reserved-cell':'available-cell'}">
-						
-						<aon:outputText value="&#160;&#160;&#160;" 
-							styleClass="#{fraction.first?'aon-icon-info':'none'}" />
-						<rich:toolTip followMouse="true" direction="top-right" showDelay="250" 
-						 	rendered="#{fraction.first}" >
-				            <span style="white-space:nowrap">
-				                <aon:div>
-				                	<aon:outputText value="#{list.asset.description}" />
-				                </aon:div>
-				            </span>
-				            
-				            <h:panelGrid columns="2" >
-				                <aon:outputLabel value="#{assetBundle.asset_activity_who}" />
-								<aon:outputText value="#{fraction.activity.holder}" />
-					                
-								<aon:outputLabel value="#{assetBundle.asset_activity_why}" />
-								<aon:outputText value="#{fraction.activity.comments}" />
-				            </h:panelGrid>
-				        </rich:toolTip>
-				       
-				        <a4j:support event="onclick" reRender="filter" >
-				        	<f:setPropertyActionListener target="#{controller.selectedAssetActivity}"
-								value="#{fraction.activity}" />	
-							<aon:actionListener method="#{controller.onSelectActivity}" />
-							
-						</a4j:support>
-				        
-					</aon:div>
-				</c:forEach>
-	
-			</rich:columns>
-				-->
-			
-		
 		</rich:dataTable>
 	</c:if>
 	

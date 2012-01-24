@@ -18,6 +18,11 @@
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{posOpening.onAccept}"
 						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{posOpening.posShift.id!=null}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						actionListener="#{posOpening.onReset}"
+						accesskey="#{bundle.aon_key_reset}" />
 				</ui:define>
 			</ui:decorate>
 
@@ -27,27 +32,27 @@
 				
 					<aon:outputLabel 
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate  
-						value="#{posOpening.posShift.startTime}"
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+					<aon:div>
+						<aon:outputText rendered="#{posOpening.posShift.id!=null}" 
+							value="#{posOpening.posShift.startTime}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:outputText value="&#160;" />
+					</aon:div>
 					
 					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
 					<aon:selectOneMenu 
 						value="#{posOpening.posShift.shift}" >
-						<f:selectItem itemLabel=" 1 " itemValue="1" />
-						<f:selectItem itemLabel=" 2 " itemValue="2" />
-						<f:selectItem itemLabel=" 3 " itemValue="3" />
-						<f:selectItem itemLabel=" 4 " itemValue="4" />
-						<f:selectItem itemLabel=" 5 " itemValue="5" />
-						<f:selectItem itemLabel=" 6 " itemValue="6" />
+						<f:selectItem itemLabel=" Mañana " itemValue="1" />
+						<f:selectItem itemLabel=" Tarde " itemValue="2" />
+						<f:selectItem itemLabel=" Noche " itemValue="3" />
 					</aon:selectOneMenu>
 				
 					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 					<aon:selectOneMenu 
 						value="#{posOpening.hotel}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 						<a4j:support event="onchange" reRender="posOpeningPanel" ignoreDupResponses="true">
 						</a4j:support>
@@ -63,14 +68,28 @@
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
-					<aon:inputText value="#{posOpening.posShift.initialAmount}" >
-						<f:validateDoubleRange minimum="0.0" />
-					</aon:inputText>
+					<aon:div>
+						<aon:inputText value="#{posOpening.posShift.initialAmount}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posOpening.onShowCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posOpening.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
 					
 				</aon:panelGrid>
 				
 			</aon:div>
 		</aon:form>
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posClosing/calculatorModal.xhtml" >
+			<ui:param name="controller" value="#{posOpening}" />								
+			<ui:param name="modalReRender" value="posOpeningForm" />
+		</ui:include>
 		
 	</ui:define>
 </ui:composition>

@@ -35,15 +35,13 @@
 					
 					<aon:outputLabel value="#{pmsBundle.pms_invoiceable}" />
 					<aon:selectBooleanCheckbox value="#{pos.to.invoiceable}" >
-						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" />
+						<a4j:support event="onclick" reRender="posPanel" ignoreDumpResponses="true" ajaxSingle="true" />
 					</aon:selectBooleanCheckbox>
 					
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{pos.to.item}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="skipSuggestText" value="#{pos.to.item != null and pos.to.item.id != null}" />
-						<ui:param name="lookupInputOnFocus" value="ProjectReservationService_description" />
 						<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
 					</ui:include>
 					

@@ -424,10 +424,24 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posShiftSearch}</value>
+				<value>#{posShiftControllerListener}</value>
 				<value>#{posShiftCountListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>posShiftSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosShiftSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>posShiftControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosShiftControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>posShiftCountListener</managed-bean-name>

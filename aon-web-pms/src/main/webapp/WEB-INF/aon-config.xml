@@ -100,7 +100,7 @@
 			showCatalogues="true"
 			showComposition="true"
 			showAlternatives="false"
-			showSuppliers="false"
+			showSuppliers="true"
 			showAccount="true"
 			showAttachment="false"
 			showEcommerceData="false"
