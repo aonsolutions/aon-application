@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="purchaseProposalForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_purchase_proposal}" />
+				<ui:param name="controller" value="#{purchaseProposal}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="purchaseProposalPanel" columns="2" >
+				
+				
+				
+							
+	<!--  
+  issue_date
+  department
+  workplace
+  scope
+  remarks
+  status  
+	-->		
+				
+				
+				<!--  
+					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+					<aon:div>
+						<aon:outputText rendered="#{!posShift.new}" 
+							value="#{posShift.to.pos.workPlace.description}" />
+						<aon:selectOneMenu rendered="#{posShift.new}"
+							value="#{posShift.hotel}" >
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true">
+							</a4j:support>
+							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true">
+							</a4j:support>
+						</aon:selectOneMenu>
+					</aon:div>
+				
+					<aon:outputLabel for="PosShift_pos" value="#{pmsBundle.pms_pos}" />
+					<aon:div>
+						<aon:outputText rendered="#{!posShift.new}" 
+							value="#{posShift.to.pos.name}" />
+						<aon:selectOneMenu id="PosShift_pos"
+							rendered="#{posShift.new}" 
+							value="#{posShift.to.pos}" >
+							<f:selectItems value="#{posShift.posList}" />
+						</aon:selectOneMenu>
+					</aon:div>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
+					<aon:selectOneMenu 
+						value="#{posShift.to.shift}" >
+						<f:selectItem itemLabel=" Mañana " itemValue="1" />
+						<f:selectItem itemLabel=" Tarde " itemValue="2" />
+						<f:selectItem itemLabel=" Noche " itemValue="3" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel 
+						value="#{pmsBundle.pms_opening}" />
+					<aon:selectInputDate  
+						value="#{posShift.to.startTime}" size="20"
+						inputSize="16" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel 
+						value="#{pmsBundle.pms_closing}" />
+					<aon:selectInputDate  
+						value="#{posShift.to.endTime}" size="20"
+						inputSize="16" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
+					<aon:div>
+						<aon:inputText value="#{posShift.to.initialAmount}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posShift.onShowCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posShift.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
+					
+				</aon:panelGrid>
+				
+				<br />
+				
+				<aon:panelGrid columns="2" >
+					<aon:outputLabel for="PosShiftCount_amount" value="#{pmsBundle.pms_cash_payMethod_name}" />
+					<aon:div>
+						<aon:inputText id="PosShiftCount_amount" 
+							value="#{posShift.cashAmount}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow" 
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posShift.onShowCashCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posShift.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
+				-->
+				</aon:panelGrid>
+				
+			</aon:div>
+			
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>
