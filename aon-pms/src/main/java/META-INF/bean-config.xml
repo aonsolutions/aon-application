@@ -14,9 +14,26 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.esferalia.aon.pms.ProjectReservationGuest</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.pms.event.ProjectReservationGuestBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationGuestBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.esferalia.aon.pms.ProjectReservationRoom</pojo>
 		<vetoListeners>
 	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationRoomBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.esferalia.aon.pms.ProjectReservationService</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.ProjectReservationServiceBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 

@@ -102,7 +102,9 @@ public class ReservationUtils implements IReservationConstants {
     private String obtainProjectReservationName(ProjectReservation reservation) throws ManagerBeanException {
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	String dates = formatter.format(reservation.getStartDate()) + "-" + formatter.format(reservation.getEndDate());
-    	return StringUtils.abbreviate(dates + " " + reservation.getCode() + " " + reservation.getGuestFullName(), 64);
+    	String guest = reservation.getGuestFullName();
+    	String code = reservation.getCode();
+    	return StringUtils.abbreviate(dates + (guest == null ? "" : " " + guest) + (code == null ? "" : " (" + reservation.getCode() + ")"), 64);
     }
 
     public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room) throws ManagerBeanException {

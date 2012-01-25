@@ -274,6 +274,11 @@ public class ReservationManager implements IReservationConstants {
 					reservationGuest.setCountry(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName().getCode());
 				}
 				reservationGuestBean.insert(reservationGuest);
+				if (reservationGuest.getGuestIndex() == 1) {
+					getReservationUtils().fillProject(reservation);
+					IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+					reservation = (ProjectReservation)reservationBean.update(reservation);
+				}
 			}
 		}
 	}

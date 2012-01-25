@@ -10,16 +10,16 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
 
-public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+public class ProjectReservationServiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-    	ProjectReservationRoom to = (ProjectReservationRoom)evt.getTo();
+    	ProjectReservationService to = (ProjectReservationService)evt.getTo();
     	try {
-    		if (to.getRoomIndex() == 0) {
-        		to.setRoomIndex(calculateNextIndex(to.getProjectReservation()));
+    		if (to.getServiceIndex() == 0) {
+        		to.setServiceIndex(calculateNextIndex(to.getProjectReservation()));
     		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex);
@@ -27,11 +27,11 @@ public class ProjectReservationRoomBeanVetoListener extends ManagerBeanVetoListe
     }
 
 	private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
-		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
-		Projection projection = Projection.max(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
-		Object value = reservationRoomBean.getUniqueResult(projection, criteria);
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
+		Projection projection = Projection.max(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_SERVICE_INDEX));
+		Object value = reservationServiceBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}
 
