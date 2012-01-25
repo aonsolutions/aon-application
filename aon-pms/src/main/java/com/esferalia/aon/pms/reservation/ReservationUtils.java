@@ -113,6 +113,45 @@ public class ReservationUtils implements IReservationConstants {
     	insertProjectReservationRoomDetails(reservationRoom, startDate, endDate, room);
     }
 
+    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
+    	boolean oneRoom = reservationRoom.getProjectReservation().getRoomCount() == 1;
+
+    	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+    	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+    	Date effectiveDate = fromDate;
+		while (effectiveDate.compareTo(toDate) < 0) {
+			AssetActivity assetActivity = new AssetActivity();
+			assetActivity.setAsset(room.getAsset());
+			assetActivity.setDate(effectiveDate);
+			assetActivity.setFromTime(effectiveDate);
+			assetActivity.setToTime(effectiveDate);
+			assetActivity.setStatus(ActivityStatus.BUSY);
+			assetActivity = (AssetActivity)assetActivityBean.insert(assetActivity);
+
+			ProjectReservationRoomDetail reservationRoomDetail = new ProjectReservationRoomDetail();
+			reservationRoomDetail.setProjectReservationRoom(reservationRoom);
+			reservationRoomDetail.setAssetActivity(assetActivity);
+			reservationRoomDetail = (ProjectReservationRoomDetail)reservationRoomDetailBean.insert(reservationRoomDetail);
+			if (oneRoom) {
+				IManagerBean resServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+				Criteria criteria = new Criteria();
+				String alias = resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+				criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
+				criteria.addEqualExpression(resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), effectiveDate);
+				for (ITransferObject ito : resServiceDetailBean.getList(criteria)) {
+					ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+					reservationServiceDetail.setProjectReservationRoomDetail(reservationRoomDetail);
+					resServiceDetailBean.update(reservationServiceDetail);
+				}
+			}
+
+			Calendar nextCalendar = new GregorianCalendar();
+			nextCalendar.setTime(effectiveDate);
+			nextCalendar.add(Calendar.DATE, 1);
+			effectiveDate = nextCalendar.getTime();
+		}
+    }
+
 	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService) throws ManagerBeanException {
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
@@ -140,31 +179,6 @@ public class ReservationUtils implements IReservationConstants {
 			}
 		}
 	}
-
-    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
-    	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
-    	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-    	Date effectiveDate = fromDate;
-		while (effectiveDate.compareTo(toDate) < 0) {
-			AssetActivity assetActivity = new AssetActivity();
-			assetActivity.setAsset(room.getAsset());
-			assetActivity.setDate(effectiveDate);
-			assetActivity.setFromTime(effectiveDate);
-			assetActivity.setToTime(effectiveDate);
-			assetActivity.setStatus(ActivityStatus.BUSY);
-			assetActivity = (AssetActivity)assetActivityBean.insert(assetActivity);
-
-			ProjectReservationRoomDetail reservationRoomDetail = new ProjectReservationRoomDetail();
-			reservationRoomDetail.setProjectReservationRoom(reservationRoom);
-			reservationRoomDetail.setAssetActivity(assetActivity);
-			reservationRoomDetailBean.insert(reservationRoomDetail);
-
-			Calendar nextCalendar = new GregorianCalendar();
-			nextCalendar.setTime(effectiveDate);
-			nextCalendar.add(Calendar.DATE, 1);
-			effectiveDate = nextCalendar.getTime();
-		}
-    }
 
     public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);

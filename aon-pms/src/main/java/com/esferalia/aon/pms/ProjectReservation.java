@@ -57,4 +57,12 @@ public class ProjectReservation extends ProjectReservationDB implements IProject
 		return null;
 	}
 
+	@Transient
+	public int getRoomCount() throws ManagerBeanException {
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		return reservationRoomBean.getCount(criteria);
+	}
+
 }
