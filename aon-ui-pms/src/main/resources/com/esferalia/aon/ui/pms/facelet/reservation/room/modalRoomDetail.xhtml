@@ -60,7 +60,7 @@
 									<aon:commandButton id="roomDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{pmsBundle.pms_remove_stay}"
-										rendered="#{!reservation.to.crs}"
+										rendered="#{!controller.new and !reservation.to.crs and controller.to.roomNumber == null}"
 										actionListener="#{controller.onRemoveReservationRoom}">
 										<rich:componentControl for="roomDetailModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -96,7 +96,7 @@
 												value="#{productBundle.product_tariff}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
 												value="#{controller.to.tariff}" required="#{true}"
-												disabled="#{!aonRole.saleOperator}">
+												disabled="#{!controller.new or !aonRole.saleOperator}">
 												<f:selectItems value="#{pmsCollections.tariffs}" />
 											</aon:selectOneMenu>
 

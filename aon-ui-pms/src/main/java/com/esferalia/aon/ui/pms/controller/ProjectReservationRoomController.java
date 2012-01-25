@@ -9,6 +9,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
+import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
@@ -34,7 +36,6 @@ public class ProjectReservationRoomController extends LinesController {
 
 	@Override
 	public void onReset(ActionEvent event) {
-		setShowRoomDetailWindow(true);
 		setNew(true);
 		try {
 			ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
@@ -43,8 +44,13 @@ public class ProjectReservationRoomController extends LinesController {
 			if (collections.getRoomItems().size() > 1) {
 				reservationRoom.setItem((Item)collections.getRoomItems().get(0).getValue());
 			}
+			if (collections.getTariffs().size() > 1) {
+				Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(reservationRoom.getProjectReservation().getProject().getRegistry().getId());
+				Tariff tariff = (customer != null && customer.getTariff() != null) ? customer.getTariff() : (Tariff)collections.getTariffs().get(0).getValue();
+				reservationRoom.setTariff(tariff);
+			}
 			setTo(reservationRoom);
-	
+
 			ReservationTableController controller = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
 			controller.onInitializeRoomList((ProjectReservationRoom)getTo());
 		} catch (ManagerBeanException ex) {
