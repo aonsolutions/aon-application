@@ -1011,6 +1011,10 @@
 		<column name="comments" type="text"/>
 	</table>
 	
+	<table name="proposal" >
+		<column name="status" type="com.code.aon.purchase.enumeration.ProposalStatus" />
+	</table>
+	
 	<table name="purchase">
 		<column name="discount_expr" property="discountExpression" type="com.code.aon.product.util.DiscountExpression"/>
 		<column name="number_of_pymnts" property="numberOfPayments" type="int"/>
