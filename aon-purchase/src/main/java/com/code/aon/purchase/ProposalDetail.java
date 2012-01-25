@@ -1,4 +1,4 @@
-package com.esferalia.aon.pms;
+package com.code.aon.purchase;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

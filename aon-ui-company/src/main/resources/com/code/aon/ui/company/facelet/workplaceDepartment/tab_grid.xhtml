@@ -18,12 +18,12 @@
 				<aon:outputText value="#{to.department.name}" rendered="#{formList}" />
 				<aon:selectOneMenu id="WorkplaceDepartment_department" value="#{to.department}" 
 					rendered="#{formEdit}" required="#{true}">
-					<f:selectItems value="#{pmsCollections.departments}" />
+					<f:selectItems value="#{companyCollections.departments}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="WorkplaceDepartment_department-New" value="#{controller.to.department}" 
 						rendered="#{formNew}" required="#{true}">
-						<f:selectItems value="#{pmsCollections.departments}" />
+						<f:selectItems value="#{companyCollections.departments}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

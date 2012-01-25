@@ -203,10 +203,12 @@ public class AonExporter extends GenericExporter{
 
 		//AON COMPANY 
 		map.put("Company","com.code.aon.company.Company");
+		map.put("Department","com.code.aon.company.Department");
 		map.put("Enterprise","com.code.aon.company.Enterprise");
 		map.put("EnterpriseData","com.code.aon.company.EnterpriseData");
 		map.put("WorkPlace","com.code.aon.company.WorkPlace");
 		map.put("EnterpriseUser","com.code.aon.company.EnterpriseUser");
+		map.put("WorkplaceDepartment","com.code.aon.company.WorkplaceDepartment");
 
 		//AON CONFIG 
 		map.put("Domain","com.code.aon.config.Domain");
@@ -392,7 +394,6 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS
-		map.put("Department","com.esferalia.aon.pms.Department");
         map.put("Hotel","com.esferalia.aon.pms.Hotel");
         map.put("Pos","com.esferalia.aon.pms.Pos");
         map.put("PosShift","com.esferalia.aon.pms.PosShift");
@@ -403,12 +404,11 @@ public class AonExporter extends GenericExporter{
         map.put("ProjectReservationRoomDetail","com.esferalia.aon.pms.ProjectReservationRoomDetail");
         map.put("ProjectReservationService","com.esferalia.aon.pms.ProjectReservationService");
         map.put("ProjectReservationServiceDetail","com.esferalia.aon.pms.ProjectReservationServiceDetail");
-        map.put("Proposal","com.esferalia.aon.pms.Proposal");
-        map.put("ProposalDetail","com.esferalia.aon.pms.ProposalDetail");
         map.put("Room","com.esferalia.aon.pms.Room");
-        map.put("WorkplaceDepartment","com.esferalia.aon.pms.WorkplaceDepartment");
         
 		//AON-PURCHASE  
+        map.put("Proposal","com.code.aon.purchase.Proposal");
+        map.put("ProposalDetail","com.code.aon.purchase.ProposalDetail");
 		map.put("Purchase","com.code.aon.purchase.Purchase");
 		map.put("PurchaseDetail","com.code.aon.purchase.PurchaseDetail");
 

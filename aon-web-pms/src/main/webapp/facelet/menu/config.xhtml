@@ -36,6 +36,14 @@
 										action="hotel_list" 
 										value="#{pmsBundle.pms_hotel_module}" />
 								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="department" 
+										action="department_grid" 
+										value="#{pmsBundle.pms_department_module}" >
+										<aon:actionListener method="#{department.onEditSearch}" />
+										<aon:actionListener method="#{department.onSearch}" />
+									</aon:commandLink>
+								</aon:div>								
 							</aon:div>
 						</aon:panelGrid>
 						

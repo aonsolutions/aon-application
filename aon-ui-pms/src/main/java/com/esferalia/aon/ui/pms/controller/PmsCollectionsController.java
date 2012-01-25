@@ -16,7 +16,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.Department;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -108,17 +107,5 @@ public class PmsCollectionsController {
 		return tariffs;
 	}
 	
-	public List<SelectItem> getDepartments() throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(Department.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IEntityAlias.DEPARTMENT_NAME));
-		for (ITransferObject ito : bean.getList(criteria)) {
-			Department d = (Department)ito;
-			SelectItem item = new SelectItem(d, d.getName());
-			list.add(item);
-		}
-		return list;
-	}
 
 }

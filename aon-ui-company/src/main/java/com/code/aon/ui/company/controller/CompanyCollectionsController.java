@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.company.Department;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
@@ -233,6 +234,20 @@ public class CompanyCollectionsController {
 		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
 		return workPlaceBean.getCount(criteria);
+	}
+	
+
+	public List<SelectItem> getDepartments() throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Department.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(IEntityAlias.DEPARTMENT_NAME));
+		for (ITransferObject ito : bean.getList(criteria)) {
+			Department d = (Department)ito;
+			SelectItem item = new SelectItem(d, d.getName());
+			list.add(item);
+		}
+		return list;
 	}
 	
 }

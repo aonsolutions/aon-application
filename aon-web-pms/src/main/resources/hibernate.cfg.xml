@@ -92,9 +92,11 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>		
 		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
@@ -186,6 +188,8 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
@@ -239,7 +243,6 @@
 		<mapping class="com.code.aon.audit.Session"/>								
 				
 		<!-- AON-PMS Mapping files -->	
-		<mapping class="com.esferalia.aon.pms.Department"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
 		<mapping class="com.esferalia.aon.pms.Pos"/>
 		<mapping class="com.esferalia.aon.pms.PosShift"/>
@@ -250,10 +253,8 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
-		<mapping class="com.esferalia.aon.pms.Proposal"/>
-		<mapping class="com.esferalia.aon.pms.ProposalDetail"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>
-		<mapping class="com.esferalia.aon.pms.WorkplaceDepartment"/>
+		
 
 	</session-factory>
 

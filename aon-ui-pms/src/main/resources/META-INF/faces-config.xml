@@ -80,7 +80,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.WorkplaceDepartment</value>
+			<value>com.code.aon.company.WorkplaceDepartment</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -107,29 +107,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>
-	
-	<!-- ************* DEPARTMENT ***************** -->
-	<managed-bean>
-		<managed-bean-name>department</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.Department</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>department</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Department_name</value>
-		</managed-property>				
 	</managed-bean>
 	
 	<!-- ************* ROOM ***************** -->
@@ -609,14 +586,6 @@
 	<!-- ******************************** -->
 	<!-- ********** NAVIGATION ********** -->
 	<!-- ******************************** -->
-
-  	<!-- =================== Department ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>department_grid</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/department/grid.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 
   	<!-- =================== Hotel ================= -->
 	<navigation-rule>

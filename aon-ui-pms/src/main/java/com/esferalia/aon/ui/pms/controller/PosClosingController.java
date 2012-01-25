@@ -88,8 +88,7 @@ public class PosClosingController {
 		criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME));
 		criteria.addNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
 		if(getHotel()!=null && getHotel().getId()!=null){
-			//TODO porque no se genera este alias
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getWorkPlace().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getWorkPlace().getId());
 		}
 		for(ITransferObject to: bean.getList(criteria)){
 			PosShift ps = (PosShift) to;
