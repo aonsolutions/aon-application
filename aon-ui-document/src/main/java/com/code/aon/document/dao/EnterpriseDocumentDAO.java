@@ -1,10 +1,13 @@
 package com.code.aon.document.dao;
 
 import static com.code.aon.document.IAlfrescoConstants.CATEGORIES_LONG;
+import static com.code.aon.document.IAlfrescoConstants.COMPANY_HOME_PATH;
+import static com.code.aon.document.IAlfrescoConstants.CONTENT_PREFFIX;
 import static com.code.aon.document.IAlfrescoConstants.CREATED_LONG;
 import static com.code.aon.document.IAlfrescoConstants.DESCRIPTION_LONG;
 import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID;
 import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_LONG;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_PREFFIX;
 import static com.code.aon.document.IAlfrescoConstants.MODIFIED_LONG;
 import static com.code.aon.document.IAlfrescoConstants.NAME_LONG;
 import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
@@ -30,11 +33,13 @@ import org.alfresco.webservice.content.ContentFault;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.ContentFormat;
 import org.alfresco.webservice.types.NamedValue;
+import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -47,6 +52,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.document.BasicAlfresco;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.EnterpriseDocumentAspect;
 import com.code.aon.project.Project;
@@ -56,14 +62,21 @@ import com.code.aon.project.Project;
  */
 public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	
-    private static final String DEFAULT_PATH = "/app:company_home/cm:AON";
-	
 	private AlfrescoDAO categoryDAO;
+	
+	private Enterprise parentEnterprise;
 
 	public EnterpriseDocumentDAO( String user, String password, AlfrescoDAO categoryDAO ) {
 		super( EnterpriseDocument.class, user, password );		
 		this.categoryDAO = categoryDAO;
-		setPath(DEFAULT_PATH);
+	}
+	
+	public Enterprise getParentEnterprise() {
+		return parentEnterprise;
+	}
+
+	public void setParentEnterprise(Enterprise parentEnterprise) {
+		this.parentEnterprise = parentEnterprise;
 	}
 
 	private EnterpriseDocument newEnterpriseDocument() {
@@ -226,6 +239,36 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			AppliedCategory ac = new AppliedCategory(classification, categories);
 			getClassificationService().setCategories(predicate, new AppliedCategory[]{ac});
 		}
+	}
+
+	public String getEnterprisePath( Enterprise enterprise ) {
+		StringBuffer path = new StringBuffer();
+		path.append(COMPANY_HOME_PATH).append("/");
+		path.append(CONTENT_PREFFIX);
+		path.append(ENTERPRISE_PREFFIX);
+		path.append(parentEnterprise.getId());
+		if (! ObjectUtils.equals(parentEnterprise, enterprise) ) {
+			path.append("/");
+			path.append(CONTENT_PREFFIX);
+			path.append(ENTERPRISE_PREFFIX);
+			path.append(enterprise.getId());			
+		}
+		return path.toString();
+	}
+	
+	public ParentReference getParent( Enterprise enterprise ) {
+		ParentReference parent = null;
+		if (! ObjectUtils.equals(parentEnterprise, enterprise) ) {
+			Reference path = getReference( getEnterprisePath(parentEnterprise) );
+			parent = getReferenceToParent(path);
+		} else {
+			parent = BasicAlfresco.getCompanyHome();
+		}
+		return parent;
+	}
+	
+	public static String getName( Enterprise enterprise ) {
+		return ENTERPRISE_PREFFIX + enterprise.getId();
 	}
 	
 }

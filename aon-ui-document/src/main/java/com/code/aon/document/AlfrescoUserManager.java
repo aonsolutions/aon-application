@@ -1,7 +1,6 @@
 package com.code.aon.document;
 
 import static com.code.aon.document.IAlfrescoConstants.ALFRESCO_ADMINISTRATORS;
-import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_PREFFIX;
 import static com.code.aon.document.IAlfrescoConstants.GROUP_AUTHORITY_TYPE;
 import static com.code.aon.document.IAlfrescoConstants.USER_AUTHORITY_TYPE;
 import static org.alfresco.webservice.util.Constants.PROP_USER_FIRSTNAME;
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
+import com.code.aon.document.dao.EnterpriseDocumentDAO;
 
 
 /**
@@ -69,12 +69,8 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 		}				
 	}
 	
-	private String getName( Enterprise enterprise ) {
-		return ENTERPRISE_PREFFIX + enterprise.getId();
-	}
-	
 	private void addUserToGroup( EnterpriseUser user ) throws DAOException {
-		addUserToGroup( user.getLogin(), getName(user.getEnterprise()) );
+		addUserToGroup( user.getLogin(), EnterpriseDocumentDAO.getName(user.getEnterprise()) );
 	}	
 	
 	public void createUser( EnterpriseUser user ) throws DAOException {

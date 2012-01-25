@@ -1,5 +1,6 @@
 package com.code.aon.document;
 
+import static com.code.aon.document.IAlfrescoConstants.COMPANY_HOME_PATH;
 import static org.alfresco.webservice.util.Constants.QUERY_LANG_LUCENE;
 
 import java.io.File;
@@ -13,6 +14,11 @@ import org.alfresco.webservice.content.Content;
 import org.alfresco.webservice.content.ContentServiceSoapBindingStub;
 import org.alfresco.webservice.repository.QueryResult;
 import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
+import org.alfresco.webservice.repository.UpdateResult;
+import org.alfresco.webservice.types.CML;
+import org.alfresco.webservice.types.CMLCreate;
+import org.alfresco.webservice.types.CMLDelete;
+import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Query;
@@ -23,6 +29,7 @@ import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.ContentUtils;
+import org.alfresco.webservice.util.Utils;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -79,9 +86,9 @@ public class BasicAlfresco {
 		AuthenticationUtils.endSession();
 	}
 
-	public ParentReference getCompanyHome() {
+	public static ParentReference getCompanyHome() {
 		ParentReference companyHomeParent = new ParentReference(STORE, null,
-				"/app:company_home", Constants.ASSOC_CONTAINS, null);
+				COMPANY_HOME_PATH, Constants.ASSOC_CONTAINS, null);
 		return companyHomeParent;
 	}
 
@@ -170,6 +177,56 @@ public class BasicAlfresco {
 		Store store = reference.getStore();
 		String id = store.getScheme() + "\\://" + store.getAddress() + "/" + reference.getUuid();
 		return id;
+	}
+
+	public String normalizeNodeName( String name ) {
+		return StringUtils.replace( name, " ", "_" );
+	}
+	
+	public Reference createSpace( ParentReference parent, String spaceName, String description ) throws DAOException {
+		Reference spaceRef = null;
+		try {
+			startSession();
+		
+			// Asignamos un nombre para el nodo que vamos a crea en company_home
+			String _name = normalizeNodeName(spaceName);
+			parent.setChildName(Constants.createQNameString(Constants.NAMESPACE_CONTENT_MODEL, _name));
+			
+			// Comienza la construcción de nodo
+			NamedValue[] contentProps = new NamedValue[2];
+			contentProps[0] = Utils.createNamedValue(Constants.PROP_NAME, spaceName);
+			contentProps[1] = Utils.createNamedValue(Constants.PROP_DESCRIPTION, description);
+			CMLCreate create = new CMLCreate("1", parent, null, null,
+					null, Constants.TYPE_FOLDER, contentProps);
+	
+			// Contruimos CML Block, con el nodo y sus aspectos
+			CML cml = new CML();
+			cml.setCreate(new CMLCreate[] { create });
+	
+			// Creamos y recuperamos el contenido vía Repository Web Service
+			UpdateResult[] result = getRepositoryService().update(cml);
+			spaceRef = result[0].getDestination();
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error creating space " + spaceName, e );
+		} finally {
+			endSession();
+		}
+		return spaceRef;
+	}	
+	
+	public void removeSpace(Reference reference) throws DAOException {
+		Predicate predicate = new Predicate( new Reference[]{reference}, STORE, null);
+		CMLDelete delete = new CMLDelete(predicate);
+		CML cml = new CML();
+		cml.setDelete(new CMLDelete[] { delete });
+		try {
+			startSession();
+			getRepositoryService().update(cml);
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error removing space " + reference.getPath(), e );
+		} finally {
+			endSession();
+		}	
 	}
 	
 }

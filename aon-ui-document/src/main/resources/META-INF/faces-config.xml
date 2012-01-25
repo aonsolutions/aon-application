@@ -87,6 +87,12 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 	
+	<managed-bean>
+		<managed-bean-name>enterpriseAlfrescoListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.document.event.EnterpriseAlfrescoListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+	
 	<!-- ************ ALFRESCO CATEGORY GROUP ************** -->
 	<managed-bean>
 		<managed-bean-name>alfrescoCategoryGroup</managed-bean-name>
@@ -210,7 +216,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>					
-	
+				
 	
 	<!-- =================== Enterprise Document ========================== -->
 	<navigation-rule>
