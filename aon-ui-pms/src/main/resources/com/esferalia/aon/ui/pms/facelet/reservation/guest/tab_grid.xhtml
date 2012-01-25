@@ -9,8 +9,9 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!reservation.active or !aonRole.saleOperator}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipResetButton" value="#{!reservation.active}" />
+		<ui:param name="skipLineEdition" value="#{!reservation.active}" />
+		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
 
 		<ui:define name="columns">
 

@@ -36,7 +36,6 @@ public class ProjectReservationRoomController extends LinesController {
 
 	@Override
 	public void onReset(ActionEvent event) {
-		setNew(true);
 		try {
 			ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 			reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
@@ -53,13 +52,14 @@ public class ProjectReservationRoomController extends LinesController {
 
 			ReservationTableController controller = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
 			controller.onInitializeRoomList((ProjectReservationRoom)getTo());
+
+			setNew(true);
 		} catch (ManagerBeanException ex) {
 			throw new AbortProcessingException("No es posible asignar Habitación");
 		}
 	}
 
 	public void onSelect(ActionEvent event) {
-		setNew(false);
 		try {
 			if (getModel().isRowAvailable()) {
 				setTo((ITransferObject)getModel().getRowData());
@@ -72,7 +72,7 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 	}
 
-	public void onAssignRoom(ActionEvent event) throws ManagerBeanException {
+	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ReservationTableController tableController = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
 		Room availableRoom = tableController.getAvailableRoom();
 
@@ -88,7 +88,7 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 	}
 
-	public void onCancelRoom(ActionEvent event) throws ManagerBeanException {
+	public void onCancelReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 		reservationRoom.setRoomNumber(null);
 

@@ -9,86 +9,88 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipResetButton" value="#{true}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="skipNewSaveButton" value="#{true}" />
+		<ui:param name="skipNewCancelButton" value="#{true}" />
+		<ui:param name="skipSaveButton" value="#{true}" />
+		<ui:param name="skipCancelButton" value="#{true}" />
 		<ui:param name="skipRemoveButton" value="#{true}" />
-		<ui:define name="beginFormListContent">
-			<aon:commandLink id="Service-selectButton"
-				styleClass="aon-table-row-link" value="&#160;"
-				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{reservation.active and aonRole.saleOperator}"
-				actionListener="#{controller.onSelect}"
-				reRender="aonContent"
-				onkeyup="#{dataTableId}KeyUp(this)"
-				onfocus="#{dataTableId}SelectRow(this)"
-				onblur="#{dataTableId}DeselectRow(this)"
-				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
-			</aon:commandLink>
-		</ui:define>
 
 		<ui:define name="columns">
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:commandLink id="Service-selectButton"
+					styleClass="aon-table-row-link" value="&#160;"
+					immediate="true" ajaxSingle="true" requestDelay="100"
+					rendered="#{reservation.active and reservation.to.roomCount > 0}"
+					actionListener="#{controller.onSelect}"
+					reRender="showServiceDetailWindow"
+					onkeyup="#{dataTableId}KeyUp(this)"
+					onfocus="#{dataTableId}SelectRow(this)"
+					onblur="#{dataTableId}DeselectRow(this)"
+					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+					<f:setPropertyActionListener target="#{controller.showServiceDetailWindow}"
+						value="#{true}" />
+				</aon:commandLink>
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton
+							id="Service-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							rendered="#{!reservation.to.crs and reservation.active and reservation.to.roomCount > 0}" 
+							actionListener="#{controller.onReset}"
+							reRender="showServiceDetailWindow"
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}">
+							<f:setPropertyActionListener target="#{controller.showServiceDetailWindow}"
+								value="#{true}" />
+						</aon:commandButton>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_serviceIndex" value="#{bundle.aon_order}" />
+					<aon:outputLabel value="#{bundle.aon_order}" />
 				</f:facet>
-				<aon:outputText id="ProjectReservationService_serviceIndex" value="#{to.serviceIndex}" 
-					rendered="#{formList or formEdit}" />
+				<aon:outputText value="#{to.serviceIndex}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{pmsBundle.pms_service}" />
+					<aon:outputLabel value="#{pmsBundle.pms_service}" />
 				</f:facet>
-				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{controller.to.item}" />
-					<ui:param name="idRequired" value="#{true}" />
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="skipNewButton" value="#{true}" />
-					<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
-					<ui:param name="lookupInputOnFocus" value="ProjectReservationService_description" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupReRender" 
-						value="reservationServiceItemEdit,ProjectReservationService_quantity,ProjectReservationService_price,
-								ProjectReservationService_taxableBase" />
-					<aon:methodParam name="lookupChangeListener"
-						value="#{controller.onItemChanged}" type="lookupChangeListener" />
-				</ui:include>
-				<aon:panelGroup id="reservationServiceItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
-					<aon:inputText id="ProjectReservationService_description" 
-						value="#{controller.to.description}" size="60" maxlength="64"
-						rendered="#{controller.to.item != null and controller.to.item.id != null}" />
-				</aon:panelGroup>
-				<f:facet name="footer">
-					<aon:div rendered="#{formNew}">
-						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{controller.to.item}" />
-							<ui:param name="idRequired" value="#{true}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
-							<ui:param name="lookupInputOnFocus" value="ProjectReservationService_description-New" />
-							<ui:param name="lookupSuffix" value="-New" />
-							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupReRender" 
-								value="reservationServiceItemNew,ProjectReservationService_quantity-New,ProjectReservationService_price-New,
-										ProjectReservationService_taxableBase-New" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{controller.onItemChanged}" type="lookupChangeListener" />
-						</ui:include>
-						<aon:panelGroup id="reservationServiceItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
-							<aon:inputText id="ProjectReservationService_description-New" 
-								value="#{controller.to.description}" size="60" maxlength="64"
-								rendered="#{controller.to.item != null and controller.to.item.id != null}" />
-						</aon:panelGroup>
-					</aon:div>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
 				</f:facet>
+				<aon:outputText value="#{to.roomNumber}" />
 			</aon:column>
 		</ui:define>
 
 		<ui:define name="endFormListContent">
+			<aon:div>
+				<aon:commandButton id="showServiceDetailTable"
+					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
+					title="#{pmsBundle.pms_to_breakdown}"
+					rendered="#{!to.showServiceDetail}" 
+					actionListener="#{controller.onShowServiceDetails}"
+					reRender="#{dataTableId}" />
+				<aon:commandButton id="hideServiceDetailTable"
+					value="&#160;" styleClass="aon-icon-index aon-noborder"
+					title="#{pmsBundle.pms_to_hide}"
+					rendered="#{to.showServiceDetail}" 
+					actionListener="#{controller.onHideServiceDetails}"
+					reRender="#{dataTableId}" />
+			</aon:div>
 			<rich:subTable id="serviceDetailTable" 
-				rendered="#{!controller.showServiceDetail}"
+				rendered="#{controller.showServiceDetail}"
 				value="#{controller.serviceDetailList}" var="serviceDetail">
 
 				<c:if test="#{reservation.active and aonRole.saleOperator}">
@@ -101,7 +103,7 @@
 					<aon:outputText value="&#160;" />
 				</aon:column>
 
-				<aon:column colspan="2"
+				<aon:column colspan="3"
 					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
 					<aon:panelGrid columns="5" columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-150, aon-noborder aon-width-150, 
 													aon-noborder aon-width-150, aon-noborder aon-width-auto">
@@ -143,86 +145,6 @@
 			</rich:subTable>
 		</ui:define>
 
-<!-- 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_effectiveDate" value="#{bundle.aon_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.effectiveDate}" rendered="#{formList}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:selectInputDate id="ProjectReservationService_effectiveDate" value="#{controller.to.effectiveDate}" 
-					rendered="#{formEdit}" required="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}" />
-				<f:facet name="footer">
-					<aon:selectInputDate id="ProjectReservationService_effectiveDate-New" value="#{controller.to.effectiveDate}" 
-						rendered="#{formNew}" required="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}" />
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_quantity" value="#{bundle.aon_quantity}" />
-				</f:facet>
-				<aon:outputText value="#{to.quantity}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ProjectReservationService_quantity" value="#{controller.to.quantity}"
-					rendered="#{formEdit}" size="5" required="true" 
-					valueChangeListener="#{controller.onQuantityChanged}" 
-					reRender="ProjectReservationService_price,ProjectReservationService_taxableBase"
-					focus="ProjectReservationService_price" /> 
-				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationService_quantity-New" value="#{controller.to.quantity}"
-						rendered="#{formNew}" size="5" required="true"
-						valueChangeListener="#{controller.onQuantityChanged}" 
-						reRender="ProjectReservationService_price-New,ProjectReservationService_taxableBase-New"
-						focus="ProjectReservationService_price-New" /> 
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_price" value="#{bundle.aon_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.price}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ProjectReservationService_price" value="#{controller.to.price}"
-					rendered="#{formEdit}" size="5" required="true"  
-					valueChangeListener="#{controller.onPriceChanged}" 
-					reRender="ProjectReservationService_taxableBase" /> 
-				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationService_price-New" value="#{controller.to.price}"
-						rendered="#{formNew}" size="5" required="true"  
-						valueChangeListener="#{controller.onPriceChanged}" 
-						reRender="ProjectReservationService_taxableBase-New" /> 
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
-				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationService_taxableBase" value="#{bundle.aon_amount}" />
-				</f:facet>
-				<aon:outputText value="#{to.taxableBase}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:outputText id="ProjectReservationService_taxableBase" value="#{controller.to.taxableBase}"
-					rendered="#{formEdit}"> 
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<f:facet name="footer">
-					<aon:outputText id="ProjectReservationService_taxableBase-New" value="#{controller.to.taxableBase}"
-						rendered="#{formNew}">
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-				</f:facet>
-			</aon:column>
- -->
 	</ui:decorate>
 
 </ui:composition>

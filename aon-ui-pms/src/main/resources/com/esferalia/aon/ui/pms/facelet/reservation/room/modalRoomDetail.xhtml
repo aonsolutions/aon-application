@@ -40,7 +40,7 @@
 									<aon:commandButton id="roomDetail-assign"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{controller.to.roomNumber == null ? (pmsBundle.pms_room_assign) : (bundle.aon_save)}"
-										actionListener="#{controller.onAssignRoom}">
+										actionListener="#{controller.onAssignReservationRoom}">
 										<rich:componentControl for="roomDetailModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
@@ -51,7 +51,7 @@
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{pmsBundle.pms_room_assign_cancel}"
 										rendered="#{controller.to.roomNumber != null}"
-										actionListener="#{controller.onCancelRoom}"
+										actionListener="#{controller.onCancelReservationRoom}"
 										reRender="showRoomDetailWindow" immediate="true">
 										<f:setPropertyActionListener
 											target="#{reservationTable.availableRoomList}"

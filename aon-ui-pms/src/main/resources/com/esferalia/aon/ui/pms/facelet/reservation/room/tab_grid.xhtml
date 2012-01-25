@@ -99,13 +99,13 @@
 			<aon:div>
 				<aon:commandButton id="showRoomDetailTable"
 					value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
-					title="#{pmsBundle.pms_tobreakdown}"
+					title="#{pmsBundle.pms_to_breakdown}"
 					rendered="#{to.roomNumber != null and !to.showRoomDetail}" 
 					actionListener="#{controller.onShowRoomDetails}"
 					reRender="#{dataTableId}" />
 				<aon:commandButton id="hideRoomDetailTable"
 					value="&#160;" styleClass="aon-icon-index aon-noborder"
-					title="#{financeBundle.finance_hide}"
+					title="#{pmsBundle.pms_to_hide}"
 					rendered="#{to.roomNumber != null and to.showRoomDetail}" 
 					actionListener="#{controller.onHideRoomDetails}"
 					reRender="#{dataTableId}" />
