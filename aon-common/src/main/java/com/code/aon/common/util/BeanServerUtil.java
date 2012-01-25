@@ -23,12 +23,6 @@ public class BeanServerUtil {
 	
 	public static final ObjectName LDAP_SERVICE = getObjectName(LDAP_SERVICE_REF);
 	
-	/**
-	 * Tell the server method to get the Datasource Metadata.
-	 */
-	public static final String CONNECTION_METHOD_NAME = "getConnectionProperties";
-
-	
 	private static ObjectName getObjectName( String ref ) {
 		try {
 			return new ObjectName( ref );
