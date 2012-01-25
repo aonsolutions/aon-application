@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="proposalForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal}" />
+				<ui:param name="controller" value="#{proposal}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="proposalPanel" columns="2" >
+				
+					<aon:outputLabel for="Proposal_issueDate" 
+						value="#{purchaseBundle.purchase_issueDate}" />
+					<aon:selectInputDate id="Proposal_issueDate"
+						value="#{proposal.to.issueDate}" size="20"
+						inputSize="16" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Proposal_workPlce" 
+						value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="Proposal_workPlce" 
+						value="#{proposal.to.workPlace}">
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+						<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" />
+						<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
+					</aon:selectOneMenu>
+			
+					<aon:outputLabel for="Proposal_department" 
+						value="#{companyBundle.company_department}" />
+					<aon:selectOneMenu id="Proposal_department" 
+						value="#{proposal.to.workplaceDepartment}">
+						<f:selectItems value="#{proposal.workplaceDepartments}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Proposal_remarks" 
+						value="#{bundle.aon_comment}" />
+					<aon:inputTextarea id="Proposal_remarks" 
+						value="#{proposal.to.remarks}" cols="80" rows="4"  />
+
+					<aon:outputLabel for="Proposal_status"
+						 value="#{bundle.aon_status}" />
+					<aon:selectOneMenu id="Proposal_status" 
+						value="#{proposal.to.status}">
+						<f:selectItems value="#{purchaseCollections.proposalStatuses}" />
+					</aon:selectOneMenu>
+				
+				</aon:panelGrid>
+				
+				<br />
+				
+				<c:if test="#{!proposal.new}">
+					<ui:include	src="/com/code/aon/ui/purchase/facelet/proposal/detail/tab_grid.xhtml">
+						<ui:param name="controller" value="#{proposalDetail}" />
+					</ui:include>
+				</c:if>
+				
+			</aon:div>
+			
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>

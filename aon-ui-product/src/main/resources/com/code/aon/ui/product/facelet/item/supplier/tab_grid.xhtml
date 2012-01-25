@@ -70,6 +70,29 @@
 						size="15" maxlength="15" />
 				</f:facet>
 			</aon:column>
+
+			<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}" >
+				<aon:column
+					styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
+					<f:facet name="header">
+						<aon:outputLabel for="ItemSupplier_workPlce" value="#{companyBundle.company_workplace}" />
+					</f:facet>
+					<aon:outputText value="#{to.workPlace.description}" rendered="#{formList}" />
+					<aon:selectOneMenu id="ItemSupplier_workPlce" rendered="#{formEdit}" 
+						value="#{proposal.to.workPlace}">
+						<f:selectItem itemLabel=" - " itemValue="null" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu id="ItemSupplier_workPlce-New" rendered="#{formNew}" 
+							value="#{itemSupplier.to.workPlace}">
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
 		</ui:define>
 	</ui:decorate>
 </ui:composition>
