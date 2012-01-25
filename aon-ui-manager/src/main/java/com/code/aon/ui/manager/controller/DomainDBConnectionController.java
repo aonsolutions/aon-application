@@ -112,6 +112,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		if (! list.isEmpty() ) {
 			return (DBConnnection) list.get(0);
 		}
+		LOGGER.error("Datasource {} not found", AonSQLFile.AON_MASTER );
 		return null;
 	}
 	

@@ -21,7 +21,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +54,6 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	private Name baseDN;
 	
 	private Map<Name,ITransferObject> cache = new HashMap<Name, ITransferObject>();
-	
-	private int cacheHit;
 
 	/**
 	 * Instantiates a new ldap dao.
@@ -379,8 +376,6 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 				IDAO dao = getDAO(info);
 				result = dao.get( id );
 				cache.put( id, (ITransferObject) result );
-			} else {
-				cacheHit++;
 			}
 		} else if ( info.isName() ) {
 			result = NameResolver.getName( ObjectUtils.toString(value) );
@@ -433,18 +428,13 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	}
 	
 	private List<ITransferObject> convertList( List<Entry> list ) throws DAOException {
-		StopWatch sw = new StopWatch();
-		sw.start();
 		cache.clear();
-		cacheHit = 0;
 		List<ITransferObject> tos = new ArrayList<ITransferObject>();
 		for( Entry entry : list ) {
 			ITransferObject to = convert(entry);
 			tos.add(to);
 			cache.put( entry.getDN(), to);
 		}
-		sw.stop();			
-		LOGGER.info( "Convert type: {}, size: {}, cache hit: {}, time: {}", new Object[]{getPOJOClass(), list.size(), cacheHit, sw.toString()} );			
 		return tos;
 	}
 	
