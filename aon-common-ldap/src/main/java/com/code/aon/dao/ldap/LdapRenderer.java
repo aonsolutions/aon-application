@@ -19,6 +19,7 @@ import com.code.aon.ql.ast.LogicalOrExpression;
 import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 
 /**
  * Visitante de expresiones destinado a obtener una expresion LDAP.
@@ -130,6 +131,9 @@ public class LdapRenderer implements CriterionVisitor {
 
 	public void visitRelationalExpression(RelationalExpression expression) {
 		out.append("(");
+		if ( expression.getType() == RelationalType.NOT_EQUAL ) {
+			out.append("!(");	
+		}
 		expression.getLeftExpression().accept(this);
 
 		StringBuffer currentOut = out;
@@ -145,10 +149,8 @@ public class LdapRenderer implements CriterionVisitor {
 				currentOut.append(">");
 				break;
 			case EQUAL:
-				currentOut.append("=");
-				break;
 			case NOT_EQUAL:
-				currentOut.append(" <> ");
+				currentOut.append("=");
 				break;
 			case GREATER_THAN_OR_EQUAL:
 				currentOut.append(">=");
@@ -167,6 +169,9 @@ public class LdapRenderer implements CriterionVisitor {
 		}
 
 		this.out = currentOut.append(this.out);
+		if ( expression.getType() == RelationalType.NOT_EQUAL ) {
+			out.append(")");	
+		}		
 		out.append(")");
 	}
 

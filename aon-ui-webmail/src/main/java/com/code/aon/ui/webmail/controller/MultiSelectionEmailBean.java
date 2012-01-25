@@ -109,11 +109,11 @@ public class MultiSelectionEmailBean {
 	 */
 	public List<Contact> getSelectedRows() {
 	    List<Contact> selectedRows = new ArrayList<Contact>();
-        for (int i = 0; i < emails.size(); i++) {
-            if (emails.get(i).isSelected()) {
-                selectedRows.add(emails.get(i).getEmail());
-            }
-        }
+	    for( SelectionEmail se : emails ) {
+	    	if ( se.isSelected() ) {
+                selectedRows.add(se.getEmail());	    		
+	    	}
+	    }
 		return selectedRows;
 	}
     

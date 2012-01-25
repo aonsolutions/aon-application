@@ -30,7 +30,7 @@
 				removeAllControlLabel ="#{webmailBundle.webmail_removeAll}"
 				styleClass="aon-margin-top"
 				sourceListWidth="250px" targetListWidth="250px"
-				converter="#{contact.groupContactConverter}"
+				converter="#{contact.converter}"
 				value="#{contact.to.contacts}" required="true">
 		        <f:selectItems value="#{contact.availableContacts}"/>
 			</aon:pickList>
