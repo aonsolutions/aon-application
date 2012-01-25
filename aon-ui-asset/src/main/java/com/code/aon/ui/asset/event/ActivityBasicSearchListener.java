@@ -39,7 +39,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	}
 
 	private ActivityStatus[] getdefaultActivityStatus() {
-		ActivityStatus[] defaultActivityStatus = {ActivityStatus.PENDING};
+		ActivityStatus[] defaultActivityStatus = {ActivityStatus.BUSY};
 		return defaultActivityStatus;
 	}
 
@@ -79,7 +79,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
 		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);
-		ActivityStatus[] defaultActivityStatus = {ActivityStatus.PENDING};
+		ActivityStatus[] defaultActivityStatus = {ActivityStatus.BUSY};
 		setActivityStatuses(defaultActivityStatus);
 	}
 	

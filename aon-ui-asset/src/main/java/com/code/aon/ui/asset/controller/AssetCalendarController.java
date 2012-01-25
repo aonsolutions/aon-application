@@ -122,7 +122,7 @@ public class AssetCalendarController extends BasicController{
 		this.clearCriteria();
 		criteria = this.getCriteria();
 		criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getCalendarDay());
-		criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.ACCEPTED);
+		criteria.addEqualExpression(getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.MAINTENANCE);
 	}
 	
 	public List<Integer> getTimeFractionList() {

@@ -455,9 +455,9 @@ public class ActivityDialogController extends EmailParentController{
 //						to.setComments(getWhy());
 						to.setAsset(getAsset());
 						if(isRequest()){
-							to.setStatus(ActivityStatus.PENDING);
+							to.setStatus(ActivityStatus.BUSY);
 						} else {
-							to.setStatus(ActivityStatus.ACCEPTED);
+							to.setStatus(ActivityStatus.MAINTENANCE);
 						}
 						bean.insert(to);
 					}
