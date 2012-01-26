@@ -40,8 +40,8 @@
 			<rich:columns styleClass="aon-editDataTable-textColumn no-padding" 
 				value="#{controller.assetModel.rowData.assetDayModel.wrappedData}" var="day" index="idx"	>
 
-				<aon:div styleClass="#{(day.activity.id!=null)?'reserved-cell':'available-cell'}">
-					
+				<aon:div styleClass="#{(day.activity!=null and day.activity.id!=null)?'reserved-cell':'available-cell'}">
+					<aon:outputText value="&#160;" />
 				</aon:div>
 			
 			</rich:columns>

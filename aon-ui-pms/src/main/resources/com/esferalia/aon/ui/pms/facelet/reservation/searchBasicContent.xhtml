@@ -36,8 +36,16 @@
 	<aon:outputLabel for="ProjectReservation_startDate" 
 		value="#{pmsBundle.pms_checkIn}" />
 	<aon:div>
-		<aon:selectInputDate id="ProjectReservation_startDate"
-			valueChangeListener="#{controller.addEqualExpression}"
+		<aon:outputLabel for="ProjectReservation_startDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_startDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_startDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_startDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
@@ -45,8 +53,16 @@
 	<aon:outputLabel for="ProjectReservation_endDate" 
 		value="#{pmsBundle.pms_checkOut}" />
 	<aon:div>
-		<aon:selectInputDate id="ProjectReservation_endDate"
-			valueChangeListener="#{controller.addEqualExpression}"
+		<aon:outputLabel for="ProjectReservation_endDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_endDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_endDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_endDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
