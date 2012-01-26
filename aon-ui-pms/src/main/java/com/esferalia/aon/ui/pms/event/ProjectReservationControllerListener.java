@@ -7,6 +7,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -22,9 +23,15 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
-		controller.resetNights();
-		controller.resetGuestName();
-		controller.resetRoomItem();
+		try {
+			controller.resetHotel();
+			controller.resetNights();
+			controller.resetGuestName();
+			controller.resetRoomItem();
+			controller.resetRoomTariff();
+		} catch(ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		reservation.setStartDate(new Date());
@@ -51,7 +58,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		try {
 			insertProjectReservationGuest((ProjectReservation)controller.getTo(), controller.getGuestName(), controller.getGuestSurname());
 			if (controller.getRoomItem() != null) {
-				insertProjectReservationRoom((ProjectReservation)controller.getTo(), controller.getRoomItem());
+				insertProjectReservationRoom((ProjectReservation)controller.getTo(), controller.getRoomItem(), controller.getRoomTariff());
 			}
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -75,11 +82,12 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservationGuestBean.insert(reservationGuest);
 	}
 
-	private void insertProjectReservationRoom(ProjectReservation reservation, Item roomItem) throws ManagerBeanException {
+	private void insertProjectReservationRoom(ProjectReservation reservation, Item roomItem, Tariff roomTariff) throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 		reservationRoom.setProjectReservation(reservation);
 		reservationRoom.setRoomIndex(1);
 		reservationRoom.setItem(roomItem);
+		reservationRoom.setTariff(roomTariff);
 		
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		reservationRoomBean.insert(reservationRoom);

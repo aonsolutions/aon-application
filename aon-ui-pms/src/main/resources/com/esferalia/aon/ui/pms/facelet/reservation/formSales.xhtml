@@ -24,6 +24,9 @@
 		<ui:param name="skipLabel" value="#{true}" />
 		<ui:param name="skipNewButton" value="#{!aonRole.financeOperator}" />
 		<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
+		<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{reservation.onAgencyChanged}" type="lookupChangeListener" />
 	</ui:include>
 
 	<aon:outputLabel for="Customer_id-Company" value="#{pmsBundle.pms_company}" />
@@ -34,6 +37,9 @@
 		<ui:param name="skipLabel" value="#{true}" />
 		<ui:param name="skipNewButton" value="#{!aonRole.financeOperator}" />
 		<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
+		<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{reservation.onCompanyChanged}" type="lookupChangeListener" />
 	</ui:include>
 
 	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
@@ -52,16 +58,26 @@
 
 	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
 	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}">
+		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}"
+		valueChangeListener="#{reservation.onHolderChanged}"
+		reRender="ProjectReservation_roomTariff">
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
 	</aon:selectOneMenu>
 
-	<aon:outputLabel for="ProjectReservation_room" value="#{pmsBundle.pms_room_type}" 
+	<aon:outputLabel for="ProjectReservation_roomItem" value="#{pmsBundle.pms_room_type}" 
 		rendered="#{reservation.new}" />
-	<aon:selectOneMenu id="ProjectReservation_room" value="#{reservation.roomItem}" 
-		rendered="#{reservation.new}">
+	<aon:selectOneMenu id="ProjectReservation_roomItem" value="#{reservation.roomItem}" 
+		rendered="#{reservation.new}" required="#{true}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{pmsCollections.roomItems}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{productBundle.product_tariff}" 
+		rendered="#{reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_roomTariff" value="#{reservation.roomTariff}" 
+		rendered="#{reservation.new}" required="#{true}">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{pmsCollections.tariffs}" />
 	</aon:selectOneMenu>
 
 </ui:composition>

@@ -96,7 +96,7 @@
 												value="#{productBundle.product_tariff}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
 												value="#{controller.to.tariff}" required="#{true}"
-												disabled="#{!controller.new or !aonRole.saleOperator}">
+												disabled="#{reservation.to.crs or !aonRole.saleOperator}">
 												<f:selectItems value="#{pmsCollections.tariffs}" />
 											</aon:selectOneMenu>
 

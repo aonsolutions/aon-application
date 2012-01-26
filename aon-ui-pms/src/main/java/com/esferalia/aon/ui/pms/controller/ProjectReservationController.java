@@ -9,10 +9,16 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tariff;
+import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ProjectReservationController extends BasicController {
@@ -22,6 +28,7 @@ public class ProjectReservationController extends BasicController {
 	private String guestName;
 	private String guestSurname;
 	private Item roomItem;
+	private Tariff roomTariff;
 
 	public String getSelectedTab() {
 		return selectedTab;
@@ -74,6 +81,33 @@ public class ProjectReservationController extends BasicController {
 		setRoomItem(null);
 	}
 
+	public Tariff getRoomTariff() {
+		return roomTariff;
+	}
+	public void setRoomTariff(Tariff roomTariff) {
+		this.roomTariff = roomTariff;
+	}
+	public void resetRoomTariff() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		setRoomTariff(obtainReservationTariff(reservation));
+	}
+
+	public void resetHotel() throws ManagerBeanException {
+		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		if (collections.getCurrentUserHotelsCount() > 0) {
+			ProjectReservation reservation = (ProjectReservation)getTo();
+			reservation.setHotel((Hotel)collections.getCurrentUserHotels().get(0).getValue());
+		}
+	}
+
+	public void onHotelChanged(ValueChangeEvent event) {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservation.setHotel((Hotel)event.getNewValue());
+			resetRoomTariff();
+		}
+	}
+
 	public void onStartDateChanged(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (reservation.getStartDate() != null) {
@@ -100,6 +134,42 @@ public class ProjectReservationController extends BasicController {
 		} else {
 			resetNights();
 		}
+	}
+
+	public void onAgencyChanged(LookupChangeEvent event) {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservation.setAgency((Customer)event.getNewValue());
+			resetRoomTariff();
+		}
+	}
+
+	public void onCompanyChanged(LookupChangeEvent event) {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservation.setCompany((Customer)event.getNewValue());
+			resetRoomTariff();
+		}
+	}
+
+	public void onHolderChanged(ValueChangeEvent event) {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservation.setBookingHolder((BookingHolder)event.getNewValue());
+			resetRoomTariff();
+		}
+	}
+
+	private Tariff obtainReservationTariff(ProjectReservation reservation) {
+		Tariff tariff = null;
+		if (reservation.getBookingHolder() == BookingHolder.AGENCY && reservation.getAgency() != null && reservation.getAgency().getId() != null) {
+			tariff = reservation.getAgency().getTariff();
+		} else if (reservation.getBookingHolder() == BookingHolder.COMPANY && reservation.getCompany() != null && reservation.getCompany().getId() != null) {
+			tariff = reservation.getCompany().getTariff();
+		} else if (reservation.getHotel() != null && reservation.getHotel().getCustomer() != null) {
+			tariff = reservation.getHotel().getCustomer().getTariff();
+		}
+		return tariff;
 	}
 
 	public boolean isActive() {
