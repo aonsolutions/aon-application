@@ -17,6 +17,10 @@ ${pojo.generateAnnIdGenerator()}
     @javax.persistence.JoinColumn(name="product", nullable=false)
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
+<#elseif property.getName()=="child" && pojo.getDeclarationName()=="GeoTreeDB">	@${pojo.importType("javax.persistence.ManyToOne")}
+	@${pojo.importType("javax.persistence.OneToOne")}(cascade={${pojo.importType("javax.persistence.CascadeType")}.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade(value={org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE})
+    @javax.persistence.JoinColumn(name="child", nullable = false)
 <#elseif property.getName()=="workPlace" && pojo.getDeclarationName()=="HotelDB">	@${pojo.importType("javax.persistence.ManyToOne")}
     @javax.persistence.JoinColumn(name="workplace", nullable = false)
 	@${pojo.importType("com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull")}
