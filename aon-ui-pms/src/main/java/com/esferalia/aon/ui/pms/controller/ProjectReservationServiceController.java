@@ -23,7 +23,6 @@ import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
-import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -95,16 +94,16 @@ public class ProjectReservationServiceController extends LinesController {
 
 	@Override
 	public void onReset(ActionEvent arg0) {
-		ProjectReservationService reservationService = new ProjectReservationService();
-		reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
-		setTo(reservationService);
+		try {
+			ProjectReservationService reservationService = new ProjectReservationService();
+			reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
+			setTo(reservationService);
 
-		setServiceReservationRoom(null);
-		setServiceFromDate(reservationService.getProjectReservation().getStartDate());
-		setServiceToDate(reservationService.getProjectReservation().getEndDate());
-		setServiceQuantity(0);
-		setServicePrice(0);
-		setNew(true);
+			setNew(true);
+			fillReservationServiceValues(reservationService);
+		} catch (ManagerBeanException ex) {
+			throw new AbortProcessingException("No es posible asignar Servicio");
+		}
 	}
 
 	@Override
@@ -114,22 +113,33 @@ public class ProjectReservationServiceController extends LinesController {
 				ProjectReservationService reservationService = (ProjectReservationService)getModel().getRowData();
 				setTo(reservationService);
 
-				setServiceReservationRoom(reservationService.getProjectReservationRoom());
-				setServiceQuantity(0);
-				setServicePrice(0);
+				fillReservationServiceValues(reservationService);
 			}
 		} catch (ManagerBeanException ex) {
 			throw new AbortProcessingException("No es posible asignar Servicio");
 		}
 	}
 
-	public boolean isRoomsAssigned() throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)getMasterController().getTo();
-		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-		Criteria criteria = new Criteria();
-		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
-		criteria.addEqualExpression(alias, reservation.getId());
-		return (reservationRoomDetailBean.getCount(criteria) > 0);
+	public void fillReservationServiceValues(ProjectReservationService reservationService) throws ManagerBeanException {
+		if (isNew()) {
+			setServiceReservationRoom(null);
+			setServiceFromDate(reservationService.getProjectReservation().getStartDate());
+			setServiceToDate(reservationService.getProjectReservation().getEndDate());
+			setServiceQuantity(0);
+			setServicePrice(0);
+		} else {
+			setServiceReservationRoom(reservationService.getProjectReservationRoom());
+			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+			Criteria criteria = new Criteria();
+			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+			criteria.addEqualExpression(alias, reservationService.getId());
+			criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
+			for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+				setServiceQuantity(reservationServiceDetail.getQuantity());
+				setServicePrice(reservationServiceDetail.getPrice());
+			}
+		}
 	}
 
 	public List<SelectItem> getReservationRoomItems() throws ManagerBeanException {
@@ -141,10 +151,12 @@ public class ProjectReservationServiceController extends LinesController {
 		List<SelectItem> roomItemList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			String label = reservationRoom.getItem().getProduct().getCode() + " - " + reservationRoom.getItem().getProduct().getName();
 			if (reservationRoom.getRoomNumber() != null) {
-				SelectItem selectItem = new SelectItem(reservationRoom, reservationRoom.getRoomNumber());
-				roomItemList.add(selectItem);
+				label = reservationRoom.getRoomNumber() + " (" + label + ")";
 			}
+			SelectItem selectItem = new SelectItem(reservationRoom, label);
+			roomItemList.add(selectItem);
 		}
 		return roomItemList;
 	}
@@ -188,17 +200,24 @@ public class ProjectReservationServiceController extends LinesController {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 
 		boolean isNew = isNew();
+		Date fromDate = getServiceFromDate();
+		Date toDate = getServiceToDate();
+		double quantity = getServiceQuantity();
+		double price = getServicePrice();
+		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
+
 		onAccept(event);
 
+		ReservationUtils reservationUtils = new ReservationUtils();
 		if (isNew) {
-			Date fromDate = getServiceFromDate();
-			Date toDate = getServiceToDate();
-			double quantity = getServiceQuantity();
-			double price = getServicePrice();
-			ProjectReservationRoom reservationRoom = getServiceReservationRoom();
-
-			ReservationUtils reservationUtils = new ReservationUtils();
 			reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, reservationRoom, getPriceStrategy());
+		} else {
+			if (reservationService.getProjectReservation().isCrs()) {
+				reservationUtils.updateProjectReservationServiceDetails(reservationService, null, null, reservationRoom, null);
+			} else {
+				reservationUtils.updateProjectReservationServiceDetails(reservationService, quantity, price, reservationRoom, getPriceStrategy());
+			}
+			reservationService.setRoomNumber(null);
 		}
 	}
 

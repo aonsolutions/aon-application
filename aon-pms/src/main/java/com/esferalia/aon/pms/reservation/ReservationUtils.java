@@ -183,7 +183,7 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
     public void insertProjectReservationServiceDetails(ProjectReservationService reservationService, Date fromDate, Date toDate, double quantity, double price, 
-    													ProjectReservationRoom reservationRoom, IPriceStrategy strategy)	throws ManagerBeanException {
+    													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
     	Date effectiveDate = fromDate;
 		while (effectiveDate.compareTo(toDate) < 0) {
@@ -214,13 +214,43 @@ public class ReservationUtils implements IReservationConstants {
 		}
     }
 
-	public void removeProjectReservationServiceDetails(ProjectReservationService reservationService) throws ManagerBeanException {
-		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+    public void updateProjectReservationServiceDetails(ProjectReservationService reservationService, Double quantity, Double price, 
+    													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
+    	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
 		criteria.addEqualExpression(alias, reservationService.getId());
 		for (ITransferObject serviceDetail : reservationServiceDetailBean.getList(criteria)) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)serviceDetail;
+			if (quantity != null && price != null) {
+				reservationServiceDetail.setQuantity(quantity);
+				reservationServiceDetail.setPrice(price);
+				reservationServiceDetail.setTaxableBase(strategy.getBasePrice(reservationServiceDetail));
+			}
+			if (reservationRoom != null) {
+		    	Date effectiveDate = reservationServiceDetail.getEffectiveDate();
+				IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+				criteria = new Criteria();
+				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+				criteria.addEqualExpression(alias, reservationRoom.getId());
+				criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), effectiveDate);
+				for (ITransferObject roomDetail : reservationRoomDetailBean.getList(criteria)) {
+					ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)roomDetail;
+					reservationServiceDetail.setProjectReservationRoomDetail(reservationRoomDetail);
+					break;
+				}
+			}
+			reservationServiceDetailBean.update(reservationServiceDetail);
+		}
+    }
+    
+    public void removeProjectReservationServiceDetails(ProjectReservationService reservationService) throws ManagerBeanException {
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+		criteria.addEqualExpression(alias, reservationService.getId());
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
 			reservationServiceDetailBean.remove(reservationServiceDetail);
 		}
 	}
