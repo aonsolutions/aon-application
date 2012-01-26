@@ -219,6 +219,8 @@ public class ProjectReservationServiceController extends LinesController {
 			}
 			reservationService.setRoomNumber(null);
 		}
+
+		calculateReservationTotals();
 	}
 
 	public void onRemoveReservationService(ActionEvent event) throws ManagerBeanException {
@@ -228,6 +230,13 @@ public class ProjectReservationServiceController extends LinesController {
     	reservationUtils.removeProjectReservationServiceDetails(reservationService);
 
     	onRemove(event);
+
+		calculateReservationTotals();
+	}
+
+	private void calculateReservationTotals() throws ManagerBeanException {
+		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		masterController.accept(null);
 	}
 
 	public void onShowServiceDetails(ActionEvent event) throws ManagerBeanException {
