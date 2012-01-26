@@ -376,9 +376,9 @@
 			<param id="printInternetData" value="#{company.getPrintInternetData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
 		</params>
-		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
-		<nested-report report="invoiceFinances"/>
+		<nested-report report="invoiceFinancesDefault"/>
 	</report>
 	<report id="invoicePrintTemplate1" description="Invoice's Report1">
 		<template path="/com/code/aon/ui/finance/report/saleInvoiceTemplate1.jasper"/>
