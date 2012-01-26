@@ -25,7 +25,7 @@
 				<aon:commandLink id="Service-selectButton"
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{reservation.active and reservation.to.roomCount > 0}"
+					rendered="#{!reservation.to.crs and reservation.active and reservation.to.roomCount > 0}"
 					actionListener="#{controller.onSelect}"
 					reRender="showServiceDetailWindow"
 					onkeyup="#{dataTableId}KeyUp(this)"
