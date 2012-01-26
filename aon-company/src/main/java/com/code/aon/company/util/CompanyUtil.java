@@ -50,7 +50,7 @@ public class CompanyUtil {
 		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(enterpriseBean.getFieldName(ICompanyAlias.ENTERPRISE_REGISTRY_ID), company.getId());
-		list = enterpriseBean.getList(null);
+		list = enterpriseBean.getList(criteria);
 		if (list == null || list.size() < 1) {
 			throw new IllegalStateException("No existe un enterprise vinculado a company!");
 		}
