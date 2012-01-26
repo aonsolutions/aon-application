@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showServiceDetailWindow">
 		<c:if test="#{controller.showServiceDetailWindow}">
 			<rich:modalPanel id="serviceDetailModalPanel" 
-				height="420" width="720" rendered="#{controller.showServiceDetailWindow}"
+				minHeight="240" minWidth="640" rendered="#{controller.showServiceDetailWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -72,16 +72,11 @@
 									<aon:panelGrid columns="2" styleClass="aon-width-all">
 
 										<aon:outputLabel for="ProjectReservationService_roomItem"
-											value="#{pmsBundle.pms_room}"
-											rendered="#{controller.roomsAssigned}" />
-										<aon:div rendered="#{controller.roomsAssigned}">
-											<aon:selectOneMenu id="ProjectReservationService_roomItem" 
-												value="#{controller.serviceReservationRoom}" required="#{true}">
-												<f:selectItems value="#{controller.reservationRoomItems}" />
-											</aon:selectOneMenu>
-											<aon:outputText value="#{controller.serviceReservationRoom.item.product.name}"
-												 />
-										</aon:div>
+											value="#{pmsBundle.pms_room}" />
+										<aon:selectOneMenu id="ProjectReservationService_roomItem" 
+											value="#{controller.serviceReservationRoom}" required="#{true}">
+											<f:selectItems value="#{controller.reservationRoomItems}" />
+										</aon:selectOneMenu>
 
 										<aon:outputLabel value="#{bundle.aon_date}"
 											rendered="#{controller.new}" />
