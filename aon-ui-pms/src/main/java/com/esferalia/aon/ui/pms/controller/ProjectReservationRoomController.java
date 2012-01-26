@@ -13,6 +13,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -82,7 +83,7 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 		onAccept(event);
 
-		if (reservationRoom.getRoomNumber() == null) {
+		if (reservationRoom.getRoomNumber() == null && availableRoom != null) {
 			ReservationUtils reservationUtils = new ReservationUtils();
 	    	reservationUtils.insertProjectReservationRoomDetails(reservationRoom, availableRoom);
 		}
@@ -94,6 +95,9 @@ public class ProjectReservationRoomController extends LinesController {
 
 		ReservationUtils reservationUtils = new ReservationUtils();
     	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+
+    	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+    	reservationServiceController.onSearch(event);
 	}
 
 	public void onRemoveReservationRoom(ActionEvent event) throws ManagerBeanException {
@@ -103,6 +107,9 @@ public class ProjectReservationRoomController extends LinesController {
     	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
 
     	onRemove(event);
+
+    	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+    	reservationServiceController.onSearch(event);
 	}
 
 	public void onShowRoomDetails(ActionEvent event) throws ManagerBeanException {
