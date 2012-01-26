@@ -14,6 +14,7 @@ import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
 import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID;
 import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_LONG;
 import static com.code.aon.document.IAlfrescoConstants.REFERENCE_DATE_LONG;
+import static com.code.aon.document.IAlfrescoConstants.ROOT_SPACE;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_LONG;
 import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
 import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
@@ -39,7 +40,6 @@ import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -52,7 +52,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
-import com.code.aon.document.BasicAlfresco;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.EnterpriseDocumentAspect;
 import com.code.aon.project.Project;
@@ -64,19 +63,12 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	
 	private AlfrescoDAO categoryDAO;
 	
-	private Enterprise parentEnterprise;
+	private ParentReference rootReference;
 
 	public EnterpriseDocumentDAO( String user, String password, AlfrescoDAO categoryDAO ) {
 		super( EnterpriseDocument.class, user, password );		
 		this.categoryDAO = categoryDAO;
-	}
-	
-	public Enterprise getParentEnterprise() {
-		return parentEnterprise;
-	}
-
-	public void setParentEnterprise(Enterprise parentEnterprise) {
-		this.parentEnterprise = parentEnterprise;
+		this.rootReference = calculateRootReference();
 	}
 
 	private EnterpriseDocument newEnterpriseDocument() {
@@ -112,8 +104,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	@Override
 	public ParentReference getParentReference(ITransferObject to) {
 		EnterpriseDocument ed = (EnterpriseDocument) to;
-		String path = getEnterprisePath( ed.getEnterprise() );
-		return getReferenceToParent(getReference(path));
+		return getEnterpriseReference( ed.getEnterprise() );
 	}
 
 	private AlfrescoCategory[] getCategories( String[] values ) throws DAOException {
@@ -248,30 +239,29 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		}
 	}
 
-	public String getEnterprisePath( Enterprise enterprise ) {
+	public ParentReference getRootReference() {
+		return rootReference;
+	}
+
+	public ParentReference calculateRootReference() {
 		StringBuffer path = new StringBuffer();
 		path.append(COMPANY_HOME_PATH).append("/");
 		path.append(CONTENT_PREFFIX);
-		path.append(ENTERPRISE_PREFFIX);
-		path.append(parentEnterprise.getId());
-		if (! ObjectUtils.equals(parentEnterprise, enterprise) ) {
-			path.append("/");
-			path.append(CONTENT_PREFFIX);
-			path.append(ENTERPRISE_PREFFIX);
-			path.append(enterprise.getId());			
-		}
-		return path.toString();
+		path.append(ROOT_SPACE);
+		Reference reference = getReference(path.toString());
+		return getReferenceToParent(reference);
 	}
 	
-	public ParentReference getParent( Enterprise enterprise ) {
-		ParentReference parent = null;
-		if (! ObjectUtils.equals(parentEnterprise, enterprise) ) {
-			Reference path = getReference( getEnterprisePath(parentEnterprise) );
-			parent = getReferenceToParent(path);
-		} else {
-			parent = BasicAlfresco.getCompanyHome();
-		}
-		return parent;
+	public ParentReference getEnterpriseReference( Enterprise enterprise ) {
+		StringBuffer path = new StringBuffer();
+		path.append(COMPANY_HOME_PATH).append("/");
+		path.append(CONTENT_PREFFIX);
+		path.append(ROOT_SPACE).append("/");
+		path.append(CONTENT_PREFFIX);
+		path.append(ENTERPRISE_PREFFIX);
+		path.append(enterprise.getId());			
+		Reference reference = getReference(path.toString());
+		return getReferenceToParent(reference);
 	}
 	
 	public static String getName( Enterprise enterprise ) {

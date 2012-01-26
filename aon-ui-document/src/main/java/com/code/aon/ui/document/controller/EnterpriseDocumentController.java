@@ -17,6 +17,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Reference;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -76,10 +77,9 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 			EnterpriseUser user = mc.getLoggedUser();
 			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
-			this.alfrescoDAO = new EnterpriseDocumentDAO(user.getLogin(), user.getPassword(), acc.getAlfrescoDAO());
-			this.alfrescoDAO.setParentEnterprise(mc.getParentEnterprise());			
-			String path = this.alfrescoDAO.getEnterprisePath(mc.getEnterprise());
-			this.alfrescoDAO.setPath(path);
+			this.alfrescoDAO = new EnterpriseDocumentDAO(user.getLogin(), user.getPassword(), acc.getAlfrescoDAO());	
+			ParentReference reference = this.alfrescoDAO.getEnterpriseReference(mc.getEnterprise());
+			this.alfrescoDAO.setParentReference(reference);
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
 		return this.alfrescoManagerBean;
