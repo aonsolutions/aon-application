@@ -11,6 +11,21 @@
 	<version>6.22-SNAPSHOT</version>
 	<description>AON REPORT</description>
 	<name>AON REPORT</name>
+	<repositories>
+		<repository>
+			<id>dynamicJasper-public-repository</id>
+			<name>DynamicJasper public Repository</name>
+			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -121,7 +136,7 @@
 		 <dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>3.1.2</version>
+			<version>3.2.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>

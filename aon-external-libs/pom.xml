@@ -18,6 +18,22 @@
 		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</developerConnection>
 	</scm>
 
+	<repositories>
+		<repository>
+			<id>dynamicJasper-public-repository</id>
+			<name>DynamicJasper public Repository</name>
+			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>axis</groupId>
@@ -222,7 +238,7 @@
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>3.1.2</version>
+			<version>3.2.1</version>
 		</dependency>
 	</dependencies>
 	<profiles>
@@ -322,7 +338,7 @@
 											<include>com.code.aon:aon.jsf.bridge:${pom.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
 											<include>net.sf.jasperreports:jasperreports:4.0.0</include>
-											<include>ar.com.fdvs:DynamicJasper:3.1.2</include>
+											<include>ar.com.fdvs:DynamicJasper:3.2.1</include>
 											<include>oro:oro:2.0.8</include>
 											<include>javax.mail:mail:1.4.2</include>
 											<include>org.jboss.slf4j:slf4j-jboss-logging:1.0.2.GA</include>
