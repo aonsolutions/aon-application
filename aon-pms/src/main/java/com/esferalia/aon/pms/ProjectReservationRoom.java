@@ -23,7 +23,6 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
 	private boolean showRoomDetail;
 	private String roomNumber;
-	private String roomCustomer;
 
 	@Transient
 	public boolean isShowRoomDetail() {
@@ -57,24 +56,6 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 	}
 	public void setRoomNumber(String roomNumber) {
 		this.roomNumber = roomNumber;
-	}
-	
-	@Transient
-	public String getRoomCustomer() throws ManagerBeanException {
-		if (roomCustomer == null) {
-			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationGuest.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), getProjectReservation().getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				roomCustomer = ((ProjectReservationGuest)list.get(0)).getFullName();
-			}
-			
-		}
-		return roomCustomer;
-	}
-	public void setRoomCustomer(String roomCustomer) {
-		this.roomCustomer = roomCustomer;
 	}
 
 }
