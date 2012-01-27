@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.22.2
+# Version: 6.22.0
 # Created by: girazu
-# Creation Date: 27/01/2012 11:35
+# Creation Date: 27/01/2012 11:25
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,6 +43,16 @@ CREATE TABLE `academic_year` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Año Academico';
 
 #
+# Structure for the `scope` table : 
+#
+
+CREATE TABLE `scope` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
+
+#
 # Structure for the `domain` table : 
 #
 
@@ -62,14 +72,11 @@ CREATE TABLE `domain` (
 
 CREATE TABLE `holiday` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Festividad',
   `holiday` int(4) default NULL COMMENT 'Identificador de Festividad',
   `editable` tinyint(1) default '0' COMMENT 'Indica si es editable o no',
   PRIMARY KEY  (`id`),
   KEY `IDX_HOLIDAY_HOLIDAY` (`holiday`),
-  KEY `IDX_HOLIDAY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_HOLIDAY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_HOLIDAY_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festividades';
 
@@ -79,7 +86,7 @@ CREATE TABLE `holiday` (
 
 CREATE TABLE `calendar` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `holiday` int(4) default NULL COMMENT 'Identificador de Festivos',
   `anual_hours` double default '0' COMMENT 'Horas anuales del Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Calendario',
@@ -104,8 +111,8 @@ CREATE TABLE `calendar` (
   KEY `IDX_CALENDAR_HOLIDAY` (`holiday`),
   KEY `IDX_CALENDAR_CALENDAR` (`calendar`),
   KEY `IDX_CALENDAR_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `FK_CALENDAR_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CALENDAR_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `FK_CALENDAR_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calendarios Laborales';
 
@@ -115,7 +122,6 @@ CREATE TABLE `calendar` (
 
 CREATE TABLE `registry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento de la Persona o Empresa',
   `document_type` tinyint(2) default '0' COMMENT 'Tipo de documento (NIF, CIF...)',
   `document_country` varchar(2) collate latin1_spanish_ci default 'ES' COMMENT 'Pais del documento',
@@ -126,23 +132,8 @@ CREATE TABLE `registry` (
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad',
   PRIMARY KEY  (`id`),
   KEY `IDX_REGISTRY_NAME` (`name`),
-  KEY `IDX_REGISTRY_DOCUMENT` (`document`),
-  KEY `IDX_REGISTRY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_REGISTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_REGISTRY_DOCUMENT` (`document`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Registro de Personas o Empresas';
-
-#
-# Structure for the `scope` table : 
-#
-
-CREATE TABLE `scope` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `description` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Ambito',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SCOPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SCOPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos';
 
 #
 # Structure for the `enterprise` table : 
@@ -150,15 +141,15 @@ CREATE TABLE `scope` (
 
 CREATE TABLE `enterprise` (
   `registry` int(4) NOT NULL default '1' COMMENT 'Registro de la Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `calendar` int(4) default NULL COMMENT 'Calendario',
   PRIMARY KEY  (`registry`),
   KEY `IDX_ENTERPRISE_SCOPE` (`scope`),
   KEY `IDX_ENTERPRISE_CALENDAR` (`calendar`),
   KEY `IDX_ENTERPRISE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `FK_ENTERPRISE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
   CONSTRAINT `FK_ENTERPRISE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_ENTERPRISE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Empresa';
@@ -169,7 +160,7 @@ CREATE TABLE `enterprise` (
 
 CREATE TABLE `geozone` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Zona Geografica',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Zona Geografica',
   `code` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Zona Geografica',
   `system` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es una Zona Geografica del sistema',
@@ -184,7 +175,6 @@ CREATE TABLE `geozone` (
 
 CREATE TABLE `raddress` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Direccion de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Direccion',
   `recipient` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Destinatario',
@@ -200,8 +190,6 @@ CREATE TABLE `raddress` (
   PRIMARY KEY  (`id`),
   KEY `IDX_RADDRESS_REGISTRY` (`registry`),
   KEY `IDX_RADDRESS_GEOZONE` (`geozone`),
-  KEY `IDX_RADDRESS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RADDRESS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RADDRESS_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_RADDRESS_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de Personas o Empresas';
@@ -212,7 +200,6 @@ CREATE TABLE `raddress` (
 
 CREATE TABLE `workplace` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Centro de Trabajo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL default '1' COMMENT 'Empresa asociada al Centro de Trabajo',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Centro de Trabajo',
   `address` int(4) NOT NULL COMMENT 'Identificador de la Direccion',
@@ -223,11 +210,9 @@ CREATE TABLE `workplace` (
   KEY `IDX_WORKPLACE_ENTERPRISE` (`enterprise`),
   KEY `IDX_WORKPLACE_RADDRESS` (`address`),
   KEY `IDX_WORKPLACE_SCOPE` (`scope`),
-  KEY `IDX_WORKPLACE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WORKPLACE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_WORKPLACE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_WORKPLACE_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
-  CONSTRAINT `FK_WORKPLACE_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`),
-  CONSTRAINT `FK_WORKPLACE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_WORKPLACE_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Centros de Trabajo';
 
 #
@@ -274,12 +259,8 @@ CREATE TABLE `customer_segment` (
 
 CREATE TABLE `tariff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Tarifa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `code` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Codigo de la Tarifa',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Tarifa',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TARIFF_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas';
 
 #
@@ -288,7 +269,7 @@ CREATE TABLE `tariff` (
 
 CREATE TABLE `customer` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente',
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente tiene recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Cliente aplica retencion de impuestos',
@@ -359,7 +340,7 @@ CREATE TABLE `academic_skill` (
 
 CREATE TABLE `account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` char(12) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo Cuenta Contable',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Cuenta',
   `alias` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Alias de la Cuenta',
@@ -377,7 +358,7 @@ CREATE TABLE `account` (
 
 CREATE TABLE `account_period` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` char(16) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del periodo',
   `initiation_date` date NOT NULL COMMENT 'Fecha de inicio del Ejercicio',
   `deadline` date NOT NULL COMMENT 'Fecha final del Ejercicio',
@@ -394,7 +375,7 @@ CREATE TABLE `account_period` (
 
 CREATE TABLE `account_entry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Asiento',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_period` int(4) NOT NULL COMMENT 'Ejercicio Contable del Asiento',
   `entry_date` date default NULL COMMENT 'Fecha del Asiento',
   `entry_type` tinyint(2) default NULL COMMENT 'Tipo de Asiento',
@@ -404,8 +385,8 @@ CREATE TABLE `account_entry` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD` (`account_period`),
   KEY `IDX_ACCOUNT_ENTRY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_ACCOUNT_ENTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Asientos Contables';
 
 #
@@ -414,7 +395,7 @@ CREATE TABLE `account_entry` (
 
 CREATE TABLE `bank` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Entidad Bancaria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Entidad Bancaria',
   `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Entidad Bancaria',
   PRIMARY KEY  (`id`),
@@ -428,7 +409,6 @@ CREATE TABLE `bank` (
 
 CREATE TABLE `rbank` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Bancaria de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
   `bank` int(4) NOT NULL default '0' COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` char(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de Cuenta Bancaria de la Persona o Empresa',
@@ -438,9 +418,7 @@ CREATE TABLE `rbank` (
   PRIMARY KEY  (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_BANK` (`bank`),
-  KEY `IDX_RBANK_DOMAIN` (`domain`),
   CONSTRAINT `FK_RBANK_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_RBANK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RBANK_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de Cuentas Bancarias de Personas o Empresas';
 
@@ -450,7 +428,7 @@ CREATE TABLE `rbank` (
 
 CREATE TABLE `bank_statement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `rbank` int(4) NOT NULL COMMENT 'Identificador de Banco de la Compañia',
   `lot_number` int(4) NOT NULL default '0' COMMENT 'Numero de lote',
   `operation_date` date NOT NULL COMMENT 'Fecha de operacion',
@@ -479,7 +457,7 @@ CREATE TABLE `bank_statement` (
 
 CREATE TABLE `account_entry_bank_statement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento',
   `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
   PRIMARY KEY  (`id`),
@@ -497,7 +475,7 @@ CREATE TABLE `account_entry_bank_statement` (
 
 CREATE TABLE `account_entry_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Apunte',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador del Asiento',
   `line` int(4) unsigned NOT NULL COMMENT 'Numero de linea del Apunte dentro del Asiento',
   `account` int(4) NOT NULL COMMENT 'Cuenta Contable del Apunte',
@@ -511,10 +489,10 @@ CREATE TABLE `account_entry_detail` (
   KEY `IDX_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY` (`account_entry`),
   KEY `IDX_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT` (`balancing_account`),
   KEY `IDX_ACCOUNT_ENTRY_DETAIL_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Apuntes Contables';
 
 #
@@ -523,7 +501,7 @@ CREATE TABLE `account_entry_detail` (
 
 CREATE TABLE `bank_statement_link` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `bank_statement` int(4) NOT NULL COMMENT 'Identificador de Extracto bancario',
   `source` tinyint(2) NOT NULL default '0' COMMENT 'Origen',
   `source_id` int(4) NOT NULL default '0' COMMENT 'Identificador del origen',
@@ -535,9 +513,9 @@ CREATE TABLE `bank_statement_link` (
   KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT` (`bank_statement`),
   KEY `IDX_BANK_STATEMENT_LINK_BANK_STATEMENT_LINK` (`linked_bank_statement_link`),
   KEY `IDX_BANK_STATEMENT_LINK_DOMAIN` (`domain`),
+  CONSTRAINT `FK_BANK_STATEMENT_LINK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT` FOREIGN KEY (`bank_statement`) REFERENCES `bank_statement` (`id`),
-  CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT_LINK` FOREIGN KEY (`linked_bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
-  CONSTRAINT `FK_BANK_STATEMENT_LINK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_BANK_STATEMENT_LINK_BANK_STATEMENT_LINK` FOREIGN KEY (`linked_bank_statement_link`) REFERENCES `bank_statement_link` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Enlaces del Extracto bancario';
 
 #
@@ -546,7 +524,7 @@ CREATE TABLE `bank_statement_link` (
 
 CREATE TABLE `fbatch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Remesa',
   `issue_date` date default NULL COMMENT 'Fecha de emision de la Remesa',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Remesa',
@@ -559,8 +537,8 @@ CREATE TABLE `fbatch` (
   KEY `IDX_FBATCH_BANK_STATEMENT_LINK` (`bank_statement_link`),
   KEY `IDX_FBATCH_RBANK` (`rbank`),
   KEY `IDX_FBATCH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `FK_FBATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FBATCH_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `FK_FBATCH_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas';
 
@@ -570,15 +548,15 @@ CREATE TABLE `fbatch` (
 
 CREATE TABLE `account_entry_fbatch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento Contable',
   `fbatch` int(4) NOT NULL COMMENT 'Identificador de Remesa',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_FBATCH_ACCOUNT_ENTRY` (`account_entry`),
   KEY `IDX_ACCOUNT_ENTRY_FBATCH_FBATCH` (`fbatch`),
   KEY `IDX_ACCOUNT_ENTRY_FBATCH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_FBATCH_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_FBATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_FBATCH_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_FBATCH_FBATCH` FOREIGN KEY (`fbatch`) REFERENCES `fbatch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Remesas';
 
@@ -588,12 +566,10 @@ CREATE TABLE `account_entry_fbatch` (
 
 CREATE TABLE `project_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Expediente',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Expediente',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Activo si o no',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROJECT_TYPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Expedientes';
 
 #
@@ -602,7 +578,7 @@ CREATE TABLE `project_type` (
 
 CREATE TABLE `project` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Proyecto',
   `alias` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Alias del Proyecto',
   `registry` int(4) NOT NULL COMMENT 'Identificador del Cliente (Potencial) asociado',
@@ -615,9 +591,9 @@ CREATE TABLE `project` (
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Proyecto esta activo o no',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_REGISTRY` (`registry`),
+  KEY `IDX_PROJECT_ENTERPRISE` (`enterprise`),
   KEY `IDX_PROJECT_PROJECT_TYPE` (`project_type`),
-  KEY `IDX_PROJECT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROJECT_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_PROJECT_PROJECT_TYPE` FOREIGN KEY (`project_type`) REFERENCES `project_type` (`id`),
   CONSTRAINT `FK_PROJECT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proyectos';
@@ -628,7 +604,6 @@ CREATE TABLE `project` (
 
 CREATE TABLE `invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Factura',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie de la Factura',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero de la Factura',
@@ -661,7 +636,7 @@ CREATE TABLE `invoice` (
   `retention_quota` double default '0' COMMENT 'Cuota de IRPF de la Factura',
   `total` double default '0' COMMENT 'Total Factura',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_INVOICE_DOMAIN_SERIES_NUMBER_TYPE` (`domain`,`series`,`number`,`type`),
+  UNIQUE KEY `IDX_INVOICE_SERIES_NUMBER_TYPE` (`series`,`number`,`type`),
   KEY `IDX_INVOICE_SCOPE` (`scope`),
   KEY `IDX_INVOICE_INVOICE` (`rectification_invoice`),
   KEY `IDX_INVOICE_PROJECT` (`project`),
@@ -669,11 +644,9 @@ CREATE TABLE `invoice` (
   KEY `IDX_INVOICE_TAX_DATE` (`tax_date`),
   KEY `IDX_INVOICE_REGISTRY` (`registry`),
   KEY `IDX_INVOICE_RADDRESS` (`raddress`),
-  KEY `IDX_INVOICE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_INVOICE_INVOICE` FOREIGN KEY (`rectification_invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_INVOICE_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_INVOICE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_INVOICE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Facturas';
@@ -684,12 +657,9 @@ CREATE TABLE `invoice` (
 
 CREATE TABLE `pay_method` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Forma de Pago',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de Forma de Pago',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Forma de Pago',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PAY_METHOD_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PAY_METHOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Formas de Pago';
 
 #
@@ -698,7 +668,7 @@ CREATE TABLE `pay_method` (
 
 CREATE TABLE `finance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Vencimiento',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `registry` int(4) default NULL COMMENT 'Identificador del Cliente o Proveedor',
   `rdocument` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento del Cliente o Proveedor',
@@ -724,8 +694,8 @@ CREATE TABLE `finance` (
   KEY `IDX_FINANCE_BANK` (`bank`),
   KEY `IDX_FINANCE_INVOICE` (`invoice`),
   KEY `IDX_FINANCE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FINANCE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_FINANCE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FINANCE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_FINANCE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_FINANCE_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_FINANCE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
@@ -738,12 +708,9 @@ CREATE TABLE `finance` (
 
 CREATE TABLE `pm_type_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Forma de Pago',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del detalle',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PM_TYPE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles por Tipo de Forma de Pago';
 
 #
@@ -752,7 +719,7 @@ CREATE TABLE `pm_type_detail` (
 
 CREATE TABLE `finance_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `finance` int(4) NOT NULL COMMENT 'Identificador de Vencimiento',
   `tracking_date` date NOT NULL COMMENT 'Fecha de Seguimiento',
   `type` tinyint(4) NOT NULL COMMENT 'Tipo de Seguimiento',
@@ -768,8 +735,8 @@ CREATE TABLE `finance_tracking` (
   KEY `IDX_FINANCE_TRACKING_BANK_STATEMENT_LINK` (`bank_statement_link`),
   KEY `IDX_FINANCE_TRACKING_FINANCE` (`finance`),
   KEY `IDX_FINANCE_TRACKING_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FINANCE_TRACKING_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FINANCE_TRACKING_BANK_STATEMENT_LINK` FOREIGN KEY (`bank_statement_link`) REFERENCES `bank_statement_link` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
   CONSTRAINT `FK_FINANCE_TRACKING_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
@@ -781,15 +748,15 @@ CREATE TABLE `finance_tracking` (
 
 CREATE TABLE `account_entry_finance_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento Contable',
   `finance_tracking` int(4) NOT NULL COMMENT 'Identificador de Seguimiento de Vencimientos',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY` (`account_entry`),
   KEY `IDX_ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING` (`finance_tracking`),
   KEY `IDX_ACCOUNT_ENTRY_FINANCE_TRACKING_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_FINANCE_TRACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING` FOREIGN KEY (`finance_tracking`) REFERENCES `finance_tracking` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Seguimiento de Vencimientos y Asientos Contab';
 
@@ -799,15 +766,15 @@ CREATE TABLE `account_entry_finance_tracking` (
 
 CREATE TABLE `account_entry_invoice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de Relacion',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `account_entry` int(4) NOT NULL COMMENT 'Identificador de Asiento',
   `invoice` int(4) NOT NULL COMMENT 'Identificador de Factura',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY` (`account_entry`),
   KEY `IDX_ACCOUNT_ENTRY_INVOICE_INVOICE` (`invoice`),
   KEY `IDX_ACCOUNT_ENTRY_INVOICE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_INVOICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
   CONSTRAINT `FK_ACCOUNT_ENTRY_INVOICE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Facturas';
 
@@ -817,7 +784,7 @@ CREATE TABLE `account_entry_invoice` (
 
 CREATE TABLE `account_helper` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `counter` int(4) NOT NULL default '0' COMMENT 'Contador, veces que se ha usado',
   `account` int(4) NOT NULL COMMENT 'Cuenta Contable',
   `balancing_account` int(4) NOT NULL COMMENT 'Contrapartida',
@@ -825,9 +792,9 @@ CREATE TABLE `account_helper` (
   KEY `IDX_ACCOUNT_HELPER_ACCOUNT` (`account`),
   KEY `IDX_ACCOUNT_HELPER_BAL_ACCOUNT` (`balancing_account`),
   KEY `IDX_ACCOUNT_HELPER_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ACCOUNT_HELPER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ACCOUNT_HELPER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_ACCOUNT_HELPER_BAL_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_ACCOUNT_HELPER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_ACCOUNT_HELPER_BAL_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ayuda a la introduccion de apuntes';
 
 #
@@ -836,7 +803,7 @@ CREATE TABLE `account_helper` (
 
 CREATE TABLE `application` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `audit_level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de auditoria',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Aplicacion',
   PRIMARY KEY  (`id`),
@@ -851,7 +818,7 @@ CREATE TABLE `application` (
 
 CREATE TABLE `action` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `menu` tinyint(1) NOT NULL default '0' COMMENT 'Indica si la Accion esta o no dentro del menu',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Accion',
   `application_id` int(4) NOT NULL COMMENT 'Aplicacion a la que pertenece la Accion',
@@ -870,7 +837,6 @@ CREATE TABLE `action` (
 
 CREATE TABLE `user` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Usuario',
   `login` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Login del Usuario',
   `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa',
@@ -880,10 +846,8 @@ CREATE TABLE `user` (
   PRIMARY KEY  (`id`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
   KEY `IDX_USER_REGISTRY` (`registry`),
-  KEY `IDX_USER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_USER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_USER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
-  CONSTRAINT `FK_USER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_USER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_USER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Usuarios';
 
 #
@@ -892,15 +856,15 @@ CREATE TABLE `user` (
 
 CREATE TABLE `action_denied` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
   `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
   PRIMARY KEY  (`id`),
   KEY `IDX_ACTION_DENIED_ACTION` (`action_id`),
   KEY `IDX_ACTION_DENIED_USER` (`user_id`),
   KEY `IDX_ACTION_DENIED_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACTION_DENIED_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_DENIED_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACTION_DENIED_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_DENIED_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion no permitida para el Usuario';
 
@@ -910,7 +874,6 @@ CREATE TABLE `action_denied` (
 
 CREATE TABLE `session` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `endDate` datetime default NULL COMMENT 'Fecha de finalizacion',
   `remote_address` varchar(15) collate latin1_spanish_ci NOT NULL default '' COMMENT 'IP remota',
   `remote_host` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Equipo remoto',
@@ -921,10 +884,8 @@ CREATE TABLE `session` (
   PRIMARY KEY  (`id`),
   KEY `IDX_SESSION_APPLICATION` (`application_id`),
   KEY `IDX_SESSION_USER` (`user_id`),
-  KEY `IDX_SESSION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SESSION_APPLICATION` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
-  CONSTRAINT `FK_SESSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SESSION_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_SESSION_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK_SESSION_APPLICATION` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Sesion web';
 
 #
@@ -933,7 +894,7 @@ CREATE TABLE `session` (
 
 CREATE TABLE `action_entry` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `executionDate` datetime NOT NULL COMMENT 'Fecha de ejecucion',
   `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
   `session_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Sesion',
@@ -941,8 +902,8 @@ CREATE TABLE `action_entry` (
   KEY `IDX_ACTION_ENTRY_ACTION` (`action_id`),
   KEY `IDX_ACTION_ENTRY_SESSION` (`session_id`),
   KEY `IDX_ACTION_ENTRY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACTION_ENTRY_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_ENTRY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACTION_ENTRY_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_ENTRY_SESSION` FOREIGN KEY (`session_id`) REFERENCES `session` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Entrada de la ejecucion de una Accion';
 
@@ -952,7 +913,7 @@ CREATE TABLE `action_entry` (
 
 CREATE TABLE `action_favorite` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `position` int(4) NOT NULL COMMENT 'Posicion dentro de las Acciones Favoritas',
   `action_id` int(4) NOT NULL default '0' COMMENT 'Identificador de la Accion',
   `user_id` int(4) NOT NULL default '0' COMMENT 'Identificador del Usuario',
@@ -960,8 +921,8 @@ CREATE TABLE `action_favorite` (
   KEY `IDX_ACTION_FAVORITE_ACTION` (`action_id`),
   KEY `IDX_ACTION_FAVORITE_USER` (`user_id`),
   KEY `IDX_ACTION_FAVORITE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACTION_FAVORITE_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_FAVORITE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACTION_FAVORITE_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_FAVORITE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion Favorita del Usuario';
 
@@ -971,7 +932,7 @@ CREATE TABLE `action_favorite` (
 
 CREATE TABLE `activity_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Actividad',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Actividad',
   `project_type` int(4) default NULL COMMENT 'Tipo de Proyecto',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Activo si o no',
@@ -988,14 +949,14 @@ CREATE TABLE `activity_type` (
 
 CREATE TABLE `agreement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `calendar` int(4) default NULL COMMENT 'Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   KEY `IDX_AGREEMENT_CALENDAR` (`calendar`),
   KEY `IDX_AGREEMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
-  CONSTRAINT `FK_AGREEMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenios';
 
 #
@@ -1004,7 +965,7 @@ CREATE TABLE `agreement` (
 
 CREATE TABLE `agreement_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
@@ -1013,8 +974,8 @@ CREATE TABLE `agreement_data` (
   PRIMARY KEY  (`id`),
   KEY `IDX_AGREEMENT_DATA_AGREEMENT` (`agreement`),
   KEY `IDX_AGREEMENT_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_DATA_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
-  CONSTRAINT `FK_AGREEMENT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_DATA_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del convenio';
 
 #
@@ -1023,7 +984,6 @@ CREATE TABLE `agreement_data` (
 
 CREATE TABLE `payment_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
@@ -1031,9 +991,7 @@ CREATE TABLE `payment_concept` (
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PAYMENT_CONCEPT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PAYMENT_CONCEPT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
 
 #
@@ -1042,7 +1000,7 @@ CREATE TABLE `payment_concept` (
 
 CREATE TABLE `agreement_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `type` tinyint(2) default NULL COMMENT 'Tipo de complemento Salarial',
@@ -1059,8 +1017,8 @@ CREATE TABLE `agreement_payment` (
   KEY `IDX_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
   KEY `IDX_AGREEMENT_PAYMENT_AGREEMENT` (`agreement`),
   KEY `IDX_AGREEMENT_PAYMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_PAYMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
   CONSTRAINT `FK_AGREEMENT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_PAYMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
   CONSTRAINT `FK_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
 
@@ -1070,7 +1028,7 @@ CREATE TABLE `agreement_payment` (
 
 CREATE TABLE `agreement_extra` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `agreement_payment` int(4) default NULL COMMENT 'Concepto',
   `start_date` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Fecha de inicio dd mm [year offset]',
@@ -1080,9 +1038,9 @@ CREATE TABLE `agreement_extra` (
   KEY `IDX_AGREEMENT_EXTRA_AGREEMENT` (`agreement`),
   KEY `IDX_AGREEMENT_EXTRA_AGREEMENT_PAYMENT` (`agreement_payment`),
   KEY `IDX_AGREEMENT_EXTRA_DOMAIN` (`domain`),
+  CONSTRAINT `FK_AGREEMENT_EXTRA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AGREEMENT_EXTRA_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
-  CONSTRAINT `FK_AGREEMENT_EXTRA_AGREEMENT_PAYMENT` FOREIGN KEY (`agreement_payment`) REFERENCES `agreement_payment` (`id`),
-  CONSTRAINT `FK_AGREEMENT_EXTRA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_EXTRA_AGREEMENT_PAYMENT` FOREIGN KEY (`agreement_payment`) REFERENCES `agreement_payment` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
 
 #
@@ -1091,14 +1049,14 @@ CREATE TABLE `agreement_extra` (
 
 CREATE TABLE `agreement_level` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `agreement` int(4) NOT NULL COMMENT 'Convenio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   KEY `IDX_AGREEMENT_LEVEL_AGREEMENT` (`agreement`),
   KEY `IDX_AGREEMENT_LEVEL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_LEVEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_LEVEL_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles retributivos';
 
 #
@@ -1107,14 +1065,14 @@ CREATE TABLE `agreement_level` (
 
 CREATE TABLE `agreement_level_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   KEY `IDX_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL` (`agreement_level`),
   KEY `IDX_AGREEMENT_LEVEL_CATEGORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_LEVEL_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_LEVEL_CATEGORY_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias profesionales';
 
 #
@@ -1123,7 +1081,7 @@ CREATE TABLE `agreement_level_category` (
 
 CREATE TABLE `agreement_level_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
@@ -1132,8 +1090,8 @@ CREATE TABLE `agreement_level_data` (
   PRIMARY KEY  (`id`),
   KEY `IDX_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL` (`agreement_level`),
   KEY `IDX_AGREEMENT_LEVEL_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`),
-  CONSTRAINT `FK_AGREEMENT_LEVEL_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AGREEMENT_LEVEL_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del convenio';
 
 #
@@ -1142,7 +1100,7 @@ CREATE TABLE `agreement_level_data` (
 
 CREATE TABLE `alarm` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Alarma',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Alarma',
   `alarm_date` datetime NOT NULL COMMENT 'Fecha y hora de ejecucion de la Alarma',
   `status` tinyint(2) default NULL COMMENT 'Estado de la Alarma',
@@ -1179,7 +1137,7 @@ CREATE TABLE `alumn_loan` (
 
 CREATE TABLE `amortization_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fixed_asset_account` int(4) NOT NULL COMMENT 'Cuenta de inmovilizado',
   `accumulated_account` int(4) NOT NULL COMMENT 'Cuenta de amortizacion acumulada',
   `allocation_account` int(4) NOT NULL COMMENT 'Cuenta para la dotacion de la amortizacion',
@@ -1190,9 +1148,9 @@ CREATE TABLE `amortization_type` (
   KEY `IDX_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT` (`accumulated_account`),
   KEY `IDX_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT` (`allocation_account`),
   KEY `IDX_AMORTIZATION_TYPE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_AMORTIZATION_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_TYPE_ACCUMULATED_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_TYPE_ALLOCATION_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_TYPE_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Amortizacion';
 
@@ -1202,7 +1160,7 @@ CREATE TABLE `amortization_type` (
 
 CREATE TABLE `amortization` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del inmovilizado',
   `amortization_type` int(4) NOT NULL COMMENT 'Tipo de Amortizacion',
   `initial_date` date NOT NULL COMMENT 'Fecha de inicio de la Amortizacion',
@@ -1222,10 +1180,10 @@ CREATE TABLE `amortization` (
   KEY `IDX_AMORTIZATION_ACCUMULATED_ACCOUNT` (`accumulated_account`),
   KEY `IDX_AMORTIZATION_ALLOCATION_ACCOUNT` (`allocation_account`),
   KEY `IDX_AMORTIZATION_DOMAIN` (`domain`),
+  CONSTRAINT `FK_AMORTIZATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_ACCUMULATED_ACCOUNT` FOREIGN KEY (`accumulated_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_ALLOCATION_ACCOUNT` FOREIGN KEY (`allocation_account`) REFERENCES `account` (`id`),
   CONSTRAINT `FK_AMORTIZATION_AMORTIZATION_TYPE` FOREIGN KEY (`amortization_type`) REFERENCES `amortization_type` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_FIXED_ASSET_ACCOUNT` FOREIGN KEY (`fixed_asset_account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fichas de Amortizacion Contables';
 
@@ -1235,7 +1193,7 @@ CREATE TABLE `amortization` (
 
 CREATE TABLE `amortization_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `amortization` int(4) NOT NULL COMMENT 'Ficha de Amortizacion',
   `from_date` date NOT NULL COMMENT 'Desde fecha',
   `to_date` date NOT NULL COMMENT 'Hasta fecha',
@@ -1248,9 +1206,9 @@ CREATE TABLE `amortization_detail` (
   KEY `IDX_AMORTIZATION_DETAIL_AMORTIZATION` (`amortization`),
   KEY `IDX_AMORTIZATION_DETAIL_ACCOUNT_ENTRY` (`account_entry`),
   KEY `IDX_AMORTIZATION_DETAIL_DOMAIN` (`domain`),
+  CONSTRAINT `FK_AMORTIZATION_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_AMORTIZATION_DETAIL_ACCOUNT_ENTRY` FOREIGN KEY (`account_entry`) REFERENCES `account_entry` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_DETAIL_AMORTIZATION` FOREIGN KEY (`amortization`) REFERENCES `amortization` (`id`),
-  CONSTRAINT `FK_AMORTIZATION_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_AMORTIZATION_DETAIL_AMORTIZATION` FOREIGN KEY (`amortization`) REFERENCES `amortization` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Ficha de Amortizacion Contable';
 
 #
@@ -1259,7 +1217,7 @@ CREATE TABLE `amortization_detail` (
 
 CREATE TABLE `app_param` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Parametro',
   `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Parametro',
   PRIMARY KEY  (`id`),
@@ -1274,8 +1232,8 @@ CREATE TABLE `app_param` (
 
 CREATE TABLE `asset` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Activo',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Activo',
   `name` varchar(10) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre corto del Activo',
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_DOMAIN` (`domain`),
@@ -1288,7 +1246,7 @@ CREATE TABLE `asset` (
 
 CREATE TABLE `asset_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
   `date` date NOT NULL COMMENT 'Fecha de la Actividad',
   `from_time` datetime NOT NULL COMMENT 'Hora de inicio de la Actividad',
@@ -1299,8 +1257,8 @@ CREATE TABLE `asset_activity` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_ACTIVITY_ASSET` (`asset`),
   KEY `IDX_ASSET_ACTIVITY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ASSET_ACTIVITY_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`),
-  CONSTRAINT `FK_ASSET_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_ASSET_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ASSET_ACTIVITY_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades sobre el Activo';
 
 #
@@ -1309,7 +1267,7 @@ CREATE TABLE `asset_activity` (
 
 CREATE TABLE `feature` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre de la Caracteristica',
   PRIMARY KEY  (`id`),
   KEY `IDX_FEATURE_DOMAIN` (`domain`),
@@ -1322,15 +1280,15 @@ CREATE TABLE `feature` (
 
 CREATE TABLE `asset_feature` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
   `feature` int(4) NOT NULL COMMENT 'Identificador de la Caracteristica',
   PRIMARY KEY  (`id`),
   KEY `IDX_ASSET_FEATURE_ASSET` (`asset`),
   KEY `IDX_ASSET_FEATURE_FEATURE` (`feature`),
   KEY `IDX_ASSET_FEATURE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ASSET_FEATURE_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`),
   CONSTRAINT `FK_ASSET_FEATURE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ASSET_FEATURE_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`),
   CONSTRAINT `FK_ASSET_FEATURE_FEATURE` FOREIGN KEY (`feature`) REFERENCES `feature` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Caracteristicas por Activo';
 
@@ -1340,7 +1298,7 @@ CREATE TABLE `asset_feature` (
 
 CREATE TABLE `auto_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Concepto Automatico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` char(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Concepto Automatico',
   PRIMARY KEY  (`id`),
   KEY `IDX_AUTO_CONCEPT_DOMAIN` (`domain`),
@@ -1353,7 +1311,7 @@ CREATE TABLE `auto_concept` (
 
 CREATE TABLE `balance` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre del Balance',
   `removable` tinyint(1) default '0' COMMENT 'Indica se puede ser borrado por el usuario',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Balance',
@@ -1368,7 +1326,7 @@ CREATE TABLE `balance` (
 
 CREATE TABLE `balance_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `balance` int(4) NOT NULL COMMENT 'Identificador del Balance',
   `code` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Detalle en el Balance',
   `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripción del detalle de balance',
@@ -1382,8 +1340,8 @@ CREATE TABLE `balance_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_BALANCE_DETAIL_BALANCE` (`balance`),
   KEY `IDX_BALANCE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_BALANCE_DETAIL_BALANCE` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`),
-  CONSTRAINT `FK_BALANCE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_BALANCE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_BALANCE_DETAIL_BALANCE` FOREIGN KEY (`balance`) REFERENCES `balance` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Balace';
 
 #
@@ -1392,7 +1350,7 @@ CREATE TABLE `balance_detail` (
 
 CREATE TABLE `bank_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Concepto',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_CONCEPT_DOMAIN` (`domain`),
@@ -1405,16 +1363,16 @@ CREATE TABLE `bank_concept` (
 
 CREATE TABLE `bank_concept_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `bank_concept` int(4) NOT NULL default '0' COMMENT 'Identificador del Concepto bancario',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` (`bank_concept`),
   KEY `IDX_BANK_CONCEPT_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_BANK_CONCEPT_ACCOUNT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`),
-  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_BANK_CONCEPT_ACCOUNT_BANK_CONCEPT` FOREIGN KEY (`bank_concept`) REFERENCES `bank_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Conceptos bancarios';
 
 #
@@ -1423,7 +1381,7 @@ CREATE TABLE `bank_concept_account` (
 
 CREATE TABLE `bonus_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `expression` varchar(512) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `description` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
@@ -1437,7 +1395,7 @@ CREATE TABLE `bonus_concept` (
 
 CREATE TABLE `brand` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Marca Comercial',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Marca Comercial',
   PRIMARY KEY  (`id`),
   KEY `IDX_BRAND_DOMAIN` (`domain`),
@@ -1450,7 +1408,7 @@ CREATE TABLE `brand` (
 
 CREATE TABLE `calendar_holiday` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `calendar` int(4) NOT NULL default '0' COMMENT 'Identificador del Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Festivo',
   `date` date default NULL COMMENT 'Fecha del festivo',
@@ -1459,8 +1417,8 @@ CREATE TABLE `calendar_holiday` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CALENDAR_HOLIDAY_CALENDAR` (`calendar`),
   KEY `IDX_CALENDAR_HOLIDAY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CALENDAR_HOLIDAY_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
-  CONSTRAINT `FK_CALENDAR_HOLIDAY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CALENDAR_HOLIDAY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CALENDAR_HOLIDAY_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Festivos de Calendarios';
 
 #
@@ -1469,7 +1427,7 @@ CREATE TABLE `calendar_holiday` (
 
 CREATE TABLE `calendar_period` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `calendar` int(4) NOT NULL COMMENT 'Identificador del Calendario',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Periodo',
   `month` tinyint(2) default '0' COMMENT 'Mes del periodo',
@@ -1492,8 +1450,8 @@ CREATE TABLE `calendar_period` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CALENDAR_PERIOD_CALENDAR` (`calendar`),
   KEY `IDX_CALENDAR_PERIOD_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CALENDAR_PERIOD_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
-  CONSTRAINT `FK_CALENDAR_PERIOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CALENDAR_PERIOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CALENDAR_PERIOD_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Periodos de Calendarios';
 
 #
@@ -1502,12 +1460,15 @@ CREATE TABLE `calendar_period` (
 
 CREATE TABLE `campaign_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion',
   `active` tinyint(1) NOT NULL default '0' COMMENT 'Activo si o no',
   PRIMARY KEY  (`id`),
+  KEY `IDX_CAMPAIGN_TYPE_ENTERPRISE` (`enterprise`),
   KEY `IDX_CAMPAIGN_TYPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CAMPAIGN_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CAMPAIGN_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CAMPAIGN_TYPE_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Campañas';
 
 #
@@ -1516,12 +1477,12 @@ CREATE TABLE `campaign_type` (
 
 CREATE TABLE `process` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Proceso',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Proceso.',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Activo si o no',
   PRIMARY KEY  (`id`),
-  KEY `IDX_PROCESS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROCESS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_PROCESS_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_PROCESS_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Procesos';
 
 #
@@ -1530,12 +1491,12 @@ CREATE TABLE `process` (
 
 CREATE TABLE `workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Grupo de Trabajo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Grupo de Trabajo',
   `status` tinyint(2) default NULL COMMENT 'Estado del grupo de Trabajo',
   PRIMARY KEY  (`id`),
-  KEY `IDX_WORKGROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WORKGROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_WORKGROUP_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_WORKGROUP_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Trabajo';
 
 #
@@ -1544,7 +1505,8 @@ CREATE TABLE `workgroup` (
 
 CREATE TABLE `campaign` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Campaña',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `campaign_type` int(4) default NULL COMMENT 'Identificador del Tipo de Campaña',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
   `process` int(4) NOT NULL COMMENT 'Identificador del Proceso',
@@ -1554,12 +1516,14 @@ CREATE TABLE `campaign` (
   `manual` tinyint(1) NOT NULL default '0' COMMENT 'Tipo de Campaña',
   `status` tinyint(2) default NULL COMMENT 'Estado de la Campaña',
   PRIMARY KEY  (`id`),
+  KEY `IDX_CAMPAIGN_ENTERPRISE` (`enterprise`),
   KEY `IDX_CAMPAIGN_CAMPAIGN_TYPE` (`campaign_type`),
   KEY `IDX_CAMPAIGN_PROCESS` (`process`),
   KEY `IDX_CAMPAIGN_WORKGROUP` (`workgroup`),
   KEY `IDX_CAMPAIGN_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CAMPAIGN_CAMPAIGN_TYPE` FOREIGN KEY (`campaign_type`) REFERENCES `campaign_type` (`id`),
   CONSTRAINT `FK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CAMPAIGN_CAMPAIGN_TYPE` FOREIGN KEY (`campaign_type`) REFERENCES `campaign_type` (`id`),
+  CONSTRAINT `FK_CAMPAIGN_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_CAMPAIGN_PROCESS` FOREIGN KEY (`process`) REFERENCES `process` (`id`),
   CONSTRAINT `FK_CAMPAIGN_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas';
@@ -1570,15 +1534,15 @@ CREATE TABLE `campaign` (
 
 CREATE TABLE `campaign_project` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion de Campañas y Expedientes',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `campaign` int(4) NOT NULL COMMENT 'Identificador de la Campaña',
   `project` int(4) NOT NULL COMMENT 'Identificador del Expediente',
   PRIMARY KEY  (`id`),
   KEY `IDX_CAMPAIGN_PROJECT_CAMPAIGN` (`campaign`),
   KEY `IDX_CAMPAIGN_PROJECT_PROJECT` (`project`),
   KEY `IDX_CAMPAIGN_PROJECT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CAMPAIGN_PROJECT_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
   CONSTRAINT `FK_CAMPAIGN_PROJECT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CAMPAIGN_PROJECT_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
   CONSTRAINT `FK_CAMPAIGN_PROJECT_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas y Expedientes';
 
@@ -1588,7 +1552,7 @@ CREATE TABLE `campaign_project` (
 
 CREATE TABLE `cashflow_forecast` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `payment` tinyint(1) NOT NULL default '0' COMMENT 'Indica si es un pago o un cobro',
   `description` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio de aplicacion',
@@ -1621,7 +1585,7 @@ CREATE TABLE `cashflow_forecast` (
 
 CREATE TABLE `catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Catalogo',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio del Catalogo',
   `end_date` date default NULL COMMENT 'Fecha de fin del Catalogo',
@@ -1636,11 +1600,8 @@ CREATE TABLE `catalogue` (
 
 CREATE TABLE `pcategory_group` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Grupo de Categorias',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Grupo de Categorias',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PCATEGORY_GROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PCATEGORY_GROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Categorias de Productos';
 
 #
@@ -1649,14 +1610,11 @@ CREATE TABLE `pcategory_group` (
 
 CREATE TABLE `pcategory` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
   `detail_pattern` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Patron para los detalles de Articulos',
   `pcategory_group` int(4) default NULL COMMENT 'Identificador del Grupo de Categorias',
   PRIMARY KEY  (`id`),
   KEY `IDX_PCATEGORY_PCATEGORY_GROUP` (`pcategory_group`),
-  KEY `IDX_PCATEGORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PCATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PCATEGORY_PCATEGORY_GROUP` FOREIGN KEY (`pcategory_group`) REFERENCES `pcategory_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias de Productos';
 
@@ -1666,7 +1624,7 @@ CREATE TABLE `pcategory` (
 
 CREATE TABLE `catalogue_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
   `category` int(4) NOT NULL COMMENT 'Identificador de la Categoria',
   `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica el descuento',
@@ -1675,8 +1633,8 @@ CREATE TABLE `catalogue_category` (
   KEY `IDX_CATALOGUE_CATEGORY_CATALOGUE` (`catalogue`),
   KEY `IDX_CATALOGUE_CATEGORY_PCATEGORY` (`category`),
   KEY `IDX_CATALOGUE_CATEGORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CATALOGUE_CATEGORY_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_CATALOGUE_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CATALOGUE_CATEGORY_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_CATALOGUE_CATEGORY_PCATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Categorias del Catalogo';
 
@@ -1686,7 +1644,6 @@ CREATE TABLE `catalogue_category` (
 
 CREATE TABLE `tax` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(30) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Impuesto',
   `tax_type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Impuesto',
   `percentage` double(15,3) NOT NULL default '0.000' COMMENT 'Porcentaje de recargo actual',
@@ -1694,9 +1651,7 @@ CREATE TABLE `tax` (
   `start_date` date default NULL COMMENT 'Fecha de inicio de vigencia',
   `vat_deduction_type` tinyint(2) default '0' COMMENT 'Tipo de deduccion del IVA',
   `withholding_type` tinyint(2) default '0' COMMENT 'Tipo de retencion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_TAX_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos';
 
 #
@@ -1705,7 +1660,6 @@ CREATE TABLE `tax` (
 
 CREATE TABLE `product` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Producto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Producto',
   `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto',
   `brand` int(4) default NULL COMMENT 'Marca Comercial del Producto',
@@ -1718,18 +1672,16 @@ CREATE TABLE `product` (
   `composition` tinyint(1) default '0' COMMENT 'Indica si el Producto es una Composicion',
   `composition_price` tinyint(1) default '0' COMMENT 'Indica si el Precio lo determina la Composicion',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_PRODUCT_DOMAIN_CODE` (`domain`,`code`),
+  UNIQUE KEY `IDX_PRODUCT_CODE` (`code`),
   KEY `IDX_PRODUCT_NAME` (`name`),
   KEY `IDX_PRODUCT_TAX_RETENTION` (`retention`),
   KEY `IDX_PRODUCT_PCATEGORY` (`category`),
   KEY `IDX_PRODUCT_BRAND` (`brand`),
   KEY `IDX_PRODUCT_TAX_VAT` (`vat`),
-  KEY `IDX_PRODUCT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`),
   CONSTRAINT `FK_PRODUCT_BRAND` FOREIGN KEY (`brand`) REFERENCES `brand` (`id`),
-  CONSTRAINT `FK_PRODUCT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PRODUCT_PCATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
-  CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`),
-  CONSTRAINT `FK_PRODUCT_TAX_VAT` FOREIGN KEY (`vat`) REFERENCES `tax` (`id`)
+  CONSTRAINT `FK_PRODUCT_TAX_RETENTION` FOREIGN KEY (`retention`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
 
 #
@@ -1738,7 +1690,6 @@ CREATE TABLE `product` (
 
 CREATE TABLE `item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
   `detail` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Detalle del Articulo',
   `description` text collate latin1_spanish_ci COMMENT 'Descripcion del Articulo',
@@ -1752,8 +1703,6 @@ CREATE TABLE `item` (
   `barcode` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Codigo de barras del Articulo',
   PRIMARY KEY  (`id`),
   KEY `IDX_ITEM_PRODUCT` (`product`),
-  KEY `IDX_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos';
 
@@ -1763,7 +1712,7 @@ CREATE TABLE `item` (
 
 CREATE TABLE `catalogue_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
   `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica el precio o descuento',
@@ -1773,8 +1722,8 @@ CREATE TABLE `catalogue_item` (
   KEY `IDX_CATALOGUE_ITEM_CATALOGUE` (`catalogue`),
   KEY `IDX_CATALOGUE_ITEM_ITEM` (`item`),
   KEY `IDX_CATALOGUE_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CATALOGUE_ITEM_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_CATALOGUE_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CATALOGUE_ITEM_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_CATALOGUE_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos del Catalogo';
 
@@ -1784,7 +1733,7 @@ CREATE TABLE `catalogue_item` (
 
 CREATE TABLE `category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Categoria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Categoria',
   PRIMARY KEY  (`id`),
   KEY `IDX_CATEGORY_DOMAIN` (`domain`),
@@ -1797,7 +1746,7 @@ CREATE TABLE `category` (
 
 CREATE TABLE `certifica2_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa de la empresa',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
   `status` int(4) default NULL COMMENT 'Estado del certificado correspondiente a la ultima respuesta',
@@ -1815,7 +1764,7 @@ CREATE TABLE `certifica2_batch` (
 
 CREATE TABLE `certifica2_batch_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `certifica2_batch` int(4) NOT NULL default '0' COMMENT 'Identificador de la remesa',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -1827,8 +1776,8 @@ CREATE TABLE `certifica2_batch_attach` (
   KEY `IDX_CERTIFICA2_BATCH_ATTACH_CERTIFICA2_BATCH` (`certifica2_batch`),
   KEY `IDX_CERTIFICA2_BATCH_ATTACH_SCOPE` (`scope`),
   KEY `IDX_CERTIFICA2_BATCH_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_ATTACH_CERTIFICA2_BATCH` FOREIGN KEY (`certifica2_batch`) REFERENCES `certifica2_batch` (`id`),
   CONSTRAINT `FK_CERTIFICA2_BATCH_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CERTIFICA2_BATCH_ATTACH_CERTIFICA2_BATCH` FOREIGN KEY (`certifica2_batch`) REFERENCES `certifica2_batch` (`id`),
   CONSTRAINT `FK_CERTIFICA2_BATCH_ATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de remesas de certificados de empresa';
 
@@ -1838,9 +1787,12 @@ CREATE TABLE `certifica2_batch_attach` (
 
 CREATE TABLE `cnae` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
   `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CNAE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CNAE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE';
 
 #
@@ -1849,9 +1801,12 @@ CREATE TABLE `cnae` (
 
 CREATE TABLE `cnae2009` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` varchar(4) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNAE',
   `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNAE',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CNAE2009_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CNAE2009_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNAE 2009. Clasificación Nacional de Actividades Económicas ';
 
 #
@@ -1860,7 +1815,7 @@ CREATE TABLE `cnae2009` (
 
 CREATE TABLE `enterprise_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
@@ -1871,9 +1826,9 @@ CREATE TABLE `enterprise_activity` (
   KEY `IDX_ENTERPRISE_ACTIVITY_CNAE` (`cnae`),
   KEY `IDX_ENTERPRISE_ACTIVITY_CNAE2009` (`cnae2009`),
   KEY `IDX_ENTERPRISE_ACTIVITY_DOMAIN` (`domain`),
+  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE` FOREIGN KEY (`cnae`) REFERENCES `cnae` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`),
-  CONSTRAINT `FK_ENTERPRISE_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ENTERPRISE_ACTIVITY_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades de Empresas';
 
@@ -1883,7 +1838,7 @@ CREATE TABLE `enterprise_activity` (
 
 CREATE TABLE `enterprise_ccc` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `ccc` char(11) collate latin1_spanish_ci default NULL COMMENT 'Valor del Codigo Cuenta Cotizacion',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Cuenta Cotizacion',
   `enterprise_activity` int(4) NOT NULL COMMENT 'Identificador de la Actividad de Empresa',
@@ -1903,7 +1858,6 @@ CREATE TABLE `enterprise_ccc` (
 
 CREATE TABLE `person` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro de la Persona',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `birth_date` date default NULL COMMENT 'Fecha de nacimiento de la Persona',
   `gender` tinyint(2) NOT NULL default '0' COMMENT 'Sexo de la Persona',
   `marital_status` tinyint(2) NOT NULL default '0' COMMENT 'Estado civil de la Persona',
@@ -1912,8 +1866,6 @@ CREATE TABLE `person` (
   `first_surname` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Primer Apellido ',
   `second_surname` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Segundo Apellido',
   PRIMARY KEY  (`registry`),
-  KEY `IDX_PERSON_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PERSON_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PERSON_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Personas';
 
@@ -1923,7 +1875,7 @@ CREATE TABLE `person` (
 
 CREATE TABLE `contract` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `person` int(4) NOT NULL COMMENT 'Identificador de la Persona',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `enterprise_ccc` int(4) default NULL COMMENT 'CCC',
@@ -1946,9 +1898,9 @@ CREATE TABLE `contract` (
   KEY `IDX_CONTRACT_AGREEMENT_LEVEL_CATEGORY` (`agreement_level_category`),
   KEY `IDX_CONTRACT_ENTERPRISE_ACTIVITY` (`enterprise_activity`),
   KEY `IDX_CONTRACT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_AGREEMENT_LEVEL_CATEGORY` FOREIGN KEY (`agreement_level_category`) REFERENCES `agreement_level_category` (`id`),
   CONSTRAINT `FK_CONTRACT_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
-  CONSTRAINT `FK_CONTRACT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_CONTRACT_ENTERPRISE_CCC` FOREIGN KEY (`enterprise_ccc`) REFERENCES `enterprise_ccc` (`id`),
   CONSTRAINT `FK_CONTRACT_PERSON` FOREIGN KEY (`person`) REFERENCES `person` (`registry`),
@@ -1961,7 +1913,7 @@ CREATE TABLE `contract` (
 
 CREATE TABLE `certifica2_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del certificado de empresa de la remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `certifica2_batch` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato de empleado',
   `enterprise_nif` varchar(9) collate latin1_spanish_ci NOT NULL COMMENT 'NIF de la empresa',
@@ -1993,9 +1945,9 @@ CREATE TABLE `certifica2_batch_detail` (
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH` (`certifica2_batch`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_CONTRACT` (`contract`),
   KEY `IDX_CERTIFICA2_BATCH_DETAIL_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH` FOREIGN KEY (`certifica2_batch`) REFERENCES `certifica2_batch` (`id`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CERTIFICA2_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de certificados de empresa';
 
 #
@@ -2004,7 +1956,7 @@ CREATE TABLE `certifica2_batch_detail` (
 
 CREATE TABLE `certifica2_batch_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de los datos de cotizacion del certificado',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `certifica2_batch_detail` int(4) NOT NULL COMMENT 'Identificador unico del certificado de empresa de la remesa',
   `year` int(4) NOT NULL COMMENT 'Anio',
   `month` int(2) NOT NULL COMMENT 'Mes',
@@ -2015,8 +1967,8 @@ CREATE TABLE `certifica2_batch_data` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL` (`certifica2_batch_detail`),
   KEY `IDX_CERTIFICA2_BATCH_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL` FOREIGN KEY (`certifica2_batch_detail`) REFERENCES `certifica2_batch_detail` (`id`),
-  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL` FOREIGN KEY (`certifica2_batch_detail`) REFERENCES `certifica2_batch_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos cotizacion de empleados de certificados de empresa';
 
 #
@@ -2025,6 +1977,7 @@ CREATE TABLE `certifica2_batch_data` (
 
 CREATE TABLE `cnae2009_rate` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador único',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `cnae2009` int(4) NOT NULL COMMENT 'CNAE',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
@@ -2032,6 +1985,8 @@ CREATE TABLE `cnae2009_rate` (
   `ims_amount` double(15,3) default '0.000' COMMENT 'Importe por Incapacidad Permanente, Muerte y Supervivencia (I.M.S.)',
   PRIMARY KEY  (`id`),
   KEY `IDX_CNAE2009_RATE_CNAE2009` (`cnae2009`),
+  KEY `IDX_CNAE2009_RATE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CNAE2009_RATE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CNAE2009_RATE_CNAE2009` FOREIGN KEY (`cnae2009`) REFERENCES `cnae2009` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de primas para I.T e I.M.S';
 
@@ -2041,9 +1996,12 @@ CREATE TABLE `cnae2009_rate` (
 
 CREATE TABLE `cno` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del CNO',
   `title` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Titulo del CNO',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `IDX_CNO_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CNO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='CNO';
 
 #
@@ -2052,7 +2010,7 @@ CREATE TABLE `cno` (
 
 CREATE TABLE `commercial_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Actividad Comercial',
   PRIMARY KEY  (`id`),
   KEY `IDX_COMMERCIAL_ACTIVITY_DOMAIN` (`domain`),
@@ -2065,7 +2023,7 @@ CREATE TABLE `commercial_activity` (
 
 CREATE TABLE `commercial_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `line` smallint(2) default '1' COMMENT 'Numero de linea de Condicion',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
   `description` text collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Condicion Comercial',
@@ -2081,7 +2039,7 @@ CREATE TABLE `commercial_term` (
 
 CREATE TABLE `commission_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Comision',
   `rate` double(6,2) default '0.00' COMMENT 'Porcentaje de Comision',
   PRIMARY KEY  (`id`),
@@ -2095,15 +2053,12 @@ CREATE TABLE `commission_type` (
 
 CREATE TABLE `seller` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Agente Comercial',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `commission_type` int(4) default NULL COMMENT 'Identificador del Tipo de Comision',
   `status` tinyint(2) default '0' COMMENT 'Estado del Agente Comercial',
   PRIMARY KEY  (`registry`),
   KEY `IDX_SELLER_COMMISSION_TYPE` (`commission_type`),
-  KEY `IDX_SELLER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
-  CONSTRAINT `FK_SELLER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SELLER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_SELLER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_SELLER_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Agentes Comerciales';
 
 #
@@ -2112,17 +2067,14 @@ CREATE TABLE `seller` (
 
 CREATE TABLE `supplier` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Proveedor',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Proveedor aplica retencion de impuestos',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Proveedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Proveedor',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`registry`),
   KEY `IDX_SUPPLIER_SCOPE` (`scope`),
-  KEY `IDX_SUPPLIER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SUPPLIER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_SUPPLIER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_SUPPLIER_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_SUPPLIER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proveedores';
 
 #
@@ -2131,7 +2083,6 @@ CREATE TABLE `supplier` (
 
 CREATE TABLE `target` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Cliente Potencial',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `tariff` int(4) default NULL COMMENT 'Tarifa asociada al Cliente Potencial',
   `advertising` tinyint(2) NOT NULL default '0' COMMENT 'Admision de Publicidad',
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si el Cliente Potencial tiene recargo de equivalencia',
@@ -2142,8 +2093,6 @@ CREATE TABLE `target` (
   PRIMARY KEY  (`registry`),
   KEY `IDX_TARGET_TARIFF` (`tariff`),
   KEY `IDX_TARGET_SCOPE` (`scope`),
-  KEY `IDX_TARGET_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TARGET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARGET_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_TARGET_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_TARGET_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
@@ -2155,7 +2104,6 @@ CREATE TABLE `target` (
 
 CREATE TABLE `offer` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Presupuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Presupuesto',
@@ -2184,7 +2132,7 @@ CREATE TABLE `offer` (
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones del Presupuesto',
   `external_reference` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Referencia externa',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_OFFER_DOMAIN_SERIES_NUMBER_VERSION` (`domain`,`series`,`number`,`version`),
+  UNIQUE KEY `IDX_OFFER_SERIES_NUMBER_VERSION` (`series`,`number`,`version`),
   KEY `IDX_OFFER_SCOPE` (`scope`),
   KEY `IDX_OFFER_BANK` (`bank`),
   KEY `IDX_OFFER_SUPPLIER` (`supplier`),
@@ -2196,9 +2144,8 @@ CREATE TABLE `offer` (
   KEY `IDX_OFFER_PAY_METHOD` (`pay_method`),
   KEY `IDX_OFFER_WORKPLACE` (`workplace`),
   KEY `IDX_OFFER_TARIFF` (`tariff`),
-  KEY `IDX_OFFER_DOMAIN` (`domain`),
+  CONSTRAINT `FK_OFFER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `FK_OFFER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_OFFER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_OFFER_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_OFFER_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`),
@@ -2206,7 +2153,6 @@ CREATE TABLE `offer` (
   CONSTRAINT `FK_OFFER_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_OFFER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `FK_OFFER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `FK_OFFER_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`),
   CONSTRAINT `FK_OFFER_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Presupuestos';
 
@@ -2216,7 +2162,6 @@ CREATE TABLE `offer` (
 
 CREATE TABLE `project_commercial` (
   `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `seller` int(4) default NULL COMMENT 'Identificador del Comercial',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios',
@@ -2227,11 +2172,9 @@ CREATE TABLE `project_commercial` (
   PRIMARY KEY  (`project`),
   KEY `IDX_PROJECT_COMMERCIAL_TARGET` (`target`),
   KEY `IDX_PROJECT_COMMERCIAL_SELLER` (`seller`),
-  KEY `IDX_PROJECT_COMMERCIAL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_COMMERCIAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_COMMERCIAL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_PROJECT_COMMERCIAL_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
-  CONSTRAINT `FK_PROJECT_COMMERCIAL_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
+  CONSTRAINT `FK_PROJECT_COMMERCIAL_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_PROJECT_COMMERCIAL_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Operaciones Comerciales';
 
 #
@@ -2240,7 +2183,7 @@ CREATE TABLE `project_commercial` (
 
 CREATE TABLE `commercial_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `date` datetime NOT NULL COMMENT 'Fecha del Seguimiento Comercial',
   `seller` int(4) NOT NULL COMMENT 'Identificador del Comercial',
   `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
@@ -2259,8 +2202,8 @@ CREATE TABLE `commercial_tracking` (
   KEY `IDX_COMMERCIAL_TRACKING_PROJECT_COMMERCIAL` (`project`),
   KEY `IDX_COMMERCIAL_TRACKING_NEXT_COMMERCIAL_TRACKING` (`next_commercial_tracking`),
   KEY `IDX_COMMERCIAL_TRACKING_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COMMERCIAL_TRACKING_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `commercial_activity` (`id`),
   CONSTRAINT `FK_COMMERCIAL_TRACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_COMMERCIAL_TRACKING_ACTIVITY` FOREIGN KEY (`activity`) REFERENCES `commercial_activity` (`id`),
   CONSTRAINT `FK_COMMERCIAL_TRACKING_NEXT_COMMERCIAL_TRACKING` FOREIGN KEY (`next_commercial_tracking`) REFERENCES `commercial_tracking` (`id`),
   CONSTRAINT `FK_COMMERCIAL_TRACKING_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`),
   CONSTRAINT `FK_COMMERCIAL_TRACKING_PROJECT_COMMERCIAL` FOREIGN KEY (`project`) REFERENCES `project_commercial` (`project`),
@@ -2273,7 +2216,7 @@ CREATE TABLE `commercial_tracking` (
 
 CREATE TABLE `commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Comision',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Comision',
   `end_date` date default NULL COMMENT 'Fecha de fin de la Comision',
@@ -2288,7 +2231,7 @@ CREATE TABLE `commission` (
 
 CREATE TABLE `commission_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
   `category` int(4) NOT NULL COMMENT 'Identificador de la Categoria',
   `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica la Comision',
@@ -2297,9 +2240,9 @@ CREATE TABLE `commission_category` (
   KEY `IDX_COMMISSION_CATEGORY_COMMISSION` (`commission`),
   KEY `IDX_COMMISSION_CATEGORY_CATEGORY` (`category`),
   KEY `IDX_COMMISSION_CATEGORY_DOMAIN` (`domain`),
+  CONSTRAINT `FK_COMMISSION_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_COMMISSION_CATEGORY_CATEGORY` FOREIGN KEY (`category`) REFERENCES `pcategory` (`id`),
-  CONSTRAINT `FK_COMMISSION_CATEGORY_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
-  CONSTRAINT `FK_COMMISSION_CATEGORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_COMMISSION_CATEGORY_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Categoria';
 
 #
@@ -2308,7 +2251,7 @@ CREATE TABLE `commission_category` (
 
 CREATE TABLE `commission_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
   `quantity` double default '0' COMMENT 'Cantidad a partir de la cual se aplica la Comision',
@@ -2318,8 +2261,8 @@ CREATE TABLE `commission_item` (
   KEY `IDX_COMMISSION_ITEM_COMMISSION` (`commission`),
   KEY `IDX_COMMISSION_ITEM_ITEM` (`item`),
   KEY `IDX_COMMISSION_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COMMISSION_ITEM_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
   CONSTRAINT `FK_COMMISSION_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_COMMISSION_ITEM_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
   CONSTRAINT `FK_COMMISSION_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Articulo';
 
@@ -2329,16 +2272,16 @@ CREATE TABLE `commission_item` (
 
 CREATE TABLE `commission_type_commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `commission_type` int(4) NOT NULL COMMENT 'Identificador del Tipo de Comision',
   `commission` int(4) NOT NULL COMMENT 'Identificador de la Comision',
   PRIMARY KEY  (`id`),
   KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` (`commission_type`),
   KEY `IDX_COMMISSION_TYPE_COMMISSION_COMMISSION` (`commission`),
   KEY `IDX_COMMISSION_TYPE_COMMISSION_DOMAIN` (`domain`),
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION` FOREIGN KEY (`commission`) REFERENCES `commission` (`id`),
-  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`),
-  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_COMMISSION_TYPE_COMMISSION_COMMISSION_TYPE` FOREIGN KEY (`commission_type`) REFERENCES `commission_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones por Tipo de Comision';
 
 #
@@ -2347,7 +2290,7 @@ CREATE TABLE `commission_type_commission` (
 
 CREATE TABLE `company` (
   `registry` int(4) NOT NULL default '1' COMMENT 'Registro de la Compañia',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `active` tinyint(1) default '0' COMMENT 'Indica si la Compañia es activa o inactiva',
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Compañia tiene de recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Compañia aplica retencion de impuestos',
@@ -2364,7 +2307,7 @@ CREATE TABLE `company` (
 
 CREATE TABLE `contract_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto del contrato',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro del contrato',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -2377,8 +2320,8 @@ CREATE TABLE `contract_attach` (
   KEY `IDX_CONTRACT_ATTACH_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_ATTACH_SCOPE` (`scope`),
   KEY `IDX_CONTRACT_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_ATTACH_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_ATTACH_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_ATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de contratos';
 
@@ -2388,7 +2331,7 @@ CREATE TABLE `contract_attach` (
 
 CREATE TABLE `contract_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa de contratos',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
   `red_notify_date` date default NULL COMMENT 'Fecha de notificacion al sistema red',
   `red_notify_id` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Identificador de la notificacion',
@@ -2406,7 +2349,7 @@ CREATE TABLE `contract_batch` (
 
 CREATE TABLE `contract_batch_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract_batch` int(4) NOT NULL default '0' COMMENT 'Identificador de la remesa',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -2418,8 +2361,8 @@ CREATE TABLE `contract_batch_attach` (
   KEY `IDX_CONTRACT_BATCH_ATTACH_CONTRACT_BATCH` (`contract_batch`),
   KEY `IDX_CONTRACT_BATCH_ATTACH_SCOPE` (`scope`),
   KEY `IDX_CONTRACT_BATCH_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_BATCH_ATTACH_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
   CONSTRAINT `FK_CONTRACT_BATCH_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_BATCH_ATTACH_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
   CONSTRAINT `FK_CONTRACT_BATCH_ATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de remesas de mensajes afi de la s.s.';
 
@@ -2429,16 +2372,16 @@ CREATE TABLE `contract_batch_attach` (
 
 CREATE TABLE `contract_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del detalle de la remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa de contratos',
   `contract` int(4) NOT NULL COMMENT 'Identificador unico del contrato',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` (`contract_batch`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_BATCH_DETAIL_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`),
-  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_BATCH_DETAIL_CONTRACT_BATCH` FOREIGN KEY (`contract_batch`) REFERENCES `contract_batch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas de contratos';
 
 #
@@ -2447,7 +2390,7 @@ CREATE TABLE `contract_batch_detail` (
 
 CREATE TABLE `contract_bonus` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
@@ -2458,9 +2401,9 @@ CREATE TABLE `contract_bonus` (
   KEY `IDX_CONTRACT_BONUS_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_BONUS_BONUS_CONCEPT` (`bonus_concept`),
   KEY `IDX_CONTRACT_BONUS_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_BONUS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_BONUS_BONUS_CONCEPT` FOREIGN KEY (`bonus_concept`) REFERENCES `bonus_concept` (`id`),
-  CONSTRAINT `FK_CONTRACT_BONUS_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_BONUS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_BONUS_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
 
 #
@@ -2469,7 +2412,7 @@ CREATE TABLE `contract_bonus` (
 
 CREATE TABLE `contract_calendar_event` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Identificador del Contrato',
   `date` date NOT NULL COMMENT 'Fecha de la incidencia',
   `type` tinyint(2) default NULL COMMENT 'Tipo de incidencia',
@@ -2477,8 +2420,8 @@ CREATE TABLE `contract_calendar_event` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_CALENDAR_EVENT_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_CALENDAR_EVENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_CALENDAR_EVENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Incidencias de calendario en Contratos';
 
 #
@@ -2487,7 +2430,7 @@ CREATE TABLE `contract_calendar_event` (
 
 CREATE TABLE `contract_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
@@ -2496,8 +2439,8 @@ CREATE TABLE `contract_data` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_DATA_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del contrato';
 
 #
@@ -2506,7 +2449,7 @@ CREATE TABLE `contract_data` (
 
 CREATE TABLE `deduction_concept` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deduccion Salarial',
@@ -2523,7 +2466,7 @@ CREATE TABLE `deduction_concept` (
 
 CREATE TABLE `contract_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deducción',
   `deduction_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
@@ -2537,9 +2480,9 @@ CREATE TABLE `contract_deduction` (
   KEY `IDX_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` (`deduction_concept`),
   KEY `IDX_CONTRACT_DEDUCTION_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_DEDUCTION_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_DEDUCTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_DEDUCTION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`),
-  CONSTRAINT `FK_CONTRACT_DEDUCTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 #
@@ -2548,7 +2491,7 @@ CREATE TABLE `contract_deduction` (
 
 CREATE TABLE `contract_embargo` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
@@ -2558,8 +2501,8 @@ CREATE TABLE `contract_embargo` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_EMBARGO_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_EMBARGO_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_EMBARGO_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_EMBARGO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_EMBARGO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_EMBARGO_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Embargos';
 
 #
@@ -2568,7 +2511,7 @@ CREATE TABLE `contract_embargo` (
 
 CREATE TABLE `contract_leave` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Baja',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
@@ -2583,9 +2526,9 @@ CREATE TABLE `contract_leave` (
   KEY `IDX_CONTRACT_LEAVE_CONTRACT_LEAVE` (`parent`),
   KEY `IDX_CONTRACT_LEAVE_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_LEAVE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CONTRACT_LEAVE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT_LEAVE` FOREIGN KEY (`parent`) REFERENCES `contract_leave` (`id`),
-  CONSTRAINT `FK_CONTRACT_LEAVE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_LEAVE_CONTRACT_LEAVE` FOREIGN KEY (`parent`) REFERENCES `contract_leave` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bajas';
 
 #
@@ -2594,7 +2537,7 @@ CREATE TABLE `contract_leave` (
 
 CREATE TABLE `contract_leave_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de parte',
   `contract_leave` int(4) NOT NULL COMMENT 'Contrato',
   `college_number` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Numero de colegiado',
@@ -2605,8 +2548,8 @@ CREATE TABLE `contract_leave_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE` (`contract_leave`),
   KEY `IDX_CONTRACT_LEAVE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE` FOREIGN KEY (`contract_leave`) REFERENCES `contract_leave` (`id`),
-  CONSTRAINT `FK_CONTRACT_LEAVE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CONTRACT_LEAVE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE` FOREIGN KEY (`contract_leave`) REFERENCES `contract_leave` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las bajas';
 
 #
@@ -2615,7 +2558,7 @@ CREATE TABLE `contract_leave_detail` (
 
 CREATE TABLE `contract_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
@@ -2632,8 +2575,8 @@ CREATE TABLE `contract_payment` (
   KEY `IDX_CONTRACT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
   KEY `IDX_CONTRACT_PAYMENT_CONTRACT` (`contract`),
   KEY `IDX_CONTRACT_PAYMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTRACT_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CONTRACT_PAYMENT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
   CONSTRAINT `FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
@@ -2643,7 +2586,8 @@ CREATE TABLE `contract_payment` (
 
 CREATE TABLE `cost_profile` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion',
   `cost` double NOT NULL default '0' COMMENT 'Costo por hora',
   PRIMARY KEY  (`id`),
@@ -2759,7 +2703,7 @@ CREATE TABLE `course_schedule` (
 
 CREATE TABLE `creditor` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro del Acreedor',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si el Acreedor aplica retencion de impuestos',
   `transaction` tinyint(2) default '0' COMMENT 'Tipo de transacciones del Acreedor',
   `status` tinyint(2) default NULL COMMENT 'Estado del Acreedor',
@@ -2778,16 +2722,16 @@ CREATE TABLE `creditor` (
 
 CREATE TABLE `creditor_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Acreedor',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `creditor` int(4) NOT NULL default '0' COMMENT 'Identificador del Acreedor',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_CREDITOR_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_CREDITOR_ACCOUNT_CREDITOR` (`creditor`),
   KEY `IDX_CREDITOR_ACCOUNT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CREDITOR_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CREDITOR_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_CREDITOR_ACCOUNT_CREDITOR` FOREIGN KEY (`creditor`) REFERENCES `creditor` (`registry`),
-  CONSTRAINT `FK_CREDITOR_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CREDITOR_ACCOUNT_CREDITOR` FOREIGN KEY (`creditor`) REFERENCES `creditor` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Acreedores';
 
 #
@@ -2796,16 +2740,16 @@ CREATE TABLE `creditor_account` (
 
 CREATE TABLE `customer_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Cliente',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `customer` int(4) NOT NULL default '0' COMMENT 'Identificador del Cliente',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_CUSTOMER_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_CUSTOMER_ACCOUNT_CUSTOMER` (`customer`),
   KEY `IDX_CUSTOMER_ACCOUNT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_CUSTOMER_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CUSTOMER_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_CUSTOMER_ACCOUNT_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_CUSTOMER_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_CUSTOMER_ACCOUNT_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Clientes';
 
 #
@@ -2814,7 +2758,7 @@ CREATE TABLE `customer_account` (
 
 CREATE TABLE `customer_fee` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuota del Cliente',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `customer` int(4) default NULL COMMENT 'Identificador del Cliente',
   `line` smallint(2) default '1' COMMENT 'Numero de linea de Cuota',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo',
@@ -2833,8 +2777,8 @@ CREATE TABLE `customer_fee` (
   KEY `IDX_CUSTOMER_FEE_ITEM` (`item`),
   KEY `IDX_CUSTOMER_FEE_WORKPLACE` (`workplace`),
   KEY `IDX_CUSTOMER_FEE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CUSTOMER_FEE_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_CUSTOMER_FEE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_CUSTOMER_FEE_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_CUSTOMER_FEE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_CUSTOMER_FEE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuotas de Clientes';
@@ -2845,11 +2789,8 @@ CREATE TABLE `customer_fee` (
 
 CREATE TABLE `job_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Trabajo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Trabajo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_JOB_TYPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_JOB_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Trabajos';
 
 #
@@ -2858,17 +2799,17 @@ CREATE TABLE `job_type` (
 
 CREATE TABLE `task_holder` (
   `registry` int(4) NOT NULL default '0' COMMENT 'Registro de la Entidad susceptible de Recibir Tareas',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Entidad susceptible de Recibir Tareas',
   `active` tinyint(1) default '1' COMMENT 'Indica si dicha Entidad esta activa o no',
   `user_id` int(4) default NULL COMMENT 'Identificador del Usuario',
   `cost_profile` int(4) default NULL COMMENT 'Identificador del Perfil de Costos',
   PRIMARY KEY  (`registry`),
   KEY `IDX_TASK_HOLDER_COST_PROFILE` (`cost_profile`),
+  KEY `IDX_TASK_HOLDER_ENTERPRISE` (`enterprise`),
   KEY `IDX_TASK_HOLDER_USER` (`user_id`),
-  KEY `IDX_TASK_HOLDER_DOMAIN` (`domain`),
   CONSTRAINT `FK_TASK_HOLDER_COST_PROFILE` FOREIGN KEY (`cost_profile`) REFERENCES `cost_profile` (`id`),
-  CONSTRAINT `FK_TASK_HOLDER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_HOLDER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_TASK_HOLDER_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_TASK_HOLDER_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Titulares de Tareas';
@@ -2879,7 +2820,7 @@ CREATE TABLE `task_holder` (
 
 CREATE TABLE `task` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Tarea',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Tarea',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio de la Tarea',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion de la Tarea',
@@ -2898,19 +2839,19 @@ CREATE TABLE `task` (
   `repeat_period` tinyint(2) default '0' COMMENT 'Periodo de repeticion de la Tarea',
   PRIMARY KEY  (`id`),
   KEY `IDX_TASK_ACTIVITY_TYPE` (`activity_type`),
+  KEY `IDX_TASK_ENTERPRISE` (`enterprise`),
   KEY `IDX_TASK_PROJECT` (`project`),
   KEY `IDX_TASK_REGISTRY` (`registry`),
   KEY `IDX_TASK_SENDER` (`sender`),
   KEY `IDX_TASK_TASK_HOLDER` (`task_holder`),
   KEY `IDX_TASK_WORKGROUP` (`workgroup`),
-  KEY `IDX_TASK_DOMAIN` (`domain`),
+  CONSTRAINT `FK_TASK_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
   CONSTRAINT `FK_TASK_ACTIVITY_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
-  CONSTRAINT `FK_TASK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_TASK_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_TASK_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_TASK_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_TASK_SENDER` FOREIGN KEY (`sender`) REFERENCES `task_holder` (`registry`),
-  CONSTRAINT `FK_TASK_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
-  CONSTRAINT `FK_TASK_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
+  CONSTRAINT `FK_TASK_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tareas';
 
 #
@@ -2919,7 +2860,8 @@ CREATE TABLE `task` (
 
 CREATE TABLE `daily_tracking` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Parte',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `task_holder` int(4) NOT NULL COMMENT 'Identificador del Usuario que realiza el Parte',
   `tracking_date` date NOT NULL COMMENT 'Fecha del Parte',
   `tracking_duration` double NOT NULL default '0' COMMENT 'Tiempo invertido en el Parte',
@@ -2931,6 +2873,7 @@ CREATE TABLE `daily_tracking` (
   `task` int(4) default NULL COMMENT 'Identificador de la Tarea que provoca el Parte',
   `cost` double default '0' COMMENT 'Costo',
   PRIMARY KEY  (`id`),
+  KEY `IDX_DT_ENTERPRISE` (`enterprise`),
   KEY `IDX_DAILY_TRACKING_ACTIVITY_TYPE` (`activity_type`),
   KEY `IDX_DAILY_TRACKING_JOB_TYPE` (`job_type`),
   KEY `IDX_DAILY_TRACKING_PROJECT` (`project`),
@@ -2938,13 +2881,14 @@ CREATE TABLE `daily_tracking` (
   KEY `IDX_DAILY_TRACKING_TASK` (`task`),
   KEY `IDX_DAILY_TRACKING_TASK_HOLDER` (`task_holder`),
   KEY `IDX_DAILY_TRACKING_DOMAIN` (`domain`),
-  CONSTRAINT `FK_DAILY_TRACKING_ACTIVITY_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
   CONSTRAINT `FK_DAILY_TRACKING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_DAILY_TRACKING_ACTIVITY_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
   CONSTRAINT `FK_DAILY_TRACKING_JOB_TYPE` FOREIGN KEY (`job_type`) REFERENCES `job_type` (`id`),
   CONSTRAINT `FK_DAILY_TRACKING_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_DAILY_TRACKING_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_DAILY_TRACKING_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`),
-  CONSTRAINT `FK_DAILY_TRACKING_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
+  CONSTRAINT `FK_DAILY_TRACKING_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
+  CONSTRAINT `FK_DT_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Parte Diario de Trabajo';
 
 #
@@ -2962,7 +2906,7 @@ CREATE TABLE `db_version` (
 
 CREATE TABLE `delivery` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Albaran de Venta',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Albaran',
   `number` int(4) NOT NULL default '0' COMMENT 'Número del Albaran',
@@ -3009,7 +2953,6 @@ CREATE TABLE `delivery` (
 
 CREATE TABLE `offer_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de Presupuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
   `line` smallint(2) default '1' COMMENT 'Numero de línea del Detalle dentro del Presupuesto',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo',
@@ -3021,8 +2964,6 @@ CREATE TABLE `offer_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_OFFER_DETAIL_OFFER` (`offer`),
   KEY `IDX_OFFER_DETAIL_ITEM` (`item`),
-  KEY `IDX_OFFER_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OFFER_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_OFFER_DETAIL_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Presupuesto';
@@ -3033,7 +2974,6 @@ CREATE TABLE `offer_detail` (
 
 CREATE TABLE `sales` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Pedido de Venta',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `customer` int(4) NOT NULL default '0' COMMENT 'Identificador del Cliente',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Pedido',
@@ -3057,7 +2997,7 @@ CREATE TABLE `sales` (
   `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_SALES_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
+  UNIQUE KEY `IDX_SALES_SERIES_NUMBER` (`series`,`number`),
   KEY `IDX_SALES_SCOPE` (`scope`),
   KEY `IDX_SALES_BANK` (`bank`),
   KEY `IDX_SALES_PROJECT` (`project`),
@@ -3067,16 +3007,14 @@ CREATE TABLE `sales` (
   KEY `IDX_SALES_RADDRESS` (`shipping_address`),
   KEY `IDX_SALES_PAY_METHOD` (`pay_method`),
   KEY `IDX_SALES_WORKPLACE` (`workplace`),
-  KEY `IDX_SALES_DOMAIN` (`domain`),
+  CONSTRAINT `FK_SALES_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `FK_SALES_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_SALES_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_SALES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_SALES_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_SALES_RADDRESS` FOREIGN KEY (`shipping_address`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_SALES_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_SALES_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
-  CONSTRAINT `FK_SALES_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_SALES_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Venta';
 
 #
@@ -3085,7 +3023,6 @@ CREATE TABLE `sales` (
 
 CREATE TABLE `sales_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Pedido de Venta',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `sales` int(4) NOT NULL default '0' COMMENT 'Identificador del Pedido de Venta',
   `line` smallint(2) default '1' COMMENT 'Numero de línea del Detalle dentro del Pedido',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador del Articulo del Detalle de Pedido',
@@ -3101,8 +3038,6 @@ CREATE TABLE `sales_detail` (
   KEY `IDX_SALES_DETAIL_OFFER_DETAIL` (`offer_detail`),
   KEY `IDX_SALES_DETAIL_SALES` (`sales`),
   KEY `IDX_SALES_DETAIL_ITEM` (`item`),
-  KEY `IDX_SALES_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALES_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`),
   CONSTRAINT `FK_SALES_DETAIL_SALES` FOREIGN KEY (`sales`) REFERENCES `sales` (`id`)
@@ -3114,13 +3049,10 @@ CREATE TABLE `sales_detail` (
 
 CREATE TABLE `warehouse` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Almacen',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Almacen',
   `workplace` int(4) default NULL COMMENT 'Identificador del Centro de Trabajo',
   PRIMARY KEY  (`id`),
   KEY `IDX_WAREHOUSE_WORKPLACE` (`workplace`),
-  KEY `IDX_WAREHOUSE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WAREHOUSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_WAREHOUSE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Almacenes';
 
@@ -3130,7 +3062,7 @@ CREATE TABLE `warehouse` (
 
 CREATE TABLE `delivery_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Albaran de Venta',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `delivery` int(4) NOT NULL COMMENT 'Identificador del Albaran de Venta',
   `line` smallint(2) default '0' COMMENT 'Numero de linea del Detalle dentro del Albaran',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo del Detalle de Albaran',
@@ -3146,25 +3078,12 @@ CREATE TABLE `delivery_detail` (
   KEY `IDX_DELIVERY_DETAIL_ITEM` (`item`),
   KEY `IDX_DELIVERY_DETAIL_SALES_DETAIL` (`sales_detail`),
   KEY `IDX_DELIVERY_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_DELIVERY_DETAIL_DELIVERY` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
   CONSTRAINT `FK_DELIVERY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_DELIVERY_DETAIL_DELIVERY` FOREIGN KEY (`delivery`) REFERENCES `delivery` (`id`),
   CONSTRAINT `FK_DELIVERY_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_DELIVERY_DETAIL_SALES_DETAIL` FOREIGN KEY (`sales_detail`) REFERENCES `sales_detail` (`id`),
   CONSTRAINT `FK_DELIVERY_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Albaran de Venta';
-
-#
-# Structure for the `department` table : 
-#
-
-CREATE TABLE `department` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre del Departamento',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_DEPARTMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos';
 
 #
 # Structure for the `ec_catalogue` table : 
@@ -3287,15 +3206,15 @@ CREATE TABLE `ec_target` (
 
 CREATE TABLE `enterprise_agreement` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `agreement` int(4) NOT NULL COMMENT 'Identificador del Convenio',
   PRIMARY KEY  (`id`),
   KEY `IDX_ENTERPRISE_AGREEMENT_ENTERPRISE` (`enterprise`),
   KEY `IDX_ENTERPRISE_AGREEMENT_AGREEMENT` (`agreement`),
   KEY `IDX_ENTERPRISE_AGREEMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ENTERPRISE_AGREEMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
   CONSTRAINT `FK_ENTERPRISE_AGREEMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ENTERPRISE_AGREEMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
   CONSTRAINT `FK_ENTERPRISE_AGREEMENT_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Convenio de la Empresa';
 
@@ -3305,7 +3224,7 @@ CREATE TABLE `enterprise_agreement` (
 
 CREATE TABLE `enterprise_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de Empresa',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Expresion',
@@ -3338,7 +3257,7 @@ CREATE TABLE `evaluation_observation` (
 
 CREATE TABLE `fan_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
   `liquidation_type` tinyint(2) NOT NULL default '0' COMMENT 'Indica el tipo de liquidacion',
@@ -3353,7 +3272,7 @@ CREATE TABLE `fan_batch` (
 
 CREATE TABLE `fan_batch_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fan_batch` int(4) NOT NULL default '0' COMMENT 'Identificador de la remesa',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -3376,7 +3295,7 @@ CREATE TABLE `fan_batch_attach` (
 
 CREATE TABLE `fan_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del detalle',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fan_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa',
   `enterprise_ccc` int(4) NOT NULL COMMENT 'Identificador unico del ccc',
   PRIMARY KEY  (`id`),
@@ -3394,7 +3313,7 @@ CREATE TABLE `fan_batch_detail` (
 
 CREATE TABLE `favorite_category` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Categoria',
   `user_id` int(4) NOT NULL COMMENT 'Usuario al que pertenece la Categoria',
   PRIMARY KEY  (`id`),
@@ -3410,7 +3329,7 @@ CREATE TABLE `favorite_category` (
 
 CREATE TABLE `favorite` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de Favorito',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `favorite_category` int(4) NOT NULL COMMENT 'Categoria a la que pertenece el Favorito',
   `description` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Favorito',
   `url` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Url del Favorito',
@@ -3430,7 +3349,7 @@ CREATE TABLE `favorite` (
 
 CREATE TABLE `fbatch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Remesa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fbatch` int(4) NOT NULL COMMENT 'Identificador de la Remesa',
   `finance` int(4) NOT NULL COMMENT 'Identificador del Vencimiento',
   `amount` double(15,3) default '0.000' COMMENT 'Importe del Detalle de la Remesa',
@@ -3450,7 +3369,7 @@ CREATE TABLE `fbatch_detail` (
 
 CREATE TABLE `fs_mod347` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `administration` tinyint(2) default '0' COMMENT 'Administracion',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -3471,7 +3390,7 @@ CREATE TABLE `fs_mod347` (
 
 CREATE TABLE `fs_mod347_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fs_mod347` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
   `type` varchar(1) collate latin1_spanish_ci default '0' COMMENT 'Clave de operacion',
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF del declarado',
@@ -3493,7 +3412,7 @@ CREATE TABLE `fs_mod347_detail` (
 
 CREATE TABLE `fs_prof_retention` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `enterprise` int(4) NOT NULL default '0' COMMENT 'Identificador de Empresa',
   `payment_date` date NOT NULL COMMENT 'Fecha de Pago',
   `document` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Numero de Documento del Profesional',
@@ -3520,7 +3439,7 @@ CREATE TABLE `fs_prof_retention` (
 
 CREATE TABLE `fs_renting` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `period` tinyint(2) default '0' COMMENT 'Periodo de la Declaracion',
   `administration` tinyint(2) default '0' COMMENT 'Administracion',
@@ -3576,7 +3495,7 @@ CREATE TABLE `fs_renting` (
 
 CREATE TABLE `fs_renting_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fs_renting` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
   `type` tinyint(2) default '0' COMMENT 'Modalidad',
   `document` varchar(9) collate latin1_spanish_ci default NULL COMMENT 'NIF',
@@ -3601,7 +3520,7 @@ CREATE TABLE `fs_renting_detail` (
 
 CREATE TABLE `fs_vat` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `year` int(4) NOT NULL COMMENT 'Ejercicio de la Declaracion',
   `period` tinyint(2) default '0' COMMENT 'Periodo de la Declaracion',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Declaracion',
@@ -3623,7 +3542,7 @@ CREATE TABLE `fs_vat` (
 
 CREATE TABLE `fs_vat_declaration` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fs_vat` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
   `without_activity` tinyint(1) default '0' COMMENT 'Sin actividad',
   `administration` tinyint(2) default '0' COMMENT 'Administracion',
@@ -3659,7 +3578,7 @@ CREATE TABLE `fs_vat_declaration` (
 
 CREATE TABLE `fs_vat_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `fs_vat` int(4) NOT NULL default '0' COMMENT 'Identificador de la Declaracion',
   `vat_key` varchar(3) collate latin1_spanish_ci NOT NULL COMMENT 'Clave de la Declaracion',
   `percent` double default '0' COMMENT 'Porcentaje de Iva',
@@ -3691,15 +3610,15 @@ CREATE TABLE `fs_vat_detail` (
 
 CREATE TABLE `geotree` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `parent` int(4) default NULL COMMENT 'Identificador de la Zona Geografica Padre',
   `child` int(4) NOT NULL COMMENT 'Identificador de la Zona Geografica Hijo',
   PRIMARY KEY  (`id`),
   KEY `IDX_GEOTREE_PARENT_GEOZONE` (`parent`),
   KEY `IDX_GEOTREE_CHILD_GEOZONE` (`child`),
   KEY `IDX_GEOTREE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_GEOTREE_CHILD_GEOZONE` FOREIGN KEY (`child`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_GEOTREE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_GEOTREE_CHILD_GEOZONE` FOREIGN KEY (`child`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_GEOTREE_PARENT_GEOZONE` FOREIGN KEY (`parent`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Jerarquia de Zonas Geograficas';
 
@@ -3709,11 +3628,16 @@ CREATE TABLE `geotree` (
 
 CREATE TABLE `geozone_irpf` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `geozone_code` varchar(3) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Zona Geografica',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
+  `geozone` int(4) NOT NULL COMMENT 'Identificador de la Zona Geografica',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `amount` double(15,3) default '0.000' COMMENT 'Importe rendimiento anual',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `IDX_GEOZONE_IRPF_GEOZONE` (`geozone`),
+  KEY `IDX_GEOZONE_IRPF_DOMAIN` (`domain`),
+  CONSTRAINT `FK_GEOZONE_IRPF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_GEOZONE_IRPF_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de tramos del IRPF';
 
 #
@@ -3722,11 +3646,14 @@ CREATE TABLE `geozone_irpf` (
 
 CREATE TABLE `geozone_irpf_descendant` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `geozone_irpf` int(4) default NULL COMMENT 'Identificador del tramo de IRPF',
   `descendant` tinyint(2) default '0' COMMENT 'Descendientes',
   `percent` double(15,2) default '0.00' COMMENT 'Porcentaje',
   PRIMARY KEY  (`id`),
   KEY `IDX_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF` (`geozone_irpf`),
+  KEY `IDX_GEOZONE_IRPF_DESCENDANT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_GEOZONE_IRPF_DESCENDANT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF` FOREIGN KEY (`geozone_irpf`) REFERENCES `geozone_irpf` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de porcentajes IRPF segun descendientes';
 
@@ -3736,11 +3663,14 @@ CREATE TABLE `geozone_irpf_descendant` (
 
 CREATE TABLE `geozone_irpf_handicap` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `geozone_irpf` int(4) default NULL COMMENT 'Identificador del tramo de IRPF',
   `handicap` tinyint(2) default '0' COMMENT 'Grado Minusvalia',
   `percent` double(15,2) default '0.00' COMMENT 'Porcentaje',
   PRIMARY KEY  (`id`),
   KEY `IDX_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF` (`geozone_irpf`),
+  KEY `IDX_GEOZONE_IRPF_HANDICAP_DOMAIN` (`domain`),
+  CONSTRAINT `FK_GEOZONE_IRPF_HANDICAP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF` FOREIGN KEY (`geozone_irpf`) REFERENCES `geozone_irpf` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de  ';
 
@@ -3750,14 +3680,11 @@ CREATE TABLE `geozone_irpf_handicap` (
 
 CREATE TABLE `holiday_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `holiday` int(4) NOT NULL COMMENT 'Identificador de Festividad',
   `date` date NOT NULL COMMENT 'Fecha Festiva',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de Festividad',
   PRIMARY KEY  (`id`),
   KEY `IDX_HOLIDAY_DETAIL_HOLIDAY` (`holiday`),
-  KEY `IDX_HOLIDAY_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_HOLIDAY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_HOLIDAY_DETAIL_HOLIDAY` FOREIGN KEY (`holiday`) REFERENCES `holiday` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de Festividades';
 
@@ -3767,20 +3694,17 @@ CREATE TABLE `holiday_detail` (
 
 CREATE TABLE `hotel` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `code` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Hotel',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `customer` int(4) default NULL COMMENT 'Identificador del Cliente',
   `active` tinyint(1) default '1' COMMENT 'Indica si el Hotel esta activo o no',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_HOTEL_CODE` (`code`),
+  UNIQUE KEY `IDX_HOTEL_CODE` (`code`),
   KEY `IDX_HOTEL_SCOPE` (`scope`),
   KEY `IDX_HOTEL_WORKPLACE` (`workplace`),
   KEY `IDX_HOTEL_CUSTOMER` (`customer`),
-  KEY `IDX_HOTEL_DOMAIN` (`domain`),
   CONSTRAINT `FK_HOTEL_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_HOTEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_HOTEL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_HOTEL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Hoteles';
@@ -3791,7 +3715,6 @@ CREATE TABLE `hotel` (
 
 CREATE TABLE `iattach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto del Articulo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `mimeType` tinyint(2) default NULL COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -3799,8 +3722,6 @@ CREATE TABLE `iattach` (
   `type` tinyint(2) default NULL COMMENT 'Tipo de Archivo Adjunto',
   PRIMARY KEY  (`id`),
   KEY `IDX_IATTACH_ITEM` (`item`),
-  KEY `IDX_IATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_IATTACH_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Articulos';
 
@@ -3810,7 +3731,6 @@ CREATE TABLE `iattach` (
 
 CREATE TABLE `income` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Albaran de Compra',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Albaran',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero del Albaran',
@@ -3831,7 +3751,7 @@ CREATE TABLE `income` (
   `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_INCOME_DOMAIN_SUPPLIER_SERIES_NUMBER` (`domain`,`supplier`,`series`,`number`),
+  UNIQUE KEY `idx_supplier` (`supplier`,`series`,`number`),
   KEY `IDX_INCOME_WORKPLACE` (`workplace`),
   KEY `IDX_INCOME_SCOPE` (`scope`),
   KEY `IDX_INCOME_BANK` (`bank`),
@@ -3839,10 +3759,8 @@ CREATE TABLE `income` (
   KEY `IDX_INCOME_SUPPLIER` (`supplier`),
   KEY `IDX_INCOME_RADDRESS` (`address`),
   KEY `IDX_INCOME_PAY_METHOD` (`pay_method`),
-  KEY `IDX_INCOME_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INCOME_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_INCOME_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INCOME_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
+  CONSTRAINT `FK_INCOME_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
   CONSTRAINT `FK_INCOME_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_INCOME_RADDRESS` FOREIGN KEY (`address`) REFERENCES `raddress` (`id`),
   CONSTRAINT `FK_INCOME_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
@@ -3856,7 +3774,6 @@ CREATE TABLE `income` (
 
 CREATE TABLE `purchase` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Pedido de Compra',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador del Proveedor',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Pedido',
@@ -3879,21 +3796,19 @@ CREATE TABLE `purchase` (
   `bank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
   `bank_account` varchar(30) collate latin1_spanish_ci default NULL COMMENT 'Numero de cuenta en la Entidad Bancaria',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_PURCHASE_DOMAIN_SUPPLIER_SERIES_NUMBER` (`domain`,`supplier`,`series`,`number`),
+  UNIQUE KEY `IDX_PURCHASE_SUPPLIER_SERIES_NUMBER` (`supplier`,`series`,`number`),
   KEY `IDX_PURCHASE_SCOPE` (`scope`),
   KEY `IDX_PURCHASE_BANK` (`bank`),
   KEY `IDX_PURCHASE_PROJECT` (`project`),
   KEY `IDX_PURCHASE_SUPPLIER` (`supplier`),
   KEY `IDX_PURCHASE_PAY_METHOD` (`pay_method`),
   KEY `IDX_PURCHASE_WORKPLACE` (`workplace`),
-  KEY `IDX_PURCHASE_DOMAIN` (`domain`),
+  CONSTRAINT `FK_PURCHASE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `FK_PURCHASE_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_PURCHASE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_PURCHASE_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_PURCHASE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_PURCHASE_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
-  CONSTRAINT `FK_PURCHASE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_PURCHASE_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pedidos de Compra';
 
 #
@@ -3902,7 +3817,6 @@ CREATE TABLE `purchase` (
 
 CREATE TABLE `purchase_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Pedido de Compra',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `purchase` int(4) NOT NULL default '0' COMMENT 'Identificador del Pedido de Compra',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `line` smallint(2) default '1' COMMENT 'Numero de linea del Detalle dentro del Pedido',
@@ -3918,8 +3832,6 @@ CREATE TABLE `purchase_detail` (
   KEY `IDX_PURCHASE_DETAIL_PROJECT` (`project`),
   KEY `IDX_PURCHASE_DETAIL_PURCHASE` (`purchase`),
   KEY `IDX_PURCHASE_DETAIL_ITEM` (`item`),
-  KEY `IDX_PURCHASE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PURCHASE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PURCHASE` FOREIGN KEY (`purchase`) REFERENCES `purchase` (`id`)
@@ -3931,7 +3843,6 @@ CREATE TABLE `purchase_detail` (
 
 CREATE TABLE `income_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Albaran de Compra',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `income` int(4) NOT NULL default '0' COMMENT 'Identificador del Albaran de Compra',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `line` smallint(2) default '0' COMMENT 'Numero de linea del Detalle dentro del Albaran',
@@ -3948,8 +3859,6 @@ CREATE TABLE `income_detail` (
   KEY `IDX_INCOME_DETAIL_WAREHOUSE` (`warehouse`),
   KEY `IDX_INCOME_DETAIL_PURCHASE_DETAIL` (`purchase_detail`),
   KEY `IDX_INCOME_DETAIL_INCOME` (`income`),
-  KEY `IDX_INCOME_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INCOME_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INCOME_DETAIL_INCOME` FOREIGN KEY (`income`) REFERENCES `income` (`id`),
   CONSTRAINT `FK_INCOME_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_INCOME_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
@@ -3963,13 +3872,10 @@ CREATE TABLE `income_detail` (
 
 CREATE TABLE `inventory` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Inventario',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `inventory_date` date NOT NULL default '0000-00-00' COMMENT 'Fecha de Inventario',
   `warehouse` int(4) NOT NULL default '0' COMMENT 'Almacen Inventariado',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Inventario',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_INVENTORY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVENTORY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Inventarios de Almacenes';
 
 #
@@ -3978,7 +3884,6 @@ CREATE TABLE `inventory` (
 
 CREATE TABLE `inventory_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle del Inventario',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `inventory` int(4) NOT NULL default '0' COMMENT 'Identificador de Inventario',
   `item` int(4) NOT NULL default '0' COMMENT 'Articulo Inventariado',
   `actual_quantity` double(15,3) default '0.000' COMMENT 'Cantidad actual del Articulo Inventariado',
@@ -3987,10 +3892,8 @@ CREATE TABLE `inventory_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_INVENTORY_DETAIL_INVENTORY` (`inventory`),
   KEY `IDX_INVENTORY_DETAIL_ITEM` (`item`),
-  KEY `IDX_INVENTORY_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVENTORY_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVENTORY_DETAIL_INVENTORY` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`id`),
-  CONSTRAINT `FK_INVENTORY_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+  CONSTRAINT `FK_INVENTORY_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_INVENTORY_DETAIL_INVENTORY` FOREIGN KEY (`inventory`) REFERENCES `inventory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Inventarios de Almacenes';
 
 #
@@ -3999,7 +3902,6 @@ CREATE TABLE `inventory_detail` (
 
 CREATE TABLE `invoice_address` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
   `street_type` varchar(2) collate latin1_spanish_ci default 'CL' COMMENT 'Tipo de via',
   `address` varchar(45) collate latin1_spanish_ci default NULL COMMENT 'Primera parte de la Direccion',
@@ -4011,8 +3913,6 @@ CREATE TABLE `invoice_address` (
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_ADDRESS_INVOICE` (`invoice`),
   KEY `IDX_INVOICE_ADDRESS_GEOZONE` (`geozone`),
-  KEY `IDX_INVOICE_ADDRESS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_ADDRESS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_ADDRESS_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`),
   CONSTRAINT `FK_INVOICE_ADDRESS_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Direcciones de la Factura';
@@ -4023,15 +3923,12 @@ CREATE TABLE `invoice_address` (
 
 CREATE TABLE `invoice_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice` int(4) NOT NULL COMMENT 'Identificador de la Factura',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_ATTACH_INVOICE` (`invoice`),
-  KEY `IDX_INVOICE_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_ATTACH_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Facturas';
 
@@ -4041,7 +3938,6 @@ CREATE TABLE `invoice_attach` (
 
 CREATE TABLE `invoice_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de la Factura',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice` int(4) NOT NULL default '0' COMMENT 'Identificador de la Factura',
   `project` int(4) default NULL COMMENT 'Identificador del Proyecto',
   `line` smallint(2) default '1' COMMENT 'Numero de línea del Detalle dentro de la Factura',
@@ -4063,13 +3959,11 @@ CREATE TABLE `invoice_detail` (
   KEY `IDX_INVOICE_DETAIL_INVOICE` (`invoice`),
   KEY `IDX_INVOICE_DETAIL_ITEM` (`item`),
   KEY `IDX_INVOICE_DETAIL_WORKPLACE` (`workplace`),
-  KEY `IDX_INVOICE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_INVOICE_DETAIL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_INVOICE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_INVOICE_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
-  CONSTRAINT `FK_INVOICE_DETAIL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_INVOICE_DETAIL_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Factura';
 
 #
@@ -4078,16 +3972,13 @@ CREATE TABLE `invoice_detail` (
 
 CREATE TABLE `invoice_detail_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice_detail` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Factura',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_DETAIL_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL` (`invoice_detail`),
-  KEY `IDX_INVOICE_DETAIL_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
+  CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`),
+  CONSTRAINT `FK_INVOICE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Lineas de Facturas';
 
 #
@@ -4096,7 +3987,6 @@ CREATE TABLE `invoice_detail_account` (
 
 CREATE TABLE `invoice_tax` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Impuesto de la Factura',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice_detail` int(4) NOT NULL default '0' COMMENT 'Identificador del Detalle de la Factura',
   `tax_type` tinyint(2) default '0' COMMENT 'Tipo de Impuesto del Detalle de la Factura',
   `percentage` double(15,3) default '0.000' COMMENT 'Porcentaje de Impuesto del Detalle de la Factura',
@@ -4108,8 +3998,6 @@ CREATE TABLE `invoice_tax` (
   `deductible_quota` double default '0' COMMENT 'Cuota deducible',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_TAX_INVOICE_DETAIL` (`invoice_detail`),
-  KEY `IDX_INVOICE_TAX_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_TAX_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICE_TAX_INVOICE_DETAIL` FOREIGN KEY (`invoice_detail`) REFERENCES `invoice_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Impuestos del Detalle de la Factura';
 
@@ -4119,16 +4007,13 @@ CREATE TABLE `invoice_tax` (
 
 CREATE TABLE `invoice_tax_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoice_tax` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Impuesto',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_INVOICE_TAX_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_INVOICE_TAX_ACCOUNT_INVOICE_TAX` (`invoice_tax`),
-  KEY `IDX_INVOICE_TAX_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_INVOICE_TAX` FOREIGN KEY (`invoice_tax`) REFERENCES `invoice_tax` (`id`)
+  CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_INVOICE_TAX` FOREIGN KEY (`invoice_tax`) REFERENCES `invoice_tax` (`id`),
+  CONSTRAINT `FK_INVOICE_TAX_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables asociadas a Impuestos de Facturas';
 
 #
@@ -4137,12 +4022,9 @@ CREATE TABLE `invoice_tax_account` (
 
 CREATE TABLE `invoicing_group` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `parent` int(4) NOT NULL COMMENT 'Grupo de Facturacion',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_INVOICING_GROUP_REGISTRY` (`parent`),
-  KEY `IDX_INVOICING_GROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICING_GROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_INVOICING_GROUP_REGISTRY` FOREIGN KEY (`parent`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupos de Facturacion';
 
@@ -4152,17 +4034,14 @@ CREATE TABLE `invoicing_group` (
 
 CREATE TABLE `invoicing_group_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `invoicing_group` int(4) NOT NULL COMMENT 'Grupo de Facturacion al que pertenece',
   `child` int(4) NOT NULL COMMENT 'Componente asociado a un Grupo de Facturacion',
   `grouped` tinyint(1) default '0' COMMENT 'Indica si agrupa facturas o no',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_INVOICING_GROUP_DETAIL_REGISTRY` (`child`),
   KEY `IDX_INVOICING_GROUP_DETAIL_INVOICING_GROUP` (`invoicing_group`),
-  KEY `IDX_INVOICING_GROUP_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`),
-  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_REGISTRY` FOREIGN KEY (`child`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_REGISTRY` FOREIGN KEY (`child`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_INVOICING_GROUP_DETAIL_INVOICING_GROUP` FOREIGN KEY (`invoicing_group`) REFERENCES `invoicing_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los Grupos de Facturacion';
 
 #
@@ -4171,7 +4050,6 @@ CREATE TABLE `invoicing_group_detail` (
 
 CREATE TABLE `irpf_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Identificador del contrato',
   `family_situation` tinyint(2) default '0' COMMENT 'Situacion familiar',
   `spouse_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento del conyuge',
@@ -4196,9 +4074,7 @@ CREATE TABLE `irpf_data` (
   `ceuta_melilla` tinyint(1) NOT NULL default '0' COMMENT 'Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_DATA_CONTRACT` (`contract`),
-  KEY `IDX_IRPF_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IRPF_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_IRPF_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_IRPF_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dator de irpf';
 
 #
@@ -4207,7 +4083,6 @@ CREATE TABLE `irpf_data` (
 
 CREATE TABLE `irpf_data_ascendants` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `irpf_data` int(4) NOT NULL COMMENT 'Identificador del irpf',
   `birth_year` int(4) default NULL COMMENT 'Anio de nacimiento',
   `disability_level` tinyint(2) default '0' COMMENT 'Grado de discapacidad',
@@ -4215,8 +4090,6 @@ CREATE TABLE `irpf_data_ascendants` (
   `another_descendient` tinyint(2) default '0' COMMENT 'Convivencia con otros descendientes',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_DATA_ASCENDANTS_IRPF_DATA` (`irpf_data`),
-  KEY `IDX_IRPF_DATA_ASCENDANTS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IRPF_DATA_ASCENDANTS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_IRPF_DATA_ASCENDANTS_IRPF_DATA` FOREIGN KEY (`irpf_data`) REFERENCES `irpf_data` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ascendientes del modelo 145';
 
@@ -4226,7 +4099,6 @@ CREATE TABLE `irpf_data_ascendants` (
 
 CREATE TABLE `irpf_data_descendients` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `irpf_data` int(4) NOT NULL COMMENT 'Identificador del irpf',
   `birth_year` int(4) default NULL COMMENT 'Anio de nacimiento',
   `adoption_year` int(4) default NULL COMMENT 'Anio de adopcion',
@@ -4235,8 +4107,6 @@ CREATE TABLE `irpf_data_descendients` (
   `unique_parent` tinyint(1) default '0' COMMENT 'Computo por entero de hijos o descendientes',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_DATA_DESCENDIENTS_IRPF_DATA` (`irpf_data`),
-  KEY `IDX_IRPF_DATA_DESCENDIENTS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IRPF_DATA_DESCENDIENTS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_IRPF_DATA_DESCENDIENTS_IRPF_DATA` FOREIGN KEY (`irpf_data`) REFERENCES `irpf_data` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Descendientes del modelo 145';
 
@@ -4246,7 +4116,6 @@ CREATE TABLE `irpf_data_descendients` (
 
 CREATE TABLE `irpf_regularization` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Identificador del contrato',
   `reason` tinyint(2) default NULL COMMENT 'Causa de regularización',
   `effective_date` date NOT NULL COMMENT 'Fecha de entrada en vigor',
@@ -4262,9 +4131,7 @@ CREATE TABLE `irpf_regularization` (
   `prior_deduct_home_loan_amount` double(15,3) default NULL COMMENT 'Importe de la minoración por pagos por la adquisión o rehabilitación de la vivienda antes de la regularización',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_REGULARIZATION_CONTRACT` (`contract`),
-  KEY `IDX_IRPF_REGULARIZATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IRPF_REGULARIZATION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_IRPF_REGULARIZATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_IRPF_REGULARIZATION_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos regularizacion IRPF';
 
 #
@@ -4273,7 +4140,6 @@ CREATE TABLE `irpf_regularization` (
 
 CREATE TABLE `irpf_result` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int(4) NOT NULL COMMENT 'Identificador del contrato',
   `effective_date` date NOT NULL COMMENT 'Fecha de entrada en vigor',
   `base_irpf` double(15,3) default NULL COMMENT 'Base para calcular el tipo de retención',
@@ -4325,9 +4191,7 @@ CREATE TABLE `irpf_result` (
   `ascendents_65_entirely` tinyint(2) default NULL COMMENT 'Ascendientes con discapacidad > 65%. Por entero',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_RESULT_CONTRACT` (`contract`),
-  KEY `IDX_IRPF_RESULT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_IRPF_RESULT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_IRPF_RESULT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_IRPF_RESULT_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Resultados IRPF';
 
 #
@@ -4336,7 +4200,6 @@ CREATE TABLE `irpf_result` (
 
 CREATE TABLE `item_alternative` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `alternative_item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo Alternativo',
   `priority` tinyint(2) default '0' COMMENT 'Prioridad del Articulo Alternativo',
@@ -4344,9 +4207,7 @@ CREATE TABLE `item_alternative` (
   UNIQUE KEY `IDX_UNQ_ITEM_ALTERNATIVE` (`item`,`alternative_item`),
   KEY `IDX_ITEM_ALTERNATIVE_ITEM` (`item`),
   KEY `IDX_ITEM_ALTERNATIVE_ALTERNATIVE` (`alternative_item`),
-  KEY `IDX_ITEM_ALTERNATIVE_DOMAIN` (`domain`),
   CONSTRAINT `FK_ITEM_ALTERNATIVE_ALTERNATIVE` FOREIGN KEY (`alternative_item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_ITEM_ALTERNATIVE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_ALTERNATIVE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo Alternativos';
 
@@ -4356,7 +4217,6 @@ CREATE TABLE `item_alternative` (
 
 CREATE TABLE `item_composition` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo compuesto',
   `composition_item` int(4) NOT NULL COMMENT 'Identificador del Articulo componente',
   `sequence` smallint(2) default '0' COMMENT 'Numero de secuencia dentro de la Composicion',
@@ -4366,9 +4226,7 @@ CREATE TABLE `item_composition` (
   PRIMARY KEY  (`id`),
   KEY `IDX_ITEM_COMPOSITION_ITEM` (`item`),
   KEY `IDX_ITEM_COMPOSITION_COMPOSITION` (`composition_item`),
-  KEY `IDX_ITEM_COMPOSITION_DOMAIN` (`domain`),
   CONSTRAINT `FK_ITEM_COMPOSITION_COMPOSITION` FOREIGN KEY (`composition_item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_ITEM_COMPOSITION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_COMPOSITION_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Composicion de Articulos';
 
@@ -4378,20 +4236,14 @@ CREATE TABLE `item_composition` (
 
 CREATE TABLE `item_supplier` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador de Proveedor',
   `code` varchar(15) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo del Producto en el Proveedor',
   `priority` tinyint(2) default '0' COMMENT 'Prioridad del Proveedor',
-  `workplace` int(4) default NULL COMMENT 'Identificador del Centro de Trabajo',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_ITEM_SUPPLIER` (`item`,`supplier`),
   KEY `IDX_ITEM_SUPPLIER_ITEM` (`item`),
   KEY `IDX_ITEM_SUPPLIER_SUPPLIER` (`supplier`),
-  KEY `IDX_ITEM_SUPPLIER_DOMAIN` (`domain`),
-  KEY `IDX_ITEM_SUPPLIER_WORKPLACE` (`workplace`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
-  CONSTRAINT `FK_ITEM_SUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_SUPPLIER_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Proveedor';
@@ -4402,7 +4254,6 @@ CREATE TABLE `item_supplier` (
 
 CREATE TABLE `item_tariff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `tariff` int(4) NOT NULL default '0' COMMENT 'Identificador de Tarifa',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Tarifa',
@@ -4412,8 +4263,6 @@ CREATE TABLE `item_tariff` (
   UNIQUE KEY `IDX_UNQ_ITEM_TARIFF` (`item`,`tariff`),
   KEY `IDX_ITEM_TARIFF_TARIFF` (`tariff`),
   KEY `IDX_ITEM_TARIFF_ITEM` (`item`),
-  KEY `IDX_ITEM_TARIFF_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ITEM_TARIFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_TARIFF_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_TARIFF_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas de Articulos';
@@ -4424,7 +4273,6 @@ CREATE TABLE `item_tariff` (
 
 CREATE TABLE `item_warehouse` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `item` int(4) NOT NULL default '0' COMMENT 'Identificador de Articulo',
   `warehouse` int(4) NOT NULL default '0' COMMENT 'Identificador de Almacen',
   `stock_max` double(15,3) default '0.000' COMMENT 'Stock maximo del Articulo en el Almacen',
@@ -4434,8 +4282,6 @@ CREATE TABLE `item_warehouse` (
   UNIQUE KEY `IDX_UNQ_ITEM_WAREHOUSE` (`item`,`warehouse`),
   KEY `IDX_ITEM_WAREHOUSE_ITEM` (`item`),
   KEY `IDX_ITEM_WAREHOUSE_WAREHOUSE` (`warehouse`),
-  KEY `IDX_ITEM_WAREHOUSE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ITEM_WAREHOUSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ITEM_WAREHOUSE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_ITEM_WAREHOUSE_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos del Articulo por Almacen';
@@ -4446,12 +4292,9 @@ CREATE TABLE `item_warehouse` (
 
 CREATE TABLE `leave_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `date` datetime default NULL COMMENT 'Fecha de la Remesa',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_LEAVE_BATCH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_LEAVE_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas de partes IT';
 
 #
@@ -4460,7 +4303,6 @@ CREATE TABLE `leave_batch` (
 
 CREATE TABLE `leave_batch_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `leave_batch` int(4) NOT NULL default '0' COMMENT 'Identificador de la remesa',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
@@ -4471,8 +4313,6 @@ CREATE TABLE `leave_batch_attach` (
   PRIMARY KEY  (`id`),
   KEY `IDX_LEAVE_BATCH_ATTACH_SCOPE` (`scope`),
   KEY `IDX_LEAVE_BATCH_ATTACH_LEAVE_BATCH` (`leave_batch`),
-  KEY `IDX_LEAVE_BATCH_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_LEAVE_BATCH_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_LEAVE_BATCH_ATTACH_LEAVE_BATCH` FOREIGN KEY (`leave_batch`) REFERENCES `leave_batch` (`id`),
   CONSTRAINT `FK_LEAVE_BATCH_ATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de remesas de partes IT';
@@ -4483,15 +4323,12 @@ CREATE TABLE `leave_batch_attach` (
 
 CREATE TABLE `leave_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `leave_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa',
   `contract_leave_detail` int(4) NOT NULL COMMENT 'Identificador unico del parte',
   PRIMARY KEY  (`id`),
   KEY `IDX_LEAVE_BATCH_DETAIL_LEAVE_BATCH` (`leave_batch`),
   KEY `IDX_LEAVE_BATCH_DETAIL_CONTRACT_LEAVE_DETAIL` (`contract_leave_detail`),
-  KEY `IDX_LEAVE_BATCH_DETAIL_DOMAIN` (`domain`),
   CONSTRAINT `FK_LEAVE_BATCH_DETAIL_CONTRACT_LEAVE_DETAIL` FOREIGN KEY (`contract_leave_detail`) REFERENCES `contract_leave_detail` (`id`),
-  CONSTRAINT `FK_LEAVE_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_LEAVE_BATCH_DETAIL_LEAVE_BATCH` FOREIGN KEY (`leave_batch`) REFERENCES `leave_batch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de remesas de partes IT';
 
@@ -4501,7 +4338,6 @@ CREATE TABLE `leave_batch_detail` (
 
 CREATE TABLE `loan` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Prestamo',
   `loan_date` date NOT NULL COMMENT 'Fecha de Concesion del Prestamo',
   `term` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Plazo',
@@ -4517,8 +4353,6 @@ CREATE TABLE `loan` (
   `status` tinyint(2) default '0' COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_LOAN_RBANK` (`rbank`),
-  KEY `IDX_LOAN_DOMAIN` (`domain`),
-  CONSTRAINT `FK_LOAN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_LOAN_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos';
 
@@ -4528,16 +4362,13 @@ CREATE TABLE `loan` (
 
 CREATE TABLE `loan_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `loan` int(4) NOT NULL COMMENT 'Prestamo',
   `account` int(4) NOT NULL COMMENT 'Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_LOAN_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_LOAN_ACCOUNT_LOAN` (`loan`),
-  KEY `IDX_LOAN_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_LOAN_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_LOAN_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_LOAN_ACCOUNT_LOAN` FOREIGN KEY (`loan`) REFERENCES `loan` (`id`)
+  CONSTRAINT `FK_LOAN_ACCOUNT_LOAN` FOREIGN KEY (`loan`) REFERENCES `loan` (`id`),
+  CONSTRAINT `FK_LOAN_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Prestamos';
 
 #
@@ -4546,14 +4377,11 @@ CREATE TABLE `loan_account` (
 
 CREATE TABLE `signature` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Firma',
   `signature` text collate latin1_spanish_ci NOT NULL COMMENT 'Texto de la Firma de la Cuenta de Correo',
   `source` tinyint(2) NOT NULL COMMENT 'Origen de la Firma',
   `source_id` int(4) NOT NULL COMMENT 'Identificador del origen de la Firma',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SIGNATURE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SIGNATURE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Firmas de Cuentas de Correo Electronico';
 
 #
@@ -4562,7 +4390,6 @@ CREATE TABLE `signature` (
 
 CREATE TABLE `mail_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Cuenta de Correo',
   `email` varchar(256) collate latin1_spanish_ci NOT NULL COMMENT 'Cuenta de correo',
   `replyto_mail` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Email de Respuesta',
@@ -4588,8 +4415,6 @@ CREATE TABLE `mail_account` (
   `source_id` int(4) NOT NULL COMMENT 'Identificador del origen de la Firma',
   PRIMARY KEY  (`id`),
   KEY `IDX_MAIL_ACCOUNT_SIGNATURE` (`signature`),
-  KEY `IDX_MAIL_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MAIL_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MAIL_ACCOUNT_SIGNATURE` FOREIGN KEY (`signature`) REFERENCES `signature` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas de Correo Electronico';
 
@@ -4599,11 +4424,8 @@ CREATE TABLE `mail_account` (
 
 CREATE TABLE `make` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Fabricante',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Fabricante',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MAKE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MAKE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Fabricantes';
 
 #
@@ -4630,11 +4452,8 @@ CREATE TABLE `mark` (
 
 CREATE TABLE `message_content` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `content` text collate latin1_spanish_ci NOT NULL COMMENT 'Contenido del Mensaje',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MESSAGE_CONTENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MESSAGE_CONTENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contenido de Mensajes';
 
 #
@@ -4643,7 +4462,6 @@ CREATE TABLE `message_content` (
 
 CREATE TABLE `message_log` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `message_id` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador del Mensaje para el servidor de Esendex',
   `message_content` int(4) default NULL COMMENT 'Identificador del Contenido del Mensaje',
   `recipient` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Destinatario del Mensaje',
@@ -4653,10 +4471,20 @@ CREATE TABLE `message_log` (
   `username` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Usuario que envia el mensaje',
   PRIMARY KEY  (`id`),
   KEY `IDX_MESSAGE_LOG_MESSAGE_CONTENT` (`message_content`),
-  KEY `IDX_MESSAGE_LOG_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MESSAGE_LOG_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MESSAGE_LOG_MESSAGE_CONTENT` FOREIGN KEY (`message_content`) REFERENCES `message_content` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Log de Mensajes';
+
+#
+# Structure for the `survey` table : 
+#
+
+CREATE TABLE `survey` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `active` tinyint(1) NOT NULL COMMENT 'Indica si el Cuestionario esta activa o no',
+  `creationDate` datetime NOT NULL COMMENT 'Fecha de creacion del Cuestionario',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Cuestionario',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuestionarios';
 
 #
 # Structure for the `mk_campaign` table : 
@@ -4664,12 +4492,9 @@ CREATE TABLE `message_log` (
 
 CREATE TABLE `mk_campaign` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
 #
@@ -4678,32 +4503,14 @@ CREATE TABLE `mk_campaign` (
 
 CREATE TABLE `mk_template` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la Plantilla',
   `data` mediumtext collate latin1_spanish_ci NOT NULL COMMENT 'Contenido de la Plantilla',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Plantilla esta activa o no',
   `creationDate` datetime NOT NULL COMMENT 'Fecha de la creacion en el sistema de la Plantilla',
   `subject` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Asunto de la Plantilla',
   `append_signature` tinyint(1) NOT NULL COMMENT 'Indica si la Plantilla incluye la firma o no',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_MK_TEMPLATE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MK_TEMPLATE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plantilla de Marketing';
-
-#
-# Structure for the `survey` table : 
-#
-
-CREATE TABLE `survey` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `active` tinyint(1) NOT NULL COMMENT 'Indica si el Cuestionario esta activa o no',
-  `creationDate` datetime NOT NULL COMMENT 'Fecha de creacion del Cuestionario',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Cuestionario',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SURVEY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SURVEY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuestionarios';
 
 #
 # Structure for the `mk_action` table : 
@@ -4711,7 +4518,6 @@ CREATE TABLE `survey` (
 
 CREATE TABLE `mk_action` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `campaign` int(11) NOT NULL COMMENT 'Identificador de la Campaña',
   `media_type` int(4) NOT NULL COMMENT 'Tipo de contacto de la Accion',
   `start_date` datetime NOT NULL COMMENT 'Fecha de inicio',
@@ -4722,11 +4528,9 @@ CREATE TABLE `mk_action` (
   KEY `IDX_MK_ACTION_MK_TEMPLATE` (`template`),
   KEY `IDX_MK_ACTION_MK_CAMPAIGN` (`campaign`),
   KEY `IDX_MK_ACTION_SURVEY` (`survey`),
-  KEY `IDX_MK_ACTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MK_ACTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
   CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
-  CONSTRAINT `FK_MK_ACTION_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`),
-  CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
+  CONSTRAINT `FK_MK_ACTION_MK_TEMPLATE` FOREIGN KEY (`template`) REFERENCES `mk_template` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de Marketing';
 
 #
@@ -4735,7 +4539,6 @@ CREATE TABLE `mk_action` (
 
 CREATE TABLE `survey_response` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `creationDate` datetime NOT NULL COMMENT 'Fecha de la creacion en el sistema de la Respuesta del Cuestionario',
   `response_date` datetime NOT NULL COMMENT 'Fecha de la Respuesta del Cuestionario',
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
@@ -4747,12 +4550,10 @@ CREATE TABLE `survey_response` (
   KEY `IDX_SURVEY_RESPONSE_SURVEY` (`survey`),
   KEY `IDX_SURVEY_RESPONSE_TARGET` (`target`),
   KEY `IDX_SURVEY_RESPONSE_USER` (`user`),
-  KEY `IDX_SURVEY_RESPONSE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SURVEY_RESPONSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_SURVEY_RESPONSE_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_MK_ACTION` FOREIGN KEY (`campaign_action`) REFERENCES `mk_action` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
-  CONSTRAINT `FK_SURVEY_RESPONSE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
-  CONSTRAINT `FK_SURVEY_RESPONSE_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_SURVEY_RESPONSE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Respuestas de Cuestionarios';
 
 #
@@ -4761,7 +4562,6 @@ CREATE TABLE `survey_response` (
 
 CREATE TABLE `mk_action_target` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `action` int(4) NOT NULL COMMENT 'Identificador de la Accion',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `status` tinyint(2) NOT NULL COMMENT 'Estado del Cliente Potencial de la Accion de Campaña',
@@ -4773,11 +4573,9 @@ CREATE TABLE `mk_action_target` (
   KEY `IDX_MK_ACTION_TARGET_SURVEY_RESPONSE` (`survey_response`),
   KEY `IDX_MK_ACTION_TARGET_MK_ACTION` (`action`),
   KEY `IDX_MK_ACTION_TARGET_TARGET` (`target`),
-  KEY `IDX_MK_ACTION_TARGET_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MK_ACTION_TARGET_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_MK_ACTION_TARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_MK_ACTION_TARGET_MK_ACTION` FOREIGN KEY (`action`) REFERENCES `mk_action` (`id`),
   CONSTRAINT `FK_MK_ACTION_TARGET_SURVEY_RESPONSE` FOREIGN KEY (`survey_response`) REFERENCES `survey_response` (`id`),
-  CONSTRAINT `FK_MK_ACTION_TARGET_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_MK_ACTION_TARGET_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Clientes Potenciales de la Accion de Marketing';
 
@@ -4787,13 +4585,10 @@ CREATE TABLE `mk_action_target` (
 
 CREATE TABLE `model` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Modelo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `make` int(4) NOT NULL COMMENT 'Identificador del Fabricante',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Modelo',
   PRIMARY KEY  (`id`),
   KEY `IDX_MODEL_MAKE` (`make`),
-  KEY `IDX_MODEL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MODEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_MODEL_MAKE` FOREIGN KEY (`make`) REFERENCES `make` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Modelos';
 
@@ -4803,15 +4598,12 @@ CREATE TABLE `model` (
 
 CREATE TABLE `note` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Nota',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `subject` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion corta de la Nota',
   `date` datetime NOT NULL COMMENT 'Fecha de la Nota',
   `owner` int(4) default NULL COMMENT 'Destinatario de la Nota',
   `note` text collate latin1_spanish_ci COMMENT 'Texto de la Nota',
   PRIMARY KEY  (`id`),
   KEY `IDX_NOTE_USER` (`owner`),
-  KEY `IDX_NOTE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_NOTE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_NOTE_USER` FOREIGN KEY (`owner`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas';
 
@@ -4821,7 +4613,6 @@ CREATE TABLE `note` (
 
 CREATE TABLE `notice` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Aviso',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `date` datetime NOT NULL COMMENT 'Fecha y hora en la que se produjo el Aviso',
   `sender` int(4) NOT NULL COMMENT 'Remitente del Aviso',
   `work_group` int(4) default NULL COMMENT 'Grupo de Trabajo al que va dirigida el Aviso',
@@ -4837,11 +4628,9 @@ CREATE TABLE `notice` (
   KEY `IDX_NOTICE_USER_SENDER` (`sender`),
   KEY `IDX_NOTICE_USER_RECIPIENT` (`recipient`),
   KEY `IDX_NOTICE_WORKGROUP` (`work_group`),
-  KEY `IDX_NOTICE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_NOTICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_NOTICE_WORKGROUP` FOREIGN KEY (`work_group`) REFERENCES `workgroup` (`id`),
   CONSTRAINT `FK_NOTICE_USER_RECIPIENT` FOREIGN KEY (`recipient`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK_NOTICE_USER_SENDER` FOREIGN KEY (`sender`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK_NOTICE_WORKGROUP` FOREIGN KEY (`work_group`) REFERENCES `workgroup` (`id`)
+  CONSTRAINT `FK_NOTICE_USER_SENDER` FOREIGN KEY (`sender`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Avisos';
 
 #
@@ -4860,15 +4649,12 @@ CREATE TABLE `observation` (
 
 CREATE TABLE `offer_attach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Archivo Adjunto',
   `data` mediumblob COMMENT 'Archivo Adjunto en binario',
   PRIMARY KEY  (`id`),
   KEY `IDX_OFFER_ATTACH_OFFER` (`offer`),
-  KEY `IDX_OFFER_ATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OFFER_ATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_ATTACH_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Presupuestos';
 
@@ -4878,7 +4664,6 @@ CREATE TABLE `offer_attach` (
 
 CREATE TABLE `offer_detail_commission` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `offer_detail` int(4) NOT NULL default '0' COMMENT 'Identificador de la Linea de Presupuesto',
   `commission` double default '0' COMMENT 'Porcentaje de Comision',
   `amount` double default '0' COMMENT 'Importe de la Comision',
@@ -4886,8 +4671,6 @@ CREATE TABLE `offer_detail_commission` (
   `pay_date` date default NULL COMMENT 'Fecha de liquidacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_OFFER_DETAIL_COMMISSION_OFFER_DETAIL` (`offer_detail`),
-  KEY `IDX_OFFER_DETAIL_COMMISSION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OFFER_DETAIL_COMMISSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_DETAIL_COMMISSION_OFFER_DETAIL` FOREIGN KEY (`offer_detail`) REFERENCES `offer_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comisiones asociadas a Lineas de Presupuestos';
 
@@ -4897,7 +4680,6 @@ CREATE TABLE `offer_detail_commission` (
 
 CREATE TABLE `offer_term` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `offer` int(4) NOT NULL COMMENT 'Identificador del Presupuesto',
   `line` smallint(2) default '1' COMMENT 'Numero de linea de la Condicion del Presupuesto',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL default '' COMMENT 'Nombre de la Condicion Comercial',
@@ -4905,8 +4687,6 @@ CREATE TABLE `offer_term` (
   `term_general` tinyint(1) default '0' COMMENT 'Indica si la Condicion es particular o general',
   PRIMARY KEY  (`id`),
   KEY `IDX_OFFER_TERM_OFFER` (`offer`),
-  KEY `IDX_OFFER_TERM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OFFER_TERM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_OFFER_TERM_OFFER` FOREIGN KEY (`offer`) REFERENCES `offer` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Condiciones del Presupuesto';
 
@@ -4916,7 +4696,6 @@ CREATE TABLE `offer_term` (
 
 CREATE TABLE `payroll_workplace` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `agreement` int(4) default NULL COMMENT 'Identificador del Convenio',
   `enterprise_activity` int(4) default NULL COMMENT 'Identificador de la Actividad',
@@ -4926,10 +4705,8 @@ CREATE TABLE `payroll_workplace` (
   KEY `IDX_PAYROLL_WORKPLACE_CALENDAR` (`calendar`),
   KEY `IDX_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY` (`enterprise_activity`),
   KEY `IDX_PAYROLL_WORKPLACE_AGREEMENT` (`agreement`),
-  KEY `IDX_PAYROLL_WORKPLACE_DOMAIN` (`domain`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_CALENDAR` FOREIGN KEY (`calendar`) REFERENCES `calendar` (`id`),
-  CONSTRAINT `FK_PAYROLL_WORKPLACE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY` FOREIGN KEY (`enterprise_activity`) REFERENCES `enterprise_activity` (`id`),
   CONSTRAINT `FK_PAYROLL_WORKPLACE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos laborales del Centro de Trabajo';
@@ -4940,15 +4717,12 @@ CREATE TABLE `payroll_workplace` (
 
 CREATE TABLE `pcategory_tree` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Nodo del Arbol de Categorias',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `parent` int(4) default NULL COMMENT 'Identificador de la Categoria padre',
   `child` int(4) default NULL COMMENT 'Identificador de la Categoria hijo',
   PRIMARY KEY  (`id`),
   KEY `IDX_PCATEGORY_TREE_PARENT_PCATEGORY` (`parent`),
   KEY `IDX_PCATEGORY_TREE_CHILD_PCATEGORY` (`child`),
-  KEY `IDX_PCATEGORY_TREE_DOMAIN` (`domain`),
   CONSTRAINT `FK_PCATEGORY_TREE_CHILD_PCATEGORY` FOREIGN KEY (`child`) REFERENCES `pcategory` (`id`),
-  CONSTRAINT `FK_PCATEGORY_TREE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PCATEGORY_TREE_PARENT_PCATEGORY` FOREIGN KEY (`parent`) REFERENCES `pcategory` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Arbol de Categorias de Productos';
 
@@ -4958,78 +4732,14 @@ CREATE TABLE `pcategory_tree` (
 
 CREATE TABLE `pm_type_detail_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `pm_type_detail` int(4) NOT NULL default '0' COMMENT 'Identificador del Detalle por Tipo de Forma de Pago',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_PM_TYPE_DETAIL_ACCOUNT_PM_TYPE_DETAIL` (`pm_type_detail`),
-  KEY `IDX_PM_TYPE_DETAIL_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`)
+  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_PM_TYPE_DETAIL` FOREIGN KEY (`pm_type_detail`) REFERENCES `pm_type_detail` (`id`),
+  CONSTRAINT `FK_PM_TYPE_DETAIL_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
-
-#
-# Structure for the `pos` table : 
-#
-
-CREATE TABLE `pos` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
-  `invoiceable` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es facturable',
-  `item` int(4) default NULL COMMENT 'Identificador del Producto',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_POS_WORKPLACE` (`workplace`),
-  KEY `IDX_POS_DOMAIN` (`domain`),
-  KEY `IDX_POS_ITEM` (`item`),
-  CONSTRAINT `FK_POS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_POS_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_POS_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='TPV';
-
-#
-# Structure for the `pos_shift` table : 
-#
-
-CREATE TABLE `pos_shift` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `pos` int(4) NOT NULL COMMENT 'Identificador del TPV',
-  `shift` tinyint(2) NOT NULL default '0' COMMENT 'Turno de trabajo',
-  `user` int(4) NOT NULL COMMENT 'Identificador del Usuario',
-  `start_time` datetime NOT NULL COMMENT 'Fecha-hora de apertura',
-  `end_time` datetime default NULL COMMENT 'Fecha-hora de cierre',
-  `initial_amount` double(15,2) default '0.00' COMMENT 'Efectivo inicial',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_POS_SHIFT_POS` (`pos`),
-  KEY `IDX_POS_SHIFT_USER` (`user`),
-  KEY `IDX_POS_SHIFT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_POS_SHIFT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_POS_SHIFT_POS` FOREIGN KEY (`pos`) REFERENCES `pos` (`id`),
-  CONSTRAINT `FK_POS_SHIFT_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Turno de trabajo del TPV';
-
-#
-# Structure for the `pos_shift_count` table : 
-#
-
-CREATE TABLE `pos_shift_count` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `pos_shift` int(4) NOT NULL COMMENT 'Identificador del Turno de trabajo',
-  `pay_method` int(4) default NULL COMMENT 'Identificador de la Forma de pago',
-  `amount` double(15,2) default '0.00' COMMENT 'Total efectivo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_POS_SHIFT_COUNT_POS_SHIFT` (`pos_shift`),
-  KEY `IDX_POS_SHIFT_COUNT_PAY_METHOD` (`pay_method`),
-  KEY `IDX_POS_SHIFT_COUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_POS_SHIFT_COUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_POS_SHIFT_COUNT_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `FK_POS_SHIFT_COUNT_POS_SHIFT` FOREIGN KEY (`pos_shift`) REFERENCES `pos_shift` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Arqueo del TPV';
 
 #
 # Structure for the `process_detail` table : 
@@ -5037,7 +4747,6 @@ CREATE TABLE `pos_shift_count` (
 
 CREATE TABLE `process_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Detalle de Proceso',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `process` int(4) NOT NULL COMMENT 'Identificador del Proceso',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Detalle de Proceso',
   `position` int(4) NOT NULL COMMENT 'Orden de ejecucion del Detalle dentro del Proceso',
@@ -5051,10 +4760,8 @@ CREATE TABLE `process_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_PROCESS_DETAIL_PROCESS` (`process`),
   KEY `IDX_PROCESS_DETAIL_WORKGROUP` (`workgroup`),
-  KEY `IDX_PROCESS_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROCESS_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROCESS_DETAIL_PROCESS` FOREIGN KEY (`process`) REFERENCES `process` (`id`),
-  CONSTRAINT `FK_PROCESS_DETAIL_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
+  CONSTRAINT `FK_PROCESS_DETAIL_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
+  CONSTRAINT `FK_PROCESS_DETAIL_PROCESS` FOREIGN KEY (`process`) REFERENCES `process` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Procesos';
 
 #
@@ -5063,11 +4770,8 @@ CREATE TABLE `process_detail` (
 
 CREATE TABLE `process_transition_type` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Tipo de Transicion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROCESS_TRANSITION_TYPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROCESS_TRANSITION_TYPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
 
 #
@@ -5076,7 +4780,6 @@ CREATE TABLE `process_transition_type` (
 
 CREATE TABLE `process_detail_transition` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `process_detail` int(11) NOT NULL COMMENT 'Identificador del Detalle del Proceso.',
   `process_transition_type` int(11) NOT NULL COMMENT 'Identificador del Tipo de Transicion.',
   `next_process_detail` int(11) NOT NULL COMMENT 'Identificador del siguiente Detalle del Proceso.',
@@ -5084,11 +4787,9 @@ CREATE TABLE `process_detail_transition` (
   KEY `IDX_PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL` (`process_detail`),
   KEY `IDX_PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL` (`next_process_detail`),
   KEY `IDX_PROCESS_DETAIL_TRANSITION_PROCESS_TRANSITION_TYPE` (`process_transition_type`),
-  KEY `IDX_PROCESS_DETAIL_TRANSITION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_PROCESS_TRANSITION_TYPE` FOREIGN KEY (`process_transition_type`) REFERENCES `process_transition_type` (`id`),
   CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_NEXT_PROCESS_DETAIL` FOREIGN KEY (`next_process_detail`) REFERENCES `process_detail` (`id`),
-  CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`),
-  CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_PROCESS_TRANSITION_TYPE` FOREIGN KEY (`process_transition_type`) REFERENCES `process_transition_type` (`id`)
+  CONSTRAINT `FK_PROCESS_DETAIL_TRANSITION_PROCESS_DETAIL` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Transiciones entre Detalles de Procesos';
 
 #
@@ -5097,7 +4798,6 @@ CREATE TABLE `process_detail_transition` (
 
 CREATE TABLE `process_task` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre Campañas, Actividades y Tareas',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `campaign` int(4) default NULL COMMENT 'Identificador de la Campaña',
   `process_detail` int(4) NOT NULL COMMENT 'Identificador del Detalle de Proceso',
   `task` int(4) NOT NULL COMMENT 'Identificador de la Tarea',
@@ -5106,10 +4806,8 @@ CREATE TABLE `process_task` (
   KEY `IDX_PROCESS_TASK_CAMPAIGN` (`campaign`),
   KEY `IDX_PROCESS_TASK_TASK` (`task`),
   KEY `IDX_PROCESS_TASK_PROCESS_DETAIL` (`process_detail`),
-  KEY `IDX_PROCESS_TASK_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROCESS_TASK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
-  CONSTRAINT `FK_PROCESS_TASK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROCESS_TASK_PROCESS_DETAIL` FOREIGN KEY (`process_detail`) REFERENCES `process_detail` (`id`),
+  CONSTRAINT `FK_PROCESS_TASK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `campaign` (`id`),
   CONSTRAINT `FK_PROCESS_TASK_TASK` FOREIGN KEY (`task`) REFERENCES `task` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas, Actividades y Tareas';
 
@@ -5119,17 +4817,14 @@ CREATE TABLE `process_task` (
 
 CREATE TABLE `product_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Producto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `product` int(4) NOT NULL default '0' COMMENT 'Identificador del Producto',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Cuenta Contable del Producto',
   PRIMARY KEY  (`id`),
   KEY `IDX_PRODUCT_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_PRODUCT_ACCOUNT_PRODUCT` (`product`),
-  KEY `IDX_PRODUCT_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PRODUCT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_PRODUCT_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PRODUCT_ACCOUNT_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
+  CONSTRAINT `FK_PRODUCT_ACCOUNT_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
+  CONSTRAINT `FK_PRODUCT_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Productos';
 
 #
@@ -5138,17 +4833,14 @@ CREATE TABLE `product_account` (
 
 CREATE TABLE `project_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Actividad',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project` int(4) NOT NULL COMMENT 'Identificador del Expendiente',
   `activity_type` int(4) NOT NULL COMMENT 'Tipo de Actividad',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Activo, si o no',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_ACTIVITY_ACTIVITY_TYPE` (`activity_type`),
   KEY `IDX_PROJECT_ACTIVITY_PROJECT` (`project`),
-  KEY `IDX_PROJECT_ACTIVITY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_ACTIVITY_ACTIVITY_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`),
-  CONSTRAINT `FK_PROJECT_ACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_ACTIVITY_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`)
+  CONSTRAINT `FK_PROJECT_ACTIVITY_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_PROJECT_ACTIVITY_ACTIVITY_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades';
 
 #
@@ -5157,18 +4849,16 @@ CREATE TABLE `project_activity` (
 
 CREATE TABLE `project_dossier` (
   `project` int(4) NOT NULL COMMENT 'Identificador unico del Expediente',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `customer` int(4) NOT NULL COMMENT 'Identificador del Cliente',
   `number` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Numero de Expediente',
   `location` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Ubicacion del Expediente',
   `status` tinyint(2) NOT NULL COMMENT 'Estado del Expediente',
   PRIMARY KEY  (`project`),
-  UNIQUE KEY `IDX_UNQ_PROJECT_DOSSIER_DOMAIN_NUMBER` (`domain`,`number`),
-  KEY `IDX_PROJECT_DOSSIER_DOMAIN` (`domain`),
-  KEY `IDX_PROJECT_DOSSIER_CUSTOMER` (`customer`),
-  CONSTRAINT `FK_PROJECT_DOSSIER_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_PROJECT_DOSSIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_DOSSIER_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`)
+  UNIQUE KEY `IDX_PRJ_DOSSIER_NUMBER` (`number`),
+  KEY `IDX_PRJ_DOSSIER_CUSTOMER` (`customer`),
+  KEY `FK_PRJ_DOSSIER_PROJECT` (`project`),
+  CONSTRAINT `FK_PRJ_DOSSIER_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_PRJ_DOSSIER_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Expedientes';
 
 #
@@ -5177,11 +4867,9 @@ CREATE TABLE `project_dossier` (
 
 CREATE TABLE `project_reservation` (
   `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
   `code` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Reserva',
   `creation_date` datetime NOT NULL COMMENT 'Fecha de creacion',
-  `modification_date` datetime default NULL COMMENT 'Fecha de modificacion',
   `start_date` date NOT NULL COMMENT 'Fecha de entrada',
   `end_date` date NOT NULL COMMENT 'Fecha de salida',
   `seller` int(4) default NULL COMMENT 'Identificador del canal de venta',
@@ -5193,12 +4881,12 @@ CREATE TABLE `project_reservation` (
   `discount_percent` double(5,2) default '0.00' COMMENT 'Porcentaje de descuento',
   `discount_amount` double(15,2) default '0.00' COMMENT 'Importe de descuento',
   `booking_holder` tinyint(2) NOT NULL COMMENT 'Titular de la Reserva',
+  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
   `taxable_base` double(15,2) default '0.00' COMMENT 'Base imponible',
   `vat_quota` double(15,2) default '0.00' COMMENT 'Cuota de IVA',
   `other_tax_quota` double(15,2) default '0.00' COMMENT 'Cuota de otros Impuestos',
   `total` double(15,2) default '0.00' COMMENT 'Importe Total',
   `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones',
-  `crs` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el origen de la Reserva es un CRS',
   `status` tinyint(2) NOT NULL COMMENT 'Estado de la Reserva',
   PRIMARY KEY  (`project`),
   KEY `IDX_PROJECT_RESERVATION_CODE` (`code`),
@@ -5206,13 +4894,13 @@ CREATE TABLE `project_reservation` (
   KEY `IDX_PROJECT_RESERVATION_SELLER` (`seller`),
   KEY `IDX_PROJECT_RESERVATION_AGENCY` (`agency`),
   KEY `IDX_PROJECT_RESERVATION_COMPANY` (`company`),
-  KEY `IDX_PROJECT_RESERVATION_DOMAIN` (`domain`),
+  KEY `IDX_PROJECT_RESERVATION_TARIFF` (`tariff`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_PROJECT_RESERVATION_AGENCY` FOREIGN KEY (`agency`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_PROJECT_RESERVATION_COMPANY` FOREIGN KEY (`company`) REFERENCES `customer` (`registry`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`)
+  CONSTRAINT `FK_PROJECT_RESERVATION_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Reservas de Hotel';
 
 #
@@ -5221,7 +4909,6 @@ CREATE TABLE `project_reservation` (
 
 CREATE TABLE `project_reservation_guest` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
   `guest_index` tinyint(2) NOT NULL COMMENT 'Numero de Huesped',
   `name` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
@@ -5236,8 +4923,6 @@ CREATE TABLE `project_reservation_guest` (
   `country` varchar(2) collate latin1_spanish_ci default NULL COMMENT 'Pais',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` (`project_reservation`),
-  KEY `IDX_PROJECT_RESERVATION_GUEST_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Huespedes por Reserva';
 
@@ -5247,22 +4932,14 @@ CREATE TABLE `project_reservation_guest` (
 
 CREATE TABLE `project_reservation_room` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
   `room_index` tinyint(2) NOT NULL COMMENT 'Numero de Habitacion',
   `item` int(4) NOT NULL COMMENT 'Identificador del Tipo de Habitacion',
-  `tariff` int(4) default NULL COMMENT 'Identificador de la Tarifa',
-  `adults` smallint(2) default '0' COMMENT 'Numero de adultos',
-  `children` smallint(2) default '0' COMMENT 'Numero de niños',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` (`project_reservation`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_ITEM` (`item`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_DOMAIN` (`domain`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_TARIFF` (`tariff`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
+  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones por Reserva';
 
 #
@@ -5271,15 +4948,12 @@ CREATE TABLE `project_reservation_room` (
 
 CREATE TABLE `project_reservation_room_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project_reservation_room` int(4) NOT NULL COMMENT 'Identificador de la Habitacion de la Reserva',
   `asset_activity` int(4) NOT NULL COMMENT 'Identificador de la Actividad de la Habitacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM` (`project_reservation_room`),
   KEY `IDX_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY` (`asset_activity`),
-  KEY `IDX_PROJECT_RESERVATION_ROOM_DETAIL_DOMAIN` (`domain`),
   CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY` FOREIGN KEY (`asset_activity`) REFERENCES `asset_activity` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM` FOREIGN KEY (`project_reservation_room`) REFERENCES `project_reservation_room` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Habitacion por Reserva';
 
@@ -5289,42 +4963,20 @@ CREATE TABLE `project_reservation_room_detail` (
 
 CREATE TABLE `project_reservation_service` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `project_reservation` int(4) NOT NULL COMMENT 'Identificador de la Reserva',
   `service_index` tinyint(2) NOT NULL COMMENT 'Numero de Servicio',
+  `effective_date` date NOT NULL COMMENT 'Fecha de efecto',
   `item` int(4) NOT NULL COMMENT 'Identificador del Servicio',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION` (`project_reservation`),
-  KEY `IDX_PROJECT_RESERVATION_SERVICE_ITEM` (`item`),
-  KEY `IDX_PROJECT_RESERVATION_SERVICE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Servicios por Reserva';
-
-#
-# Structure for the `project_reservation_service_detail` table : 
-#
-
-CREATE TABLE `project_reservation_service_detail` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `project_reservation_service` int(4) NOT NULL COMMENT 'Identificador del Servicio de la Reserva',
-  `project_reservation_room_detail` int(4) default NULL COMMENT 'Identificador del Detalle de Habitacion de la Reserva',
-  `effective_date` date NOT NULL COMMENT 'Fecha de efecto',
   `quantity` double(15,2) default '0.00' COMMENT 'Cantidad',
   `price` double(15,2) default '0.00' COMMENT 'Precio',
   `taxable_base` double(15,2) default '0.00' COMMENT 'Base imponible',
   PRIMARY KEY  (`id`),
-  KEY `IDX_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` (`domain`),
-  KEY `IDX_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_SERVICE` (`project_reservation_service`),
-  KEY `IDX_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_ROOM_DETAIL` (`project_reservation_service`),
-  KEY `FK_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_ROOM_DETAIL` (`project_reservation_room_detail`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_SERVICE` FOREIGN KEY (`project_reservation_service`) REFERENCES `project_reservation_service` (`id`),
-  CONSTRAINT `FK_PRJ_RESERVATION_SERVICE_DETAIL_PRJ_RESERVATION_ROOM_DETAIL` FOREIGN KEY (`project_reservation_room_detail`) REFERENCES `project_reservation_room_detail` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Servicio por Reserva';
+  KEY `IDX_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION` (`project_reservation`),
+  KEY `IDX_PROJECT_RESERVATION_SERVICE_ITEM` (`item`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_SERVICE_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Servicios por Reserva';
 
 #
 # Structure for the `tas_item` table : 
@@ -5332,18 +4984,15 @@ CREATE TABLE `project_reservation_service_detail` (
 
 CREATE TABLE `tas_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Articulo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `model` int(4) NOT NULL COMMENT 'Identificador del Modelo',
   `publicCode` varchar(25) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo publico del Articulo',
   `privateCode` varchar(25) collate latin1_spanish_ci default NULL COMMENT 'Codigo privado del Articulo',
   `description` varchar(255) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Articulo',
   `add_info` varchar(255) collate latin1_spanish_ci default NULL COMMENT 'Informacion adicional del Articulo',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_TAS_ITEM_DOMAIN_PUBLIC_CODE` (`domain`,`publicCode`),
-  UNIQUE KEY `IDX_UNQ_TAS_ITEM_DOMAIN_PRIVATE_CODE` (`domain`,`privateCode`),
+  UNIQUE KEY `IDX_TAS_ITEM_PUBLIC_CODE` (`publicCode`),
+  UNIQUE KEY `IDX_TAS_ITEM_PRIVATE_CODE` (`privateCode`),
   KEY `IDX_TAS_ITEM_MODEL` (`model`),
-  KEY `IDX_TAS_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAS_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TAS_ITEM_MODEL` FOREIGN KEY (`model`) REFERENCES `model` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulo susceptible de Asistencia Tecnica';
 
@@ -5353,7 +5002,6 @@ CREATE TABLE `tas_item` (
 
 CREATE TABLE `project_tas` (
   `project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie de la Orden de Reparacion',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero de la Orden de Reparacion',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
@@ -5369,82 +5017,12 @@ CREATE TABLE `project_tas` (
   KEY `IDX_PROJECT_TAS_TAS_ITEM` (`tas_item`),
   KEY `IDX_PROJECT_TAS_TASK_HOLDER` (`task_holder`),
   KEY `IDX_PROJECT_TAS_WORKPLACE` (`workplace`),
-  KEY `IDX_PROJECT_TAS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_PROJECT_TAS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_PROJECT_TAS_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
   CONSTRAINT `FK_PROJECT_TAS_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
   CONSTRAINT `FK_PROJECT_TAS_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
   CONSTRAINT `FK_PROJECT_TAS_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
-  CONSTRAINT `FK_PROJECT_TAS_TAS_ITEM` FOREIGN KEY (`tas_item`) REFERENCES `tas_item` (`id`),
-  CONSTRAINT `FK_PROJECT_TAS_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_PROJECT_TAS_TAS_ITEM` FOREIGN KEY (`tas_item`) REFERENCES `tas_item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ordenes de Reparacion o Fabricacion';
-
-#
-# Structure for the `workplace_department` table : 
-#
-
-CREATE TABLE `workplace_department` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `department` int(4) NOT NULL COMMENT 'Identificador del Departamento',
-  `catalogue` int(4) default NULL COMMENT 'Identificador del Catalogo',
-  `active` tinyint(1) default '1' COMMENT 'Indica si el Departamento esta activo o no',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_WORKPLACE_DEPARTMENT_DOMAIN` (`domain`),
-  KEY `IDX_WORKPLACE_DEPARTMENT_WORKPLACE` (`workplace`),
-  KEY `IDX_WORKPLACE_DEPARTMENT_DEPARTMENT` (`department`),
-  KEY `IDX_WORKPLACE_DEPARTMENT_CATALOGUE` (`catalogue`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
-
-#
-# Structure for the `proposal` table : 
-#
-
-CREATE TABLE `proposal` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `issue_date` date default NULL COMMENT 'Fecha de emision de la Propuesta',
-  `workplace_department` int(4) default NULL COMMENT 'Identificador del Departamento',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
-  `remarks` text collate latin1_spanish_ci COMMENT 'Observaciones de la Propuesta',
-  `status` tinyint(2) default '0' COMMENT 'Estado de la Propuesta',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROPOSAL_DOMAIN` (`domain`),
-  KEY `IDX_PROPOSAL_SCOPE` (`scope`),
-  KEY `IDX_PROPOSAL_WORKPLACE` (`workplace`),
-  KEY `IDX_PROPOSAL_WORKPLACE_DEPARTMENT` (`workplace_department`),
-  CONSTRAINT `FK_PROPOSAL_WORKPLACE_DEPARTMENT` FOREIGN KEY (`workplace_department`) REFERENCES `workplace_department` (`id`),
-  CONSTRAINT `FK_PROPOSAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROPOSAL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_PROPOSAL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Propuestas de Compra';
-
-#
-# Structure for the `proposal_detail` table : 
-#
-
-CREATE TABLE `proposal_detail` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `proposal` int(4) NOT NULL default '0' COMMENT 'Identificador de la Propuesta de Compra',
-  `item` int(4) NOT NULL default '0' COMMENT 'Identificador del Articulo',
-  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `quantity` double(15,3) default '0.000' COMMENT 'Cantidad',
-  `price` double default '0' COMMENT 'Precio',
-  `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROPOSAL_DETAIL_DOMAIN` (`domain`),
-  KEY `IDX_PROPOSAL_DETAIL_PROPOSAL` (`proposal`),
-  KEY `IDX_PROPOSAL_DETAIL_ITEM` (`item`),
-  CONSTRAINT `FK_PROPOSAL_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROPOSAL_DETAIL_PROPOSAL` FOREIGN KEY (`proposal`) REFERENCES `proposal` (`id`),
-  CONSTRAINT `FK_PROPOSAL_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Propuesta de Compra';
 
 #
 # Structure for the `qualification` table : 
@@ -5465,15 +5043,12 @@ CREATE TABLE `qualification` (
 
 CREATE TABLE `question` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Pregunta esta activa o no',
   `question_text` varchar(255) collate latin1_spanish_ci NOT NULL COMMENT 'Texto de la Pregunta',
   `type` tinyint(2) NOT NULL COMMENT 'Tipo de Pregunta',
   `argument` text collate latin1_spanish_ci COMMENT 'Argumentacion de la Pregunta',
   `alias` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Alias de la Pregunta',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_QUESTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_QUESTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas';
 
 #
@@ -5482,15 +5057,12 @@ CREATE TABLE `question` (
 
 CREATE TABLE `question_value` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
   `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   PRIMARY KEY  (`id`),
   KEY `IDX_QUESTION_VALUE_QUESTION` (`question`),
-  KEY `IDX_QUESTION_VALUE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_QUESTION_VALUE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_QUESTION_VALUE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Valores de Preguntas';
 
@@ -5500,15 +5072,12 @@ CREATE TABLE `question_value` (
 
 CREATE TABLE `raddinfo` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa',
   `attribute` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Atributo adicional',
   `value` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Valor del atributo adicional',
   `value_date` date NOT NULL COMMENT 'Fecha del valor del atributo',
   PRIMARY KEY  (`id`),
   KEY `IDX_RADDINFO_REGISTRY` (`registry`),
-  KEY `IDX_RADDINFO_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RADDINFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RADDINFO_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion adicional de la Persona o Empresa';
 
@@ -5518,7 +5087,6 @@ CREATE TABLE `raddinfo` (
 
 CREATE TABLE `rattach` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Archivo Adjunto de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
   `category` int(4) default NULL COMMENT 'Categoria del Archivo Adjunto',
   `mimeType` tinyint(2) default '0' COMMENT 'Mime Type del Archivo Adjunto',
@@ -5532,10 +5100,8 @@ CREATE TABLE `rattach` (
   KEY `IDX_RATTACH_SCOPE` (`scope`),
   KEY `IDX_RATTACH_CATEGORY` (`category`),
   KEY `IDX_RATTACH_REGISTRY` (`registry`),
-  KEY `IDX_RATTACH_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RATTACH_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
-  CONSTRAINT `FK_RATTACH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RATTACH_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RATTACH_CATEGORY` FOREIGN KEY (`category`) REFERENCES `category` (`id`),
   CONSTRAINT `FK_RATTACH_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Archivos Adjuntos de Personas o Empresas';
 
@@ -5545,16 +5111,13 @@ CREATE TABLE `rattach` (
 
 CREATE TABLE `rbank_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable de la Cuenta Bancaria',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `rbank` int(4) NOT NULL default '0' COMMENT 'Identificador de la Cuenta Bancaria',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_RBANK_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_RBANK_ACCOUNT_RBANK` (`rbank`),
-  KEY `IDX_RBANK_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RBANK_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_RBANK_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_RBANK_ACCOUNT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
+  CONSTRAINT `FK_RBANK_ACCOUNT_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
+  CONSTRAINT `FK_RBANK_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
 
 #
@@ -5563,7 +5126,6 @@ CREATE TABLE `rbank_account` (
 
 CREATE TABLE `rdir_staff` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion entre Empresas y sus Directivos',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
   `document` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Numero de Documento del Directivo',
   `name` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Directivo',
@@ -5577,8 +5139,6 @@ CREATE TABLE `rdir_staff` (
   `representative_labor` tinyint(1) NOT NULL default '0' COMMENT 'Indica si el Directivo es representante laboral',
   PRIMARY KEY  (`id`),
   KEY `IDX_RDIR_STAFF_REGISTRY` (`registry`),
-  KEY `IDX_RDIR_STAFF_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RDIR_STAFF_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RDIR_STAFF_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Empresas y sus Directivos';
 
@@ -5588,7 +5148,6 @@ CREATE TABLE `rdir_staff` (
 
 CREATE TABLE `record_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Dato Registral',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Registro de la Empresa',
   `creation_date` date default NULL COMMENT 'Fecha de creacion del Dato Registral',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Dato Registral',
@@ -5604,10 +5163,8 @@ CREATE TABLE `record_data` (
   PRIMARY KEY  (`id`),
   KEY `IDX_RECORD_DATA_RATTACH` (`attach`),
   KEY `IDX_RECORD_DATA_REGISTRY` (`registry`),
-  KEY `IDX_RECORD_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RECORD_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_RECORD_DATA_RATTACH` FOREIGN KEY (`attach`) REFERENCES `rattach` (`id`),
-  CONSTRAINT `FK_RECORD_DATA_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_RECORD_DATA_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RECORD_DATA_RATTACH` FOREIGN KEY (`attach`) REFERENCES `rattach` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos Registrales';
 
 #
@@ -5616,11 +5173,8 @@ CREATE TABLE `record_data` (
 
 CREATE TABLE `relationship` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Tipo de Relacion',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Tipo de Relacion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_RELATIONSHIP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RELATIONSHIP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tipos de Relaciones entre Personas y/o Empresas';
 
 #
@@ -5629,7 +5183,6 @@ CREATE TABLE `relationship` (
 
 CREATE TABLE `rmedia` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Medio de Contacto de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
   `media` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Medio de Contacto de la Persona o Empresa',
   `value` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor del Medio de Contacto de la Persona o Empresa',
@@ -5641,10 +5194,8 @@ CREATE TABLE `rmedia` (
   PRIMARY KEY  (`id`),
   KEY `IDX_RMEDIA_RADDRESS` (`raddress`),
   KEY `IDX_RMEDIA_REGISTRY` (`registry`),
-  KEY `IDX_RMEDIA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RMEDIA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_RMEDIA_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`),
-  CONSTRAINT `FK_RMEDIA_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_RMEDIA_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
+  CONSTRAINT `FK_RMEDIA_RADDRESS` FOREIGN KEY (`raddress`) REFERENCES `raddress` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Medios de Contacto de Personas o Empresas';
 
 #
@@ -5653,7 +5204,6 @@ CREATE TABLE `rmedia` (
 
 CREATE TABLE `rnote` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Nota de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL default '0' COMMENT 'Identificador del Registro de la Persona o Empresa',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Nota',
   `note_date` date default NULL COMMENT 'Fecha de la Nota',
@@ -5662,8 +5212,6 @@ CREATE TABLE `rnote` (
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad de la Nota',
   PRIMARY KEY  (`id`),
   KEY `IDX_RNOTE_REGISTRY` (`registry`),
-  KEY `IDX_RNOTE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RNOTE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_RNOTE_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Notas de Personas o Empresas';
 
@@ -5672,16 +5220,15 @@ CREATE TABLE `rnote` (
 #
 
 CREATE TABLE `room` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `asset` int(4) NOT NULL COMMENT 'Identificador del Activo',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `hotel` int(4) NOT NULL COMMENT 'Identificador del Hotel',
   `item` int(4) NOT NULL COMMENT 'Identificador del Producto',
-  PRIMARY KEY  (`asset`),
-  KEY `IDX_ROOM_DOMAIN` (`domain`),
+  PRIMARY KEY  (`id`),
+  KEY `IDX_ROOM_ASSET` (`asset`),
   KEY `IDX_ROOM_HOTEL` (`hotel`),
   KEY `IDX_ROOM_ITEM` (`item`),
   CONSTRAINT `FK_ROOM_ASSET` FOREIGN KEY (`asset`) REFERENCES `asset` (`id`),
-  CONSTRAINT `FK_ROOM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ROOM_HOTEL` FOREIGN KEY (`hotel`) REFERENCES `hotel` (`id`),
   CONSTRAINT `FK_ROOM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Habitaciones de Hotel';
@@ -5692,7 +5239,6 @@ CREATE TABLE `room` (
 
 CREATE TABLE `rpaymethod` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Forma de Pago de la Persona o Empresa',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador del Registro de la Persona o Empresa',
   `pay_method` int(4) NOT NULL COMMENT 'Identificador de la Forma de Pago',
   `rbank` int(4) default NULL COMMENT 'Identificador de la Entidad Bancaria',
@@ -5704,11 +5250,9 @@ CREATE TABLE `rpaymethod` (
   KEY `IDX_RPAYMETHOD_PAY_METHOD` (`pay_method`),
   KEY `IDX_RPAYMETHOD_RBANK` (`rbank`),
   KEY `IDX_RPAYMETHOD_REGISTRY` (`registry`),
-  KEY `IDX_RPAYMETHOD_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RPAYMETHOD_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RPAYMETHOD_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
   CONSTRAINT `FK_RPAYMETHOD_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
-  CONSTRAINT `FK_RPAYMETHOD_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`),
-  CONSTRAINT `FK_RPAYMETHOD_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
+  CONSTRAINT `FK_RPAYMETHOD_RBANK` FOREIGN KEY (`rbank`) REFERENCES `rbank` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la Forma de Pago de la Persona o Empresa';
 
 #
@@ -5717,7 +5261,6 @@ CREATE TABLE `rpaymethod` (
 
 CREATE TABLE `rrelationship` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Relacion',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa que tiene la Relacion',
   `related_registry` int(4) NOT NULL COMMENT 'Identificador de la Persona o Empresa relacionada',
   `relationship` int(4) NOT NULL COMMENT 'Identificador del Tipo de Relación',
@@ -5726,11 +5269,9 @@ CREATE TABLE `rrelationship` (
   KEY `IDX_RRELATIONSHIP_REGISTRY` (`registry`),
   KEY `IDX_RRELATIONSHIP_RELATED_REGISTRY` (`related_registry`),
   KEY `IDX_RRELATIONSHIP_RELATIONSHIP` (`relationship`),
-  KEY `IDX_RRELATIONSHIP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RRELATIONSHIP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_RRELATIONSHIP_RELATIONSHIP` FOREIGN KEY (`relationship`) REFERENCES `relationship` (`id`),
   CONSTRAINT `FK_RRELATIONSHIP_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_RRELATIONSHIP_RELATED_REGISTRY` FOREIGN KEY (`related_registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_RRELATIONSHIP_RELATIONSHIP` FOREIGN KEY (`relationship`) REFERENCES `relationship` (`id`)
+  CONSTRAINT `FK_RRELATIONSHIP_RELATED_REGISTRY` FOREIGN KEY (`related_registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relaciones entre Personas y/o Empresas';
 
 #
@@ -5739,11 +5280,8 @@ CREATE TABLE `rrelationship` (
 
 CREATE TABLE `segment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre del Segmento',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SEGMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SEGMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos Comerciales';
 
 #
@@ -5752,16 +5290,13 @@ CREATE TABLE `segment` (
 
 CREATE TABLE `rsegment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `registry` int(4) NOT NULL COMMENT 'Identificador de Persona o Empresa',
   `segment` int(4) NOT NULL COMMENT 'Identificador del Segmento',
   PRIMARY KEY  (`id`),
   KEY `IDX_RSEGMENT_REGISTRY` (`registry`),
   KEY `IDX_RSEGMENT_SEGMENT` (`segment`),
-  KEY `IDX_RSEGMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_RSEGMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_RSEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`),
-  CONSTRAINT `FK_RSEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`)
+  CONSTRAINT `FK_RSEGMENT_SEGMENT` FOREIGN KEY (`segment`) REFERENCES `segment` (`id`),
+  CONSTRAINT `FK_RSEGMENT_REGISTRY` FOREIGN KEY (`registry`) REFERENCES `registry` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Segmentos de Personas o Empresas';
 
 #
@@ -5770,7 +5305,6 @@ CREATE TABLE `rsegment` (
 
 CREATE TABLE `salary` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Nomina',
   `contract` int(4) NOT NULL COMMENT 'Contrato',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio liquidación',
@@ -5808,9 +5342,7 @@ CREATE TABLE `salary` (
   `charge_date` date NOT NULL COMMENT 'Fecha de cobro',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_CONTRACT` (`contract`),
-  KEY `IDX_SALARY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`),
-  CONSTRAINT `FK_SALARY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_SALARY_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Recibo del pago de salarios';
 
 #
@@ -5819,15 +5351,12 @@ CREATE TABLE `salary` (
 
 CREATE TABLE `salary_bonus` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `bonus_concept` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_BONUS_SALARY` (`salary`),
-  KEY `IDX_SALARY_BONUS_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_BONUS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_BONUS_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bonificaciones';
 
@@ -5837,7 +5366,6 @@ CREATE TABLE `salary_bonus` (
 
 CREATE TABLE `salary_cost` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
@@ -5845,8 +5373,6 @@ CREATE TABLE `salary_cost` (
   `cost_concept` varchar(10) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_COST_SALARY` (`salary`),
-  KEY `IDX_SALARY_COST_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_COST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_COST_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
 
@@ -5856,14 +5382,11 @@ CREATE TABLE `salary_cost` (
 
 CREATE TABLE `salary_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` tinyint(2) NOT NULL COMMENT 'Nombre',
   `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SALARY_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Datos de la nomina';
 
 #
@@ -5872,7 +5395,6 @@ CREATE TABLE `salary_data` (
 
 CREATE TABLE `salary_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) default NULL COMMENT 'Tipo de deducción Salarial',
   `deduction_concept` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
@@ -5881,8 +5403,6 @@ CREATE TABLE `salary_deduction` (
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_DEDUCTION_SALARY` (`salary`),
-  KEY `IDX_SALARY_DEDUCTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_DEDUCTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_DEDUCTION_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
@@ -5892,7 +5412,6 @@ CREATE TABLE `salary_deduction` (
 
 CREATE TABLE `salary_embargo` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `contract_embargo` int(4) NOT NULL COMMENT 'Embargo',
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
@@ -5900,10 +5419,8 @@ CREATE TABLE `salary_embargo` (
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_EMBARGO_CONTRACT_EMBARGO` (`contract_embargo`),
   KEY `IDX_SALARY_EMBARGO_SALARY` (`salary`),
-  KEY `IDX_SALARY_EMBARGO_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_EMBARGO_CONTRACT_EMBARGO` FOREIGN KEY (`contract_embargo`) REFERENCES `contract_embargo` (`id`),
-  CONSTRAINT `FK_SALARY_EMBARGO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SALARY_EMBARGO_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
+  CONSTRAINT `FK_SALARY_EMBARGO_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
+  CONSTRAINT `FK_SALARY_EMBARGO_CONTRACT_EMBARGO` FOREIGN KEY (`contract_embargo`) REFERENCES `contract_embargo` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Embargos';
 
 #
@@ -5912,7 +5429,6 @@ CREATE TABLE `salary_embargo` (
 
 CREATE TABLE `salary_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `salary` int(4) NOT NULL COMMENT 'Recibo del pago de salarios',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
   `payment_concept` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo del concepto',
@@ -5921,8 +5437,6 @@ CREATE TABLE `salary_payment` (
   `amount` double(15,3) default '0.000' COMMENT 'Importe',
   PRIMARY KEY  (`id`),
   KEY `IDX_SALARY_PAYMENT_SALARY` (`salary`),
-  KEY `IDX_SALARY_PAYMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SALARY_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SALARY_PAYMENT_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones salariales';
 
@@ -5931,10 +5445,7 @@ CREATE TABLE `salary_payment` (
 #
 
 CREATE TABLE `series` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Serie',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
+  `id` varchar(5) collate latin1_spanish_ci NOT NULL COMMENT 'Identificador unico',
   `description` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Serie',
   `tas` tinyint(1) default '0' COMMENT 'Indica si es una Serie para Ordenes de Reparacion',
   `offer` tinyint(1) default '0' COMMENT 'Indica si es una Serie para Presupuestos',
@@ -5944,11 +5455,7 @@ CREATE TABLE `series` (
   `rectification` tinyint(1) default '0' COMMENT 'Indica si es una Serie para Facturas rectificativas',
   `security_level` tinyint(2) NOT NULL COMMENT 'Nivel de seguridad de la Serie',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Serie esta activa o no',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SERIES_DOMAIN` (`domain`),
-  KEY `IDX_SERIES_SCOPE` (`scope`),
-  CONSTRAINT `FK_SERIES_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_SERIES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Series';
 
 #
@@ -5957,16 +5464,13 @@ CREATE TABLE `series` (
 
 CREATE TABLE `stock` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Stock',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `warehouse` int(4) default NULL COMMENT 'Identificador del Almacen',
   `item` int(4) default NULL COMMENT 'Identificador del Articulo',
   `quantity` double(15,3) default '0.000' COMMENT 'Cantidad del Articulo en el Almacen',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_STOCK_WAREHOUSE_ITEM` (`warehouse`,`item`),
+  UNIQUE KEY `IDX_STOCK_WAREHOUSE_ITEM` (`warehouse`,`item`),
   KEY `IDX_STOCK_WAREHOUSE` (`warehouse`),
   KEY `IDX_STOCK_ITEM` (`item`),
-  KEY `IDX_STOCK_DOMAIN` (`domain`),
-  CONSTRAINT `FK_STOCK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_STOCK_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_STOCK_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Stocks de Almacenes';
@@ -5977,16 +5481,13 @@ CREATE TABLE `stock` (
 
 CREATE TABLE `supplier_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Proveedor',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `supplier` int(4) NOT NULL default '0' COMMENT 'Identificador del Proveedor',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   PRIMARY KEY  (`id`),
   KEY `IDX_SUPPLIER_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_SUPPLIER_ACCOUNT_SUPPLIER` (`supplier`),
-  KEY `IDX_SUPPLIER_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SUPPLIER_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_SUPPLIER_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SUPPLIER_ACCOUNT_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
+  CONSTRAINT `FK_SUPPLIER_ACCOUNT_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
+  CONSTRAINT `FK_SUPPLIER_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Proveedores';
 
 #
@@ -5995,17 +5496,14 @@ CREATE TABLE `supplier_account` (
 
 CREATE TABLE `survey_question` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `survey` int(4) NOT NULL COMMENT 'Identificador del Cuestionario',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
   `position` int(11) default NULL COMMENT 'Posicion de la Pregunta dentro del Cuestionario',
   PRIMARY KEY  (`id`),
   KEY `IDX_SURVEY_QUESTION_QUESTION` (`question`),
   KEY `IDX_SURVEY_QUESTION_SURVEY` (`survey`),
-  KEY `IDX_SURVEY_QUESTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SURVEY_QUESTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SURVEY_QUESTION_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
-  CONSTRAINT `FK_SURVEY_QUESTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
+  CONSTRAINT `FK_SURVEY_QUESTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
+  CONSTRAINT `FK_SURVEY_QUESTION_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Preguntas de Cuestionarios';
 
 #
@@ -6014,17 +5512,14 @@ CREATE TABLE `survey_question` (
 
 CREATE TABLE `survey_response_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `value_text` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo texto',
   `value_number` double(15,3) default NULL COMMENT 'Valor de tipo numerico',
   `value_date` datetime default NULL COMMENT 'Valor de tipo fecha',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
   `surveyResponse` int(4) NOT NULL COMMENT 'Identificador de la Respuesta del Cuestionario',
   PRIMARY KEY  (`id`),
-  KEY `IDX_SURVEY_RESPONSE_DETAIL_QUESTION` (`question`),
-  KEY `IDX_SURVEY_RESPONSE_DETAIL_SURVEY_RESPONSE` (`surveyResponse`),
-  KEY `IDX_SURVEY_RESPONSE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SURVEY_RESPONSE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  KEY `question` (`question`),
+  KEY `surveyResponse` (`surveyResponse`),
   CONSTRAINT `FK_SURVEY_RESPONSE_DETAIL_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
   CONSTRAINT `FK_SURVEY_RESPONSE_DETAIL_SURVEY_RESPONSE` FOREIGN KEY (`surveyResponse`) REFERENCES `survey_response` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Respuestas de Cuestionarios';
@@ -6035,7 +5530,6 @@ CREATE TABLE `survey_response_detail` (
 
 CREATE TABLE `survey_workflow` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `questionValue` int(4) default NULL COMMENT 'Identificador del Valor de la Pregunta',
   `surveyQuestion` int(4) NOT NULL COMMENT 'Identificador de la Pregunta del Cuestionario',
   `nextSurveyQuestion` int(4) NOT NULL COMMENT 'Identificador de la siguiente Pregunta del Cuestionario',
@@ -6047,11 +5541,9 @@ CREATE TABLE `survey_workflow` (
   KEY `IDX_SURVEY_WORKFLOW_NEXT_SURVEY_QUESTION` (`nextSurveyQuestion`),
   KEY `IDX_SURVEY_WORKFLOW_QUESTION_VALUE` (`questionValue`),
   KEY `IDX_SURVEY_WORKFLOW_SURVEY_QUESTION` (`surveyQuestion`),
-  KEY `IDX_SURVEY_WORKFLOW_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SURVEY_WORKFLOW_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_SURVEY_WORKFLOW_SURVEY_QUESTION` FOREIGN KEY (`surveyQuestion`) REFERENCES `survey_question` (`id`),
   CONSTRAINT `FK_SURVEY_WORKFLOW_NEXT_SURVEY_QUESTION` FOREIGN KEY (`nextSurveyQuestion`) REFERENCES `survey_question` (`id`),
-  CONSTRAINT `FK_SURVEY_WORKFLOW_QUESTION_VALUE` FOREIGN KEY (`questionValue`) REFERENCES `question_value` (`id`),
-  CONSTRAINT `FK_SURVEY_WORKFLOW_SURVEY_QUESTION` FOREIGN KEY (`surveyQuestion`) REFERENCES `survey_question` (`id`)
+  CONSTRAINT `FK_SURVEY_WORKFLOW_QUESTION_VALUE` FOREIGN KEY (`questionValue`) REFERENCES `question_value` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Secuencias de Cuestionarios';
 
 #
@@ -6060,16 +5552,13 @@ CREATE TABLE `survey_workflow` (
 
 CREATE TABLE `system_cost` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
   `expression` text collate latin1_spanish_ci COMMENT 'Expresion',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Costo',
   `code` varchar(10) collate latin1_spanish_ci default NULL COMMENT 'Código',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SYSTEM_COST_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SYSTEM_COST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Costos';
 
 #
@@ -6078,16 +5567,13 @@ CREATE TABLE `system_cost` (
 
 CREATE TABLE `system_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `expression` text collate latin1_spanish_ci COMMENT 'Expresion',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date default NULL COMMENT 'Fecha de finalizacion',
   `read_only` tinyint(1) default NULL COMMENT 'Modificable',
   `comments` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Comentario de ayuda',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_SYSTEM_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SYSTEM_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto de las funciones';
 
 #
@@ -6096,7 +5582,6 @@ CREATE TABLE `system_data` (
 
 CREATE TABLE `system_deduction` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Deducción',
   `deduction_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
@@ -6107,9 +5592,7 @@ CREATE TABLE `system_deduction` (
   `month` tinyint(2) default NULL COMMENT 'Mes de la deducción',
   PRIMARY KEY  (`id`),
   KEY `IDX_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` (`deduction_concept`),
-  KEY `IDX_SYSTEM_DEDUCTION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`),
-  CONSTRAINT `FK_SYSTEM_DEDUCTION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT` FOREIGN KEY (`deduction_concept`) REFERENCES `deduction_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Deducciones';
 
 #
@@ -6118,7 +5601,6 @@ CREATE TABLE `system_deduction` (
 
 CREATE TABLE `system_payment` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
   `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
@@ -6132,8 +5614,6 @@ CREATE TABLE `system_payment` (
   `salary_type` tinyint(2) default NULL COMMENT 'Tipo de Nomina/Recibo',
   PRIMARY KEY  (`id`),
   KEY `IDX_SYSTEM_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
-  KEY `IDX_SYSTEM_PAYMENT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SYSTEM_PAYMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_SYSTEM_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones Salariales';
 
@@ -6143,15 +5623,12 @@ CREATE TABLE `system_payment` (
 
 CREATE TABLE `target_item` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo',
   `status` tinyint(2) NOT NULL COMMENT 'Estado',
   PRIMARY KEY  (`id`),
   KEY `IDX_TARGET_ITEM_TARGET` (`target`),
   KEY `IDX_TARGET_ITEM_ITEM` (`item`),
-  KEY `IDX_TARGET_ITEM_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TARGET_ITEM_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARGET_ITEM_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_TARGET_ITEM_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Articulos interesados por Cliente Potencial';
@@ -6162,7 +5639,6 @@ CREATE TABLE `target_item` (
 
 CREATE TABLE `target_profile` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `last_update` datetime NOT NULL COMMENT 'Fecha de la ultima modificacion del Perfil del Cliente Potencial',
   `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
@@ -6172,10 +5648,8 @@ CREATE TABLE `target_profile` (
   PRIMARY KEY  (`id`),
   KEY `IDX_TARGET_PROFILE_QUESTION` (`question`),
   KEY `IDX_TARGET_PROFILE_TARGET` (`target`),
-  KEY `IDX_TARGET_PROFILE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TARGET_PROFILE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TARGET_PROFILE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`),
-  CONSTRAINT `FK_TARGET_PROFILE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
+  CONSTRAINT `FK_TARGET_PROFILE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_TARGET_PROFILE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Perfiles de Clientes Potenciales';
 
 #
@@ -6184,7 +5658,6 @@ CREATE TABLE `target_profile` (
 
 CREATE TABLE `target_seller` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `seller` int(4) NOT NULL COMMENT 'Identificador del Comercial',
   `start_date` date NOT NULL COMMENT 'Fecha de Inicio',
@@ -6193,8 +5666,6 @@ CREATE TABLE `target_seller` (
   PRIMARY KEY  (`id`),
   KEY `IDX_TARGET_SELLER_TARGET` (`target`),
   KEY `IDX_TARGET_SELLER_SELLER` (`seller`),
-  KEY `IDX_TARGET_SELLER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TARGET_SELLER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARGET_SELLER_SELLER` FOREIGN KEY (`seller`) REFERENCES `seller` (`registry`),
   CONSTRAINT `FK_TARGET_SELLER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Comerciales relacionado con Cliente Potencial';
@@ -6205,7 +5676,6 @@ CREATE TABLE `target_seller` (
 
 CREATE TABLE `target_supplier` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
   `supplier` int(4) NOT NULL COMMENT 'Identificador del Proveedor',
   `target_external_code` varchar(15) collate latin1_spanish_ci default NULL COMMENT 'Codigo del Cliente Potencial para el Proveedor',
@@ -6223,9 +5693,7 @@ CREATE TABLE `target_supplier` (
   KEY `IDX_TARGET_SUPPLIER_TARIFF` (`tariff`),
   KEY `IDX_TARGET_SUPPLIER_PAY_METHOD` (`pay_method`),
   KEY `IDX_TARGET_SUPPLIER_BANK` (`bank`),
-  KEY `IDX_TARGET_SUPPLIER_DOMAIN` (`domain`),
   CONSTRAINT `FK_TARGET_SUPPLIER_BANK` FOREIGN KEY (`bank`) REFERENCES `bank` (`id`),
-  CONSTRAINT `FK_TARGET_SUPPLIER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARGET_SUPPLIER_PAY_METHOD` FOREIGN KEY (`pay_method`) REFERENCES `pay_method` (`id`),
   CONSTRAINT `FK_TARGET_SUPPLIER_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `FK_TARGET_SUPPLIER_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
@@ -6238,15 +5706,12 @@ CREATE TABLE `target_supplier` (
 
 CREATE TABLE `tariff_catalogue` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `tariff` int(4) NOT NULL COMMENT 'Identificador de la Tarifa',
   `catalogue` int(4) NOT NULL COMMENT 'Identificador del Catalogo',
   PRIMARY KEY  (`id`),
   KEY `IDX_TARIFF_CATALOGUE_TARIFF` (`tariff`),
   KEY `IDX_TARIFF_CATALOGUE_CATALOGUE` (`catalogue`),
-  KEY `IDX_TARIFF_CATALOGUE_DOMAIN` (`domain`),
   CONSTRAINT `FK_TARIFF_CATALOGUE_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
-  CONSTRAINT `FK_TARIFF_CATALOGUE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TARIFF_CATALOGUE_TARIFF` FOREIGN KEY (`tariff`) REFERENCES `tariff` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tarifas por Catalogo';
 
@@ -6256,14 +5721,11 @@ CREATE TABLE `tariff_catalogue` (
 
 CREATE TABLE `task_holder_workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `task_holder` int(4) NOT NULL COMMENT 'Identificador del Responsable de la Tarea',
   `workgroup` int(4) NOT NULL COMMENT 'Identificador del Grupo de Trabajo',
   PRIMARY KEY  (`id`),
   KEY `IDX_TASK_HOLDER_WORKGROUP_TASK_HOLDER` (`task_holder`),
   KEY `IDX_TASK_HOLDER_WORKGROUP_WORKGROUP` (`workgroup`),
-  KEY `IDX_TASK_HOLDER_WORKGROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TASK_HOLDER_WORKGROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TASK_HOLDER_WORKGROUP_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`),
   CONSTRAINT `FK_TASK_HOLDER_WORKGROUP_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
@@ -6274,17 +5736,14 @@ CREATE TABLE `task_holder_workgroup` (
 
 CREATE TABLE `tax_account` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Cuenta Contable del Impuesto',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `tax` int(4) NOT NULL default '0' COMMENT 'Identificador del Impuesto',
   `account` int(4) NOT NULL COMMENT 'Identificador de la Cuenta Contable',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Cuenta Contable del Impuesto',
   PRIMARY KEY  (`id`),
   KEY `IDX_TAX_ACCOUNT_ACCOUNT` (`account`),
   KEY `IDX_TAX_ACCOUNT_TAX` (`tax`),
-  KEY `IDX_TAX_ACCOUNT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAX_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_TAX_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_TAX_ACCOUNT_TAX` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`)
+  CONSTRAINT `FK_TAX_ACCOUNT_TAX` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`),
+  CONSTRAINT `FK_TAX_ACCOUNT_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Impuestos de la Factura';
 
 #
@@ -6293,7 +5752,6 @@ CREATE TABLE `tax_account` (
 
 CREATE TABLE `tax_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Historico de Impuestos',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `tax` int(4) NOT NULL default '0' COMMENT 'Identificador del Impuesto',
   `start_date` date default NULL COMMENT 'Fecha de inicio de vigencia',
   `end_date` date default NULL COMMENT 'Fecha de fin de vigencia',
@@ -6301,8 +5759,6 @@ CREATE TABLE `tax_detail` (
   `surcharge` double(15,3) default NULL COMMENT 'Porcentaje de recargo de equivalencia',
   PRIMARY KEY  (`id`),
   KEY `IDX_TAX_DETAIL_TAX` (`tax`),
-  KEY `IDX_TAX_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_TAX_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_TAX_DETAIL_TAX` FOREIGN KEY (`tax`) REFERENCES `tax` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Historico de Impuestos';
 
@@ -6312,16 +5768,13 @@ CREATE TABLE `tax_detail` (
 
 CREATE TABLE `user_scope` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`id`),
   KEY `IDX_USER_SCOPE_SCOPE` (`scope`),
   KEY `IDX_USER_SCOPE_USER` (`user_id`),
-  KEY `IDX_USER_SCOPE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_USER_SCOPE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_USER_SCOPE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
-  CONSTRAINT `FK_USER_SCOPE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_USER_SCOPE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK_USER_SCOPE_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ambitos de Usuario';
 
 #
@@ -6330,16 +5783,13 @@ CREATE TABLE `user_scope` (
 
 CREATE TABLE `user_workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `workgroup` int(4) NOT NULL COMMENT 'Identificador del Grupo de Trabajo',
   PRIMARY KEY  (`id`),
   KEY `IDX_USER_WORKGROUP_USER` (`user_id`),
   KEY `IDX_USER_WORKGROUP_WORKGROUP` (`workgroup`),
-  KEY `IDX_USER_WORKGROUP_DOMAIN` (`domain`),
-  CONSTRAINT `FK_USER_WORKGROUP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_USER_WORKGROUP_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK_USER_WORKGROUP_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`)
+  CONSTRAINT `FK_USER_WORKGROUP_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
+  CONSTRAINT `FK_USER_WORKGROUP_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Usuarios y Grupos de Trabajo';
 
 #
@@ -6348,7 +5798,6 @@ CREATE TABLE `user_workgroup` (
 
 CREATE TABLE `warehouse_transfer` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `series` char(5) collate latin1_spanish_ci default NULL COMMENT 'Serie del Traspaso',
   `number` int(4) NOT NULL default '0' COMMENT 'Numero del Traspaso',
   `issue_time` datetime NOT NULL COMMENT 'Fecha de emision del Traspaso',
@@ -6356,14 +5805,12 @@ CREATE TABLE `warehouse_transfer` (
   `source_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Origen',
   `target_warehouse` int(4) default NULL COMMENT 'Identificador del Almacen Destino',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_UNQ_WAREHOUSE_TRANSFER_DOMAIN_SERIES_NUMBER` (`domain`,`series`,`number`),
+  UNIQUE KEY `IDX_WAREHOUSE_TRANSFER_SERIES_NUMBER` (`series`,`number`),
   KEY `IDX_WAREHOUSE_TRANSFER_ISSUE_TIME` (`issue_time`),
   KEY `IDX_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE` (`source_warehouse`),
   KEY `IDX_WAREHOUSE_TRANSFER_TARGET_WAREHOUSE` (`target_warehouse`),
-  KEY `IDX_WAREHOUSE_TRANSFER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE` FOREIGN KEY (`source_warehouse`) REFERENCES `warehouse` (`id`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_TARGET_WAREHOUSE` FOREIGN KEY (`target_warehouse`) REFERENCES `warehouse` (`id`)
+  CONSTRAINT `FK_WAREHOUSE_TRANSFER_TARGET_WAREHOUSE` FOREIGN KEY (`target_warehouse`) REFERENCES `warehouse` (`id`),
+  CONSTRAINT `FK_WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE` FOREIGN KEY (`source_warehouse`) REFERENCES `warehouse` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Traspasos entre Almacenes';
 
 #
@@ -6372,17 +5819,14 @@ CREATE TABLE `warehouse_transfer` (
 
 CREATE TABLE `warehouse_transfer_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `warehouse_transfer` int(4) NOT NULL COMMENT 'Identificador del Traspaso',
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo del Detalle de Traspaso',
   `quantity` double(15,3) default NULL COMMENT 'Cantidad del Detalle de Traspaso',
   PRIMARY KEY  (`id`),
   KEY `IDX_WAREHOUSE_TRANSFER_DETAIL_ITEM` (`item`),
   KEY `IDX_WAREHOUSE_TRANSFER_DETAIL_WAREHOUSE_TRANSFER` (`warehouse_transfer`),
-  KEY `IDX_WAREHOUSE_TRANSFER_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DETAIL_WAREHOUSE_TRANSFER` FOREIGN KEY (`warehouse_transfer`) REFERENCES `warehouse_transfer` (`id`)
+  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DETAIL_WAREHOUSE_TRANSFER` FOREIGN KEY (`warehouse_transfer`) REFERENCES `warehouse_transfer` (`id`),
+  CONSTRAINT `FK_WAREHOUSE_TRANSFER_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de Traspasos entre Almacenes';
 
 #
@@ -6391,16 +5835,13 @@ CREATE TABLE `warehouse_transfer_detail` (
 
 CREATE TABLE `web_info` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `company` int(4) NOT NULL COMMENT 'Empresa',
   `commercial_description` text collate latin1_spanish_ci COMMENT 'Descripcion comercial',
   `schedule` text collate latin1_spanish_ci COMMENT 'Horario',
   `slogan` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Slogan',
   PRIMARY KEY  (`id`),
   KEY `IDX_WEB_INFO_COMPANY` (`company`),
-  KEY `IDX_WEB_INFO_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WEB_INFO_COMPANY` FOREIGN KEY (`company`) REFERENCES `company` (`registry`),
-  CONSTRAINT `FK_WEB_INFO_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  CONSTRAINT `FK_WEB_INFO_COMPANY` FOREIGN KEY (`company`) REFERENCES `company` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Informacion de la empresa que se mostrara en la ficha web';
 
 #
@@ -6409,14 +5850,11 @@ CREATE TABLE `web_info` (
 
 CREATE TABLE `web_info_page` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo de la Pagina',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(64) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Nombre de la Pagina.',
   `type` tinyint(2) NOT NULL default '0' COMMENT 'Tipo de Pagina',
   `position` tinyint(2) default NULL COMMENT 'Posicion de la Pagina en el menu',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Pagina esta activa o no',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_WEB_INFO_PAGE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WEB_INFO_PAGE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Paginas pertenecientes a la ficha web';
 
 #
@@ -6425,7 +5863,6 @@ CREATE TABLE `web_info_page` (
 
 CREATE TABLE `web_info_page_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Detalle de la Pagina',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `web_info_page` int(4) NOT NULL COMMENT 'Identificador de la Pagina a la que corresponde el detalle',
   `title` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Titulo del contenido de la Pagina',
   `layout` int(2) default NULL COMMENT 'Tipo de plantilla',
@@ -6433,8 +5870,6 @@ CREATE TABLE `web_info_page_detail` (
   `extra` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Campo reservado a otros datos de la Pagina',
   PRIMARY KEY  (`id`),
   KEY `IDX_WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE` (`web_info_page`),
-  KEY `IDX_WEB_INFO_PAGE_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WEB_INFO_PAGE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE` FOREIGN KEY (`web_info_page`) REFERENCES `web_info_page` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Detalles de la pagina perteneciente a la ficha web';
 
@@ -6444,15 +5879,12 @@ CREATE TABLE `web_info_page_detail` (
 
 CREATE TABLE `web_info_page_resource` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Recurso de la Pagina',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `web_info_page` int(4) NOT NULL COMMENT 'Codigo de la Pagina',
   `rattach` int(4) NOT NULL COMMENT 'Identificador del Archivo Adjunto calificado como Recurso',
   `content` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Texto del Recurso',
   PRIMARY KEY  (`id`),
   KEY `IDX_WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE` (`web_info_page`),
   KEY `IDX_WEB_INFO_PAGE_RESOURCE_RATTACH` (`rattach`),
-  KEY `IDX_WEB_INFO_PAGE_RESOURCE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WEB_INFO_PAGE_RESOURCE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_WEB_INFO_PAGE_RESOURCE_RATTACH` FOREIGN KEY (`rattach`) REFERENCES `rattach` (`id`),
   CONSTRAINT `FK_WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE` FOREIGN KEY (`web_info_page`) REFERENCES `web_info_page` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Recursos de la pagina perteneciente a la ficha web';
@@ -6463,12 +5895,9 @@ CREATE TABLE `web_info_page_resource` (
 
 CREATE TABLE `web_info_style` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Codigo del Estilo de la Pagina',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `variable` varchar(128) character set latin1 collate latin1_spanish_ci NOT NULL COMMENT 'Nombre de la variable del Estilo',
   `value` varchar(255) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Valor de la variable del Estilo',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_WEB_INFO_STYLE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WEB_INFO_STYLE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 #
@@ -6477,7 +5906,6 @@ CREATE TABLE `web_info_style` (
 
 CREATE TABLE `workactivity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Actividad',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad',
   `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
   `enterpriseCCC` int(4) NOT NULL COMMENT 'Cuenta de Cotización asociada a la Actividad',
@@ -6485,18 +5913,12 @@ CREATE TABLE `workactivity` (
   PRIMARY KEY  (`id`),
   KEY `IDX_WORKACTIVITY_ENTERPRISE_CCC` (`enterpriseCCC`),
   KEY `IDX_WORKACTIVITY_WORKPLACE` (`workplace`),
-  KEY `IDX_WORKACTIVITY_DOMAIN` (`domain`),
-  CONSTRAINT `FK_WORKACTIVITY_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_WORKACTIVITY_ENTERPRISE_CCC` FOREIGN KEY (`enterpriseCCC`) REFERENCES `enterprise_ccc` (`id`),
-  CONSTRAINT `FK_WORKACTIVITY_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_WORKACTIVITY_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
+  CONSTRAINT `FK_WORKACTIVITY_ENTERPRISE_CCC` FOREIGN KEY (`enterpriseCCC`) REFERENCES `enterprise_ccc` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades del Centro de Trabajo';
 
 
-<<<<<<< .working
-INSERT INTO `db_version` (`version_number`) VALUES ('7.0.4');
-=======
-INSERT INTO `db_version` (`version_number`) VALUES ('6.22.2');
->>>>>>> .merge-right.r17336
+INSERT INTO `db_version` (`version_number`) VALUES ('6.22.0');
 
 COMMIT;
 
