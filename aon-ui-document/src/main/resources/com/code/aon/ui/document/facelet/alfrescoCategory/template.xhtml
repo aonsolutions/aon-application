@@ -16,6 +16,7 @@
 			<a4j:repeat value="#{controller.categories}" rowKeyVar="index" var="ac">
 				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
 					<aon:selectOneMenu id="#{categoryId}"
+						validator="#{alfrescoCategory.categoryCheck}"
 						required="#{categoryRequired and (controller.categoriesSize &lt; 2)}"
 						value="#{controller.categories[index]}">
 						<f:selectItem itemLabel="-" itemValue="#{enterpriseDocument.emptyCategory}"/>
