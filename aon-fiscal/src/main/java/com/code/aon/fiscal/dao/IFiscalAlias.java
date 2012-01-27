@@ -617,34 +617,40 @@ public interface IFiscalAlias {
 	String  VAT_TAX_PERIOD = VAT_TAX_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: VatTax_prorata
+	* Hibernate value: VatTax.prorata
+	*/
+	String  VAT_TAX_PRORATA = VAT_TAX_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: VatTax_replacement
 	* Hibernate value: VatTax.replacement
 	*/
-	String  VAT_TAX_REPLACEMENT = VAT_TAX_ENTRY.getAliasNames()[5];
+	String  VAT_TAX_REPLACEMENT = VAT_TAX_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: VatTax_securityLevel
 	* Hibernate value: VatTax.securityLevel
 	*/
-	String  VAT_TAX_SECURITY_LEVEL = VAT_TAX_ENTRY.getAliasNames()[6];
+	String  VAT_TAX_SECURITY_LEVEL = VAT_TAX_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: VatTax_status
 	* Hibernate value: VatTax.status
 	*/
-	String  VAT_TAX_STATUS = VAT_TAX_ENTRY.getAliasNames()[7];
+	String  VAT_TAX_STATUS = VAT_TAX_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: VatTax_taxRefundRegistry
 	* Hibernate value: VatTax.taxRefundRegistry
 	*/
-	String  VAT_TAX_TAX_REFUND_REGISTRY = VAT_TAX_ENTRY.getAliasNames()[8];
+	String  VAT_TAX_TAX_REFUND_REGISTRY = VAT_TAX_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: VatTax_year
 	* Hibernate value: VatTax.year
 	*/
-	String  VAT_TAX_YEAR = VAT_TAX_ENTRY.getAliasNames()[9];
+	String  VAT_TAX_YEAR = VAT_TAX_ENTRY.getAliasNames()[10];
 
 
 
@@ -736,6 +742,12 @@ public interface IFiscalAlias {
 	* Hibernate value: VatTaxDetail.vatTax.year
 	*/
 	String  VAT_TAX_DETAIL_VAT_TAX_YEAR = VAT_TAX_DETAIL_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: VatTaxDetail_vatTax_securityLevel
+	* Hibernate value: VatTaxDetail.vatTax.securityLevel
+	*/
+	String  VAT_TAX_DETAIL_VAT_TAX_SECURITY_LEVEL = VAT_TAX_DETAIL_ENTRY.getAliasNames()[14];
 
 
 

@@ -5,12 +5,12 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.url">jdbc:mysql://volga:3306/payroll-esferalia-org?autoReconnect=true</property>		
-		<property name="connection.username">dbuser</property>		
+		<property name="connection.url">jdbc:mysql://localhost:3306/aon-inelco-mac-asesores-es?autoReconnect=true</property>		
+		<property name="connection.username">root</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
-		<property name="connection.password">serubd2000</property>	
+		<property name="connection.password"></property>	
 	
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
@@ -34,8 +34,7 @@
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
+		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		
 		<!-- AON-CONFIG Mapping files -->

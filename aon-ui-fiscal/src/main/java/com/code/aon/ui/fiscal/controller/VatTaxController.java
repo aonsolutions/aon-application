@@ -52,7 +52,7 @@ public class VatTaxController extends BasicController {
 	
 	private List<VatTaxDetail> summary;
 	private VatTaxParameters params;
-	private  VatTaxManager provider;
+	private VatTaxManager provider;
 	private String selectedTab;
 	private FiscalParametersController fiscalParams;
 	
@@ -60,7 +60,7 @@ public class VatTaxController extends BasicController {
 	private boolean declaredPanelVisible;
 	private boolean anyPreviousAdjust;
 	private VatTaxDetail detail;
-
+	
 	public FiscalParametersController getFiscalParams() {
 		if (fiscalParams == null) {
 			fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
@@ -144,7 +144,7 @@ public class VatTaxController extends BasicController {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-
+	
 	public void initializeVatTax(boolean isNew) throws ManagerBeanException {
 		setAnyPreviousAdjust(false);
 		VatTax vatTax = (VatTax) getTo();
@@ -161,6 +161,26 @@ public class VatTaxController extends BasicController {
 			setSummary(getManager().getDetailList(getParams()));
 		}
 		setVatTaxModel(new ListDataModel(getSummary()));
+	}
+
+	public void onChangePeriod(ActionEvent event) {
+		try {
+			if (isNew()) {
+				VatTax vatTax = (VatTax) getTo();
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
+				criteria.addLessThanExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+				criteria.addOrder(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), false);
+				System.out.println(criteria);
+				List<ITransferObject> list = getManagerBean().getList(criteria);
+				if (list != null && list.size() > 0) {
+					VatTax previous = (VatTax) list.get(0);
+					vatTax.setProrata(previous.getProrata());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NAda. No se inicializa la prorrata.
+		}
 	}
 
 	private void calculateTax() {

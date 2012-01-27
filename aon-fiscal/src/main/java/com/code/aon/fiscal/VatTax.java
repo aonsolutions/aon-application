@@ -19,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
@@ -40,6 +41,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
 	private boolean replacement;
 	private boolean taxRefundRegistry;
 	private Integer number;
+    private double prorata;
 	
 	private Boolean replaced;
 	
@@ -143,6 +145,14 @@ public class VatTax implements ITransferObject, IConfidentialable {
         this.number = number;
     }
 
+    @Column(name="prorata", precision=15, scale=3)
+	public double getProrata() {
+		return prorata;
+	}
+	public void setProrata(double prorata) {
+		this.prorata = prorata;
+	}
+
 	@Transient
 	public boolean isFinished() {
 		return getStatus() == VatTaxStatus.FINISHED;
@@ -168,7 +178,12 @@ public class VatTax implements ITransferObject, IConfidentialable {
     	return replaced;
     }
 
-    @Override
+    @Transient
+    public boolean isProrataEnabled() {
+		return (CommonUtil.round(getProrata()) != 0);
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
@@ -185,6 +200,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
 				.append(this.replacement, o.replacement)
 				.append(this.taxRefundRegistry, o.taxRefundRegistry)
 				.append(this.number, o.number)				
+				.append(this.prorata, o.prorata)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -203,6 +219,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
 			.append(this.replacement)
 			.append(this.taxRefundRegistry)
 			.append(this.number)				
+			.append(this.prorata)
 			.toHashCode();
 	}	
 
