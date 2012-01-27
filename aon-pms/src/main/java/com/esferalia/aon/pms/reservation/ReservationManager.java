@@ -34,6 +34,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
@@ -172,11 +173,14 @@ public class ReservationManager implements IReservationConstants {
 			String discountPercent = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, PERCENT);
 			String discountAmount = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT, AMOUNT);
 			String bookingHolder = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), BOOKING_HOLDER, null);
-			double taxableBase = reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue();
+			String remarks =  findComments(reservationType.getResGlobalInfo());
+			double taxableBase = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountBeforeTax().doubleValue());
 			double vatQuota = findTaxQuota(reservationType.getResGlobalInfo(), VAT_TAX);
 			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
-			double total = reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue();
-			String remarks =  findComments(reservationType.getResGlobalInfo());
+			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
+			if (CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
+				throw new ReservationException("Reservation Total is not correct", reservationId, 197);
+			}
 
 			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
 			getReservationUtils().setDomain(hotel.getDomain());
@@ -314,6 +318,7 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		double servicesTaxableBase = 0;
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		for (int i=0; i<reservationType.getServices().sizeOfServiceArray(); i++) {
@@ -346,6 +351,7 @@ public class ReservationManager implements IReservationConstants {
 					reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
 					reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
 					reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.insert(reservationServiceDetail);
+					servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
 
 					if (serviceRoom) {
 						Calendar currentCalendar = new GregorianCalendar();
@@ -368,12 +374,17 @@ public class ReservationManager implements IReservationConstants {
 							reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
 							reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
 							reservationServiceDetailBean.insert(reservationServiceDetail);
+							servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
 							
 							currentCalendar.add(Calendar.DATE, 1);
 						}
 					}
 				}
 			}
+		}
+
+		if (reservation.getTaxableBase() != servicesTaxableBase) {
+			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCode(), 197);
 		}
 	}
 
@@ -527,11 +538,11 @@ public class ReservationManager implements IReservationConstants {
 			for (int i=0; i<resGlobalInfoType.getTotal().getTaxes().sizeOfTaxArray(); i++) {
 				TaxType taxType = resGlobalInfoType.getTotal().getTaxes().getTaxArray(i);
 				if (taxType.getTaxDescriptionArray(0) != null && taxType.getTaxDescriptionArray(0).getTextArray(0).getStringValue().equals(type)) {
-					taxQuota = taxType.getAmount().doubleValue();
+					taxQuota += taxType.getAmount().doubleValue();
 				}
 			}
 		}
-		return taxQuota;
+		return CommonUtil.round(taxQuota);
 	}
 
 	private Node findNode(Node parent, String nodeName, boolean deep) {
