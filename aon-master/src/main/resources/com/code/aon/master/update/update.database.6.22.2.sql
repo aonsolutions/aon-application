@@ -1,5 +1,5 @@
 # Database: aon_master
-# Version: Actualizacion de la version 6.21.3 a la version 7.0.0.
+# Version: Actualizacion de la version 6.22.2 a la version 7.0.0.
 # Created by: girazu
 # Creation Date: 10/01/2012 14:00
 # Comentarios: esta actualización no contiene cambios invalidantes de base de datos.

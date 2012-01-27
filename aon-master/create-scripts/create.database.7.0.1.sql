@@ -3610,6 +3610,7 @@ CREATE TABLE `fs_vat` (
   `replacement` tinyint(1) default '0' COMMENT 'Declaracion sustitutiva',
   `tax_refund_registry` tinyint(1) default '0' COMMENT 'Inscrito en registro de devolucion',
   `number` int(4) default '0' COMMENT 'Numero de Decl. complementaria o sustitutiva',
+  `prorata` double(5,2) default '100.00' COMMENT 'Porcentaje de prorrata',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_VAT_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_VAT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)

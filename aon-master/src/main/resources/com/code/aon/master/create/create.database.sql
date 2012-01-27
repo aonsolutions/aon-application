@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.22.2
+# Version: 7.0.4
 # Created by: girazu
-# Creation Date: 27/01/2012 11:35
+# Creation Date: 25/01/2012 20:50
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6492,11 +6492,7 @@ CREATE TABLE `workactivity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Actividades del Centro de Trabajo';
 
 
-<<<<<<< .working
 INSERT INTO `db_version` (`version_number`) VALUES ('7.0.4');
-=======
-INSERT INTO `db_version` (`version_number`) VALUES ('6.22.2');
->>>>>>> .merge-right.r17336
 
 COMMIT;
 
