@@ -1,5 +1,5 @@
 # Database: aon_master
-# Version: Actualizacion de la version 6.21.2 a la version 6.21.3.
+# Version: Actualizacion de la version 6.22.1 a la version 6.22.2.
 # Created by: girazu
 # Creation Date: 09/01/2012 15:40
 # Comentarios: CREACION DE LA TABLA DOMAIN Y EL CAMPO DOMAIN EN TODAS LAS TABLAS.
@@ -142,6 +142,6 @@ ALTER TABLE `workplace` ADD KEY `IDX_WORKPLACE_DOMAIN` (`domain`);
 ALTER TABLE `workplace` ADD CONSTRAINT `FK_WORKPLACE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`);
 
 
-UPDATE `db_version` SET `version_number` = '6.21.3';
+UPDATE `db_version` SET `version_number` = '6.22.2';
 
 COMMIT;
