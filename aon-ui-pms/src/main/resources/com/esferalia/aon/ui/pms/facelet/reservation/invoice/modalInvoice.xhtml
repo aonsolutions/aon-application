@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showInvoiceWindow">
+		<c:if test="#{controller.showInvoiceWindow}">
+			<rich:modalPanel id="invoiceModalPanel" minHeight="420"
+				minWidth="660" rendered="#{controller.showInvoiceWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{pmsBundle.pms_to_invoice_label}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showInvoiceWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showInvoiceWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="invoiceForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div id="invoiceModalToolbar" styleClass="aon-toolbar">
+									<aon:commandButton id="invoice-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{pmsBundle.pms_to_invoice}"
+										actionListener="#{controller.onInvoice}"
+										reRender="aonContent"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<rich:componentControl for="invoiceModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showInvoiceWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="invoice-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}"
+										reRender="showInvoiceWindow">
+										<f:setPropertyActionListener
+											target="#{controller.showInvoiceWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 90%;">
+
+										<c:if test="#{aonRole.saleOperator}">
+											<aon:outputLabel for="ProjectReservation_invoiceSeries"
+												value="#{bundle.aon_series}" />
+											<aon:selectOneMenu id="ProjectReservation_invoiceSeries"
+												value="#{controller.invoiceSeries}"
+												valueChangeListener="#{controller.onInvoiceSeriesChanged}" 
+												reRender="ProjectReservation_invoiceNumber">
+												<f:selectItems value="#{controller.hotelInvoiceSeries}" />
+											</aon:selectOneMenu>
+
+											<aon:outputLabel for="ProjectReservation_invoiceNumber"
+												value="#{bundle.aon_number}" />
+											<aon:inputText id="ProjectReservation_invoiceNumber"
+												value="#{controller.invoiceNumber}"
+												required="true" size="7" />
+										</c:if>
+
+										<aon:outputLabel for="ProjectReservation_invoiceCustomerName"
+											value="#{bundle.aon_company_name}" />
+										<aon:div>
+											<aon:inputText id="ProjectReservation_invoiceCustomerName"
+												value="#{controller.invoiceRegistry.name}"
+												required="true" size="53" maxlength="128"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:outputText value="#{controller.invoiceRegistry.name}" styleClass="aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+										</aon:div>
+
+										<aon:outputLabel for="ProjectReservation_invoiceCustomerDocument"
+											value="#{bundle.aon_company_document}" />
+										<aon:div>
+											<aon:selectOneMenu id="ProjectReservation_invoiceCustomerDocumentType"
+												value="#{controller.invoiceRegistry.documentType}" 
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}">
+												<f:selectItems value="#{registryCollections.documentTypes}" />
+											</aon:selectOneMenu>
+											<aon:outputText styleClass="aon-margin-left aon-italic"
+												value="#{bundle.aon_country}"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:selectOneMenu id="ProjectReservation_customerDocumentCountry" styleClass="aon-margin-left" 
+												value="#{controller.invoiceRegistry.documentCountry}"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}">
+												<f:selectItems value="#{commonCollections.countryCodes}" />
+											</aon:selectOneMenu>
+											<aon:inputText id="ProjectReservation_invoiceCustomerDocument"	style="margin-left: 2px;"
+												value="#{controller.invoiceRegistry.document}"
+												required="true" size="15" maxlength="16"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}"
+												onblur="toUpperCase(this);" />
+											<aon:outputText value="#{controller.invoiceRegistry.document}" styleClass="aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+										</aon:div>
+
+										<aon:outputLabel for="ProjectReservation_invoiceCustomerAddress"
+											value="#{bundle.aon_address}" />
+										<aon:div>
+											<aon:inputText id="ProjectReservation_invoiceCustomerAddress"
+												value="#{controller.invoiceAddress.address}"
+												required="true" size="53" maxlength="45"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:outputText value="#{controller.invoiceAddress.fullAddress}" styleClass="aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+										</aon:div>
+
+										<aon:outputLabel for="ProjectReservation_invoiceCustomerCity"
+											value="#{bundle.aon_city}" />
+										<aon:div>
+											<aon:inputText id="ProjectReservation_invoiceCustomerCity"
+												value="#{controller.invoiceAddress.city}"
+												required="true" size="53" maxlength="45"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:outputText value="#{controller.invoiceAddress.city}" styleClass="aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+										</aon:div>
+
+										<aon:outputLabel for="ProjectReservation_invoiceCustomerProvince"
+											value="#{bundle.aon_state}" />
+										<aon:div>
+											<aon:inputText id="ProjectReservation_invoiceCustomerProvince"
+												value="#{controller.invoiceAddress.province}"
+												required="true" size="30" maxlength="45"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:outputText styleClass="aon-margin-left aon-margin-right aon-italic"
+												value="C.P."
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:inputText id="ProjectReservation_invoiceCustomerZip"
+												value="#{controller.invoiceAddress.zip}"
+												size="9" maxlength="16"
+												rendered="#{controller.to.project.registry.id == controller.to.hotel.customer.id}" />
+											<aon:outputText value="#{controller.invoiceAddress.geozone.name}" styleClass="aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+											<aon:outputText value="#{controller.invoiceAddress.zip}" styleClass="aon-margin-left aon-bold"
+												rendered="#{controller.to.project.registry.id != controller.to.hotel.customer.id}" />
+										</aon:div>
+
+									</aon:panelGrid>
+
+									<aon:div styleClass="aon-group" style="width: 90%;">
+										<aon:div styleClass="aon-group-title">
+											<aon:outputText value="#{pmsBundle.pms_payments}"/>
+										</aon:div>
+										<aon:div styleClass="aon-group-body"> 
+											<aon:div styleClass="aon-group-body-internal">
+												<aon:dataTable id="financeList"
+													value="#{controller.invoiceFinances}" var="reservationFinance">
+
+													<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
+														<aon:outputLabel for="ProjectReservation_financePayMethod"
+															value="#{configBundle.config_pay_method}" />
+													</aon:column>
+
+													<aon:column styleClass="aon-panelGrid-even aon-width-150 aon-editDataTable-textColumn">
+														<aon:selectOneMenu id="ProjectReservation_financePayMethod"
+															value="#{reservationFinance.payMethod}" required="true">
+															<f:selectItems value="#{configCollections.directPayMethods}" />
+														</aon:selectOneMenu>
+													</aon:column>
+
+													<aon:column styleClass="aon-panelGrid-odd aon-width-80 aon-editDataTable-textColumn">
+														<aon:outputLabel for="ProjectReservation_financeAmount"
+															value="#{bundle.aon_amount}" />
+													</aon:column>
+
+													<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
+														<aon:inputText id="ProjectReservation_financeAmount"
+															value="#{reservationFinance.amount}"
+															required="true" size="5"
+															reRender="invoiceModalToolbar" />
+														<aon:commandButton
+															id="Finance-newButton" title="#{bundle.aon_reset}"
+															styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
+															rendered="#{reservationFinance == reservation.lastInvoiceFinance}"
+															actionListener="#{controller.onNewFinance}"
+															reRender="invoiceModalToolbar,financeList" />
+													</aon:column>
+
+												</aon:dataTable>
+											</aon:div>
+										</aon:div>
+									</aon:div>
+
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:dataTable id="reservationInvoiceDataList" value="#{reservation.invoiceModel}" 
+		rows="20" var="to">
+
+		<aon:column  styleClass="aon-editDataTable-dateColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.issueDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+			</f:facet>
+			<aon:outputText value="#{to.referenceCode}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{customerBundle.customer_customer}" />
+			</f:facet>
+			<aon:outputText value="#{to.registryName}" />
+		</aon:column>
+
+		<aon:column alias="Invoice.registryDocument"
+			styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_company_document}" />
+			</f:facet>
+			<aon:outputText value="#{to.registryDocument}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+			<f:facet name="header">
+				<aon:outputText value="#{configBundle.config_pay_method}" />
+			</f:facet>
+			<aon:outputText value="#{to.payMethod}">
+				<aon:abbreviateConverter maxWidth="15" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_total}" />
+			</f:facet>
+			<aon:outputText value="#{to.total}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column
+			styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:commandButton id="reservationInvoice-rectify"
+				value="&#160;" title="#{pmsBundle.pms_to_return}"
+				rendered="#{!to.rectified and !to.rectifier}"
+				actionListener="#{reservation.onRectifyInvoiceShow}"
+				reRender="showRectificationWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-removed">
+				<f:setPropertyActionListener target="#{reservation.showRectificationWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+			<aon:htmlCommandLink id="reservationInvoice-report"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
+				action="#{report.onExecute}" target="_blank"
+				actionListener="#{reservation.onPrintInvoice}" styleClass="aon-icon-pdf">
+				<f:param name="reportKey" value="saleInvoice" />
+			</aon:htmlCommandLink>
+		</aon:column>
+	</aon:dataTable>
+	<aon:dataScroller2 for="reservationInvoiceDataList" showNote="true" />
+</ui:composition>
