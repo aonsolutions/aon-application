@@ -20,6 +20,7 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -102,7 +103,9 @@ public class ProjectReservationServiceController extends LinesController {
 			setNew(true);
 			fillReservationServiceValues(reservationService);
 		} catch (ManagerBeanException ex) {
-			throw new AbortProcessingException("No es posible asignar Servicio");
+			String msg = "No es posible asignar Servicio";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -116,7 +119,9 @@ public class ProjectReservationServiceController extends LinesController {
 				fillReservationServiceValues(reservationService);
 			}
 		} catch (ManagerBeanException ex) {
-			throw new AbortProcessingException("No es posible asignar Servicio");
+			String msg = "No es posible asignar Servicio";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -162,7 +167,7 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
-		ProjectReservationService reservationService = new ProjectReservationService();
+		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			reservationService.setItem(item);

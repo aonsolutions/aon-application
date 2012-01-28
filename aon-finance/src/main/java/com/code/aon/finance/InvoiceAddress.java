@@ -19,12 +19,14 @@ public class InvoiceAddress extends InvoiceAddressDB implements IAddress {
 	public String getAddress3() {
 		return null;
 	}
+	public void setAddress3(String address3) {
+	}
 
 	@Transient
     public String getFullAddress() {
     	StringBuffer buf = new StringBuffer();
-    	buf.append(getStreetType()==null?"":getStreetType());
-    	buf.append(getStreetType()==null?"":". ");
+    	buf.append((getStreetType()!=null) ? getStreetType() : "");
+    	buf.append((getStreetType()!=null) ? ". " : "");
     	buf.append(getAddress());
     	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
@@ -41,4 +43,13 @@ public class InvoiceAddress extends InvoiceAddressDB implements IAddress {
   		return StringUtils.abbreviate(getFullAddress(), 25);
     }
     
+	@Transient
+    public String getLocation() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append((getCity()!=null) ? getCity()+" " : "");
+    	buf.append((getGeozone()!=null && getGeozone().getId()!=null) ? "("+getGeozone().getName()+")" : "");
+    	buf.append((getGeozone()==null || getGeozone().getId()==null) ? "("+getProvince()+")" : "");
+    	return buf.toString();
+    }
+
 }

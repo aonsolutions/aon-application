@@ -29,6 +29,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 			controller.resetGuestName();
 			controller.resetRoomItem();
 			controller.resetRoomTariff();
+			controller.setInvoiceModel(null);
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -44,6 +45,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		controller.resetNights();
+		controller.setInvoiceModel(null);
 	}
 
 	@Override

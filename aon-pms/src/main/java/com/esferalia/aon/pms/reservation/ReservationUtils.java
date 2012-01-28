@@ -21,6 +21,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -255,8 +256,19 @@ public class ReservationUtils implements IReservationConstants {
 		}
 	}
 
+    public double getReservationCalculatedTaxableBase(ProjectReservation reservation) {
+		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		return strategy.getTaxableBase(reservation);
+    }
 
-	public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
+    public double getReservationCalculatedVatQuota(ProjectReservation reservation) throws ManagerBeanException {
+		Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(reservation.getProject().getRegistry().getId());
+		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
+		return strategy.getTotalVatQuota(reservation, customer);
+    }
+
+
+    public Hotel obtainHotel(String hotelCode) throws ManagerBeanException, ReservationException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_CODE), hotelCode);

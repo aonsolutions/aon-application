@@ -181,13 +181,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return ((iAddress.getFullAddress().length()>30)?iAddress.getFullAddress().substring(0,27)+"...":iAddress.getFullAddress());
 	}
 
-	public String getCity() {
+	public String getLocation() {
 		IAddress iAddress = getInvoice().getRegistryAddress();
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
 		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
 			iAddress = (InvoiceAddress)addressController.getTo();
 		}
-		return iAddress.getCity();
+		return iAddress.getLocation();
 	}
 
     public List<SelectItem> getProjects() {
@@ -427,25 +427,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			financeTotal += finance.getAmount();
 		}
 		return CommonUtil.round(financeTotal);
-	}
-
-	public String getPayMethod() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		String payMethodName = null;
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (payMethodName == null) {
-				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
-			}
-			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
-				return "MULTIPLE";
-			}
-		}
-		return payMethodName;
 	}
 
 	public boolean isRemovable() {

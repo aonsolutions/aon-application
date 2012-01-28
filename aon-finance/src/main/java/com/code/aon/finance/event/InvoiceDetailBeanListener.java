@@ -122,26 +122,28 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 
-		IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
-		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ID), detail.getId());
-		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
-		List<ITransferObject> list = detailBean.getList(criteria);
-		int index = detail.getLine() + 1;
-		for (ITransferObject to : list) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)to;
-			if (index == invoiceDetail.getLine()) {
-				invoiceDetail.setLine(index - 1);
-				invoiceDetail.setUpdateEnabled(false);
-				invoiceDetail.getInvoice().setUpdateEnabled(false);
-				detailBean.update(invoiceDetail);
-				++ index;
+		if (detail.isUpdateEnabled()) {
+			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
+			criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ID), detail.getId());
+			criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE), detail.getLine());
+			criteria.addOrder(detailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
+			List<ITransferObject> list = detailBean.getList(criteria);
+			int index = detail.getLine() + 1;
+			for (ITransferObject to : list) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)to;
+				if (index == invoiceDetail.getLine()) {
+					invoiceDetail.setLine(index - 1);
+					invoiceDetail.setUpdateEnabled(false);
+					invoiceDetail.getInvoice().setUpdateEnabled(false);
+					detailBean.update(invoiceDetail);
+					++ index;
+				}
 			}
-		}
 
-		updateInvoiceTotals(detail.getInvoice());
+			updateInvoiceTotals(detail.getInvoice());
+		}
 	}
 
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {

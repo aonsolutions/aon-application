@@ -364,6 +364,9 @@ color:#000;
 .aon-icon-delete{
 	background:transparent url(images/aon-icon/aon-icon-delete.png) scroll left center no-repeat;
  }
+.aon-icon-removed{
+	background:transparent url(images/aon-icon/aon-icon-removed.png) scroll left center no-repeat;
+ }
 .aon-icon-search{
 	background:transparent url(images/aon-icon/aon-icon-search.png) scroll left center no-repeat;
   }

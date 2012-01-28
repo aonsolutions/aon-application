@@ -28,6 +28,7 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -339,6 +340,25 @@ public class ConfigCollectionsController {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+		for (ITransferObject ito : payMethodBean.getList(criteria)) {
+			PayMethod pMethod = (PayMethod)ito;
+			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			payMethods.add(item);
+		}
+		return payMethods;
+	}
+
+	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
+		directPayMethods.add(PayMethodType.CASH_BASIS);
+		directPayMethods.add(PayMethodType.DEBIT_CARD);
+		directPayMethods.add(PayMethodType.CREDIT_CARD);
+
+		List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
 		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 		for (ITransferObject ito : payMethodBean.getList(criteria)) {
 			PayMethod pMethod = (PayMethod)ito;

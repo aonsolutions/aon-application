@@ -16,12 +16,18 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
 
 	private static final long serialVersionUID = 1L;
 
-	@Override
+	@Transient
+    public String getProvince() {
+  		return (getGeozone() != null && getGeozone().getId() != null) ? getGeozone().getName() : null;
+    }
+    public void setProvince(String province) {
+    }
+
 	@Transient
     public String getFullAddress() {
     	StringBuffer buf = new StringBuffer();
-    	buf.append(getStreetType()==null?"":getStreetType());
-    	buf.append(getStreetType()==null?"":". ");
+    	buf.append((getStreetType()!=null) ? getStreetType() : "");
+    	buf.append((getStreetType()!=null) ? ". " : "");
     	buf.append(getAddress());
     	buf.append(StringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(StringUtils.isEmpty(getNumber())?"":getNumber());
@@ -33,10 +39,18 @@ public class RegistryAddress extends RegistryAddressDB implements IAddress {
     	return buf.toString();
     }
 
-    @Override
 	@Transient
     public String getShortAddress() {
   		return StringUtils.isEmpty(getAlias())?StringUtils.abbreviate(getFullAddress(), 25): getAlias();
+    }
+
+	@Transient
+    public String getLocation() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append((getCity()!=null) ? getCity()+" " : "");
+    	buf.append((getGeozone()!=null && getGeozone().getId()!=null) ? "("+getGeozone().getName()+")" : "");
+    	buf.append((getGeozone()==null || getGeozone().getId()==null) ? "("+getProvince()+")" : "");
+    	return buf.toString();
     }
 
     @Transient

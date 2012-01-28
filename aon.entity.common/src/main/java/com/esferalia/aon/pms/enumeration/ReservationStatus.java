@@ -10,7 +10,7 @@ public enum ReservationStatus implements IResourceable {
 	ACTIVE,
 	BLOCKED,
 	CANCELLED,
-	FINISHED;
+	INVOICED;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.pms.i18n.messages";

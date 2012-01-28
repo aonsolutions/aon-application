@@ -1,5 +1,7 @@
 package com.esferalia.aon.pms.event;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -21,12 +23,23 @@ public class ProjectReservationServiceBeanVetoListener extends ManagerBeanVetoLi
     		if (to.getServiceIndex() == 0) {
         		to.setServiceIndex(calculateNextIndex(to.getProjectReservation()));
     		}
+    		if (StringUtils.isEmpty(to.getDescription())) {
+    			to.setDescription(to.getItem().getProduct().getName());
+    		}
     	} catch (ManagerBeanException ex) {
     		throw new ManagerBeanVetoListenerException(ex);
     	}
     }
 
-	private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
+    @Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+    	ProjectReservationService to = (ProjectReservationService)evt.getTo();
+		if (StringUtils.isEmpty(to.getDescription())) {
+			to.setDescription(to.getItem().getProduct().getName());
+		}
+	}
+
+    private	Integer calculateNextIndex(ProjectReservation reservation) throws ManagerBeanException {
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());

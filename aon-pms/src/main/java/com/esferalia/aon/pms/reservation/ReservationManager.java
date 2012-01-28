@@ -331,6 +331,7 @@ public class ReservationManager implements IReservationConstants {
 			reservationService.setDescription(reservationService.getItem().getProduct().getName());
 			reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
 
+			int quantity = service.getQuantity();
 			boolean serviceRoom = false;
 			for (int j=0; j<service.getServiceDetails().getComments().sizeOfCommentArray(); j++) {
 				Comment comment = service.getServiceDetails().getComments().getCommentArray(j);
@@ -377,6 +378,33 @@ public class ReservationManager implements IReservationConstants {
 							servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
 							
 							currentCalendar.add(Calendar.DATE, 1);
+						}
+					} else {
+						--quantity;
+						Calendar currentCalendar = new GregorianCalendar();
+						currentCalendar.setTime(reservationServiceDetail.getEffectiveDate());
+						currentCalendar.add(Calendar.DATE, 1);
+						Calendar nextCalendar = new GregorianCalendar();
+						nextCalendar.setTime(reservation.getEndDate());
+						if ((j+1) < service.sizeOfPriceArray()) {
+							nextCalendar = service.getPriceArray(j+1).getEffectiveDate();
+							nextCalendar.set(Calendar.HOUR, 0);
+							nextCalendar.set(Calendar.MINUTE, 0);
+							nextCalendar.set(Calendar.SECOND, 0);
+						}
+						while (currentCalendar.compareTo(nextCalendar) < 0 && quantity > 0) {
+							reservationServiceDetail = new ProjectReservationServiceDetail();
+							reservationServiceDetail.setProjectReservationService(reservationService);
+							reservationServiceDetail.setDomain(getReservationUtils().getDomain());
+							reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());
+							reservationServiceDetail.setQuantity(price.getNumberOfUnits());
+							reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
+							reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
+							reservationServiceDetailBean.insert(reservationServiceDetail);
+							servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
+							
+							currentCalendar.add(Calendar.DATE, 1);
+							--quantity;
 						}
 					}
 				}

@@ -6,4 +6,6 @@ public interface IPmsConstants {
 	String RESERVATION_TABLE_CONTROLLER_NAME = "reservationTable";
 	String RESERVATION_SERVICE_CONTROLLER_NAME = "reservationService";
 
+	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+
 }

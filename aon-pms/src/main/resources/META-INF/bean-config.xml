@@ -37,4 +37,18 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<listeners>
+	        <listener>com.esferalia.aon.pms.event.InvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 </bean-config>

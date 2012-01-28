@@ -1,6 +1,5 @@
 package com.code.aon.finance;
 
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -307,6 +306,25 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 			}
 		}
 		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
+	}
+
+	@Transient
+	public String getPayMethod() throws ManagerBeanException {
+		String payMethodName = null;
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
+		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			if (payMethodName == null) {
+				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
+			}
+			if (finance.getPayMethod() != null && !finance.getPayMethod().getName().equals(payMethodName)) {
+				return "MULTIPLE";
+			}
+		}
+		return payMethodName;
 	}
 
 }

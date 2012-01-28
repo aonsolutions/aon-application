@@ -285,7 +285,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			invoiceDetailBean.remove((InvoiceDetail) iter.next());
+			InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
+			invoiceDetail.setUpdateEnabled(false);
+			invoiceDetailBean.remove(invoiceDetail);
 		}
 	}
 

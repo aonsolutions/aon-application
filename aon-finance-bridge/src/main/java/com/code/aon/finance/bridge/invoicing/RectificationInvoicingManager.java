@@ -60,6 +60,7 @@ public class RectificationInvoicingManager {
 	private Invoice createRectifierInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, 
 			RectificationType rectificationtype) throws ManagerBeanException {
 		Invoice rectifier = new Invoice();
+		rectifier.setProject(invoice.getProject());
 		rectifier.setSeries(series);
 		rectifier.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		rectifier.setRegistry(invoice.getRegistry());
@@ -119,6 +120,7 @@ public class RectificationInvoicingManager {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			InvoiceDetail rectifierDetail = new InvoiceDetail();
 			rectifierDetail.setInvoice(rectifier);
+			rectifierDetail.setProject(invoiceDetail.getProject());
 			rectifierDetail.setLine(invoiceDetail.getLine());
 			rectifierDetail.setItem(invoiceDetail.getItem());
 			rectifierDetail.setDescription(invoiceDetail.getDescription());

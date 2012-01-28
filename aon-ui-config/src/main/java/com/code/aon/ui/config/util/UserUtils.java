@@ -1,7 +1,6 @@
 package com.code.aon.ui.config.util;
 
 import java.security.Principal;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -84,9 +83,8 @@ public class UserUtils {
             IManagerBean employeeWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(employeeWorkGroupBean.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_ID), user.getId());
-            Iterator<ITransferObject> iter = employeeWorkGroupBean.getList(criteria).iterator();
-            while(iter.hasNext()) {
-            	UserWorkGroup userWorkGroup = (UserWorkGroup)iter.next();
+            for (ITransferObject ito : employeeWorkGroupBean.getList(criteria)) {
+            	UserWorkGroup userWorkGroup = (UserWorkGroup)ito;
                 expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, userWorkGroup.getWorkGroup().getId()));
             }
         } catch (ManagerBeanException e) {
@@ -95,16 +93,15 @@ public class UserUtils {
         return expression;
     }
 	
-	public List<Scope> getCurrentUserScopes(){
+	public List<Scope> getCurrentUserScopes() {
 		List<Scope> scopes = new LinkedList<Scope>();
 		try {
 			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
 			criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
-			Iterator iter = userScopeBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				scopes.add(((UserScope)iter.next()).getScope());
+			for (ITransferObject ito : userScopeBean.getList(criteria)) {
+				scopes.add(((UserScope)ito).getScope());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);

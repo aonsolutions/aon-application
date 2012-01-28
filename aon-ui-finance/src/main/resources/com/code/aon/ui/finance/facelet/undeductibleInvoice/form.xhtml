@@ -233,7 +233,7 @@
 							value="#{undeductibleInvoice.address}" 
 							rendered="#{undeductibleInvoiceAddress.to.id != null or (undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id != null)}" />
 						<aon:outputText styleClass="aon-margin-left aon-bold"
-							value="(#{undeductibleInvoice.city})"
+							value="#{undeductibleInvoice.location}"
 							rendered="#{undeductibleInvoiceAddress.to.id != null or (undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id != null)}" />
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="invoiceAddressButton"

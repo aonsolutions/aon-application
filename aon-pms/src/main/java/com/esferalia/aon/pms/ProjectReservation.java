@@ -49,8 +49,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return getStatus() == ReservationStatus.CANCELLED;
 	}
 	@Transient
-	public boolean isFinished() {
-		return getStatus() == ReservationStatus.FINISHED;
+	public boolean isInvoiced() {
+		return getStatus() == ReservationStatus.INVOICED;
 	}
 
 	@Transient

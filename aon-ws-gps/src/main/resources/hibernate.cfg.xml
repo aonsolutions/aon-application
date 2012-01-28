@@ -36,6 +36,11 @@
     	<mapping class="com.code.aon.config.Tariff"/>
     	<mapping class="com.code.aon.config.Tax"/>
     	<mapping class="com.code.aon.customer.Customer"/>
+    	<mapping class="com.code.aon.finance.Finance"/>
+    	<mapping class="com.code.aon.finance.Invoice"/>
+    	<mapping class="com.code.aon.finance.InvoiceAddress"/>
+    	<mapping class="com.code.aon.finance.InvoiceAttachment"/>
+    	<mapping class="com.code.aon.finance.InvoiceDetail"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
     	<mapping class="com.code.aon.product.Brand"/>
     	<mapping class="com.code.aon.product.Item"/>
@@ -57,6 +62,7 @@
     	<mapping class="com.code.aon.registry.Segment"/>
     	<mapping class="com.code.aon.seller.Seller"/>
     	<mapping class="com.code.aon.supplier.Supplier"/>
+    	<mapping class="com.code.aon.warehouse.Warehouse"/>
 
     	<mapping class="com.esferalia.aon.calendar.Calendar"/>
     	<mapping class="com.esferalia.aon.calendar.Holiday"/>

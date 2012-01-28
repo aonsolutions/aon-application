@@ -56,7 +56,9 @@ public class ProjectReservationRoomController extends LinesController {
 
 			setNew(true);
 		} catch (ManagerBeanException ex) {
-			throw new AbortProcessingException("No es posible asignar Habitación");
+			String msg = "No es posible asignar Habitación";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -69,7 +71,9 @@ public class ProjectReservationRoomController extends LinesController {
 				tableController.onInitializeRoomList((ProjectReservationRoom)getTo());
 			}
 		} catch (ManagerBeanException ex) {
-			throw new AbortProcessingException("No es posible asignar Habitación");
+			String msg = "No es posible asignar Habitación";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
