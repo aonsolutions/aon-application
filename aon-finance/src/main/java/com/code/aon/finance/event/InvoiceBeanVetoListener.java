@@ -307,6 +307,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (rectified.getRectificationInvoice() != null && rectified.getRectificationInvoice().getId() == invoice.getId()) {
 			rectified.setRectificationType(RectificationType.NONE);
 			rectified.setRectificationInvoice(null);
+			rectified.setUpdateEnabled(false);
 			invoiceBean.update(rectified);
 		} else {
 			Criteria criteria = new Criteria();
@@ -318,6 +319,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 					rectified.setRectificationType(RectificationType.RECTIFIED);
 					rectified.setRectificationInvoice((Invoice)ito);
 				}
+				rectified.setUpdateEnabled(false);
 				invoiceBean.update(rectified);
 			}
 		}
