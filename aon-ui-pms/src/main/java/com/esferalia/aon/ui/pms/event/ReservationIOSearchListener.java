@@ -51,9 +51,9 @@ public class ReservationIOSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel(null);
-		setCheckin(false);
-		setFromDate(null);
-		setToDate(null);
+		setCheckin(true);
+		setFromDate(new Date());
+		setToDate(new Date());
 	}
 	
 	@Override

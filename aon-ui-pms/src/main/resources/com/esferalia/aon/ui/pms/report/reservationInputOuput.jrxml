@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="35"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -22,7 +22,6 @@
 	<field name="adults" class="java.lang.Integer"/>
 	<field name="children" class="java.lang.Integer"/>
 	<field name="roomNumber" class="java.lang.String"/>
-	<field name="roomCustomer" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -299,7 +298,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_guests_childres_lt6}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_guests_children}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-59" mode="Opaque" x="606" y="15" width="31" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -394,7 +393,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{roomCustomer}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{projectReservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="247" y="0" width="55" height="14"/>

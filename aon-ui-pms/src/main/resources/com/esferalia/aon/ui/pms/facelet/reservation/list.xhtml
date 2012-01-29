@@ -13,17 +13,6 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<aon:htmlCommandLink id="inputOutput_list"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{pmsBundle.pms_input_output_listing}"
-						action="#{report.onExecute}">
-						<f:param name="reportKey" value="reservationInputOuput" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>	
-				</ui:define>
-				
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">

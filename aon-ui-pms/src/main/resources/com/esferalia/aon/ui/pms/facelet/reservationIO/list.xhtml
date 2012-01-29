@@ -38,26 +38,28 @@
 					
 					<ui:define name="columns">
 					
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomNumber}" />
 						</aon:column>
  
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column alias="ProjectReservationRoom.item.product.code"
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
 							</f:facet>
 							<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 						</aon:column>
  
-						<aon:column  
+						<aon:column   
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_guest}" />
 							</f:facet>
-							<aon:outputText value="#{to.roomCustomer}" />
+							<aon:outputText value="#{to.projectReservation.guestFullName}" />
 						</aon:column>
 	
 						<aon:column alias="ProjectReservationRoom.projectReservation.startDate"
@@ -82,18 +84,28 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column alias="ProjectReservationRoom.projectReservation.id"
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputLabel value="#{pmsBundle.pms_reservation_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.projectReservation.id}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column alias="ProjectReservationRoom.projectReservation.code" 
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputLabel value="#{pmsBundle.pms_reservation_code}" />
 							</f:facet>
 							<aon:outputText value="#{to.projectReservation.code}" />
+						</aon:column>
+
+						<aon:column alias="ProjectReservationRoom.projectReservation.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputLabel value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.projectReservation.status}"   />
 						</aon:column>
 	
 					</ui:define>
