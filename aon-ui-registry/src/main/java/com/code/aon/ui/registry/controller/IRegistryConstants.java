@@ -27,6 +27,8 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_DOCUMENT_ERROR = "registry_document_error";
 	
+	String REGISTRY_CATEGORY = "registry_category";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

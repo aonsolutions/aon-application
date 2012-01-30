@@ -3,8 +3,17 @@ package com.code.aon.ui.document.event;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
+import java.util.List;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.EnterpriseUser;
+import com.code.aon.config.Scope;
+import com.code.aon.config.User;
+import com.code.aon.config.UserScope;
 import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.document.controller.ManagerController;
@@ -46,6 +55,21 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		EnterpriseUser eUser = (EnterpriseUser) event.getController().getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(UserScope.class);
+			UserScope us = new UserScope();
+			us.setUser(getUser(eUser));
+			us.setScope(getScope());
+			bean.insert(us);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);			
+		}
+	}
+
+	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
@@ -67,4 +91,34 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 		}
 	}
 	
+	private Scope getScope() throws ManagerBeanException {
+		Scope scope = null;
+		IManagerBean bean = BeanManager.getManagerBean(Scope.class);
+		List<ITransferObject> list = bean.getList(null);
+		if (! list.isEmpty()) {
+			scope = (Scope) list.get(0);
+		} else {
+			scope = new Scope();
+			scope.setDescription("GENERAL");
+			bean.insert(scope);
+		}
+		return scope;
+	}
+
+	private User getUser( EnterpriseUser eu) throws ManagerBeanException {
+		User user = new User();
+		user.setId(eu.getId());
+		user.setActive(eu.isActive());
+		user.setLogin(eu.getLogin());
+		user.setName(eu.getName());
+		user.setPassword(eu.getPassword());
+		if ( eu.getEnterprise() != null ) {
+			user.setEnterprise(eu.getEnterprise().getId());
+		}
+		if ( eu.getRegistry() != null ) {
+			user.setRegistry(eu.getRegistry().getId());	
+		}
+		return user;
+	}
+
 }

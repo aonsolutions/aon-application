@@ -78,7 +78,12 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			EnterpriseUser user = mc.getLoggedUser();
 			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
 			this.alfrescoDAO = new EnterpriseDocumentDAO(user.getLogin(), user.getPassword(), acc.getAlfrescoDAO());	
-			ParentReference reference = this.alfrescoDAO.getEnterpriseReference(mc.getEnterprise());
+			ParentReference reference = null;
+			if ( mc.isMainEnterprise() ) {
+				reference = this.alfrescoDAO.getRootReference();
+			} else {
+				reference = this.alfrescoDAO.getEnterpriseReference(mc.getEnterprise());
+			}
 			this.alfrescoDAO.setParentReference(reference);
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
