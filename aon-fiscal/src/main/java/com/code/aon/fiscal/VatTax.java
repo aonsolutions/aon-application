@@ -29,11 +29,6 @@ public class VatTax extends VatTaxDB {
 	public boolean isExtraDeclaration() {
 		return (isComplementary() || isReplacement() );
 	}
-
-	@Transient
-	public boolean isFinished() {
-		return getStatus() == VatTaxStatus.FINISHED;
-	}
 	
     @Transient
     public boolean isReplaced() {
@@ -54,5 +49,4 @@ public class VatTax extends VatTaxDB {
     	}
     	return replaced;
     }
-
 }

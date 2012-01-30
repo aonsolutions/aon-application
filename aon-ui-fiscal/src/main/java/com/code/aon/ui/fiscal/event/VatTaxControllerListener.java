@@ -21,6 +21,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 		vatTax.setReplacement(false);
 		vatTax.setSecurityLevel(SecurityLevel.OFFICIAL);
 		vatTax.setTaxRefundRegistry(c.getFiscalParams().isTaxRefundRegistry());
+		vatTax.setProrata(100);
 		c.setAnyPreviousAdjust(false);
 		c.setScoredInvoices(false);
 		c.setDeclaredPanelVisible(false);

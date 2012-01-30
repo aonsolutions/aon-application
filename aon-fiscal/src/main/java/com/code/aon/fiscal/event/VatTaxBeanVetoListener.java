@@ -43,6 +43,17 @@ public class VatTaxBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		} else {
 			checkPeriodVatTax(vatTax);
 		}
+		
+		checkProrata(vatTax);
+	}
+	
+	private void checkProrata(VatTax vatTax) throws ManagerBeanVetoListenerException {
+		if (vatTax.getProrata() < 0 ) {
+			throw new ManagerBeanVetoListenerException("El porcentaje de prorrata no puede ser menor de cero.");
+		}
+		if (vatTax.getProrata() > 100 ) {
+			throw new ManagerBeanVetoListenerException("El porcentaje de prorrata no puede ser mayor de cien.");
+		}
 	}
 
 	private void checkNormalVatTax(VatTax vatTax) throws ManagerBeanVetoListenerException {

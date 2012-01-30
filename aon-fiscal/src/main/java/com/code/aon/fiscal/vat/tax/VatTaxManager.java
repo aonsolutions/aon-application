@@ -89,10 +89,22 @@ public class VatTaxManager {
 				amount.setDeductibleQuota(deductibleQuota);
 				if (keyExs != null) {
 					for (VatTaxKeyEx keyEx : keyExs) {
-						manageKey(column,list,keyEx,amount);
+						// En el caso de que las claves afectadas deban ser 
+						// aminoradas debido a la existencia de prorrata.
+						if (params.getVatTax().isProrataEnabled() && keyEx.getKey().isProrrataAware()) {
+							double prorata = params.getVatTax().getProrata();
+							VatTaxAmount proratedAmount = new VatTaxAmount();
+							proratedAmount.setTaxableBase(taxableBase);
+							proratedAmount.setQuota(CommonUtil.round( quota * prorata / 100  ));
+							proratedAmount.setDeductibleQuota(CommonUtil.round( deductibleQuota * prorata / 100  ));
+							manageKey(column,list,keyEx,proratedAmount);
+						} else {
+							manageKey(column,list,keyEx,amount);	
+						}
 						if (keyEx.getKey() == VatTaxKey.A1) {
 							// En el caso especial del regimen general, se chequea si la linea 
 							// tiene R.E. para añadirlo en la casilla A2
+							// Se ignora la prorrata, puesto que solo afecta al IVA soportado.
 							if (surchargePercent > 0) {
 								VatTaxKeyEx sKeyEx = new VatTaxKeyEx(VatTaxKey.A2,surchargePercent);
 								VatTaxAmount surchargeAmount = new VatTaxAmount();
