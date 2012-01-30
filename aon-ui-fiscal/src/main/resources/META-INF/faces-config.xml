@@ -348,6 +348,13 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** VAT TAX SUMMARY REPORT *************** -->
+	<managed-bean>
+		<managed-bean-name>vatTaxSummaryReport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.VatTaxSummaryReport</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- **************** PROFESSIONAL RETENTION  *************** -->
 	<managed-bean>
 		<managed-bean-name>profRetention</managed-bean-name>
@@ -515,6 +522,13 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== VAT TAX ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>vatTaxSummaryReport_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/vatTaxSummaryReport/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	<!-- =================== PROFESSIONAL RETENTION ================= -->
 	<navigation-rule>
 		<navigation-case>

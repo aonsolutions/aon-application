@@ -31,6 +31,11 @@
 										action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
 										value="#{fiscalBundle.fiscal_vat_tax_module}" />
 								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="vatTaxSummaryReport" action="vatTaxSummaryReport_search"
+										value="#{fiscalBundle.fiscal_vat_tax_summary_report_module}" />
+								</aon:div>
 	
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="renting" 

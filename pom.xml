@@ -332,7 +332,7 @@
 		<repository>
 			<id>dynamicJasper-public-repository</id>
 			<name>DynamicJasper public Repository</name>
-			<url>http://www.fdvs.com.ar/djmaven2</url>
+			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
