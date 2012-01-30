@@ -11,4 +11,8 @@ public class WorkplaceDepartment extends WorkplaceDepartmentDB {
 
 	private static final long serialVersionUID = 1L;
 
+	public WorkplaceDepartment() {
+		setActive(true);
+	}
+
 }
