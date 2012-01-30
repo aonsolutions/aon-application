@@ -73,7 +73,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	protected abstract NamedValue[] updateValues( ITransferObject to );
 	
-	protected CMLAddAspect[] getAddAspects(ITransferObject to ) {
+	protected CMLAddAspect[] getAddAspects( ParentReference parent, ITransferObject to ) {
 		return null;
 	}
 	
@@ -94,6 +94,10 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		setParentReference( getReferenceToParent(reference) );		
 	}
 
+	public ParentReference getParentReference(ITransferObject to) {
+		return parentReference;
+	}
+	
 	public ParentReference getParentReference() {
 		return parentReference;
 	}
@@ -196,7 +200,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		// Contruimos CML Block, con el nodo y sus aspectos
 		CML cml = new CML();
 		cml.setCreate(new CMLCreate[] { create });
-		CMLAddAspect[] aspects = getAddAspects(ato);
+		CMLAddAspect[] aspects = getAddAspects(parent, ato);
 		if (! ArrayUtils.isEmpty(aspects) ) {
 			cml.setAddAspect(aspects);	
 		}
@@ -211,8 +215,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	@Override
 	public ITransferObject insert(ITransferObject to) throws DAOException {
 		try {
+			ParentReference parent = getParentReference( to );
 			startSession();
-			ParentReference parent = getParentReference();
 			addContent(parent, (IAlfrescoTransferObject) to);
 			afterInsert(to);
 		} catch ( Throwable e ) {

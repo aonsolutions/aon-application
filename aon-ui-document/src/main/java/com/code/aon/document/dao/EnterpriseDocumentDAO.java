@@ -109,6 +109,13 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		return null;
 	}
 	
+	@Override
+	public ParentReference getParentReference(ITransferObject to) {
+		EnterpriseDocument ed = (EnterpriseDocument) to;
+		String path = getEnterprisePath( ed.getEnterprise() );
+		return getReferenceToParent(getReference(path));
+	}
+
 	private AlfrescoCategory[] getCategories( String[] values ) throws DAOException {
 		AlfrescoCategory[] categories = null;
 		if (! ArrayUtils.isEmpty(values)) {
@@ -198,7 +205,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 
 	@Override
-	protected CMLAddAspect[] getAddAspects(ITransferObject to) {
+	protected CMLAddAspect[] getAddAspects(ParentReference parent, ITransferObject to) {
 		EnterpriseDocument ed = (EnterpriseDocument) to;
 		
 		NamedValue[] values = new NamedValue[] {
@@ -207,7 +214,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		CMLAddAspect title = new CMLAddAspect(Constants.ASPECT_TITLED, values, null, "1");
 		
 		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed);
-		CMLAddAspect aspect = eda.getAspect(getParentReference());
+		CMLAddAspect aspect = eda.getAspect(parent);
 		return new CMLAddAspect[]{ title, aspect };
 	}
 
