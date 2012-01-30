@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="showRoomDetailWindow">
 		<c:if test="#{controller.showRoomDetailWindow}">
-			<rich:modalPanel id="roomDetailModalPanel" 
-				height="420" width="720" rendered="#{controller.showRoomDetailWindow}"
+			<rich:modalPanel id="roomDetailModalPanel" minHeight="420" minWidth="#{(controller.to.roomNumber == null) ? '720' : '520'}" 
+				rendered="#{controller.showRoomDetailWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -131,6 +131,24 @@
 											<aon:outputText value="#{controller.to.roomNumber}"
 												rendered="#{controller.to.roomNumber != null}" />
 
+											<aon:outputLabel 
+												value="#{(controller.to.roomNumber == null) ? pmsBundle.pms_available_services : pmsBundle.pms_assigned_services}" />
+											<aon:div>
+												<aon:selectManyCheckbox layout="pageDirection" 
+													value="#{controller.linkedServices}"
+													rendered="#{controller.to.roomNumber == null}">
+													<f:selectItems value="#{controller.availableServicesList}" />
+												</aon:selectManyCheckbox>
+												<aon:dataTable id="linkedServicesList" styleClass="aon-noborder"
+													value="#{controller.linkedServicesList}" var="linkedService"
+													rendered="#{controller.to.roomNumber != null}">
+													<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-noborder"
+														style="font-size: 0.9em;">
+														<aon:outputText value="#{linkedService.description}" />
+													</aon:column>
+												</aon:dataTable>
+											</aon:div>
+
 										</aon:panelGrid>
 
 										<aon:div id="ProjectReservationRoomFilters" styleClass="aon-panelGrid-search aon-text-center"
@@ -151,6 +169,7 @@
 										</aon:div>
 
 									</aon:panelGrid>
+
 								</aon:div>
 							</aon:div>
 						</aon:div>

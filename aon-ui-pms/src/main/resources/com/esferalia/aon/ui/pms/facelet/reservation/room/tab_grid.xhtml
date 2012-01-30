@@ -126,7 +126,8 @@
 
 				<aon:column colspan="6"
 					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
-					<aon:panelGrid columns="3" columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-150, aon-noborder aon-width-auto">
+					<aon:panelGrid columns="4" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-130, 
+																aon-noborder aon-width-400, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
 							<aon:outputText value="#{roomDetail.assetActivity.date}" styleClass="aon-italic">
@@ -137,6 +138,13 @@
 						<aon:div>
 							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
 							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" 
+								rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}" />
+							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic"
+								rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}" />
+							<aon:outputText value="&#160;" />
 						</aon:div>
 						<aon:div>
 							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right"

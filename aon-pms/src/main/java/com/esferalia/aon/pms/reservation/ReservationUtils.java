@@ -3,6 +3,7 @@ package com.esferalia.aon.pms.reservation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -24,6 +25,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.seller.Seller;
@@ -110,15 +112,14 @@ public class ReservationUtils implements IReservationConstants {
     	return StringUtils.abbreviate(dates + (guest == null ? "" : " " + guest) + (code == null ? "" : " (" + reservation.getCode() + ")"), 64);
     }
 
-    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room) throws ManagerBeanException {
+    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room, Integer[] services) throws ManagerBeanException {
     	Date startDate = reservationRoom.getProjectReservation().getStartDate();
     	Date endDate = reservationRoom.getProjectReservation().getEndDate();
-    	insertProjectReservationRoomDetails(reservationRoom, startDate, endDate, room);
+    	insertProjectReservationRoomDetails(reservationRoom, startDate, endDate, room, services);
     }
 
-    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
-    	boolean oneRoom = reservationRoom.getProjectReservation().getRoomCount() == 1;
-
+    public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room, Integer[] services) 
+    		throws ManagerBeanException {
     	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
     	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
     	Date effectiveDate = fromDate;
@@ -135,12 +136,15 @@ public class ReservationUtils implements IReservationConstants {
 			reservationRoomDetail.setProjectReservationRoom(reservationRoom);
 			reservationRoomDetail.setAssetActivity(assetActivity);
 			reservationRoomDetail = (ProjectReservationRoomDetail)reservationRoomDetailBean.insert(reservationRoomDetail);
-			if (oneRoom) {
+			if (services != null && services.length > 0) {
 				IManagerBean resServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 				Criteria criteria = new Criteria();
 				String alias = resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 				criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
+				alias = resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+				criteria.addExpression(ExpressionUtilities.getInExpression(alias, Arrays.asList(services)));
 				criteria.addEqualExpression(resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), effectiveDate);
+				criteria.addNullExpression(resServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
 				for (ITransferObject ito : resServiceDetailBean.getList(criteria)) {
 					ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
 					reservationServiceDetail.setProjectReservationRoomDetail(reservationRoomDetail);

@@ -18,8 +18,38 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{reservation}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
-				
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:commandLink id="#{dataTableId}-selectButton" 
+								styleClass="#{(reservation.pendingRoomAssignation) ? 
+												'aon-icon-point-red' : 
+												((reservation.pendingServiceAssignation) ? 
+													'aon-icon-point-yellow' : 
+													'aon-icon-point-green')}" 
+								value="&#160;&#160;&#160;&#160;"
+								title="#{(reservation.pendingRoomAssignation) ?
+											pmsBundle.pms_room_assignation_pending_msg : 
+											((reservation.pendingServiceAssignation) ? 
+												pmsBundle.pms_service_assignation_pending_msg : 
+												'OK')}" 
+								immediate="true" ajaxSingle="true" requestDelay="100"
+								action="#{rowSelectorAction}"
+								actionListener="#{rowSelectorActionListener}"
+								onkeyup="#{dataTableId}KeyUp(this)"
+								onfocus="disableRowSelector();#{dataTableId}SelectRow(this)"
+								onblur="enableRowSelector();#{dataTableId}DeselectRow(this)"
+								onmouseover="disableRowSelector();"
+								onmouseout="enableRowSelector();"				
+								focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
+								reRender="#{rowSelectorReRender}" >
+							</aon:commandLink>
+							<f:facet name="footer">
+								<ui:insert name="selectFooterContent"/>
+							</f:facet>
+						</aon:column>
+
 						<aon:column alias="ProjectReservation.hotel.name"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">

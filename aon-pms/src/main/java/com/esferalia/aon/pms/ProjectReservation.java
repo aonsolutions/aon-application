@@ -67,11 +67,36 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 
 	@Transient
+	public int getGuestCount() throws ManagerBeanException {
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), getId());
+		return reservationGuestBean.getCount(criteria);
+	}
+
+	@Transient
 	public int getRoomCount() throws ManagerBeanException {
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
 		return reservationRoomBean.getCount(criteria);
+	}
+
+	@Transient
+	public int getRoomAssignedCount() throws ManagerBeanException {
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, getId());
+		return reservationRoomDetailBean.getCount(criteria);
+	}
+
+	@Transient
+	public int getServiceCount() throws ManagerBeanException {
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), getId());
+		return reservationServiceBean.getCount(criteria);
 	}
 
 	@Transient

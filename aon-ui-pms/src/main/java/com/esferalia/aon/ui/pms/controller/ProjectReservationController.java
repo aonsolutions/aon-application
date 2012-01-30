@@ -40,6 +40,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -233,6 +236,56 @@ public class ProjectReservationController extends BasicController {
 		}
 	}
 
+	public void onLoad(ActionEvent event) throws ManagerBeanException {
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+		onSearch(event);
+	}
+
+	public boolean isPendingRoomAssignation() throws ManagerBeanException {
+		boolean pendingRooms = true;
+		if (getModel().isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+			IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+			for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+				pendingRooms = false;
+				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+				criteria = new Criteria();
+				String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+				criteria.addEqualExpression(alias, reservationRoom.getId());
+				if (reservationRoomDetailBean.getCount(criteria) == 0) {
+					return true;
+				}
+			}
+		}
+		return pendingRooms;
+	}
+
+	public boolean isPendingServiceAssignation() throws ManagerBeanException {
+		boolean pendingServices = true;
+		if (getModel().isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)getModel().getRowData();
+			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+			IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
+			for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+				pendingServices = false;
+				ProjectReservationService reservationService = (ProjectReservationService)ito;
+				criteria = new Criteria();
+				String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+				criteria.addEqualExpression(alias, reservationService.getId());
+				criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
+				if (reservationServiceDetailBean.getCount(criteria) > 0) {
+					return true;
+				}
+			}
+		}
+		return pendingServices;
+	}
+
 	public void resetHotel() throws ManagerBeanException {
 		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		if (collections.getCurrentUserHotelsCount() > 0) {
@@ -321,12 +374,6 @@ public class ProjectReservationController extends BasicController {
 	public boolean isBlocked() {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		return reservation.isBlocked();
-	}
-
-	public void onLoad(ActionEvent event) throws ManagerBeanException {
-		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
-		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
-		onSearch(event);
 	}
 
 	public void onBlock(ActionEvent event) {

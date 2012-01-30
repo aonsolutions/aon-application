@@ -1,9 +1,11 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,12 +22,15 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationRoomController extends LinesController {
 
 	private boolean showRoomDetailWindow;
+	private Integer[] linkedServices;
 
 	public boolean isShowRoomDetailWindow() {
 		return showRoomDetailWindow;
@@ -33,6 +38,14 @@ public class ProjectReservationRoomController extends LinesController {
 
 	public void setShowRoomDetailWindow(boolean showRoomDetailWindow) {
 		this.showRoomDetailWindow = showRoomDetailWindow;
+	}
+
+	public Integer[] getLinkedServices() {
+		return linkedServices;
+	}
+
+	public void setLinkedServices(Integer[] linkedServices) {
+		this.linkedServices = linkedServices;
 	}
 
 	@Override
@@ -89,8 +102,9 @@ public class ProjectReservationRoomController extends LinesController {
 
 		if (reservationRoom.getRoomNumber() == null && availableRoom != null) {
 			ReservationUtils reservationUtils = new ReservationUtils();
-	    	reservationUtils.insertProjectReservationRoomDetails(reservationRoom, availableRoom);
+	    	reservationUtils.insertProjectReservationRoomDetails(reservationRoom, availableRoom, getLinkedServices());
 		}
+		setLinkedServices(null);
 	}
 
 	public void onCancelReservationRoom(ActionEvent event) throws ManagerBeanException {
@@ -147,11 +161,57 @@ public class ProjectReservationRoomController extends LinesController {
 	}
 
 	private List<ITransferObject> getRoomDetailList(ProjectReservationRoom room) throws ManagerBeanException {
-		IManagerBean roomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(roomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID), room.getId());
-		criteria.addOrder(roomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE));
-		return roomDetailBean.getList(criteria);
+		criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID), room.getId());
+		criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE));
+		return reservationRoomDetailBean.getList(criteria);
+	}
+
+	public List<SelectItem> getAvailableServicesList() throws ManagerBeanException {
+		List<ProjectReservationService> servicesList = new LinkedList<ProjectReservationService>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, ((ProjectReservationRoom)getTo()).getProjectReservation().getId());
+		criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
+		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID));
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationService reservationService = ((ProjectReservationServiceDetail)ito).getProjectReservationService();
+			if (!servicesList.contains(reservationService)) {
+				servicesList.add(reservationService);
+			}
+		}
+
+		List<SelectItem> serviceItemList = new LinkedList<SelectItem>();
+		Integer[] services = new Integer[servicesList.size()];
+		for (ProjectReservationService reservationService : servicesList) {
+			SelectItem serviceItem = new SelectItem(reservationService.getId(), reservationService.getDescription());
+			serviceItemList.add(serviceItem);
+			if (reservationService.getProjectReservation().getRoomCount() == 1) {
+				services[servicesList.indexOf(reservationService)] = reservationService.getId();
+			}
+		}
+		setLinkedServices(services);
+		return serviceItemList;
+	}
+
+	public List<ProjectReservationService> getLinkedServicesList() throws ManagerBeanException {
+		List<ProjectReservationService> servicesList = new LinkedList<ProjectReservationService>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, ((ProjectReservationRoom)getTo()).getProjectReservation().getId());
+		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+		criteria.addEqualExpression(alias, ((ProjectReservationRoom)getTo()).getId());
+		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID));
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationService reservationService = ((ProjectReservationServiceDetail)ito).getProjectReservationService();
+			if (!servicesList.contains(reservationService)) {
+				servicesList.add(reservationService);
+			}
+		}
+		return servicesList;
 	}
 
 }

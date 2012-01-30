@@ -10,9 +10,9 @@
 
 	<aon:panelGroup id="showInvoiceWindow">
 		<c:if test="#{controller.showInvoiceWindow}">
-			<rich:modalPanel id="invoiceModalPanel" minHeight="420"
-				minWidth="660" rendered="#{controller.showInvoiceWindow}"
-				showWhenRendered="true" zindex="90">
+			<rich:modalPanel id="invoiceModalPanel" minHeight="420" minWidth="660" 
+				rendered="#{controller.showInvoiceWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{pmsBundle.pms_to_invoice_label}" />

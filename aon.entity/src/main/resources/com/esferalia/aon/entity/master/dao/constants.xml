@@ -298,8 +298,8 @@
 		<hibernate names="id,domain,projectReservationRoom.id,projectReservationRoom.projectReservation.id,assetActivity.id,assetActivity.date"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationServiceDetail" sqlName="project_reservation_service_detail">
-		<alias names="id,domain,invoiceDetail_id,projectReservationService_id,projectReservationService_projectReservation_id,projectReservationRoomDetail,projectReservationRoomDetail_id,effectiveDate,quantity,price,taxableBase"/>
-		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.projectReservation.id,projectReservationRoomDetail,projectReservationRoomDetail.id,effectiveDate,quantity,price,taxableBase"/>
+		<alias names="id,domain,invoiceDetail_id,projectReservationService_id,projectReservationService_projectReservation_id,projectReservationRoomDetail,projectReservationRoomDetail_id,projectReservationRoomDetail_projectReservationRoom_id,effectiveDate,quantity,price,taxableBase"/>
+		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.projectReservation.id,projectReservationRoomDetail,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
 		<alias names="domain,endTime,id,initialAmount,pos_id,pos_workPlace_id,shift,startTime,user"/>

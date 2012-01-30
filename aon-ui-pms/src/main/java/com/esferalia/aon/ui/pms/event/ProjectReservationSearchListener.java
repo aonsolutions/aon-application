@@ -46,7 +46,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE};
+		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE, ReservationStatus.INVOICED};
 		setReservationStatuses(defaultReservationStatus);
 	}
 	
