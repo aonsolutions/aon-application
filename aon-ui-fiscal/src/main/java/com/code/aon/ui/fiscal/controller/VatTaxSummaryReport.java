@@ -14,13 +14,14 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
+
+import org.apache.commons.lang.StringUtils;
+
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.CustomExpression;
@@ -36,7 +37,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
@@ -53,6 +53,7 @@ import com.code.aon.report.jr.exporter.IJRExporterFactory;
 import com.code.aon.report.jr.exporter.JRExporterFactoryManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxSummaryReport {
 
@@ -145,16 +146,16 @@ public class VatTaxSummaryReport {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), getYear());
 			if (getStatus() != null) {
-				c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_STATUS), getStatus());	
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_STATUS), getStatus());	
 			}
 			if (getSecurityLevel() != null) {
-				c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_SECURITY_LEVEL), getSecurityLevel());
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_SECURITY_LEVEL), getSecurityLevel());
 			}
-			c.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD));
-			c.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_KEY));
-			c.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_PERCENT));
+			c.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD));
+			c.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY));
+			c.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_PERCENT));
 			List<ITransferObject> list = bean.getList(c);
 			VatTaxKeyExComparator comparator = new VatTaxKeyExComparator();
 			TreeMap<VatTaxKeyEx, VatSummaryReport> map = new TreeMap<VatTaxKeyEx, VatSummaryReport>(comparator);
@@ -279,9 +280,9 @@ public class VatTaxSummaryReport {
 			JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds);
 			IJRExporterFactory fm = JRExporterFactoryManager.getJRExporterFactory(OutputFormat.XLS); 
 			JRExporter exporter = fm.getJRExporter();
-			fm.fillJRParametersMap(exporter.getParameters());
 		    exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
 		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out); 
+			fm.fillJRParametersMap(null,exporter.getParameters());
 			exporter.exportReport();
 		} catch (IOException e) {
 			e.printStackTrace();

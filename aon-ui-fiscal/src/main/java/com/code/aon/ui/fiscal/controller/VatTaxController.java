@@ -168,9 +168,9 @@ public class VatTaxController extends BasicController {
 			if (isNew()) {
 				VatTax vatTax = (VatTax) getTo();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-				criteria.addLessThanExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
-				criteria.addOrder(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), false);
+				criteria.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+				criteria.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+				criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD), false);
 				System.out.println(criteria);
 				List<ITransferObject> list = getManagerBean().getList(criteria);
 				if (list != null && list.size() > 0) {
