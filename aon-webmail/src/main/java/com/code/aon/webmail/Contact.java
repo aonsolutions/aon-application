@@ -80,7 +80,7 @@ public class Contact implements IPerson {
 	
 	private Boolean contactGroup = Boolean.FALSE;
 	
-	private List<GroupContact> contacts;
+	private List<Contact> contacts;
 	
 	@Id
 	public Name getId() {
@@ -327,16 +327,16 @@ public class Contact implements IPerson {
 	}
 		
 	@BaseDN("{this}")	
-	@Attribute(name=MEMBER_ATTRIBUTE,baseClass="com.code.aon.webmail.GroupContact")
-	public List<GroupContact> getContacts() {
+	@Attribute(name=MEMBER_ATTRIBUTE,baseClass="com.code.aon.webmail.Contact")
+	public List<Contact> getContacts() {
 		return contacts;
 	}
 
-	public void setContacts(List<GroupContact> contacts) {
+	public void setContacts(List<Contact> contacts) {
 		this.contacts = contacts;
 		if ( (contacts != null) && !contacts.isEmpty() ) {
-			this.contacts = new LinkedList<GroupContact>();
-			for( GroupContact gc : contacts ) {
+			this.contacts = new LinkedList<Contact>();
+			for( Contact gc : contacts ) {
 				if ( gc != null ) {
 					this.contacts.add(gc);					
 				}
@@ -359,7 +359,7 @@ public class Contact implements IPerson {
 		if ( getContactGroup() ) {
 			List<String> list = new LinkedList<String>();
 			if ( getContacts() != null ) {
-				for( GroupContact gc : getContacts() ) {
+				for( Contact gc : getContacts() ) {
 					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
 						String email = getEmailLarge( gc.getDisplayName(), gc.getEmail() );
 						list.add( email );						
@@ -381,7 +381,7 @@ public class Contact implements IPerson {
 		if ( getContactGroup() ) {
 			List<String> list = new LinkedList<String>();
 			if ( getContacts() != null ) {
-				for( GroupContact gc : getContacts() ) {
+				for( Contact gc : getContacts() ) {
 					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
 						list.add( gc.getEmail() );						
 					}
