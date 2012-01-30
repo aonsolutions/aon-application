@@ -190,8 +190,8 @@
 
 	<!-- ** AON FISCAL  **************************************************** -->
 	<bean class="com.code.aon.fiscal.VatTaxDetail">
-		<alias names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax_id,vatTax_period,vatTax_status,vatTax_type,vatTax_year"/>
-		<hibernate names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax.id,vatTax.period,vatTax.status,vatTax.type,vatTax.year"/>
+		<alias names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax_id,vatTax_period,vatTax_status,vatTax_type,vatTax_year,vatTax_securityLevel"/>
+		<hibernate names="deductibleQuota,deductibleQuotaAdjust,id,key,percent,quota,quotaAdjust,taxableBase,taxableBaseAdjust,vatTax.id,vatTax.period,vatTax.status,vatTax.type,vatTax.year,vatTax.securityLevel"/>
 	</bean>
 	
 	<bean class="com.code.aon.fiscal.VatTaxDeclaration">
