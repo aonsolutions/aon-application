@@ -136,6 +136,10 @@ public class BasicAlfresco {
 		return parent;
 	}
 	
+	public Predicate getPredicate( Reference reference ) {
+		return new Predicate( new Reference[]{reference}, STORE, null);
+	}
+	
 	public byte[] getContent(Reference node) throws DAOException {
 		byte[] data = null;
 		try {

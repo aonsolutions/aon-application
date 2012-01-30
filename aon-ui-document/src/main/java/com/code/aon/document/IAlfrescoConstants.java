@@ -105,9 +105,13 @@ public interface IAlfrescoConstants {
 	
 	String ALFRESCO_ADMINISTRATORS = "ALFRESCO_ADMINISTRATORS";
 	
+	String ROOT_SPACE = "AON";
+	
 	String ENTERPRISE_PREFFIX = "EMPRESA-";
 	
 	String COMPANY_HOME_PATH = "/app:company_home";
+	
+	String CONSUMER = "Consumer";
 
 	// ************************************************************
 	// MESSAGES

@@ -7,13 +7,17 @@ import static org.alfresco.webservice.util.Constants.PROP_USER_FIRSTNAME;
 import static org.alfresco.webservice.util.Constants.PROP_USER_HOMEFOLDER;
 import static org.alfresco.webservice.util.Constants.PROP_USER_ORGID;
 
+import org.alfresco.webservice.accesscontrol.ACE;
 import org.alfresco.webservice.accesscontrol.AccessControlServiceSoapBindingStub;
+import org.alfresco.webservice.accesscontrol.AccessStatus;
 import org.alfresco.webservice.accesscontrol.NewAuthority;
 import org.alfresco.webservice.accesscontrol.SiblingAuthorityFilter;
 import org.alfresco.webservice.administration.AdministrationServiceSoapBindingStub;
 import org.alfresco.webservice.administration.NewUserDetails;
 import org.alfresco.webservice.administration.UserDetails;
 import org.alfresco.webservice.types.NamedValue;
+import org.alfresco.webservice.types.Predicate;
+import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.ArrayUtils;
@@ -21,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
 import com.code.aon.document.dao.EnterpriseDocumentDAO;
 
@@ -137,10 +140,9 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 	public void createGroup( String name ) throws DAOException {
 		try {
 			startSession();
-	        AccessControlServiceSoapBindingStub acs = getAccessControlService();
 	        NewAuthority cpGrpAuth = new NewAuthority(GROUP_AUTHORITY_TYPE, name);
 	        NewAuthority[] newAuthorities = {cpGrpAuth};
-	        acs.createAuthorities(null, newAuthorities);
+	        getAccessControlService().createAuthorities(null, newAuthorities);
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error creating group " + name, e );
 		} finally {
@@ -151,9 +153,8 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 	public void deleteGroup(String name) throws DAOException {
 		try {
 			startSession();
-	        AccessControlServiceSoapBindingStub acs = getAccessControlService();
 	        String groupName = Constants.GROUP_PREFIX + name;
-	        acs.deleteAuthorities(new String[]{groupName});
+	        getAccessControlService().deleteAuthorities(new String[]{groupName});
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error deleting group " + name, e );
 		} finally {
@@ -221,29 +222,32 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 		}					
 		return users;
 	}	
-	
-	public static void main(String a[]) throws DAOException {
-    	EnterpriseUser user = new EnterpriseUser();
-    	user.setName( "Nombre de Prueba 3" );
-    	user.setLogin( "prueba" );
-    	user.setPassword( "demo" );
-    	Enterprise enterprise = new Enterprise();
-    	enterprise.setId(1);
-    	user.setEnterprise(enterprise);
-    	AlfrescoUserManager um = new AlfrescoUserManager("admin", "admin");
-    	// um.createUser(user);
-    	// um.deleteUser(user.getLogin());
-    	// um.createGroup( "EMPRESA-10" );
-    	// um.deleteGroup( "EMPRESA-10" );
-    	// um.addUserToGroup( user );
-    	// LOGGER.info( "User {} exists: {}", "pepe", um.userExists("pepe") );
-    	// LOGGER.info( "User {} exists: {}", "admin", um.userExists("admin") );
-    	// LOGGER.info( "Users in {}: {}", "EMPRESA-1", um.getUsersInGroup("EMPRESA-1") );    	
-    	// LOGGER.info( "Users in {}: {}", ALFRESCO_ADMINISTRATORS, um.getUsersInGroup(ALFRESCO_ADMINISTRATORS) );
-    	// LOGGER.info( "User {} is administrator: {}", "asesor", um.isAlfrescoAdministrator("asesor") );
-    	// LOGGER.info( "User {} is administrator: {}", "prueba", um.isAlfrescoAdministrator("prueba") );
-    	// um.updateUser(user);
-    	um.changePassword("empresa2", null, "demo");
-    }
+
+	public void setInheritPermission( Reference reference, boolean value ) throws DAOException {
+		try {
+			startSession();
+			Predicate predicate = getPredicate(reference);  
+	        getAccessControlService().setInheritPermission( predicate, value );
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error setting inherit permission for " + reference.getPath(), e );
+		} finally {
+			endSession();
+		}					
+	}
+
+	public String[] addGroupAccess( Reference reference, String group, String permission ) throws DAOException {
+		String[] users = null;
+		try {
+			startSession();
+			Predicate predicate = getPredicate(reference);
+			ACE ace = new ACE(Constants.GROUP_PREFIX + group, permission, AccessStatus.acepted);
+	        getAccessControlService().addACEs(predicate, new ACE[]{ace});			
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error adding group " + group + " access to " + reference.getPath(), e );
+		} finally {
+			endSession();
+		}					
+		return users;
+	}		
 	
 }

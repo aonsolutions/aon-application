@@ -230,7 +230,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	protected Predicate getPredicate( ITransferObject to ) {
 		IAlfrescoTransferObject ad = (IAlfrescoTransferObject) to;
-		return new Predicate( new Reference[]{ad.getId()}, STORE, null);		
+		return getPredicate( ad.getId() );		
 	}
 	
 	@Override
