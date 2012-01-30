@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.ql.Criteria;
@@ -30,6 +31,11 @@ public class VatTax extends VatTaxDB {
 		return (isComplementary() || isReplacement() );
 	}
 	
+	@Transient
+	public boolean isFinished() {
+		return getStatus() == VatTaxStatus.FINISHED;
+	}
+	
     @Transient
     public boolean isReplaced() {
     	if (replaced == null) {
@@ -49,4 +55,9 @@ public class VatTax extends VatTaxDB {
     	}
     	return replaced;
     }
+
+    @Transient
+    public boolean isProrataEnabled() {
+		return (CommonUtil.round(getProrata()) != 100);
+	}
 }
