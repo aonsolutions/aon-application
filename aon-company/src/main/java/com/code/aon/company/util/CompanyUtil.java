@@ -37,5 +37,21 @@ public class CompanyUtil {
 		}
 		return companyGeoZone;
 	}
-
+	
+	public Enterprise getActiveEnterprise() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		List<ITransferObject> list = companyBean.getList(null);
+		if (list == null || list.size() < 1) {
+			throw new IllegalStateException("No existe company!");
+		}
+		Company company = (Company) list.get(0);
+		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_ID), company.getId());
+		list = enterpriseBean.getList(criteria);
+		if (list == null || list.size() < 1) {
+			throw new IllegalStateException("No existe un enterprise vinculado a company!");
+		}
+		return (Enterprise) list.get(0);
+	}
 }
