@@ -50,11 +50,32 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private boolean treeView;
 	
 	private AonFile aonFile;
+	
 	private RegistryAttachment attach;
 	
 	private String formAction;
 	
-    public boolean isTreeView() {
+	private boolean skipResetButton;
+	
+	private boolean skipRemoveButton;
+	
+	public boolean isSkipResetButton() {
+		return skipResetButton;
+	}
+
+	public void setSkipResetButton(boolean skipResetButton) {
+		this.skipResetButton = skipResetButton;
+	}
+
+	public boolean isSkipRemoveButton() {
+		return skipRemoveButton;
+	}
+
+	public void setSkipRemoveButton(boolean skipRemoveButton) {
+		this.skipRemoveButton = skipRemoveButton;
+	}
+
+	public boolean isTreeView() {
 		return treeView;
 	}
 
