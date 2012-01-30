@@ -14,10 +14,14 @@
 				value="#{appBundle.menu_sales}"
 				action="menu_sales" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-sales" />
+		</c:if>
+		<c:if test="#{aonRole.purchaseOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
 			<aon:commandLink id="purchase"
 				value="#{appBundle.menu_purchase}"
 				action="menu_purchase" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-purchase" />
+		</c:if>
+		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="treasury"
 				value="#{financeBundle.finance_menu_group}"
 				action="menu_treasury" immediate="true"

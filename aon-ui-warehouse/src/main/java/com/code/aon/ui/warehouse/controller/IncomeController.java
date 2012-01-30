@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -328,7 +329,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		to.setBankAccount(new BankAccount());
 	}
 
-	public void onWorkPlaceChanged(LookupChangeEvent event) throws ManagerBeanException {
+	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			WorkPlace workPlace = (WorkPlace)event.getNewValue();
 			((Income)this.getTo()).setWorkPlace(workPlace);

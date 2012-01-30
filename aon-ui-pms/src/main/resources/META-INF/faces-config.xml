@@ -128,7 +128,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Room_asset_name</value>
+			<value>Room_hotel_workPlace_description,Room_asset_name</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>

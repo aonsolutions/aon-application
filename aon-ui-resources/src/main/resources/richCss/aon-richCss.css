@@ -2469,6 +2469,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-book{
 	background:transparent url(images/aon-main-menu/aon-icon-book.png) no-repeat scroll center left;
 }
+.aon-icon-room{
+	background:transparent url(images/aon-main-menu/aon-icon-room.png) no-repeat scroll center left;
+}
+.aon-icon-pos{
+	background:transparent url(images/aon-main-menu/aon-icon-pos.png) no-repeat scroll center left;
+}
 .aon-icon-car{
 	background:transparent url(images/aon-main-menu/aon-icon-car.png) no-repeat scroll center left;
 }

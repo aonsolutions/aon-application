@@ -20,10 +20,6 @@
 
 				<ui:define name="searchContent">
 						
-					<aon:outputLabel value="#{bundle.aon_name}" />
-					<aon:inputText id="Room_asset_name" 
-						valueChangeListener="#{room.addExpression}" />
-						
 					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 					<aon:selectOneMenu id="Room_hotel"
 						value="#{roomSearch.hotel}" >
@@ -37,6 +33,10 @@
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
+						
+					<aon:outputLabel value="#{bundle.aon_number}" />
+					<aon:inputText id="Room_asset_name" size="5"
+						valueChangeListener="#{room.addExpression}" />
 						
 				</ui:define>
 			</ui:decorate>				

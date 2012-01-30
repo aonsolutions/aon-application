@@ -20,11 +20,6 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="roomTable" columns="2" width="100%">
-					<aon:outputLabel for="room_name" value="#{bundle.aon_name}" />
-					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
-						size="15" required="#{true}">
-						<f:validateLength maximum="10" />
-					</aon:inputText>
 					
 					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 					<aon:selectOneMenu 
@@ -38,6 +33,12 @@
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="room_name" value="#{bundle.aon_number}" />
+					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
+						size="5" required="#{true}">
+						<f:validateLength maximum="10" />
+					</aon:inputText>
+
 				</aon:panelGrid>
 				
 				<aon:panel rendered="#{!room.new}">

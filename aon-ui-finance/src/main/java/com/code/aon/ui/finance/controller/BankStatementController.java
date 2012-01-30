@@ -178,6 +178,19 @@ public class BankStatementController extends BasicController implements IFinance
 		return writer;
 	}
 
+	public void onEditSearch(ActionEvent event) {
+		try {
+			if (getAvailableRegistryBanks() == 0) {
+				String msg = "No hay Cuentas Bancarias definidas";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} catch (ManagerBeanException ex) {
+			throw new AbortProcessingException(ex);
+		}
+		super.onEditSearch(event);
+	}
+
 	public void onSeeAll(ActionEvent event) throws ManagerBeanException {
 		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		searchListener.setStatementReliabilities(new StatementReliability[0]);

@@ -342,7 +342,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		to.setBankAccount(new BankAccount());
 	}
 
-	public void onWorkPlaceChanged(LookupChangeEvent event) throws ManagerBeanException {
+	public void onWorkPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			WorkPlace workPlace = (WorkPlace)event.getNewValue();
 			((Delivery)this.getTo()).setWorkPlace(workPlace);
