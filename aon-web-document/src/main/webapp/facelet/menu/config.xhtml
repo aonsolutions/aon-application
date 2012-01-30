@@ -32,6 +32,12 @@
 											actionListener="#{alfrescoCategoryGroup.onSearch}" 
 											value="#{registryBundle.registry_category}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="alfrescoGroup" 
+											action="alfrescoGroup" 
+											actionListener="#{alfrescoGroup.onSearch}" 
+											value="#{configBundle.config_scopes}" />
+									</aon:div>
 								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project_type"

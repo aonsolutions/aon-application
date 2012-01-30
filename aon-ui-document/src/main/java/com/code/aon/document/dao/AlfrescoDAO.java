@@ -59,7 +59,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlfrescoDAO.class);
 	
-    private static final String BASE_NAME = "com.code.aon.document.i18n.messages";
+    public static final String BASE_NAME = "com.code.aon.document.i18n.messages";
     
     private ResourceBundle bundle;
 
