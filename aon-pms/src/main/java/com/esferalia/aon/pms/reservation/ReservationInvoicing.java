@@ -1,8 +1,11 @@
 package com.esferalia.aon.pms.reservation;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +149,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
-			invoiceDetail.setDescription(reservationServiceDetail.getProjectReservationService().getDescription());
+			invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
 			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
 			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -169,10 +172,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				}
 			}
 			invoiceDetail.setUpdateEnabled(line == reservationServiceDetailList.size());
-			invoiceDetail = (InvoiceDetail)invoiceDetailBean.insert(invoiceDetail);
-
-			reservationServiceDetail.setInvoiceDetail(invoiceDetail);
-			reservationServiceDetailBean.update(reservationServiceDetail);
+			invoiceDetailBean.insert(invoiceDetail);
 		}
 	}
 
@@ -211,6 +211,14 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {
 		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
 		entryWriter.recordAndUpdateInvoice(invoice);
+	}
+
+	private String obtainDetailDescription(ProjectReservationServiceDetail reservationServiceDetail) throws ManagerBeanException {
+    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	String description = StringUtils.rightPad(formatter.format(reservationServiceDetail.getEffectiveDate()), 11);
+    	description += StringUtils.rightPad(reservationServiceDetail.getProjectReservationRoomDetail().getRoom().getAsset().getName(), 6);
+    	description += reservationServiceDetail.getProjectReservationService().getDescription();
+		return description;
 	}
 
 }
