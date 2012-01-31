@@ -9,10 +9,10 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCalculatorWindow">
-		<c:if test="#{controller.showCalculatorWindow}">
+		<c:if test="#{controller.calculator.showCalculatorWindow}">
 			<rich:modalPanel id="calculatorModalPanel" 
 				height="550" width="350"  
-				rendered="#{controller.showCalculatorWindow}"
+				rendered="#{controller.calculator.showCalculatorWindow}"
 				showWhenRendered="true" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -26,7 +26,7 @@
 							reRender="showCalculatorWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{controller.showCalculatorWindow}"
+								target="#{controller.calculator.showCalculatorWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>
@@ -46,7 +46,7 @@
 										<rich:componentControl for="calculatorModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{controller.showCalculatorWindow}"
+											target="#{controller.calculator.showCalculatorWindow}"
 											value="#{false}" />
 										<aon:actionListener method="#{controller.onAcceptCalculatorAmount}" />
 									</aon:commandButton>	
@@ -59,9 +59,16 @@
 										<rich:componentControl for="calculatorModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
-											target="#{controller.showCalculatorWindow}"
+											target="#{controller.calculator.showCalculatorWindow}"
 											value="#{false}" />
-									</aon:commandButton>	
+									</aon:commandButton>
+									
+									<aon:htmlCommandLink id="reservationInvoice-report"
+										value="#{bundle.aon_report}" title="#{bundle.aon_report}"
+										action="#{report.onExecute}" target="_blank"
+										styleClass="aon-finding-toolbar-item aon-icon-pdf" >
+										<f:param name="reportKey" value="cashDetailCount" />
+									</aon:htmlCommandLink>	
 								</aon:div>
 								
 								<aon:div styleClass="aon-scroll-area" >
@@ -85,122 +92,122 @@
 										
 										
 										<aon:outputLabel value="0.01 €" />
-										<aon:inputText id="amount0" value="#{controller.amounts[0]}" size="15">
+										<aon:inputText id="amount0" value="#{controller.calculator.amounts[0]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount1" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[0]*0.01}" >
+										<aon:outputText value="#{controller.calculator.amounts[0]*0.01}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="0.02 €" />
-										<aon:inputText id="amount1" value="#{controller.amounts[1]}" size="15">
+										<aon:inputText id="amount1" value="#{controller.calculator.amounts[1]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount2" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[1]*0.02}" >
+										<aon:outputText value="#{controller.calculator.amounts[1]*0.02}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="0.05 €" />
-										<aon:inputText id="amount2" value="#{controller.amounts[2]}" size="15">
+										<aon:inputText id="amount2" value="#{controller.calculator.amounts[2]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount3" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[2]*0.05}" >
+										<aon:outputText value="#{controller.calculator.amounts[2]*0.05}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="0.10 €" />
-										<aon:inputText id="amount3" value="#{controller.amounts[3]}" size="15">
+										<aon:inputText id="amount3" value="#{controller.calculator.amounts[3]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount4" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[3]*0.1}" >
+										<aon:outputText value="#{controller.calculator.amounts[3]*0.1}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="0.20 €" />
-										<aon:inputText id="amount4" value="#{controller.amounts[4]}" size="15">
+										<aon:inputText id="amount4" value="#{controller.calculator.amounts[4]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount5" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[4]*0.2}" >
+										<aon:outputText value="#{controller.calculator.amounts[4]*0.2}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="0.50 €" />
-										<aon:inputText id="amount5" value="#{controller.amounts[5]}" size="15">
+										<aon:inputText id="amount5" value="#{controller.calculator.amounts[5]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true"  focus="amount6" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[5]*0.5}" >
+										<aon:outputText value="#{controller.calculator.amounts[5]*0.5}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="1 €" />
-										<aon:inputText id="amount6" value="#{controller.amounts[6]}" size="15">
+										<aon:inputText id="amount6" value="#{controller.calculator.amounts[6]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount7" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[6]*1}" >
+										<aon:outputText value="#{controller.calculator.amounts[6]*1}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="2 €" />
-										<aon:inputText id="amount7" value="#{controller.amounts[7]}" size="15">
+										<aon:inputText id="amount7" value="#{controller.calculator.amounts[7]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true"  focus="amount8" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[7]*2}" >
+										<aon:outputText value="#{controller.calculator.amounts[7]*2}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="5 €" />
-										<aon:inputText id="amount8" value="#{controller.amounts[8]}" size="15">
+										<aon:inputText id="amount8" value="#{controller.calculator.amounts[8]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount9" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[8]*5}" >
+										<aon:outputText value="#{controller.calculator.amounts[8]*5}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="10 €" />
-										<aon:inputText id="amount9" value="#{controller.amounts[9]}" size="15">
+										<aon:inputText id="amount9" value="#{controller.calculator.amounts[9]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount10" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[9]*10}" >
+										<aon:outputText value="#{controller.calculator.amounts[9]*10}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="20 €" />
-										<aon:inputText id="amount10" value="#{controller.amounts[10]}" size="15">
+										<aon:inputText id="amount10" value="#{controller.calculator.amounts[10]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount11" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[10]*20}" >
+										<aon:outputText value="#{controller.calculator.amounts[10]*20}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="50 €" />
-										<aon:inputText id="amount11" value="#{controller.amounts[11]}" size="15">
+										<aon:inputText id="amount11" value="#{controller.calculator.amounts[11]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount12" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[11]*50}" >
+										<aon:outputText value="#{controller.calculator.amounts[11]*50}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="100 €" />
-										<aon:inputText id="amount12" value="#{controller.amounts[12]}" size="15">
+										<aon:inputText id="amount12" value="#{controller.calculator.amounts[12]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount13" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[12]*100}" >
+										<aon:outputText value="#{controller.calculator.amounts[12]*100}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="200 €" />
-										<aon:inputText id="amount13" value="#{controller.amounts[13]}" size="15">
+										<aon:inputText id="amount13" value="#{controller.calculator.amounts[13]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount14" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[13]*200}" >
+										<aon:outputText value="#{controller.calculator.amounts[13]*200}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
 										<aon:outputLabel value="500 €" />
-										<aon:inputText id="amount14" value="#{controller.amounts[14]}" size="15">
+										<aon:inputText id="amount14" value="#{controller.calculator.amounts[14]}" size="15">
 											<a4j:support event="onchange" reRender="calculatorGrid" ignoreDupResponses="true" focus="amount0" />
 										</aon:inputText>
-										<aon:outputText value="#{controller.amounts[14]*500}" >
+										<aon:outputText value="#{controller.calculator.amounts[14]*500}" >
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										
@@ -213,7 +220,7 @@
 													<aon:outputLabel value="Total" />
 												</rich:column>
 												<rich:column styleClass="aon-panelGrid-even">
-													<aon:outputText value="#{controller.calcTotal}" >
+													<aon:outputText value="#{controller.calculator.calcTotal}" >
 														<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 													</aon:outputText>
 												</rich:column>

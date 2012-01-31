@@ -51,7 +51,7 @@
 						rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
 						styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
 						actionListener="#{modalController.onShowCalculatorWindow}" >
-						<f:setPropertyActionListener target="#{modalController.showCalculatorWindow}"
+						<f:setPropertyActionListener target="#{modalController.calculator.showCalculatorWindow}"
 							value="#{true}" />								
 					</aon:commandButton>
 				</aon:div>
@@ -66,7 +66,7 @@
 							rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
 							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
 							actionListener="#{modalController.onShowCalculatorWindow}" >
-							<f:setPropertyActionListener target="#{modalController.showCalculatorWindow}"
+							<f:setPropertyActionListener target="#{modalController.calculator.showCalculatorWindow}"
 								value="#{true}" />								
 						</aon:commandButton>
 					</aon:div>

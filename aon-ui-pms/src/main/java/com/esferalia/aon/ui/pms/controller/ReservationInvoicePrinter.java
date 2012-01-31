@@ -1,11 +1,14 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.Collection;
+import java.util.List;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 
 
 
@@ -15,18 +18,15 @@ public class ReservationInvoicePrinter {
 		return new ReservationInvoicePrinter();
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public Collection getCollection() throws ManagerBeanException {
-		ProjectReservationController reservationController = (ProjectReservationController) FormUtil.getController("reservation");
-		if(reservationController.getTo()!=null){
-			ProjectReservationServiceController reservationServiceController = (ProjectReservationServiceController) FormUtil.getController("reservationService");
-			return reservationServiceController.getServiceDetailList();
+	public ProjectReservation getProjectReservation(Integer projectId) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_PROJECT_ID), projectId);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			return ((ProjectReservation)list.get(0));
 		}
 		return null;
-	}
-	
-	public ProjectReservation getProjectReservation() throws ManagerBeanException {
-		return ((ProjectReservationServiceDetail) (getCollection().isEmpty()?null:getCollection().toArray()[0])).getProjectReservationService().getProjectReservation();
 	}
 
 

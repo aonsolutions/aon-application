@@ -33,21 +33,6 @@
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
-					<aon:outputLabel for="ProposalDetail_description" value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" title="#{to.description}" rendered="#{formList}" >
-					<aon:abbreviateConverter maxWidth="60" />
-				</aon:outputText>
-				<aon:inputTextarea id="ProposalDetail_description" rendered="#{formEdit}" 
-					value="#{to.description}" cols="60" rows="4"  />
-				<f:facet name="footer">
-					<aon:inputTextarea id="ProposalDetail_description-New" rendered="#{formNew}" 
-						value="#{controller.to.description}" cols="60" rows="4"  />
-				</f:facet>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
 					<aon:outputLabel for="ProposalDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}" rendered="#{formList}">
@@ -64,43 +49,7 @@
 					</aon:inputText>
 				</f:facet>
 			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel for="ProposalDetail_price" value="#{bundle.aon_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.price}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="ProposalDetail_price" rendered="#{formEdit}"
-					value="#{to.price}" >
-					<f:validateDoubleRange minimum="0.0" />
-				</aon:inputText>
-				<f:facet name="footer">
-					<aon:inputText id="ProposalDetail_price-New" rendered="#{formNew}"
-						value="#{controller.to.price}" >
-						<f:validateDoubleRange minimum="0.0" />
-					</aon:inputText>
-				</f:facet>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel for="ProposalDetail_discountExpr" value="#{bundle.aon_discount}" />
-				</f:facet>
-				<aon:outputText value="#{to.discountExpr}" rendered="#{formList}" />
-				<aon:inputText id="ProposalDetail_discountExpr" rendered="#{formEdit}" 
-					value="#{to.discountExpr}" >
-					<f:validateLength maximum="32" />
-				</aon:inputText>
-				<f:facet name="footer">
-					<aon:inputText id="ProposalDetail_discountExpr-New" rendered="#{formNew}" 
-						value="#{controller.to.discountExpr}"  >
-						<f:validateLength maximum="32" />
-					</aon:inputText>
-				</f:facet>
-			</aon:column>
-		
+
 		</ui:define>
 
 	</ui:decorate>

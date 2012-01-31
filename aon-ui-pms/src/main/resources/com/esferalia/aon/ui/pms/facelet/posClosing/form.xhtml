@@ -87,14 +87,14 @@
 					<aon:outputLabel for="PosShiftCount_amount" value="#{pmsBundle.pms_cash_payMethod_name}" />
 					<aon:div>
 						<aon:inputText id="PosShiftCount_amount" required="true"
-							value="#{posClosing.cashAmount}" >
+							value="#{posClosing.calculator.cashAmount}" >
 							<f:validateDoubleRange minimum="0.0" />
 						</aon:inputText>
 						<aon:commandButton 
 							reRender="showCalculatorWindow" ajaxSingle="true"
 							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
 							actionListener="#{posClosing.onShowCalculatorWindow}" >
-							<f:setPropertyActionListener target="#{posClosing.showCalculatorWindow}"
+							<f:setPropertyActionListener target="#{posClosing.calculator.showCalculatorWindow}"
 								value="#{true}" />								
 						</aon:commandButton>
 					</aon:div>

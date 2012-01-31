@@ -485,6 +485,13 @@
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosClosingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
+	
+	<!-- ************* CASH COUNT CALCULATOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>cashCountCalculator</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.CashCountCalculator</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
 
 	<!-- ************* POS SHIFT ***************** -->
 	<managed-bean>

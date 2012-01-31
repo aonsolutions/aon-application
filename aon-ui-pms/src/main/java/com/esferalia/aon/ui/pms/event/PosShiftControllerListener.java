@@ -29,9 +29,9 @@ public class PosShiftControllerListener extends ControllerAdapter {
 		PosShiftController controller = (PosShiftController) this.getController();
 		try {
 			if( getPosShiftCount()!=null ){
-				controller.setCashAmount(getPosShiftCount().getAmount());
+				controller.getCalculator().setCashAmount(getPosShiftCount().getAmount());
 			} else {
-				controller.setCashAmount(null);
+				controller.getCalculator().setCashAmount(null);
 			}
 		} catch (ManagerBeanException e) {
 			// TODO: handle exception
@@ -84,7 +84,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	
 	private void acceptCashAmount() throws ManagerBeanException {
 		PosShiftController controller = (PosShiftController) this.getController();
-		if ( controller.getCashAmount()==null ) {
+		if ( controller.getCalculator().getCashAmount()==null ) {
 			String msg = "El importe en efectivo no puede ser nulo.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
@@ -95,7 +95,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 			psc.setPosShift(controller.getPosShift());
 			psc.setPayMethod(getCashPayMethod());
 		}
-		psc.setAmount(controller.getCashAmount());
+		psc.setAmount(controller.getCalculator().getCashAmount());
 		IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
 		bean.insertOrUpdate(psc);
 	}
@@ -106,7 +106,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 		if( psc != null ){
 			IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
 			bean.remove(psc);
-			controller.setCashAmount(null);
+			controller.getCalculator().setCashAmount(null);
 		}
 	}
 	
@@ -138,14 +138,14 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	private void checkClosingWithCash() {
 		PosShiftController controller = (PosShiftController) this.getController();
 		PosShift ps = (PosShift) controller.getTo();
-		if ( ps.getEndTime()!=null && controller.getCashAmount()==null ) {
+		if ( ps.getEndTime()!=null && controller.getCalculator().getCashAmount()==null ) {
 			String msg = "El importe en efectivo no puede ser nulo.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
-		} else if ( controller.getCashAmount()!=null && ps.getEndTime()==null ) {
+		} else if ( controller.getCalculator().getCashAmount()!=null && ps.getEndTime()==null ) {
 			String msg = "No se puede grabar el importe en efectivo sin una fecha de cierre.";
 			AonUtil.addErrorMessage(msg);
-			controller.setCashAmount(null);
+			controller.getCalculator().setCashAmount(null);
 		}
 	}
 	

@@ -24,12 +24,10 @@
 				
 					<aon:outputLabel for="Proposal_issueDate" 
 						value="#{purchaseBundle.purchase_issueDate}" />
-					<aon:selectInputDate id="Proposal_issueDate"
-						value="#{proposal.to.issueDate}" size="20"
-						inputSize="16" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
+					<aon:outputText value="#{proposal.to.issueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
 
 					<aon:outputLabel for="Proposal_workPlce" 
 						value="#{companyBundle.company_workplace}" />

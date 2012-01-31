@@ -579,6 +579,9 @@ public class ProjectReservationController extends BasicController {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), ((Invoice)getInvoiceModel().getRowData()).getId());
 
 			((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME)).setCriteria(criteria);
+			((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME)).onSearch(event);
+			((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME)).getModel().setRowIndex(0);
+			((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME)).onSelect(event);
 		}
 	}
 
