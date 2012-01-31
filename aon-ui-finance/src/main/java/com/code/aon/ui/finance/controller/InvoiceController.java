@@ -36,7 +36,6 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceSource;
-import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -431,7 +430,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public boolean isRemovable() {
 		InvoiceDetailController invoiceDetailController = (InvoiceDetailController)FormUtil.getController(invoiceDetailControllerName);
-		return (invoiceDetailController.getTo() == null && InvoiceStatus.PENDING == getInvoice().getStatus());
+		return (invoiceDetailController.getTo() == null && !isReadOnly());
 	}
 	
 	public boolean isAccountSource() throws ManagerBeanException {
