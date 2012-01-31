@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryExpense" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="35" bottomMargin="42" isFloatColumnFooter="true">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="690"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
-	<style name="Default"/>
+	<style name="default" isDefault="true" fontName="SansSerif"/>
 	<style name="complements_TABLE">
 		<box>
 			<pen lineWidth="0.0" lineColor="#FFFFFF"/>
@@ -130,7 +129,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getContract().getWorkPlace().getDescription()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getContract().getWorkPlace().getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement x="0" y="0" width="90" height="14"/>
@@ -138,7 +137,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_workplace}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{payroll_workplace}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -150,7 +149,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_subtotal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$R{payroll_subtotal}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="210" y="0" width="80" height="14"/>
@@ -158,7 +157,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalPayment}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalPayment}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="340" y="0" width="45" height="14"/>
@@ -166,7 +165,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalIrpf}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalIrpf}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="290" y="0" width="50" height="14"/>
@@ -174,7 +173,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSSEmployee}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalSSEmployee}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="435" y="0" width="75" height="14"/>
@@ -182,7 +181,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalLiquid}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalLiquid}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="510" y="0" width="75" height="14"/>
@@ -190,7 +189,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSSEnterprise}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalSSEnterprise}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="660" y="0" width="75" height="14"/>
@@ -198,7 +197,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalExpense}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalExpense}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="385" y="0" width="50" height="14"/>
@@ -206,7 +205,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalOther}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalOther}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="false">
 					<reportElement key="textField" x="585" y="0" width="75" height="14"/>
@@ -214,7 +213,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 						<topPen lineWidth="0.5" lineStyle="Solid"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle"/>
-					<textFieldExpression class="java.lang.Double"><![CDATA[$V{subtotalSS}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$V{subtotalSS}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -232,7 +231,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_expense}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_salary_expense}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -244,14 +243,14 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_enterprise}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_enterprise}+": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="54" y="0" width="281" height="15"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getEnterpriseName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="660" y="0" width="142" height="15"/>
@@ -264,7 +263,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="0" y="15" width="54" height="15"/>
@@ -272,14 +271,14 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_period}+": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_period}+": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="54" y="15" width="281" height="15"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{month}.getName( $P{REPORT_LOCALE} ) + ", " + $P{year}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{month}.getName( $P{REPORT_LOCALE} ) + ", " + $P{year}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -296,7 +295,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_employee_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_employee_name}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="170" y="0" width="40" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -309,7 +308,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_type}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_salary_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="210" y="0" width="80" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -322,7 +321,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_total_payment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_total_payment}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="340" y="0" width="45" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -335,7 +334,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_irpf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_irpf}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="435" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -348,7 +347,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_total_liquid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_total_liquid}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="510" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -361,7 +360,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_enterprise_expense}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_enterprise_expense}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="660" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -374,7 +373,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_total_expense}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_total_expense}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="290" y="0" width="50" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -387,7 +386,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_ss}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_ss}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="385" y="0" width="50" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -400,7 +399,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_other}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_other}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="585" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
@@ -413,7 +412,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_ss_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_ss_total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -430,7 +429,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getEmployeeName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-8" x="170" y="0" width="40" height="14"/>
@@ -443,7 +442,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="210" y="0" width="80" height="14"/>
@@ -456,7 +455,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="340" y="0" width="45" height="14"/>
@@ -469,7 +468,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="290" y="0" width="50" height="14"/>
@@ -482,7 +481,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="435" y="0" width="75" height="14"/>
@@ -495,7 +494,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="510" y="0" width="75" height="14"/>
@@ -508,7 +507,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalEnterprise()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalEnterprise()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="660" y="0" width="75" height="14"/>
@@ -521,7 +520,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalPayment()+$F{salary}.getTotalEnterprise()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()+$F{salary}.getTotalEnterprise()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="385" y="0" width="50" height="14"/>
@@ -534,7 +533,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></variableE
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[($F{salary}.getDeductions().getAdvancePayment()==null?
+				<textFieldExpression><![CDATA[($F{salary}.getDeductions().getAdvancePayment()==null?
 new Double(0.0):$F{salary}.getDeductions().getAdvancePayment().getAmount())
 +($F{salary}.getDeductions().getInKind()==null?
 new Double(0.0):$F{salary}.getDeductions().getInKind().getAmount())
@@ -552,7 +551,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalEnterprise()
+				<textFieldExpression><![CDATA[$F{salary}.getTotalEnterprise()
 +$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
 			</textField>
 		</band>
@@ -568,7 +567,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalExpense}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalExpense}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="210" height="14"/>
@@ -576,7 +575,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_enterprise_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{payroll_enterprise_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="340" y="0" width="45" height="14"/>
@@ -587,7 +586,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalIrpf}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalIrpf}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="290" y="0" width="50" height="14"/>
@@ -598,7 +597,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSSEmployee}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSSEmployee}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="210" y="0" width="80" height="14"/>
@@ -609,7 +608,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalPayment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalPayment}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="510" y="0" width="75" height="14"/>
@@ -620,7 +619,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSSEnterprise}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSSEnterprise}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="435" y="0" width="75" height="14"/>
@@ -631,7 +630,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalLiquid}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalLiquid}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="385" y="0" width="50" height="14"/>
@@ -642,7 +641,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalOther}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalOther}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" x="585" y="0" width="75" height="14"/>
@@ -653,7 +652,7 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalSS}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{totalSS}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
@@ -663,13 +662,13 @@ new Double(0.0):$F{salary}.getDeductions().getOther().getAmount())]]></textField
 				<reportElement x="0" y="0" width="786" height="14"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="786" y="0" width="16" height="14"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Bottom"/>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
