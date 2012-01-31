@@ -8,7 +8,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="activityForm">
+		<aon:form id="roomForm">
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -35,9 +35,7 @@
 					
 					<aon:outputLabel for="room_name" value="#{bundle.aon_number}" />
 					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
-						size="5" required="#{true}">
-						<f:validateLength maximum="10" />
-					</aon:inputText>
+						size="5" maxlength="5" required="#{true}" />
 
 				</aon:panelGrid>
 				
@@ -50,11 +48,6 @@
 				
 			</aon:div>
 		</aon:form>
-		
-<!--  
-		<aon:lookupButtonPopup lookup="#{assetTypeLookup}" />
-		<aon:lookupButtonPopup lookup="#{featureLookup}" />
--->
-		
+
 	</ui:define>
 </ui:composition>
