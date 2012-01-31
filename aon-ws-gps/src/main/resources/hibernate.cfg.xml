@@ -43,6 +43,9 @@
     	<mapping class="com.code.aon.finance.InvoiceDetail"/>
     	<mapping class="com.code.aon.geozone.GeoZone"/>
     	<mapping class="com.code.aon.product.Brand"/>
+    	<mapping class="com.code.aon.product.Catalogue"/>
+    	<mapping class="com.code.aon.product.CatalogueCategory"/>
+    	<mapping class="com.code.aon.product.CatalogueItem"/>
     	<mapping class="com.code.aon.product.Item"/>
     	<mapping class="com.code.aon.product.ItemSupplier"/>
     	<mapping class="com.code.aon.product.Product"/>
