@@ -1,8 +1,9 @@
 package com.esferalia.aon.pms;
 
-
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -16,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.IProject;
@@ -64,6 +66,33 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 			return reservationGuest.getFullName();
 		}
 		return null;
+	}
+
+	@Transient
+	public String getTariffInfo() throws ManagerBeanException {
+		Map<Integer, String> tariffInfoMap = new HashMap<Integer, String>();
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			Tariff tariff = ((ProjectReservationRoom)ito).getTariff();
+			String rooms = ((ProjectReservationRoom)ito).getRoomNumber();
+			if (!tariffInfoMap.containsKey(tariff.getId())) {
+				tariffInfoMap.put(tariff.getId(), tariff.getName() + " (" + rooms);
+			} else {
+				tariffInfoMap.put(tariff.getId(), tariffInfoMap.get(tariff.getId()) + ", " + rooms);
+			}
+		}
+
+		String tariffInfo = "";
+		for (String info : tariffInfoMap.values()) {
+			if (!tariffInfo.equals("")) {
+				tariffInfo += " - ";
+			}
+			tariffInfo += info + ")";
+		}
+		return tariffInfo;
 	}
 
 	@Transient
