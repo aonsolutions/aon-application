@@ -15,7 +15,7 @@
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
 				<ui:param name="skipSaveButton" value="#{!reservation.active or !aonRole.saleOperator}" />
-				<ui:param name="skipRemoveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="reservation-Invoice"
 						value="#{pmsBundle.pms_to_invoice}"
@@ -77,6 +77,8 @@
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
+			<ui:param name="directCustomer" value="#{reservation.to.project.registry.id == reservation.to.hotel.customer.id}" />
+			<ui:param name="service" value="#{false}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalRectification.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
