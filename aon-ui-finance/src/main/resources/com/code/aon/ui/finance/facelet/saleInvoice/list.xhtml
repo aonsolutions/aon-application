@@ -28,7 +28,8 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="saleInvoiceList" />
 					</aon:htmlCommandLink>
-
+<!--	DEPRECATED
+ 
 					<aon:htmlCommandLink id="saleInvoiceDetailledList-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
@@ -41,6 +42,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-pdf">
 						<f:param name="reportKey" value="saleInvoiceDetailledList" />
 					</aon:htmlCommandLink>
+ -->					
 				</ui:define>
 
 			</ui:decorate>
@@ -124,7 +126,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
-							<aon:outputText value="#{controller.invoiceTotalPrice}">
+							<aon:outputText value="#{to.total}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>

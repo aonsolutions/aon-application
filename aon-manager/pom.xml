@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.22</version>
+		<version>6.22.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.manager</artifactId>
 	<packaging>jar</packaging>
-	<version>6.22</version>
+	<version>6.22.1</version>
 	<description>AON MANAGER</description>
 	<name>AON MANAGER</name>	
 	<dependencies>

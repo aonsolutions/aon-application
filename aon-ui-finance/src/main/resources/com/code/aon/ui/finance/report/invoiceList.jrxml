@@ -3,14 +3,12 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6105100000000043"/>
-	<property name="ireport.x" value="216"/>
+	<property name="ireport.x" value="103"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="PriceStrategy" class="com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy" isForPrompting="false"/>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="title" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
@@ -26,32 +24,24 @@
 	<field name="registryDocument" class="java.lang.String"/>
 	<field name="type" class="com.code.aon.finance.enumeration.InvoiceType"/>
 	<field name="documentNumber" class="java.lang.String"/>
+	<field name="taxableBase" class="java.lang.Double"/>
+	<field name="vatQuota" class="java.lang.Double"/>
+	<field name="retentionQuota" class="java.lang.Double"/>
+	<field name="total" class="java.lang.Double"/>
 	<variable name="currentBean" class="java.lang.Object" resetType="None">
 		<variableExpression><![CDATA[((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
-	<variable name="invoiceTaxableBase" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTaxableBase((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean}))]]></variableExpression>
-	</variable>
 	<variable name="reportTaxableBaseTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceTaxableBase}]]></variableExpression>
-	</variable>
-	<variable name="invoiceVat" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalVatQuota((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean},(com.code.aon.registry.ITaxInfo) $V{currentBean}))]]></variableExpression>
+		<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 	</variable>
 	<variable name="reportVatTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceVat}]]></variableExpression>
-	</variable>
-	<variable name="invoiceRetention" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[new Double (0.00 - $P{PriceStrategy}.getTotalRetentionQuota((com.code.aon.product.strategy.ICalculableContainer) $V{currentBean},(com.code.aon.registry.ITaxInfo) $V{currentBean}))]]></variableExpression>
+		<variableExpression><![CDATA[$F{vatQuota}]]></variableExpression>
 	</variable>
 	<variable name="reportRetentionTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceRetention}]]></variableExpression>
-	</variable>
-	<variable name="invoiceTotal" class="java.lang.Double" resetType="None">
-		<variableExpression><![CDATA[com.code.aon.common.util.CommonUtil.round($V{invoiceTaxableBase}.doubleValue() + $V{invoiceVat}.doubleValue() - $V{invoiceRetention}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[$F{retentionQuota}]]></variableExpression>
 	</variable>
 	<variable name="reportTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
 	<group name="reportGroup">
 		<groupExpression><![CDATA[null]]></groupExpression>
@@ -187,10 +177,10 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="17" splitType="Stretch">
+		<band height="14" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean($P{printHeaders}.booleanValue() || (!$P{printHeaders}.booleanValue() && $V{PAGE_NUMBER}.intValue()==1))]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-3" mode="Opaque" x="43" y="0" width="69" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-3" mode="Opaque" x="43" y="0" width="69" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -198,12 +188,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-4" mode="Opaque" x="181" y="0" width="177" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-4" mode="Opaque" x="181" y="0" width="177" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -211,12 +201,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_company}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-5" mode="Opaque" x="0" y="0" width="43" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-5" mode="Opaque" x="0" y="0" width="43" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -224,12 +214,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-7" mode="Opaque" x="506" y="0" width="49" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-7" mode="Opaque" x="506" y="0" width="49" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -237,12 +227,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-21" mode="Opaque" x="358" y="0" width="49" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-21" mode="Opaque" x="358" y="0" width="49" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -250,12 +240,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_list_report_base}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-21" mode="Opaque" x="454" y="0" width="52" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-21" mode="Opaque" x="454" y="0" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -263,12 +253,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_list_report_irpf}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-21" mode="Opaque" x="407" y="0" width="47" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-21" mode="Opaque" x="407" y="0" width="47" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -276,12 +266,12 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{invoice_list_report_iva}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-3" mode="Opaque" x="112" y="0" width="69" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField-3" mode="Opaque" x="112" y="0" width="69" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -289,16 +279,16 @@
 					<rightPen lineStyle="Solid"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_document_number}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="14" splitType="Stretch">
+		<band height="12" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" x="43" y="0" width="69" height="14"/>
+				<reportElement key="textField-8" x="43" y="0" width="69" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -311,7 +301,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-9" x="506" y="0" width="49" height="14"/>
+				<reportElement key="textField-9" x="506" y="0" width="49" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -321,10 +311,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceTotal}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-11" x="0" y="0" width="43" height="14"/>
+				<reportElement key="textField-11" x="0" y="0" width="43" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -336,8 +326,8 @@
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-12" x="181" y="0" width="177" height="14"/>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-12" x="181" y="0" width="177" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -350,7 +340,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-22" x="454" y="0" width="52" height="14"/>
+				<reportElement key="textField-22" x="454" y="0" width="52" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -360,10 +350,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceRetention}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{retentionQuota}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-22" x="407" y="0" width="47" height="14"/>
+				<reportElement key="textField-22" x="407" y="0" width="47" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -373,10 +363,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceVat}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{vatQuota}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-22" x="358" y="0" width="49" height="14"/>
+				<reportElement key="textField-22" x="358" y="0" width="49" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -386,10 +376,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{invoiceTaxableBase}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxableBase}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" x="112" y="0" width="69" height="14"/>
+				<reportElement key="textField-8" x="112" y="0" width="69" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -410,7 +400,7 @@
 		<band height="20" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-16" x="0" y="0" width="540" height="20"/>
+				<reportElement key="textField-16" x="0" y="0" width="519" height="20"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -423,7 +413,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
-				<reportElement key="textField-15" x="540" y="0" width="15" height="20"/>
+				<reportElement key="textField-15" x="519" y="0" width="36" height="20"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
