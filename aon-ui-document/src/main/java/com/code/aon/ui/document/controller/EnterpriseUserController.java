@@ -7,6 +7,8 @@ import static com.code.aon.ui.document.controller.IDocumentConstants.USER_DUPLIC
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.INVALID_NAME;
 
+import java.util.List;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -148,6 +150,16 @@ public class EnterpriseUserController extends BasicController {
 			return mc.getUserManager().isAlfrescoAdministrator(user.getLogin());			
 		}
 		return false;
+	}
+
+	public String getCurrentScopeList() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			EnterpriseUser user = (EnterpriseUser) getSelectedTO();
+			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+			List<String> scopes = mc.getUserManager().getUserScopes(user.getLogin());			
+			return StringUtils.join(scopes, ", ");			
+		}
+		return null;
 	}
 	
 }

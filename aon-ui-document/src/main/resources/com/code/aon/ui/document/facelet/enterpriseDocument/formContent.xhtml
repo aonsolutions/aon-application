@@ -76,21 +76,30 @@
 				timeZone="#{timeZoneController.timeZone}" inputSize="16"
 				popupDateFormat="#{bundle.aon_timestamp2_pattern}" />				
 			
-			<aon:outputLabel rendered="#{!enterpriseDocument.new}"
-				value="#{documentBundle.document_createdDate}" />
-			<aon:outputText rendered="#{!enterpriseDocument.new}"
-				value="#{enterpriseDocument.to.createdDate}">
-				<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>
-
-			<aon:outputLabel rendered="#{!enterpriseDocument.new}"
-				value="#{documentBundle.document_modifiedDate}" />
-			<aon:outputText rendered="#{!enterpriseDocument.new}"
-				value="#{enterpriseDocument.to.modifiedDate}">
-				<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-			</aon:outputText>
+			<c:if test="#{manager.showScopes}" >
+				<aon:outputLabel for="scope"
+					value="#{configBundle.config_scope}" />
+				<aon:selectOneMenu id="scope"
+					converter="#{alfrescoGroup.converter}"
+					value="#{enterpriseDocument.to.scope}">
+					<f:selectItem itemLabel="-" itemValue="#{null}"/>
+					<f:selectItems value="#{manager.userScopes}" />
+				</aon:selectOneMenu>					
+			</c:if>
+			
+			<c:if test="#{!enterpriseDocument.new}" >
+				<aon:outputLabel value="#{documentBundle.document_createdDate}" />
+				<aon:outputText value="#{enterpriseDocument.to.createdDate}">
+					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+	
+				<aon:outputLabel value="#{documentBundle.document_modifiedDate}" />
+				<aon:outputText value="#{enterpriseDocument.to.modifiedDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</c:if>
 				
 		</aon:panelGrid>
 
