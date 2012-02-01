@@ -16,7 +16,7 @@
 	@Override
 	public int hashCode() {
 		return new ${pojo.importType("org.apache.commons.lang.builder.HashCodeBuilder")}()
-<#foreach property in pojo.getAllPropertiesIterator()>			.append(${property.getName()})
-</#foreach>
+<#foreach property in pojo.getAllPropertiesIterator()><#if !aonExporter.isRecursiveProperty(pojo,property)>			.append(${property.getName()})
+</#if></#foreach>
 			.toHashCode();
    }   

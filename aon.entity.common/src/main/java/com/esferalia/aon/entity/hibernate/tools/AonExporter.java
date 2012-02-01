@@ -126,6 +126,33 @@ public class AonExporter extends GenericExporter{
 		return map;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public boolean isStringEnum(Property property) {
+		try {
+			Class clazz = Class.forName(property.getType().getName());
+			Class[] interfaces = clazz.getInterfaces();
+			for (Class interfaz : interfaces) {
+				if (IStringEnum.class.equals(interfaz)) {
+					return true;
+				}
+			}
+		} catch (MappingException e) {
+			// ignore hibernate tools will fail
+		} catch (ClassNotFoundException e) {
+			// ignore hibernate tools will fail
+		}
+		return false;
+	}
+	
+	public boolean isRecursiveProperty(POJOClass pojo, Property property) {
+		if (property.getType().isEntityType()) {
+			String propertyClass = ClassUtils.getShortClassName(property.getType().getName()) + CLASS_SUFFIX;
+			String pojoClass = pojo.getDeclarationName();
+			return StringUtils.equals(propertyClass, pojoClass);
+		}
+		return false;
+	}
+
 	static {
 		map = new HashMap<String, String>();
 		// AON ACCOUNT
@@ -465,25 +492,4 @@ public class AonExporter extends GenericExporter{
 		
 	}
 		
-	@SuppressWarnings("rawtypes")
-	public boolean isStringEnum(Property property) {
-		try {
-			Class clazz = Class.forName(property.getType().getName());
-			Class[] interfaces = clazz.getInterfaces();
-			for (Class interfaz : interfaces) {
-				if (IStringEnum.class.equals(interfaz)) {
-					return true;
-				}
-			}
-		} catch (MappingException e) {
-			// ignore hibernate tools will fail
-		} catch (ClassNotFoundException e) {
-			// ignore hibernate tools will fail
-		}
-		return false;
-	}
-//		return (property.getType().getName().equals(Country.class.getName()))
-//			|| (property.getType().getName().equals(StreetType.class.getName()))
-//			|| (property.getType().getName().equals(SuspensionCause.class.getName()));
-//	}
 }
