@@ -71,6 +71,9 @@ public class ManagerController implements IEnterpriseController {
 		}
 		this.userManager = new AlfrescoUserManager(loggedUser.getLogin(), loggedUser.getPassword());
 		this.administrator = this.userManager.isAlfrescoAdministrator(loggedUser.getLogin());
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ec.setSkipResetButton(!this.administrator);
+		ec.setSkipRemoveButton(!this.administrator);
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());

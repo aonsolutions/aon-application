@@ -105,6 +105,8 @@ public interface IAlfrescoConstants {
 	
 	String ALFRESCO_ADMINISTRATORS = "ALFRESCO_ADMINISTRATORS";
 	
+	String EMAIL_CONTRIBUTORS = "EMAIL_CONTRIBUTORS";
+	
 	String ROOT_SPACE = "AON";
 	
 	String ENTERPRISE_PREFFIX = "EMPRESA-";
@@ -119,7 +121,6 @@ public interface IAlfrescoConstants {
 	
 	String REMOVE_ERROR = "document_error_remove";
 	String UPDATE_ERROR = "document_error_update";
-	String INSERT_ERROR = "document_error_insert";
-	
+	String INSERT_ERROR = "document_error_insert";	
 	
 }

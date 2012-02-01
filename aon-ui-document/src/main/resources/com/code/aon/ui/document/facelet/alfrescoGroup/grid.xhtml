@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+		<aon:form id="alfrescoScopeList">
+
+			<aon:div ajaxRendered="true" layout="none">
+
+				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{configBundle.config_scopes}" />
+					<ui:param name="controller" value="#{alfrescoGroup}" />
+					<ui:param name="skipSaveButton" value="#{true}" />
+				</ui:include>
+
+				<aon:div styleClass="aon-scroll-area">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{alfrescoGroup}" />
+						<ui:param name="skipSaveButton" value="#{!controller.new}" />
+						<ui:define name="columns">
+				
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputLabel for="AlfrescoGroup_name" value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" />
+								<f:facet name="footer">
+									<aon:inputText id="AlfrescoGroup_name"
+										rendered="#{formNew}"
+										validator="#{alfrescoGroup.groupCheck}"
+										size="40" maxlength="64" required="true" 
+										value="#{controller.to.name}" />
+								</f:facet>
+							</aon:column>
+														
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+			</aon:div>
+			
+		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/document/facelet/enterpriseUser/changePassword.xhtml" />
+		
+	</ui:define>
+
+</ui:composition>

@@ -164,6 +164,31 @@
 		</managed-property>
 	</managed-bean>	
 	
+	<!-- ************ ALFRESCO GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>alfrescoGroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.AlfrescoGroupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.document.AlfrescoGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>alfrescoGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>saveState</property-name>
+			<value>false</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<!-- ************ BATCH DOCUMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>batchDocument</managed-bean-name>
@@ -240,6 +265,10 @@
 			<from-outcome>alfrescoCategoryGroup_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategoryGroup/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>alfrescoGroup</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoGroup/grid.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	<!-- =================== Enterprise Tree  ========================== -->
@@ -247,6 +276,10 @@
 		<navigation-case>
 			<from-outcome>enterprise_formTree</from-outcome>
 			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseTree/formTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterprise_searchTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>enterpriseDocument_formTree</from-outcome>

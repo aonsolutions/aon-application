@@ -3,8 +3,14 @@ package com.code.aon.ui.document.event;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.util.List;
 
+import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.ActionFavorite;
+import com.code.aon.audit.Session;
+import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -14,7 +20,9 @@ import com.code.aon.company.EnterpriseUser;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.document.AlfrescoUserManager;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -85,6 +93,15 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
 		try {
+			deleteEntries(UserScope.class, IConfigAlias.USER_SCOPE_USER_ID, user.getId());
+			deleteEntries(ActionDenied.class, IAuditAlias.ACTION_DENIED_USER_ID, user.getId());
+			deleteEntries(ActionFavorite.class, IAuditAlias.ACTION_FAVORITE_USER_ID, user.getId());
+			deleteEntries(ActionEntry.class, IAuditAlias.ACTION_ENTRY_SESSION_USER_ID, user.getId());
+			deleteEntries(Session.class, IAuditAlias.SESSION_USER_ID, user.getId());
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+		try {
 			getUserManager().deleteUser(user.getLogin());
 		} catch (DAOException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -119,6 +136,15 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 			user.setRegistry(eu.getRegistry().getId());	
 		}
 		return user;
+	}
+	
+	private void deleteEntries( Class<? extends ITransferObject> _class, String field, Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(field), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			bean.remove(to);
+		}
 	}
 
 }

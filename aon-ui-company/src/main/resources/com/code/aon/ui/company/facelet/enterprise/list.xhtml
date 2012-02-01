@@ -12,6 +12,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 				<ui:param name="controller" value="#{enterprise}" />
+				<ui:param name="skipResetButton" value="#{enterprise.skipResetButton}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
