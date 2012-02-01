@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -124,7 +124,7 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{printName}.name().equals( "LEFT_SIDE" ) ? $P{company}.getName() : "")
+				<textFieldExpression><![CDATA[($P{printName}.name().equals( "LEFT_SIDE" ) ? $P{company}.getName() : "")
 + (new Boolean($P{printName}.name().equals( "LEFT_SIDE" ) && $P{printRecordData} && $P{recordData}!=null) ? ", " : "")
 + ( new Boolean($P{printRecordData} && $P{recordData}!=null) ?
     ($P{recordData}.getRegistration().isEmpty()?"":$P{recordData}.getRegistration())
@@ -171,7 +171,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<graphicElement fill="Solid"/>
-				<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
+				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-26" x="350" y="29" width="170" height="21" isPrintWhenDetailOverflows="true">
@@ -186,7 +186,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getHotel().getWorkPlace().getAddress().getFullAddress()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getAddress().getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="350" y="4" width="170" height="13">
@@ -201,7 +201,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getHotel().getWorkPlace().getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="350" y="50" width="170" height="12">
@@ -216,7 +216,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{reservation}.getHotel().getWorkPlace().getAddress().getZip()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getZip() + " ")
+				<textFieldExpression><![CDATA[($V{reservation}.getHotel().getWorkPlace().getAddress().getZip()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getZip() + " ")
 + ($V{reservation}.getHotel().getWorkPlace().getAddress().getCity()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getCity() + " ")
 + "(" + $V{reservation}.getHotel().getWorkPlace().getAddress().getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
@@ -233,7 +233,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getWeb().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getWeb().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-56" x="208" y="62" width="123" height="12">
@@ -248,7 +248,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getEmail().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-24" x="350" y="62" width="170" height="12">
@@ -263,7 +263,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getPhone()==null?"":(
+				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getPhone()==null?"":(
 $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getPhone().getValue())
 + ($V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getFax()==null?"":(" - "
 + $R{aon_fax} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getFax().getValue()))]]></textFieldExpression>
@@ -281,7 +281,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document} + ": "
+				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentCountry() + "-"
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocument()]]></textFieldExpression>
@@ -304,7 +304,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 				<reportElement key="textField-44" positionType="Float" x="520" y="250" width="15" height="14"/>
@@ -317,7 +317,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" €"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="20" y="330" width="499" height="38" isRemoveLineWhenBlank="true"/>
@@ -330,9 +330,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_lopd}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_lopd}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-48" x="20" y="35" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -343,7 +343,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-34" x="273" y="15" width="246" height="16"/>
@@ -356,9 +356,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryName}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-49" x="68" y="48" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -369,9 +369,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-55" x="115" y="15" width="123" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -382,7 +382,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-47" x="68" y="35" width="170" height="13"/>
@@ -395,9 +395,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{referenceCode}!= null && !"".equals($F{referenceCode})?$F{referenceCode} :"")]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-55" x="20" y="15" width="95" height="20"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -408,9 +408,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-52" x="20" y="61" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -421,9 +421,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company_document} + ":"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-50" x="20" y="48" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -434,9 +434,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-54" positionType="Float" x="21" y="144" width="65" height="15">
 					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
 				</reportElement>
@@ -449,7 +449,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="86" y="144" width="433" height="38" isRemoveLineWhenBlank="true">
@@ -464,9 +464,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{comments}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" x="68" y="61" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -477,10 +477,10 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="86" y="92" width="101" height="13">
+				<reportElement key="textField-51" positionType="Float" x="76" y="92" width="131" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -490,27 +490,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{reservation}.getId()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="65" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_id} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getId()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="86" y="105" width="101" height="13">
+				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="55" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -520,12 +505,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getCode()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_id} +": "]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="65" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-51" positionType="Float" x="76" y="105" width="131" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -535,12 +520,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_code} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getCode()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="187" y="92" width="65" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="55" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -550,12 +535,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_input} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_code} +": "]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="252" y="92" width="101" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="92" width="40" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -565,27 +550,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$V{reservation}.getStartDate()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="187" y="105" width="65" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_output} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_input} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="252" y="105" width="101" height="13">
+				<reportElement key="textField-51" positionType="Float" x="247" y="92" width="106" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -595,9 +565,39 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$V{reservation}.getEndDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getStartDate()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="105" width="40" height="13">
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report_output} +": "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-51" positionType="Float" x="247" y="105" width="106" height="13">
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reservation}.getEndDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" x="-161" y="-146" width="65" height="13">
@@ -612,7 +612,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" x="-96" y="-146" width="101" height="13">
@@ -627,10 +627,10 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="418" y="92" width="101" height="13">
+				<reportElement key="textField-51" positionType="Float" x="413" y="92" width="106" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -640,12 +640,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{reservation}.getRoomCount()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getRoomCount()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="65" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="60" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -655,12 +655,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_room_count} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_room_count} +": "]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="65" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="60" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -670,12 +670,12 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_room_persons} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_room_persons} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="418" y="105" width="101" height="13">
+				<reportElement key="textField-51" positionType="Float" x="413" y="105" width="106" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -685,9 +685,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{reservation}.getPersonCount()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getPersonCount()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-43" positionType="Float" mode="Transparent" x="182" y="250" width="278" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -697,10 +697,11 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+				<textElement verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement key="tax" positionType="Float" x="182" y="232" width="353" height="18"/>
@@ -714,7 +715,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								<bottomPen lineWidth="0.0"/>
 							</box>
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
-								<reportElement key="textField-16" x="0" y="1" width="89" height="16"/>
+								<reportElement key="textField-16" x="90" y="0" width="146" height="17"/>
 								<box>
 									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -722,26 +723,26 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<rightPen lineStyle="Solid"/>
 								</box>
 								<textElement verticalAlignment="Middle">
-									<font fontName="SansSerif" size="9"/>
+									<font fontName="SansSerif" size="6"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{taxPercent}
+								<textFieldExpression><![CDATA[$F{base}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement key="textField-16" x="0" y="1" width="90" height="16"/>
+								<box>
+									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="0.5" lineColor="#000000"/>
+									<rightPen lineStyle="Solid"/>
+								</box>
+								<textElement verticalAlignment="Middle">
+									<font fontName="SansSerif" size="6"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taxPercent}
 + ($F{surchargePercent}.doubleValue() > 0?" + " + $F{surchargePercent}:"")
 + " % " +
 $F{taxType}.getName($P{REPORT_LOCALE})
 + " " + $R{aon_over} + " "]]></textFieldExpression>
-							</textField>
-							<textField pattern="#,##0.00##" isBlankWhenNull="true">
-								<reportElement key="textField-16" x="89" y="1" width="147" height="16"/>
-								<box>
-									<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-									<bottomPen lineWidth="0.5" lineColor="#000000"/>
-									<rightPen lineStyle="Solid"/>
-								</box>
-								<textElement verticalAlignment="Middle">
-									<font fontName="SansSerif" size="9"/>
-								</textElement>
-								<textFieldExpression class="java.lang.Double"><![CDATA[$F{base}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -758,7 +759,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font fontName="SansSerif" size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Double"><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
+								<textFieldExpression><![CDATA[new Double($F{taxQuota}.doubleValue() + $F{surchargeQuota}.doubleValue())]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement key="textField-44" positionType="Float" x="102" y="1" width="15" height="16"/>
@@ -771,14 +772,14 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="10" isBold="false" pdfFontName="Helvetica"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[" €"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement key="reservationServices" positionType="Float" x="0" y="188" width="535" height="31"/>
+				<reportElement key="detail" positionType="Float" x="0" y="188" width="535" height="31"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail">
 						<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
@@ -793,10 +794,11 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+								<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
 									<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report_date}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report_date}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -809,7 +811,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle"/>
-								<textFieldExpression class="java.util.Date"><![CDATA[new Date($F{description}.substring( 0, 10 ))]]></textFieldExpression>
+								<textFieldExpression><![CDATA[new Date($F{description}.substring( 0, 10 ))]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -823,10 +825,11 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+								<textElement verticalAlignment="Middle" rotation="None" markup="none">
 									<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report_room_abbreviated}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report_room_abbreviated}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -839,7 +842,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle"/>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{description}.substring( 11, 16 )]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{description}.substring( 11, 16 )]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -857,10 +860,11 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+								<textElement verticalAlignment="Middle" rotation="None" markup="none">
 									<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report_charge}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report_charge}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -876,7 +880,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle"/>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{description}.substring( 17, $F{description}.length() )]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{description}.substring( 17, $F{description}.length() )]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -890,11 +894,30 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+								<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
 									<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+									<paragraph lineSpacing="Single"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{report_price}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{report_price}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<box>
@@ -911,7 +934,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Right" verticalAlignment="Middle"/>
-								<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxableBase}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{taxableBase}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
 								<reportElement key="textField-44" positionType="Float" x="86" y="0" width="15" height="14">
@@ -926,7 +949,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font isBold="false" pdfFontName="Helvetica"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[" €"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -951,8 +974,26 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
@@ -964,7 +1005,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Left" verticalAlignment="Middle"/>
-								<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -981,7 +1022,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
@@ -994,7 +1035,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle"/>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{payMethod}.getName()]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{payMethod}.getName()]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1011,8 +1052,26 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font isBold="true" pdfFontName="Helvetica-Bold"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_amount}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1026,7 +1085,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 							</textField>
 							<textField pattern="" isBlankWhenNull="true">
 								<reportElement key="textField-5" x="84" y="0" width="10" height="14"/>
@@ -1039,14 +1098,14 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA["€"]]></textFieldExpression>
+								<textFieldExpression><![CDATA["€"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="65" height="13">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="55" height="13">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -1056,42 +1115,12 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="86" y="118" width="101" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-52" positionType="Float" x="187" y="118" width="65" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_tariff} +": "]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="252" y="118" width="267" height="26" isPrintWhenDetailOverflows="true">
+				<reportElement key="textField-51" positionType="Float" x="76" y="118" width="131" height="26" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -1101,9 +1130,39 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{reservation}.getTariffInfo()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-52" positionType="Float" x="207" y="118" width="40" height="13">
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report_tariff} +": "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-51" positionType="Float" x="247" y="118" width="272" height="26" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reservation}.getTariffInfo()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="21" y="82" width="498" height="1" forecolor="#CCCCCC"/>
@@ -1122,7 +1181,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-37" x="273" y="61" width="246" height="15"/>
@@ -1135,7 +1194,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-36" x="273" y="46" width="246" height="15"/>
@@ -1148,7 +1207,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

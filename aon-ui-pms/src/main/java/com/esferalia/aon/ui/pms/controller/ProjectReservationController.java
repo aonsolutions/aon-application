@@ -574,11 +574,8 @@ public class ProjectReservationController extends BasicController {
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (invoiceModel.isRowAvailable()) {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), ((Invoice)getInvoiceModel().getRowData()).getId());
-
-			((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME)).setCriteria(criteria);
+			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
+			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}
 
