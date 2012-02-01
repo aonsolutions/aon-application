@@ -305,6 +305,10 @@
 		<alias names="domain,endTime,id,initialAmount,pos_id,pos_workPlace_id,shift,startTime,user"/>
 		<hibernate names="domain,endTime,id,initialAmount,pos.id,pos.workPlace.id,shift,startTime,user"/>
 	</bean> 
+	<bean class="com.esferalia.aon.pms.Room" sqlName="room">
+		<alias names="asset_id,asset_name,domain,hotel_id,id,item_id"/>
+		<hibernate names="asset.id,asset.name,domain,hotel.id,id,item.id"/>
+	</bean> 
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">

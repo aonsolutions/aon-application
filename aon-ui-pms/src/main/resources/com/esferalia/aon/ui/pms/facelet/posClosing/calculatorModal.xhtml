@@ -16,7 +16,7 @@
 				showWhenRendered="true" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{pmsBundle.pms_calculator}" />
+						<aon:outputText value="#{pmsBundle.pms_calculator_title}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -65,7 +65,7 @@
 									
 									<aon:htmlCommandLink id="reservationInvoice-report"
 										value="#{bundle.aon_report}" title="#{bundle.aon_report}"
-										action="#{report.onExecute}" target="_blank"
+										action="#{controller.calculator.onPrintCashCount}" target="_blank"
 										styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 										<f:param name="reportKey" value="cashDetailCount" />
 									</aon:htmlCommandLink>	

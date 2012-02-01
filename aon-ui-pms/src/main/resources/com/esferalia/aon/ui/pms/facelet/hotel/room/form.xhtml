@@ -43,7 +43,9 @@
 					<f:facet name="header">
 						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
 					</f:facet>
-					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" />
+					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" >
+						<ui:param name="controller" value="#{roomFeature}" />
+					</ui:include>
 				</aon:panel>
 				
 			</aon:div>

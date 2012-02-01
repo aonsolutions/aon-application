@@ -38,6 +38,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.esferalia.aon.pms.Room</pojo>
+		<vetoListeners>
+	        <vetoListener>com.esferalia.aon.pms.event.RoomBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.finance.Invoice</pojo>
 		<listeners>
 	        <listener>com.esferalia.aon.pms.event.InvoiceBeanListener</listener>

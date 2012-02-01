@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+				
+	<aon:outputLabel value="#{purchaseBundle.purchase_issueDate}" />
+	<aon:div>
+		<aon:outputLabel for="Proposal_issueDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="Proposal_issueDate-From"
+			valueChangeListener="#{proposal.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="Proposal_issueDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="Proposal_issueDate-To"
+			valueChangeListener="#{proposal.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+	
+	<aon:outputLabel value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="Proposal_workPlce" 
+		value="#{proposalSearch.workPlace}">
+		<f:selectItem itemLabel=" - " itemValue="null" />
+		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+		<a4j:support event="onchange" reRender="Proposal_workplaceDepartment" ignoreDupResponses="true" />
+		<a4j:support event="oninputchanged" reRender="Proposal_workplaceDepartment" ignoreDupResponses="true" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{companyBundle.company_department}" />
+	<aon:selectOneMenu id="Proposal_workplaceDepartment" 
+		value="#{proposalSearch.workplaceDepartment}">
+		<f:selectItem itemLabel=" - " itemValue="null" />
+		<f:selectItems value="#{proposalSearch.workplaceDepartments}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{bundle.aon_status}" />
+	<aon:selectManyCheckbox value="#{proposalSearch.proposalStatuses}">
+		<f:selectItems value="#{purchaseCollections.proposalStatuses}"/>
+	</aon:selectManyCheckbox>
+							
+</ui:composition>

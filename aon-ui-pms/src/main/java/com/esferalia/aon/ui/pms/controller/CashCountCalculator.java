@@ -4,9 +4,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.report.controller.ReportManager;
+import com.code.aon.ui.util.AonUtil;
 
 
 
@@ -14,6 +18,7 @@ public class CashCountCalculator implements ICollectionProvider {
 	
 	private boolean showCalculatorWindow;
 	private int[] amounts = new int[15];
+	private List<CashCountUnit> amountList;
 	private Double cashAmount;
 	
 	public Double getCalcTotal() {
@@ -88,6 +93,11 @@ public class CashCountCalculator implements ICollectionProvider {
 //			l.add(getTo());
 //			return l;
 //		}
+//		return null;
+		
+		
+		
+//		return amountList;
 		return l;
 	}
 	
@@ -101,6 +111,7 @@ public class CashCountCalculator implements ICollectionProvider {
 	public Collection<CashCountUnit> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return this.getCollection();
 //		if (!forceRefresh) {
+//		return this.getCollection();
 //		}
 //		if (this.getTo() != null) {
 //			List<ITransferObject> l = new LinkedList<ITransferObject>();
@@ -151,6 +162,33 @@ public class CashCountCalculator implements ICollectionProvider {
 		public void setAmount(int amount) {
 			this.amount = amount;
 		}
+	}
+	
+	
+	public String onPrintCashCount(){
+		getAmounts();
+		
+		amountList = new LinkedList<CashCountUnit>();
+		
+		amountList.add(new CashCountUnit(0.01, amounts[0]));
+		amountList.add(new CashCountUnit(0.02, amounts[1]));
+		amountList.add(new CashCountUnit(0.05, amounts[2]));
+		amountList.add(new CashCountUnit(0.1, amounts[3]));
+		amountList.add(new CashCountUnit(0.2, amounts[4]));
+		amountList.add(new CashCountUnit(0.5, amounts[5]));
+		amountList.add(new CashCountUnit(1.0, amounts[6]));
+		amountList.add(new CashCountUnit(2.0, amounts[7]));
+		amountList.add(new CashCountUnit(5.0, amounts[8]));
+		amountList.add(new CashCountUnit(10.0, amounts[9]));
+		amountList.add(new CashCountUnit(20.0, amounts[10]));
+		amountList.add(new CashCountUnit(50.0, amounts[11]));
+		amountList.add(new CashCountUnit(100.0, amounts[12]));
+		amountList.add(new CashCountUnit(200.0, amounts[13]));
+		amountList.add(new CashCountUnit(500.0, amounts[14]));
+		
+		
+		
+		return ((ReportManager)AonUtil.getRegisteredBean("report")).onExecute();
 	}
 			
 }

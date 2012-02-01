@@ -10,7 +10,7 @@
 		<aon:form id="proposalList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal}" />
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal_module}" />
 				<ui:param name="controller" value="#{proposal}" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -26,48 +26,7 @@
 					
 					<ui:define name="columns">
 					
-						<aon:column alias="Proposal.issueDate"
-							styleClass="aon-editDataTable-dateColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{purchaseBundle.purchase_issueDate}" />
-							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-					
-						<aon:column alias="Proposal.department.name" 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_department}" />
-							</f:facet>
-							<aon:outputText value="#{to.workplaceDepartment.department.name}" />
-						</aon:column>
-
-						<aon:column alias="Proposal.workPlace.name" 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_workplace}" />
-							</f:facet>
-							<aon:outputText value="#{to.workPlace.description}" />
-						</aon:column>
-
-						<aon:column alias="Proposal.remarks" 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_comment}" />
-							</f:facet>
-							<aon:outputText value="#{to.remarks}" />
-						</aon:column>
-
-						<aon:column alias="Proposal.status" 
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-						</aon:column>
+						<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/list_content.xhtml" />
 	
 					</ui:define>
 				</ui:decorate>

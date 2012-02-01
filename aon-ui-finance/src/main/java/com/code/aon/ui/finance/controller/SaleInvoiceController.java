@@ -234,11 +234,4 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		}
 	}
 	
-	public boolean isPrintReservation(){
-		if(this.getTo()!=null){
-			return ((Invoice)this.getTo()).getProject().isReservation();
-		}
-		return false;
-	}
-
 }

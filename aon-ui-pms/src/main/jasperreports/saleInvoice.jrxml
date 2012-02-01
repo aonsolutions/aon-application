@@ -73,7 +73,6 @@
 	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
 	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
 	<parameter name="reservationInvoicePrinter" class="com.esferalia.aon.ui.pms.controller.ReservationInvoicePrinter" isForPrompting="false"/>
-	<parameter name="printReservation" class="java.lang.Boolean" isForPrompting="false"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -98,6 +97,10 @@
 	<variable name="reservation" class="com.esferalia.aon.pms.ProjectReservation" resetType="Page">
 		<variableExpression><![CDATA[$P{reservationInvoicePrinter}.getProjectReservation($F{project}.getId())]]></variableExpression>
 		<initialValueExpression><![CDATA[$P{reservationInvoicePrinter}.getProjectReservation($F{project}.getId())]]></initialValueExpression>
+	</variable>
+	<variable name="isReservation" class="java.lang.Boolean">
+		<variableExpression><![CDATA[$F{project}.isReservation()]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{project}.isReservation()]]></initialValueExpression>
 	</variable>
 	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
@@ -172,7 +175,7 @@
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-26" x="350" y="29" width="170" height="21" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box bottomPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -187,7 +190,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="350" y="4" width="170" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -202,7 +205,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="350" y="50" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -219,7 +222,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-56" x="208" y="50" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -234,7 +237,7 @@
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-56" x="208" y="62" width="123" height="12">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -267,7 +270,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="350" y="17" width="170" height="12">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -478,7 +481,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="86" y="92" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -493,7 +496,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -508,7 +511,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="86" y="105" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -523,7 +526,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -538,7 +541,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="187" y="92" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -553,7 +556,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="252" y="92" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -568,7 +571,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="187" y="105" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -583,7 +586,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="252" y="105" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -628,7 +631,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="418" y="92" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -643,7 +646,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -658,7 +661,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -673,7 +676,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="418" y="105" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1044,7 +1047,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 			</componentElement>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1059,7 +1062,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="86" y="118" width="101" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1074,7 +1077,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" positionType="Float" x="187" y="118" width="65" height="13">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1089,7 +1092,7 @@ $F{taxType}.getName($P{REPORT_LOCALE})
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-51" positionType="Float" x="252" y="118" width="267" height="26" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$P{printReservation}]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

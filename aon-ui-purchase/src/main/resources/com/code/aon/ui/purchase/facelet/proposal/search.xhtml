@@ -11,7 +11,7 @@
 		<aon:form id="proposalSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal}" />
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal_module}" />
 				<ui:param name="controller" value="#{proposal}" />
 			</ui:include>
 				
@@ -21,42 +21,7 @@
 				
 				<ui:define name="searchContent">
 				
-					<aon:outputLabel value="#{purchaseBundle.purchase_issueDate}" />
-					<aon:div>
-						<aon:outputLabel for="Proposal_issueDate-From"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="Proposal_issueDate-From"
-							valueChangeListener="#{proposal.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputLabel for="Proposal_issueDate-To"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="Proposal_issueDate-To"
-							valueChangeListener="#{proposal.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</aon:div>
-					
-					<aon:outputLabel value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu id="Proposal_workPlce" 
-						value="#{proposalSearch.workPlace}">
-						<f:selectItem itemLabel=" - " itemValue="null" />
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-						<a4j:support event="onchange" reRender="proposalSearch" ignoreDupResponses="true" />
-						<a4j:support event="oninputchanged" reRender="proposalSearch" ignoreDupResponses="true" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel value="#{companyBundle.company_department}" />
-					<aon:selectOneMenu id="Proposal_workplaceDepartment" 
-						value="#{proposalSearch.workplaceDepartment}">
-						<f:selectItem itemLabel=" - " itemValue="null" />
-						<f:selectItems value="#{proposalSearch.workplaceDepartments}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel value="#{bundle.aon_status}" />
-					<aon:selectManyCheckbox value="#{proposalSearch.proposalStatuses}">
-						<f:selectItems value="#{purchaseCollections.proposalStatuses}"/>
-					</aon:selectManyCheckbox>
+					<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/search_content.xhtml" />
 						
 				</ui:define>
 			</ui:decorate>				
