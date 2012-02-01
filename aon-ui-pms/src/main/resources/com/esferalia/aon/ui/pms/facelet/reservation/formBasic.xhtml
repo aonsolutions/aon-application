@@ -49,7 +49,7 @@
 
 	<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
 	<aon:selectInputDate id="ProjectReservation_startDate" value="#{reservation.to.startDate}" 
-		required="true" disabled="#{reservation.to.crs or !reservation.active or reservation.to.roomAssignedCount > 0 or !aonRole.saleOperator}"
+		required="true" disabled="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 		<a4j:support ajaxSingle="true" event="oninputchange"
@@ -65,14 +65,14 @@
 	<aon:outputLabel for="ProjectReservation_nights" value="#{pmsBundle.pms_nights}" />
 	<aon:inputText id="ProjectReservation_nights" value="#{reservation.nights}"
 		size="2" maxlength="3"
-		disabled="#{reservation.to.crs or !reservation.active or reservation.to.roomAssignedCount > 0 or !aonRole.saleOperator}"
+		disabled="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}"
 		valueChangeListener="#{reservation.onNightsChanged}"
 		reRender="ProjectReservation_endDate"
 		focus="Seller_id" /> 
 
 	<aon:outputLabel for="ProjectReservation_endDate" value="#{pmsBundle.pms_checkOut}" />
 	<aon:selectInputDate id="ProjectReservation_endDate" value="#{reservation.to.endDate}" 
-		required="true" disabled="#{reservation.to.crs or !reservation.active or reservation.to.roomAssignedCount > 0 or !aonRole.saleOperator}"
+		required="true" disabled="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 		<a4j:support ajaxSingle="true" event="oninputchange"

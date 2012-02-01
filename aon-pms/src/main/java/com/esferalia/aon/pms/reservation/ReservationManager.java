@@ -333,20 +333,9 @@ public class ReservationManager implements IReservationConstants {
 
 			for (int j=0; j<service.sizeOfPriceArray(); j++) {
 				AmountType price = service.getPriceArray(j);
-				if (price.getEffectiveDate() != null) {
-					ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
-					reservationServiceDetail.setProjectReservationService(reservationService);
-					reservationServiceDetail.setDomain(getReservationUtils().getDomain());
-					reservationServiceDetail.setEffectiveDate(price.getEffectiveDate().getTime());
-					reservationServiceDetail.setQuantity(price.getNumberOfUnits());
-					reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
-					reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
-					reservationServiceDetail = (ProjectReservationServiceDetail)reservationServiceDetailBean.insert(reservationServiceDetail);
-					servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
-
+				if (price.getEffectiveDate() != null && price.getBase().getAmountBeforeTax().doubleValue() != 0) {
 					Calendar currentCalendar = new GregorianCalendar();
-					currentCalendar.setTime(reservationServiceDetail.getEffectiveDate());
-					currentCalendar.add(Calendar.DATE, 1);
+					currentCalendar.setTime(price.getEffectiveDate().getTime());
 					Calendar nextCalendar = new GregorianCalendar();
 					nextCalendar.setTime(reservation.getEndDate());
 					if ((j+1) < service.sizeOfPriceArray()) {
@@ -356,7 +345,7 @@ public class ReservationManager implements IReservationConstants {
 						nextCalendar.set(Calendar.SECOND, 0);
 					}
 					while (currentCalendar.compareTo(nextCalendar) < 0) {
-						reservationServiceDetail = new ProjectReservationServiceDetail();
+						ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 						reservationServiceDetail.setProjectReservationService(reservationService);
 						reservationServiceDetail.setDomain(getReservationUtils().getDomain());
 						reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());

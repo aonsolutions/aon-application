@@ -6,7 +6,6 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
 
 @Entity
@@ -16,7 +15,7 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB {
 	private static final long serialVersionUID = 1L;
 
     @Transient
-	public String getFullName() throws ManagerBeanException {
+	public String getFullName() {
     	String fullName = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
     	fullName += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
     	fullName += StringUtils.isEmpty(getSurname()) ? "" : getSurname() + " ";
@@ -24,7 +23,7 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB {
 	}
 
     @Transient
-	public String getFullAddress() throws ManagerBeanException {
+	public String getFullAddress() {
     	String fullAddress = StringUtils.isEmpty(getAddress()) ? "" : getAddress() + " ";
     	fullAddress += StringUtils.isEmpty(getZip()) ? "" : getZip() + " - ";
     	fullAddress += StringUtils.isEmpty(getCity()) ? "" : getCity() + " ";

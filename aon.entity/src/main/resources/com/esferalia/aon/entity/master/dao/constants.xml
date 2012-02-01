@@ -294,12 +294,12 @@
 		<hibernate names="adults,children,item.id,projectReservation.endDate,projectReservation.hotel.id,projectReservation.id,projectReservation.startDate,roomIndex,tariff.id" />
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationRoomDetail" sqlName="project_reservation_room_detail">
-		<alias names="id,domain,projectReservationRoom_id,projectReservationRoom_projectReservation_id,assetActivity_id,assetActivity_date"/>
-		<hibernate names="id,domain,projectReservationRoom.id,projectReservationRoom.projectReservation.id,assetActivity.id,assetActivity.date"/>
+		<alias names="id,domain,projectReservationRoom_id,projectReservationRoom_projectReservation_id,projectReservationRoom_projectReservation_hotel_id,assetActivity_id,assetActivity_asset_name,assetActivity_date"/>
+		<hibernate names="id,domain,projectReservationRoom.id,projectReservationRoom.projectReservation.id,projectReservationRoom.projectReservation.hotel.id,assetActivity.id,assetActivity.asset.name,assetActivity.date"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationServiceDetail" sqlName="project_reservation_service_detail">
-		<alias names="id,domain,invoiceDetail_id,projectReservationService_id,projectReservationService_projectReservation_id,projectReservationRoomDetail,projectReservationRoomDetail_id,projectReservationRoomDetail_projectReservationRoom_id,effectiveDate,quantity,price,taxableBase"/>
-		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.projectReservation.id,projectReservationRoomDetail,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
+		<alias names="id,domain,invoiceDetail_id,projectReservationService_id,projectReservationService_projectReservation_id,projectReservationService_extra,projectReservationRoomDetail,projectReservationRoomDetail_id,projectReservationRoomDetail_projectReservationRoom_id,effectiveDate,quantity,price,taxableBase"/>
+		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.projectReservation.id,projectReservationService.extra,projectReservationRoomDetail,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
 		<alias names="domain,endTime,id,initialAmount,pos_id,pos_workPlace_id,shift,startTime,user"/>

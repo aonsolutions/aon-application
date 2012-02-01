@@ -30,8 +30,6 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.IAddress;
-import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -46,6 +44,7 @@ import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
 import com.esferalia.aon.pms.reservation.ReservationInvoicing;
 
 public class ProjectReservationController extends BasicController {
@@ -57,15 +56,9 @@ public class ProjectReservationController extends BasicController {
 	private Item roomItem;
 	private Tariff roomTariff;
 	private boolean showInvoiceWindow;
-	private String invoiceSeries;
-	private int invoiceNumber;
-	private Registry invoiceRegistry;
-	private IAddress invoiceAddress;
-	private List<Finance> invoiceFinances;
+	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
 	private Invoice invoiceToRectificate;
-	private Date rectificationDate;
-	private String rectificationCause;
 	private DataModel invoiceModel;
 
 	public String getSelectedTab() {
@@ -138,44 +131,12 @@ public class ProjectReservationController extends BasicController {
 		this.showInvoiceWindow = showInvoiceWindow;
 	}
 
-	public String getInvoiceSeries() {
-		return invoiceSeries;
+	public ReservationInvoiceTo getReservationInvoiceTo() {
+		return reservationInvoiceTo;
 	}
 
-	public void setInvoiceSeries(String invoiceSeries) {
-		this.invoiceSeries = invoiceSeries;
-	}
-
-	public int getInvoiceNumber() {
-		return invoiceNumber;
-	}
-
-	public void setInvoiceNumber(int invoiceNumber) {
-		this.invoiceNumber = invoiceNumber;
-	}
-
-	public Registry getInvoiceRegistry() {
-		return invoiceRegistry;
-	}
-
-	public void setInvoiceRegistry(Registry invoiceRegistry) {
-		this.invoiceRegistry = invoiceRegistry;
-	}
-
-	public IAddress getInvoiceAddress() {
-		return invoiceAddress;
-	}
-
-	public void setInvoiceAddress(IAddress invoiceAddress) {
-		this.invoiceAddress = invoiceAddress;
-	}
-
-	public List<Finance> getInvoiceFinances() {
-		return invoiceFinances;
-	}
-
-	public void setInvoiceFinances(List<Finance> invoiceFinances) {
-		this.invoiceFinances = invoiceFinances;
+	public void setReservationInvoiceTo(ReservationInvoiceTo reservationInvoiceTo) {
+		this.reservationInvoiceTo = reservationInvoiceTo;
 	}
 
 	public boolean isShowRectificationWindow() {
@@ -192,22 +153,6 @@ public class ProjectReservationController extends BasicController {
 
 	public void setInvoiceToRectificate(Invoice invoiceToRectificate) {
 		this.invoiceToRectificate = invoiceToRectificate;
-	}
-
-	public Date getRectificationDate() {
-		return rectificationDate;
-	}
-
-	public void setRectificationDate(Date rectificationDate) {
-		this.rectificationDate = rectificationDate;
-	}
-
-	public String getRectificationCause() {
-		return rectificationCause;
-	}
-
-	public void setRectificationCause(String rectificationCause) {
-		this.rectificationCause = rectificationCause;
 	}
 
 	public DataModel getInvoiceModel() {
@@ -237,6 +182,7 @@ public class ProjectReservationController extends BasicController {
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
+		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
 		onSearch(event);
 	}
@@ -397,6 +343,7 @@ public class ProjectReservationController extends BasicController {
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+			setReservationInvoiceTo(new ReservationInvoiceTo());
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -418,30 +365,26 @@ public class ProjectReservationController extends BasicController {
 	}
 
 	private void fillInvoiceData(ProjectReservation reservation) throws ManagerBeanException {
-		setInvoiceSeries(obtainHotelInvoiceSeries());
-		setInvoiceNumber(obtainSeriesMaxNumber(getInvoiceSeries()));
+		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
-		setInvoiceRegistry(reservation.getProject().getRegistry());
+		getReservationInvoiceTo().setRegistry(reservation.getProject().getRegistry());
 		if (reservation.getProject().getRegistry().getId() == reservation.getHotel().getCustomer().getRegistry().getId()) {
+			getReservationInvoiceTo().setAddress(new InvoiceAddress());
 			IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID), reservation.getId());
 			criteria.addEqualExpression(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX), 1);
 			for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
 				ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
-				getInvoiceRegistry().setName(reservationGuest.getFullName());
-
-				setInvoiceAddress(new InvoiceAddress());
-				getInvoiceAddress().setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
-				getInvoiceAddress().setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
-				getInvoiceAddress().setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
-				getInvoiceAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
+				getReservationInvoiceTo().setGuest(reservationGuest);
+				fillGuestData(reservationGuest);
 			}
 		} else {
-			setInvoiceAddress(getInvoiceRegistry().getDefaultAddress());
+			getReservationInvoiceTo().setAddress(getReservationInvoiceTo().getRegistry().getDefaultAddress());
 		}
 
-		setInvoiceFinances(new LinkedList<Finance>());
+		getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
 		onNewFinance(null);
 	}
 
@@ -485,8 +428,8 @@ public class ProjectReservationController extends BasicController {
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			setInvoiceSeries((String)event.getNewValue());
-			obtainSeriesMaxNumber(getInvoiceSeries());
+			getReservationInvoiceTo().setSeries((String)event.getNewValue());
+			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 		}
 	}
 
@@ -496,17 +439,52 @@ public class ProjectReservationController extends BasicController {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
+	public List<SelectItem> getGuests() throws ManagerBeanException {
+		List<SelectItem> guestList = new LinkedList<SelectItem>();
+		IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, ((ProjectReservation)this.getTo()).getId());
+		criteria.addOrder(reservationGuestBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_GUEST_GUEST_INDEX));
+		for (ITransferObject ito : reservationGuestBean.getList(criteria)) {
+			ProjectReservationGuest reservationGuest = (ProjectReservationGuest)ito;
+			SelectItem selectItem = new SelectItem(reservationGuest, reservationGuest.getFullName());
+			guestList.add(selectItem);
+		}
+		return guestList;
+	}
+
+	public void onInvoiceGuestChanged(ValueChangeEvent event) throws ManagerBeanException {
+		ProjectReservationGuest reservationGuest = new ProjectReservationGuest();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservationGuest = (ProjectReservationGuest)event.getNewValue();
+		}
+		fillGuestData(reservationGuest);
+	}
+
+	private void fillGuestData(ProjectReservationGuest reservationGuest) {
+		getReservationInvoiceTo().getRegistry().setName(reservationGuest.getFullName());
+		getReservationInvoiceTo().getRegistry().setDocumentType(reservationGuest.getDocumentType());
+		getReservationInvoiceTo().getRegistry().setDocumentCountry(reservationGuest.getDocumentCountry());
+		getReservationInvoiceTo().getRegistry().setDocument(reservationGuest.getDocument());
+
+		getReservationInvoiceTo().getAddress().setAddress(StringUtils.abbreviate(reservationGuest.getAddress(), 45));
+		getReservationInvoiceTo().getAddress().setZip(StringUtils.abbreviate(reservationGuest.getZip(), 16));
+		getReservationInvoiceTo().getAddress().setCity(StringUtils.abbreviate(reservationGuest.getCity(), 45));
+		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
+	}
+
 	public void onNewFinance(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Finance finance = new Finance();
 		double amount = CommonUtil.round(reservation.getTotal() - getFinancesAmount());
 		finance.setAmount(amount);
-		getInvoiceFinances().add(finance);
+		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
 	private double getFinancesAmount() {
 		double amount = 0;
-		for (Finance finance : getInvoiceFinances()) {
+		for (Finance finance : getReservationInvoiceTo().getFinances()) {
 			amount += CommonUtil.round(finance.getAmount());
 		}
 		return CommonUtil.round(amount);
@@ -517,17 +495,13 @@ public class ProjectReservationController extends BasicController {
 		return CommonUtil.round(reservation.getTotal() - getFinancesAmount()) == 0;
 	}
 
-	public Finance getLastInvoiceFinance() {
-		return getInvoiceFinances().get(getInvoiceFinances().size()-1);
-	}
-
 	public void onInvoice(ActionEvent event) {
 		setInvoiceModel(null);
 		if (isFinancesAmountOk()) {
 			ProjectReservation reservation = (ProjectReservation)this.getTo();
 			try {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				reservationInvoicing.invoice(reservation, getInvoiceSeries(), getInvoiceNumber(), getInvoiceRegistry(), getInvoiceAddress(), getInvoiceFinances());
+				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, false);
 	
 				reservation.setStatus(ReservationStatus.INVOICED);
 				accept(event);
@@ -551,10 +525,9 @@ public class ProjectReservationController extends BasicController {
 		}
 		try {
 			setInvoiceToRectificate((Invoice)getInvoiceModel().getRowData());
-			setInvoiceSeries(obtainHotelRectificationSeries());
-			setInvoiceNumber(obtainSeriesMaxNumber(getInvoiceSeries()));
-			setRectificationDate(new Date());
-			setRectificationCause(null);
+			setReservationInvoiceTo(new ReservationInvoiceTo());
+			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
+			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
@@ -565,7 +538,10 @@ public class ProjectReservationController extends BasicController {
 		setInvoiceModel(null);
 		try {
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			reservationInvoicing.rectify(getInvoiceToRectificate(), getInvoiceSeries(), getInvoiceNumber(), getRectificationDate(), getRectificationCause());
+			reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
+
+			IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+			reservationServiceController.onSearch(null);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

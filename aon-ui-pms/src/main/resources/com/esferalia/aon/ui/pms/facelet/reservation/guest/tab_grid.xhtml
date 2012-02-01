@@ -44,27 +44,49 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_phone" value="#{bundle.aon_phone}" />
+					<aon:outputLabel for="ProjectReservationGuest_document" value="#{bundle.aon_document}" />
 				</f:facet>
-				<aon:outputText value="#{to.phone}" rendered="#{formList}" />
-				<aon:inputText id="ProjectReservationGuest_phone" value="#{controller.to.phone}"
-					rendered="#{formEdit}" size="20" maxlength="32" />
+				<aon:outputText styleClass="aon-margin-right" value="#{to.documentCountry.value}" rendered="#{formList and !empty to.document}" />
+				<aon:outputText value="#{to.document}" rendered="#{formList}" />
+				<aon:div rendered="#{formEdit}">
+					<ui:include src="tab_grid_document.xhtml">
+						<ui:param name="suffix" value="" />
+					</ui:include>
+				</aon:div>
 				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationGuest_phone-New" value="#{controller.to.phone}"
-						rendered="#{formNew}" size="20" maxlength="32" />
+					<aon:div rendered="#{formNew}">
+						<ui:include src="tab_grid_document.xhtml">
+							<ui:param name="suffix" value="-New" />
+						</ui:include>
+					</aon:div>
 				</f:facet>
+
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_email" value="#{bundle.aon_email}" />
+					<aon:outputLabel for="ProjectReservationGuest_email" value="#{bundle.aon_contact_data}" />
 				</f:facet>
-				<aon:outputText value="#{to.email}" rendered="#{formList}" />
-				<aon:inputText id="ProjectReservationGuest_email" value="#{controller.to.email}"
-					rendered="#{formEdit}" size="25" maxlength="128" />
+				<aon:outputText value="t:" rendered="#{formList and !empty to.phone}" />
+				<aon:outputText styleClass="aon-margin-right" value="#{to.phone}" rendered="#{formList and !empty to.phone}" />
+				<aon:outputText value="e:" rendered="#{formList and !empty to.email}" />
+				<aon:outputText value="#{to.email}" rendered="#{formList}">
+					<aon:abbreviateConverter maxWidth="15" />
+				</aon:outputText>
+				<rich:toolTip rendered="#{formList and !empty to.email}">
+					<aon:outputText value="#{to.email}" />
+				</rich:toolTip>
+				<aon:div rendered="#{formEdit}">
+					<ui:include src="tab_grid_contact.xhtml">
+						<ui:param name="suffix" value="" />
+					</ui:include>
+				</aon:div>
 				<f:facet name="footer">
-					<aon:inputText id="ProjectReservationGuest_email-New" value="#{controller.to.email}"
-						rendered="#{formNew}" size="25" maxlength="128" />
+					<aon:div rendered="#{formNew}">
+						<ui:include src="tab_grid_contact.xhtml">
+							<ui:param name="suffix" value="-New" />
+						</ui:include>
+					</aon:div>
 				</f:facet>
 			</aon:column>
 

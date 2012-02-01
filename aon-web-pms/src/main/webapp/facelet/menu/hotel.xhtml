@@ -32,17 +32,23 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="reservationTable"
-										value="#{pmsBundle.pms_reservationTable_module}"
-										action="reservationTable_form" >
-										<aon:actionListener method="#{reservationTable.onInitialize}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservationIO" 
 										value="#{pmsBundle.pms_reservationIO_module}"
 										action="reservationIO_search" >
 										<aon:actionListener method="#{reservationIO.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="serviceInvoice" 
+										action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
+										value="#{pmsBundle.pms_service_invoice_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservationTable"
+										value="#{pmsBundle.pms_reservationTable_module}"
+										action="reservationTable_form" >
+										<aon:actionListener method="#{reservationTable.onInitialize}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>

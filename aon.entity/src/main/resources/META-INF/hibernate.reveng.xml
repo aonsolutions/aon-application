@@ -573,6 +573,12 @@
 		<column name="handicap" type="java.lang.Integer"/>
 	</table>
 
+	<table name="hotel">
+		<foreign-key constraint-name="FK_HOTEL_SERVICE_CATALOGUE">
+			<many-to-one property="serviceCatalogue" />
+		</foreign-key>
+	</table>
+
 	<table name="iattach" class="com.esferalia.aon.entity.master.ItemAttachment">
 		<column name="type" type="com.code.aon.product.enumeration.AttachmentType"/>
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
@@ -991,6 +997,8 @@
 	
 	<table name="project_reservation_guest">
 		<column name="guest_index" type="int"/>
+		<column name="document_type" type="com.code.aon.registry.enumeration.DocumentType" property="documentType"/>
+		<column name="document_country" type="com.code.aon.common.enumeration.Country" property="documentCountry"/>
 	</table>
 	
 	<table name="project_reservation_room">

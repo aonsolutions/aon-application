@@ -7,14 +7,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div styleClass="aon-group aon-margin-top" style="width: 90%;">
+	<aon:div id="invoiceFinancesDiv" styleClass="aon-group" style="width: 90%; margin-top: 2em;">
 		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{pmsBundle.pms_payments}"/>
 		</aon:div>
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
 				<aon:dataTable id="financeList"
-					value="#{controller.invoiceFinances}" var="reservationFinance">
+					value="#{controller.reservationInvoiceTo.finances}" var="hotelInvoiceFinance">
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 						<aon:outputLabel for="ProjectReservation_financePayMethod"
@@ -23,7 +23,7 @@
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-150 aon-editDataTable-textColumn">
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
-							value="#{reservationFinance.payMethod}" required="true">
+							value="#{hotelInvoiceFinance.payMethod}" required="true">
 							<f:selectItems value="#{configCollections.directPayMethods}" />
 						</aon:selectOneMenu>
 					</aon:column>
@@ -35,15 +35,14 @@
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
 						<aon:inputText id="ProjectReservation_financeAmount"
-							value="#{reservationFinance.amount}"
-							required="true" size="5"
-							reRender="invoiceModalToolbar" />
+							value="#{hotelInvoiceFinance.amount}"
+							required="true" size="5" />
 						<aon:commandButton
 							id="Finance-newButton" title="#{bundle.aon_reset}"
 							styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
-							rendered="#{reservationFinance == reservation.lastInvoiceFinance}"
+							rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
 							actionListener="#{controller.onNewFinance}"
-							reRender="invoiceModalToolbar,financeList" />
+							reRender="financeList" />
 					</aon:column>
 
 				</aon:dataTable>

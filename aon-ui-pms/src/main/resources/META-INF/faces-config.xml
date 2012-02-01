@@ -501,18 +501,63 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ********** RESERVATION INVOICE PRINTER ********** -->
-	<managed-bean>
-		<managed-bean-name>reservationInvoicePrinter</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationInvoicePrinter</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<!-- ********** RESERVATION TABLE VIEWER ********** -->
 	<managed-bean>
 		<managed-bean-name>reservationTable</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationTableController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* SERVICE INVOICE ***************** -->
+	<managed-bean>
+		<managed-bean-name>serviceInvoice</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ServiceInvoiceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>serviceInvoice</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Invoice_service</key>
+					<value>true</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Invoice_issueDate desc,Invoice_referenceCode desc</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{serviceInvoiceScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>serviceInvoiceScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Invoice_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ********** RESERVATION INVOICE PRINTER ********** -->
+	<managed-bean>
+		<managed-bean-name>reservationInvoicePrinter</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationInvoicePrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************* POS ***************** -->
@@ -741,7 +786,7 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservation/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
-	
+
   	<!-- =================== Reservation Table ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -749,6 +794,22 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationTable/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+  	<!-- =================== Reservation ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>serviceInvoice_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/serviceInvoice/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceInvoice_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/serviceInvoice/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>serviceInvoice_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/serviceInvoice/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
 
   	<!-- =================== Pos ================= -->
 	<navigation-rule>
@@ -813,6 +874,5 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationIO/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
-	
 	
 </faces-config>

@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.pms.event;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -13,6 +14,12 @@ import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationGuestController;
 
 public class ProjectReservationGuestControllerListener extends ControllerAdapter {
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		ProjectReservationGuest to = (ProjectReservationGuest)event.getController().getTo();
+		to.setDocumentCountry(Country.ES);
+	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {

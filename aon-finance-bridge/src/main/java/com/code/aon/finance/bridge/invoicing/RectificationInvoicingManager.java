@@ -97,6 +97,7 @@ public class RectificationInvoicingManager {
 			rectifierAddress.setAddress2(invoiceAddress.getAddress2());
 			rectifierAddress.setZip(invoiceAddress.getZip());
 			rectifierAddress.setCity(invoiceAddress.getCity());
+			rectifierAddress.setProvince(invoiceAddress.getProvince());
 			rectifierAddress.setGeozone(invoiceAddress.getGeozone());
 			invoiceAddressBean.insert(rectifierAddress);
 		}
