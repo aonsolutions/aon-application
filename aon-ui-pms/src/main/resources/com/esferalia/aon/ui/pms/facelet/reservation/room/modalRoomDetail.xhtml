@@ -93,10 +93,12 @@
 											</aon:selectOneMenu>
 
 											<aon:outputLabel for="ProjectReservationRoom_tariff"
-												value="#{productBundle.product_tariff}" />
+												value="#{productBundle.product_tariff}"
+												rendered="#{controller.new}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_tariff" 
 												value="#{controller.to.tariff}" required="#{true}"
-												disabled="#{reservation.to.crs or !aonRole.saleOperator}">
+												rendered="#{controller.new}"
+												disabled="#{!aonRole.saleOperator}">
 												<f:selectItems value="#{pmsCollections.tariffs}" />
 											</aon:selectOneMenu>
 
@@ -128,7 +130,7 @@
 
 											<aon:outputLabel value="#{pmsBundle.pms_room_number}"
 												rendered="#{controller.to.roomNumber != null}" />
-											<aon:outputText value="#{controller.to.roomNumber}"
+											<aon:outputText value="#{controller.to.roomNumber}" styleClass="aon-bold"
 												rendered="#{controller.to.roomNumber != null}" />
 
 											<aon:outputLabel 
