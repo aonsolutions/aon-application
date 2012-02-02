@@ -26,6 +26,8 @@ import static org.alfresco.webservice.util.Constants.PROP_TITLE;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.classification.AppliedCategory;
@@ -68,12 +70,21 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	private AlfrescoUserManager userManager;
 	
 	private ParentReference rootReference;
+	
+	private Map<String, AlfrescoCategory> categoryCache;
+	
+	private Map<Integer, Enterprise> enterpriseCache;
+	
+	private Map<Integer, Project> projectCache;
 
 	public EnterpriseDocumentDAO( String user, String password, AlfrescoDAO categoryDAO, AlfrescoUserManager userManager ) {
 		super( EnterpriseDocument.class, user, password );		
 		this.categoryDAO = categoryDAO;
 		this.userManager = userManager;
 		this.rootReference = calculateRootReference();
+		this.categoryCache = new HashMap<String, AlfrescoCategory>();
+		this.enterpriseCache = new HashMap<Integer, Enterprise>();
+		this.projectCache = new HashMap<Integer, Project>();
 	}
 
 	private EnterpriseDocument newEnterpriseDocument() {
@@ -118,14 +129,13 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			categories = new AlfrescoCategory[values.length];	
 			for( int i = 0; i < values.length; i++ ) {
 				String uuid = StringUtils.substringAfterLast(values[i], "/");
-				categories[i] = (AlfrescoCategory) categoryDAO.get(uuid);
+				categories[i] = getCategory(uuid);
 			}
 		}
 		return categories;
 	}
 		
-	private ITransferObject getTo( String value, Class<? extends ITransferObject> _class ) throws DAOException {
-		Integer id = NumberUtils.toInt(value);
+	private ITransferObject getTo( Integer id, Class<? extends ITransferObject> _class ) throws DAOException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(_class);
 			return bean.get(id);
@@ -173,11 +183,9 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 					Date date = ISO8601DateFormat.parse(nv.getValue());
 					ed.setReferenceDate(date);					
 				} else if ( ENTERPRISE_ID_LONG.equals(name) ) {
-					Enterprise enterprise = (Enterprise) getTo(nv.getValue(), Enterprise.class);
-					ed.setEnterprise(enterprise);
+					ed.setEnterprise( getEnterprise(nv.getValue()) );
 				} else if ( PROJECT_ID_LONG.equals(name) ) {
-					Project project = (Project) getTo(nv.getValue(), Project.class);
-					ed.setProject(project);		
+					ed.setProject( getProject(nv.getValue()) );
 				}
 			} else if ( nv.getValues() != null ) {
 				if ( CATEGORIES_LONG.equals(name) ) {
@@ -303,6 +311,45 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	
 	public static String getName( Enterprise enterprise ) {
 		return ENTERPRISE_PREFFIX + enterprise.getId();
+	}
+
+	private Enterprise getEnterprise( String value ) throws DAOException {
+		Integer id = NumberUtils.toInt(value);		
+		Enterprise enterprise = this.enterpriseCache.get(id);
+		if ( enterprise == null ) {
+			enterprise = (Enterprise) getTo(id, Enterprise.class);
+			this.enterpriseCache.put(id, enterprise);
+		}
+		return enterprise;
+	}
+
+	private Project getProject( String value ) throws DAOException {
+		Integer id = NumberUtils.toInt(value);		
+		Project project = this.projectCache.get(id);
+		if ( project == null ) {
+			project = (Project) getTo(id, Project.class);
+			this.projectCache.put(id, project);
+		}
+		return project;
+	}
+
+	private AlfrescoCategory getCategory( String uuid ) throws DAOException {	
+		AlfrescoCategory category = this.categoryCache.get(uuid);
+		if ( category == null ) {
+			category = (AlfrescoCategory) categoryDAO.get(uuid);
+			this.categoryCache.put(uuid, category);
+		}
+		return category;
+	}
+	
+	protected void prepareGetList() {
+		setCloseSession(false);		
+	}
+
+	protected void finishGetList() {
+		setCloseSession(true);
+		this.enterpriseCache.clear();
+		this.projectCache.clear();
 	}
 	
 }
