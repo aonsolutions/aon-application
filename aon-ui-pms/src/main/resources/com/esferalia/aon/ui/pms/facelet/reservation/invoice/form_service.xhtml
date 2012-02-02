@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:div id="invoiceServicesDiv" styleClass="aon-group" style="width: 90%; margin-top: 2em;">
+	<aon:div id="invoiceServicesDiv" styleClass="aon-group" style="width: 100%; margin-top: 2em;">
 		<aon:div styleClass="aon-group-title">
 			<aon:outputText value="#{pmsBundle.pms_services}"/>
 		</aon:div>
@@ -36,7 +36,7 @@
 							value="#{bundle.aon_quantity}" />
 					</aon:column>
 
-					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
+					<aon:column styleClass="aon-panelGrid-even aon-width-80 aon-editDataTable-textColumn">
 						<aon:inputText id="ProjectReservation_serviceQuantity"
 							value="#{hotelInvoiceService.quantity}"
 							required="true" size="5">
@@ -44,12 +44,54 @@
 								actionListener="#{controller.onInvoiceServiceChanged}"
 								reRender="invoiceFinancesDiv" />
 						</aon:inputText>
+					</aon:column>
+
+					<aon:column styleClass="aon-panelGrid-odd aon-width-60 aon-editDataTable-textColumn">
+						<aon:outputLabel for="ProjectReservation_serviceFromDate" 
+							value="#{bundle.aon_date_from}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-panelGrid-event aon-width-120 aon-editDataTable-textColumn">
+						<aon:selectInputDate id="ProjectReservation_serviceFromDate"
+							value="#{hotelInvoiceService.fromDate}" required="true" inputSize="8" 
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange"
+								actionListener="#{controller.onInvoiceServiceChanged}"
+								reRender="invoiceFinancesDiv"
+								focus="ProjectReservation_serviceToDate" />
+							<a4j:support event="onchanged"
+								actionListener="#{controller.onInvoiceServiceChanged}"
+								reRender="invoiceFinancesDiv"
+								focus="ProjectReservation_serviceToDate" />
+						</aon:selectInputDate>
+					</aon:column>
+
+					<aon:column styleClass="aon-panelGrid-odd aon-width-60 aon-editDataTable-textColumn">
+						<aon:outputLabel for="ProjectReservation_serviceToDate" 
+							value="#{bundle.aon_date_to}" />
+					</aon:column>
+
+					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
+						<aon:selectInputDate id="ProjectReservation_serviceToDate"
+							value="#{hotelInvoiceService.toDate}" required="true" inputSize="8"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange"
+								actionListener="#{controller.onInvoiceServiceChanged}"
+								reRender="invoiceFinancesDiv"
+								focus="Service-newButton" />
+							<a4j:support event="onchanged"
+								actionListener="#{controller.onInvoiceServiceChanged}"
+								reRender="invoiceFinancesDiv"
+								focus="Service-newButton" />
+						</aon:selectInputDate>
 						<aon:commandButton
 							id="Service-newButton" title="#{bundle.aon_reset}"
 							styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
 							rendered="#{hotelInvoiceService == controller.reservationInvoiceTo.lastService}"
 							actionListener="#{controller.onNewService}"
-							reRender="invoiceHotelDiv,invoiceServicesDiv,invoiceFinancesDiv" />
+							reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv" />
 					</aon:column>
 
 				</aon:dataTable>

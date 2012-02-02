@@ -2,9 +2,7 @@ package com.esferalia.aon.pms.reservation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +40,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.reservation.ReservationInvoiceTo.HotelService;
 
 public class ReservationInvoicing implements IReservationConstants {
 
@@ -213,7 +212,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-		for (InvoiceDetail service : reservationInvoiceTo.getServices()) {
+		for (HotelService service : reservationInvoiceTo.getServices()) {
 			ProjectReservationService reservationService = new ProjectReservationService();
 			if (reservation != null) {
 				reservationService.setProjectReservation(reservation);
@@ -223,19 +222,16 @@ public class ReservationInvoicing implements IReservationConstants {
 				reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
 			}
 
-			Calendar fromCalendar = new GregorianCalendar();
-			fromCalendar.setTime(reservationInvoiceTo.getServiceFromDate());
-			Calendar toCalendar = new GregorianCalendar();
-			toCalendar.setTime(reservationInvoiceTo.getServiceToDate());
-			while (fromCalendar.compareTo(toCalendar) <= 0) {
+			Date date = service.getFromDate();
+			while (date.compareTo(service.getToDate()) <= 0) {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setProject((reservation!=null) ? reservation.getProject() : null);
 				invoiceDetail.setLine(++line);
 				invoiceDetail.setItem(service.getItem());
-				invoiceDetail.setDescription(obtainDetailDescription(fromCalendar.getTime(), reservationInvoiceTo.getRoom(), service.getItem()));
+				invoiceDetail.setDescription(obtainDetailDescription(date, reservationInvoiceTo.getRoom(), service.getItem()));
 				invoiceDetail.setQuantity(service.getQuantity());
-				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, fromCalendar.getTime(), reservationInvoiceTo.getHotel().getCustomer().getTariff()));
+				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
 				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 				invoiceDetail.setTaxableBase(strategy.getBasePrice(invoiceDetail));
@@ -247,7 +243,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 					reservationServiceDetail.setProjectReservationService(reservationService);
 					reservationServiceDetail.setProjectReservationRoomDetail(reservationInvoiceTo.getRoom());
-					reservationServiceDetail.setEffectiveDate(fromCalendar.getTime());
+					reservationServiceDetail.setEffectiveDate(date);
 					reservationServiceDetail.setQuantity(invoiceDetail.getQuantity());
 					reservationServiceDetail.setPrice(invoiceDetail.getPrice());
 					reservationServiceDetail.setTaxableBase(invoiceDetail.getTaxableBase());
@@ -255,7 +251,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					reservationServiceDetailBean.insert(reservationServiceDetail);
 				}
 
-				fromCalendar.add(Calendar.DATE, 1);
+				date = CommonUtil.addDaysToDate(date, 1);
 			}
 		}
 	}

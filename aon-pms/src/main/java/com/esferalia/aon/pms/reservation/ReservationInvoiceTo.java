@@ -4,9 +4,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.product.Item;
+import com.code.aon.product.strategy.ICalculable;
+import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.Hotel;
@@ -25,21 +28,15 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private Registry registry;
 	private IAddress address;
 	private String comments;
-	private Date serviceFromDate;
-	private Date serviceToDate;
-	private List<InvoiceDetail> services;
+	private List<HotelService> services;
 	private List<Finance> finances;
 
 	public ReservationInvoiceTo() {
 		setIssueDate(new Date());
-		setServiceFromDate(new Date());
-		setServiceToDate(new Date());
-
 		setRegistry(new Registry());
 		setAddress(new InvoiceAddress());
 		setComments(null);
-		
-		setServices(new LinkedList<InvoiceDetail>());
+		setServices(new LinkedList<HotelService>());
 		setFinances(new LinkedList<Finance>());
 	}
 
@@ -123,27 +120,11 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		this.comments = comments;
 	}
 
-	public Date getServiceFromDate() {
-		return serviceFromDate;
-	}
-
-	public void setServiceFromDate(Date serviceFromDate) {
-		this.serviceFromDate = serviceFromDate;
-	}
-
-	public Date getServiceToDate() {
-		return serviceToDate;
-	}
-
-	public void setServiceToDate(Date serviceToDate) {
-		this.serviceToDate = serviceToDate;
-	}
-
-	public List<InvoiceDetail> getServices() {
+	public List<HotelService> getServices() {
 		return services;
 	}
 
-	public void setServices(List<InvoiceDetail> services) {
+	public void setServices(List<HotelService> services) {
 		this.services = services;
 	}
 
@@ -155,12 +136,87 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		this.finances = finances;
 	}
 
-	public InvoiceDetail getLastService() {
+	public HotelService getNewService() {
+		return new HotelService();
+	}
+
+	public int getServicesCount() {
+		return getServices().size();
+	}
+
+	public HotelService getLastService() {
 		return getServices().get(getServices().size()-1);
+	}
+
+	public int getFinancesCount() {
+		return getFinances().size();
 	}
 
 	public Finance getLastFinance() {
 		return getFinances().get(getFinances().size()-1);
+	}
+
+	public class HotelService implements ICalculable {
+		private Date fromDate;
+		private Date toDate;
+		private Item item;
+		private double quantity;
+		private double price;
+		private double taxableBase;
+
+		public Date getFromDate() {
+			return fromDate;
+		}
+		public void setFromDate(Date fromDate) {
+			this.fromDate = fromDate;
+		}
+
+		public Date getToDate() {
+			return toDate;
+		}
+		public void setToDate(Date toDate) {
+			this.toDate = toDate;
+		}
+
+		public Item getItem() {
+			return item;
+		}
+		public void setItem(Item item) {
+			this.item = item;
+		}
+
+		public double getQuantity() {
+			return quantity;
+		}
+		public void setQuantity(double quantity) {
+			this.quantity = quantity;
+		}
+
+		public double getPrice() {
+			return price;
+		}
+		public void setPrice(double price) {
+			this.price = price;
+		}
+
+		public double getTaxableBase() {
+			return taxableBase;
+		}
+		public void setTaxableBase(double taxableBase) {
+			this.taxableBase = taxableBase;
+		}
+
+
+		@Override
+		public DiscountExpression getDiscountExpression() {
+			return new DiscountExpression("0.0");
+		}
+
+		@Override
+		public double getTaxes() throws ManagerBeanException {
+			return 0;
+		}
+
 	}
 
 }

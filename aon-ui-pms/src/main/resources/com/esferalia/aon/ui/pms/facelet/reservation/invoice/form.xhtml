@@ -30,24 +30,29 @@
 		<aon:div id="invoiceHotelDiv">
 			<aon:selectOneMenu id="ProjectReservation_invoiceHotel"
 				value="#{controller.reservationInvoiceTo.hotel}" required="true"
-				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount &lt;= 1 and pmsCollections.currentUserHotelsCount > 1}"
+				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1 and pmsCollections.currentUserHotelsCount > 1}"
 				valueChangeListener="#{controller.onInvoiceHotelChanged}" 
 				reRender="ProjectReservation_invoiceRoom,ProjectReservation_invoiceGuest,invoiceServicesDiv,invoiceFinancesDiv">
 				<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 			</aon:selectOneMenu>
 			<aon:outputText value="#{controller.reservationInvoiceTo.hotel.workPlace.description}" styleClass="aon-bold"
-				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserHotelsCount &lt;= 1}" />
+				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserHotelsCount == 1}" />
 		</aon:div>
 
 		<aon:outputLabel for="ProjectReservation_invoiceRoom"
 			value="#{pmsBundle.pms_room}" />
-		<aon:selectOneMenu id="ProjectReservation_invoiceRoom"
-			value="#{controller.reservationInvoiceTo.room}"
-			valueChangeListener="#{controller.onInvoiceRoomChanged}"
-			reRender="invoiceHotelDiv,ProjectReservation_invoiceGuest,invoiceServicesDateDiv,invoiceFinancesDiv">
-			<f:selectItem itemLabel=" - " itemValue="#{null}" />
-			<f:selectItems value="#{controller.roomList}" />
-		</aon:selectOneMenu>
+		<aon:div id="invoiceRoomDiv">
+			<aon:selectOneMenu id="ProjectReservation_invoiceRoom"
+				value="#{controller.reservationInvoiceTo.room}"
+				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1}"
+				valueChangeListener="#{controller.onInvoiceRoomChanged}"
+				reRender="invoiceHotelDiv,invoiceRoomDiv,ProjectReservation_invoiceGuest,invoiceServicesDiv,invoiceFinancesDiv">
+				<f:selectItem itemLabel=" - " itemValue="#{null}" />
+				<f:selectItems value="#{controller.roomList}" />
+			</aon:selectOneMenu>
+			<aon:outputText value="#{controller.reservationInvoiceTo.room.room.asset.name}" styleClass="aon-bold"
+				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1}" />
+		</aon:div>
 	</c:if>
 
 	<aon:outputLabel for="ProjectReservation_invoiceGuest"
@@ -139,42 +144,5 @@
 		<aon:outputText value="#{controller.reservationInvoiceTo.address.zip}" styleClass="aon-margin-left aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
 	</aon:div>
-
-	<c:if test="#{service}">
-		<aon:outputLabel value="#{bundle.aon_date}" />
-		<aon:div id="invoiceServicesDateDiv">
-			<aon:outputLabel for="ProjectReservation_serviceFromDate" value="#{bundle.aon_date_from}"
-				styleClass="aon-margin-right aon-italic" />
-			<aon:selectInputDate id="ProjectReservation_serviceFromDate"
-				value="#{controller.reservationInvoiceTo.serviceFromDate}" required="true" 
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange"
-					actionListener="#{controller.onInvoiceServiceChanged}"
-					reRender="invoiceServicesDiv,invoiceFinancesDiv"
-					focus="ProjectReservation_serviceToDate" />
-				<a4j:support event="onchanged"
-					actionListener="#{controller.onInvoiceServiceChanged}"
-					reRender="invoiceServicesDiv,invoiceFinancesDiv"
-					focus="ProjectReservation_serviceToDate" />
-			</aon:selectInputDate>
-
-			<aon:outputLabel for="ProjectReservation_serviceToDate" value="#{bundle.aon_date_to}"
-				styleClass="aon-margin-left aon-margin-right aon-italic"  />
-			<aon:selectInputDate id="ProjectReservation_serviceToDate"
-				value="#{controller.reservationInvoiceTo.serviceToDate}" required="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange"
-					actionListener="#{controller.onInvoiceServiceChanged}"
-					reRender="invoiceServicesDiv,invoiceFinancesDiv"
-					focus="ProjectReservation_serviceItem" />
-				<a4j:support event="onchanged"
-					actionListener="#{controller.onInvoiceServiceChanged}"
-					reRender="invoiceServicesDiv,invoiceFinancesDiv"
-					focus="ProjectReservation_serviceItem" />
-			</aon:selectInputDate>
-		</aon:div>
-	</c:if>
 
 </ui:composition>

@@ -1,8 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +39,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
+import com.esferalia.aon.pms.reservation.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.reservation.ReservationInvoicing;
 
 public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
@@ -110,7 +109,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			getReservationInvoiceTo().setHotel((Hotel)event.getNewValue());
 			fillHotelData();
 
-			getReservationInvoiceTo().setServices(new LinkedList<InvoiceDetail>());
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
 			onNewService(null);
 		}
 	}
@@ -174,14 +173,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	public void onInvoiceRoomChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			getReservationInvoiceTo().setRoom((ProjectReservationRoomDetail)event.getNewValue());
-			getReservationInvoiceTo().setServiceFromDate(getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getStartDate());
 
-			Calendar toCalendar = new GregorianCalendar();
-			toCalendar.setTime(getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getEndDate());
-			toCalendar.add(Calendar.DATE, -1);
-			getReservationInvoiceTo().setServiceToDate(toCalendar.getTime());
-
-			getReservationInvoiceTo().setServices(new LinkedList<InvoiceDetail>());
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
 			onNewService(null);
 		}
 	}
@@ -223,19 +216,25 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
 	}
 
-	public void onServiceFromDateChanged(ActionEvent event) {
-	}
-
-	public void onServiceToDateChanged(ActionEvent event) {
-	}
-
 	public void onNewService(ActionEvent event) {
 		try {
-			InvoiceDetail invoiceDetail = new InvoiceDetail();
-			invoiceDetail.setItem((Item)getHotelServices().get(0).getValue());
-			invoiceDetail.setQuantity(1);
-			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-			getReservationInvoiceTo().getServices().add(invoiceDetail);
+			Date fromDate = new Date();
+			Date toDate = new Date();
+			if (getInvoiceServicesCount() > 0) {
+				fromDate = getReservationInvoiceTo().getLastService().getFromDate();
+				toDate = getReservationInvoiceTo().getLastService().getToDate();
+			} else if (getReservationInvoiceTo().getRoom() != null) {
+				fromDate = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getStartDate();
+				toDate = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getEndDate();
+				toDate = CommonUtil.addDaysToDate(toDate, -1);
+			}
+
+			HotelService hotelService = getReservationInvoiceTo().getNewService();
+			hotelService.setFromDate(fromDate);
+			hotelService.setToDate(toDate);
+			hotelService.setItem((Item)getHotelServices().get(0).getValue());
+			hotelService.setQuantity(1);
+			getReservationInvoiceTo().getServices().add(hotelService);
 			onInvoiceServiceChanged(null);
 		} catch (ManagerBeanException ex) {
 			String msg = "Error al seleccionar Servicio.";
@@ -245,7 +244,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	}
 
 	public int getInvoiceServicesCount() {
-		return getReservationInvoiceTo().getServices().size();
+		return getReservationInvoiceTo().getServicesCount();
 	}
 
 	public List<SelectItem> getHotelServices() throws ManagerBeanException {
@@ -272,19 +271,16 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	private double getServicesAmount() {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
-		for (InvoiceDetail invoiceService : getReservationInvoiceTo().getServices()) {
-			if (invoiceService.getItem() != null) {
+		for (HotelService hotelService : getReservationInvoiceTo().getServices()) {
+			if (hotelService.getItem() != null) {
 				double prices = 0;
-				Calendar fromCalendar = new GregorianCalendar();
-				fromCalendar.setTime(getReservationInvoiceTo().getServiceFromDate());
-				Calendar toCalendar = new GregorianCalendar();
-				toCalendar.setTime(getReservationInvoiceTo().getServiceToDate());
-				while (fromCalendar.compareTo(toCalendar) <= 0) {
-					prices += strategy.getUnitPrice(invoiceService, fromCalendar.getTime(), getReservationInvoiceTo().getHotel().getCustomer().getTariff());
-					fromCalendar.add(Calendar.DATE, 1);
+				Date date = hotelService.getFromDate();
+				while (date.compareTo(hotelService.getToDate()) <= 0) {
+					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer().getTariff());
+					date = CommonUtil.addDaysToDate(date, 1);
 				}
-				invoiceService.setPrice(CommonUtil.round(prices, 4));
-				invoiceService.setTaxableBase(strategy.getBasePrice(invoiceService));
+				hotelService.setPrice(CommonUtil.round(prices, 4));
+				hotelService.setTaxableBase(strategy.getBasePrice(hotelService));
 			}
 		}
 		return strategy.getTotalPrice(this, getReservationInvoiceTo().getHotel().getCustomer());
@@ -339,25 +335,29 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	}
 
 	private boolean isServicesDatesOk() {
-		Date from = getReservationInvoiceTo().getServiceFromDate();
-		Date to = getReservationInvoiceTo().getServiceToDate();
 		ProjectReservation reservation = null;
-		if (getReservationInvoiceTo().getRoom()!=null) {
+		if (getReservationInvoiceTo().getRoom() != null) {
 			reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 		}
 
-		String msg = "";
-		if (from.compareTo(to) > 0) {
-			msg = "La fecha de inicio del Servicio no puede ser mayor que la fecha de fin.";
-		} else if (reservation != null && (from.compareTo(reservation.getStartDate()) < 0 || to.compareTo(reservation.getEndDate()) > 0)) {
-			msg = "Las fechas del Servicio no estan dentro de la Reserva.";
-		} else if (CommonUtil.getDaysBetweenDates(from, to) > 30) {
-			msg = "No se puede facturar un servicio de mas de 30 dias.";
-		} else {
-			return true;
+		for (HotelService hotelService : getReservationInvoiceTo().getServices()) {
+			Date fromDate = hotelService.getFromDate();
+			Date toDate = hotelService.getToDate();
+			if (fromDate.compareTo(toDate) > 0) {
+				String msg = "La Fecha de inicio del Servicio " + hotelService.getItem().getProduct().getName() + " no puede ser mayor que la Fecha de fin.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else if (CommonUtil.getDaysBetweenDates(fromDate, toDate) > 30) {
+				String msg = "No se puede facturar un Servicio de mas de 30 dias.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			} else if ((reservation != null) && (fromDate.compareTo(reservation.getStartDate()) < 0 || toDate.compareTo(reservation.getEndDate()) > 0)) {
+				String msg = "Las fechas del Servicio no estan dentro de la Reserva.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 		}
-		AonUtil.addErrorMessage(msg);
-		throw new AbortProcessingException(msg);
+		return true;
 	}
 
 	public boolean isFinancesAmountOk() {
