@@ -525,6 +525,10 @@
 			<property-name>defaultExpressions</property-name>
 			<map-entries>
 				<map-entry>
+					<key>Invoice_type</key>
+					<value>1</value>
+				</map-entry>
+				<map-entry>
 					<key>Invoice_service</key>
 					<value>true</value>
 				</map-entry>
