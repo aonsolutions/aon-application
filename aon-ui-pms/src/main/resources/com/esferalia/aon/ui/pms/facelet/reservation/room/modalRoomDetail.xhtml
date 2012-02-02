@@ -89,7 +89,7 @@
 												disabled="#{controller.to.roomNumber != null}"
 												valueChangeListener="#{reservationTable.onItemFilterChanged}"
 												reRender="ProjectReservationRoomAvailability">
-												<f:selectItems value="#{pmsCollections.roomItems}" />
+												<f:selectItems value="#{reservation.hotelRoomItems}" />
 											</aon:selectOneMenu>
 
 											<aon:outputLabel for="ProjectReservationRoom_tariff"

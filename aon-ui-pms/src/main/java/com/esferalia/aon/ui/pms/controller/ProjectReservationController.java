@@ -30,6 +30,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -42,6 +43,7 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
@@ -166,21 +168,6 @@ public class ProjectReservationController extends BasicController {
 		this.invoiceModel = invoiceModel;
 	}
 
-	private List<ITransferObject> getReservationInvoiceList(ProjectReservation reservation) {
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
-			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
-			return invoiceBean.getList(criteria);
-		} catch (ManagerBeanException ex) {
-			String msg = "Error al cargar los datos de Facturas.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, ex);
-		}
-	}
-
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
@@ -244,8 +231,43 @@ public class ProjectReservationController extends BasicController {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setHotel((Hotel)event.getNewValue());
+			resetRoomItem();
 			resetRoomTariff();
 		}
+	}
+
+	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (reservation.getHotel() != null && reservation.getHotel().getId() != null) {
+			return getHotelRoomItems(reservation.getHotel());
+		}
+		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		return collectionsController.getRoomItems(); 
+	}
+
+	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
+		List<Integer> items = new LinkedList<Integer>();
+		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
+		for (ITransferObject ito : roomBean.getList(criteria)) {
+			Room room = (Room)ito;
+			if (!items.contains(room.getItem().getId())) {
+				items.add(room.getItem().getId());
+			}
+		}
+
+		List<SelectItem> roomItems = new LinkedList<SelectItem>();
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
+		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject ito : itemBean.getList(criteria)) {
+			Item item = (Item)ito;
+			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+			roomItems.add(roomItem);
+		}
+		return roomItems;
 	}
 
 	public void onStartDateChanged(ActionEvent event) {
@@ -513,6 +535,21 @@ public class ProjectReservationController extends BasicController {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		}
+	}
+
+	private List<ITransferObject> getReservationInvoiceList(ProjectReservation reservation) {
+		try {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
+			return invoiceBean.getList(criteria);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al cargar los datos de Facturas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
 		}
 	}
 

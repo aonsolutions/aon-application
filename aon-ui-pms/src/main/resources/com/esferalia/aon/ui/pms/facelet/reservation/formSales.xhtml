@@ -69,7 +69,7 @@
 	<aon:selectOneMenu id="ProjectReservation_roomItem" value="#{reservation.roomItem}" 
 		rendered="#{reservation.new}" required="#{true}">
 		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{pmsCollections.roomItems}" />
+		<f:selectItems value="#{reservation.hotelRoomItems}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{productBundle.product_tariff}" 
