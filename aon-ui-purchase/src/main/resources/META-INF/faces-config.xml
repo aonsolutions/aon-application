@@ -269,7 +269,16 @@
 		</managed-property>	
 	</managed-bean>
 	
+	<!-- ************* PURCHASE PROPOSAL ORDER ***************** -->
+	<managed-bean>
+		<managed-bean-name>purchaseOrder</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.purchase.controller.PurchaseOrderController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+   	<!-- ************************************************ -->
    	<!-- ************* NAVIGATION RULES ***************** -->
+   	<!-- ************************************************ -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>purchase_list</from-outcome>
@@ -298,6 +307,22 @@
 		<navigation-case>
 			<from-outcome>proposal_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/purchase/facelet/proposal/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 		
+	
+	<!-- =================== Purchase order ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>purchaseOrder_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>purchaseOrder_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>purchaseOrder_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 		
 	

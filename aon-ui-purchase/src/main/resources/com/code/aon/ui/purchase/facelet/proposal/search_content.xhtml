@@ -10,20 +10,20 @@
 		<aon:outputLabel for="Proposal_issueDate-From"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
 		<aon:selectInputDate id="Proposal_issueDate-From"
-			valueChangeListener="#{proposal.addGreaterThanOrEqualExpression}"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 		<aon:outputLabel for="Proposal_issueDate-To"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 		<aon:selectInputDate id="Proposal_issueDate-To"
-			valueChangeListener="#{proposal.addLessThanOrEqualExpression}"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 	
 	<aon:outputLabel value="#{companyBundle.company_workplace}" />
 	<aon:selectOneMenu id="Proposal_workPlce" 
-		value="#{proposalSearch.workPlace}">
+		value="#{searchController.workPlace}">
 		<f:selectItem itemLabel=" - " itemValue="null" />
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 		<a4j:support event="onchange" reRender="Proposal_workplaceDepartment" ignoreDupResponses="true" />
@@ -32,13 +32,13 @@
 
 	<aon:outputLabel value="#{companyBundle.company_department}" />
 	<aon:selectOneMenu id="Proposal_workplaceDepartment" 
-		value="#{proposalSearch.workplaceDepartment}">
+		value="#{searchController.workplaceDepartment}">
 		<f:selectItem itemLabel=" - " itemValue="null" />
-		<f:selectItems value="#{proposalSearch.workplaceDepartments}" />
+		<f:selectItems value="#{searchController.workplaceDepartments}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel value="#{bundle.aon_status}" />
-	<aon:selectManyCheckbox value="#{proposalSearch.proposalStatuses}">
+	<aon:selectManyCheckbox value="#{searchController.proposalStatuses}">
 		<f:selectItems value="#{purchaseCollections.proposalStatuses}"/>
 	</aon:selectManyCheckbox>
 							

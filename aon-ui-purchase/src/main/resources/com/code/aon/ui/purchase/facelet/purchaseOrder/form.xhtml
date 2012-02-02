@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="purchaseOrderForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchaseOrder_module}" />
+				<ui:define name="toolbarContent">
+				
+				<!--  
+					<aon:htmlCommandLink id="purchaseOrder_list"
+						disabled="true"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{purchaseBundle.purchase_detail}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="purchaseOrder" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+					
+					<aon:commandButton id="purchaseOrder_confirm"
+						disabled="true"
+						value="#{purchaseBundle.purchase_to_close}" immediate="#{true}" 
+						rendered="#{purchaseOrder.model.rowCount > 0 }"
+						styleClass="aon-finding-toolbar-item aon-icon-favorite"
+						actionListener="#{purchaseOrder.onPurchaseConfirm}"
+						reRender="purchaseOrderForm">
+					</aon:commandButton>
+				-->
+				
+				</ui:define>
+			</ui:decorate>
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid columns="2"  style="width:100%;"
+					columnClasses="
+					aon-vertical-align-top aon-padding-top aon-width-auto, 
+					aon-vertical-align-top aon-width-450
+					">
+				
+					<aon:div styleClass="aon-padding-right">
+						<aon:dataTable id="proposalDetailDataList" value="#{purchaseOrder.model}" 
+							rendered="#{purchaseOrder.model.rowCount > 0}" rows="20" var="to">
+							
+							<aon:rowSelector actionListener="#{purchaseOrder.onSelectGroup}" />
+							
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_item}s" />
+							</f:facet>
+							
+							
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+								<aon:div >
+									<aon:outputText value="#{to.totalQuantity}"
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+									<aon:outputText value=" unidades de " />
+									<aon:outputText value="#{to.item.product.name}" 
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+									<aon:outputText value=" en " />
+									<aon:outputText value="#{to.totalItem}" 
+										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+									<aon:outputText value=" solicitudes " />
+								</aon:div>
+							</aon:column>
+					
+							<ui:include 
+								src="/com/code/aon/ui/purchase/facelet/purchaseOrder/detail_list.xhtml" />
+								
+						</aon:dataTable>
+						<aon:dataScroller2 for="proposalDetailDataList" showNote="true" />
+					</aon:div>
+					
+					<aon:div styleClass="aon-panelGrid-search">
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>	
+						
+								
+						<aon:panelGrid columns="2"  style="width:100%;"
+							columnClasses="aon-panelGrid-odd aon-width-50, 
+							aon-panelGrid-even aon-width-auto">
+							
+							<aon:outputLabel value="#{purchaseBundle.purchase_issueDate}" />
+							<aon:div>
+								<aon:outputLabel for="Proposal_issueDate-From"
+									styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+								<aon:selectInputDate id="Proposal_issueDate-From"
+									value="#{purchaseOrder.params.startDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+								<aon:outputLabel for="Proposal_issueDate-To"
+									styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+								<aon:selectInputDate id="Proposal_issueDate-To"
+									value="#{purchaseOrder.params.endDate}"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}"/>
+							</aon:div>
+							
+							<aon:outputLabel value="#{companyBundle.company_workplace}" />
+							<aon:selectOneMenu id="Proposal_workPlce" 
+								value="#{purchaseOrder.params.workPlace}">
+								<f:selectItem itemLabel=" - " itemValue="null" />
+								<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+							</aon:selectOneMenu>
+							
+							<aon:outputText value="&#160;" />
+							<aon:commandButton id="search" ignoreDupResponses="true"
+								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+								action="purchaseOrder_form"
+								actionListener="#{purchaseOrder.onSearch}" />
+							
+						</aon:panelGrid>
+					</aon:div>
+					
+			
+				</aon:panelGrid>
+			</aon:div>
+			
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>

@@ -3,6 +3,7 @@ package com.code.aon.ui.purchase.event;
 import java.util.Date;
 
 import com.code.aon.purchase.Proposal;
+import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -28,6 +29,7 @@ public class ProposalControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		((Proposal)getController().getTo()).setIssueDate(new Date());
+		((Proposal)getController().getTo()).setStatus(ProposalStatus.PENDING);
 	}
 	
 }

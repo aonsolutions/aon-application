@@ -348,6 +348,7 @@ public class ReservationTableController {
 						AssetDay d = assetDayList.get(pos);
 						d.setAsset(aa.getAsset());
 						d.setActivity(aa);
+						d.setFirst(true);
 					}
 				}
 			}
@@ -405,7 +406,14 @@ public class ReservationTableController {
 	public class AssetDay {
 		private Asset asset;
 		private AssetActivity activity;
-
+		private boolean first;
+		
+		public boolean isFirst() {
+			return first;
+		}
+		public void setFirst(boolean first) {
+			this.first = first;
+		}
 		public Asset getAsset() {
 			return asset;
 		}

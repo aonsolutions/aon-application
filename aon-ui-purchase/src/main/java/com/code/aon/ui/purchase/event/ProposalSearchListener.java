@@ -52,8 +52,8 @@ public class ProposalSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setWorkPlace(null);
-		setWorkplaceDepartment(null);
+		setWorkPlace(new WorkPlace());
+		setWorkplaceDepartment(new WorkplaceDepartment());
 		ProposalStatus[] defaultProposalStatus = {ProposalStatus.PENDING};
 		setProposalStatuses(defaultProposalStatus);
 	}
@@ -80,8 +80,8 @@ public class ProposalSearchListener extends ControllerSearchListener {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getWorkPlace().getId());
 			for (ITransferObject ito : bean.getList(criteria)) {
-				WorkplaceDepartment d = (WorkplaceDepartment)ito;
-				SelectItem item = new SelectItem(d.getDepartment(), d.getDepartment().getName());
+				WorkplaceDepartment wd = (WorkplaceDepartment)ito;
+				SelectItem item = new SelectItem(wd, wd.getDepartment().getName());
 				list.add(item);
 			}
 		}

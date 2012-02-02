@@ -21,7 +21,10 @@
 				
 				<ui:define name="searchContent">
 				
-					<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/search_content.xhtml" />
+					<ui:include src="/com/code/aon/ui/purchase/facelet/proposal/search_content.xhtml" >
+						<ui:param name="controller" value="#{proposal}" />
+						<ui:param name="searchController" value="#{proposalSearch}" />
+					</ui:include>
 						
 				</ui:define>
 			</ui:decorate>				

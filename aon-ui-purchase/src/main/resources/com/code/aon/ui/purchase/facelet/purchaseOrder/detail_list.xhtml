@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:subTable id="purchaseOrderDetailList" var="detail" index="idx"
+		rendered="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex}" width="auto"
+		value="#{purchaseOrder.detailModel}" >
+		
+		<rich:column colspan="1" 
+			style="padding: 0px; border: none;background-color: #{purchaseOrder.detailModel.rowIndex%2==0?'#FBEDB6;':'#FDF9E7;' }"
+			styleClass="aon-width-all aon-noborder" >
+			
+			<h:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
+				cellpadding="0" cellspacing="0" border="0"
+				columnClasses="
+					aon-noborder ,
+					aon-noborder,
+					aon-noborder,
+					aon-noborder,
+					aon-noborder
+					" >
+				
+					<aon:div styleClass="aon-width-100 aon-editDataTable-iconColumn aon-noborder">
+						<aon:commandLink  
+							styleClass="aon-table-row-link" value="&#160;"
+							immediate="true" ajaxSingle="true" requestDelay="100"
+							actionListener="#{purchaseOrder.onSelectDetail}"
+							 >
+						</aon:commandLink>
+					</aon:div>
+				
+					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn">
+						<aon:outputText value="#{companyBundle.company_workplace}:" />
+						<aon:outputText value="#{detail.proposal.workPlace.description}" />
+					</aon:div>
+			
+					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn aon-noborder">
+						<aon:outputText value="#{companyBundle.company_department}:" />
+						<aon:outputText value="#{detail.proposal.workplaceDepartment.department.name}" />
+					</aon:div>
+			
+					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn aon-noborder">
+						<aon:outputText value="#{bundle.aon_quantity}:" />
+						<aon:outputText value="#{detail.quantity}"
+							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:inputText value="#{detail.quantity}" 
+							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+					</aon:div>
+				
+					<aon:div styleClass="aon-width-70  aon-noborder">
+						<aon:commandButton
+							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}"
+							actionListener="#{purchaseOrder.onAcceptDetail}"
+							styleClass="aon-editDataTable-button aon-icon-accept" />
+						<aon:commandButton
+							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}"
+							actionListener="#{purchaseOrder.onCancelDetail}"
+							immediate="true" 
+							styleClass="aon-editDataTable-button aon-icon-cancel" />
+						<aon:confirmButton id="remove"
+							title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
+							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}"
+							immediate="true"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{purchaseOrder.onRemoveDetail}"
+							styleClass="aon-editDataTable-button aon-icon-delete" />
+					</aon:div>
+			
+			</h:panelGrid>
+			
+		</rich:column> 
+		
+	</rich:subTable>
+	
+</ui:composition>

@@ -40,8 +40,25 @@
 			<rich:columns styleClass="aon-editDataTable-textColumn no-padding" 
 				value="#{controller.assetModel.rowData.assetDayModel.wrappedData}" var="day" index="idx"	>
 
-				<aon:div styleClass="#{(day.activity!=null and day.activity.id!=null)?'reserved-cell':'available-cell'}">
-					<aon:outputText value="&#160;" />
+				<aon:div styleClass="#{(day.activity!=null and day.activity.id!=null)?'reserved-cell':'available-cell'}" >
+					<aon:outputText value="&#160;&#160;&#160;" 
+						styleClass="#{fraction.first?'aon-icon-info':'none'}" >
+						<rich:toolTip followMouse="true" direction="top-right" showDelay="250" 
+						 	rendered="#{day.first}" >
+							<span style="white-space:nowrap">
+								<aon:div><aon:outputText value="#{day.activity.asset.description}" /></aon:div>
+							</span>
+							<h:panelGrid columns="2" >
+								<aon:outputLabel value="#{assetBundle.asset_activity_who}" />
+								<aon:outputText value="#{day.activity.holder}" />
+						               
+								<aon:outputLabel value="#{assetBundle.asset_activity_why}" />
+								<aon:outputText value="#{day.activity.comments}" />
+							</h:panelGrid>
+						</rich:toolTip>
+					</aon:outputText>
+					
+					
 				</aon:div>
 			
 			</rich:columns>
