@@ -34,7 +34,10 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/esferalia/aon/ui/pms/facelet/serviceInvoice/formContent.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/pms/facelet/serviceInvoice/formContent.xhtml">
+					<ui:param name="controller" value="#{serviceInvoice}" />
+					<ui:param name="service" value="#{true}" />
+				</ui:include>
  			</aon:div>
 
 		</aon:form>

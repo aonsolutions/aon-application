@@ -77,7 +77,6 @@
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
-			<ui:param name="directCustomer" value="#{reservation.to.project.registry.id == reservation.to.hotel.customer.id}" />
 			<ui:param name="service" value="#{false}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalRectification.xhtml">

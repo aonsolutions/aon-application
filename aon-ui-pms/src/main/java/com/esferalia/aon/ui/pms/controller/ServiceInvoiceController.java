@@ -94,6 +94,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	private void fillInvoiceData() throws ManagerBeanException {
 		getReservationInvoiceTo().setHotel(obtainHotel());
 		fillHotelData();
+		getReservationInvoiceTo().setDirectCustomer(true);
 		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
 		onNewService(null);
 	}
@@ -269,29 +270,6 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		onNewFinance(null);
 	}
 
-	public boolean verifyServicesDates() {
-		Date from = getReservationInvoiceTo().getServiceFromDate();
-		Date to = getReservationInvoiceTo().getServiceToDate();
-		ProjectReservation reservation = null;
-		if (getReservationInvoiceTo().getRoom()!=null) {
-			reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
-		}
-
-		String msg = "";
-		if (from.compareTo(to) > 0) {
-			msg = "La fecha de inicio del Servicio no puede ser mayor que la fecha de fin.";
-		} else if (reservation != null && (from.compareTo(reservation.getStartDate()) < 0 || to.compareTo(reservation.getEndDate()) > 0)) {
-			msg = "Las fechas del Servicio no estan dentro de la Reserva.";
-		} else if (CommonUtil.getDaysBetweenDates(from, to) > 30) {
-			msg = "No se puede facturar un servicio de mas de 30 dias.";
-		} else {
-			return true;
-		}
-
-		AonUtil.addErrorMessage(msg);
-		throw new AbortProcessingException(msg);
-	}
-
 	private double getServicesAmount() {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
 		for (InvoiceDetail invoiceService : getReservationInvoiceTo().getServices()) {
@@ -327,41 +305,63 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		return CommonUtil.round(amount);
 	}
 
-	public boolean isFinancesAmountOk() {
-		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
-	}
-
-	public Finance getLastInvoiceFinance() {
-		return getReservationInvoiceTo().getFinances().get(getReservationInvoiceTo().getFinances().size()-1);
-	}
-
 	public void onInvoice(ActionEvent event) {
-		if (verifyServicesDates()) {
-			if (isFinancesAmountOk()) {
-				try {
-					ProjectReservation reservation = null;
-					if (getReservationInvoiceTo().getRoom() != null) {
-						reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
-					}
-	
-					ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-					Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
-
-					onEditSearch(event);
-					getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
-					onSearch(event);
-					getModel().setRowIndex(0);
-					onSelect(event);
-				} catch (ManagerBeanException ex) {
-					AonUtil.addErrorMessage(ex.getMessage());
-					throw new AbortProcessingException(ex.getMessage(), ex);
+		if (validateInvoice()) {
+			try {
+				ProjectReservation reservation = null;
+				if (getReservationInvoiceTo().getRoom() != null) {
+					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
-			} else {
-				String msg = "El importe de los Pagos no coincide con el importe de los Servicios.";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+
+				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
+				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
+
+				onEditSearch(event);
+				getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+				onSearch(event);
+				getModel().setRowIndex(0);
+				onSelect(event);
+			} catch (ManagerBeanException ex) {
+				AonUtil.addErrorMessage(ex.getMessage());
+				throw new AbortProcessingException(ex.getMessage(), ex);
 			}
 		}
+	}
+
+	private boolean validateInvoice() {
+		if (!isFinancesAmountOk()) {
+			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return isServicesDatesOk();
+	}
+
+	private boolean isServicesDatesOk() {
+		Date from = getReservationInvoiceTo().getServiceFromDate();
+		Date to = getReservationInvoiceTo().getServiceToDate();
+		ProjectReservation reservation = null;
+		if (getReservationInvoiceTo().getRoom()!=null) {
+			reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
+		}
+
+		String msg = "";
+		if (from.compareTo(to) > 0) {
+			msg = "La fecha de inicio del Servicio no puede ser mayor que la fecha de fin.";
+		} else if (reservation != null && (from.compareTo(reservation.getStartDate()) < 0 || to.compareTo(reservation.getEndDate()) > 0)) {
+			msg = "Las fechas del Servicio no estan dentro de la Reserva.";
+		} else if (CommonUtil.getDaysBetweenDates(from, to) > 30) {
+			msg = "No se puede facturar un servicio de mas de 30 dias.";
+		} else {
+			return true;
+		}
+		AonUtil.addErrorMessage(msg);
+		throw new AbortProcessingException(msg);
+	}
+
+	public boolean isFinancesAmountOk() {
+		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
 	}
 
 	public void onRectifyInvoiceShow(ActionEvent event) {

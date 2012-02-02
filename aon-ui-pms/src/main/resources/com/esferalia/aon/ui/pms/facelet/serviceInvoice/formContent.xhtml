@@ -10,20 +10,12 @@
 	<aon:panelGrid columns="2" styleClass="aon-width-all"
 		columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
-		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form.xhtml">
-			<ui:param name="controller" value="#{serviceInvoice}" />
-			<ui:param name="directCustomer" value="#{true}" />
-			<ui:param name="service" value="#{true}" />
-		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form.xhtml" />
 
 	</aon:panelGrid>
 	 
-	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_service.xhtml">
-		<ui:param name="controller" value="#{serviceInvoice}" />
-	</ui:include>
+	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_service.xhtml" />
 
-	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml">
-		<ui:param name="controller" value="#{serviceInvoice}" />
-	</ui:include>
+	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />
 
 </ui:composition>

@@ -31,6 +31,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
@@ -390,8 +391,9 @@ public class ProjectReservationController extends BasicController {
 		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
+		getReservationInvoiceTo().setDirectCustomer(reservation.getProject().getRegistry().getId() == reservation.getHotel().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRegistry(reservation.getProject().getRegistry());
-		if (reservation.getProject().getRegistry().getId() == reservation.getHotel().getCustomer().getRegistry().getId()) {
+		if (getReservationInvoiceTo().isDirectCustomer()) {
 			getReservationInvoiceTo().setAddress(new InvoiceAddress());
 			IManagerBean reservationGuestBean = BeanManager.getManagerBean(ProjectReservationGuest.class);
 			Criteria criteria = new Criteria();
@@ -496,9 +498,15 @@ public class ProjectReservationController extends BasicController {
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
 	}
 
-	public void onNewFinance(ActionEvent event) {
+	public void onNewFinance(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		Finance finance = new Finance();
+		if (!getReservationInvoiceTo().isDirectCustomer()) {
+			RegistryPayMethod payMethod = getReservationInvoiceTo().getRegistry().getPayMethod();
+			if (payMethod != null) {
+				finance.setPayMethod(payMethod.getPayment());
+			}
+		}
 		double amount = CommonUtil.round(reservation.getTotal() - getFinancesAmount());
 		finance.setAmount(amount);
 		getReservationInvoiceTo().getFinances().add(finance);
@@ -512,14 +520,9 @@ public class ProjectReservationController extends BasicController {
 		return CommonUtil.round(amount);
 	}
 
-	public boolean isFinancesAmountOk() {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return CommonUtil.round(reservation.getTotal() - getFinancesAmount()) == 0;
-	}
-
 	public void onInvoice(ActionEvent event) {
 		setInvoiceModel(null);
-		if (isFinancesAmountOk()) {
+		if (validateInvoice()) {
 			ProjectReservation reservation = (ProjectReservation)this.getTo();
 			try {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
@@ -531,11 +534,32 @@ public class ProjectReservationController extends BasicController {
 				AonUtil.addErrorMessage(ex.getMessage());
 				throw new AbortProcessingException(ex.getMessage(), ex);
 			}
-		} else {
+		}
+	}
+
+	private boolean validateInvoice() {
+		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+
+		if (!isPayMethodOk()) {
+			String msg = "La Forma de Pago no es válida.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return true;
+	}
+
+	public boolean isFinancesAmountOk() {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		return CommonUtil.round(reservation.getTotal() - getFinancesAmount()) == 0;
+	}
+
+	public boolean isPayMethodOk() {
+		return (getReservationInvoiceTo().getFinances().get(0).getPayMethod() != null);
 	}
 
 	private List<ITransferObject> getReservationInvoiceList(ProjectReservation reservation) {

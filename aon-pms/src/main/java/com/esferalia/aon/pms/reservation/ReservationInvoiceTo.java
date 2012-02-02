@@ -21,6 +21,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private int number;
 	private ProjectReservationRoomDetail room;
 	private ProjectReservationGuest guest;
+	private boolean directCustomer;
 	private Registry registry;
 	private IAddress address;
 	private String comments;
@@ -88,6 +89,14 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setGuest(ProjectReservationGuest guest) {
 		this.guest = guest;
+	}
+
+	public boolean isDirectCustomer() {
+		return directCustomer;
+	}
+
+	public void setDirectCustomer(boolean directCustomer) {
+		this.directCustomer = directCustomer;
 	}
 
 	public Registry getRegistry() {

@@ -22,8 +22,15 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-150 aon-editDataTable-textColumn">
+						<aon:div rendered="#{!controller.reservationInvoiceTo.directCustomer}">
+							<aon:outputText value="#{hotelInvoiceFinance.payMethod.name}" styleClass="aon-bold"
+								rendered="#{hotelInvoiceFinance.payMethod != null}" />
+							<aon:outputText value="#{bundle.aon_undefined}" styleClass="aon-bold aon-label-error"
+								rendered="#{hotelInvoiceFinance.payMethod == null}" />
+						</aon:div>
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
-							value="#{hotelInvoiceFinance.payMethod}" required="true">
+							value="#{hotelInvoiceFinance.payMethod}" required="true"
+							rendered="#{controller.reservationInvoiceTo.directCustomer}">
 							<f:selectItems value="#{configCollections.directPayMethods}" />
 						</aon:selectOneMenu>
 					</aon:column>
@@ -34,15 +41,21 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
-						<aon:inputText id="ProjectReservation_financeAmount"
-							value="#{hotelInvoiceFinance.amount}"
-							required="true" size="5" />
-						<aon:commandButton
-							id="Finance-newButton" title="#{bundle.aon_reset}"
-							styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
-							rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
-							actionListener="#{controller.onNewFinance}"
-							reRender="financeList" />
+						<aon:outputText value="#{hotelInvoiceFinance.amount}" styleClass="aon-bold"
+							rendered="#{!controller.reservationInvoiceTo.directCustomer}">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						<aon:div rendered="#{controller.reservationInvoiceTo.directCustomer}">
+							<aon:inputText id="ProjectReservation_financeAmount"
+								value="#{hotelInvoiceFinance.amount}"
+								required="true" size="5" />
+							<aon:commandButton
+								id="Finance-newButton" title="#{bundle.aon_reset}"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
+								rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
+								actionListener="#{controller.onNewFinance}"
+								reRender="financeList" />
+						</aon:div>
 					</aon:column>
 
 				</aon:dataTable>

@@ -30,6 +30,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -65,7 +66,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			if (reservationInvoiceTo.getAddress() != null) {
 				createInvoiceAddress(invoice, reservationInvoiceTo.getAddress());
 			}
-			createInvoiceFinances(invoice, reservationInvoiceTo.getFinances());
+			createInvoiceFinances(invoice, reservationInvoiceTo);
 			recordInvoice(invoice);
 
 			HibernateUtil.getSession(sessionName).flush();
@@ -277,16 +278,22 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoiceAddressBean.insert(invoiceAddress);
 	}
 
-	private void createInvoiceFinances(Invoice invoice, List<Finance> finances) throws ManagerBeanException {
+	private void createInvoiceFinances(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		for (Finance finance : finances) {
+		for (Finance finance : reservationInvoiceTo.getFinances()) {
 			if (finance.getAmount() > 0) {
-				finance.setInvoice(invoice);
-				finance.setPayment(false);
-				finance.setDueDate(invoice.getIssueDate());
-				finance.setScope(invoice.getScope());
-				finance.setFinanceStatus(FinanceStatus.PENDING);
-				financeBean.insert(finance);
+				if (!reservationInvoiceTo.isDirectCustomer()) {
+					FinanceGenerator financeGenerator = new FinanceGenerator();
+					financeGenerator.generateFinances(invoice, finance.getAmount());
+					break;
+				} else {
+					finance.setInvoice(invoice);
+					finance.setPayment(false);
+					finance.setDueDate(invoice.getIssueDate());
+					finance.setScope(invoice.getScope());
+					finance.setFinanceStatus(FinanceStatus.PENDING);
+					financeBean.insert(finance);
+				}
 			}
 		}
 	}
