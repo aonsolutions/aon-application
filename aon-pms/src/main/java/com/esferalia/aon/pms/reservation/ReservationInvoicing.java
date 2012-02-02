@@ -334,6 +334,8 @@ public class ReservationInvoicing implements IReservationConstants {
 			Criteria criteria = new Criteria();
 			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_INVOICE_DETAIL_ID);
 			criteria.addEqualExpression(alias, invoiceDetail.getId());
+			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
+			criteria.addEqualExpression(alias, true);
 			for (ITransferObject itr : reservationServiceDetailBean.getList(criteria)) {
 				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)itr;
 				if (!servicesToRemove.contains(reservationServiceDetail.getProjectReservationService())) {
