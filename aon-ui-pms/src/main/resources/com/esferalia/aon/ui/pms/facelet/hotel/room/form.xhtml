@@ -39,14 +39,18 @@
 
 				</aon:panelGrid>
 				
-				<aon:panel rendered="#{!room.new}">
-					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
-					</f:facet>
-					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" >
-						<ui:param name="controller" value="#{roomFeature}" />
-					</ui:include>
-				</aon:panel>
+				<aon:div styleClass="aon-group" style="width: 100%; margin-top: 2em;">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{assetBundle.asset_feature_module}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" >
+								<ui:param name="controller" value="#{roomFeature}" />
+							</ui:include>
+						</aon:div>
+					</aon:div>
+				</aon:div>
 				
 			</aon:div>
 		</aon:form>
