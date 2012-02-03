@@ -218,9 +218,11 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	public void onNewService(ActionEvent event) {
 		try {
+			double quantity = 1;
 			Date fromDate = new Date();
 			Date toDate = new Date();
 			if (getInvoiceServicesCount() > 0) {
+				quantity = getReservationInvoiceTo().getLastService().getQuantity();
 				fromDate = getReservationInvoiceTo().getLastService().getFromDate();
 				toDate = getReservationInvoiceTo().getLastService().getToDate();
 			} else if (getReservationInvoiceTo().getRoom() != null) {
@@ -233,7 +235,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			hotelService.setFromDate(fromDate);
 			hotelService.setToDate(toDate);
 			hotelService.setItem((Item)getHotelServices().get(0).getValue());
-			hotelService.setQuantity(1);
+			hotelService.setQuantity(quantity);
 			getReservationInvoiceTo().getServices().add(hotelService);
 			onInvoiceServiceChanged(null);
 		} catch (ManagerBeanException ex) {
