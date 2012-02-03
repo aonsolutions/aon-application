@@ -83,6 +83,7 @@ public interface IPayrollConstants {
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
 	String PERSON_CONTROLLER_NAME = "person";
+	String SALARY_EXPENSE_CONTROLLER_NAME = "salaryExpense";
 
 	// ************************************************************
 	// CONFIGURATION
@@ -98,6 +99,7 @@ public interface IPayrollConstants {
 	String SALARY_LIST_REPORT = "salaryList";
 	String DEFAULT_SALARY_TEMPLATE = "salary";
 	String DEFAULT_SALARY_DRAFT_TEMPLATE = "salaryDraft";
+	String COST_REPORT = "salaryExpenseReport";
 
 	// ************************************************************
 	// NAVIGATION KEYS

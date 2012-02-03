@@ -43,10 +43,12 @@
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<collection provider="#{salary}" forceRefresh="true" />
 		<params>
+			<!--
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+			-->
 		</params>
 	</report>
 

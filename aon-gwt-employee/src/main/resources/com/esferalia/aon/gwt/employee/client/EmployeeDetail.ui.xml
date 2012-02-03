@@ -7,7 +7,7 @@
 
 	<g:DockLayoutPanel unit='EM' >
 	    <g:center >
-	      <employee:SalaryReceipt ui:field="salaryReceipt"></employee:SalaryReceipt>
+	      <employee:Reports ui:field="reports"></employee:Reports>
 	    </g:center>
 	</g:DockLayoutPanel>
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="351"/>
+	<property name="ireport.x" value="59"/>
+	<property name="ireport.y" value="126"/>
 	<style name="label" vAlign="Bottom" fontSize="9"/>
 	<style name="title" fontSize="11" isBold="true" isUnderline="true"/>
 	<style name="title1" style="label" fontSize="10" isBold="true"/>
@@ -592,25 +592,25 @@
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getSocialSecurityContributions())]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="title2_dotts" x="14" y="123" width="269" height="13"/>
+					<reportElement style="title2_dotts" x="14" y="136" width="269" height="13"/>
 					<textElement/>
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement style="amount" x="283" y="123" width="40" height="13"/>
+					<reportElement style="amount" x="283" y="136" width="40" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getDescription()]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement style="label_dotts" x="24" y="136" width="324" height="13"/>
-					<textElement/>
-					<text><![CDATA[TOTAL APORTACIONES]]></text>
-				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="136" width="97" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getIrpf().getAmount())]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement style="label_dotts" x="24" y="123" width="324" height="13"/>
+					<textElement/>
+					<text><![CDATA[TOTAL APORTACIONES]]></text>
+				</staticText>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="149" width="334" height="13"/>
 					<textElement/>

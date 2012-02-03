@@ -14,15 +14,15 @@ public class EmployeeDetail extends ResizeComposite {
 	interface Binder extends UiBinder<Widget, EmployeeDetail> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField SalaryReceipt salaryReceipt;
+	@UiField Reports reports;
 	
 	
 	public EmployeeDetail() {
 		initWidget(binder.createAndBindUi(this));
 	}
 	
-	public SalaryReceipt getSalaryReceipt() {
-		return salaryReceipt;
+	public Reports getSalaryReceipt() {
+		return reports;
 	}
 	
 

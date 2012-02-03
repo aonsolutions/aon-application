@@ -1,12 +1,11 @@
 package com.esferalia.aon.gwt.employee.client;
 
 import java.util.List;
-import java.util.ListIterator;
 
+import com.esferalia.aon.gwt.employee.shared.Cost;
 import com.esferalia.aon.gwt.employee.shared.Employee;
 import com.esferalia.aon.gwt.employee.shared.Enterprise;
 import com.esferalia.aon.gwt.employee.shared.Salary;
-import com.esferalia.aon.gwt.employee.shared.StringUtils;
 import com.esferalia.aon.gwt.employee.shared.Workplace;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -22,9 +21,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class Employees extends Composite 
-	implements AsyncCallback<Enterprise>, OpenHandler<TreeItem>, SelectionHandler<TreeItem>{
-	
+public class Employees extends Composite implements AsyncCallback<Enterprise>,
+		OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
+
 	private static final String DELIMITERS = "\t ,.-";
 
 	/**
@@ -46,166 +45,152 @@ public class Employees extends Composite
 		ImageResource treeLeaf();
 	}
 
-	private Tree 					tree;
-	private Images 					images;
-	private EmployeesServiceAsync 	employeesService;
-	
-	private EmployeeDetail			employeeDetail;
-	
+	private Tree tree;
+	private Images images;
+	private EmployeesServiceAsync employeesService;
+
+	private EmployeeDetail employeeDetail;
+
 	public Employees() {
 
 		images = GWT.create(Images.class);
 		tree = new Tree(images);
-		
-		// Create a remote service proxy to talk to the server-side Employees service.
+
+		// Create a remote service proxy to talk to the server-side Employees
+		// service.
 		employeesService = GWT.create(EmployeesService.class);
-		
+
 		employeesService.getEnterprise(this);
-		
-		
+
 		initWidget(tree);
-		
+
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 	}
-	
+
 	public void setEmployeeDetail(EmployeeDetail employeeDetail) {
 		this.employeeDetail = employeeDetail;
 	}
-	
-	
+
 	@Override
 	public void onFailure(Throwable caught) {
 		// TODO Auto-generated method stub
 		Window.alert(caught.getLocalizedMessage());
 	}
-	
+
 	@Override
 	public void onSuccess(Enterprise enterprise) {
-		
+
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
-		TreeItem enterpriseItem = new TreeItem(imageItemHTML(images.enterprise(),
-				enterprise.getName() , workplaces.size() ));
-		
+		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(
+				images.enterprise(), enterprise.getName(), workplaces.size()));
+
+		List<Cost> enterpriseCosts = enterprise.getCosts();
+		IReportsModel<IReport> reports = 
+				new CostReportsModel(enterpriseCosts);
+		enterpriseItem.setUserObject(reports);
+
 		tree.addItem(enterpriseItem);
-		
-		
+
 		for (Workplace workplace : workplaces) {
-		
+
 			List<Employee> employees = workplace.getEmployees();
-			
+
 			String description = workplace.getDescription();
-			description = StringUtils.capitalizeFully(description, DELIMITERS);
-			
-			TreeItem workplaceItem = addImageItem(enterpriseItem, 
-					description , employees.size() , 
-					images.workplace());
-			
-			
+
+			TreeItem workplaceItem = addImageItem(enterpriseItem, description,
+					employees.size(), images.workplace());
+
+			List<Cost> workplaceCosts = workplace.getCosts();
+			IReportsModel<IReport> workplaceReports = 
+					new CostReportsModel(workplaceCosts);
+			workplaceItem.setUserObject(workplaceReports);
+
 			for (Employee employee : employees) {
 				String fullName = employee.getFullname();
-				fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
-				TreeItem employeeItem = addImageItem(workplaceItem, 
-						fullName, 0 /* Not show number of childs */,
-						images.employee());
-				
+				// fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
+				TreeItem employeeItem = addImageItem(workplaceItem, fullName,
+						0 /* Not show number of childs */, images.employee());
+
 				employeeItem.setUserObject(employee);
-				
+
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
-				
+
 			}
 		}
-		
-		//addImageItem(employee, "Draft", images.draft());
-		
+
+		enterpriseItem.setSelected(true);
+		enterpriseItem.setState(true);
+
+
 	}
-	
-	
+
 	// From OpenHandler<TreeItem>
 	@Override
 	public void onOpen(OpenEvent<TreeItem> event) {
 		TreeItem item = event.getTarget();
 		Object userObject = item.getUserObject();
-		if ( userObject instanceof Employee ) {
+		if (userObject instanceof Employee) {
 			onEmployeeOpen(item);
 		}
 	}
-	 
+
 	// From SelectionHandler<TreeItem>
 	@Override
 	public void onSelection(SelectionEvent<TreeItem> event) {
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
-		if ( userObject instanceof StateListIterator<?> ) {
-			onSalariesSelected((StateListIterator<Salary>) userObject);
+		if (userObject instanceof IReportsModel<?>) {
+			onReportsSelected((IReportsModel<IReport>) userObject);
 		}
 	}
-	
-	private void onEmployeeOpen(TreeItem employeeItem ) {
-		
+
+	private void onEmployeeOpen(TreeItem employeeItem) {
+
 		final TreeItem salariesItem = employeeItem.getChild(0);
 		Object salariesObject = salariesItem.getUserObject();
-		if ( salariesObject != null  ) {
+		if (salariesObject != null) {
 			return;
 		}
 
-		Employee employee = ( Employee) employeeItem.getUserObject();
-		
-		employeesService.getSalaries(employee, new AsyncCallback<List<Salary>>(){
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				Window.alert(caught.getLocalizedMessage());
-				
-			}
-			
-			@Override
-			public void onSuccess(List<Salary> result) {
-				StateListIterator<Salary> salaries = 
-						new StateListIterator<Salary>(result.listIterator());
-				if ( salaries.hasNext() ) {
-					salaries.next();
-					salariesItem.setHTML(
-							imageItemHTML(images.salaries(), "Nominas" , result.size() ));
-					salariesItem.setUserObject(salaries);
-				}
-			}
-		});
+		Employee employee = (Employee) employeeItem.getUserObject();
+
+		employeesService.getSalaries(employee,
+				new AsyncCallback<List<Salary>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Salary> salaries) {
+						if (salaries.size() > 0) {
+							salariesItem.setHTML(imageItemHTML(
+									images.salaries(), "Nominas",
+									salaries.size()));
+						}
+						IReportsModel<IReport> reports = new SalaryReportsModel(
+								salaries);
+						salariesItem.setUserObject(reports);
+					}
+				});
 	}
-	
-	private void onSalariesSelected(StateListIterator<Salary> salaries) {
-		Salary salary = salaries.current();
-		employeesService.getSalaryReceiptHTML(salary, 1.30f, new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				Window.alert(caught.getLocalizedMessage());
-			}
-			@Override
-			public void onSuccess(String result) {
-				/*
-				SalaryReceipt salaryReceipts = 
-						new SalaryReceipt();
-				salaryReceipts.setSalaryReceipt(result);
-				
-				employeeDetail.setDetail(salaryReceipts);
-				*/
-				// TODO Auto-generated method stub
-				//Window.alert(result );
-				employeeDetail.getSalaryReceipt().setSalaryReceipt(result);
-			}
-		});
+
+	private void onReportsSelected(IReportsModel<IReport> reports) {
+		employeeDetail.getSalaryReceipt().setReports(reports);
 	}
-	
+
 	/**
 	 * A helper method to simplify adding tree items that have attached images.
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
 	 */
-	private TreeItem addImageItem(TreeItem root, String title, int childs ,
+	private TreeItem addImageItem(TreeItem root, String title, int childs,
 			ImageResource imageProto) {
-		TreeItem item = new TreeItem(imageItemHTML(imageProto, title, childs ));
+		TreeItem item = new TreeItem(imageItemHTML(imageProto, title, childs));
 		root.addItem(item);
 		return item;
 	}
@@ -213,9 +198,63 @@ public class Employees extends Composite
 	/**
 	 * Generates HTML for a tree item with an attached icon.
 	 */
-	private String imageItemHTML(ImageResource imageProto, String title, int childs ) {
+	private String imageItemHTML(ImageResource imageProto, String title,
+			int childs) {
 		return AbstractImagePrototype.create(imageProto).getHTML() + " "
-				+ title + ( childs > 0 ? " (" + childs +")" : "" );
+				+ title + (childs > 0 ? " (" + childs + ")" : "");
 	}
 
+	private class SalaryReportsModel extends AbstractReportsModel<IReport>
+			implements IReport {
+
+		private List<Salary> salaries;
+
+		public SalaryReportsModel(List<Salary> salaries) {
+			this.salaries = salaries;
+			first();
+		}
+
+		@Override
+		public int size() {
+			return salaries.size();
+		}
+
+		@Override
+		public IReport current() {
+			return this;
+		}
+
+		@Override
+		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+			Salary salary = salaries.get(currentIndex());
+			employeesService.getSalaryReceiptHTML(salary, zoomRatio, callback);
+		}
+	}
+
+	private class CostReportsModel extends AbstractReportsModel<IReport>
+			implements IReport {
+
+		private List<Cost> costs;
+
+		public CostReportsModel(List<Cost> costs) {
+			this.costs = costs;
+			first();
+		}
+
+		@Override
+		public int size() {
+			return costs.size();
+		}
+
+		@Override
+		public IReport current() {
+			return this;
+		}
+
+		@Override
+		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+			Cost cost = costs.get(currentIndex());
+			employeesService.getCostReceiptHTML(cost, zoomRatio, callback);
+		}
+	}
 }

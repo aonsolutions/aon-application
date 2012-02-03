@@ -5,6 +5,8 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -23,6 +25,9 @@ public class Employe implements EntryPoint , Salaries.Handler{
 		@NotStrict
 		@Source("gwt.css")
 		CssResource css();
+
+		@Source("richCss/images/aon-header/aon-menuBar.png")
+		ImageResource menuBar();
 	}
 
 	interface RichResources extends ClientBundle {
@@ -78,7 +83,7 @@ public class Employe implements EntryPoint , Salaries.Handler{
 			
 			@Override
 			public void onSuccess(String result) {
-				employeDetail.getSalaryReceipt().setSalaryReceipt(result);
+				//employeDetail.getSalaryReceipt().setSalaryReceipt(result);
 			}
 			
 			@Override

@@ -1,6 +1,5 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
-	xmlns:employe='urn:import:com.esferalia.aon.gwt.employee.client'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employe='urn:import:com.esferalia.aon.gwt.employee.client'>
 
 	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
 	<ui:data field='notesgroupIe6Data' src='notesgroup_ie6.gif' />
@@ -8,24 +7,10 @@
 	<ui:data field='documentsgroupIe6Data' src='documentsgroup_ie6.gif' />
 
 	<ui:style>
-	 .shortcuts {
-	   border-left: 1px solid #e5e5e5;
-	   border-right: 1px solid #e5e5e5;
-	   border-bottom: 1px solid #e5e5e5;
-	 }
-	
-	 .stackHeader {
-	   background-color: #f5f5f5;
-	   cursor: pointer;
-	
-	   font-size: 1.2em;
-	   font-weight: bold;
-	   color: #000;
-	   padding: .7em .5em .7em .6em;
-	   border-top: 1px solid #e5e5e5;
-	   
-	 }
-	
+	.stackHeader {
+	  padding: .7em .5em .7em .6em;
+	  
+	}
 	 @if user.agent ie6 {
 	   @url notesgroupIe6 notesgroupIe6Data;
 	   @url documentsgroupIe6 notesgroupIe6Data;
@@ -84,45 +69,45 @@
 
 		<g:center>
 			<g:SplitLayoutPanel>
-				<g:west size='192'>	
+				<g:west size='192'>
 
-						<g:StackLayoutPanel styleName='{style.shortcuts}' unit='EM'>
+					<g:StackLayoutPanel unit='EM'>
 
-							<g:stack>
-								<g:header size='3'>
-									<div class='{style.stackHeader}'>
-										<div class='{style.salariesIcon}' />
-										Nominas
-									</div>
-								</g:header>
-								<g:ScrollPanel>
-									<employe:Salaries ui:field='salaries' />
-								</g:ScrollPanel>
-							</g:stack>
-							<g:stack>
-								<g:header size='3'>
-									<div class='{style.stackHeader}'>
-										<div class='{style.notesIcon}' />
-										Notas
-									</div>
-								</g:header>
-								<g:ScrollPanel>
-								</g:ScrollPanel>
-							</g:stack>
-							<g:stack>
-								<g:header size='3'>
-									<div class='{style.stackHeader}'>
-										<div class='{style.documentsIcon}' />
-										Documentos
-									</div>
-								</g:header>
-								<g:ScrollPanel>
-								</g:ScrollPanel>
-							</g:stack>
+						<g:stack>
+							<g:header size='3'>
+								<div class='{style.stackHeader}'>
+									<div class='{style.salariesIcon}' />
+									Nominas
+								</div>
+							</g:header>
+							<g:ScrollPanel>
+								<employe:Salaries ui:field='salaries' />
+							</g:ScrollPanel>
+						</g:stack>
+						<g:stack>
+							<g:header size='3'>
+								<div class='{style.stackHeader}'>
+									<div class='{style.notesIcon}' />
+									Notas
+								</div>
+							</g:header>
+							<g:ScrollPanel>
+							</g:ScrollPanel>
+						</g:stack>
+						<g:stack>
+							<g:header size='3'>
+								<div class='{style.stackHeader}'>
+									<div class='{style.documentsIcon}' />
+									Documentos
+								</div>
+							</g:header>
+							<g:ScrollPanel>
+							</g:ScrollPanel>
+						</g:stack>
 
-						</g:StackLayoutPanel>
+					</g:StackLayoutPanel>
 
-					
+
 				</g:west>
 
 				<g:center>
