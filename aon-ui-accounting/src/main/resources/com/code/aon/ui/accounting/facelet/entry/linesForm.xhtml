@@ -79,7 +79,8 @@
 					<aon:div style="width: 90%;"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" styleClass="aon-nowrap">
 
-						<aon:commandLink immediate="#{true}"
+						<aon:commandLink id="accountStatement-search" 
+							immediate="#{true}"
 							styleClass="aon-dataTable-link"
 							rendered="#{accountEntry.statementAvailable}"
 							actionListener="#{accountEntryDetail.onAccountStatement}"

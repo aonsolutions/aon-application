@@ -127,7 +127,8 @@
 						
 						<aon:column breakBefore="#{ledgerReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
 							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-									<aon:commandLink immediate="#{true}" 
+									<aon:commandLink id="accountEntry-search" 
+										immediate="#{true}" 
 										styleClass="aon-dataTable-link"
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{ledgerReport.onAccountEntry}"

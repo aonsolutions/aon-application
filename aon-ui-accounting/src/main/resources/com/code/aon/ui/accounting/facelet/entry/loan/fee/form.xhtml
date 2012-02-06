@@ -147,7 +147,8 @@
 	
 								<aon:outputText value="#{accountBundle.account_account}" />
 								<aon:div>
-									<aon:commandLink immediate="#{true}"
+									<aon:commandLink id="loanFeeEntryStatement-search" 
+										immediate="#{true}"
 										styleClass="aon-dataTable-link"
 										rendered="#{loanFeeEntry.relatedAccount != null and loanFeeEntry.relatedAccount.id != null}"
 										actionListener="#{loanFeeEntry.onAccountStatement}"

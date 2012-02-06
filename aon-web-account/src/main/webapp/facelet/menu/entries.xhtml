@@ -41,93 +41,75 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+						
+						<c:if test="#{!aonRole.guest}">
+							<aon:panelGrid id="group_pred_entries" styleClass="aon-width-all"
+								columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry-predefined aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{accountingBundle.menu_pred_entries}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceEntry"
+											action="account_invoice_entry"
+											actionListener="#{invoiceEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_invoice_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeEntry"
+											action="account_finance_entry"
+											actionListener="#{financeEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_finance_module}" />
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeTrackingEntry"
+											action="account_finance_tracking_entry"
+											actionListener="#{financeTrackingEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseEntry"
+											action="account_expense_entry"
+											actionListener="#{expenseEntry.onReset}"
+											value="#{accountingBundle.accounting_expense_entry_module}" />
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="salaryEntry" action="account_salary_entry"
+											actionListener="#{salaryEntry.onReset}"
+											value="#{accountingBundle.accounting_salary_entry_module}" />
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="socialInsuranceEntry"
+											action="account_social_insurance_entry"
+											actionListener="#{socialInsuranceEntry.onReset}"
+											value="#{accountingBundle.accounting_social_insurance_entry_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
 
-						<aon:panelGrid id="group_pred_entries" styleClass="aon-width-all"
-							columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry-predefined aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{accountingBundle.menu_pred_entries}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="invoiceEntry"
-										action="account_invoice_entry"
-										actionListener="#{invoiceEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_invoice_module}" />
+							<aon:panelGrid id="group_pred_entries_end_period"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry-close aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText
+										value="#{accountingBundle.menu_end_period_entries}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="endPeriodEntries"
+											action="endPeriodEntries_form"
+											actionListener="#{endPeriodEntries.onInit}"
+											value="#{accountingBundle.accounting_en_period_entries_management}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financeEntry"
-										action="account_finance_entry"
-										actionListener="#{financeEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_finance_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financeTrackingEntry"
-										action="account_finance_tracking_entry"
-										actionListener="#{financeTrackingEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="expenseEntry"
-										action="account_expense_entry"
-										actionListener="#{expenseEntry.onReset}"
-										value="#{accountingBundle.accounting_expense_entry_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="salaryEntry" action="account_salary_entry"
-										actionListener="#{salaryEntry.onReset}"
-										value="#{accountingBundle.accounting_salary_entry_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="socialInsuranceEntry"
-										action="account_social_insurance_entry"
-										actionListener="#{socialInsuranceEntry.onReset}"
-										value="#{accountingBundle.accounting_social_insurance_entry_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_pred_entries_end_period"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry-close aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText
-									value="#{accountingBundle.menu_end_period_entries}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="endPeriodEntries"
-										action="endPeriodEntries_form"
-										actionListener="#{endPeriodEntries.onInit}"
-										value="#{accountingBundle.accounting_en_period_entries_management}" />
-								</aon:div>
-<!-- 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOperatingEntry"
-										action="accountOperatingEntry"
-										actionListener="#{endPeriodEntries.onInitOperatingEntry}"
-										value="#{accountingBundle.accounting_operating_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountClosingEntry"
-										action="accountClosingEntry"
-										actionListener="#{endPeriodEntries.onInitClosingEntry}"
-										value="#{accountingBundle.accounting_closing_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOpeningEntry"
-										action="accountOpeningEntry"
-										actionListener="#{endPeriodEntries.onInitOpeningEntry}"
-										value="#{accountingBundle.accounting_opening_entry_module}" />
-								</aon:div>
- -->
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 
 						<aon:panelGrid id="group_pred_entries_loan"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -137,17 +119,21 @@
 									value="#{accountingBundle.accounting_loan_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanFeeEntry"
-										action="account_loan_fee_entry"
-										actionListener="#{loanFeeEntry.onReset}"
-										value="#{accountingBundle.accounting_loan_fee_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="loanEntry" action="account_loan_entry"
-										actionListener="#{loanEntry.onReset}"
-										value="#{accountingBundle.accounting_loan_entry_module}" />
-								</aon:div>
+								<c:if test="#{!aonRole.guest}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="loanFeeEntry"
+											action="account_loan_fee_entry"
+											actionListener="#{loanFeeEntry.onReset}"
+											value="#{accountingBundle.accounting_loan_fee_entry_module}" />
+									</aon:div>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="loanEntry" action="account_loan_entry"
+											actionListener="#{loanEntry.onReset}"
+											value="#{accountingBundle.accounting_loan_entry_module}" />
+									</aon:div>
+								</c:if>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="loan" action="loan_search"
 										actionListener="#{loan.onEditSearch}"
@@ -160,99 +146,103 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_invoice_recorder"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_management_entries}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="saleInvoiceRecorder"
-										value="#{financeBundle.finance_sale_invoice_recording_module}"
-										actionListener="#{saleInvoiceRecorder.onEditSearch}"
-										action="saleInvoiceRecorder_search" />
+						<c:if test="#{!aonRole.guest}">
+							<aon:panelGrid id="group_invoice_recorder"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_management_entries}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="saleInvoiceRecorder"
+											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											actionListener="#{saleInvoiceRecorder.onEditSearch}"
+											action="saleInvoiceRecorder_search" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchaseInvoiceRecorder"
+											value="#{financeBundle.finance_purchase_invoice_recording_module}"
+											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
+											action="purchaseInvoiceRecorder_search" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseInvoiceRecorder"
+											value="#{financeBundle.finance_expense_invoice_recording_module}"
+											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+											action="expenseInvoiceRecorder_search" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="undeductibleInvoiceRecorder"
+											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+											action="undeductibleInvoiceRecorder_search" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="purchaseInvoiceRecorder"
-										value="#{financeBundle.finance_purchase_invoice_recording_module}"
-										actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
-										action="purchaseInvoiceRecorder_search" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="expenseInvoiceRecorder"
-										value="#{financeBundle.finance_expense_invoice_recording_module}"
-										actionListener="#{expenseInvoiceRecorder.onEditSearch}"
-										action="expenseInvoiceRecorder_search" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="undeductibleInvoiceRecorder"
-										value="#{financeBundle.finance_undeductible_invoice_recording_module}"
-										actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
-										action="undeductibleInvoiceRecorder_search" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 
-						<aon:panelGrid id="group_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountManager"
-										action="accountManager_list"
-										value="#{accountBridgeBundle.account_relationships_module}" />
+						<c:if test="#{!aonRole.guest}">
+							<aon:panelGrid id="group_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_utilities}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountManager"
+											action="accountManager_list"
+											value="#{accountBridgeBundle.account_relationships_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountChange"
+											action="accountChange_form"
+											actionListener="#{accountChange.onReset}"
+											value="#{accountingBundle.accounting_change_account}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="regenerateAccount"
+											action="regenerateAccount"
+											value="#{accountingBundle.accounting_regenerate_account_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="regenerateVat"
+											action="regenerateVat" actionListener="#{vatRegenerator.onEditSearch}"
+											value="#{accountingBundle.accounting_regenerate_vat_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountCheck" action="check_form"
+											actionListener="#{accountCheck.onInitialize}"
+											value="#{accountingBundle.accounting_check_balance_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="customerAccountChecker"
+											action="customerAccountChecker_search"
+											actionListener="#{customerAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_customer_checker_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="supplierAccountChecker"
+											action="supplierAccountChecker_search"
+											actionListener="#{supplierAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_supplier_checker_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="creditorAccountChecker"
+											action="creditorAccountChecker_search"
+											actionListener="#{creditorAccountChecker.onEditSearch}"
+											value="#{accountBridgeBundle.account_creditor_checker_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceIntegrity"
+											action="invoiceIntegrity_search"
+											actionListener="#{invoiceIntegrity.onStart}"
+											value="#{financeBundle.finance_invoice_integrity_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountChange"
-										action="accountChange_form"
-										actionListener="#{accountChange.onReset}"
-										value="#{accountingBundle.accounting_change_account}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="regenerateAccount"
-										action="regenerateAccount"
-										value="#{accountingBundle.accounting_regenerate_account_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="regenerateVat"
-										action="regenerateVat" actionListener="#{vatRegenerator.onEditSearch}"
-										value="#{accountingBundle.accounting_regenerate_vat_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountCheck" action="check_form"
-										actionListener="#{accountCheck.onInitialize}"
-										value="#{accountingBundle.accounting_check_balance_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="customerAccountChecker"
-										action="customerAccountChecker_search"
-										actionListener="#{customerAccountChecker.onEditSearch}"
-										value="#{accountBridgeBundle.account_customer_checker_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="supplierAccountChecker"
-										action="supplierAccountChecker_search"
-										actionListener="#{supplierAccountChecker.onEditSearch}"
-										value="#{accountBridgeBundle.account_supplier_checker_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="creditorAccountChecker"
-										action="creditorAccountChecker_search"
-										actionListener="#{creditorAccountChecker.onEditSearch}"
-										value="#{accountBridgeBundle.account_creditor_checker_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="invoiceIntegrity"
-										action="invoiceIntegrity_search"
-										actionListener="#{invoiceIntegrity.onStart}"
-										value="#{financeBundle.finance_invoice_integrity_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 
 					</aon:panelGroup>
 				</h:panelGrid>

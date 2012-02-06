@@ -157,18 +157,17 @@
 					</aon:div>
 					
 					<aon:outputText value="" />
-					<aon:div styleClass="aon-search-commandButton-left">
-						<aon:div styleClass="aon-search-commandButton-right">
-							<aon:commandButton id="SearchButton"   
-								value="#{bundle.aon_search}"
-								action="profit_and_loss_list"
-								actionListener="#{profitAndLossReport.calculateSummaryCollections}"
-								disabled="#{!profitAndLossReport.dateValid}"
-								reRender="#{searchReRender}"
-								accesskey="#{bundle.aon_key_search}">
-								<aon:actionHotKey key="return" />
-							</aon:commandButton>
-						</aon:div>
+					<aon:div >
+						<aon:commandButton id="profitAndLossReport-search"   
+							value="#{bundle.aon_search}"
+							styleClass="aon-search-lookup-button"
+							action="profit_and_loss_list"
+							actionListener="#{profitAndLossReport.calculateSummaryCollections}"
+							disabled="#{!profitAndLossReport.dateValid}"
+							reRender="#{searchReRender}"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionHotKey key="return" />
+						</aon:commandButton>
 					</aon:div>
 				</ui:define>
 			</ui:decorate>

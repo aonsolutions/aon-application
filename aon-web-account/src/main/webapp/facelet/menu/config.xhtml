@@ -55,49 +55,51 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
-						<aon:panelGrid id="group_configuration_data_sync"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-refresh aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.account_data_sync}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account_exporter"
-										action="account_exporter"
-										value="#{accountBundle.account_exporter_module}" />
+						
+						<c:if test="#{!aonRole.guest}">
+							<aon:panelGrid id="group_configuration_data_sync"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-refresh aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.account_data_sync}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account_exporter"
+											action="account_exporter"
+											value="#{accountBundle.account_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account_importer"
+											action="account_importer"
+											actionListener="#{accountImporter.onInitialize}"
+											value="#{accountBundle.account_importer_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="balance_exporter"
+											action="balance_exporter"
+											value="#{accountingBundle.accounting_balance_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="balance_importer"
+											action="balance_importer"
+											actionListener="#{balanceImporter.onInitialize}"
+											value="#{accountingBundle.accounting_balance_importer_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortization_exporter"
+											action="amortization_exporter"
+											value="#{accountingBundle.accounting_amortizationType_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortization_importer"
+											action="amortization_importer"
+											actionListener="#{amortizationTypeImporter.onInitialize}"
+											value="#{accountingBundle.accounting_amortizationType_importer_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account_importer"
-										action="account_importer"
-										actionListener="#{accountImporter.onInitialize}"
-										value="#{accountBundle.account_importer_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="balance_exporter"
-										action="balance_exporter"
-										value="#{accountingBundle.accounting_balance_exporter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="balance_importer"
-										action="balance_importer"
-										actionListener="#{balanceImporter.onInitialize}"
-										value="#{accountingBundle.accounting_balance_importer_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization_exporter"
-										action="amortization_exporter"
-										value="#{accountingBundle.accounting_amortizationType_exporter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization_importer"
-										action="amortization_importer"
-										actionListener="#{amortizationTypeImporter.onInitialize}"
-										value="#{accountingBundle.accounting_amortizationType_importer_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 						
 					</aon:panelGroup>
 
@@ -118,33 +120,37 @@
 									<aon:commandLink id="tax" action="tax_list"
 										value="#{configBundle.config_tax_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accPeriod" action="accPeriod"
-										actionListener="#{accPeriod.onSearch}"
-										value="#{accountingBundle.accounting_period_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="defaultParams" action="defaultParams"
-										actionListener="#{accAppParams.onLoad}"
-										value="#{accountingBundle.accounting_default_params_module}" />
-								</aon:div>
+								<c:if test="#{!aonRole.guest}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod" action="accPeriod"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{accountingBundle.accounting_period_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="defaultParams" action="defaultParams"
+											actionListener="#{accAppParams.onLoad}"
+											value="#{accountingBundle.accounting_default_params_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_configuration_utilities"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-utilities aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_utilities}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mbase_form" action="sqlScript_form"
-										actionListener="#{sqlScript.onInitialize}"
-										value="#{dbutilsBundle.dbutils_script_module}" />
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_configuration_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_utilities}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mbase_form" action="sqlScript_form"
+											actionListener="#{sqlScript.onInitialize}"
+											value="#{dbutilsBundle.dbutils_script_module}" />
+									</aon:div>
 								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 						
 					</aon:panelGroup>
 

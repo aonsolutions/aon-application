@@ -125,7 +125,8 @@
 							style="#{journalReport.odd?'background-color:#FFFFFF;':'background-color:#e5e5e5;'}">
 			
 								<aon:div style="text-align:center; font-size: 1em;">
-									<aon:commandLink immediate="#{true}" 
+									<aon:commandLink id="accountEntry-search" 
+										immediate="#{true}" 
 										styleClass="aon-dataTable-link"
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{journalReport.onAccountEntry}"

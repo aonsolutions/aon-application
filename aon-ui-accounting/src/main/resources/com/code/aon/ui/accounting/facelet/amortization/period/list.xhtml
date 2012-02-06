@@ -111,8 +111,9 @@
 							<aon:outputText value="#{accountingBundle.accounting_recorded}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" rendered="#{!to.scored}" />
-						<aon:commandLink immediate="true" styleClass="aon-dataTable-link"
-							rendered="#{to.scored}"
+						<aon:commandLink id="accountEntry-search" 
+							styleClass="aon-dataTable-link"
+							rendered="#{to.scored}" immediate="true" 
 							title="#{accountingBundle.accounting_lookup_account_entry}"
 							actionListener="#{periodAmortization.onAccountEntry}"
 							action="accountEntry_form">

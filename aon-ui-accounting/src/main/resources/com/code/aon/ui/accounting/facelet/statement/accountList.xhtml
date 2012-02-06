@@ -121,7 +121,8 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
-						<aon:commandLink immediate="true" 
+						<aon:commandLink id="statement-search" 
+							immediate="true" 
 							style="margin-left: #{(to.level-1)/2}em;" 
 							styleClass="aon-dataTable-link"
 							actionListener="#{trialBalance.onStatement}"

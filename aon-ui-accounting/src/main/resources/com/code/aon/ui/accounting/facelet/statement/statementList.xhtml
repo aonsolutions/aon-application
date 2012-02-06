@@ -199,7 +199,8 @@
 								<aon:outputText
 									value="#{accountingBundle.accounting_account_entry}" />
 							</f:facet>
-							<aon:commandLink immediate="true" 
+							<aon:commandLink id="accountEntry-search" 
+								immediate="true" 
 								styleClass="aon-dataTable-link"
 								title="#{accountingBundle.accounting_lookup_account_entry}"
 								actionListener="#{trialBalance.onAccountEntry}"

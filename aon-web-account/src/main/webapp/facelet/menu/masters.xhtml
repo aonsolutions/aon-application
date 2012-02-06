@@ -18,7 +18,6 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-
 						<aon:panelGrid id="group_holder"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-customer aon-direct-access-panel">
@@ -43,40 +42,35 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-
-						<c:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_general"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-general">
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.menu_general}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="geotreeParent-management" 
-											action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
-											value="#{geozoneBundle.geozone_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod-management" 
-											action="payMethod"
-											value="#{configBundle.config_paymethod_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank-management" 
-											action="bank"
-											value="#{configBundle.config_bank_module}" />
-									</aon:div>
+						<aon:panelGrid id="group_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent-management" 
+										action="geotreeParent_list"	actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
 								</aon:div>
-							</aon:panelGrid>
-						</c:if>
-
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="payMethod-management" 
+										action="payMethod"
+										value="#{configBundle.config_paymethod_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank-management" 
+										action="bank"
+										value="#{configBundle.config_bank_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
-					
+
 				</h:panelGrid>
 			</aon:div>
 		</aon:form>

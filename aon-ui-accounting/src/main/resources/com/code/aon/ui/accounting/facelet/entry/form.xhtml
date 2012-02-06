@@ -113,7 +113,10 @@
 							reRender="duplicateEntryContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							immediate="true" />
-						<aon:spin controller="#{accountEntry}" action="accountEntry_form" rendered="#{!accountEntry.new}" />
+						
+						<aon:spin id="accountEntrySpin"
+							controller="#{accountEntry}" action="accountEntry_form" rendered="#{!accountEntry.new}" />
+						
 					</ui:define>
 				</ui:decorate>
 		
