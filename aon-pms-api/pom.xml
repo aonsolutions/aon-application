@@ -43,9 +43,10 @@
 							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdlUrls>
-								<wsdlUrl>http://xmlgatewaytest.tradyso.com/xmlgateway/xmlpush/PMS_Tradyso.wsdl</wsdlUrl>
-							</wsdlUrls>
+ 							<wsdlDirectory>src/main/wsdl</wsdlDirectory>
+							<wsdlFiles>
+         						<wsdlFile>PMS_Tradyso.wsdl</wsdlFile>
+							</wsdlFiles>
 							<sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir>
 							<packageName>com.esferalia.aon.pms</packageName>
 							<staleFile>${project.build.directory}/generated-sources/staleFlag/jaxws/.staleFlag</staleFile>
