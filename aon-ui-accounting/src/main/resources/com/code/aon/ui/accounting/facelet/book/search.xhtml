@@ -45,7 +45,8 @@
 					<aon:div id="journal">
 						<aon:selectBooleanCheckbox id="journalEnabled" value="#{accountingBook.journalEnabled}" ajaxSingle="true" reRender="journal"/>
 						<aon:outputLabel for="journalEnabled" value="#{accountingBundle.accounting_journalEnabled}" />
-						<aon:commandLink styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
+						<aon:commandLink id="accountingBookRegenerate" 
+							styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
 							value="#{accountingBundle.accounting_regenerate_journal_counter_module}" 
 							actionListener="#{accountingBook.onRegenerate}"
 							onclick="Richfaces.showModalPanel('waitProccess')"

@@ -91,7 +91,8 @@
 							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_date}" itemValue="1" />
 							<f:selectItem itemLabel="#{accountingBundle.accounting_show_entry_journal}" itemValue="2" />
 						</aon:selectOneMenu>
-						<aon:commandLink styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
+						<aon:commandLink id="journalReportRegenerate" 
+							styleClass="aon-margin-left aon-bold" style="color:red; text-decoration: underline;"
 							value="#{accountingBundle.accounting_regenerate_journal_counter_module}" 
 							actionListener="#{journalReport.onRegenerate}"
 							onclick="Richfaces.showModalPanel('waitProccess')"

@@ -41,7 +41,8 @@
 							<aon:outputText value="#{accountingBundle.accounting_check_action}" />
 						</f:facet>
 						<aon:div rendered="#{to.fixAvailable}">
-							<aon:commandLink rendered="#{!to.fixed}" 
+							<aon:commandLink id="accountCheckFix" 
+								rendered="#{!to.fixed}" 
 								actionListener="#{accountCheck.onFix}"
 								styleClass="aon-dataTable-link">
 								<aon:outputText value="#{to.fixActionLabel}" style="color:red;"/>

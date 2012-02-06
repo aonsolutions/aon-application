@@ -101,7 +101,8 @@
 								rendered="#{to.detail.internalCalculation}">
 								<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 							</aon:outputText>
-							<aon:commandLink immediate="#{true}"
+							<aon:commandLink id="statement-search"  
+								immediate="#{true}"
 								rendered="#{!to.detail.internalCalculation}"
 								styleClass="aon-dataTable-link"
 								actionListener="#{balanceSheet.onAccountStatement}"
@@ -125,7 +126,8 @@
 								rendered="#{to.detail.internalCalculation}">
 								<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 							</aon:outputText>
-							<aon:commandLink immediate="#{true}"
+							<aon:commandLink id="statementPrevious-search" 
+								immediate="#{true}"
 								rendered="#{!to.detail.internalCalculation}"
 								styleClass="aon-dataTable-link"
 								actionListener="#{balanceSheet.onAccountPreviousStatement}"

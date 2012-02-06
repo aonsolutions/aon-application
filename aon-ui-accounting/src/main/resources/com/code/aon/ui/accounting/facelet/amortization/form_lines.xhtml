@@ -193,7 +193,8 @@
 				reRender="amortizationForm"
 				onclick="if (!confirm('#{accountingBundle.accounting_record}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-assume" />
-			<aon:commandLink immediate="true" styleClass="aon-dataTable-link"
+			<aon:commandLink id="accountEntry-search" 
+				immediate="true" styleClass="aon-dataTable-link"
 				rendered="#{amortizationDetail.to != to and to.scored}"
 				title="#{accountingBundle.accounting_lookup_account_entry}"
 				actionListener="#{amortizationDetail.onAccountEntry}"

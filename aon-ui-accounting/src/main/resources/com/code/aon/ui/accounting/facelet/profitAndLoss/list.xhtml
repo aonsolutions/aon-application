@@ -157,7 +157,8 @@
 						<rich:subTable value="#{controller.grossMargin.summaryList}"
 							var="to">
 							<aon:column styleClass="aon-width-100">
-								<aon:commandLink immediate="true"
+								<aon:commandLink id="trialBalanceGrossMargin-search" 
+									immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="account_statement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"
@@ -205,7 +206,8 @@
 						<rich:subTable value="#{controller.totalExpenses.summaryList}"
 							var="to">
 							<aon:column>
-								<aon:commandLink immediate="true"
+								<aon:commandLink id="trialBalanceTotalExpenses-search" 
+									immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="account_statement_account_list">
 									<f:setPropertyActionListener value="#{to.code}"

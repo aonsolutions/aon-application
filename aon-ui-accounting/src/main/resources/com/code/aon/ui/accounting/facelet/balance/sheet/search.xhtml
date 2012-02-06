@@ -63,23 +63,7 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
-<!-- 
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_exclude_operating"
-							value="#{balanceSheet.parameters.excludeOperatingEntry}" />
-						<aon:outputLabel for="Account_exclude_operating"
-							value="#{accountingBundle.accounting_exclude_operating_entry}" />
-					</aon:div>
 
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Account_exclude_closing"
-							value="#{balanceSheet.parameters.excludeClosingEntry}" />
-						<aon:outputLabel for="Account_exclude_closing"
-							value="#{accountingBundle.accounting_exclude_closing_entry}" />
-					</aon:div>
- -->
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox id="Show_Accounts"
@@ -128,15 +112,17 @@
 					</aon:div>
 
 					<aon:outputText value="&#160;" />
-
-					<aon:commandButton
-						value="#{accountingBundle.accounting_balance_sheet_show}"
-						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')"
-						actionListener="#{balanceSheet.onBalance}"
-						action="balance_sheet_list">
-						<aon:actionHotKey key="return" />
-					</aon:commandButton>
+					<aon:div>
+						<aon:commandButton id="balanceSheet-search"
+							styleClass="aon-search-lookup-button"
+							value="#{accountingBundle.accounting_balance_sheet_show}"
+							onclick="Richfaces.showModalPanel('waitProccess')"
+							oncomplete="Richfaces.hideModalPanel('waitProccess')"
+							actionListener="#{balanceSheet.onBalance}"
+							action="balance_sheet_list">
+							<aon:actionHotKey key="return" />
+						</aon:commandButton>
+					</aon:div>
 				</ui:define>
 			</ui:decorate>
 

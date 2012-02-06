@@ -125,10 +125,12 @@
 										actionListener="#{balanceSheet.onCustomBalance}"
 										value="#{accountingBundle.accounting_balance_menu_custom}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accounting_balance" action="balance_list"
-										value="#{accountingBundle.accounting_balance_menu}" />
-								</aon:div>
+								<c:if test="#{!aonRole.guest}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance" action="balance_list"
+											value="#{accountingBundle.accounting_balance_menu}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 

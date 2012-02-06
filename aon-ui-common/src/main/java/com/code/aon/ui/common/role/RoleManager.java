@@ -12,7 +12,7 @@ import javax.faces.context.FacesContext;
  */
 public class RoleManager {
 	
-	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back", "report"};
+	private static final String[] ALLOWED_IDS = new String[] {"Spin", "Scroll", "search", "back", "cancel", "report"};
 
 	/**
 	 * @param role

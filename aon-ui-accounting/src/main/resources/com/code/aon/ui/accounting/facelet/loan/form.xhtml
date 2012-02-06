@@ -128,7 +128,8 @@
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 				
 					<aon:outputText value="#{accountBundle.account_account}" />
-					<aon:commandLink immediate="#{true}" 
+					<aon:commandLink id="onAccountStatement-search" 
+						immediate="#{true}" 
 						styleClass="aon-dataTable-link"
 						actionListener="#{loan.onAccountStatement}"
 						title="#{accountingBundle.accounting_statement_module}"

@@ -30,31 +30,38 @@
 			value="#{accountBundle.account_account}" />
 			<aon:div id="links">
 				<aon:inputText id="Account_id" value="#{controller.parameters.accountExpression}" size="14" />
-				<aon:commandLink value="#{accountingBundle.accounting_treasury}" reRender="Account_id" tabindex="1000"
+				<aon:commandLink id="treasury-search" 
+					value="#{accountingBundle.accounting_treasury}" reRender="Account_id" tabindex="1000"
 					styleClass="aon-margin-left aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="57*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_banks}" reRender="Account_id" tabindex="1001"  
+				<aon:commandLink id="banks-search" 
+					value="#{accountingBundle.accounting_banks}" reRender="Account_id" tabindex="1001"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="572*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_cash}" reRender="Account_id" tabindex="1002"  
+				<aon:commandLink id="cash-search" 
+					value="#{accountingBundle.accounting_cash}" reRender="Account_id" tabindex="1002"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="570*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_publicAdmon}" reRender="Account_id" tabindex="1003"  
+				<aon:commandLink id="publicAdmon-search" 
+					value="#{accountingBundle.accounting_publicAdmon}" reRender="Account_id" tabindex="1003"  
 					styleClass="aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="47*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_customer}" reRender="Account_id" tabindex="1004"  
+				<aon:commandLink id="customer-search"
+					value="#{accountingBundle.accounting_customer}" reRender="Account_id" tabindex="1004"  
 					styleClass="aon-dataTable-link-simple aon-italic" >
 					<a4j:actionparam value="430*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_supplier}" reRender="Account_id" tabindex="1005"  
+				<aon:commandLink id="supplier-search" 
+					value="#{accountingBundle.accounting_supplier}" reRender="Account_id" tabindex="1005"  
 					styleClass="aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="400*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
-				<aon:commandLink value="#{accountingBundle.accounting_creditor}" reRender="Account_id" tabindex="1006"  
+				<aon:commandLink id="creditor-search" 
+					value="#{accountingBundle.accounting_creditor}" reRender="Account_id" tabindex="1006"  
 					styleClass="aon-dataTable-link-simple aon-italic">
 					<a4j:actionparam value="410*" assignTo="#{controller.parameters.accountExpression}"/>
 				</aon:commandLink>
@@ -243,17 +250,16 @@
 	</aon:div>
 	
 	<aon:outputText value="" />
-	<aon:div styleClass="aon-search-commandButton-left">
-		<aon:div styleClass="aon-search-commandButton-right">
-			<aon:commandButton id="SearchButton"   
-				value="#{bundle.aon_search}"
-				action="#{action}"
-				actionListener="#{controller.onSearch}"
-				disabled="#{!controller.dateValid}"
-				reRender="#{searchReRender}"
-				accesskey="#{bundle.aon_key_search}">
-				<aon:actionHotKey key="return" />
-			</aon:commandButton>
-		</aon:div>
+	<aon:div>
+		<aon:commandButton id="balance-search"
+			styleClass="aon-search-lookup-button"   
+			value="#{bundle.aon_search}"
+			action="#{action}"
+			actionListener="#{controller.onSearch}"
+			disabled="#{!controller.dateValid}"
+			reRender="#{searchReRender}"
+			accesskey="#{bundle.aon_key_search}">
+			<aon:actionHotKey key="return" />
+		</aon:commandButton>
 	</aon:div>
 </ui:composition>
