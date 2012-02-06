@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.22.1</version>
+		<version>6.22.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.company</artifactId>
-	<version>6.22.1</version>
+	<version>6.22.2</version>
 	<description>AON COMPANY</description>
 	<name>AON COMPANY</name>	
 	<dependencies>
