@@ -85,112 +85,38 @@
 
 						<f:facet name="header">
 							<rich:columnGroup>
-								<c:if test="#{statement.openingEntryPresent}">
-									<aon:column colspan="3" styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:commandLink immediate="true" 
-											styleClass="aon-dataTable-link"
-											title="#{accountingBundle.accounting_lookup_account_entry}"
-											actionListener="#{trialBalance.onOpeningEntry}"
-											action="accountEntry_form">
-											<aon:outputText
-												value="#{accountingBundle.accounting_opening_entry}" />
-										</aon:commandLink>
-										<aon:outputText value=" (" />
-										<aon:outputText value="#{statement.openingEntry.fromDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=")" />
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="#{statement.openingEntry.debit}"
-											rendered="#{statement.openingEntry.debit != 0}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="#{statement.openingEntry.credit}"
-											rendered="#{statement.openingEntry.credit != 0}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText
-											value="#{statement.openingEntry.unpaidBalance}"
-											rendered="#{statement.openingEntry.unpaidBalance != 0}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText
-											value="#{statement.openingEntry.creditBalance}"
-											rendered="#{statement.openingEntry.creditBalance != 0}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</aon:column>
-									<aon:column
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="&#160;" />
-									</aon:column>
-									<aon:column
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="&#160;" />
-									</aon:column>
-								</c:if>
-
-								<c:if test="#{statement.fromOpeningEntryPresent}">
+								<c:if test="#{statement.previousBalancePresent}">
 									<aon:column breakBefore="true" colspan="3"
 										styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText
-											value="#{accountingBundle.accounting_previous_accumulated_amounts} " />
-										<aon:outputText value=" (" />
-										<aon:outputText value="#{bundle.aon_date_from} "
-											rendered="#{statement.fromOpeningEntry.fromDate != null}" />
-										<aon:outputText value="#{statement.fromOpeningEntry.fromDate}">
+											value="#{accountingBundle.accounting_balance_at} " />
+										<aon:outputText value="#{statement.previousBalance.toDate}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=" #{bundle.aon_date_to} "
-											rendered="#{statement.fromOpeningEntry.toDate != null}" />
-										<aon:outputText value="#{statement.fromOpeningEntry.toDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</aon:outputText>
-										<aon:outputText value=")" />
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="#{statement.fromOpeningEntry.debit}"
-											rendered="#{statement.fromOpeningEntry.debit!= 0}">
-											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
 									</aon:column>
 									<aon:column styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText value="#{statement.fromOpeningEntry.credit}"
-											rendered="#{statement.fromOpeningEntry.credit!= 0}">
+										<aon:outputText value="&#160;" />
+									</aon:column>
+									<aon:column styleClass="aon-text-right"
+										style="font-size: 1em;background: #FFF;font-weight: normal;">
+										<aon:outputText value="&#160;" />
+									</aon:column>
+									<aon:column styleClass="aon-text-right"
+										style="font-size: 1em;background: #FFF;font-weight: normal;">
+										<aon:outputText
+											value="#{statement.previousBalance.unpaidBalance}"
+											rendered="#{statement.previousBalance.unpaidBalance != 0}">
 											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
 									</aon:column>
 									<aon:column styleClass="aon-text-right"
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText
-											value="#{statement.fromOpeningEntry.unpaidBalance}"
-											rendered="#{statement.fromOpeningEntry.unpaidBalance != 0}">
-											<f:convertNumber pattern="#,##0.00" />
-										</aon:outputText>
-									</aon:column>
-									<aon:column styleClass="aon-text-right"
-										style="font-size: 1em;background: #FFF;font-weight: normal;">
-										<aon:outputText
-											value="#{statement.fromOpeningEntry.creditBalance}"
-											rendered="#{statement.fromOpeningEntry.creditBalance != 0}">
+											value="#{statement.previousBalance.creditBalance}"
+											rendered="#{statement.previousBalance.creditBalance != 0}">
 											<f:convertNumber pattern="#,##0.00" />
 										</aon:outputText>
 									</aon:column>
@@ -202,7 +128,7 @@
 										style="font-size: 1em;background: #FFF;font-weight: normal;">
 										<aon:outputText value="&#160;" />
 									</aon:column>
-								</c:if>
+								</c:if>							
 
 								<aon:column breakBefore="true" colspan="3"
 									styleClass="aon-text-right"

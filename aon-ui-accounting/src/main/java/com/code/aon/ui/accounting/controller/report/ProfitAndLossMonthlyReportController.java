@@ -30,16 +30,16 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 
 			SummaryProvider sp = new SummaryProvider();
 			SummaryCollection grossMargin = sp.getGrossMarginSummaryCollection(params);
-			list.addAll(grossMargin.getSortedSummaryList());
+			list.addAll(grossMargin.getSummaryList());
 			SummaryMonthly gmTotal = new SummaryMonthly();
 			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 			gmTotal.setCredit(grossMargin.getCredit());
 			gmTotal.setDebit(grossMargin.getDebit());
 			Double[] months0 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-			for (Summary s : grossMargin.getSortedSummaryList()) {
+			for (Summary s : grossMargin.getSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
 				for (int i = 0; i < sm.getMonths().length; i++) {
-					if (sm.getId().startsWith("7")) {
+					if (sm.getCode().startsWith("7")) {
 						months0[i] = CommonUtil.round(months0[i] + sm.getMonths()[i]);
 					} else {
 						months0[i] = CommonUtil.round(months0[i] - sm.getMonths()[i]);
@@ -50,13 +50,13 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			list.add(gmTotal);
 
 			SummaryCollection totalExpenses = sp.getTotalExpensesSummaryCollection(params);
-			list.addAll(totalExpenses.getSortedSummaryList());
+			list.addAll(totalExpenses.getSummaryList());
 			SummaryMonthly teTotal = new SummaryMonthly();
 			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 			teTotal.setCredit(totalExpenses.getCredit());
 			teTotal.setDebit(totalExpenses.getDebit());
 			Double[] months1 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-			for (Summary s : totalExpenses.getSortedSummaryList()) {
+			for (Summary s : totalExpenses.getSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
 				for (int i = 0; i < sm.getMonths().length; i++) {
 					months1[i] = CommonUtil.round(months1[i] + sm.getMonths()[i]);
@@ -90,7 +90,7 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException(e.getMessage(), e);
 		} finally {
-			params.setMonthlyGrouping(true);
+			params.setMonthlyGrouping(false);
 		}
 
 	}

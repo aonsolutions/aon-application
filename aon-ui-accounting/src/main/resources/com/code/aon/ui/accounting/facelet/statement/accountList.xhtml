@@ -127,7 +127,7 @@
 							actionListener="#{trialBalance.onStatement}"
 							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_list">
-							<aon:outputText value="#{to.id}" />
+							<aon:outputText value="#{to.code}" />
 							<f:setPropertyActionListener 
 								value="account_statement_account_list" 
 								target="#{statement.backAction}" />

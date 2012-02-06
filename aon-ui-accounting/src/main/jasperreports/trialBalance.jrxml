@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5000000000000007"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.x" value="34"/>
+	<property name="ireport.y" value="898"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -56,7 +56,7 @@
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{summaryCollection}.getCredit() != 0?$P{summaryCollection}.getCredit():null]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,###.##" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-45" positionType="Float" x="465" y="3" width="55" height="11"/>
 					<box leftPadding="1" rightPadding="1">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>

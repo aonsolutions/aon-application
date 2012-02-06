@@ -12,7 +12,7 @@
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="params" class="com.code.aon.accounting.summary.SummaryProviderParameters" isForPrompting="false"/>
 	<parameter name="title" class="java.lang.String" isForPrompting="false"/>
-	<field name="id" class="java.lang.String"/>
+	<field name="code" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="periodUnpaidBalance" class="java.lang.Double"/>
 	<field name="periodCreditBalance" class="java.lang.Double"/>
@@ -38,7 +38,7 @@
 					</chart>
 					<categoryDataset>
 						<categorySeries>
-							<seriesExpression><![CDATA[$F{id}]]></seriesExpression>
+							<seriesExpression><![CDATA[$F{code}]]></seriesExpression>
 							<categoryExpression><![CDATA[$F{description}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{periodUnpaidBalance}==0 ? $F{periodCreditBalance} :$F{periodUnpaidBalance}]]></valueExpression>
 							<labelExpression><![CDATA[$F{periodUnpaidBalance}==0 ?$F{periodCreditBalance}.toString():$F{periodUnpaidBalance}.toString()]]></labelExpression>

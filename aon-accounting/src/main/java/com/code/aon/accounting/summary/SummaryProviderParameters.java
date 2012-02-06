@@ -1,5 +1,6 @@
 package com.code.aon.accounting.summary;
 
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,9 +9,15 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.sql.SqlRenderer;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 
 public class SummaryProviderParameters implements Cloneable{
 
+	private static final String PERCENT = "%";
+	private static final String ASTERISK = "*";
 	private static final String SEMICOLON = "; ";
 	private static final String EMPTY = "";
 	private static final Date START_DATE = new Date(0);
@@ -83,6 +90,9 @@ public class SummaryProviderParameters implements Cloneable{
 	private boolean coverVisible = false;
 	private boolean counterVisible = false;
 	private int pageCounter = 0;
+	
+	private boolean totalExpensesSummary;
+	private boolean grossMarginSummary;
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
@@ -108,12 +118,13 @@ public class SummaryProviderParameters implements Cloneable{
 		setPageCounter(0);
 		setCounterVisible(false);
 		setCoverVisible(false);
+		setTotalExpensesSummary(false);
+		setGrossMarginSummary(false);
 	}
 
 	public String getAccountExpression() {
 		return accountExpression;
 	}
-
 	public void setAccountExpression(String accountExpression) {
 		this.accountExpression = accountExpression;
 	}
@@ -315,7 +326,22 @@ public class SummaryProviderParameters implements Cloneable{
 	public boolean isNotEmptyAccountAlias(){
 		return StringUtils.isNotEmpty(getAccountAlias());
 	}
-	
+
+	public boolean isTotalExpensesSummary() {
+		return totalExpensesSummary;
+	}
+	public void setTotalExpensesSummary(boolean totalExpensesSummary) {
+		this.totalExpensesSummary = totalExpensesSummary;
+	}
+
+	public boolean isGrossMarginSummary() {
+		return grossMarginSummary;
+	}
+
+	public void setGrossMarginSummary(boolean grossMarginSummary) {
+		this.grossMarginSummary = grossMarginSummary;
+	}
+
 	@Override
 	public SummaryProviderParameters clone() throws CloneNotSupportedException {
 		SummaryProviderParameters cloned = new SummaryProviderParameters();
@@ -341,6 +367,8 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setPageCounter(getPageCounter());
 		cloned.setCounterVisible(isCounterVisible());
 		cloned.setCoverVisible(isCoverVisible());
+		cloned.setGrossMarginSummary(isGrossMarginSummary());
+		cloned.setTotalExpensesSummary(isTotalExpensesSummary());
 		return cloned;
 	}
 	
@@ -357,4 +385,34 @@ public class SummaryProviderParameters implements Cloneable{
 		buf.append( buf.length()>0?".... ": EMPTY);
 		return buf.toString();
 	}
+
+	public String getDescriptionLikeExpression() {
+		return getLikeExpression(getAccountDescription());
+	}
+	public String getAliasLikeExpression() {
+		return getLikeExpression(getAccountAlias());
+	}
+	public String getLikeExpression(String param) {
+		if (StringUtils.isEmpty(param)) {
+			return PERCENT;
+		}
+		if (StringUtils.countMatches(param, ASTERISK)>0) {
+			return StringUtils.replace(param, ASTERISK, PERCENT);
+		} 
+		return PERCENT + param + PERCENT;
+	}
+
+	public String getAccountSQLExpression(String ident) throws ExpressionException {
+		if (StringUtils.isNotBlank( getAccountExpression() ) ) {
+			ExpressionUtilities.getExpression(getAccountExpression(), ident);
+			Criteria c = new Criteria();
+			c.addExpression(ExpressionUtilities.getExpression(getAccountExpression(), ident));
+			StringWriter out = new StringWriter();
+			SqlRenderer renderer = new SqlRenderer(out);
+			c.accept(renderer);
+			return out.toString();
+		}
+		return null;
+	}
+
 }

@@ -66,7 +66,7 @@
 						<rich:columnGroup>
 							<rich:column colspan="4">
 								<aon:outputText
-									value="#{balanceSheet.balance.name} (#{balanceSheet.parameters.period.id})" />
+									value="#{balanceSheet.balance.name} (#{balanceSheet.parameters.period.name})" />
 							</rich:column>
 						</rich:columnGroup>
 					</f:facet>
@@ -93,7 +93,7 @@
 
 					<aon:column rendered="#{!to.title}">
 						<f:facet name="header">
-							<aon:outputText value="#{balanceSheet.parameters.period.id}" />
+							<aon:outputText value="#{balanceSheet.parameters.period.name}" />
 						</f:facet>
 						<aon:div rendered="#{to.amount != null}">
 							<aon:outputText value="#{to.amount}"
@@ -117,7 +117,7 @@
 
 					<aon:column rendered="#{!to.title and balanceSheet.parameters.previousPeriodVisible}">
 						<f:facet name="header">
-							<aon:outputText value="#{balanceSheet.previousPeriod.id}" />
+							<aon:outputText value="#{balanceSheet.previousPeriod.name}" />
 						</f:facet>
 						<aon:div rendered="#{to.previousAmount != null}">
 							<aon:outputText value="#{to.previousAmount}"

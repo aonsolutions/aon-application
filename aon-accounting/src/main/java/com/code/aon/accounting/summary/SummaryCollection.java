@@ -1,7 +1,6 @@
 package com.code.aon.accounting.summary;
 
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,9 +33,6 @@ public class SummaryCollection {
 		summaryList.add(summary);
 		setInitialDebit(CommonUtil.round(getInitialDebit() + summary.getInitialDebit()));
 		setInitialCredit(CommonUtil.round(getInitialCredit() + summary.getInitialCredit()));
-		
-		setOpeningDebit(CommonUtil.round(getOpeningDebit() + summary.getOpeningDebit()));
-		setOpeningCredit(CommonUtil.round(getOpeningCredit() + summary.getOpeningCredit()));
 		if (summary.isLastLevel()) {
 			setDebit(CommonUtil.round(getDebit() + summary.getDebit()));
 			setCredit(CommonUtil.round(getCredit() + summary.getCredit()));
@@ -94,13 +90,6 @@ public class SummaryCollection {
 	}
 	public void setSummaryList(List<Summary> list) {
 		this.summaryList = list;
-	}
-
-	public List<Summary> getSortedSummaryList() {
-		List<Summary> sortedSummaryList = new LinkedList<Summary>();
-		sortedSummaryList.addAll(summaryList);
-		Collections.sort(sortedSummaryList, new SummaryComparator());
-		return sortedSummaryList;
 	}
 
 	public void print(PrintStream out) {

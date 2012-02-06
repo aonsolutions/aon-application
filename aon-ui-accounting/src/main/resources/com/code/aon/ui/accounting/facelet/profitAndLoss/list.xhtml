@@ -154,16 +154,16 @@
 							</rich:columnGroup>
 						</f:facet>
 	
-						<rich:subTable value="#{controller.grossMargin.sortedSummaryList}"
+						<rich:subTable value="#{controller.grossMargin.summaryList}"
 							var="to">
 							<aon:column styleClass="aon-width-100">
 								<aon:commandLink immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="account_statement_account_list">
-									<f:setPropertyActionListener value="#{to.id}"
+									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />
-									<aon:outputText value="#{to.id}" />
+									<aon:outputText value="#{to.code}" />
 									<f:setPropertyActionListener value="profit_and_loss_list"
 										target="#{trialBalance.backAction}" />
 								</aon:commandLink>
@@ -202,16 +202,16 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<rich:subTable value="#{controller.totalExpenses.sortedSummaryList}"
+						<rich:subTable value="#{controller.totalExpenses.summaryList}"
 							var="to">
 							<aon:column>
 								<aon:commandLink immediate="true"
 									title="#{accountingBundle.accounting_statement_module}"
 									styleClass="aon-dataTable-link" action="account_statement_account_list">
-									<f:setPropertyActionListener value="#{to.id}"
+									<f:setPropertyActionListener value="#{to.code}"
 										target="#{profitAndLossReport.accountStatement}" />
 									<aon:actionListener method="#{profitAndLossReport.onStatement}" />
-									<aon:outputText value="#{to.id}" />
+									<aon:outputText value="#{to.code}" />
 									<f:setPropertyActionListener value="profit_and_loss_list"
 										target="#{trialBalance.backAction}" />
 								</aon:commandLink>

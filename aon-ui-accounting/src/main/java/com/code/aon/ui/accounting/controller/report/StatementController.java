@@ -14,9 +14,10 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -30,8 +31,7 @@ public class StatementController extends BasicController {
 
 	private SummaryProvider sp = new SummaryProvider();
 
-	private Balance openingEntry;
-	private Balance fromOpeningEntry;
+	private Balance previousBalance;
 	private Balance periodBalance;
 
 	private List<Balance> detail;
@@ -40,20 +40,12 @@ public class StatementController extends BasicController {
 	private SummaryProviderParameters params;
 
 
-	public Balance getOpeningEntry() {
-		return openingEntry;
+	public Balance getPreviousBalance() {
+		return previousBalance;
 	}
 
-	public void setOpeningEntry(Balance openingEntry) {
-		this.openingEntry = openingEntry;
-	}
-
-	public Balance getFromOpeningEntry() {
-		return fromOpeningEntry;
-	}
-
-	public void setFromOpeningEntry(Balance fromOpeningEntry) {
-		this.fromOpeningEntry = fromOpeningEntry;
+	public void setPreviousBalance(Balance previousBalance) {
+		this.previousBalance = previousBalance;
 	}
 
 	public Balance getPeriodBalance() {
@@ -96,8 +88,7 @@ public class StatementController extends BasicController {
 
 
 	private void initialize() {
-		setOpeningEntry(null);
-		setFromOpeningEntry(null);
+		setPreviousBalance(null);
 		setPeriodBalance(null);
 		setDetail(null);
 	}
@@ -121,100 +112,71 @@ public class StatementController extends BasicController {
 	private void transformDetailModel() throws ManagerBeanException {
 		IController c = FormUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
 		DataModel model = c.getModel();
-		Balance previous = null;
-		if (isOpeningEntryPresent()) {
-			previous = getOpeningEntry();	
-		}
-		if (isFromOpeningEntryPresent()) {
-			previous = getFromOpeningEntry();
-		}
+		Balance previous = getPreviousBalance();
 		setDetail(new LinkedList<Balance>());
 		for (int i = 0; i < model.getRowCount(); i++) {
 			model.setRowIndex(i);
 			AccountEntryDetail d = (AccountEntryDetail) model.getRowData();
-			boolean ignore = false;
-			// En el caso de que entre las fechas seleccionadas haya asientos se apertura,
-			// se debe excluir el que se haya tomado en cuenta en el saldo incial,
-			// es decir, cuando la fecha de getOpeningEntry coincida con la fecha del apunte.
-			ignore = d.getAccountEntry().getType() == AccountEntryType.OPENING && getOpeningEntry() != null
-					&& DateUtils.isSameDay(getOpeningEntry().getFromDate(), d.getAccountEntry().getEntryDate());
-			if (!ignore) {
-				Balance balance = new Balance();
-				balance.setAccountEntry(d.getAccountEntry().getId());
-				balance.setAccount(d.getAccount().getCode());
-				balance.setDescription(d.getAccount().getDescription());
-				balance.setFromDate(d.getAccountEntry().getEntryDate());
-				balance.setDebit(d.getDebit());
-				balance.setCredit(d.getCredit());
-				balance.setConcept(d.getConcept());
-				balance.setDocumentNumber(d.getDocumentNumber());
-				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getCode());
-				balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
-				if (previous != null) {
-					balance.dragBalance(previous);
+			Balance balance = new Balance();
+			balance.setAccountEntry(d.getAccountEntry().getId());
+			balance.setAccount(d.getAccount().getCode());
+			balance.setDescription(d.getAccount().getDescription());
+			balance.setFromDate(d.getAccountEntry().getEntryDate());
+			balance.setDebit(d.getDebit());
+			balance.setCredit(d.getCredit());
+			balance.setConcept(d.getConcept());
+			balance.setDocumentNumber(d.getDocumentNumber());
+			balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getCode());
+			balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
+			if (previous != null) {
+				balance.dragBalance(previous);
+			} else {
+				double b = CommonUtil.round(d.getDebit() - d.getCredit());
+				if (b > 0) {
+					balance.setUnpaidBalance(b);
 				} else {
-					double b = CommonUtil.round(d.getDebit() - d.getCredit());
-					if (b > 0) {
-						balance.setUnpaidBalance(b);
-					} else {
-						balance.setCreditBalance(CommonUtil.round(b * (-1)));
-					}
+					balance.setCreditBalance(CommonUtil.round(b * (-1)));
 				}
-				detail.add(balance);
-				previous = balance;
 			}
+			detail.add(balance);
+			previous = balance;
 		}
 		setDetailModel(new ListDataModel(getDetail()));
 	}
 
 	private void initializeAmounts() throws ManagerBeanException {
-/*
-	En la parte inicial del listado se indican tres lineas:
-	 1.- Asiento de apertura:
-	 2.- Acumulados desde el asiento de apertura hasta la fecha de inicio del listado. 
-	 3.- Acumulados desde la fecha de inicio hasta la fecha fin del listado.
-	 
-	Lo que sigue a continuación es un detalle del punto 3 (una lista de AccountEntryDetail).
-	
-	Uno de los parámetros params.getPeriod ó params.getFromDate, debe tener valor 
-	valor para buscar el asiento de apertura inmediatamente inferior en fecha.
-	Este valor se almacena en this.openingEntry.
-
-*/	
-		Account account = getAccount();
-		Date from = params.getFromDate()==null?params.isPeriodNull()?new Date(0):params.getPeriod().getInitiationDate():params.getFromDate();
-		setOpeningEntry(sp.getOpeningEntryBalance(from, account.getCode(),params.getSecurityLevel()));
-		setFromOpeningEntry(null);
-		Date to = DateUtils.addDays(from, -1);
-		from = null;
-		if (isOpeningEntryPresent()) {
-			if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
-				from = getOpeningEntry().getFromDate();
-				setFromOpeningEntry(sp.getPeriodBalance(from, to,account.getCode(),params.getSecurityLevel(),false,false));
+		try {
+			Account account = getAccount();
+			AccountingUtil accountingUtil = new AccountingUtil();
+			Date from = params.getFromDate()==null?params.isPeriodNull()?accountingUtil.getFirstPeriodInitialDate():params.getPeriod().getInitiationDate():params.getFromDate();
+			SummaryProviderParameters clonedParams = params.clone();
+			clonedParams.setFromDate(from);
+			clonedParams.setAccountExpression(account.getCode());
+			
+			Summary summary = sp.getUniqueSummary(clonedParams);
+			double initialDebit = summary.getInitialDebit();
+			double initialCredit = summary.getInitialCredit();
+			if ( CommonUtil.round(initialDebit - initialCredit, 2) != 0.0) {
+				setPreviousBalance( new Balance() );
+				getPreviousBalance().setAccount(summary.getCode());
+				getPreviousBalance().setDescription(summary.getDescription());
+				getPreviousBalance().setToDate(DateUtils.addDays(from, -1));
+				getPreviousBalance().set(initialDebit,initialCredit);	
 			}
-		} else {
-			setFromOpeningEntry( sp.getPeriodBalance(from, to, account.getCode(),params.getSecurityLevel(),false,false));
-		}
-		
-		setPeriodBalance(sp.getPeriodBalance(params.getFromDate(), params.getToDate(), account.getCode(),params.getSecurityLevel(),false,false));
-		
-		if (isFromOpeningEntryPresent()) {
-			if (isOpeningEntryPresent()) {
-				// Si exiten acumulados anteriores y asiento de apertura, éste se decuenta de los acumulados anteriores.
-				getFromOpeningEntry().substractBalance(getOpeningEntry());
-				getFromOpeningEntry().dragBalance(getOpeningEntry());
+			
+			
+			setPeriodBalance( new Balance() );
+			getPeriodBalance().setAccount(summary.getCode());
+			getPeriodBalance().setDescription(summary.getDescription());
+			getPeriodBalance().setFromDate(from);
+			getPeriodBalance().setToDate(params.getToDate());
+			getPeriodBalance().set(summary.getDebit(),summary.getCredit());
+			if (isPreviousBalancePresent()) {
+				getPeriodBalance().dragBalance(getPreviousBalance());
 			}
-		}
-		
-		if (isFromOpeningEntryPresent()) {
-			getPeriodBalance().dragBalance(getFromOpeningEntry());
-		} else {
-			if (isOpeningEntryPresent()) {
-				if ( !getPeriodBalance().getFromDate().after(getOpeningEntry().getFromDate()) ) {
-					getPeriodBalance().substractBalance(getOpeningEntry());	
-				}
-				getPeriodBalance().dragBalance(getOpeningEntry());	
-			}
+			
+		} catch (CloneNotSupportedException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
 		}
 	}
 
@@ -222,18 +184,13 @@ public class StatementController extends BasicController {
 		return (Account) getTo();
 	}
 
-	public boolean isOpeningEntryPresent() {
-		return (getOpeningEntry() != null);
-	}
-
-	public boolean isFromOpeningEntryPresent() {
-		return (getFromOpeningEntry() != null);
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Collection getCollection() {
 		return getDetail();
 	}
-	
+
+	public boolean isPreviousBalancePresent() {
+		return getPreviousBalance() != null;
+	}
 }

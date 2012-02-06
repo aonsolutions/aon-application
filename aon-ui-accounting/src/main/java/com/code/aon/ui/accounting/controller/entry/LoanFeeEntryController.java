@@ -206,7 +206,7 @@ public class LoanFeeEntryController {
 				params.setAccountLevel(5);
 				params.setFromDate(getEntry().getLoan().getLoanDate());
 				params.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
-				SummaryCollection sc = sp.getSummaryCollection(params);
+				SummaryCollection sc = sp.getSummaryCollection(params,true);
 				double p = CommonUtil.round(sc.getCreditBalance())==0.0?
 						CommonUtil.round(sc.getUnpaidBalance()*-1):sc.getCreditBalance(); 
 				return p;

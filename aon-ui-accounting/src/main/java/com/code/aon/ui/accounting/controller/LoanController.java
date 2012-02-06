@@ -61,7 +61,7 @@ public class LoanController extends BasicController{
 				params.setAccountLevel(5);
 				params.setFromDate(loan .getLoanDate());
 				params.setSecurityLevel(loan.getSecurityLevel());
-				SummaryCollection sc = sp.getSummaryCollection(params);
+				SummaryCollection sc = sp.getSummaryCollection(params,true);
 				double p = CommonUtil.round(sc.getCreditBalance())==0.0?
 						CommonUtil.round(sc.getUnpaidBalance()*-1):sc.getCreditBalance(); 
 				return p;
@@ -80,7 +80,8 @@ public class LoanController extends BasicController{
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
 			spp.setAccountExpression(account.getCode());
-			
+			spp.setAccountLevel(5);
+			spp.setLowerLevelVisible(false);
 			spp.setFromDate(loan.getLoanDate());
 			spp.setToDate(new Date());
 			spp.setSecurityLevel(loan.getSecurityLevel());
