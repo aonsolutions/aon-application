@@ -6,6 +6,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.enumeration.Country;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.entity.master.ProjectReservationGuestDB;
 
 @Entity
@@ -14,7 +16,12 @@ public class ProjectReservationGuest extends ProjectReservationGuestDB {
 
 	private static final long serialVersionUID = 1L;
 
-    @Transient
+	public ProjectReservationGuest() {
+		setDocumentType(DocumentType.NIF);
+		setDocumentCountry(Country.ES);
+	}
+
+	@Transient
 	public String getFullName() {
     	String fullName = StringUtils.isEmpty(getTreatment()) ? "" : getTreatment() + " ";
     	fullName += StringUtils.isEmpty(getName()) ? "" : getName() + " ";
