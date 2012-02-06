@@ -285,12 +285,19 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return list;
 	}
 	
+	protected void prepareGetList() {
+	}
+
+	protected void finishGetList() {
+	}
+	
 	@Override
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
 		List<ITransferObject> tos = null;
 		try {
 			startSession();
+			prepareGetList();
 			String expression = getQueryExpression(criteria);
 			LOGGER.debug( "getList, expression={}", expression );
 			List<ResultSetRow> list = getList(expression);
@@ -300,6 +307,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in getList of " + pojoClass, e );
 		} finally {
+			finishGetList();
 			endSession();
 		}
 		return tos;			

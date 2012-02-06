@@ -55,6 +55,21 @@ public class BasicAlfresco {
 	private String serverUserName;
 	private String serverPassword;	
 	
+    private static ThreadLocal<Boolean> MUST_CLOSE_SESSION = new ThreadLocal<Boolean>() { 	
+    	protected Boolean initialValue() {
+    		return new Boolean(true);
+    	}
+    };
+    
+    public static void setCloseSession(boolean mustCloseSession) {
+        MUST_CLOSE_SESSION.set(new Boolean(mustCloseSession));
+    }
+    
+    public static boolean mustCloseSession() {
+        return MUST_CLOSE_SESSION.get().booleanValue();
+    }
+    
+    
 	public BasicAlfresco( String user, String password ) {
 		this.serverUserName = user;
 		this.serverPassword = password;
@@ -72,18 +87,22 @@ public class BasicAlfresco {
 	}
 
 	public void startSession() {
-		try {
-			LOGGER.debug("Connecting to: " + serverURL);
-			WebServiceFactory.setEndpointAddress(serverURL);
-			AuthenticationUtils.startSession(serverUserName, serverPassword);
-		} catch (Exception e) {
-			LOGGER.error("Can not initiate session with Alfresco server", e);
+		if ( mustCloseSession() ) {
+			try {
+				LOGGER.debug("Connecting to: " + serverURL);
+				WebServiceFactory.setEndpointAddress(serverURL);
+				AuthenticationUtils.startSession(serverUserName, serverPassword);
+			} catch (Exception e) {
+				LOGGER.error("Can not initiate session with Alfresco server", e);
+			}			
 		}
 	}
 
 	public void endSession() {
-		LOGGER.debug("Closing connection");
-		AuthenticationUtils.endSession();
+		if ( mustCloseSession() ) {
+			LOGGER.debug("Closing connection");
+			AuthenticationUtils.endSession();			
+		}
 	}
 
 	public static ParentReference getCompanyHome() {
