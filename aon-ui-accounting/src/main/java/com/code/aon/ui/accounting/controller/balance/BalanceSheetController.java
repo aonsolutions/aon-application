@@ -11,6 +11,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -221,8 +222,20 @@ public class BalanceSheetController implements ICollectionProvider {
 			c.onResetStatement(event);
 			SummaryProviderParameters spp = getStatementParameters(item);
 			spp.setPeriod(getPreviousPeriod());
-			spp.setFromDate(getPreviousPeriod().getInitiationDate());
-			spp.setToDate(getPreviousPeriod().getDeadline());
+			Date previousFrom;
+			if (getParameters().getFromDate() != null) {
+				previousFrom = DateUtils.addYears(getParameters().getFromDate(),-1); 
+			} else {
+				previousFrom =  getPreviousPeriod().getInitiationDate();	
+			}
+			spp.setFromDate(previousFrom);
+			Date previousTo;
+			if (getParameters().getToDate() != null) {
+				previousTo = DateUtils.addYears(getParameters().getToDate(),-1); 
+			} else {
+				previousTo = getPreviousPeriod().getDeadline();
+			}
+			spp.setToDate(previousTo);
 			c.setParameters(spp);
 			c.onSearch(event);
 			c.setBackAction(IAccountingConstants.BALANCE_SHEET_LIST_NAVKEY);

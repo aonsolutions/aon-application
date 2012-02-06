@@ -377,7 +377,6 @@ public class SummaryProvider {
 			}
 		}
 		buf.append(" ORDER BY domain,code");
-		System.out.println(buf.toString());
 		return buf.toString();
 	}
 	
@@ -409,7 +408,6 @@ public class SummaryProvider {
 		if (params.isMonthlyGrouping()) {
 			buf.append(" GROUP BY MONTH(ae.entry_date)");
 		}
-		System.out.println("ACUM: " + buf.toString());
 		return HibernateUtil.getSQLConnection(sessionName).prepareStatement(buf.toString());
 	}
 
