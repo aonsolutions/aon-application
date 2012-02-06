@@ -40,4 +40,9 @@ public class ProjectReservationRoomDetail extends ProjectReservationRoomDetailDB
     	return false;
     }
 
+    @Transient
+    public boolean isInvoiced() {
+    	return (getProjectReservationRoom() != null && getProjectReservationRoom().getProjectReservation().isInvoiced());
+    }
+
 }

@@ -92,11 +92,10 @@
 						<rich:columns styleClass="aon-editDataTable-textColumn aon-nopadding aon-nomargin" 
 							value="#{controller.rackActivityList}" var="rackActivity">
 							<aon:div styleClass="#{rackActivity.firstNight ? 'aon-padding-left' : ''} #{rackActivity.lastNight ? 'aon-padding-right' : ''}">
-								<aon:outputText styleClass="#{(rackActivity.id != null) ? ('reserved-cell') : ('available-cell')}"
-									value="&#160;" 
+								<aon:outputText styleClass="pms-available-cell"
+									value="&#160;"
 									rendered="#{rackActivity.id == null}" />
-								<aon:commandLink
-									styleClass="#{(rackActivity.id != null) ? ('reserved-cell') : ('available-cell')}"
+								<aon:commandLink styleClass="#{(rackActivity.invoiced) ? ('pms-invoiced-cell') : ('pms-active-cell')}"
 									value="&#160;"
 									rendered="#{rackActivity.id != null}"
 									actionListener="#{controller.onLoadReservation}"
