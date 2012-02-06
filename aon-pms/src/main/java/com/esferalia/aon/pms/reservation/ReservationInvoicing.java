@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -251,7 +252,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					reservationServiceDetailBean.insert(reservationServiceDetail);
 				}
 
-				date = CommonUtil.addDaysToDate(date, 1);
+				date = DateUtils.addDays(date, 1);
 			}
 		}
 	}

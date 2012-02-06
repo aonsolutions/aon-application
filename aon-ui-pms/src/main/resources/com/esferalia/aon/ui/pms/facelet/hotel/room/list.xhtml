@@ -13,13 +13,10 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
 				<ui:param name="controller" value="#{room}" />
 			</ui:include>
- 
 
 			<aon:div styleClass="aon-scroll-area">
-				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{room}" />
-					
 					<ui:define name="columns">
  
 						<aon:column alias="Room.asset.name" >
@@ -49,7 +46,6 @@
 	
 					</ui:define>
 				</ui:decorate>
-				
 			</aon:div>
 
 		</aon:form>

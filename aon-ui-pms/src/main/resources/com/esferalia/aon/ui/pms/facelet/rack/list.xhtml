@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="rackList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_rack_module}" />
+				<ui:param name="controller" value="#{rack}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:div styleClass="aon-spin-control">
+						<aon:commandButton id="previousView" 
+							styleClass="aon-commandButton aon-text-center"
+							value="#{bundle.aon_previous}" ignoreDupResponses="true"
+							reRender="aonContent"
+							actionListener="#{rack.onDecreaseStartDate}" />
+						<aon:selectOneMenu 
+							styleClass="aon-margin-left aon-margin-right"
+							value="#{rack.filterParams.startDateIncrease}">
+							<f:selectItem itemLabel="#{bundle.aon_day}" itemValue="0" />
+							<f:selectItem itemLabel="#{bundle.aon_week}" itemValue="1" />
+							<f:selectItem itemLabel="#{bundle.aon_month}" itemValue="2" />
+						</aon:selectOneMenu>
+						<aon:commandButton id="nextView"
+							styleClass="aon-commandButton"
+							value="#{bundle.aon_next}" ignoreDupResponses="true"
+							reRender="aonContent"
+							actionListener="#{rack.onIncreaseStartDate}" />
+					</aon:div>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom"
+					rendered="#{assetCollections.featuresCount > 0}">
+					<aon:selectManyCheckbox layout="lineDirection" 
+						value="#{rackSearch.features}">
+						<f:selectItems value="#{assetCollections.featuresIds}" />
+					</aon:selectManyCheckbox>
+					<aon:div styleClass="aon-text-center">
+						<aon:commandButton id="addFeature"
+							styleClass="aon-text-center" 
+							value="#{bundle.aon_filter}" ignoreDupResponses="true"
+							reRender="aonContent" 
+							actionListener="#{rack.onSearch}" />
+					</aon:div>
+				</aon:div>
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{rack}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:define name="columns">
+ 						<f:facet name="header">
+							<rich:columnGroup>
+								<aon:column styleClass="aon-dataTable-header">
+									<aon:outputText value="#{pmsBundle.pms_room_abrv}" />
+								</aon:column>
+
+								<rich:columns styleClass="aon-dataTable-header aon-nopadding aon-nomargin" 
+									value="#{controller.rackDayList}" var="rackDay">
+									<aon:div>
+										<aon:outputText value="#{rackDay.time}" >
+											<f:convertDateTime pattern="#{pmsBundle.aon_day_pattern}" 
+												timeZone="#{timeZoneController.timeZoneId}"  />
+										</aon:outputText>
+									</aon:div>
+									<aon:div>
+										<aon:outputText value="#{rackDay.time}" >
+											<f:convertDateTime pattern="#{pmsBundle.aon_month_pattern}" 
+												timeZone="#{timeZoneController.timeZoneId}"  />
+										</aon:outputText>
+									</aon:div>
+
+								</rich:columns>
+							</rich:columnGroup>
+						</f:facet>
+
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<aon:outputText value="#{to.asset.name}" />
+						</aon:column>
+	
+						<rich:columns styleClass="aon-editDataTable-textColumn aon-nopadding aon-nomargin" 
+							value="#{controller.rackActivityList}" var="rackActivity">
+							<aon:div styleClass="#{rackActivity.firstNight ? 'aon-padding-left' : ''} #{rackActivity.lastNight ? 'aon-padding-right' : ''}">
+								<aon:outputText styleClass="#{(rackActivity.id != null) ? ('reserved-cell') : ('available-cell')}"
+									value="&#160;" 
+									rendered="#{rackActivity.id == null}" />
+								<aon:commandLink
+									styleClass="#{(rackActivity.id != null) ? ('reserved-cell') : ('available-cell')}"
+									value="&#160;"
+									rendered="#{rackActivity.id != null}"
+									actionListener="#{controller.onLoadReservation}"
+									action="reservation_form">
+									<f:param name="reservationId" value="#{rackActivity.projectReservationRoom.projectReservation.id}"/>
+								</aon:commandLink>
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
+									rendered="#{rackActivity.id != null}">
+									<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
+										<aon:outputText value="#{pmsBundle.pms_room_number}:" />
+										<aon:outputText value="#{rackActivity.assetActivity.asset.name}" />
+
+										<aon:outputText value="#{pmsBundle.pms_reservation_id}:" />
+										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.id}" />
+
+										<aon:outputText value="#{pmsBundle.pms_reservation_code}:" />
+										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.code}" />
+
+										<aon:outputText value="#{pmsBundle.pms_checkIn}:" />
+										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.startDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+
+										<aon:outputText value="#{pmsBundle.pms_checkOut}:" />
+										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.endDate}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+
+										<aon:outputText value="#{pmsBundle.pms_guest}:" />
+										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.guestFullName}" />
+									</aon:panelGrid>
+								</rich:toolTip>
+							</aon:div>
+						</rich:columns>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -54,7 +54,7 @@
 										actionListener="#{controller.onCancelReservationRoom}"
 										reRender="showRoomDetailWindow" immediate="true">
 										<f:setPropertyActionListener
-											target="#{reservationTable.availableRoomList}"
+											target="#{roomAvailability.availableRoomList}"
 											value="#{null}" />
 									</aon:commandButton>	
 									<aon:commandButton id="roomDetail-remove"
@@ -85,9 +85,9 @@
 											<aon:outputLabel for="ProjectReservationRoom_item"
 												value="#{pmsBundle.pms_room_type}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_item" 
-												value="#{reservationTable.filterParams.item}" required="#{true}"
+												value="#{roomAvailability.filterParams.item}" required="#{true}"
 												disabled="#{controller.to.roomNumber != null}"
-												valueChangeListener="#{reservationTable.onItemFilterChanged}"
+												valueChangeListener="#{roomAvailability.onItemFilterChanged}"
 												reRender="ProjectReservationRoomAvailability">
 												<f:selectItems value="#{reservation.hotelRoomItems}" />
 											</aon:selectOneMenu>
@@ -120,11 +120,11 @@
 											<aon:div id="ProjectReservationRoomAvailability" 
 												rendered="#{controller.to.roomNumber == null}">
 												<aon:outputText value="#{pmsBundle.pms_no_room_available_msg}"
-													rendered="#{reservationTable.availableRoomCount == 0}" />
+													rendered="#{roomAvailability.availableRoomCount == 0}" />
 												<aon:selectOneListbox id="ProjectReservationRoom_room" size="5"
-													value="#{reservationTable.availableRoom}"
-													rendered="#{reservationTable.availableRoomCount > 0}">
-													<f:selectItems value="#{reservationTable.availableRoomList}" />
+													value="#{roomAvailability.availableRoom}"
+													rendered="#{roomAvailability.availableRoomCount > 0}">
+													<f:selectItems value="#{roomAvailability.availableRoomList}" />
 												</aon:selectOneListbox>
 											</aon:div>
 
@@ -157,16 +157,16 @@
 											rendered="#{controller.to.roomNumber == null}" >
 											<aon:div>
 												<aon:outputText value="#{pmsBundle.pms_room_number}" styleClass="aon-italic aon-margin-right" />
-												<aon:inputText value="#{reservationTable.filterParams.name}" 
-													size="3" maxlength="10" />
+												<aon:inputText value="#{roomAvailability.filterParams.name}" 
+													size="3" maxlength="5" />
 											</aon:div>
 											<aon:selectManyCheckbox layout="pageDirection" 
-												value="#{reservationTable.filterParams.featureFilter}">
-												<f:selectItems value="#{reservationTable.featuresList}" />
+												value="#{roomAvailability.filterParams.featureFilter}">
+												<f:selectItems value="#{assetCollections.featuresIds}" />
 											</aon:selectManyCheckbox>
 											<aon:commandButton id="addFeature" ignoreDupResponses="true"
 												value="#{bundle.aon_filter}" styleClass="aon-margin-top"
-												actionListener="#{reservationTable.onFilter}"
+												actionListener="#{roomAvailability.onFilter}"
 												reRender="ProjectReservationRoomAvailability,ProjectReservationRoomFilters" />
 										</aon:div>
 

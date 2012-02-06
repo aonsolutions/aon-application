@@ -64,8 +64,8 @@ public class ProjectReservationRoomController extends LinesController {
 			}
 			setTo(reservationRoom);
 
-			ReservationTableController controller = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
-			controller.onInitializeRoomList((ProjectReservationRoom)getTo());
+			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+			roomAvailability.onInitializeRoomList((ProjectReservationRoom)getTo());
 
 			setNew(true);
 		} catch (ManagerBeanException ex) {
@@ -80,8 +80,8 @@ public class ProjectReservationRoomController extends LinesController {
 			if (getModel().isRowAvailable()) {
 				setTo((ITransferObject)getModel().getRowData());
 
-				ReservationTableController tableController = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
-				tableController.onInitializeRoomList((ProjectReservationRoom)getTo());
+				RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+				roomAvailability.onInitializeRoomList((ProjectReservationRoom)getTo());
 			}
 		} catch (ManagerBeanException ex) {
 			String msg = "No es posible asignar Habitación";
@@ -91,12 +91,12 @@ public class ProjectReservationRoomController extends LinesController {
 	}
 
 	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
-		ReservationTableController tableController = (ReservationTableController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_TABLE_CONTROLLER_NAME);
-		Room availableRoom = tableController.getAvailableRoom();
+		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+		Room availableRoom = roomAvailability.getAvailableRoom();
 
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 		if (isNew()) {
-			reservationRoom.setItem((availableRoom != null) ? availableRoom.getItem() : tableController.getFilterParams().getItem());
+			reservationRoom.setItem((availableRoom != null) ? availableRoom.getItem() : roomAvailability.getFilterParams().getItem());
 		}
 		onAccept(event);
 

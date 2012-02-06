@@ -45,10 +45,10 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="reservationTable"
-										value="#{pmsBundle.pms_reservationTable_module}"
-										action="reservationTable_form" >
-										<aon:actionListener method="#{reservationTable.onInitialize}" />
+									<aon:commandLink id="rack"
+										value="#{pmsBundle.pms_rack_module}"
+										action="rack_search" >
+										<aon:actionListener method="#{rack.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>

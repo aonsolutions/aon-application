@@ -114,11 +114,9 @@
 				rendered="#{controller.showRoomDetail}"
 				value="#{controller.roomDetailList}" var="roomDetail">
 
-				<c:if test="#{reservation.active and aonRole.saleOperator}">
-					<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
-						<aon:outputText value="&#160;" />
-					</aon:column>
-				</c:if>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:outputText value="&#160;" />
+				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
 					<aon:outputText value="&#160;" />

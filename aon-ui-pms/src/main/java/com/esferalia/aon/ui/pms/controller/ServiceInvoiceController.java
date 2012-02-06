@@ -10,6 +10,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -228,7 +229,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			} else if (getReservationInvoiceTo().getRoom() != null) {
 				fromDate = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getStartDate();
 				toDate = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation().getEndDate();
-				toDate = CommonUtil.addDaysToDate(toDate, -1);
+				toDate = DateUtils.addDays(toDate, -1);
 			}
 
 			HotelService hotelService = getReservationInvoiceTo().getNewService();
@@ -279,7 +280,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 				Date date = hotelService.getFromDate();
 				while (date.compareTo(hotelService.getToDate()) <= 0) {
 					prices += strategy.getUnitPrice(hotelService, date, getReservationInvoiceTo().getHotel().getCustomer().getTariff());
-					date = CommonUtil.addDaysToDate(date, 1);
+					date = DateUtils.addDays(date, 1);
 				}
 				hotelService.setPrice(CommonUtil.round(prices, 4));
 				hotelService.setTaxableBase(strategy.getBasePrice(hotelService));

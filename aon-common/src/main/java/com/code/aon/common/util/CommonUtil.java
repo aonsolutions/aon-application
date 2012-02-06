@@ -311,21 +311,4 @@ public class CommonUtil {
 		return calendar.getTime();
 	}
 
-	/**
-	 * Suma o resta a una fecha un numero de dias pasado como parametro. 
-	 * 
-	 * @param date
-	 *            La fecha que se desea modificar
-	 * @param amount
-	 *            Cantidad de dias a sumar o restar
-	 * 
-	 * @return Un java.util.Date con la fecha modificada
-	 */
-	public static Date addDaysToDate(Date date, int amount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(Calendar.DATE, amount);
-		return calendar.getTime();
-	}
-
 }

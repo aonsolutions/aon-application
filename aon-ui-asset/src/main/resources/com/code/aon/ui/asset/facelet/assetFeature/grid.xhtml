@@ -20,15 +20,13 @@
 					</f:facet>
 					<aon:outputText value="#{to.feature.name}" rendered="#{formList}"  />
 					<aon:selectOneMenu id="AssetFeature_feature" rendered="#{formEdit}"
-						value="#{controller.to.feature}" >
-						<f:selectItem itemLabel="-" itemValue="#{null}" />
-						<f:selectItems value="#{assetCollections.featureList}" />
+						value="#{controller.to.feature}">
+						<f:selectItems value="#{assetCollections.features}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="AssetFeature_feature-New" rendered="#{formNew}"
-							value="#{controller.to.feature}" >
-							<f:selectItem itemLabel="-" itemValue="#{null}" />
-							<f:selectItems value="#{assetCollections.featureList}" />
+							value="#{controller.to.feature}">
+							<f:selectItems value="#{assetCollections.features}" />
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>

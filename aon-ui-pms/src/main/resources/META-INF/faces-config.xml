@@ -115,10 +115,6 @@
 		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.Room</value>
 		</managed-property>
@@ -179,17 +175,9 @@
 		<managed-bean-name>roomFeature</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
+ 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.asset.AssetFeature</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>15</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -501,13 +489,56 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ********** RESERVATION TABLE VIEWER ********** -->
+	<!-- ********** RACK ********** -->
 	<managed-bean>
-		<managed-bean-name>reservationTable</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationTableController</managed-bean-class>
+		<managed-bean-name>rack</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RackController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.Room</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>rack</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Room_hotel_id,Room_asset_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rackSearch}</value>
+				<value>#{rackControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>rackSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.RackSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>rackControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.RackControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ********** ROOM AVAILABILITY ********** -->
+	<managed-bean>
+		<managed-bean-name>roomAvailability</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomAvailabilityController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* SERVICE INVOICE ***************** -->
 	<managed-bean>
 		<managed-bean-name>serviceInvoice</managed-bean-name>
@@ -791,15 +822,19 @@
 		</navigation-case>
 	</navigation-rule>  
 
-  	<!-- =================== Reservation Table ================= -->
+  	<!-- =================== Rack ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>reservationTable_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationTable/form.xhtml</to-view-id>
+			<from-outcome>rack_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/rack/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>rack_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/rack/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== Reservation ================= -->
+  	<!-- =================== Service Invoice ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>serviceInvoice_list</from-outcome>
