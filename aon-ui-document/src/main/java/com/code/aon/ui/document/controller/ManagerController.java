@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
@@ -23,9 +24,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
+import com.code.aon.document.AlfrescoGroup;
 import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -60,6 +63,8 @@ public class ManagerController implements IEnterpriseController {
 	
 	private boolean administrator;
 	
+	private List<SelectItem> userScopes;
+	
 	public ManagerController() {
 		AuthPrincipal principal = resolvePrincipal();
 		this.loggedUser = resolveUser( principal );
@@ -69,7 +74,12 @@ public class ManagerController implements IEnterpriseController {
 		} else {
 			initEnterprise();
 		}
-		this.userManager = new AlfrescoUserManager(loggedUser.getLogin(), loggedUser.getPassword());
+		try {
+			this.userManager = new AlfrescoUserManager(loggedUser.getLogin(), loggedUser.getPassword());
+			loadUserScopes();
+		} catch (DAOException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
 		this.administrator = this.userManager.isAlfrescoAdministrator(loggedUser.getLogin());
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ec.setSkipResetButton(!this.administrator);
@@ -191,6 +201,22 @@ public class ManagerController implements IEnterpriseController {
 
 	public Enterprise getParentEnterprise() {
 		return parentEnterprise;
+	}
+
+	public List<SelectItem> getUserScopes() {
+		return userScopes;
+	}
+
+	private void loadUserScopes() throws DAOException {
+		this.userScopes = new LinkedList<SelectItem>();
+		for( String scope : getUserManager().getUserScopes() ) {
+			SelectItem item = new SelectItem(new AlfrescoGroup(scope), scope);
+			this.userScopes.add(item);
+		}
+	}
+	
+	public boolean isShowScopes() {
+		return ! this.userScopes.isEmpty();
 	}
 	
 }

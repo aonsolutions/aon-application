@@ -70,7 +70,24 @@
 										value="#{controller.to.name}" />
 								</f:facet>
 							</aon:column>
-							
+
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputLabel for="EnterpriseUser_scope" value="#{configBundle.config_scope}" />
+								</f:facet>
+								<aon:outputText value="#{controller.currentScopeList}" rendered="#{formList}" />
+								<ui:include src="/com/code/aon/ui/document/facelet/alfrescoGroup/template.xhtml" >
+									<ui:param name="scopeId" value="EnterpriseUser_scope" />
+									<ui:param name="scopeRendered" value="#{formEdit}" />
+								</ui:include>
+								<f:facet name="footer">
+									<ui:include src="/com/code/aon/ui/document/facelet/alfrescoGroup/template.xhtml" >
+										<ui:param name="scopeId" value="EnterpriseUser_scope-New" />
+										<ui:param name="scopeRendered" value="#{formNew}" />
+									</ui:include>
+								</f:facet>
+							</aon:column>
+														
 							<aon:column alias="EnterpriseUser.active"
 								styleClass="aon-width-100">
 								<f:facet name="header">

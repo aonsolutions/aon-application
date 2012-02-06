@@ -52,6 +52,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.document.AlfrescoGroup;
+import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.EnterpriseDocumentAspect;
 import com.code.aon.project.Project;
@@ -63,11 +65,14 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	
 	private AlfrescoDAO categoryDAO;
 	
+	private AlfrescoUserManager userManager;
+	
 	private ParentReference rootReference;
 
-	public EnterpriseDocumentDAO( String user, String password, AlfrescoDAO categoryDAO ) {
+	public EnterpriseDocumentDAO( String user, String password, AlfrescoDAO categoryDAO, AlfrescoUserManager userManager ) {
 		super( EnterpriseDocument.class, user, password );		
 		this.categoryDAO = categoryDAO;
+		this.userManager = userManager;
 		this.rootReference = calculateRootReference();
 	}
 
@@ -129,6 +134,14 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		}		
 	}
 	
+	private AlfrescoGroup getScope( EnterpriseDocument ed ) throws DAOException {
+		String name = userManager.getScope(ed.getId(), Constants.COORDINATOR);
+		if ( name != null ) {
+			return new AlfrescoGroup(name);
+		}
+		return null;
+	}	
+	
 	@Override
 	protected ITransferObject convert( NamedValue[] values ) throws DAOException {
 		EnterpriseDocument ed = newEnterpriseDocument();
@@ -172,6 +185,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 				}				
 			}
 		}		
+		ed.setScope( getScope(ed) );
 		return ed;
 	}
 
@@ -210,14 +224,16 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 
 	@Override
-	protected void afterInsert(ITransferObject to) throws ClassificationFault, RemoteException {
+	protected void afterInsert(ITransferObject to) throws Exception {
 		insertContent( (EnterpriseDocument) to );
 		updateCategories( (EnterpriseDocument) to );
+		updateScope( (EnterpriseDocument) to, false);
 	}
 	
 	@Override
 	protected void afterUpdate(ITransferObject to) throws Exception {
 		updateCategories( (EnterpriseDocument) to );
+		updateScope( (EnterpriseDocument) to, true );
 	}
 	
 	private void insertContent( EnterpriseDocument ed ) throws ContentFault, RemoteException {
@@ -236,6 +252,27 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			String classification = Constants.createQNameString(NAMESPACE_CONTENT_MODEL, "generalclassifiable");
 			AppliedCategory ac = new AppliedCategory(classification, categories);
 			getClassificationService().setCategories(predicate, new AppliedCategory[]{ac});
+		}
+	}
+	
+	private void removeScope( EnterpriseDocument ed ) throws DAOException {
+		String name = userManager.getScope(ed.getId(), Constants.COORDINATOR);
+		if ( name != null ) {
+			userManager.removeGroupAccess(ed.getId(), name, Constants.COORDINATOR);			
+		}
+	}
+	
+	private void updateScope( EnterpriseDocument ed, boolean update ) throws DAOException {
+		AlfrescoGroup scope = ed.getScope();
+		if ( scope != null ) {
+			if ( update ) {
+				removeScope(ed);
+			}
+			userManager.addGroupAccess(ed.getId(), scope.getName(), Constants.COORDINATOR);
+			userManager.setInheritPermission(ed.getId(), false);
+		} else {
+			removeScope(ed);
+			userManager.setInheritPermission(ed.getId(), true);			
 		}
 	}
 

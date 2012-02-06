@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.Transient;
+
 import org.alfresco.webservice.types.Reference;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -51,6 +53,8 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	private AlfrescoCategory[] categories;
 	
 	private AlfrescoDAO dao;
+	
+	private AlfrescoGroup scope;
 	
 	public void setDao(AlfrescoDAO dao) {
 		this.dao = dao;
@@ -170,6 +174,15 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 		return null;
 	}
 	
+	@Transient
+	public AlfrescoGroup getScope() {
+		return scope;
+	}
+
+	public void setScope(AlfrescoGroup scope) {
+		this.scope = scope;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -186,6 +199,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 				.append(this.modifiedDate, o.modifiedDate)
 				.append(this.project, o.project)
 				.append(this.referenceDate, o.referenceDate)
+				.append(this.scope, o.scope)
 				.append(this.title, o.title)
 				.isEquals();
 		}
@@ -204,6 +218,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			.append(mimeType)
 			.append(modifiedDate)
 			.append(referenceDate)
+			.append(scope)
 			.append(title)
 			.toHashCode();
 	}
@@ -220,6 +235,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			append("modifiedDate", modifiedDate).
 			append("project", (project != null) ? project.getId() : null).
 			append("referenceDate", referenceDate).
+			append("scope", (scope != null) ? scope.getName() : null).
 			append("title", title).
 			toString();
 	}

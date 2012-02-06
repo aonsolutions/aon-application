@@ -1,6 +1,7 @@
 package com.code.aon.ui.document.event;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_GROUP_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import com.code.aon.config.UserScope;
 import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.document.controller.AlfrescoGroupController;
 import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -41,12 +43,22 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
+		AlfrescoGroupController agc = (AlfrescoGroupController) AonUtil.getRegisteredBean(ALFRESCO_GROUP_CONTROLLER_NAME);
+		agc.initScopes(user);
+	}
+
+	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
 		user.setActive(true);
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		user.setEnterprise( ec.getEnterprise() );
+		AlfrescoGroupController agc = (AlfrescoGroupController) AonUtil.getRegisteredBean(ALFRESCO_GROUP_CONTROLLER_NAME);
+		agc.initScopes(user);
 	}
 
 	@Override
@@ -56,6 +68,8 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 		try {
 			user.setPassword(user.getLogin());
 			getUserManager().createUser(user);
+			AlfrescoGroupController agc = (AlfrescoGroupController) AonUtil.getRegisteredBean(ALFRESCO_GROUP_CONTROLLER_NAME);
+			agc.updateScopes(user);			
 		} catch (DAOException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -82,6 +96,8 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
 		try {
 			getUserManager().updateUser(user);
+			AlfrescoGroupController agc = (AlfrescoGroupController) AonUtil.getRegisteredBean(ALFRESCO_GROUP_CONTROLLER_NAME);
+			agc.updateScopes(user);						
 		} catch (DAOException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

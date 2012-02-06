@@ -1,6 +1,7 @@
 package com.code.aon.ui.document.event;
 
 import static com.code.aon.document.IAlfrescoConstants.CONSUMER;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_GROUP;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
@@ -37,7 +38,7 @@ public class EnterpriseAlfrescoListener extends ControllerAdapter {
 		try {
 			Reference space = dao.createSpace(root, name, enterprise.getRegistry().getFullName());
 			AlfrescoUserManager um = mc.getUserManager();
-			um.createGroup(name);
+			um.createGroup(name, ENTERPRISE_GROUP);
 			um.addGroupAccess(root, name, CONSUMER);
 			um.addGroupAccess(space, name, Constants.COORDINATOR);
 			String parentEnterprise = EnterpriseDocumentDAO.getName(mc.getParentEnterprise());
@@ -52,19 +53,17 @@ public class EnterpriseAlfrescoListener extends ControllerAdapter {
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		Enterprise enterprise = (Enterprise) event.getController().getTo();
-		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		EnterpriseDocumentDAO dao = edc.getAlfrescoDAO();
 		ParentReference reference = dao.getEnterpriseReference(enterprise);
 		String name = EnterpriseDocumentDAO.getName(enterprise);
 		try {		
 			dao.removeSpace(reference);
-			mc.getUserManager().deleteGroup(name);
+			mc.getUserManager().deleteGroup(name, ENTERPRISE_GROUP);
 		} catch (DAOException e) {
 			throw new ControllerListenerException(e.getMessage(), e);			
 		}
 	}
-	
-	
 	
 }

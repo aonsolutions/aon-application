@@ -32,4 +32,6 @@ public interface IDocumentConstants {
 
 	String ENTERPRISE_USER_CONTROLLER_NAME = "enterpriseUser";
 	
+	String ALFRESCO_GROUP_CONTROLLER_NAME = "alfrescoGroup";
+	
 }
