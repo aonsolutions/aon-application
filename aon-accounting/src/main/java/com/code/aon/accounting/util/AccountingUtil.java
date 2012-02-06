@@ -55,7 +55,7 @@ public class AccountingUtil {
 		return obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT);
 	}
 
-	public Date getFirstPeriodInitialionDate() throws ManagerBeanException {
+	public Date getFirstPeriodInitialDate() throws ManagerBeanException {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
 		String alias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
@@ -63,6 +63,18 @@ public class AccountingUtil {
 		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return ((Period) iter.next()).getInitiationDate();
+		}
+		return null;
+	}
+
+	public Date getLastPeriodDeadline() throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		String alias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		criteria.addOrder(alias,false);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return ((Period) iter.next()).getDeadline();
 		}
 		return null;
 	}

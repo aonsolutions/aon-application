@@ -67,17 +67,22 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	public SummaryProviderParameters getParameters() {
 		if (parameters == null) {
 			SummaryProviderParameters p = new SummaryProviderParameters();
+			p.setFromDate(null);
+			p.setToDate(null);
 			try {
-				p.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
+				Period period = AccountingPeriodUtil.getDefaultPeriod(); 
+				p.setPeriod(period);
+				if (period != null && period.getId() != null) {
+					p.setFromDate(period.getInitiationDate());
+					p.setToDate(period.getDeadline());
+				}
 			} catch (ManagerBeanException e) {
 				p.setPeriod(null);
 			}
-			p.setFromDate(null);
-			p.setToDate(null);
 			p.setDate(new Date());
 			p.setAccountExpression(null);
 			p.setLowerLevelVisible(false);
-			p.setNoTouchedAccountVisible(false);
+			p.setNoTouchedAccountVisible(true);
 			p.setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 			boolean excludeClosing = false;
 			if (p.getPeriod() != null) {
@@ -154,6 +159,18 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 			if (getParameters().getToDate() == null && getParameters().getPeriod().getDeadline() != null) {
 				getParameters().setToDate(getParameters().getPeriod().getDeadline());
 			}
+			if (getParameters().getPeriod().getId() != null) {
+				if (getParameters().getFromDate().before(getParameters().getPeriod().getInitiationDate())) {
+					String msg = "La fecha desde es menor que la fecha de inicio del ejercicio seleccionado.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+				if (getParameters().getToDate().after(getParameters().getPeriod().getDeadline())) {
+					String msg = "La fecha hasta es mayor que la fecha de final del ejercicio seleccionado.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
 			setSummaryCollection(null);
 			setModel(new ListDataModel(getSummaryCollection().getSummaryList()));
 			if (getParameters().getAccountLevel() == 5) {
@@ -164,6 +181,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 				onStatement(event);
 			}
 		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("No se pudo mostrar el balance. [" + e.getMessage() +"]");
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
@@ -171,7 +189,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	public SummaryCollection getSummaryCollection() throws ManagerBeanException {
 		if (summaryCollection == null) {
 			SummaryProvider sp = new SummaryProvider();
-			setSummaryCollection(sp.getSummaryCollection(getParameters()));
+			setSummaryCollection(sp.getSummaryCollection(getParameters(),true));
 		}
 		return summaryCollection;
 	}
@@ -199,7 +217,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
 			String alias = c.getFieldName(IAccountAlias.ACCOUNT_CODE);
-			criteria.addExpression(alias, summary.getId() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(alias, summary.getCode() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.setParams(getParameters());
@@ -208,7 +226,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 				c.getModel().setRowIndex(0);
 				c.onSelect(event);
 			} else {
-				String msg = "No existen cuentas contables con el identiicador " + summary.getId()
+				String msg = "No existen cuentas contables con el identiicador " + summary.getCode()
 						+ "*.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -247,11 +265,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 			throw new AbortProcessingException(msg);
 		}
 	}
-	public void onOpeningEntry(ActionEvent event) {
-		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
-		Balance balance = c.getOpeningEntry();
-		showAccountEntry(balance,AccountEntryType.OPENING);
-	}
+
 	public void onAccountEntry(ActionEvent event) {
 		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		Balance balance = (Balance) c.getDetailModel().getRowData();
@@ -276,10 +290,9 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		try {
 			Period period = (Period) event.getNewValue();
 			if (period == null) {
-				if (getParameters().getFromDate() == null) {
-					Date first = getAccountingUtil().getFirstPeriodInitialionDate();
+					Date first = getAccountingUtil().getFirstPeriodInitialDate();
 					getParameters().setFromDate(first);
-				}
+					getParameters().setToDate(null);
 			} else {
 				getParameters().setFromDate(period.getInitiationDate());
 				getParameters().setToDate(period.getDeadline());

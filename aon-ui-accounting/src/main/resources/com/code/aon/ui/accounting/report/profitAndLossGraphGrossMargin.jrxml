@@ -15,7 +15,7 @@
 	<parameter name="purchasesList" class="java.util.Collection" isForPrompting="false"/>
 	<parameter name="grossMarginList" class="java.util.Collection" isForPrompting="false"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
-	<field name="id" class="java.lang.String"/>
+	<field name="code" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="periodUnpaidBalance" class="java.lang.Double"/>
 	<field name="periodCreditBalance" class="java.lang.Double"/>
@@ -55,8 +55,8 @@
 					</chart>
 					<categoryDataset>
 						<categorySeries>
-							<seriesExpression><![CDATA[$F{id}]]></seriesExpression>
-							<categoryExpression><![CDATA[$F{id}]]></categoryExpression>
+							<seriesExpression><![CDATA[$F{code}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{code}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{periodCreditBalance}]]></valueExpression>
 							<labelExpression><![CDATA[$F{periodCreditBalance}.toString()]]></labelExpression>
 						</categorySeries>

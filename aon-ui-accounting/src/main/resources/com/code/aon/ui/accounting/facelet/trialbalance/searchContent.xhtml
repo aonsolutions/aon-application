@@ -64,13 +64,15 @@
 			value="#{bundle.aon_description}" />
 		<aon:inputText id="Account_Description" 
 			value="#{controller.parameters.accountDescription}"
-			size="50" />
+			size="50">
+		</aon:inputText>
 	
 		<aon:outputLabel for="Account_Alias"
 			value="#{bundle.aon_alias}" />
 		<aon:inputText id="Account_Alias" 
 			value="#{controller.parameters.accountAlias}"
-			size="30" />
+			size="30">
+		</aon:inputText>
 	</c:if>
 	
 	<aon:outputText value="#{bundle.aon_date_select}" />
@@ -149,7 +151,7 @@
 		</aon:div>
 	
 		<aon:outputText value="&#160;" />
-		<aon:div>
+		<aon:div id ="Account_lower_level_Container">
 			<aon:selectBooleanCheckbox id="Account_lower_level"
 				ajaxSingle="true" reRender="accountLevelVisibility"
 				value="#{controller.parameters.lowerLevelVisible}" />

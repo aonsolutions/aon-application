@@ -119,8 +119,7 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="openingEntry" value="#{statement.getOpeningEntry}" />
-			<param id="fromOpeningEntry" value="#{statement.getFromOpeningEntry}" />
+			<param id="previousBalance" value="#{statement.getPreviousBalance}" />
 			<param id="periodBalance" value="#{statement.getPeriodBalance}" />
 			<param id="params" value="#{trialBalance.getParameters}" />
 		</params>

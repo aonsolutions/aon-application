@@ -4,42 +4,56 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.util.CommonUtil;
 
-public class Summary {
+public class Summary implements Comparable<Summary>{
+	
 	private static final double ZERO = 0.0;
 	
-	private String id;				//Identificador de la cuenta.
+	private Integer accountId;		//Identificador de la cuenta.
+	private String code;			//Código de la cuenta.
 	private String description;		//Descripción de la cuenta.
 	private boolean lastLevel;		// FALSE si la cuenta es de nivel inferior al solicitado.
 	private double debit;
 	private double credit;
 	private double initialDebit;
 	private double initialCredit;
-	private double openingDebit;
-	private double openingCredit;
 
-	public String getId() {
-		return id;
+	private boolean touched;
+	
+	public boolean isTouched() {
+		return touched;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setTouched(boolean touched) {
+		this.touched = touched;
+	}
+	
+	public Integer getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public int getLevel() {
-		if (id == null) {
+		if (code == null) {
 			return -1;	
 		}
-		if (id.length() > 5) {
+		if (code.length() > 5) {
 			return 5;
-		} else if (id.length() == 5) {
-			return 4;
 		} 
-		return id.length();
+		return code.length();
 	}
 
 	public String getIndentedId() {
-		return StringUtils.repeat(" ", getLevel()) + id;
+		return StringUtils.repeat(" ", getLevel()) + getCode();
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -85,18 +99,6 @@ public class Summary {
 		this.initialCredit = initialCredit;
 	}
 
-	public double getOpeningDebit() {
-		return openingDebit;
-	}
-	public void setOpeningDebit(double openingDebit) {
-		this.openingDebit = openingDebit;
-	}
-	public double getOpeningCredit() {
-		return openingCredit;
-	}
-	public void setOpeningCredit(double openingCredit) {
-		this.openingCredit = openingCredit;
-	}
 	public double getTotalDebit() {
 		return CommonUtil.round(getInitialDebit() + getDebit());
 	}
@@ -130,14 +132,6 @@ public class Summary {
 		return ZERO;
 	}
 
-	public double getPeriodDebit() {
-		return CommonUtil.round(getDebit() + getOpeningDebit());
-	}
-	
-	public double getPeriodCredit() {
-		return CommonUtil.round(getCredit() + getOpeningCredit());
-	}
-	
 	public double getPeriodUnpaidBalance() {
 		if (getDebit() > getCredit()) {
 			return CommonUtil.round(getDebit() - getCredit());
@@ -156,12 +150,36 @@ public class Summary {
     }
 
 	public String toString() {
-		return (StringUtils.rightPad(getId(), 12) + "\t" + isLastLevel() + "\t"
+		return (StringUtils.rightPad(getCode(), 12) + "\t" + isLastLevel() + "\t"
 				+ StringUtils.rightPad(getShortDescription(), 50) + "\t"
 				+ StringUtils.leftPad(Double.toString(getDebit()), 15) + "\t"
 				+ StringUtils.leftPad(Double.toString(getCredit()), 15) + "\t"
 				+ StringUtils.leftPad(Double.toString(getUnpaidBalance()), 15) + "\t" + StringUtils
 				.leftPad(Double.toString(getCreditBalance()), 15));
+	}
+	
+	public void add(Summary summary) {
+		setInitialDebit(CommonUtil.round(getInitialDebit() + summary.getInitialDebit()));
+		setInitialCredit(CommonUtil.round(getInitialCredit() + summary.getInitialCredit()));
+		setDebit(CommonUtil.round(getDebit() + summary.getDebit()));
+		setCredit(CommonUtil.round(getCredit() + summary.getCredit()));
+		setTouched(true);
+	}
+	
+	public boolean isEmpty() {
+		return (CommonUtil.round(debit + credit + initialCredit + initialDebit) == 0);
+	}
+	public boolean isBalanced() {
+		return (CommonUtil.round(getCreditBalance() + getUnpaidBalance()) == 0);
+	}
+	
+	@Override
+	public int compareTo(Summary s) {
+		if ( s == null) return 1;
+		if (getCode() != null && s.getCode() == null) return 1;
+		if (getCode() == null && s.getCode() == null) return 0;
+		if (getCode() == null && s.getCode() != null) return -1;
+		return getCode().compareTo(s.getCode());
 	}
 
 }

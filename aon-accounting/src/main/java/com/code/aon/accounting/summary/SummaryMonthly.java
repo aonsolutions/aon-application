@@ -8,6 +8,8 @@ public class SummaryMonthly extends Summary {
 
 	public SummaryMonthly() {
 		super();
+		Double[] months = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+		setMonths(months);
 	}
 
 	public Double[] getMonths() {
@@ -26,5 +28,18 @@ public class SummaryMonthly extends Summary {
 			}
 		}
 		return total;
+	}
+	
+	@Override
+	public void add(Summary summary) {
+		super.add(summary);
+		if (summary instanceof SummaryMonthly) {
+			SummaryMonthly sm = (SummaryMonthly) summary;
+			for (int i = 0; i < months.length; i++) {
+				getMonths()[i] = CommonUtil.round(getMonths()[i] + sm.getMonths()[i],2);
+			}
+			
+			
+		}
 	}
 }

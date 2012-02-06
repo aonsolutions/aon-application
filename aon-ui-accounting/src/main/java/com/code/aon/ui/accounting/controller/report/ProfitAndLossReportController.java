@@ -120,6 +120,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			}
 			p.setExcludeOperatingEntry(excludeOperating);
 			setParameters(p);
+			
 		}
 		return parameters;
 	}
@@ -179,8 +180,8 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		netExpenses = new LinkedList<Summary>();
 		summaryList = getTotalExpenses().getSummaryList();
 		for (Summary summary: summaryList) {
-			if ((summary.getId().substring(0, 3).equals("640")) 
-				|| (summary.getId().substring(0, 3).equals("642"))) {
+			if ((summary.getCode().substring(0, 3).equals("640")) 
+				|| (summary.getCode().substring(0, 3).equals("642"))) {
 			} else {
 				netExpenses.add(summary);
 			}
@@ -208,14 +209,14 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		salesList = new LinkedList<Summary>();
 		summaryList = getGrossMargin().getSummaryList();
 		for (Summary summary: summaryList) {
-			if (summary.getId().substring(0, 1).equals("7")) {
+			if (summary.getCode().substring(0, 1).equals("7")) {
 				salesList.add(summary);
 				amount += summary.getPeriodCreditBalance();
 			}
 		}
 		setTotalSales(amount);
 		Summary s = new Summary();
-		s.setId("Total Ventas");
+		s.setCode("Total Ventas");
 		s.setDescription("Total Ventas");
 		s.setCredit(amount);
 		salesList.add(0, s);
@@ -228,14 +229,14 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		purchaseList = new LinkedList<Summary>();
 		summaryList = getGrossMargin().getSummaryList();
 		for (Summary summary: summaryList) {
-			if (summary.getId().substring(0, 2).equals("60")) {
+			if (summary.getCode().substring(0, 2).equals("60")) {
 				purchaseList.add(summary);
 				amount += summary.getPeriodUnpaidBalance();
 			}
 		}
 		setTotalPurchases(amount);
 		Summary s = new Summary();
-		s.setId("Total Compras");
+		s.setCode("Total Compras");
 		s.setDescription("Total Compras");
 		s.setDebit(amount);
 		purchaseList.add(0, s);
@@ -245,7 +246,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public void generateGrossMarginsList() {
 
 		Summary s = new Summary();
-		s.setId("Margen Bruto");
+		s.setCode("Margen Bruto");
 		s.setDescription("Margen Bruto");
 		s.setDebit(totalSales - totalPurchases);
 		grossMarginList.add(s);
@@ -256,14 +257,14 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 
 	public Collection<Summary> getCollection() {
 		Collection<Summary> list = new LinkedList<Summary>();
-		list.addAll(getGrossMargin().getSortedSummaryList());
+		list.addAll(getGrossMargin().getSummaryList());
 		Summary gmTotal = new Summary();
 		gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 		gmTotal.setCredit(getGrossMargin().getCredit());
 		gmTotal.setDebit(getGrossMargin().getDebit());
 		list.add(gmTotal);
 
-		list.addAll(getTotalExpenses().getSortedSummaryList());
+		list.addAll(getTotalExpenses().getSummaryList());
 		Summary teTotal = new Summary();
 		teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 		teTotal.setCredit(getTotalExpenses().getCredit());
@@ -373,7 +374,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		try {
 			Period period = (Period) event.getNewValue();
 			if (period == null && getParameters().getFromDate() == null) {
-				Date first = getAccountingUtil().getFirstPeriodInitialionDate();
+				Date first = getAccountingUtil().getFirstPeriodInitialDate();
 				getParameters().setFromDate(first);
 			}
 			boolean excludeOperating = getParameters().isExcludeOperatingEntry();

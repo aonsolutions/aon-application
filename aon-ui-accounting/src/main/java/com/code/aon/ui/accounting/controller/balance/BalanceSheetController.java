@@ -80,6 +80,13 @@ public class BalanceSheetController implements ICollectionProvider {
 		parameters.setAccountExpression(null);
 		parameters.setLowerLevelVisible(false);
 		parameters.setNoTouchedAccountVisible(false);
+		if (balanceType == BalanceType.CLOSING) {
+			parameters.setExcludeClosingEntry(true);	
+		}
+		if (balanceType == BalanceType.OPERATING) {
+			parameters.setExcludeOperatingEntry(true);
+			parameters.setExcludeClosingEntry(true);
+		}
 		parameters.setRowsPerPage(20);
 		parameters.setAccountLevel(5);
 		parameters.setPreviousPeriodVisible(true);
@@ -257,7 +264,9 @@ public class BalanceSheetController implements ICollectionProvider {
 		if (spp.getToDate() == null) {
 			spp.setToDate(spp.getPeriod().getDeadline());
 		}
-		spp.setExcludeOpeningEntry(true);
+		spp.setExcludeBalancedAccounts(true);
+		spp.setExcludeClosingEntry((balanceType == BalanceType.CLOSING));	
+		spp.setExcludeOperatingEntry((balanceType == BalanceType.OPERATING));
 		return spp;
 	}
 

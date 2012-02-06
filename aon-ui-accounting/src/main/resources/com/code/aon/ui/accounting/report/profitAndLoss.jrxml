@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6105100000000008"/>
-	<property name="ireport.x" value="65"/>
-	<property name="ireport.y" value="465"/>
+	<property name="ireport.x" value="48"/>
+	<property name="ireport.y" value="882"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -12,7 +12,7 @@
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="params" class="com.code.aon.accounting.summary.SummaryProviderParameters" isForPrompting="false"/>
 	<parameter name="reportTitle" class="java.lang.String" isForPrompting="false"/>
-	<field name="id" class="java.lang.String"/>
+	<field name="code" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="periodUnpaidBalance" class="java.lang.Double"/>
 	<field name="periodCreditBalance" class="java.lang.Double"/>
@@ -354,7 +354,7 @@
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{id} != null]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{code} != null]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-19" x="0" y="0" width="60" height="11"/>
 				<box>
@@ -366,7 +366,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{id}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-20" x="60" y="0" width="308" height="11"/>
@@ -413,7 +413,7 @@
 			</textField>
 		</band>
 		<band height="12">
-			<printWhenExpression><![CDATA[$F{id} == null]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{code} == null]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-45" mode="Opaque" x="0" y="0" width="60" height="12" backcolor="#FFFFFF"/>
 				<box>
@@ -425,7 +425,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{id}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-46" mode="Opaque" x="60" y="0" width="308" height="12" backcolor="#FFFFFF"/>
