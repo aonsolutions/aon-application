@@ -127,6 +127,8 @@ public class ProjectReservationServiceController extends LinesController {
 
 	public void fillReservationServiceValues(ProjectReservationService reservationService) throws ManagerBeanException {
 		if (isNew()) {
+			reservationService.setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+
 			setServiceReservationRoom(null);
 			setServiceFromDate(reservationService.getProjectReservation().getStartDate());
 			setServiceToDate(reservationService.getProjectReservation().getEndDate());
