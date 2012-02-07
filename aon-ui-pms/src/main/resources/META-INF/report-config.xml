@@ -40,16 +40,25 @@
 	<report id="cashDetailCount" description="Pos closing cash count Report">
 		<template path="/com/esferalia/aon/ui/pms/report/cashDetailCount.jasper" />
 		<collection provider="#{cashCountCalculator}" />
-		<!--  
-		<collection provider="#{posShift}" forceRefresh="true"/>
-		<bean key="com.esferalia.aon.pms.ProjectReservationRoom" />
-		<criteria provider="#{reservationIO}"/>
-		-->
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+
+	<!--  ********* Governess - Work planning  ********* -->
+	<report id="workPlanning" description="Governess Work Planning Report">
+		<template path="/com/esferalia/aon/ui/pms/report/workPlanning.jasper" />
+		<collection provider="#{workPlanning}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{workPlanning.getHotel}" />
+			<param id="date" value="#{workPlanning.getDate}" />
 		</params>
 	</report>
 

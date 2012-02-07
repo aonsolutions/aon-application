@@ -18,7 +18,7 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_reservation"
+						<aon:panelGrid id="group_hotel_reservation"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-book aon-direct-access-panel">
 							<f:facet name="header">
@@ -55,7 +55,7 @@
 						</aon:panelGrid>
 
 						<c:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_config_general"
+							<aon:panelGrid id="group_hotel_room"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-room">
 								<f:facet name="header">
@@ -81,7 +81,7 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_pos"
+						<aon:panelGrid id="group_hotel_pos"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-pos aon-direct-access-panel">
 							<f:facet name="header">
@@ -114,6 +114,24 @@
 										value="#{pmsBundle.pms_posClosing_module}">
 									</aon:commandLink>
 								</aon:div>
+							</aon:div>
+							
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_governess"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-pos aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_governess_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="workPlanning" 
+										action="workPlanning_search" actionListener="#{workPlanning.onInit}"
+										value="#{pmsBundle.pms_workPlanning_module}">
+									</aon:commandLink>
+								</aon:div>
+								
 							</aon:div>
 							
 						</aon:panelGrid>
