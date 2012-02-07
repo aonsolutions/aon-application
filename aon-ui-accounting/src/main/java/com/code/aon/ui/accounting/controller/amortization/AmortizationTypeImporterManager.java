@@ -26,19 +26,18 @@ public class AmortizationTypeImporterManager {
 		if (amortizationType != null) {
 			AmortizationType a = (AmortizationType) getManagerBean().get(amortizationType.getId());
 			if (a == null) {
-				bean.insert(amortizationType);
-			} else {
-				a.setDescription(amortizationType.getDescription());
-				Account fix = getAccount(amortizationType.getFixedAssetAccount());
-				a.setFixedAssetAccount(fix);
-				Account acc = getAccount(amortizationType.getAccumulatedAccount());
-				a.setAccumulatedAccount(acc);
-				Account all = getAccount(amortizationType.getAllocationAccount());
-				a.setAllocationAccount(all);
-				a.setPercentage(amortizationType.getPercentage());
-				
-				bean.update(a);
+				a = amortizationType;
+				a.setId(null);
 			}
+			a.setDescription(amortizationType.getDescription());
+			a.setPercentage(amortizationType.getPercentage());
+			Account fix = getAccount(amortizationType.getFixedAssetAccount());
+			a.setFixedAssetAccount(fix);
+			Account acc = getAccount(amortizationType.getAccumulatedAccount());
+			a.setAccumulatedAccount(acc);
+			Account all = getAccount(amortizationType.getAllocationAccount());
+			a.setAllocationAccount(all);
+			bean.insertOrUpdate(a);
 		}
 	}
 
@@ -51,7 +50,7 @@ public class AmortizationTypeImporterManager {
 		c.addEqualExpression(bean.getFieldName(IAccountAlias.ACCOUNT_CODE), account.getCode());
 		List<ITransferObject> list = bean.getList(c);
 		if (list == null || list.isEmpty()) {
-			return null;
+			throw new ManagerBeanException("No existe la cuenta contable " + account.getCode());
 		} 
 		Account a = (Account) list.get(0);
 		return a;
