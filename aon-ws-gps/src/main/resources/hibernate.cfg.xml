@@ -26,6 +26,8 @@
 
     	<mapping class="com.code.aon.asset.Asset"/>
     	<mapping class="com.code.aon.asset.AssetActivity"/>
+    	<mapping class="com.code.aon.asset.AssetFeature"/>
+    	<mapping class="com.code.aon.asset.Feature"/>
     	<mapping class="com.code.aon.company.Enterprise"/>
     	<mapping class="com.code.aon.company.WorkPlace"/>
     	<mapping class="com.code.aon.config.Bank"/>
