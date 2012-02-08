@@ -11,7 +11,7 @@
 	<aon:outputText	value="#{reservation.to.hotel.workPlace.description}" styleClass="aon-bold"
 		rendered="#{!reservation.new}" />
 	<aon:selectOneMenu id="ProjectReservation_hotel_id" value="#{reservation.to.hotel}" 
-		rendered="#{reservation.new}" required="#{true}"
+		rendered="#{reservation.new}" required="true"
 		valueChangeListener="#{reservation.onHotelChanged}"
 		reRender="ProjectReservation_roomItem,ProjectReservation_roomTariff">
 		<f:selectItems value="#{pmsCollections.currentUserHotels}" />

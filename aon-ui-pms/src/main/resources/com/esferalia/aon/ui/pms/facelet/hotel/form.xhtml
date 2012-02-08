@@ -36,7 +36,7 @@
 						value="#{pmsBundle.pms_enterprise}"
 						rendered="#{companyCollections.currentUserEnterprisesCount > 1}" />
 					<aon:selectOneMenu id="Hotel_workPlace_enterprise"
-						value="#{hotel.to.workPlace.enterprise}" required="#{true}"
+						value="#{hotel.to.workPlace.enterprise}" required="true"
 						rendered="#{companyCollections.currentUserEnterprisesCount > 1}">
 						<f:selectItems value="#{companyCollections.currentUserEnterprises}" />
 					</aon:selectOneMenu>
@@ -44,7 +44,7 @@
 					<aon:outputLabel for="Hotel_scope" 
 						value="#{configBundle.config_scope}" />
 					<aon:selectOneMenu id="Hotel_scope"
-						value="#{hotel.to.scope}" required="#{true}">
+						value="#{hotel.to.scope}" required="true">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
@@ -107,7 +107,7 @@
 					<aon:outputLabel for="Hotel_serviceCatalogue" 
 						value="#{pmsBundle.pms_service_catalogue}" />
 					<aon:selectOneMenu id="Hotel_serviceCatalogue" 
-						value="#{hotel.to.serviceCatalogue}" required="#{true}">
+						value="#{hotel.to.serviceCatalogue}" required="true">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{productCollections.catalogues}" />
 					</aon:selectOneMenu>
@@ -115,7 +115,7 @@
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
 					<aon:selectOneRadio id="Hotel_active"
-						value="#{hotel.to.active}" required="#{true}">
+						value="#{hotel.to.active}" required="true">
 						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
 					</aon:selectOneRadio>				

@@ -49,16 +49,16 @@
 		<aon:outputLabel for="ProjectReservation_guestName" value="#{bundle.aon_name}"
 			styleClass="aon-margin-left aon-margin-right aon-italic" />
 		<aon:inputText id="ProjectReservation_guestName" value="#{reservation.guestName}" 
-			size="30" maxlength="64" required="#{true}" />
+			size="30" maxlength="64" required="true" />
 		<aon:outputLabel for="ProjectReservation_guestSurname" value="#{bundle.aon_surname}"
 			styleClass="aon-margin-left aon-margin-right aon-italic" />
 		<aon:inputText id="ProjectReservation_guestSurname" value="#{reservation.guestSurname}" 
-			size="30" maxlength="64" required="#{true}" />
+			size="30" maxlength="64" required="true" />
 	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
 	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-		required="#{true}" disabled="#{!reservation.active or !aonRole.saleOperator}"
+		required="true" disabled="#{!reservation.active or !aonRole.saleOperator}"
 		valueChangeListener="#{reservation.onHolderChanged}"
 		reRender="ProjectReservation_roomTariff">
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
@@ -67,7 +67,7 @@
 	<aon:outputLabel for="ProjectReservation_roomItem" value="#{pmsBundle.pms_room_type}" 
 		rendered="#{reservation.new}" />
 	<aon:selectOneMenu id="ProjectReservation_roomItem" value="#{reservation.roomItem}" 
-		rendered="#{reservation.new}" required="#{true}">
+		rendered="#{reservation.new}" required="true">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{reservation.hotelRoomItems}" />
 	</aon:selectOneMenu>
@@ -75,7 +75,7 @@
 	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{productBundle.product_tariff}" 
 		rendered="#{reservation.new}" />
 	<aon:selectOneMenu id="ProjectReservation_roomTariff" value="#{reservation.roomTariff}" 
-		rendered="#{reservation.new}" required="#{true}">
+		rendered="#{reservation.new}" required="true">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{pmsCollections.tariffs}" />
 	</aon:selectOneMenu>
