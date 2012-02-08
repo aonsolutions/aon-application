@@ -155,7 +155,7 @@ public class RackController extends BasicController implements IPmsConstants {
 		Map<String, String> params = ec.getRequestParameterMap();
 
 		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
-		reservationController.onLoad(event, new Integer(params.get("reservationId")), RACK_LIST_NAME, RACK_CONTROLLER_NAME + ".onSearch");
+		reservationController.onLoad(event, new Integer(params.get(RACK_RESERVATION)), RACK_LIST_NAME, RACK_CONTROLLER_NAME + ".onSearch");
 	}
 
 

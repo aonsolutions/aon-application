@@ -1,11 +1,17 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -65,7 +71,7 @@ public class ProjectReservationRoomController extends LinesController {
 			setTo(reservationRoom);
 
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
-			roomAvailability.onInitializeRoomList((ProjectReservationRoom)getTo());
+			roomAvailability.onInitializeRoomList(reservationRoom, null, null);
 
 			setNew(true);
 		} catch (ManagerBeanException ex) {
@@ -78,10 +84,17 @@ public class ProjectReservationRoomController extends LinesController {
 	public void onSelect(ActionEvent event) {
 		try {
 			if (getModel().isRowAvailable()) {
-				setTo((ITransferObject)getModel().getRowData());
+				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getModel().getRowData();
+				setTo(reservationRoom);
 
+				Date startDate = reservationRoom.getProjectReservation().getStartDate();
+				Date endDate = reservationRoom.getProjectReservation().getEndDate();
+				Date date = new Date();
+				if (date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
+					date = null;
+				}
 				RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
-				roomAvailability.onInitializeRoomList((ProjectReservationRoom)getTo());
+				roomAvailability.onInitializeRoomList((ProjectReservationRoom)getTo(), date, null);
 			}
 		} catch (ManagerBeanException ex) {
 			String msg = "No es posible asignar Habitación";
@@ -90,21 +103,39 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 	}
 
-	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
-		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
-		Room availableRoom = roomAvailability.getAvailableRoom();
-
+	public void onAcceptReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 		if (isNew()) {
-			reservationRoom.setItem((availableRoom != null) ? availableRoom.getItem() : roomAvailability.getFilterParams().getItem());
+			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+			reservationRoom.setItem(roomAvailability.getFilterParams().getItem());
+		}
+		onAccept(event);
+	}
+
+	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+
+		Room availableRoom = (Room)BeanManager.getManagerBean(Room.class).get(new Integer(params.get(IPmsConstants.AVAILABLE_ROOM)));
+		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
+		if (isNew()) {
+			reservationRoom.setItem(availableRoom.getItem());
 		}
 		onAccept(event);
 
-		if (reservationRoom.getRoomNumber() == null && availableRoom != null) {
-			ReservationUtils reservationUtils = new ReservationUtils();
+		ReservationUtils reservationUtils = new ReservationUtils();
+		if (reservationRoom.getRoomNumber() == null) {
 	    	reservationUtils.insertProjectReservationRoomDetails(reservationRoom, availableRoom, getLinkedServices());
+		} else {
+			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+			Date startDate = roomAvailability.getFilterParams().getViewerStartDate();
+			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
+	    	reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, availableRoom);
 		}
-		setLinkedServices(null);
+		reservationRoom.setRoomNumber(null);
+
+    	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+    	reservationServiceController.onSearch(event);
 	}
 
 	public void onCancelReservationRoom(ActionEvent event) throws ManagerBeanException {
@@ -188,7 +219,9 @@ public class ProjectReservationRoomController extends LinesController {
 		for (ProjectReservationService reservationService : servicesList) {
 			SelectItem serviceItem = new SelectItem(reservationService.getId(), reservationService.getDescription());
 			serviceItemList.add(serviceItem);
-			if (reservationService.getProjectReservation().getRoomCount() == 1) {
+
+			int roomCount = reservationService.getProjectReservation().getRoomCount();
+			if ((isNew() && roomCount == 0) || (!isNew() && roomCount == 1)) {
 				services[servicesList.indexOf(reservationService)] = reservationService.getId();
 			}
 		}
@@ -212,6 +245,42 @@ public class ProjectReservationRoomController extends LinesController {
 			}
 		}
 		return servicesList;
+	}
+
+	public void onMinusStartDate(ActionEvent event) {
+		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+		Date startDate = DateUtils.addDays(roomAvailability.getFilterParams().getViewerStartDate(), -1);
+		if (startDate.compareTo(((ProjectReservationRoom)getTo()).getProjectReservation().getStartDate()) >= 0) {
+			roomAvailability.getFilterParams().setViewerStartDate(startDate);
+			roomAvailability.onFilter(event);
+		}
+	}
+
+	public void onPlusStartDate(ActionEvent event) {
+		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+		Date startDate = DateUtils.addDays(roomAvailability.getFilterParams().getViewerStartDate(), 1);
+		if (startDate.compareTo(roomAvailability.getFilterParams().getViewerEndDate()) < 0) {
+			roomAvailability.getFilterParams().setViewerStartDate(startDate);
+			roomAvailability.onFilter(event);
+		}
+	}
+
+	public void onMinusEndDate(ActionEvent event) {
+		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+		Date endDate = DateUtils.addDays(roomAvailability.getFilterParams().getViewerEndDate(), -1);
+		if (endDate.compareTo(roomAvailability.getFilterParams().getViewerStartDate()) > 0) {
+			roomAvailability.getFilterParams().setViewerEndDate(endDate);
+			roomAvailability.onFilter(event);
+		}
+	}
+
+	public void onPlusEndDate(ActionEvent event) {
+		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
+		Date endDate = DateUtils.addDays(roomAvailability.getFilterParams().getViewerEndDate(), 1);
+		if (endDate.compareTo(((ProjectReservationRoom)getTo()).getProjectReservation().getEndDate()) <= 0) {
+			roomAvailability.getFilterParams().setViewerEndDate(endDate);
+			roomAvailability.onFilter(event);
+		}
 	}
 
 }

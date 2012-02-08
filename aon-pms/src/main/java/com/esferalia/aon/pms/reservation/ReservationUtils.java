@@ -4,11 +4,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.SourceType;
 
@@ -151,12 +150,24 @@ public class ReservationUtils implements IReservationConstants {
 					resServiceDetailBean.update(reservationServiceDetail);
 				}
 			}
-
-			Calendar nextCalendar = new GregorianCalendar();
-			nextCalendar.setTime(effectiveDate);
-			nextCalendar.add(Calendar.DATE, 1);
-			effectiveDate = nextCalendar.getTime();
+			effectiveDate = DateUtils.addDays(effectiveDate, 1);
 		}
+    }
+
+    public void updateProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Date fromDate, Date toDate, Room room) throws ManagerBeanException {
+    	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
+    	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+    	Criteria criteria = new Criteria();
+    	String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+    	criteria.addEqualExpression(alias, reservationRoom.getId());
+    	criteria.addGreaterThanOrEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), fromDate);
+    	criteria.addLessThanExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), toDate);
+    	for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
+    		ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)ito;
+    		AssetActivity assetActivity = reservationRoomDetail.getAssetActivity();
+    		assetActivity.setAsset(room.getAsset());
+    		assetActivityBean.update(assetActivity);
+    	}
     }
 
 	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService) throws ManagerBeanException {
@@ -211,11 +222,7 @@ public class ReservationUtils implements IReservationConstants {
 				}
 			}
 			reservationServiceDetailBean.insert(reservationServiceDetail);
-
-			Calendar nextCalendar = new GregorianCalendar();
-			nextCalendar.setTime(effectiveDate);
-			nextCalendar.add(Calendar.DATE, 1);
-			effectiveDate = nextCalendar.getTime();
+			effectiveDate = DateUtils.addDays(effectiveDate, 1);
 		}
     }
 

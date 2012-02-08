@@ -1,14 +1,11 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -18,7 +15,6 @@ import org.hibernate.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.pms.Hotel;
@@ -29,8 +25,7 @@ import com.esferalia.aon.pms.Room;
 public class RoomAvailabilityController extends BasicController implements IPmsConstants {
 	
 	private FilterParams filterParams;
-	private Room availableRoom;
-	private List<SelectItem> availableRoomList;
+	private List<Room> availableRoomList;
 
 	public FilterParams getFilterParams() {
 		if (filterParams == null) {
@@ -43,31 +38,18 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		this.filterParams = filterParams;
 	}
 
-	public Room getAvailableRoom() {
-		return availableRoom;
-	}
-
-	public void setAvailableRoom(Room availableRoom) {
-		this.availableRoom = availableRoom;
-	}
-
-	public List<SelectItem> getAvailableRoomList() throws ManagerBeanException {
+	public List<Room> getAvailableRoomList() throws ManagerBeanException {
 		if (availableRoomList == null) {
-			availableRoomList = new LinkedList<SelectItem>();
+			availableRoomList = new LinkedList<Room>();
 			for (Object obj : obtainAvailableRoomList()) {
 				Room room = (Room)BeanManager.getManagerBean(Room.class).get((Integer)obj);
-				SelectItem selectItem = new SelectItem(room, room.getAsset().getName());
-				availableRoomList.add(selectItem);
-			}
-
-			if (availableRoom == null && availableRoomList.size() > 0) {
-				availableRoom = (Room)availableRoomList.get(0).getValue();
+				availableRoomList.add(room);
 			}
 		}
 		return availableRoomList;
 	}
 
-	public void setAvailableRoomList(List<SelectItem> availableRoomList) {
+	public void setAvailableRoomList(List<Room> availableRoomList) {
 		this.availableRoomList = availableRoomList;
 	}
 
@@ -75,29 +57,29 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		return getAvailableRoomList().size();
 	}
 	
-	public void onInitializeRoomList(ProjectReservationRoom reservationRoom) {
-		setAvailableRoom(null);
+	public void onInitializeRoomList(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) {
+		startDate = (startDate == null) ? reservationRoom.getProjectReservation().getStartDate() : startDate;
+		endDate = (endDate == null) ? reservationRoom.getProjectReservation().getEndDate() : endDate;
+
 		setAvailableRoomList(null);
-		resetFilterParams(reservationRoom);
+		resetFilterParams(reservationRoom, startDate, endDate);
 	}
 
 	public void onFilter(ActionEvent event) {
-		setAvailableRoom(null);
 		setAvailableRoomList(null);
 	}
 
 	public void onItemFilterChanged(ValueChangeEvent event) {
-		setAvailableRoom(null);
 		setAvailableRoomList(null);
 	}
 
-	private void resetFilterParams(ProjectReservationRoom reservationRoom) {
+	private void resetFilterParams(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) {
 		ProjectReservation reservation = reservationRoom.getProjectReservation();
 		setFilterParams(null);
 		getFilterParams().setHotel(reservation.getHotel());
 		getFilterParams().setItem(reservationRoom.getItem());
-		getFilterParams().setViewerStartDate(reservation.getStartDate());
-		getFilterParams().setAssetAvailability((int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()));
+		getFilterParams().setViewerStartDate(startDate);
+		getFilterParams().setViewerEndDate(endDate);
 	}
 	
 	private List<?> obtainAvailableRoomList() {
@@ -113,7 +95,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		if (!StringUtils.isEmpty(getFilterParams().getName())) {
 			whereClause += " AND Room.asset IN (SELECT id FROM asset WHERE name LIKE :name)";
 		}
-		if (getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 && getFilterParams().getViewerStartDate() != null) {
+		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
 			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE date BETWEEN :start AND :end)";
 		}
 		if (getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0) {
@@ -132,20 +114,18 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		String sqlSelect = "SELECT Room.asset " +
 							"FROM room as Room " +
+							"LEFT JOIN asset as Asset on Asset.id = Room.asset " +
 							"LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Room.asset " +
 							whereClause +
 							" GROUP BY Room.asset" +
-							" ORDER BY Room.asset";
+							" ORDER BY Asset.name";
 		Query sqlQuery = session.createSQLQuery(sqlSelect);
 		if (!StringUtils.isEmpty(getFilterParams().getName())) {
 			sqlQuery.setString("name", getFilterParams().getName() + "%");
 		}
-		if (getFilterParams().getAssetAvailability() != null && getFilterParams().getAssetAvailability() > 0 && getFilterParams().getViewerStartDate() != null) {
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getFilterParams().getViewerStartDate());
-			sqlQuery.setDate("start", calendar.getTime());
-			calendar.add(Calendar.DATE, getFilterParams().getAssetAvailability() - 1);
-			sqlQuery.setDate("end", calendar.getTime());
+		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
+			sqlQuery.setDate("start", getFilterParams().getViewerStartDate());
+			sqlQuery.setDate("end", DateUtils.addDays(getFilterParams().getViewerEndDate(), -1));
 		}
 		return sqlQuery.list();
 	}
@@ -156,12 +136,12 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		private Item item;
 		private String name;
 		private Date viewerStartDate;
-		private Integer assetAvailability;
+		private Date viewerEndDate;
 		private Integer[] featureFilter;
 
 		public FilterParams() {
 			viewerStartDate = new Date();
-			assetAvailability = 0;
+			viewerEndDate = new Date();
 		}
 		
 		public Hotel getHotel() {
@@ -191,18 +171,12 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		public void setViewerStartDate(Date viewerStartDate) {
 			this.viewerStartDate = viewerStartDate;
 		}
-		public Date getViewerEndDate() {
-			return DateUtils.addMonths(viewerStartDate, 1);
-		}
-		public int getViewerDays() {
-			return (int)CommonUtil.getDaysBetweenDates(getFilterParams().getViewerStartDate(), getFilterParams().getViewerEndDate()) + 1;
-		}
 
-		public Integer getAssetAvailability() {
-			return assetAvailability;
+		public Date getViewerEndDate() {
+			return viewerEndDate;
 		}
-		public void setAssetAvailability(Integer assetAvailability) {
-			this.assetAvailability = assetAvailability;
+		public void setViewerEndDate(Date viewerEndDate) {
+			this.viewerEndDate = viewerEndDate;
 		}
 
 		public Integer[] getFeatureFilter() {

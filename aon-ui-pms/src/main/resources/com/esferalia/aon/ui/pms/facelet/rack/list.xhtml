@@ -100,7 +100,7 @@
 									rendered="#{rackActivity.id != null}"
 									actionListener="#{controller.onLoadReservation}"
 									action="reservation_form">
-									<f:param name="reservationId" value="#{rackActivity.projectReservationRoom.projectReservation.id}"/>
+									<f:param name="rackReservation" value="#{rackActivity.projectReservationRoom.projectReservation.id}"/>
 								</aon:commandLink>
 								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
 									rendered="#{rackActivity.id != null}">

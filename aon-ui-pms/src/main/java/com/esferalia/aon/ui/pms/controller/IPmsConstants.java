@@ -13,4 +13,7 @@ public interface IPmsConstants {
 
 	String RACK_LIST_NAME = "rack_list";
 
+	String AVAILABLE_ROOM = "availableRoom";
+	String RACK_RESERVATION = "rackReservation";
+
 }
