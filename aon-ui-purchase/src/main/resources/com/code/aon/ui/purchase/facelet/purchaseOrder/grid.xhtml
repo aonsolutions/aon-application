@@ -53,29 +53,38 @@
 							
 							<aon:rowSelector actionListener="#{purchaseOrder.onSelectGroup}" />
 							
-							<f:facet name="header">
-								<aon:outputText value="#{productBundle.product_item}s" />
-							</f:facet>
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_quantity}" />
+								</f:facet>
+								<aon:outputText value="#{to.totalQuantity}"
+									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}">
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
+							</aon:column>
 							
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{productBundle.product_item}" />
+								</f:facet>
+								<aon:outputText value="#{to.item.product.name}" 
+									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-								<aon:div >
-									<aon:outputText value="#{to.totalQuantity}"
-										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}">
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-									<aon:outputText value=" unidades de " />
-									<aon:outputText value="#{to.item.product.name}" 
-										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
-									<aon:outputText value=" en " />
-									<aon:outputText value="#{to.totalItem}" 
-										styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
-									<aon:outputText value=" solicitudes " />
-								</aon:div>
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+								<f:facet name="header">
+									<aon:outputText value="#{purchaseBundle.purchase_request_count}" />
+								</f:facet>
+								<aon:outputText value="#{to.totalItem}" 
+									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
+							</aon:column>
+							
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<aon:outputText value="&#160;" />
 							</aon:column>
 					
 							<ui:include 
-								src="/com/code/aon/ui/purchase/facelet/purchaseOrder/detail_list.xhtml" />
+								src="/com/code/aon/ui/purchase/facelet/purchaseOrder/detail_grid.xhtml" />
 								
 						</aon:dataTable>
 						<aon:dataScroller2 for="proposalDetailDataList" showNote="true" />

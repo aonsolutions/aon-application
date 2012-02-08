@@ -8,11 +8,11 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<rich:subTable id="purchaseOrderDetailList" var="detail" index="idx"
-		rendered="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex}" width="auto"
+	<rich:subTable id="purchaseOrderDetailList" var="detail" 
+		rendered="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex}"
 		value="#{purchaseOrder.detailModel}" >
 		
-		<rich:column colspan="1" 
+		<rich:column colspan="4" 
 			style="padding: 0px; border: none;background-color: #{purchaseOrder.detailModel.rowIndex%2==0?'#FBEDB6;':'#FDF9E7;' }"
 			styleClass="aon-width-all aon-noborder" >
 			
@@ -26,7 +26,7 @@
 					aon-noborder
 					" >
 				
-					<aon:div styleClass="aon-width-100 aon-editDataTable-iconColumn aon-noborder">
+					<aon:div styleClass="aon-width-20 ">
 						<aon:commandLink  
 							styleClass="aon-table-row-link" value="&#160;"
 							immediate="true" ajaxSingle="true" requestDelay="100"
@@ -36,8 +36,8 @@
 					</aon:div>
 				
 					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn">
-						<aon:outputText value="#{companyBundle.company_workplace}:" />
 						<aon:outputText value="#{detail.proposal.workPlace.description}" />
+						<aon:outputText value=" (#{detail.proposal.workplaceDepartment.department.name})" />
 					</aon:div>
 			
 					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn aon-noborder">
@@ -58,6 +58,9 @@
 					</aon:div>
 				
 					<aon:div styleClass="aon-width-70  aon-noborder">
+						<aon:outputText value="&#160;" title="#{detail.proposal.remarks}" 
+							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and detail.proposal.remarks!=null}" 
+							styleClass="aon-editDataTable-button aon-icon-info" />
 						<aon:commandButton
 							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}"

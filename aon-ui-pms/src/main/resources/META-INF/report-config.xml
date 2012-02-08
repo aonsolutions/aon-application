@@ -62,4 +62,19 @@
 		</params>
 	</report>
 
+	<!--  ********* Board list ********* -->
+	<report id="boardList" description="Board list Report">
+		<template path="/com/esferalia/aon/ui/pms/report/boardList.jasper" />
+		<collection provider="#{boardList}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{boardList.getHotel}" />
+			<param id="date" value="#{boardList.getDate}" />
+			<param id="itemList" value="#{boardList.getItemList}" />
+		</params>
+	</report>
+
 </report-config>

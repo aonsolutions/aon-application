@@ -774,10 +774,17 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- ************* RESERVATION INPUT OUTPUT ***************** -->
+	<!-- ************* GEVERNESS - WORK PLANNING ***************** -->
 	<managed-bean>
 		<managed-bean-name>workPlanning</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.WorkPlanningController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>		
+	
+	<!-- ************* BOARD LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>boardList</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardListController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
@@ -930,6 +937,18 @@
 		<navigation-case>
 			<from-outcome>workPlanning_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/workPlanning/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Board list ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>boardList_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/boardList/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>boardList_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/boardList/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

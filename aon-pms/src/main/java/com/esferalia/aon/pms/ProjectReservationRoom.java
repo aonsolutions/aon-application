@@ -58,9 +58,4 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 		this.roomNumber = roomNumber;
 	}
 	
-	@Transient
-	public Integer getGuestTotal(){
-		return getAdults()+getChildren();
-	}
-
 }

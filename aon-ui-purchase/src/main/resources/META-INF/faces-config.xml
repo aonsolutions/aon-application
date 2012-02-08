@@ -313,16 +313,8 @@
 	<!-- =================== Purchase order ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>purchaseOrder_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>purchaseOrder_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>purchaseOrder_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/form.xhtml</to-view-id>
+			<from-outcome>purchaseOrder_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/purchase/facelet/purchaseOrder/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 		
 	

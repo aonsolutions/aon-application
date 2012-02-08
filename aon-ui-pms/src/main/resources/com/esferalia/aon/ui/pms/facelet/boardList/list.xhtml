@@ -3,6 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -10,33 +12,33 @@
 		<aon:form id="posShiftList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_workPlanning_module}" />
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_boardList_module}" />
 				
 				<ui:define name="additionalToolbarContent">
 				
-					<aon:commandButton id="workPlanning-search"
+					<aon:commandButton id="boardList-search"
 						title="#{bundle.aon_key_search_accelerator}"
 						value="#{bundle.aon_search}" 
-						action="workPlanning_search" actionListener="#{workPlanning.onInit}"
+						action="boardList_search" actionListener="#{boardList.onInit}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}" />
 					
-					<aon:htmlCommandLink id="workPlanning-excel-report"
+					<aon:htmlCommandLink id="boardList-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
 						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="workPlanning" />
+						<f:param name="reportKey" value="boardList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="workPlanning_list"
+					<aon:htmlCommandLink id="boardList_list"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.aon_listing}"
 						action="#{report.onExecute}"
 						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="workPlanning" />
+						<f:param name="reportKey" value="boardList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>	
-				
+					
 				</ui:define>
 				
 			</ui:decorate>
@@ -49,10 +51,10 @@
 						aon-panelGrid-even aon-noborder">
 				
 						<aon:outputText value="#{pmsBundle.pms_hotel}:" styleClass="aon-italic aon-bold" />
-						<aon:outputText value="#{workPlanning.hotel.workPlace.description}" />
+						<aon:outputText value="#{boardList.hotel.workPlace.description}" />
 						
 						<aon:outputText value="#{bundle.aon_date}:" styleClass="aon-italic aon-bold" />
-						<aon:outputText value="#{workPlanning.date}" >
+						<aon:outputText value="#{boardList.date}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
@@ -61,33 +63,31 @@
 				
 				</aon:panel>
 			
-				<aon:dataTable id="workPlanningDataList" value="#{workPlanning.model}" 
-					rendered="#{workPlanning.model!=null and workPlanning.model.rowCount > 0}" rows="20" var="to">
+				<aon:dataTable id="roomBoardList" value="#{boardList.model}" 
+					rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
 						
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_room}" />
 							</f:facet>
-							<aon:outputText value="#{to.room.asset.name}" />
+							<aon:outputText value="#{to.name}" />
 						</aon:column>
 						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_guests}" />
-							</f:facet>
-							<aon:outputText value="#{to.reservation.projectReservationRoom.adults + to.reservation.projectReservationRoom.children}" />
-						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_action}" />
-							</f:facet>
-							<aon:outputText value="#{to.action}" />
-						</aon:column>
+						<c:set var="index" value="0" />
+
+						<c:forEach items="#{boardList.itemList}" var="item" index="idx" >
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+								<f:facet name="header">
+									<aon:outputText value="#{item.product.name}" />
+								</f:facet>
+								<aon:outputText value="#{to.servicesCount[index]}" />
+							</aon:column>
+							<c:set var="index" value="#{index + 1}" />
+						</c:forEach>
 						
 				</aon:dataTable>
 			
-				<aon:dataScroller2 for="workPlanningDataList" showNote="true" />
+				<aon:dataScroller2 for="roomBoardList" showNote="true" />
 				
 			</aon:div>
 

@@ -62,11 +62,13 @@ public class WorkPlanningController implements ICollectionProvider {
 	private ProjectReservationRoomDetail obtainActivity(Room room) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 		Criteria criteria = new Criteria();
-		if(getDate()!=null){
+		if(getHotel()!=null && getHotel().getId()!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID), room.getId());
+		}
+		if(getDate()!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), getDate());
 		}
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID), room.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		return (ProjectReservationRoomDetail) (list.isEmpty()?null:list.get(0));
 	}

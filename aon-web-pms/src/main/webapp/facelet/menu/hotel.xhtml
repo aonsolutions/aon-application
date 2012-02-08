@@ -135,6 +135,24 @@
 							</aon:div>
 							
 						</aon:panelGrid>
+
+						<aon:panelGrid id="group_hotel_boards"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-pos aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_boardList_module}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="boardList" 
+										action="boardList_search" actionListener="#{boardList.onInit}"
+										value="#{pmsBundle.pms_boardList_module}">
+									</aon:commandLink>
+								</aon:div>
+								
+							</aon:div>
+							
+						</aon:panelGrid>
 					</aon:panelGroup>
 						
 				</h:panelGrid>
