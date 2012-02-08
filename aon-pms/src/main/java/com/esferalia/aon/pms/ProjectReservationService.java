@@ -1,8 +1,5 @@
 package com.esferalia.aon.pms;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -35,24 +32,15 @@ public class ProjectReservationService extends ProjectReservationServiceDB {
 	@Transient
 	public String getRoomNumber() throws ManagerBeanException {
 		if (roomNumber == null) {
-			List<String> roomList = new LinkedList<String>();
 			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 			Criteria criteria = new Criteria();
 			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
 			criteria.addEqualExpression(alias, getId());
+			criteria.addNotNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
+			criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), false);
 			for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
-				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-				if (reservationServiceDetail.getProjectReservationRoomDetail() != null) {
-					String roomNumber = reservationServiceDetail.getProjectReservationRoomDetail().getRoom().getAsset().getName();
-					if (!roomList.contains(roomNumber)) {
-						roomList.add(roomNumber);
-					}
-				}
-			}
-
-			for (int i=0; i<roomList.size(); i++) {
-				roomNumber = (roomNumber == null) ? "" : roomNumber + ", ";
-				roomNumber += roomList.get(i);
+				roomNumber = ((ProjectReservationServiceDetail)ito).getProjectReservationRoomDetail().getRoom().getAsset().getName();
+				break;
 			}
 		}
 		return roomNumber;

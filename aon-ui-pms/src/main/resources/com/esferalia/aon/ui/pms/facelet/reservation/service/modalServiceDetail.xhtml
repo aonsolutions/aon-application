@@ -39,7 +39,7 @@
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="serviceDetail-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										value="#{bundle.aon_save}"
+										value="#{bundle.aon_save} #{pmsBundle.pms_service}"
 										actionListener="#{controller.onAssignReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -49,8 +49,8 @@
 									</aon:commandButton>	
 									<aon:commandButton id="serviceDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										value="#{bundle.aon_remove}"
-										rendered="#{!controller.new and !reservation.to.crs}"
+										value="#{bundle.aon_remove} #{pmsBundle.pms_service}"
+										rendered="#{!controller.new and !reservation.to.crs and !controller.to.extra}"
 										actionListener="#{controller.onRemoveReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -72,9 +72,11 @@
 									<aon:panelGrid columns="2" styleClass="aon-width-all">
 
 										<aon:outputLabel for="ProjectReservationService_roomItem"
-											value="#{pmsBundle.pms_room}" />
+											value="#{pmsBundle.pms_room}"
+											rendered="#{reservation.to.roomAssignedCount > 0}" />
 										<aon:selectOneMenu id="ProjectReservationService_roomItem" 
-											value="#{controller.serviceReservationRoom}" required="#{true}">
+											value="#{controller.serviceReservationRoom}"
+											rendered="#{reservation.to.roomAssignedCount > 0}">
 											<f:selectItems value="#{controller.reservationRoomItems}" />
 										</aon:selectOneMenu>
 
@@ -105,7 +107,7 @@
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="skipGoToButton" value="#{true}" />
-											<ui:param name="lookupDisabled" value="#{reservation.to.crs}" />
+											<ui:param name="lookupDisabled" value="#{reservation.to.crs or controller.to.extra}" />
 											<ui:param name="lookupInputOnFocus" value="ProjectReservationService_quantity" />
 											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_price" />
 											<aon:methodParam name="lookupChangeListener"
@@ -116,7 +118,7 @@
 											value="#{pmsBundle.pms_units}" />
 										<aon:inputText id="ProjectReservationService_quantity" 
 											value="#{controller.serviceQuantity}" size="5" required="true"
-											disabled="#{reservation.to.crs}" 
+											disabled="#{reservation.to.crs or controller.to.extra}" 
 											valueChangeListener="#{controller.onQuantityChanged}" 
 											reRender="ProjectReservationService_price"
 											focus="ProjectReservationService_price" /> 
@@ -125,7 +127,7 @@
 											value="#{bundle.aon_price}" />
 										<aon:inputText id="ProjectReservationService_price" 
 											value="#{controller.servicePrice}" size="5" required="true"
-											disabled="#{reservation.to.crs}" /> 
+											disabled="#{reservation.to.crs or controller.to.extra}" /> 
 
 									</aon:panelGrid>
 								</aon:div>

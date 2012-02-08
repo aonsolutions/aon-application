@@ -25,7 +25,7 @@
 				<aon:commandLink id="Service-selectButton"
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{!reservation.to.crs and reservation.active and reservation.to.roomCount > 0}"
+					rendered="#{reservation.active and (!reservation.to.crs or reservation.to.roomAssignedCount > 1)}"
 					actionListener="#{controller.onSelect}"
 					reRender="showServiceDetailWindow"
 					onkeyup="#{dataTableId}KeyUp(this)"
@@ -40,7 +40,7 @@
 						<aon:commandButton
 							id="Service-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							rendered="#{!reservation.to.crs and reservation.active and reservation.to.roomCount > 0}" 
+							rendered="#{!reservation.to.crs and reservation.active}" 
 							actionListener="#{controller.onReset}"
 							reRender="showServiceDetailWindow"
 							accesskey="#{bundle.aon_key_new_line}" 

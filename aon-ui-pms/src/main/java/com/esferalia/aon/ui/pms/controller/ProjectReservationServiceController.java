@@ -158,12 +158,10 @@ public class ProjectReservationServiceController extends LinesController {
 		List<SelectItem> roomItemList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-			String label = reservationRoom.getItem().getProduct().getCode() + " - " + reservationRoom.getItem().getProduct().getName();
 			if (reservationRoom.getRoomNumber() != null) {
-				label = reservationRoom.getRoomNumber() + " (" + label + ")";
+				SelectItem selectItem = new SelectItem(reservationRoom, reservationRoom.getRoomNumber());
+				roomItemList.add(selectItem);
 			}
-			SelectItem selectItem = new SelectItem(reservationRoom, label);
-			roomItemList.add(selectItem);
 		}
 		return roomItemList;
 	}
