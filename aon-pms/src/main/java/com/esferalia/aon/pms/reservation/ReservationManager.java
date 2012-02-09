@@ -562,11 +562,11 @@ public class ReservationManager implements IReservationConstants {
 		HotelReservationIDsType reservationIds = response.addNewHotelReservations().addNewHotelReservation().addNewResGlobalInfo().addNewHotelReservationIDs();
 		for (String reservationCode : successMap.keySet()) {
 			HotelReservationID reservationId1 = reservationIds.addNewHotelReservationID();
-			reservationId1.setResIDSource(TRADYSO);
+			reservationId1.setResIDSource(SIRIUS);
 			reservationId1.setResIDValue(reservationCode);
 
 			HotelReservationID reservationId2 = reservationIds.addNewHotelReservationID();
-			reservationId2.setResIDSource(GPS);
+			reservationId2.setResIDSource(PLS);
 			reservationId2.setResIDValue(successMap.get(reservationCode).toString());
 		}
 		return document.toString();

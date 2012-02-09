@@ -37,6 +37,6 @@ public interface IReservationConstants {
 	String SERVICE_TYPE = "ServiceType";
 	String SERVICE_TYPE_ROOM = "H";
 
-	String TRADYSO = "Tradyso";
-	String GPS = "Gps";
+	String SIRIUS = "SIRIUS";
+	String PLS = "PLS";
 }
