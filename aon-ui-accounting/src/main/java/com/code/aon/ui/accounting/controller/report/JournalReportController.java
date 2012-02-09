@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
@@ -13,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
@@ -28,6 +31,13 @@ public class JournalReportController extends BasicController implements IAccount
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
+	private String account;
+	private String accountDescription;
+	private String balancingAccount;
+	private String concept;
+	private String document;
+	private String debit;
+	private String credit;
 	private int order;
 	//private boolean journal;
 	private boolean journalCorrect;
@@ -96,7 +106,48 @@ public class JournalReportController extends BasicController implements IAccount
 	public void setPageCounter(int pageCounter) {
 		this.pageCounter = pageCounter;
 	}
-
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+	public void setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+	}
+	public String getBalancingAccount() {
+		return balancingAccount;
+	}
+	public void setBalancingAccount(String balancingAccount) {
+		this.balancingAccount = balancingAccount;
+	}
+	public String getConcept() {
+		return concept;
+	}
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+	public String getDocument() {
+		return document;
+	}
+	public void setDocument(String document) {
+		this.document = document;
+	}
+	public String getDebit() {
+		return debit;
+	}
+	public void setDebit(String debit) {
+		this.debit = debit;
+	}
+	public String getCredit() {
+		return credit;
+	}
+	public void setCredit(String credit) {
+		this.credit = credit;
+	}
 	public void onReset(ActionEvent event) {
 		initialize();
 		super.onReset(event);
@@ -126,6 +177,13 @@ public class JournalReportController extends BasicController implements IAccount
 		} catch (ManagerBeanException e) {
 			setPeriod(null);
 		}
+		setAccount(null);
+		setAccountDescription(null);
+		setBalancingAccount(null);
+		setConcept(null);
+		setDocument(null);
+		setDebit(null);
+		setCredit(null);
 		setFromDate(null);
 		setToDate(null);
 		setDate(new Date());
@@ -151,23 +209,38 @@ public class JournalReportController extends BasicController implements IAccount
 
 	public void onSearch(ActionEvent event) {
 		try {
+			previousAccountEntryDetail = null;
+			previousAccountEntry= null;
 			Criteria criteria = getCriteria();
 			if (period != null) {
-				criteria
-						.addEqualExpression(
-								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),
-								period.getId());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),period.getId());
 			}
 			if (getFromDate() != null) {
-				criteria
-						.addGreaterThanOrEqualExpression(
-								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
-								getFromDate());
+				criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),getFromDate());
 			}
-			if (getToDate() != null) {	
-				criteria.addLessThanOrEqualExpression(
-								getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
-								getToDate());
+			if (getToDate() != null) {
+				criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),getToDate());
+			}
+			if (StringUtils.isNotEmpty(getAccount())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.account.code",getAccount());
+			}
+			if (StringUtils.isNotEmpty(getAccountDescription())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.account.description",getAccountDescription());
+			}
+			if (StringUtils.isNotEmpty(getBalancingAccount())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.balancingAccount.code",getBalancingAccount());
+			}
+			if (StringUtils.isNotEmpty(getCredit())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.credit",getCredit());
+			}
+			if (StringUtils.isNotEmpty(getDebit())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.debit",getDebit());
+			}
+			if (StringUtils.isNotEmpty(getConcept())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.concept",getConcept());
+			}
+			if (StringUtils.isNotEmpty(getDocument())) {
+				criteria.addExpression("AccountEntryDetail.accountEntry.detail.documentNumber",getDocument());
 			}
 			if (getSecurityLevel() != null) {
 				criteria.addEqualExpression(getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
@@ -182,6 +255,9 @@ public class JournalReportController extends BasicController implements IAccount
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} catch (ExpressionException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());
 		}

@@ -80,6 +80,41 @@
 						</aon:selectOneMenu>
 					</c:if>
 
+					<aon:outputLabel for="AccountEntry_detail_account_code"
+						value="#{accountBundle.account_account}" />
+					<aon:inputText id="AccountEntry_detail_account_code" size="10"
+						value="#{journalReport.account}" />
+
+					<aon:outputLabel for="AccountEntry_detail_account_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="AccountEntry_detail_account_description" size="50"
+						value="#{journalReport.accountDescription}"  />
+					
+					<aon:outputLabel for="AccountEntry_detail_concept"
+						value="#{bundle.aon_concept}" />
+					<aon:inputText id="AccountEntry_detail_concept" size="30"
+						value="#{journalReport.concept}"  />
+
+					<aon:outputLabel for="AccountEntry_detail_debit"
+						value="#{accountingBundle.accounting_debit}" />
+					<aon:inputText id="AccountEntry_detail_debit" size="15"
+						value="#{journalReport.debit}"  />
+					
+					<aon:outputLabel for="AccountEntry_detail_credit"
+						value="#{accountingBundle.accounting_credit}" />
+					<aon:inputText id="AccountEntry_detail_credit" size="15"
+						value="#{journalReport.credit}"  />
+					
+					<aon:outputLabel for="AccountEntry_detail_balancingAccount_code"
+						value="#{accountingBundle.accounting_balancing_account}" />
+					<aon:inputText id="AccountEntry_detail_balancingAccount_code" size="10"
+						value="#{journalReport.balancingAccount}"  />
+					
+					<aon:outputLabel for="AccountEntry_detail_documentNumber"
+						value="#{accountingBundle.accounting_document_number}" />
+					<aon:inputText id="AccountEntry_detail_documentNumber" size="30"
+						value="#{journalReport.document}"  />
+
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_journal"
 						value="#{accountingBundle.accounting_show_order}" />
