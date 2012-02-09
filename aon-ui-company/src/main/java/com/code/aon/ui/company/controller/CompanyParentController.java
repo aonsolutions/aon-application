@@ -66,6 +66,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public static final String SALE_INVOICE_REPORT_KEY_PARAM = "REPORT_saleInvoice";
 	
+	public static final String SALE_INVOICE_REPORT_KEY = "saleInvoice";
+	
+	public static final String INVOICE_PRINT_REPORT_KEY = "invoicePrint";
+	
 	/** The attach. */
 	private RegistryAttachment attach;
 	
@@ -607,7 +611,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 	
 	public String getInvoicePrintTemplateValue(){
-		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue().replaceFirst("saleInvoice", "invoicePrint");
+		return saleInvoiceTemplate==null?INVOICE_PRINT_REPORT_KEY:saleInvoiceTemplate.getValue().replaceFirst(SALE_INVOICE_REPORT_KEY, INVOICE_PRINT_REPORT_KEY);
 	}
 	
 	public boolean isPrintLogo() {
