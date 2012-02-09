@@ -226,7 +226,7 @@
 					accesskey="#{bundle.aon_key_cancel_line}" />
 				<aon:commandButton id="amortizationDetailTable-remove"
 					title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove_line})"
-					immediate="true" rendered="#{to==amortizationDetail.to}"
+					immediate="true" rendered="#{to==amortizationDetail.to and to.updatable}"
 					reRender="amortizationForm"
 					onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
 					actionListener="#{amortizationDetail.onRemove}"

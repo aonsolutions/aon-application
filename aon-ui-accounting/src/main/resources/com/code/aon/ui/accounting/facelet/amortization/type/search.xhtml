@@ -19,6 +19,7 @@
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{amortizationType.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="amortizationType_list" />				
+					<ui:param name="skipAfterSearch" value="true" />
 				
 					<aon:outputLabel for="AmortizationType_id"
 						value="#{bundle.aon_id}" />

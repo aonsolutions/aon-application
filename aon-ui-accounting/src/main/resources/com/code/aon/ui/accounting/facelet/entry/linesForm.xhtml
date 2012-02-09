@@ -73,7 +73,7 @@
 				<aon:column
 					styleClass="aon-editDataTable-textColumn aon-width-auto aon-nowrap">
 					<f:facet name="header">
-						<aon:outputText value="#{accountBundle.account_account}" />
+						<aon:outputLabel for="Account_id" value="#{accountBundle.account_account}" />
 					</f:facet>
 
 					<aon:div style="width: 90%;"
@@ -122,11 +122,11 @@
 				<aon:column
 					styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-150">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_concept}" />
+						<aon:outputLabel for="AccountEntryDetail_concept" value="#{bundle.aon_concept}" />
 					</f:facet>
 					<aon:outputText value="#{to.concept}" styleClass="aon-nowrap"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" />
-					<aon:inputText id="AccountEntryDetail_concept-Edit"
+					<aon:inputText id="AccountEntryDetail_concept"
 						value="#{accountEntryDetail.to.concept}"
 						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" 
 						required="true" size="15" maxlength="32"/>
@@ -161,20 +161,23 @@
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputText value="#{accountingBundle.accounting_debit}" />
+						<aon:outputLabel for="AccountEntryDetail_debit" value="#{accountingBundle.accounting_debit}" />
 					</f:facet>
 					<aon:outputText value="#{to.debit}"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
-					<aon:inputText id="debit1" value="#{accountEntryDetail.to.debit}"
+					<aon:inputText id="AccountEntryDetail_debit" value="#{accountEntryDetail.to.debit}"
 						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" 
 						required="true" size="8">
 						<f:validateDoubleRange />
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="debitChange" ignoreDupResponses="true"
+							reRender="AccountEntryDetail_debit,AccountEntryDetail_credit" focus="AccountEntryDetail_credit"/>
 						<a4j:support event="onkeyup"
 							onsubmit="if(event.keyCode != 120) return false;"
 							eventsQueue="debitKeyUp" ignoreDupResponses="true"
-							reRender="debit1,credit1"
+							reRender="AccountEntryDetail_debit,AccountEntryDetail_credit"
 							requestDelay="100"
 							actionListener="#{accountEntryDetail.onBalanceDebit}">
 						</a4j:support>
@@ -182,16 +185,12 @@
 					<f:facet name="footer">
 						<aon:div styleClass="aon-italic"
 							style="text-align:right; font-weight:bold;">
-							<aon:inputText id="debit2" value="#{accountEntryDetail.to.debit}"
+							<aon:inputText id="AccountEntryDetail_debit-NEW" value="#{accountEntryDetail.to.debit}"
 								rendered="#{accountEntryDetail.new}" required="true" size="8">
 								<f:validateDoubleRange />
-								<a4j:support event="onkeyup"
-									onsubmit="if(event.keyCode != 120) return false;"
-									eventsQueue="debitKeyUp" ignoreDupResponses="true"
-									requestDelay="100"
-									reRender="debit2,credit2"
-									actionListener="#{accountEntryDetail.onBalanceDebit}">
-								</a4j:support>
+								<a4j:support event="onchange" ajaxSingle="true"
+									eventsQueue="debitChange" ignoreDupResponses="true"
+									reRender="AccountEntryDetail_debit-NEW,AccountEntryDetail_credit-NEW" focus="AccountEntryDetail_credit-NEW" />
 							</aon:inputText>
 							<aon:outputText value="#{accountEntry.totalDebit}"
 								style="#{accountEntry.balanced?'color:green':'color:red'}"
@@ -204,37 +203,37 @@
 
 				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
-						<aon:outputText value="#{accountingBundle.accounting_credit}" />
+						<aon:outputLabel for="AccountEntryDetail_credit" value="#{accountingBundle.accounting_credit}" />
 					</f:facet>
 					<aon:outputText value="#{to.credit}"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}">
 						<f:convertNumber pattern="#,##0.00" />
 					</aon:outputText>
-					<aon:inputText id="credit1" value="#{accountEntryDetail.to.credit}"
+					<aon:inputText id="AccountEntryDetail_credit" value="#{accountEntryDetail.to.credit}"
 						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}"
 						required="true" size="8">
 						<f:validateDoubleRange />
+						<a4j:support event="onchange" ajaxSingle="true"
+							eventsQueue="creditChange" ignoreDupResponses="true"
+							reRender="AccountEntryDetail_debit,AccountEntryDetail_credit" focus="Account_idBalancingAccount" />
 						<a4j:support event="onkeyup"
 							onsubmit="if(event.keyCode != 120) return false;"
 							eventsQueue="debitKeyUp" ignoreDupResponses="true"
 							requestDelay="100"
-							reRender="debit1,credit1"
+							reRender="AccountEntryDetail_debit,AccountEntryDetail_credit"
 							actionListener="#{accountEntryDetail.onBalanceCredit}">
 						</a4j:support>
 					</aon:inputText>
 					<f:facet name="footer">
 						<aon:div styleClass="aon-italic"
 							style="text-align:right; font-weight:bold;">
-							<aon:inputText id="credit2" value="#{accountEntryDetail.to.credit}"
+							<aon:inputText id="AccountEntryDetail_credit-NEW" value="#{accountEntryDetail.to.credit}"
 								rendered="#{accountEntryDetail.new}" required="true" size="8">
 								<f:validateDoubleRange />
-								<a4j:support event="onkeyup"
-									onsubmit="if(event.keyCode != 120) return false;"
-									eventsQueue="debitKeyUp" ignoreDupResponses="true"
-									requestDelay="100"
-									reRender="debit2,credit2"
-									actionListener="#{accountEntryDetail.onBalanceCredit}">
-								</a4j:support>
+								<a4j:support event="onchange" ajaxSingle="true"
+									eventsQueue="creditChange" ignoreDupResponses="true"
+									reRender="AccountEntryDetail_debit-NEW,AccountEntryDetail_credit-NEW" 
+									focus="Account_idBalancingAccount-NEW" />
 							</aon:inputText>
 							<aon:outputText value="#{accountEntry.totalCredit}"
 								style="#{accountEntry.balanced?'color:green':'color:red'}"
@@ -247,7 +246,7 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap">
 					<f:facet name="header">
-						<aon:outputText
+						<aon:outputLabel for="Account_idBalancingAccount"
 							value="#{accountingBundle.accounting_balancing_account}" />
 					</f:facet>
 
@@ -287,11 +286,12 @@
 				<aon:column
 					styleClass="aon-editDataTable-textColumn aon-nowrap aon-width-100">
 					<f:facet name="header">
-						<aon:outputText value="#{accountingBundle.accounting_document_number}" />
+						<aon:outputLabel for="AccountEntryDetail_documentNumber"
+							 value="#{accountingBundle.accounting_document_number}" />
 					</f:facet>
 					<aon:outputText value="#{to.documentNumber}" styleClass="aon-nowrap"
 						rendered="#{to!=accountEntryDetail.to or !accountEntryDetail.updatable}" />
-					<aon:inputText id="AccountEntryDetail_documentNumber-Edit"
+					<aon:inputText id="AccountEntryDetail_documentNumber"
 						value="#{accountEntryDetail.to.documentNumber}"
 						rendered="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" 
 						required="false" size="10" maxlength="32"/>
