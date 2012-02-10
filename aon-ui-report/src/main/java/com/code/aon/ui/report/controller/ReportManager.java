@@ -242,7 +242,7 @@ public class ReportManager {
 				LOGGER.debug("Dynamic params set!");
 			}
 
-			String out = report.run(outputFormat, os, getBundle(), criteria, collection, params);
+			String out = report.run(outputFormat, os, getBundle(), getLocale(), criteria, collection, params);
 			report.setCustomParams(null);
 			HibernateUtil.commitTransaction(sessionFactoryName);
 			HibernateUtil.closeSession(sessionFactoryName);
@@ -325,9 +325,24 @@ public class ReportManager {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Application app = ctx.getApplication();
 		String baseName = app.getMessageBundle();
-		Locale locale = ctx.getViewRoot().getLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+		ResourceBundle bundle = ResourceBundle.getBundle(baseName, getLocale());
 		return bundle;
+	}
+	
+	/**
+	 * Obtains the Locale needed for the report. <br>
+	 * <code>
+	 * 		FacesContext ctx = FacesContext.getCurrentInstance();<br>
+	 * 		Locale locale = ctx.getViewRoot().getLocale();<br>
+	 * 		return ctx.getViewRoot().getLocale();<br>
+	 * </code>
+	 * 
+	 * @return The Locale needed for the report.
+	 */
+	private Locale getLocale() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		Locale locale = ctx.getViewRoot().getLocale();
+		return locale;
 	}
 
 	/**
