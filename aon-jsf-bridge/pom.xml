@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.23-SNAPSHOT</version>
+		<version>6.23</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.jsf.bridge</artifactId>
-	<version>6.23-SNAPSHOT</version>
+	<version>6.23</version>
 	<description>AON JSF BRIDGE</description>
 	<name>AON JSF BRIDGE</name>
 	<dependencies>
