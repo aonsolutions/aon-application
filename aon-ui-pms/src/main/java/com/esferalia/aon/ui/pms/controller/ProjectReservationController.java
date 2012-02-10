@@ -49,8 +49,9 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
 import com.esferalia.aon.pms.reservation.ReservationInvoicing;
+import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 
-public class ProjectReservationController extends BasicController {
+public class ProjectReservationController extends BasicController implements IPmsConstants {
 
 	private String selectedTab;
 	private int nights;
@@ -172,6 +173,8 @@ public class ProjectReservationController extends BasicController {
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+		ProjectReservationSearchListener searchController = (ProjectReservationSearchListener)AonUtil.getRegisteredBean(RESERVATION_SEARCH_LISTENER_NAME);
+		searchController.setReservationStatuses(null);
 		onSearch(event);
 	}
 
@@ -221,7 +224,7 @@ public class ProjectReservationController extends BasicController {
 	}
 
 	public void resetHotel() throws ManagerBeanException {
-		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
 		if (collections.getCurrentUserHotelsCount() > 0) {
 			ProjectReservation reservation = (ProjectReservation)getTo();
 			reservation.setHotel((Hotel)collections.getCurrentUserHotels().get(0).getValue());
@@ -242,7 +245,7 @@ public class ProjectReservationController extends BasicController {
 		if (reservation.getHotel() != null && reservation.getHotel().getId() != null) {
 			return getHotelRoomItems(reservation.getHotel());
 		}
-		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
 		return collectionsController.getRoomItems(); 
 	}
 
@@ -601,7 +604,7 @@ public class ProjectReservationController extends BasicController {
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
 
-			IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+			IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
 			reservationServiceController.onSearch(null);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -611,7 +614,7 @@ public class ProjectReservationController extends BasicController {
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (invoiceModel.isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
+			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME));
 			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}

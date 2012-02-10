@@ -36,7 +36,7 @@
 
 				<c:if test="#{!reservation.new}">
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formContent.xhtml" />
-					
+
 					<aon:panelTabSet id="reservationTab" selectedTab="#{reservation.selectedTab}">
 						<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">
 							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/room/tab_grid.xhtml">
