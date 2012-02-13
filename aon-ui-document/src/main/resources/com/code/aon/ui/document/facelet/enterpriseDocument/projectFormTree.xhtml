@@ -41,7 +41,7 @@
 					<aon:outputText value="#{projectBundle.project_assigned}" />
 					<aon:outputText value="#{project.to.registry.fullName}" />
 
-					<c:if test="#{project.to.projectType}">
+					<c:if test="#{(project.to.projectType != null) and (project.to.projectType.id != null)}">
 						<aon:outputText value="#{projectBundle.project_project_type}" />
 						<aon:outputText value="#{project.to.projectType.description}" />
 					</c:if>
