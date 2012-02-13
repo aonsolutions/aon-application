@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +26,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
-
 
 public class BoardListController implements ICollectionProvider {
 	
@@ -34,16 +36,23 @@ public class BoardListController implements ICollectionProvider {
 	private Hotel hotel;
 	private Date date;
 	private ProductCategory category;
-	private List<RoomBoard> roomBoardList;	
+	private List<RoomBoard> boardList;
 	private DataModel model;
+	private boolean boardPageBreak;
+	private Item boardItem;
 	
+	public List<RoomBoard> getBoardList() {
+		return boardList;
+	}
+	public void setBoardList(List<RoomBoard> boardList) {
+		this.boardList = boardList;
+	}
 	public ProductCategory getCategory() {
 		return category;
 	}
 	public void setCategory(ProductCategory category) {
 		this.category = category;
 	}
-	
 	public DataModel getModel() {
 		return model;
 	}
@@ -62,17 +71,27 @@ public class BoardListController implements ICollectionProvider {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public List<RoomBoard> getRoomBoardList() {
-		return roomBoardList;
+	public boolean isBoardPageBreak() {
+		return boardPageBreak;
 	}
-	public void setRoomBoardList(List<RoomBoard> roomBoardList) {
-		this.roomBoardList = roomBoardList;
+	public void setBoardPageBreak(boolean boardPageBreak) {
+		this.boardPageBreak = boardPageBreak;
 	}
-	public void onInit(ActionEvent event) throws ManagerBeanException{
-		setDate(new Date());
+	public Item getBoardItem() {
+		return boardItem;
+	}
+	public void setBoardItem(Item boardItem) {
+		this.boardItem = boardItem;
 	}
 	
-	public List<ITransferObject> getItemList() throws ManagerBeanException{
+	public void onInit(ActionEvent event) throws ManagerBeanException{
+		setDate(new Date());
+		setBoardPageBreak(true);
+		setBoardItem(null);
+		onSearch(event);
+	}
+	
+	public List<ITransferObject> getBoardItems() throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
@@ -85,64 +104,24 @@ public class BoardListController implements ICollectionProvider {
 		return list.isEmpty()?null:list;
 	}
 	
-	
-	public void onSearch(ActionEvent event) {
-		try {
-			roomBoardList = new LinkedList<BoardListController.RoomBoard>();
-			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
-			Criteria criteria = new Criteria();
-			if(getHotel()!=null && getHotel().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());
-			}
-			if(getDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), getDate());
-			}
-			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID));
-			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
-			List<ITransferObject> list = bean.getList(criteria);
-			if( !list.isEmpty() ){
-				RoomBoard rb = null;
-				String roomNumber = null;
-				for( Object o: list ){
-					ProjectReservationServiceDetail d = (ProjectReservationServiceDetail) o;
-					if(roomNumber==null || !d.getProjectReservationService().getRoomNumber().equals(roomNumber)){
-						rb = new RoomBoard();
-						roomBoardList.add(rb);
-						rb.setName(d.getProjectReservationService().getRoomNumber());
-						rb.setServicesCount(new Integer[6]);
-					}
-					roomNumber = d.getProjectReservationService().getRoomNumber();
-					for(int i=0; i<getItemList().size(); i++){
-						if(d.getProjectReservationService().getItem().getItemCompositionList().isEmpty()){
-							if(d.getProjectReservationService().getItem().getProduct().getId().equals(((Item)getItemList().get(i)).getProduct().getId())) {
-								if(rb.getServicesCount()[i] == null){
-									rb.getServicesCount()[i] = 0;
-								}
-								rb.getServicesCount()[i] = rb.getServicesCount()[i] + (int)d.getQuantity();
-							}
-						} else {
-							for( ItemComposition ic: d.getProjectReservationService().getItem().getItemCompositionList() ){
-								if(ic.getCompositionItem().getProduct().getId().equals(((Item)getItemList().get(i)).getProduct().getId())) {
-									if(rb.getServicesCount()[i] == null){
-										rb.getServicesCount()[i] = 0;
-									}
-									rb.getServicesCount()[i] = rb.getServicesCount()[i] + (int)ic.getQuantity();
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (ManagerBeanException e) {
-			String msg =  "Error searching service detail. ";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg + e.getMessage());
+	public List<SelectItem> getBoardItemList() throws ManagerBeanException{
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (ITransferObject ito : getBoardItems()) {
+			Item i = (Item)ito;
+			SelectItem item = new SelectItem(i, i.getProduct().getName());
+			list.add(item);
 		}
-		setModel(new ListDataModel(roomBoardList));
+		return list;
 	}
 	
-	private List<ITransferObject> getBoardList() {
-		List<ITransferObject> reportList = null;
+	public void onSearch(ActionEvent event) {
+		buildBoardList();
+		setModel(new ListDataModel(getBoardList()));
+	}
+	
+	private void buildBoardList() {
+		List<RoomBoard> reportList = null;
+		List<RoomBoard> compositeList = null;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 			Criteria criteria = new Criteria();
@@ -156,51 +135,139 @@ public class BoardListController implements ICollectionProvider {
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_CODE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
 			
-			reportList = new LinkedList<ITransferObject>();
+			reportList = new LinkedList<RoomBoard>();
+			compositeList = new LinkedList<RoomBoard>();
 			for(ITransferObject to: bean.getList(criteria)){
 				ProjectReservationServiceDetail d = (ProjectReservationServiceDetail) to;
-				for(ITransferObject to2: getItemList()){
-					Item item = (Item) to2;
+				if(getBoardItem()!=null && getBoardItem().getId()!=null){
+					Item item = getBoardItem();
+					RoomBoard board = new RoomBoard();
+					board.setItem(d.getItem());
+					board.setQuantity(d.getQuantity());
+					board.setProjectReservationService(d.getProjectReservationService());
 					if(d.getItem().getProduct().isComposition()){
-						
+						for( ItemComposition ic: d.getItem().getItemCompositionList() ){
+							board = new RoomBoard();
+							board.setItem(ic.getCompositionItem());
+							board.setQuantity(ic.getQuantity());
+							board.setProjectReservationService(d.getProjectReservationService());
+							if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+								compositeList.add(board);
+							}
+						}
 					}
 					if(d.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-						reportList.add(d);
+						reportList.add(board);
+					}
+				} else {
+					for(ITransferObject to2: getBoardItems()){
+						Item item = (Item) to2;
+						RoomBoard board = new RoomBoard();
+						board.setItem(d.getItem());
+						board.setQuantity(d.getQuantity());
+						board.setProjectReservationService(d.getProjectReservationService());
+						if(d.getItem().getProduct().isComposition()){
+							for( ItemComposition ic: d.getItem().getItemCompositionList() ){
+								board = new RoomBoard();
+								board.setItem(ic.getCompositionItem());
+								board.setQuantity(ic.getQuantity());
+								board.setProjectReservationService(d.getProjectReservationService());
+								if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+									compositeList.add(board);
+								}
+							}
+						}
+						if(d.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
+							reportList.add(board);
+						}
+					}
+				}
+				
+			}
+			for(RoomBoard board: compositeList){
+				if(getBoardItem()!=null && getBoardItem().getId()!=null){
+					Item item = getBoardItem();
+					if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+						addCompositeItem(reportList, board);
+					}
+				} else {
+					for(ITransferObject to2: getBoardItems()){
+						Item item = (Item) to2;
+						if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+							addCompositeItem(reportList, board);
+						}
 					}
 				}
 			}
-			
 		} catch (ManagerBeanException e) {
 			String msg =  "Error searching service detail. ";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg + e.getMessage());
 		}
-		
-		return reportList;
+		setBoardList(reportList);
 	}
 	
+	private void addCompositeItem(List<RoomBoard> reportList, RoomBoard board) throws ManagerBeanException {
+		ListIterator<RoomBoard> it = reportList.listIterator();
+		while(it.hasNext()){
+			RoomBoard b = it.next();
+			if( b.isSameBoard(board) ){
+				if( b.isSameRoom(board) ){
+					reportList.get(it.nextIndex()-1).setQuantity(reportList.get(it.nextIndex()-1).getQuantity()+board.getQuantity());
+					break;
+				} else if( it.hasNext() 
+					&& reportList.get(it.nextIndex()).getItem().getProduct().getCode().compareToIgnoreCase(board.getItem().getProduct().getCode()) != 0 ) {
+					reportList.add(it.nextIndex(), board);
+					break;
+				}
+			} else if( it.hasNext() 
+					&& board.getItem().getProduct().getCode().compareToIgnoreCase(reportList.get(it.nextIndex()).getItem().getProduct().getCode()) < 0 ) {
+				reportList.add(it.nextIndex(), board);
+				break;
+			} else if( !it.hasNext() ) {
+				reportList.add(board);
+				break;
+			}
+		}
+	}
+
 	/**************************************************/
 	/**************************************************/
 	
 	public class RoomBoard {
-		private String name;
-		private Integer[] servicesCount;
+		private Item item;
+		private ProjectReservationService projectReservationService;
+		private Double quantity;
 		
-		public Integer[] getServicesCount() {
-			return servicesCount;
+		public Item getItem() {
+			return item;
 		}
-		public void setServicesCount(Integer[] servicesCount) {
-			this.servicesCount = servicesCount;
+		public void setItem(Item item) {
+			this.item = item;
 		}
-		public String getName() {
-			return name;
+		public ProjectReservationService getProjectReservationService() {
+			return projectReservationService;
 		}
-		public void setName(String name) {
-			this.name = name;
+		public void setProjectReservationService(
+				ProjectReservationService projectReservationService) {
+			this.projectReservationService = projectReservationService;
 		}
-		public Date getDate() {
-			return date;
+		public Double getQuantity() {
+			return quantity;
 		}
+		public void setQuantity(Double quantity) {
+			this.quantity = quantity;
+		}
+		
+		public boolean isSameBoard(RoomBoard board) throws ManagerBeanException {
+			return item.getProduct().getId().equals(board.getItem().getProduct().getId())
+				&& item.getProduct().getCode().toLowerCase().equals(board.getItem().getProduct().getCode().toLowerCase());
+	    }
+		
+		public boolean isSameRoom(RoomBoard board) throws ManagerBeanException {
+			return projectReservationService.getRoomNumber().equals(board.getProjectReservationService().getRoomNumber());
+		}
+		
 	}
 
 	@SuppressWarnings("rawtypes")

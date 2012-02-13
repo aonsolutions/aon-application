@@ -73,7 +73,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="hotel" value="#{boardList.getHotel}" />
 			<param id="date" value="#{boardList.getDate}" />
-			<param id="itemList" value="#{boardList.getItemList}" />
+			<param id="boardPageBreak" value="#{boardList.isBoardPageBreak}" />
 		</params>
 	</report>
 
