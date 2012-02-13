@@ -46,8 +46,6 @@ public class Employee implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		
-		Window.alert("Hello");
-
 		// Inject rich styles.
 		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
 

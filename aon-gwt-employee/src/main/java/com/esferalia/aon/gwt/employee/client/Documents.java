@@ -28,7 +28,7 @@ public class Documents extends Composite {
 	 * Specifies the images that will be bundled for this Composite and specify
 	 * that tree's images should also be included in the same bundle.
 	 */
-	public interface Images extends ClientBundle, Tree.Resources {
+	public static interface Images extends ClientBundle, Tree.Resources {
 
 		ImageResource folder();
 
@@ -49,9 +49,10 @@ public class Documents extends Composite {
 		@Source("noimage.png")
 		ImageResource treeLeaf();
 	}
+	private static final Images IMAGES = GWT.create(Images.class);
+	
 
 	private Tree tree;
-	private Images images;
 
 	private DocumentsServiceAsync documentsService;
 
@@ -59,9 +60,8 @@ public class Documents extends Composite {
 
 	public Documents() {
 
-		images = GWT.create(Images.class);
 
-		tree = new Tree(images);
+		tree = new Tree(IMAGES);
 
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
@@ -79,7 +79,7 @@ public class Documents extends Composite {
 							String category = document.getCategory();
 							if (category == null) {
 								docItem = new TreeItem(imageItemHTML(
-										images.doc_text(),
+										getImage(document),
 										document.getDescription()));
 								tree.addItem(docItem);
 							} else {
@@ -87,7 +87,7 @@ public class Documents extends Composite {
 										.get(category);
 								if (categoryTreeItem == null) {
 									categoryTreeItem = new TreeItem(
-											imageItemHTML(images.folder(),
+											imageItemHTML(IMAGES.folder(),
 													category));
 									tree.addItem(categoryTreeItem);
 									categoryTreeItems.put(category,
@@ -95,7 +95,7 @@ public class Documents extends Composite {
 								}
 								docItem = addImageItem(categoryTreeItem,
 										document.getDescription(),
-										images.doc_text());
+										getImage(document));
 							}
 							docItem.setUserObject(new DocumentReportsModel ( document ));
 						}
@@ -151,6 +151,9 @@ public class Documents extends Composite {
 		return AbstractImagePrototype.create(imageProto).getHTML() + " "
 				+ title;
 	}
+	
+	
+	
 
 	private class DocumentReportsModel extends AbstractReportsModel<IReport>
 			implements IReport {
@@ -180,10 +183,25 @@ public class Documents extends Composite {
 
 		@Override
 		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
-			Window.alert("getAsHTML()");
 			Document doc = documents.get(currentIndex());
-			callback.onSuccess(  "<div> <span>" + doc.getDescription() +  "</span> <img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
+			callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
 		}
+	}
+	
+	private static final Map<String, ImageResource> IMAGES_MAP = 
+			new HashMap<String, ImageResource>(){
+		{
+			put("application/pdf", IMAGES.doc_pdf());
+			put("application/msword", IMAGES.doc_word());
+			put("application/vnd.ms-excel", IMAGES.doc_excel());
+			put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", IMAGES.doc_excel());
+			put("pplication/vnd.ms-powerpoint", IMAGES.doc_powerpoint());
+		}
+	};
+	
+	private static ImageResource getImage(Document doc ) {
+		String mimeType = doc.getMimeType();
+		return IMAGES_MAP.containsKey(mimeType) ? IMAGES_MAP.get(mimeType) : IMAGES.doc_text();
 	}
 
 }

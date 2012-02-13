@@ -32,7 +32,7 @@ import com.sun.pdfview.PDFPage;
 
 public class PDF2ImageServlet extends HttpServlet {
 
-	private static float DEFAULT_ZOOM = 1.1f;
+	private static float DEFAULT_ZOOM = 1.3f;
 	private static String DEFAULT_FORMAT = "png";
 
 	public static String ZOOM_PARAM = "zoom";
