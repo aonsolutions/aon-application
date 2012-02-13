@@ -52,11 +52,13 @@
 							</aon:div>
 						</aon:div>							
 
-						<aon:div styleClass="aon-login-info2">						
-							 <aon:outputText value="#{bundle.aon_trademark}" />
-							 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
-							 	styleClass="aon-footer-company-label"/>
-						</aon:div>	
+						<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
+							<aon:div styleClass="aon-login-info2">						
+								 <aon:outputText value="#{bundle.aon_trademark}" />
+								 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
+								 	styleClass="aon-footer-company-label"/>
+							</aon:div>
+						</c:if>	
 					</aon:div>
 				</form>
 			</aon:div>
