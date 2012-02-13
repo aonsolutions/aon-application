@@ -54,8 +54,9 @@
 						target="#{enterpriseDocumentSearch.showList}"  />
 					<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
 				</aon:menuItem>
-			</aon:dropDownMenu>						
+			</aon:dropDownMenu>				
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
+				styleClass="aon-inputText aon-skip-focus"
 				size="28" maxlength="32" tabindex="32767" >
 				<rich:hotKey key="return" handler="mainSearch();return false;"/>
 				<a4j:jsFunction name="mainSearch"

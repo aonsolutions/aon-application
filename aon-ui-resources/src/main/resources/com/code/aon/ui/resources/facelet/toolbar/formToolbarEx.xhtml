@@ -80,7 +80,7 @@
 			
 			<c:if test="#{!skipFocusFirst}">
 				<rich:jQuery timing="onload"
-					selector=":input:visible:enabled:not(:button):first"
+					selector=":input:visible:enabled:not(:button):not(.aon-skip-focus):first"
 					query="focus()" />
 			</c:if>								
 		</ui:define>
