@@ -24,8 +24,6 @@ import com.google.gwt.user.client.ui.TreeItem;
 public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
 
-	private static final String DELIMITERS = "\t ,.-";
-
 	/**
 	 * Specifies the images that will be bundled for this Composite and specify
 	 * that tree's images should also be included in the same bundle.

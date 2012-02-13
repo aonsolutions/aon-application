@@ -37,6 +37,7 @@ public class Employee implements EntryPoint {
 	
 	
 	@UiField Employees employees;
+	@UiField Documents documents;
 	@UiField EmployeeDetail employeeDetail;
 
 	/**
@@ -44,6 +45,8 @@ public class Employee implements EntryPoint {
 	 * controls and hooking up event handler.
 	 */
 	public void onModuleLoad() {
+		
+		Window.alert("Hello");
 
 		// Inject rich styles.
 		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
@@ -62,5 +65,6 @@ public class Employee implements EntryPoint {
 		root.add(outer);
 		
 		employees.setEmployeeDetail(employeeDetail);
+		documents.setEmployeeDetail(employeeDetail);
 	}
 }

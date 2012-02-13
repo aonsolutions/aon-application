@@ -66,13 +66,12 @@ import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 import com.esferalia.aon.web.employee.controller.ManagerController;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-public class EmployeesServiceImpl extends RemoteServiceServlet implements
+public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService {
 
 	public Enterprise getEnterprise() throws IllegalArgumentException {
@@ -244,77 +243,6 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 
 	}
 
-
-	/**
-	 * Should be called when the FacesContext aren't needed any more.
-	 */
-	protected void releaseFacesContext() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (facesContext != null) {
-			facesContext.release();
-		}
-	}
-
-	private void initFacesContext() {
-		try {
-			LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder
-					.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-			FacesContextFactory facesContextFactory = (FacesContextFactory) FactoryFinder
-					.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-
-			Lifecycle lifecycle = lifecycleFactory
-					.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-
-			ServletContext context = getServletContext();
-			HttpServletRequest request = getThreadLocalRequest();
-			HttpServletResponse response = getThreadLocalResponse();
-
-			FacesContext facesContext = facesContextFactory.getFacesContext(
-					context, request, response, lifecycle);
-
-			UIViewRoot view = facesContext.getApplication().getViewHandler()
-					.createView(facesContext, "/home.xhtml");
-
-			facesContext.setViewRoot(view);
-
-		} catch (Throwable throwable) {
-			// TODO: Do some usefull with this.
-			throwable.printStackTrace();
-		}
-	}
-
-	private Integer getEnterpriseID() {
-		HttpSession session = getSession();
-		ManagerController controller = (ManagerController) session
-				.getAttribute(ManagerController.CONTROLLER_NAME);
-		EnterpriseUser enterpriseUser = controller.getLoggedUser();
-		com.code.aon.company.Enterprise aonEnterprise = enterpriseUser
-				.getEnterprise();
-		Registry registry = aonEnterprise.getRegistry();
-		return registry.getId();
-	}
-
-
-	private HttpSession getSession() {
-		HttpServletRequest request = getThreadLocalRequest();
-		return request.getSession(false);
-	}
-
-	private Integer getPersonID ( ) {
-		HttpSession session = getSession();
-		ManagerController controller = (ManagerController) session
-				.getAttribute(ManagerController.CONTROLLER_NAME);
-
-		EnterpriseUser enterpriseUser = controller.getLoggedUser();
-
-		Registry registry = enterpriseUser.getRegistry();
-		
-		com.code.aon.company.Enterprise aonEnterprise = enterpriseUser
-				.getEnterprise();
-		
-		
-		return registry.getId();
-	}
 
 	private static List<Salary> getSalaries(Connection connection, Integer contractId)
 			throws SQLException {
@@ -632,11 +560,6 @@ public class EmployeesServiceImpl extends RemoteServiceServlet implements
 		return String.format("%1$s.%2$s", table, col);
 	}
 
-	private static Connection getConnection() {
-		String sessionFactory = HibernateUtil
-				.getSessionFactoryName(Salary.class.getName());
-		return HibernateUtil.getSQLConnection(sessionFactory);
-	}
 
 	private static interface GroupHandler {
 

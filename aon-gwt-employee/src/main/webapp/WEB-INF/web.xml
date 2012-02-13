@@ -43,6 +43,26 @@
     <servlet-name>employeesServlet</servlet-name>
     <url-pattern>/aon_gwt_employee/employees</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>documentsServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.DocumentsServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>documentsServlet</servlet-name>
+    <url-pattern>/aon_gwt_employe/documents</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>documentsServlet</servlet-name>
+    <url-pattern>/aon_gwt_employee/documents</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>pdf2ImageServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.PDF2ImageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>pdf2ImageServlet</servlet-name>
+    <url-pattern>/aon_gwt_employee/pdf2Image/*</url-pattern>
+  </servlet-mapping>
   <context-param>
     <description>
 			Improving render phase performance. You should increase

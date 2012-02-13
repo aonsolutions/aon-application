@@ -106,6 +106,7 @@
 								</div>
 							</g:header>
 							<g:ScrollPanel>
+								<employee:Documents ui:field='documents' />
 							</g:ScrollPanel>
 						</g:stack>
 
