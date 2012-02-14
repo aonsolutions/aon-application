@@ -1,170 +1,118 @@
 package com.code.aon.file.tax.model.MOD347.data;
 
-/**
- * Declared 
- * 
- * @author Consulting & Development. Iñigo GAyarre - 08/02/2007
- * @since 1.0
- *
- */
 public class Declared {
 
-	/**
-	 * The code
-	 */
 	private String code;
-	/**
-	 * The managers code
-	 */
 	private String managerCode;
-	/**
-	 * The anme
-	 */
 	private String name;
-	/**
-	 * The province
-	 */
 	private Integer province;
-	/**
-	 * The country
-	 */
 	private String country;
-	/**
-	 * The key
-	 */
 	private String key;
-	/**
-	 * The quantity
-	 */
 	private Double quantity;
-	/**
-	 * Is insurance
-	 */
+	private Double quantityQuarter1;	
+	private Double quantityQuarter2;	
+	private Double quantityQuarter3;	
+	private Double quantityQuarter4;	
 	private boolean insurance = false;
-	/**
-	 * Is renting
-	 */
 	private boolean renting = false;
 	
-	/**
-	 * @return the code
-	 */
 	public String getCode() {
 		return code;
 	}
-	/**
-	 * @param code the code to set
-	 */
 	public void setCode(String code) {
 		this.code = code;
 	}
-	/**
-	 * @return the country
-	 */
+
 	public String getCountry() {
 		return country;
 	}
-	/**
-	 * @param country the country to set
-	 */
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	/**
-	 * @return the insurance code
-	 */
+
 	public String getInsurance() {
 		return insurance?"X":null;
 	}
-	/**
-	 * @param insurance the insurance to set
-	 */
 	public void setInsurance(boolean insurance) {
 		this.insurance = insurance;
 	}
-	/**
-	 * @return the key
-	 */
+
 	public String getKey() {
 		return key;
 	}
-	/**
-	 * @param key the key to set
-	 */
 	public void setKey(String key) {
 		this.key = key;
 	}
-	/**
-	 * @return the managerCode
-	 */
+
 	public String getManagerCode() {
 		return managerCode;
 	}
-	/**
-	 * @param managerCode the managerCode to set
-	 */
 	public void setManagerCode(String managerCode) {
 		this.managerCode = managerCode;
 	}
-	/**
-	 * @return the name
-	 */
+
 	public String getName() {
 		return name;
 	}
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	/**
-	 * @return the province
-	 */
+
 	public Integer getProvince() {
 		return province;
 	}
-	/**
-	 * @param province the province to set
-	 */
 	public void setProvince(Integer province) {
 		this.province = province;
 	}
-	/**
-	 * @return the quantity
-	 */
+
 	public Double getQuantity() {
 		return quantity;
 	}
-	/**
-	 * @param quantity the quantity to set
-	 */
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
 	}
-	/**
-	 * @return the renting code
-	 */
+
 	public String getRenting() {
 		return renting?"X":null;
 	}
-	/**
-	 * @param renting the renting to set
-	 */
 	public void setRenting(boolean renting) {
 		this.renting = renting;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	public Double getQuantityQuarter1() {
+		return quantityQuarter1;
+	}
+	public void setQuantityQuarter1(Double quantityQuarter1) {
+		this.quantityQuarter1 = quantityQuarter1;
+	}
+
+	public Double getQuantityQuarter2() {
+		return quantityQuarter2;
+	}
+	public void setQuantityQuarter2(Double quantityQuarter2) {
+		this.quantityQuarter2 = quantityQuarter2;
+	}
+	
+	public Double getQuantityQuarter3() {
+		return quantityQuarter3;
+	}
+	public void setQuantityQuarter3(Double quantityQuarter3) {
+		this.quantityQuarter3 = quantityQuarter3;
+	}
+	
+	public Double getQuantityQuarter4() {
+		return quantityQuarter4;
+	}
+	public void setQuantityQuarter4(Double quantityQuarter4) {
+		this.quantityQuarter4 = quantityQuarter4;
+	}
+
 	public String toString(){
-		String description = "DECLARED CODE ";
+		String description = "Reg. Declarado ";
 		description += code == null?"NULL ":"'"+code+"''";
 		description += "NAME ";
 		description += name == null?"NULL ":"'"+name+"'; ";
 		return description;
 	}
-	
 
 }

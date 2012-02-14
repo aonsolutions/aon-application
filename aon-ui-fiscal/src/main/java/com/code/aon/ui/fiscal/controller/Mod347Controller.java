@@ -29,12 +29,20 @@ public class Mod347Controller extends BasicController {
 
 	private FileOutput fileOutput;
 	private FiscalParametersController fiscalParams;
+	private boolean quarterBreakdownEnabled;
 
 	public FiscalParametersController getFiscalParams() {
 		if (fiscalParams == null) {
 			fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
 		}
 		return fiscalParams;
+	}
+
+	public boolean isQuarterBreakdownEnabled() {
+		return quarterBreakdownEnabled;
+	}
+	public void setQuarterBreakdownEnabled(boolean quarterBreakdownEnabled) {
+		this.quarterBreakdownEnabled = quarterBreakdownEnabled;
 	}
 
 	public FileOutput getFileOutput() {

@@ -127,7 +127,11 @@ public class MOD347Writer implements IFinanceConstants{
 			dec.setName(detail.getName());
 			dec.setKey(detail.getType().getValue());
 			dec.setInsurance(false);
-			dec.setProvince(detail.getProvince());
+			int prov = detail.getProvince().ordinal();
+			if (prov == 0) {
+				prov = 99;
+			}
+			dec.setProvince(prov);
 			dec.setCountry(detail.getCountry()==null?null:detail.getCountry().getValue());
 			if (Country.ES == detail.getCountry()) {
 				dec.setCountry("  ");		
@@ -135,6 +139,10 @@ public class MOD347Writer implements IFinanceConstants{
 				dec.setProvince(99);		
 			}
 			dec.setQuantity(detail.getAmount());
+			dec.setQuantityQuarter1(detail.getFirstQuarterAmount());
+			dec.setQuantityQuarter2(detail.getSecondQuarterAmount());
+			dec.setQuantityQuarter3(detail.getThirdQuarterAmount());
+			dec.setQuantityQuarter4(detail.getFourthQuarterAmount());
 			dec.setRenting(false);
 			deponent.getDeclareds().add(dec);
 		}

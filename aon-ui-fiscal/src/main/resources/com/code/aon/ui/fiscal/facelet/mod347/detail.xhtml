@@ -4,10 +4,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 
 	<c:if test="#{!renting.new}">
+	
 		<aon:div styleClass="aon-margin-top">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
@@ -18,9 +20,9 @@
 				<ui:define name="columns">
 
 					<aon:column alias="Mod347Detail.type"
-						 styleClass="aon-editDataTable-textColumn aon-width-50">
+						 styleClass="aon-editDataTable-textColumn aon-width-30">
 						<f:facet name="header">
-							<aon:outputLabel for="mod347_detail_type" value="#{fiscalBundle.fiscal_key}" />
+							<aon:outputLabel for="mod347_detail_type" value="C" />
 						</f:facet>
 						<aon:outputText value="#{to.type.value}" rendered="#{formList}"/>
 						<aon:selectOneMenu id="mod347_detail_type" value="#{controller.to.type}" required="true" rendered="#{formEdit}">
@@ -34,9 +36,10 @@
 					</aon:column>
 
 					<aon:column alias="Mod347Detail.document" 
-						styleClass="aon-editDataTable-textColumn aon-width-100">
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-textColumn aon-width-70">
 						<f:facet name="header">
-							<aon:outputLabel for="mod347_detail_document" value="#{bundle.aon_document}" />
+							<aon:outputLabel for="mod347_detail_document" value="#{bundle.aon_company_document}" />
 						</f:facet>
 						<aon:outputText value="#{to.document}" rendered="#{formList}"/>
 						<aon:inputText id="mod347_detail_document" value="#{controller.to.document}"
@@ -47,7 +50,8 @@
 						</f:facet>
 					</aon:column>
 
-					<aon:column	alias="Mod347Detail.name" 
+					<aon:column	alias="Mod347Detail.name"
+						style="font-size: 0.8em;" 
 						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<aon:outputLabel for="mod347_detail_name" value="#{bundle.aon_name}" />
@@ -62,21 +66,27 @@
 					</aon:column>
 
 					<aon:column alias="Mod347Detail.province" 
-						styleClass="aon-editDataTable-textColumn aon-width-50">
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-textColumn aon-width-80">
 						<f:facet name="header">
 							<aon:outputLabel for="mod347_detail_province" value="#{bundle.aon_state}" />
 						</f:facet>
 						<aon:outputText value="#{to.province}" rendered="#{formList}"/>
-						<aon:inputText id="mod347_detail_province" value="#{controller.to.province}"
-							rendered="#{formEdit}" size="2"/>
+						<aon:selectOneMenu id="mod347_detail_province" rendered="#{formEdit}" value="#{controller.to.province}" >
+							<f:selectItem value="#{null}" itemLabel="-"/>
+							<f:selectItems value="#{commonCollections.provinces}" />
+						</aon:selectOneMenu>
 						<f:facet name="footer">
-							<aon:inputText id="mod347_detail_province-NEW" value="#{controller.to.province}"
-								rendered="#{formNew}" size="2"/>
+							<aon:selectOneMenu id="mod347_detail_province-NEW" rendered="#{formNew}" value="#{controller.to.province}" >
+								<f:selectItem value="#{null}" itemLabel="-"/>
+								<f:selectItems value="#{commonCollections.provinces}" />
+							</aon:selectOneMenu>
 						</f:facet>
 					</aon:column>
 
-					<aon:column alias="Mod347Detail.pais"  
-						styleClass="aon-editDataTable-textColumn aon-width-150">
+					<aon:column alias="Mod347Detail.country"  
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-textColumn aon-width-80">
 						<f:facet name="header">
 							<aon:outputLabel for="mod347_detail_country" value="#{bundle.aon_country}" />
 						</f:facet>
@@ -94,7 +104,8 @@
 					</aon:column>
 
 					<aon:column	alias="Mod347Detail.amount" 
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						style="font-size: 0.9em;"
+						styleClass="aon-editDataTable-numberColumn aon-bold aon-width-80">
 						<f:facet name="header">
 							<aon:outputLabel for="mod347_detail_amount" value="#{bundle.aon_amount}" />
 						</f:facet>
@@ -108,6 +119,75 @@
 								rendered="#{formNew}" size="12" required="true"/>
 						</f:facet>
 					</aon:column>
+
+					<aon:column	alias="Mod347Detail.firstQuarterAmount"
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel for="mod347_detail_firstQuarterAmount" value="Trim. 1" />
+						</f:facet>
+						<aon:outputText value="#{to.firstQuarterAmount}" rendered="#{formList}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:inputText id="mod347_detail_firstQuarterAmount" value="#{controller.to.firstQuarterAmount}"
+							rendered="#{formEdit}" size="12" required="true"/>
+						<f:facet name="footer">
+							<aon:inputText id="mod347_detail_firstQuarterAmount-NEW" value="#{controller.to.firstQuarterAmount}"
+								rendered="#{formNew}" size="12" required="true"/>
+						</f:facet>
+					</aon:column>
+					
+					<aon:column	alias="Mod347Detail.secondQuarterAmount"
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel for="mod347_detail_secondQuarterAmount" value="Trim. 2" />
+						</f:facet>
+						<aon:outputText value="#{to.secondQuarterAmount}" rendered="#{formList}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:inputText id="mod347_detail_secondQuarterAmount" value="#{controller.to.secondQuarterAmount}"
+							rendered="#{formEdit}" size="12" required="true"/>
+						<f:facet name="footer">
+							<aon:inputText id="mod347_detail_secondQuarterAmount-NEW" value="#{controller.to.secondQuarterAmount}"
+								rendered="#{formNew}" size="12" required="true"/>
+						</f:facet>
+					</aon:column>
+					<aon:column	alias="Mod347Detail.thirdQuarterAmount"
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel for="mod347_detail_thirdQuarterAmount" value="Trim. 3" />
+						</f:facet>
+						<aon:outputText value="#{to.thirdQuarterAmount}" rendered="#{formList}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:inputText id="mod347_detail_thirdQuarterAmount" value="#{controller.to.thirdQuarterAmount}"
+							rendered="#{formEdit}" size="12" required="true"/>
+						<f:facet name="footer">
+							<aon:inputText id="mod347_detail_thirdQuarterAmount-NEW" value="#{controller.to.thirdQuarterAmount}"
+								rendered="#{formNew}" size="12" required="true"/>
+						</f:facet>
+					</aon:column>
+					
+					<aon:column	alias="Mod347Detail.fourthQuarterAmount"
+						style="font-size: 0.8em;"
+						styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<f:facet name="header">
+							<aon:outputLabel for="mod347_detail_fourthQuarterAmount" value="Trim. 4" />
+						</f:facet>
+						<aon:outputText value="#{to.fourthQuarterAmount}" rendered="#{formList}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:inputText id="mod347_detail_fourthQuarterAmount" value="#{controller.to.fourthQuarterAmount}"
+							rendered="#{formEdit}" size="12" required="true"/>
+						<f:facet name="footer">
+							<aon:inputText id="mod347_detail_fourthQuarterAmount-NEW" value="#{controller.to.fourthQuarterAmount}"
+								rendered="#{formNew}" size="12" required="true"/>
+						</f:facet>
+					</aon:column>
+
+					
 				</ui:define>
 			</ui:decorate>
 		</aon:div>

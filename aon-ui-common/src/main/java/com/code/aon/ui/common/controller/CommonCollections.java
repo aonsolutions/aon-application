@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.util.AonUtil;
 
@@ -23,7 +24,8 @@ import com.code.aon.ui.util.AonUtil;
 public class CommonCollections {
 	
 	private Map<Locale,List<SelectItem>> countries = new HashMap<Locale,List<SelectItem>>();  
-	private Map<Locale,List<SelectItem>> countryCodes = new HashMap<Locale,List<SelectItem>>();  
+	private Map<Locale,List<SelectItem>> countryCodes = new HashMap<Locale,List<SelectItem>>();
+	private Map<Locale,List<SelectItem>> provinces = new HashMap<Locale,List<SelectItem>>();
 	private Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
 	private Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
 	private Map<Locale,List<SelectItem>> confidentialValues = new HashMap<Locale,List<SelectItem>>();
@@ -84,6 +86,25 @@ public class CommonCollections {
 			countryCodes.put(locale,countryList);			
 		}
 		return countryCodes.get(locale);
+	}
+
+	/**
+	 * @return s
+	 */
+	public List<SelectItem> getProvinces(){
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		if (provinces.get(locale) == null) {
+			List<SelectItem> provinceList = new LinkedList<SelectItem>();
+			Province[] m = Province.values();
+			for (int i = 0; i < m.length; i++) {
+				Province province = m[i];
+				String name = province.getName(locale);
+				SelectItem item = new SelectItem(province, StringUtils.abbreviate(name,25));
+				provinceList.add(item);
+			}
+			provinces.put(locale,provinceList);			
+		}
+		return provinces.get(locale);
 	}
 
 	/**

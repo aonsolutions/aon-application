@@ -5,6 +5,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.code.aon.fiscal.mod347.Mod347Manager;
+import com.code.aon.fiscal.mod347.Mod347Parameters;
 import com.code.aon.ui.fiscal.controller.Mod347Controller;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -32,7 +33,9 @@ public class Mod347ControllerListener extends ControllerAdapter {
 			Mod347 mod347= (Mod347) c.getTo();
 			if (mod347.isGenerateLines()) {
 				Mod347Manager manager = new Mod347Manager();
-				manager.generateDetails(mod347);
+				Mod347Parameters params = new Mod347Parameters();
+				params.setMod347(mod347);
+				manager.generateDetails(params);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Imposible generar la declaración",e);

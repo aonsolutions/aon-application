@@ -7,18 +7,27 @@ public enum MOD347Format {
 	ALAVA(2010,Administration.ALAVA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Declared.xml"),
-	BIZKAIA(2010,Administration.BIZKAIA
+	BIZKAIA_2010(2010,Administration.BIZKAIA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Declared.xml"),
-	GIPUZKOA(2010,Administration.GIPUZKOA
+	BIZKAIA_2011(2011,Administration.BIZKAIA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_BIZKAIA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_BIZKAIA_Declared.xml"),
+	GIPUZKOA_2010(2010,Administration.GIPUZKOA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_GIPUZKOA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_GIPUZKOA_Declared.xml"),
+	GIPUZKOA_2011(2011,Administration.GIPUZKOA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Declared.xml"),
 	NAVARRA(2010,Administration.NAVARRA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Declared.xml"),
-	AEAT(2010,Administration.COMMON_TERRITORY
+	AEAT_2010(2010,Administration.COMMON_TERRITORY
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Declared.xml");
+			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Declared.xml"),
+	AEAT_2011(2011,Administration.COMMON_TERRITORY
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_AEAT_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_AEAT_Declared.xml");
 
 	private Integer year;
 	private Administration administration;

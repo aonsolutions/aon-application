@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
@@ -27,46 +28,18 @@ public class Mod347Manager {
 	private static final String COUNTRY_ALIAS = "country";
 	private static final String PROVINCE_ALIAS = "province";
 	private static final String AMOUNT_ALIAS = "amount";
+	private static final String FIRST_QUARTER_ALIAS = "firstQuarter";
+	private static final String SECOND_QUARTER_ALIAS = "secondQuarter";
+	private static final String THIRD_QUARTER_ALIAS = "thirdQuarter";
+	private static final String FOURTH_QUARTER_ALIAS = "fourthQuarter";
 
-	private static final String STMT =
-		"SELECT ELT(i.type+1, 'A', 'B', 'A') "		+ KEY_ALIAS
-		+ ",i.registry " 	 						+ REGISTRY_ALIAS
-		+ ",i.rdocument "  							+ DOCUMENT_ALIAS
-		+ ",MIN(i.rname) "	 						+ NAME_ALIAS
-		+ ",MIN(r.nationality) "					+ COUNTRY_ALIAS
-		+ ",IF(giz.id IS NOT null,giz.id,IF(gz.id IS NOT null,gz.id,gz2.id)) " 	+ PROVINCE_ALIAS
-		+",SUM( id.taxable_base + ( IF(it.quota=0, ROUND(it.percentage * id.taxable_base / 100,2) ,IF(it.quota is NULL,0,it.quota)) + IF( it.surcharge_quota=0, ROUND(it.surcharge * id.taxable_base / 100,2) ,IF(it.surcharge_quota is NULL,0,it.surcharge_quota) ))) " + AMOUNT_ALIAS
-		+" FROM invoice_detail id "
-		+" INNER JOIN invoice i ON (id.invoice = i.id) "
-		+" INNER JOIN registry r ON (r.id = i.registry) "
-		+" LEFT OUTER JOIN invoice_tax it ON it.invoice_detail = id.id "
-		
-		// PRIORIDAD 1. Buscamos la provincia en las direcciones de la factura. 
-		+" LEFT OUTER JOIN invoice_address ia ON ia.invoice = i.id "
-		+" LEFT OUTER JOIN geozone giz ON ia.geozone = giz.id "
-
-		// PRIORIDAD 2. Buscamos la provincia en la direccion de raddress asignada a la factura.		
-		+" LEFT OUTER JOIN raddress ra ON ra.id = i.raddress  "
-		+" LEFT OUTER JOIN geozone gz ON ra.geozone = gz.id "
-
-		// PRIORIDAD 3. Buscamos la provincia en la direccion principal de raddress.		
-		+" LEFT OUTER JOIN raddress ra2 ON ra2.registry = i.registry AND ra2.type = 0 "
-		+" LEFT OUTER JOIN geozone gz2 ON ra2.geozone = gz2.id "
-		
-		+" WHERE i.id=i.id"
-		+" AND it.tax_type=1 "
-		+" AND i.issue_date >= ?"
-		+" AND i.issue_date <= ?"
-		+" GROUP BY  key347,i.rdocument,i.registry,province "
-		+" HAVING amount > ? "
-		+" ORDER BY key347,name,amount desc";
-	
-	public Mod347 generateDetails(Mod347 mod347) throws ManagerBeanException {
+	public Mod347 generateDetails(Mod347Parameters params) throws ManagerBeanException {
 		PreparedStatement ps = null; 
 		ResultSet rs = null;
 		try {
+			Mod347 mod347 = params.getMod347();
 			String sessionName = HibernateUtil.getSessionFactoryName(Mod347Detail.class.getName());
-			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(STMT,
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getSentence(params),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setDate(++i, new java.sql.Date( CommonUtil.getYearFirstDay(mod347.getYear()).getTime()));
@@ -87,8 +60,12 @@ public class Mod347Manager {
 				detail.setName(rs.getString(NAME_ALIAS));
 				Country country = Country.valueOf( rs.getString(COUNTRY_ALIAS) ); 
 				detail.setCountry( country );
-				detail.setProvince( rs.getInt( PROVINCE_ALIAS ) );
+				detail.setProvince( Province.values()[rs.getInt( PROVINCE_ALIAS )] );
 				detail.setAmount(CommonUtil.round(rs.getDouble(AMOUNT_ALIAS)));
+				detail.setFirstQuarterAmount(CommonUtil.round(rs.getDouble(FIRST_QUARTER_ALIAS)));
+				detail.setSecondQuarterAmount(CommonUtil.round(rs.getDouble(SECOND_QUARTER_ALIAS)));
+				detail.setThirdQuarterAmount(CommonUtil.round(rs.getDouble(THIRD_QUARTER_ALIAS)));
+				detail.setFourthQuarterAmount(CommonUtil.round(rs.getDouble(FOURTH_QUARTER_ALIAS)));
 				bean.insert(detail);
 			}
 			return mod347;
@@ -109,6 +86,45 @@ public class Mod347Manager {
 			}
 		}
 
+	}
+
+	private String getSentence(Mod347Parameters params) {
+		String sumOp = " id.taxable_base + ( IF(it.quota=0, ROUND(it.percentage * id.taxable_base / 100,2) ,IF(it.quota is NULL,0,it.quota)) + IF( it.surcharge_quota=0, ROUND(it.surcharge * id.taxable_base / 100,2) ,IF(it.surcharge_quota is NULL,0,it.surcharge_quota)))"; 
+		return "SELECT ELT(i.type+1, 'A', 'B', 'A') "		+ KEY_ALIAS
+				+ ",i.registry " 	 						+ REGISTRY_ALIAS
+				+ ",i.rdocument "  							+ DOCUMENT_ALIAS
+				+ ",MIN(i.rname) "	 						+ NAME_ALIAS
+				+ ",MIN(r.nationality) "					+ COUNTRY_ALIAS
+				+ ",IF(giz.id IS NOT null,giz.id,IF(gz.id IS NOT null,gz.id,gz2.id)) " 	+ PROVINCE_ALIAS
+				+",SUM( " + sumOp+ " ) " + AMOUNT_ALIAS
+				+",SUM( IF(QUARTER(i.issue_date)=1,(" + sumOp + "),0)) " + FIRST_QUARTER_ALIAS
+				+",SUM( IF(QUARTER(i.issue_date)=2,(" + sumOp + "),0)) " + SECOND_QUARTER_ALIAS
+				+",SUM( IF(QUARTER(i.issue_date)=3,(" + sumOp + "),0)) " + THIRD_QUARTER_ALIAS
+				+",SUM( IF(QUARTER(i.issue_date)=4,(" + sumOp + "),0)) " + FOURTH_QUARTER_ALIAS
+				+" FROM invoice_detail id "
+				+" INNER JOIN invoice i ON (id.invoice = i.id) "
+				+" INNER JOIN registry r ON (r.id = i.registry) "
+				+" LEFT OUTER JOIN invoice_tax it ON it.invoice_detail = id.id "
+				
+				// PRIORIDAD 1. Buscamos la provincia en las direcciones de la factura. 
+				+" LEFT OUTER JOIN invoice_address ia ON ia.invoice = i.id "
+				+" LEFT OUTER JOIN geozone giz ON ia.geozone = giz.id "
+
+				// PRIORIDAD 2. Buscamos la provincia en la direccion de raddress asignada a la factura.		
+				+" LEFT OUTER JOIN raddress ra ON ra.id = i.raddress  "
+				+" LEFT OUTER JOIN geozone gz ON ra.geozone = gz.id "
+
+				// PRIORIDAD 3. Buscamos la provincia en la direccion principal de raddress.		
+				+" LEFT OUTER JOIN raddress ra2 ON ra2.registry = i.registry AND ra2.type = 0 "
+				+" LEFT OUTER JOIN geozone gz2 ON ra2.geozone = gz2.id "
+				
+				+" WHERE i.id=i.id"
+				+" AND it.tax_type=1 "
+				+" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") +" >= ?"
+				+" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") +" <= ?"
+				+" GROUP BY  key347,i.rdocument,i.registry,province "
+				+" HAVING amount > ? "
+				+" ORDER BY key347,name,amount desc";
 	}
 
 }

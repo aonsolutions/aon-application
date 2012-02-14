@@ -1,6 +1,6 @@
 package com.code.aon.file.tax.model.MOD347.check;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD347.data.Deponent;
@@ -15,7 +15,7 @@ public class CheckDeponent extends Check {
 	private static final String ERROR_DEPONENT_7_MESSAGE = "ERROR_DEPONENT_7";
 	private static final String ERROR_DEPONENT_8_MESSAGE = "ERROR_DEPONENT_8";
 	
-	public static boolean parse(Deponent deponent,ArrayList<Exception> exceptions){
+	public static boolean parse(Deponent deponent,List<Exception> exceptions){
 		boolean status = true;
 		if (deponent.getYear()==null){
 			exceptions.add( new Fd0Exception( getMessage(ERROR_DEPONENT_1_MESSAGE) ,deponent.toString()) );

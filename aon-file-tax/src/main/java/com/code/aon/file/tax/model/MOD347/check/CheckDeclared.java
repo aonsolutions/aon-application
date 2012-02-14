@@ -1,6 +1,6 @@
 package com.code.aon.file.tax.model.MOD347.check;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD347.data.Declared;
@@ -21,7 +21,7 @@ public class CheckDeclared extends Check {
 	 * @param exceptions errors founds
 	 * @return true if no errors
 	 */
-	public static boolean parse(Declared declared,ArrayList<Exception> exceptions){
+	public static boolean parse(Declared declared,List<Exception> exceptions){
 		boolean status = true;
 		if (declared.getCode()==null){
 			exceptions.add( new Fd0Exception( getMessage("ERROR_DECLERED_1") ,declared.toString()) );
@@ -59,7 +59,7 @@ public class CheckDeclared extends Check {
 		return status;
 	}
 
-	private static boolean checkImport(Declared declared,ArrayList<Exception> exceptions){
+	private static boolean checkImport(Declared declared,List<Exception> exceptions){
 		String clave = declared.getKey();
 		double importe = declared.getQuantity()==null?0d:declared.getQuantity().doubleValue();
 		double IMPORTE_A = 3005.06;
