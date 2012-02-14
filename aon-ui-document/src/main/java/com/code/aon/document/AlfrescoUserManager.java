@@ -30,8 +30,6 @@ import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.EnterpriseUser;
@@ -41,8 +39,6 @@ import com.code.aon.document.dao.EnterpriseDocumentDAO;
  * The Class LdapDAO.
  */
 public class AlfrescoUserManager extends BasicAlfresco  {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AlfrescoUserManager.class);
 	
 	private Set<String> scopes = new TreeSet<String>();
 
@@ -256,17 +252,7 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 			startSession();
 			Predicate predicate = getPredicate(reference);
 			ACE ace = new ACE(Constants.GROUP_PREFIX + group, permission, AccessStatus.acepted);
-	        ACL[] acls = getAccessControlService().removeACEs(predicate, new ACE[]{ace});
-	        if (! ArrayUtils.isEmpty(acls) ) {
-	        	for( ACL acl : acls ) {
-	        		LOGGER.info( "ACL: {}", acl.getReference().getPath() );
-	        		if (! ArrayUtils.isEmpty(acl.getAces()) ) {
-		        		for( ACE _ace : acl.getAces() ) {
-		        			LOGGER.info( "ACE: {}", _ace.getAuthority() );
-		        		}
-	        		}
-	        	}
-	        }	        
+			getAccessControlService().removeACEs(predicate, new ACE[]{ace});
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error removing group " + group + " access to " + reference.getPath(), e );
 		} finally {
@@ -303,10 +289,7 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 			startSession();
 	        NewAuthority cpGrpAuth = new NewAuthority(GROUP_AUTHORITY_TYPE, name);
 	        NewAuthority[] newAuthorities = {cpGrpAuth};
-	        String[] result = getAccessControlService().createAuthorities(parentAuthority, newAuthorities);
-	        if (! ArrayUtils.isEmpty(result) ) {
-	        	LOGGER.info("Result: {}", ArrayUtils.toString(result) );
-	        }
+	        getAccessControlService().createAuthorities(parentAuthority, newAuthorities);
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error creating group " + name + " in " + parentAuthority, e );			
 		} finally {
@@ -379,14 +362,5 @@ public class AlfrescoUserManager extends BasicAlfresco  {
 		}				
 		return list;
 	}		
-	
-	public static void main(String[] args) throws DAOException {
-		AlfrescoUserManager um = new AlfrescoUserManager("admin", "admin");
-		// LOGGER.info( "Groups: {}", ArrayUtils.toString(um.getUserScopes()) );
-		// um.createGroup("Test", IAlfrescoConstants.ENTERPRISE_GROUP);
-		// um.createGroup("Test", IAlfrescoConstants.SCOPES_GROUP);
-		// um.deleteGroup("Test", IAlfrescoConstants.ENTERPRISE_GROUP);
-		LOGGER.info( "User: {}", um.getUser("asesor") );
-	}
 	
 }

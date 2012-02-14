@@ -41,25 +41,9 @@
 					<aon:outputText value="#{projectBundle.project_assigned}" />
 					<aon:outputText value="#{project.to.registry.fullName}" />
 
-					<aon:outputText value="#{projectBundle.project_project_type}" />
-					<aon:outputText value="#{project.to.projectType.description}" />
-					
-					<c:if test="#{project.to.commercial}">
-						<aon:outputText value="#{projectBundle.project_commercial}" />
-						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
-							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
-					</c:if>
-
-					<c:if test="#{project.to.tas}">
-						<aon:outputText value="#{projectBundle.project_tas}" />
-						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
-							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
-					</c:if>
-
-					<c:if test="#{project.to.dossier}">
-						<aon:outputText value="#{projectBundle.project_dossier}" />
-						<aon:outputText value="&#160;" style="background-position: 5px 2px;"
-							styleClass="aon-icon aon-icon-checked aon-padding-bottom" />
+					<c:if test="#{(project.to.projectType != null) and (project.to.projectType.id != null)}">
+						<aon:outputText value="#{projectBundle.project_project_type}" />
+						<aon:outputText value="#{project.to.projectType.description}" />
 					</c:if>
 		
 			</aon:panelGrid>
