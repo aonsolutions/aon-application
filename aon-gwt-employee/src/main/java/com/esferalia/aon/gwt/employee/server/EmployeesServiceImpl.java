@@ -143,6 +143,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Map<Object, Object> parameters = 
 					new HashMap<Object, Object>();
 			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			if ( zoomRatio == 0.20f ) {
+				parameters.put(JRHtmlExporterParameter.PAGE_INDEX, 0);
+			}
 			reportManager.execute(out, IPayrollConstants.SALARY_REPORT, parameters);
 
 			return out.toString();

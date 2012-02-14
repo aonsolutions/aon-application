@@ -69,7 +69,7 @@
 
 		<g:center>
 			<g:SplitLayoutPanel>
-				<g:west size='192'>
+				<g:west size='275'>
 
 					<g:StackLayoutPanel unit='EM'>
 

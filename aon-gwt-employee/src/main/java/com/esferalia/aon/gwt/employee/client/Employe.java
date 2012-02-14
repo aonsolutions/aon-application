@@ -5,21 +5,19 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Employe implements EntryPoint , Salaries.Handler{
+public class Employe implements EntryPoint, Salaries.Handler {
 
 	interface GWTResources extends ClientBundle {
 		@NotStrict
@@ -30,21 +28,15 @@ public class Employe implements EntryPoint , Salaries.Handler{
 		ImageResource menuBar();
 	}
 
-	interface RichResources extends ClientBundle {
-		@NotStrict
-		@Source("richCss/aon-richCss.css")
-		CssResource css();
-	}
-
-
 	interface Binder extends UiBinder<DockLayoutPanel, Employe> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	
-	
-	@UiField Salaries 		salaries;
-	@UiField EmployeeDetail employeDetail;
+
+	@UiField
+	Salaries salaries;
+	@UiField
+	EmployeeDetail employeDetail;
 
 	private EmployeesServiceAsync employeesService;
 
@@ -55,8 +47,7 @@ public class Employe implements EntryPoint , Salaries.Handler{
 	public void onModuleLoad() {
 
 		// Inject rich styles.
-		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
-		GWT.<RichResources>create(RichResources.class).css().ensureInjected();
+		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 		// Create the UI defined in Mail.ui.xml.
 		DockLayoutPanel outer = binder.createAndBindUi(this);
 
@@ -69,28 +60,45 @@ public class Employe implements EntryPoint , Salaries.Handler{
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get();
 		root.add(outer);
-		
+
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		employeesService = GWT.create(EmployeesService.class);
-		
+
 		salaries.addHandler(this);
 	}
 
 	@Override
 	public void onSalarySelected(Salary salary) {
-		employeesService.getSalaryReceiptHTML(salary, 1.30f, new AsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				//employeDetail.getSalaryReceipt().setSalaryReceipt(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				Window.alert(caught.getLocalizedMessage());
-			}
-		});
+		
+		employeDetail.getSalaryReceipt().setReports(new SalaryReportsModel(salary));
+
 	}
+
+	private class SalaryReportsModel extends AbstractReportsModel<IReport>
+			implements IReport {
+
+		private Salary salary;
+
+		public SalaryReportsModel(Salary salary) {
+			this.salary = salary;
+			first();
+		}
+
+		@Override
+		public int size() {
+			return 1;
+		}
+
+		@Override
+		public IReport current() {
+			return this;
+		}
+
+		@Override
+		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+			employeesService.getSalaryReceiptHTML(salary, zoomRatio, callback);
+		}
+	}
+
 }
