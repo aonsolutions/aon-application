@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -234,6 +235,32 @@ public class JRReport {
 	 */
 	public String run(OutputFormat outputFormat, OutputStream out,
 			ResourceBundle bundle, Criteria criteria, Collection<?> collection, Map<Object,Object>... params) throws ReportException {
+		return run(outputFormat, out, bundle, Locale.getDefault() ,criteria, collection, params);
+	}
+	
+	/**
+	 * Runs this report.
+	 * 
+	 * @param outputFormat
+	 *            Tht output format.
+	 * @param out
+	 *            The output stream.
+	 * @param bundle
+	 *            The resource Bundle used in i18n.
+	 * @param locale 
+	 *            The locale of application.
+	 * @param criteria
+	 *            The criteria of the data.
+	 * @param collection
+	 *            The collection of the data.
+	 * @param params 
+	 * 			  Sets export parameters from a specified map.
+	 * @return The outcome.
+	 * @throws ReportException
+	 *             Si se produce algún error. If an error ocurred.
+	 */
+	public String run(OutputFormat outputFormat, OutputStream out,
+			ResourceBundle bundle, Locale locale, Criteria criteria, Collection<?> collection, Map<Object,Object>... params) throws ReportException {
 		try {
 			setGeneratedPages( 0 );
 			if (JRExporterFactoryManager.accept(outputFormat)) {
@@ -264,17 +291,17 @@ public class JRReport {
 				boolean hasCache = passFetchModeParameters(fillMap);
 				passNestedReports(fillMap);
 				exporterMap.put(JRExporterParameter.OUTPUT_STREAM, out);
-
+				
 				if ( config.getParams() != null && config.getParams().containsKey(
 						JRParameter.REPORT_RESOURCE_BUNDLE)) {
 					String baseName = (String) config.getParams().get(
 							JRParameter.REPORT_RESOURCE_BUNDLE);
 					fillMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, ResourceBundle
-							.getBundle(baseName));
+							.getBundle(baseName, locale));
 				} else {
 					fillMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
 				}
-
+				map.put(JRParameter.REPORT_LOCALE, locale);
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
 					Connection c = HibernateUtil.getSQLConnection();
