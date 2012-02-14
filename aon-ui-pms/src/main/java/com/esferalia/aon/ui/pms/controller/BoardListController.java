@@ -91,20 +91,27 @@ public class BoardListController implements ICollectionProvider {
 		onSearch(event);
 	}
 	
-	public List<ITransferObject> getBoardItems() throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(Item.class);
-		Criteria criteria = new Criteria();
-		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
-//		if(getCategory()!=null){
-//			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getCategory().getId());
-//		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), 4);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
-		List<ITransferObject> list = bean.getList(criteria);
-		return list.isEmpty()?null:list;
+	public List<ITransferObject> getBoardItems() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
+//			if(getCategory()!=null){
+//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getCategory().getId());
+//			}
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), 4);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
+			List<ITransferObject> list = bean.getList(criteria);
+			return list.isEmpty()?null:list;
+		} catch (ManagerBeanException e) {
+			String msg =  "******** Error getting board items. ";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg + e.getMessage());
+		}
+		return null;
 	}
 	
-	public List<SelectItem> getBoardItemList() throws ManagerBeanException{
+	public List<SelectItem> getBoardItemList() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for (ITransferObject ito : getBoardItems()) {
 			Item i = (Item)ito;
@@ -200,7 +207,7 @@ public class BoardListController implements ICollectionProvider {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			String msg =  "Error searching service detail. ";
+			String msg =  "******** Error searching service detail. ";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg + e.getMessage());
 		}
@@ -208,25 +215,29 @@ public class BoardListController implements ICollectionProvider {
 	}
 	
 	private void addCompositeItem(List<RoomBoard> reportList, RoomBoard board) throws ManagerBeanException {
-		ListIterator<RoomBoard> it = reportList.listIterator();
-		while(it.hasNext()){
-			RoomBoard b = it.next();
-			if( b.isSameBoard(board) ){
-				if( b.isSameRoom(board) ){
-					reportList.get(it.nextIndex()-1).setQuantity(reportList.get(it.nextIndex()-1).getQuantity()+board.getQuantity());
-					break;
+		if(reportList.isEmpty()){
+			reportList.add(board);
+		} else {
+			ListIterator<RoomBoard> it = reportList.listIterator();
+			while(it.hasNext()){
+				RoomBoard b = it.next();
+				if( b.isSameBoard(board) ){
+					if( b.isSameRoom(board) ){
+						reportList.get(it.nextIndex()-1).setQuantity(reportList.get(it.nextIndex()-1).getQuantity()+board.getQuantity());
+						break;
+					} else if( it.hasNext() 
+							&& reportList.get(it.nextIndex()).getItem().getProduct().getCode().compareToIgnoreCase(board.getItem().getProduct().getCode()) != 0 ) {
+						reportList.add(it.nextIndex(), board);
+						break;
+					}
 				} else if( it.hasNext() 
-					&& reportList.get(it.nextIndex()).getItem().getProduct().getCode().compareToIgnoreCase(board.getItem().getProduct().getCode()) != 0 ) {
+						&& board.getItem().getProduct().getCode().compareToIgnoreCase(reportList.get(it.nextIndex()).getItem().getProduct().getCode()) < 0 ) {
 					reportList.add(it.nextIndex(), board);
 					break;
+				} else if( !it.hasNext() ) {
+					reportList.add(board);
+					break;
 				}
-			} else if( it.hasNext() 
-					&& board.getItem().getProduct().getCode().compareToIgnoreCase(reportList.get(it.nextIndex()).getItem().getProduct().getCode()) < 0 ) {
-				reportList.add(it.nextIndex(), board);
-				break;
-			} else if( !it.hasNext() ) {
-				reportList.add(board);
-				break;
 			}
 		}
 	}
