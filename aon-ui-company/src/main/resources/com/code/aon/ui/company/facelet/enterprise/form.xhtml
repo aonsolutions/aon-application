@@ -119,6 +119,9 @@
 			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
 		</c:if>
+		<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+			<aon:lookupButtonPopup lookup="#{registryLookup}" />
+		</c:if>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>
