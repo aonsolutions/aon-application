@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateUtils;
+
+
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import com.code.aon.common.BeanManager;
@@ -40,10 +43,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.EnterpriseUser;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
 import com.code.aon.registry.Registry;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
@@ -251,10 +258,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-
-			String sql = "SELECT * " + " FROM " + SALARY + " WHERE " + SALARY
-					+ "." + SalaryColumns.CONTRACT + " = ?";
-
+			
+			
+			String sql = "SELECT * " 
+					+ " FROM " + SALARY 
+					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?"
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC" ;
+			
+			
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contractId);
 			rs = stmt.executeQuery();
@@ -429,12 +440,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ RaddressColumns.ID + " AND " + WORKPLACE + "."
 					+ WorkplaceColumns.ID + " = " + CONTRACT + "."
 					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "."
-					+ ContractColumns.PERSON + " = " + PERSON + "."
-					+ PersonColumns.REGISTRY + " ORDER BY " + WORKPLACE + "."
-					+ WorkplaceColumns.ID;
+					+ ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY
+					
+					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
+					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )"
+					
+					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID 
+					+ " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
+			
+			stmt.setDate(2, getMonthStartDate());
 			rs = stmt.executeQuery();
 
 			EnterpriseHandler enterpriseHandler = new EnterpriseHandler();
@@ -466,7 +483,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 			if (stmt != null) {
-				rs.close();
+				stmt.close();
 			}
 		}
 	}
@@ -664,5 +681,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			workplaceHandler.getWorkplace().addEmployee(employee);
 		}
 	}
-
+	
+	private static java.sql.Date getMonthStartDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set( Calendar.DAY_OF_MONTH, 1);
+		
+		return new java.sql.Date ( calendar.getTimeInMillis());
+	}
 }
