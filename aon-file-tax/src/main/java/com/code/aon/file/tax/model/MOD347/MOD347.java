@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class MOD347  extends AbstractFileFiller{
 
 	}
 
-	public List<Exception> create() {
+	public ArrayList<Exception> create() {
 		try{
 			Map<String,Object> properties = new HashMap<String,Object>();
 			properties.put(MOD347.DEPONENT, deponent);
