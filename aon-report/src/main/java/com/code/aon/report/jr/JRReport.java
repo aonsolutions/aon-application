@@ -301,7 +301,7 @@ public class JRReport {
 				} else {
 					fillMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
 				}
-				map.put(JRParameter.REPORT_LOCALE, locale);
+				fillMap.put(JRParameter.REPORT_LOCALE, locale);
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
 					Connection c = HibernateUtil.getSQLConnection();
