@@ -2,23 +2,19 @@ package com.esferalia.aon.gwt.employee.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.gwt.employee.shared.Cost;
 import com.esferalia.aon.gwt.employee.shared.Document;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
@@ -184,10 +180,12 @@ public class Documents extends Composite {
 		@Override
 		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
 			Document doc = documents.get(currentIndex());
-			callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
+			//callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
+			documentsService.getAsHTML(doc, callback);
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	private static final Map<String, ImageResource> IMAGES_MAP = 
 			new HashMap<String, ImageResource>(){
 		{

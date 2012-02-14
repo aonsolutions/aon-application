@@ -3,16 +3,47 @@ package com.esferalia.aon.gwt.employee.server;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CATEGORY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.RATTACH;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.poi.hssf.converter.ExcelToHtmlConverter;
+import org.apache.poi.hssf.converter.ExcelToHtmlUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.WordToHtmlConverter;
+import org.apache.poi.hwpf.converter.WordToHtmlUtils;
+import org.apache.poi.util.IOUtils;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.esferalia.aon.gwt.employee.client.DocumentsService;
 import com.esferalia.aon.gwt.employee.shared.Document;
+import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 
@@ -29,6 +60,22 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public String getAsHTML(Document doc) {
+		IDocument2HtmlConverter converter = 
+				getDocument2HtmlConverter(doc);
+		try {
+			ByteArrayOutputStream os = 
+					new ByteArrayOutputStream();
+			converter.transform(doc, os);
+			os.flush();
+			return os.toString();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 
 	private static List<Document> getRegistryDocuments(Integer registryID, Connection connection)
 			throws SQLException {
@@ -91,4 +138,165 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 		}
 		return mimeTypes[value].getName();
 	}
+	
+	private IDocument2HtmlConverter getDocument2HtmlConverter(Document document) {
+		MimeType mimeType = MimeType.get(document.getMimeType());
+		return DOC2HTML_CONVERTERS.get(mimeType);
+		
+	}
+	
+	
+	private static final Map<MimeType, IDocument2HtmlConverter> DOC2HTML_CONVERTERS = 
+			new HashMap<MimeType, DocumentsServiceImpl.IDocument2HtmlConverter>(){
+		{
+			put(MimeType.MIME_PDF, Pdf2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_WORD, Word2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_WORD_2007, Word2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_EXCEL, Excel2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_MS_EXCEL_2007, Excel2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
+		}
+	};
+	
+	
+	private static interface IDocument2HtmlConverter {
+		void transform(Document doc, OutputStream os) throws Exception;
+	}
+
+
+	private static class Pdf2HtmlConverter implements IDocument2HtmlConverter {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Pdf2HtmlConverter();
+
+		@Override
+		public void transform(Document doc, OutputStream os) throws Exception {
+			PrintStream printStream = new PrintStream(os);
+			// TODO : aon_gwt_employee ???
+			printStream.printf("<div><img src='aon_gwt_employee/pdf2Image/%d.png'></img> </div>", doc.getId() );
+		}
+	}
+
+	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
+		@Override
+		public void transform(Document doc, OutputStream os) throws Exception {
+			Connection connection = getConnection();
+
+			ResultSet rs = null;
+			PreparedStatement stmt = null;
+			try {
+
+				stmt = connection.prepareStatement(
+						"SELECT " + RattachColumns.DATA
+						+ " FROM " + SQLConstants.RATTACH + " WHERE "
+						+ RattachColumns.ID + "= ? ");
+
+				stmt.setInt(1, doc.getId());
+				
+				rs = stmt.executeQuery();
+				
+				if (!rs.next()) {
+					throw new IllegalArgumentException();
+				}
+
+				InputStream is = rs.getBinaryStream(RattachColumns.DATA);
+				transform(is, os);
+			}
+			catch (Exception e ) {
+				throw new IllegalArgumentException();
+			}
+			finally {
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException e) {
+						throw new IllegalArgumentException(e);
+					}
+				}
+			}
+		}
+		
+		void serialize(org.w3c.dom.Document  w3cDocument, OutputStream os ) throws Exception {
+	        DOMSource domSource = new DOMSource( w3cDocument );
+	        StreamResult streamResult = new StreamResult( os );
+
+	        TransformerFactory tf = TransformerFactory.newInstance();
+	        Transformer serializer = tf.newTransformer();
+	        
+	        // TODO set encoding from a parameter
+	        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+	        serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
+	        serializer.setOutputProperty( OutputKeys.METHOD, "html" );
+
+	        serializer.transform( domSource, streamResult );
+		}
+
+		
+		
+		void transform(InputStream is, OutputStream os) throws Exception {
+			org.w3c.dom.Document w3cDocument = getDocument(is);
+			serialize(w3cDocument, os);
+		}
+		
+		abstract org.w3c.dom.Document getDocument(InputStream is ) throws Exception;
+	}
+	
+	private static class Word2HtmlConverter extends  Document2HtmlConverter{
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Word2HtmlConverter();
+		
+		@Override
+		org.w3c.dom.Document getDocument(InputStream is) throws Exception {
+			HWPFDocumentCore hwpfDocument = WordToHtmlUtils.loadDoc( is );
+	        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
+	                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+	                        .newDocument() );
+	        wordToHtmlConverter.processDocument( hwpfDocument );
+	        return wordToHtmlConverter.getDocument();
+
+		}
+	}
+	
+	private static class Excel2HtmlConverter extends  Document2HtmlConverter{
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Excel2HtmlConverter();
+		
+		@Override
+		org.w3c.dom.Document getDocument(InputStream is) throws Exception {
+			HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
+	        ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
+	                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+	                        .newDocument() );
+	        excelToHtmlConverter.processWorkbook( hssfWorkbook );
+	        return excelToHtmlConverter.getDocument();
+		}
+	}
+	
+	private static class Noop2HtmlConverter  extends  Document2HtmlConverter  {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
+		
+		@Override
+		org.w3c.dom.Document getDocument(InputStream is) throws Exception {
+			return null;
+		}
+		
+		@Override
+		void transform(InputStream is, OutputStream os) throws Exception {
+			int read ;
+			byte buffer [] = new byte [256];
+			while ( ( read = is.read(buffer)) == buffer.length ) {
+				os.write(buffer, 0, read);
+			}
+		}
+	}
+
 }
+

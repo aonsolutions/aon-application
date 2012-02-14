@@ -108,12 +108,18 @@
 		</dependency>
 
 		<dependency>
-			<groupId>poi</groupId>
+			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.1-FINAL</version>
+			<version>3.8-beta5</version>
 			<scope>compile</scope>
 		</dependency>
 	            
-            
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.8-beta5</version>
+			<scope>compile</scope>
+		</dependency>
+                        
 	</dependencies>
 </project>
