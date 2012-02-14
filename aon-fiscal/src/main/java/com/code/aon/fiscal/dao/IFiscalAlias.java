@@ -109,40 +109,64 @@ public interface IFiscalAlias {
 	String  MOD347DETAIL_DOCUMENT = MOD347DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Mod347Detail_firstQuarterAmount
+	* Hibernate value: Mod347Detail.firstQuarterAmount
+	*/
+	String  MOD347DETAIL_FIRST_QUARTER_AMOUNT = MOD347DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod347Detail_fourthQuarterAmount
+	* Hibernate value: Mod347Detail.fourthQuarterAmount
+	*/
+	String  MOD347DETAIL_FOURTH_QUARTER_AMOUNT = MOD347DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Mod347Detail_id
 	* Hibernate value: Mod347Detail.id
 	*/
-	String  MOD347DETAIL_ID = MOD347DETAIL_ENTRY.getAliasNames()[3];
+	String  MOD347DETAIL_ID = MOD347DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Mod347Detail_mod347_id
 	* Hibernate value: Mod347Detail.mod347.id
 	*/
-	String  MOD347DETAIL_MOD347_ID = MOD347DETAIL_ENTRY.getAliasNames()[4];
+	String  MOD347DETAIL_MOD347_ID = MOD347DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Mod347Detail_name
 	* Hibernate value: Mod347Detail.name
 	*/
-	String  MOD347DETAIL_NAME = MOD347DETAIL_ENTRY.getAliasNames()[5];
+	String  MOD347DETAIL_NAME = MOD347DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Mod347Detail_province
 	* Hibernate value: Mod347Detail.province
 	*/
-	String  MOD347DETAIL_PROVINCE = MOD347DETAIL_ENTRY.getAliasNames()[6];
+	String  MOD347DETAIL_PROVINCE = MOD347DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Mod347Detail_registry
 	* Hibernate value: Mod347Detail.registry
 	*/
-	String  MOD347DETAIL_REGISTRY = MOD347DETAIL_ENTRY.getAliasNames()[7];
+	String  MOD347DETAIL_REGISTRY = MOD347DETAIL_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Mod347Detail_secondQuarterAmount
+	* Hibernate value: Mod347Detail.secondQuarterAmount
+	*/
+	String  MOD347DETAIL_SECOND_QUARTER_AMOUNT = MOD347DETAIL_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Mod347Detail_thirdQuarterAmount
+	* Hibernate value: Mod347Detail.thirdQuarterAmount
+	*/
+	String  MOD347DETAIL_THIRD_QUARTER_AMOUNT = MOD347DETAIL_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Mod347Detail_type
 	* Hibernate value: Mod347Detail.type
 	*/
-	String  MOD347DETAIL_TYPE = MOD347DETAIL_ENTRY.getAliasNames()[8];
+	String  MOD347DETAIL_TYPE = MOD347DETAIL_ENTRY.getAliasNames()[12];
 
 
 

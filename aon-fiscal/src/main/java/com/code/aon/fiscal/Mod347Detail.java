@@ -18,6 +18,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.Province;
 import com.code.aon.fiscal.enumeration.Mod347Type;
 
 @Entity
@@ -32,10 +33,14 @@ public class Mod347Detail implements ITransferObject {
 	private String document;
 	private Integer registry;
 	private String name;
-	private Integer province;
+	private Province province;
 	private Country country;
 	private Double amount;
-
+	private Double firstQuarterAmount;
+	private Double secondQuarterAmount;
+	private Double thirdQuarterAmount;
+	private Double fourthQuarterAmount;
+	
 	@Id
     @GeneratedValue
     public Integer getId() {
@@ -88,10 +93,10 @@ public class Mod347Detail implements ITransferObject {
 	}
 
 	@Column(name="province")	
-	public Integer getProvince() {
+	public Province getProvince() {
 		return province;
 	}
-	public void setProvince(Integer province) {
+	public void setProvince(Province province) {
 		this.province = province;
 	}
 
@@ -111,6 +116,38 @@ public class Mod347Detail implements ITransferObject {
 		this.amount = amount;
 	}
 	
+	@Column(name="first_quarter_amount")	
+	public Double getFirstQuarterAmount() {
+		return firstQuarterAmount;
+	}
+	public void setFirstQuarterAmount(Double firstQuarterAmount) {
+		this.firstQuarterAmount = firstQuarterAmount;
+	}
+	
+	@Column(name="second_quarter_amount")
+	public Double getSecondQuarterAmount() {
+		return secondQuarterAmount;
+	}
+	public void setSecondQuarterAmount(Double secondQuarterAmount) {
+		this.secondQuarterAmount = secondQuarterAmount;
+	}
+	
+	@Column(name="third_quarter_amount")
+	public Double getThirdQuarterAmount() {
+		return thirdQuarterAmount;
+	}
+	public void setThirdQuarterAmount(Double thirdQuarterAmount) {
+		this.thirdQuarterAmount = thirdQuarterAmount;
+	}
+	
+	@Column(name="fourth_quarter_amount")
+	public Double getFourthQuarterAmount() {
+		return fourthQuarterAmount;
+	}
+	public void setFourthQuarterAmount(Double fourthQuarterAmount) {
+		this.fourthQuarterAmount = fourthQuarterAmount;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -127,6 +164,10 @@ public class Mod347Detail implements ITransferObject {
 				.append(this.province,o.province)
 				.append(this.country,o.country)
 				.append(this.amount,o.amount)
+				.append(this.firstQuarterAmount,o.firstQuarterAmount)
+				.append(this.secondQuarterAmount,o.secondQuarterAmount)
+				.append(this.thirdQuarterAmount,o.thirdQuarterAmount)
+				.append(this.fourthQuarterAmount,o.fourthQuarterAmount)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -144,6 +185,10 @@ public class Mod347Detail implements ITransferObject {
 			.append(this.province)
 			.append(this.country)
 			.append(this.amount)
+			.append(this.firstQuarterAmount)
+			.append(this.secondQuarterAmount)
+			.append(this.thirdQuarterAmount)
+			.append(this.fourthQuarterAmount)
 			.toHashCode();
 	}	
 

@@ -3,8 +3,8 @@ package com.code.aon.file.tax.model.MOD347;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
@@ -41,7 +41,7 @@ public class MOD347  extends AbstractFileFiller{
 
 	}
 
-	public ArrayList<Exception> create() {
+	public List<Exception> create() {
 		try{
 			Map<String,Object> properties = new HashMap<String,Object>();
 			properties.put(MOD347.DEPONENT, deponent);
