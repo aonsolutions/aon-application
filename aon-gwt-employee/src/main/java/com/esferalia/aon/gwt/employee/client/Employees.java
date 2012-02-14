@@ -58,12 +58,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		// service.
 		employeesService = GWT.create(EmployeesService.class);
 
-		employeesService.getEnterprise(this);
-
 		initWidget(tree);
 
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
+
+		employeesService.getEnterprise(this);
+
+
 	}
 
 	public void setEmployeeDetail(EmployeeDetail employeeDetail) {
@@ -118,9 +120,8 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			}
 		}
 
-		enterpriseItem.setSelected(true);
-		enterpriseItem.setState(true);
-
+		enterpriseItem.setState(true, true);
+		tree.setSelectedItem(enterpriseItem, true);
 
 	}
 
