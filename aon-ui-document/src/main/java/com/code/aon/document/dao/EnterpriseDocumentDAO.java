@@ -17,7 +17,6 @@ import static com.code.aon.document.IAlfrescoConstants.REFERENCE_DATE_LONG;
 import static com.code.aon.document.IAlfrescoConstants.ROOT_SPACE;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_LONG;
 import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
-import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
 import static org.alfresco.webservice.util.Constants.PROP_CREATED;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_NAME;
@@ -30,14 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.alfresco.util.ISO8601DateFormat;
-import org.alfresco.webservice.classification.AppliedCategory;
-import org.alfresco.webservice.classification.ClassificationFault;
 import org.alfresco.webservice.content.ContentFault;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.ContentFormat;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ParentReference;
-import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
@@ -56,6 +52,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.AlfrescoGroup;
 import com.code.aon.document.AlfrescoUserManager;
+import com.code.aon.document.BasicAlfresco;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.EnterpriseDocumentAspect;
 import com.code.aon.project.Project;
@@ -141,7 +138,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			return bean.get(id);
 		} catch (ManagerBeanException e) {
 			throw new DAOException(e);
-		}		
+		}
 	}
 	
 	private AlfrescoGroup getScope( EnterpriseDocument ed ) throws DAOException {
@@ -198,8 +195,25 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 
 	@Override
+	protected NamedValue[] getInsertAdditionalValues(ITransferObject to) {
+		EnterpriseDocument ed = (EnterpriseDocument) to;
+		return new NamedValue[]{ getNamedValue(ed.getCategories()) };
+	}
+
+	private NamedValue getNamedValue( AlfrescoCategory[] categories ) {
+		String[] values = null;
+		if (! ArrayUtils.isEmpty(categories)) {
+			values = new String[categories.length];
+			for( int i = 0; i < categories.length; i++ ) {
+				values[i] = BasicAlfresco.getId(categories[i].getId());
+			}
+		}
+		return Utils.createNamedValue(CATEGORIES_LONG, values);		
+	}
+	
+	@Override
 	protected NamedValue[] updateValues(ITransferObject to) {
-		NamedValue[] values = new NamedValue[5];
+		NamedValue[] values = new NamedValue[6];
 		EnterpriseDocument ed = (EnterpriseDocument) to;
 		values[0] = Utils.createNamedValue(PROP_DESCRIPTION, ed.getDescription());
 		values[1] = Utils.createNamedValue(PROP_NAME, ed.getName());
@@ -214,6 +228,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			projectId = ed.getProject().getId().toString();
 		}
 		values[4] = Utils.createNamedValue(PROJECT_ID_LONG, projectId);
+		values[5] = getNamedValue(ed.getCategories());
 		return values;
 	}
 
@@ -234,33 +249,17 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	@Override
 	protected void afterInsert(ITransferObject to) throws Exception {
 		insertContent( (EnterpriseDocument) to );
-		updateCategories( (EnterpriseDocument) to );
 		updateScope( (EnterpriseDocument) to, false);
 	}
 	
 	@Override
 	protected void afterUpdate(ITransferObject to) throws Exception {
-		updateCategories( (EnterpriseDocument) to );
 		updateScope( (EnterpriseDocument) to, true );
 	}
 	
 	private void insertContent( EnterpriseDocument ed ) throws ContentFault, RemoteException {
 		ContentFormat contentFormat = new ContentFormat(ed.getMimeType().getName(), "UTF-8");
 		getContentService().write(ed.getId(), Constants.PROP_CONTENT, ed.getData(), contentFormat);		
-	}
-
-	private void updateCategories( EnterpriseDocument ed ) throws ClassificationFault, RemoteException {
-		AlfrescoCategory[] list = ed.getCategories();
-		if (! ArrayUtils.isEmpty(list) ) {
-			Predicate predicate = getPredicate(ed);
-			Reference[] categories = new Reference[list.length];
-			for( int i = 0; i < list.length; i++ ) {
-				categories[i] = list[i].getId(); 
-			}
-			String classification = Constants.createQNameString(NAMESPACE_CONTENT_MODEL, "generalclassifiable");
-			AppliedCategory ac = new AppliedCategory(classification, categories);
-			getClassificationService().setCategories(predicate, new AppliedCategory[]{ac});
-		}
 	}
 	
 	private void removeScope( EnterpriseDocument ed ) throws DAOException {
@@ -342,12 +341,8 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		return category;
 	}
 	
-	protected void prepareGetList() {
-		setCloseSession(false);		
-	}
-
-	protected void finishGetList() {
-		setCloseSession(true);
+	@Override
+	protected void afterList() {
 		this.enterpriseCache.clear();
 		this.projectCache.clear();
 	}

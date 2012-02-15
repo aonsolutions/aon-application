@@ -73,6 +73,10 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	protected abstract NamedValue[] updateValues( ITransferObject to );
 	
+	protected NamedValue[] getInsertAdditionalValues( ITransferObject to ) {
+		return null;
+	}
+	
 	protected CMLAddAspect[] getAddAspects( ParentReference parent, ITransferObject to ) {
 		return null;
 	}
@@ -194,6 +198,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		NamedValue[] contentProps = new NamedValue[2];
 		contentProps[0] = Utils.createNamedValue(Constants.PROP_NAME, ato.getName());
 		contentProps[1] = Utils.createNamedValue(Constants.PROP_DESCRIPTION, ato.getDescription());
+		contentProps = (NamedValue[]) ArrayUtils.addAll(contentProps, getInsertAdditionalValues(ato));
 		CMLCreate create = new CMLCreate("1", parent, null, null,
 				null, getType(), contentProps);
 
@@ -215,14 +220,16 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	@Override
 	public ITransferObject insert(ITransferObject to) throws DAOException {
 		try {
-			ParentReference parent = getParentReference( to );
 			startSession();
+			setCloseSession(false);
+			ParentReference parent = getParentReference( to );
 			addContent(parent, (IAlfrescoTransferObject) to);
 			afterInsert(to);
 		} catch ( Throwable e ) {
 			String message = getErrorMessage(to, e, INSERT_ERROR);
 			throw new DAOException( message, e );			
 		} finally {
+			setCloseSession(true);
 			endSession();
 		}
 		return to;
@@ -284,11 +291,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		}
 		return list;
 	}
-	
-	protected void prepareGetList() {
-	}
 
-	protected void finishGetList() {
+	protected void afterList() {
 	}
 	
 	@Override
@@ -297,9 +301,9 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		List<ITransferObject> tos = null;
 		try {
 			startSession();
-			prepareGetList();
+			setCloseSession(false);
 			String expression = getQueryExpression(criteria);
-			LOGGER.debug( "getList, expression={}", expression );
+			LOGGER.debug( "getList, expression={}", expression );			
 			List<ResultSetRow> list = getList(expression);
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
@@ -307,7 +311,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in getList of " + pojoClass, e );
 		} finally {
-			finishGetList();
+			afterList();
+			setCloseSession(true);
 			endSession();
 		}
 		return tos;			
@@ -335,9 +340,10 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		Predicate predicate = getPredicate(pk);
 		try {
 			startSession();
+			setCloseSession(false);
+			Predicate predicate = getPredicate(pk);
 			Node[] nodes = getRepositoryService().get(predicate);
 			if (! ArrayUtils.isEmpty(nodes) ) {
 				ITransferObject to = convert(nodes[0].getProperties());
@@ -346,6 +352,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in get of " + pojoClass );
 		} finally {
+			setCloseSession(true);
 			endSession();
 		}
 		return null;		
@@ -362,8 +369,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 			cml.setUpdate(new CMLUpdate[] { update });
 
 			getRepositoryService().update(cml);
-			
-			afterUpdate(to);
+
+			afterUpdate(to);		
 		} catch ( Throwable e ) {
 			String message = getErrorMessage(to, e, UPDATE_ERROR);
 			throw new DAOException( message, e );			

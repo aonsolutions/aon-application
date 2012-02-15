@@ -198,7 +198,7 @@ public class BasicAlfresco {
 
 	public static String getId( Reference reference ) {
 		Store store = reference.getStore();
-		String id = store.getScheme() + "\\://" + store.getAddress() + "/" + reference.getUuid();
+		String id = store.getScheme() + "://" + store.getAddress() + "/" + reference.getUuid();
 		return id;
 	}
 

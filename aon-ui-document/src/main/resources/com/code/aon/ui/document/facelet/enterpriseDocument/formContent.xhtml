@@ -53,7 +53,6 @@
 				value="#{registryBundle.registry_category}" />
 			<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" >
 				<ui:param name="controller" value="#{enterpriseDocument}" />			
-				<ui:param name="categoryRequired" value="#{true}" />
 			</ui:include>						
 
 			<c:if test="#{manager.mainEnterprise and (!enterprise.treeView)}" >
