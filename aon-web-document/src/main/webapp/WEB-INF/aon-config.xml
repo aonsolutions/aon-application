@@ -38,5 +38,11 @@
 			connectDomainMailAccounts="true"			
 		/>
 	</webmail:config>	
+
+	<project:config version="1.0" xmlns:project="http://www.esferalia.com/project" >
+		<project:project
+			skipProjectFlags="true"
+		/>
+	</project:config>	
 		
 </config>
