@@ -495,7 +495,7 @@ public class ReservationUtils implements IReservationConstants {
 		for (ITransferObject ito : tariffBean.getList(criteria)) {
 			return (Tariff)ito;
 		}
-		
+
 		throw new ReservationException("Invalid Rate Code: " + tariffCode, 249);
 	}
 

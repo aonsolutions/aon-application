@@ -53,6 +53,7 @@ public class ReservationManager implements IReservationConstants {
 
 	private ReservationUtils reservationUtils;
 	private IPriceStrategy priceStrategy;
+	private boolean calculateTaxData;
 	private Map<String, Integer> successMap;
 
 	public ReservationUtils getReservationUtils() {
@@ -79,7 +80,7 @@ public class ReservationManager implements IReservationConstants {
 				for (int i=0; i<reservationsType.sizeOfHotelReservationArray(); i++) {
 					getReservationUtils().init();
 					ProjectReservation reservation = processReservation(reservationsType.getHotelReservationArray(i), posType);
-					successMap.put(reservation.getCode(), reservation.getId());
+					successMap.put(reservation.getCrsCode(), reservation.getId());
 				}
 			} else {
 				throw new ReservationException("Invalid message", 395);
@@ -111,7 +112,7 @@ public class ReservationManager implements IReservationConstants {
 			createReservation(reservationType, posType, reservation);
 			return reservation;
 		} else {
-			throw new ReservationException("Reservation already exists", reservation.getCode(), 127);
+			throw new ReservationException("Reservation already exists", reservation.getCrsCode(), 127);
 		}
 	}
 
@@ -127,16 +128,16 @@ public class ReservationManager implements IReservationConstants {
 					createReservation(reservationType, posType, reservation);
 					return reservation;
 				} else {
-					throw new ReservationException("Reservation in use, can not be modified", reservation.getCode(), 255);
+					throw new ReservationException("Reservation in use, can not be modified", reservation.getCrsCode(), 255);
 				}
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-				throw new ReservationException("Reservation already cancelled", reservation.getCode(), 95);
+				throw new ReservationException("Reservation already cancelled", reservation.getCrsCode(), 95);
 			} else {
-				throw new ReservationException("Reservation in use, can not be modified", reservation.getCode(), 255);
+				throw new ReservationException("Reservation in use, can not be modified", reservation.getCrsCode(), 255);
 			}
 		} else {
-			String reservationCode = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
-			throw new ReservationException("No Reservations found with search criteria", reservationCode, 284);
+			String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
+			throw new ReservationException("No Reservations found with search criteria", reservationCrsCode, 284);
 		}
 	}
 
@@ -148,24 +149,31 @@ public class ReservationManager implements IReservationConstants {
 				cancelReservation(reservation);
 				return reservation;
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-				throw new ReservationException("Reservation already cancelled", reservation.getCode(), 95);
+				throw new ReservationException("Reservation already cancelled", reservation.getCrsCode(), 95);
 			} else {
-				throw new ReservationException("Reservation in use, can not be cancelled", reservation.getCode(), 255);
+				throw new ReservationException("Reservation in use, can not be cancelled", reservation.getCrsCode(), 255);
 			}
 		} else {
-			String reservationCode = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
-			throw new ReservationException("No Reservations found with search criteria", reservationCode, 284);
+			String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS); 
+			throw new ReservationException("No Reservations found with search criteria", reservationCrsCode, 284);
 		}
 	}
 
 	private void createReservation(HotelReservationType reservationType, POSType posType, ProjectReservation reservation) throws ReservationException {
-		String reservationId = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
+		String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
 		try {
 			String hotelCode = reservationType.getRoomStays().getRoomStayArray(0).getBasicPropertyInfo().getHotelCode();
+			String reservationCode = findReservationId(reservationType.getResGlobalInfo(), EXT);
 			String operationDate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, DATE);
 			String operationTime = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), OPERATION_TIME_STAMP, TIME);
 			Date checkIn = reservationType.getResGlobalInfo().getTimeSpan().getStart().getTime();
 			Date checkOut = reservationType.getResGlobalInfo().getTimeSpan().getEnd().getTime();
+			Calendar checkInTime = new GregorianCalendar();
+			checkInTime.setTime(checkIn);
+			checkInTime.set(checkInTime.get(Calendar.YEAR), checkInTime.get(Calendar.MONTH), checkInTime.get(Calendar.DATE), 14, 0, 0);
+			Calendar checkOutTime = new GregorianCalendar();
+			checkOutTime.setTime(checkOut);
+			checkOutTime.set(checkOutTime.get(Calendar.YEAR), checkOutTime.get(Calendar.MONTH), checkOutTime.get(Calendar.DATE), 12, 0, 0);
 			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
 			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
@@ -179,16 +187,20 @@ public class ReservationManager implements IReservationConstants {
 			double otherTaxQuota = findTaxQuota(reservationType.getResGlobalInfo(), OTHER_TAX);
 			double total = CommonUtil.round(reservationType.getResGlobalInfo().getTotal().getAmountAfterTax().doubleValue());
 			if (CommonUtil.round(taxableBase + vatQuota + otherTaxQuota) != total) {
-				throw new ReservationException("Reservation Total is not correct", reservationId, 197);
+				throw new ReservationException("Reservation Total is not correct", reservationCrsCode, 197);
+			} else {
+				calculateTaxData = (vatQuota == 0);
 			}
 
 			Hotel hotel = getReservationUtils().obtainHotel(hotelCode);
 			getReservationUtils().setDomain(hotel.getDomain());
 
 			reservation.setHotel(hotel);
-			reservation.setCode(reservationId);
+			reservation.setCode(reservationCode);
 			reservation.setStartDate(checkIn);
 			reservation.setEndDate(checkOut);
+			reservation.setStartTime(checkInTime.getTime());
+			reservation.setEndTime(checkOutTime.getTime());
 			reservation.setSeller(getReservationUtils().obtainSeller(sellerSource));
 			reservation.setAgency(getReservationUtils().obtainAgency(agencyInfo));
 			reservation.setAgencyCommissionPercent(getReservationUtils().obtainAgencyCommissionPercent(agencyInfo));
@@ -204,6 +216,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setTotal(total);
 			reservation.setRemarks(remarks);
 			reservation.setCrs(true);
+			reservation.setCrsCode(reservationCrsCode);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
 			getReservationUtils().fillProject(reservation);
@@ -240,10 +253,10 @@ public class ReservationManager implements IReservationConstants {
 
 			if (ex instanceof ReservationException) {
 				ReservationException rex = (ReservationException)ex;
-				rex.setRecord(reservationId);
+				rex.setRecord(reservationCrsCode);
 				throw rex;
 			} else {
-				throw new ReservationException("Unknown error", reservationId, 1);
+				throw new ReservationException("Unknown error", reservationCrsCode, 1);
 			}
 		}
 	}
@@ -288,6 +301,7 @@ public class ReservationManager implements IReservationConstants {
 	}
 
 	private void createReservationRoom(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
+		int totalPax = 0;
 		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
 		for (int i=0; i<reservationType.getRoomStays().sizeOfRoomStayArray(); i++) {
 			RoomStay stay = reservationType.getRoomStays().getRoomStayArray(i);
@@ -309,12 +323,17 @@ public class ReservationManager implements IReservationConstants {
 							} else {
 								reservationRoom.setAdults(stay.getGuestCounts().getGuestCountArray(k).getCount());
 							}
+							totalPax += reservationRoom.getChildren() + reservationRoom.getAdults();
 						}
 					}
 					reservationRoomBean.insert(reservationRoom);
 				}
 			}
 		}
+
+		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservation.setRemarks(reservation.getRemarks() + "NUMERO TOTAL DE PERSONAS: " + totalPax + "\n");
+		reservation = (ProjectReservation)reservationBean.update(reservation);
 	}
 
 	private void createReservationService(HotelReservationType reservationType, ProjectReservation reservation) throws ManagerBeanException, ReservationException {
@@ -340,7 +359,7 @@ public class ReservationManager implements IReservationConstants {
 					nextCalendar.setTime(reservation.getEndDate());
 					if ((j+1) < service.sizeOfPriceArray()) {
 						nextCalendar = service.getPriceArray(j+1).getEffectiveDate();
-						nextCalendar.set(Calendar.HOUR, 0);
+						nextCalendar.set(Calendar.HOUR_OF_DAY, 0);
 						nextCalendar.set(Calendar.MINUTE, 0);
 						nextCalendar.set(Calendar.SECOND, 0);
 					}
@@ -350,10 +369,15 @@ public class ReservationManager implements IReservationConstants {
 						reservationServiceDetail.setDomain(getReservationUtils().getDomain());
 						reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());
 						reservationServiceDetail.setQuantity(price.getNumberOfUnits());
-						reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
+						if (calculateTaxData) {
+							double vatPercent = reservationService.getItem().getProduct().getVat().getPercentage();
+							reservationServiceDetail.setPrice(CommonUtil.round(price.getBase().getAmountBeforeTax().doubleValue() / (1 + vatPercent / 100), 4));
+						} else {
+							reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
+						}
 						reservationServiceDetail.setTaxableBase(getPriceStrategy().getBasePrice(reservationServiceDetail));
 						reservationServiceDetailBean.insert(reservationServiceDetail);
-						servicesTaxableBase += CommonUtil.round(reservationServiceDetail.getTaxableBase());
+						servicesTaxableBase = CommonUtil.round(servicesTaxableBase + reservationServiceDetail.getTaxableBase(), 4);
 						
 						currentCalendar.add(Calendar.DATE, 1);
 					}
@@ -361,16 +385,25 @@ public class ReservationManager implements IReservationConstants {
 			}
 		}
 
+		if (calculateTaxData) {
+			servicesTaxableBase = CommonUtil.round(servicesTaxableBase);
+			reservation.setTaxableBase(servicesTaxableBase);
+			reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
+
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			reservation = (ProjectReservation)reservationBean.update(reservation);
+		}
+
 		if (reservation.getTaxableBase() != servicesTaxableBase) {
-			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCode(), 197);
+			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
 		}
 	}
 
 	private ProjectReservation obtainReservation(HotelReservationType reservationType) throws ManagerBeanException {
-		String reservationId = reservationType.getResGlobalInfo().getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
+		String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), reservationId);
+		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservationCrsCode);
 		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS), new Boolean(true));
 		if (reservationBean.getCount(criteria) > 0) {
 			return (ProjectReservation)reservationBean.getList(criteria).get(0);
@@ -456,6 +489,22 @@ public class ReservationManager implements IReservationConstants {
 		reservationBean.update(reservation);
 	}
 
+	private String findReservationId(ResGlobalInfoType resGlobalInfoType, String source) {
+		if (resGlobalInfoType.getHotelReservationIDs() != null) {
+			for (int i=0; i<resGlobalInfoType.getHotelReservationIDs().sizeOfHotelReservationIDArray(); i++) {
+				HotelReservationID reservationCode = resGlobalInfoType.getHotelReservationIDs().getHotelReservationIDArray(i);
+				if (reservationCode.getResIDSource() == null || reservationCode.getResIDSource().equals(source)) {
+					return reservationCode.getResIDValue();
+				}
+			}
+			
+			if (resGlobalInfoType.getHotelReservationIDs().sizeOfHotelReservationIDArray() > 0) {
+				return resGlobalInfoType.getHotelReservationIDs().getHotelReservationIDArray(0).getResIDValue();
+			}
+		}
+		return null;
+	}
+
 	private SourceType findPosSource(SourceType[] sources, String type) {
 		for (int i=0; i<sources.length; i++) {
 			SourceType source = sources[i];
@@ -503,7 +552,7 @@ public class ReservationManager implements IReservationConstants {
 			for (int i=0; i<resGlobalInfoType.getComments().sizeOfCommentArray(); i++) {
 				Comment comment = resGlobalInfoType.getComments().getCommentArray(i);
 				for (int j=0; j<comment.sizeOfTextArray(); j++) {
-					comments += comment.getTextArray(j).getStringValue() + " ";
+					comments += comment.getTextArray(j).getStringValue() + "\n";
 				}
 			}
 		}
