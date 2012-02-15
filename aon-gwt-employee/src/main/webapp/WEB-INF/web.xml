@@ -56,12 +56,12 @@
     <url-pattern>/aon_gwt_employee/documents</url-pattern>
   </servlet-mapping>
   <servlet>
-    <servlet-name>pdf2ImageServlet</servlet-name>
-    <servlet-class>com.esferalia.aon.gwt.employee.server.PDF2ImageServlet</servlet-class>
+    <servlet-name>openDocument2ImageServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocument2ImageServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>pdf2ImageServlet</servlet-name>
-    <url-pattern>/aon_gwt_employee/pdf2Image/*</url-pattern>
+    <servlet-name>openDocument2ImageServlet</servlet-name>
+    <url-pattern>/aon_gwt_employee/openDocument2Image/*</url-pattern>
   </servlet-mapping>
   <context-param>
     <description>
