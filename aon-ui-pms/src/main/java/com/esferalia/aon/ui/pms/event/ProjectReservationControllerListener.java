@@ -1,6 +1,8 @@
 package com.esferalia.aon.ui.pms.event;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -25,6 +27,8 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
 		try {
 			controller.resetHotel();
+			controller.resetStartTime();
+			controller.resetEndTime();
 			controller.resetNights();
 			controller.resetGuestName();
 			controller.resetRoomItem();
@@ -44,14 +48,19 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		controller.resetStartTime();
+		controller.resetEndTime();
 		controller.resetNights();
 		controller.setInvoiceModel(null);
 	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ProjectReservation reservation = (ProjectReservation)event.getController().getTo();
+		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		reservation.setCreationDate(new Date());
+		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
+		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
 	}
 
 	@Override
@@ -69,8 +78,19 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		ProjectReservation reservation = (ProjectReservation)event.getController().getTo();
+		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		ProjectReservation reservation = (ProjectReservation)controller.getTo();
 		reservation.setModificationDate(new Date());
+		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
+		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
+	}
+
+	private Date obtainDateTime(Date date, String time) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0, 2)));
+		calendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(3, time.length())));
+		return calendar.getTime();
 	}
 
 	private void insertProjectReservationGuest(ProjectReservation reservation, String name, String surname) throws ManagerBeanException {

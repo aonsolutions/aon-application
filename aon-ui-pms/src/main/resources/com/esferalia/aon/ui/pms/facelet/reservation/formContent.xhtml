@@ -7,64 +7,252 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
-		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+	<aon:outputLabel for="ProjectReservation_hotel_id" value="#{pmsBundle.pms_hotel}" />
+	<aon:outputText	value="#{reservation.to.hotel.workPlace.description}" styleClass="aon-bold"
+		rendered="#{!reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_hotel_id" value="#{reservation.to.hotel}" 
+		rendered="#{reservation.new}" required="true"
+		valueChangeListener="#{reservation.onHotelChanged}"
+		reRender="ProjectReservation_roomItem,ProjectReservation_roomTariff">
+		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_status" value="#{bundle.aon_status}"
+		rendered="#{!reservation.new}" />
+	<aon:div rendered="#{!reservation.new}">
+		<aon:outputText id="ProjectReservation_status" value="#{reservation.to.status}" 
+			styleClass="aon-bold" rendered="#{!reservation.new}"  />
+		<aon:commandButton id="block" value="&#160;"
+			actionListener="#{reservation.onBlock}"
+			title="#{pmsBundle.pms_to_block}"
+			immediate="true" rendered="#{!reservation.new and reservation.active and aonRole.saleOperator}"
+			styleClass="aon-icon-commandButton aon-icon-lock aon-margin-left">
+		</aon:commandButton>										
+		<aon:commandButton id="unblock" value="&#160;"
+			actionListener="#{reservation.onUnblock}"
+			title="#{pmsBundle.pms_to_unblock}"
+			immediate="true" rendered="#{reservation.blocked and aonRole.saleOperator}"
+			styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+		</aon:commandButton>										
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
+	<aon:outputText	id="ProjectReservation_guest" value="#{reservation.to.guestFullName}" 
+		styleClass="aon-bold" rendered="#{!reservation.new}" />
+	<aon:div rendered="#{reservation.new}">
+		<aon:outputLabel for="ProjectReservation_guestName" value="#{bundle.aon_name}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_guestName" value="#{reservation.guestName}" 
+			size="30" maxlength="64" required="true" />
+		<aon:outputLabel for="ProjectReservation_guestSurname" value="#{bundle.aon_surname}"
+			styleClass="aon-margin-left aon-margin-right aon-italic" />
+		<aon:inputText id="ProjectReservation_guestSurname" value="#{reservation.guestSurname}" 
+			size="30" maxlength="64" required="true" />
+	</aon:div>
+
+	<aon:outputLabel for="ProjectReservation_creationDate" value="#{pmsBundle.pms_reservation_creationDate}"
+		rendered="#{!reservation.new}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" rendered="#{!reservation.new}">
+		<aon:outputText id="ProjectReservation_creationDate" value="#{reservation.to.creationDate}"
+			styleClass="aon-bold">
+			<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
 		<aon:div>
-			<aon:div styleClass="aon-group">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{pmsBundle.pms_reservation_data}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 
-					<aon:div styleClass="aon-group-body-internal">
-						<aon:panelGrid columns="2" styleClass="aon-width-all"
-							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-
-							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formBasic.xhtml" />
-
-						</aon:panelGrid>
-					</aon:div>
-				</aon:div>
-			</aon:div>
-
-		</aon:div>
-
-		<aon:div>
-			<aon:div styleClass="aon-group aon-vertical-align-bottom">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{pmsBundle.pms_reservation_sales}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 	
-					<aon:div styleClass="aon-group-body-internal">
-						<a4j:region>
-							<aon:panelGrid columns="2" styleClass="aon-width-all"
-								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-
-								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formSales.xhtml" />
-
-							</aon:panelGrid>
-						</a4j:region>
-					</aon:div>
-				</aon:div>
-			</aon:div>
-
-			<aon:div styleClass="aon-group">
-				<aon:div styleClass="aon-group-title">
-					<aon:outputText value="#{pmsBundle.pms_reservation_prices}"/>
-				</aon:div>
-				<aon:div styleClass="aon-group-body"> 	
-					<aon:div styleClass="aon-group-body-internal">
-						<a4j:region>
-							<aon:panelGrid columns="2" styleClass="aon-width-all"
-								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-
-								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/formPrices.xhtml" />
-
-							</aon:panelGrid>
-						</a4j:region>
-					</aon:div>
-				</aon:div>
-			</aon:div>
+			<aon:outputLabel for="ProjectReservation_modificationDate" value="#{pmsBundle.pms_reservation_modificacionDate}:"
+				styleClass="aon-margin-right aon-italic" rendered="#{reservation.to.modificationDate != null}" />
+			<aon:outputText id="ProjectReservation_modificationDate" value="#{reservation.to.modificationDate}" 
+				styleClass="aon-bold" rendered="#{reservation.to.modificationDate != null}">
+				<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
 		</aon:div>
 	</aon:panelGrid>
-	 
+
+	<aon:outputLabel for="ProjectReservation_project_id" value="#{pmsBundle.pms_reservation_id}"
+		rendered="#{!reservation.new}" />
+	<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" 
+		styleClass="aon-bold" rendered="#{!reservation.new}" />
+
+	<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+		<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
+			rendered="#{reservation.to.crs or !reservation.active or !aonRole.saleOperator}" />
+		<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
+			size="16" maxlength="16" required="true"
+			rendered="#{!reservation.to.crs and reservation.active and aonRole.saleOperator}" />
+		<aon:div>
+			<aon:outputLabel for="ProjectReservation_crsCode" value="#{pmsBundle.pms_crs}:"
+				styleClass="aon-margin-right aon-italic" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
+			<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}" 
+				styleClass="aon-bold" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
+		</aon:div>
+	</aon:panelGrid>
+
+	<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
+		<aon:outputText	value="#{reservation.to.startDate}" styleClass="aon-bold"
+			rendered="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<aon:selectInputDate id="ProjectReservation_startDate" value="#{reservation.to.startDate}" 
+			required="true" rendered="#{!reservation.to.crs and reservation.active and !reservation.to.inUse and aonRole.saleOperator}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support ajaxSingle="true" event="oninputchange"
+				actionListener="#{reservation.onStartDateChanged}"
+				reRender="ProjectReservation_nights,ProjectReservation_endDate"
+				focus="ProjectReservation_nights" />
+			<a4j:support ajaxSingle="true" event="onchanged"
+				actionListener="#{reservation.onStartDateChanged}"
+				reRender="ProjectReservation_nights,ProjectReservation_endDate"
+				focus="ProjectReservation_nights" />
+		</aon:selectInputDate>
+		<aon:div>
+			<aon:outputLabel for="ProjectReservation_nights" value="#{pmsBundle.pms_nights}" 
+				styleClass="aon-margin-right aon-italic" />
+			<aon:outputText value="#{reservation.nights}" styleClass="aon-bold" 
+				rendered="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}" />
+			<aon:inputText id="ProjectReservation_nights" value="#{reservation.nights}"
+				size="1" maxlength="3"
+				rendered="#{!reservation.to.crs and reservation.active and !reservation.to.inUse and aonRole.saleOperator}"
+				valueChangeListener="#{reservation.onNightsChanged}"
+				reRender="ProjectReservation_endDate"
+				focus="ProjectReservation_bookingHolder" />
+		</aon:div>
+	</aon:panelGrid>
+
+	<aon:outputLabel for="ProjectReservation_startTime" value="#{pmsBundle.pms_checkIn_hour}"
+		rendered="#{!reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_startTime" value="#{reservation.startTime}"
+		rendered="#{!reservation.new}">
+		<f:selectItems value="#{reservation.reservationTimes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_endDate" value="#{pmsBundle.pms_checkOut}" />
+	<aon:outputText	value="#{reservation.to.endDate}" styleClass="aon-bold"
+		rendered="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}">
+		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+			timeZone="#{timeZoneController.timeZoneId}" />
+	</aon:outputText>
+	<aon:selectInputDate id="ProjectReservation_endDate" value="#{reservation.to.endDate}" 
+		required="true" rendered="#{!reservation.to.crs and reservation.active and !reservation.to.inUse and aonRole.saleOperator}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+		<a4j:support ajaxSingle="true" event="oninputchange"
+			actionListener="#{reservation.onEndDateChanged}"
+			reRender="ProjectReservation_startDate,ProjectReservation_nights"
+			focus="ProjectReservation_bookingHolder" />
+		<a4j:support ajaxSingle="true" event="onchanged"
+			actionListener="#{reservation.onEndDateChanged}"
+			reRender="ProjectReservation_startDate,ProjectReservation_nights"
+			focus="ProjectReservation_bookingHolder" />
+	</aon:selectInputDate>
+
+	<aon:outputLabel for="ProjectReservation_endTime" value="#{pmsBundle.pms_checkOut_hour}" 
+		rendered="#{!reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_endTime" value="#{reservation.endTime}"
+		rendered="#{!reservation.new}">
+		<f:selectItems value="#{reservation.reservationTimes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
+	<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
+		rendered="#{!reservation.active or !aonRole.saleOperator}"  />
+	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
+		required="true" rendered="#{reservation.active and aonRole.saleOperator}"
+		valueChangeListener="#{reservation.onHolderChanged}"
+		reRender="BookingHolderLabelDiv,BookingHolderValueDiv,ProjectReservation_roomTariff">
+		<f:selectItems value="#{pmsCollections.bookingHolders}" />
+	</aon:selectOneMenu>
+
+	<aon:div id="BookingHolderLabelDiv">
+		<aon:outputLabel for="Customer_id-Agency" value="#{pmsBundle.pms_agency}"
+			 rendered="#{!reservation.to.companyHolder}" />
+		<aon:outputLabel for="Customer_id-Company" value="#{pmsBundle.pms_company}"
+			rendered="#{reservation.to.companyHolder}" />
+	</aon:div>
+
+	<aon:div id="BookingHolderValueDiv">
+		<aon:outputText value="#{reservation.to.agency.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}"  />
+		<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{reservation.to.agency}" />
+			<ui:param name="lookupSuffix" value="-Agency" />
+			<ui:param name="lookupRendered" value="#{!reservation.to.companyHolder and reservation.active and aonRole.saleOperator}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator or !aonRole.financeOperator}" />
+			<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
+			<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{reservation.onAgencyChanged}" type="lookupChangeListener" />
+		</ui:include>
+		<aon:outputText value="#{reservation.to.company.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}"  />
+		<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{reservation.to.company}" />
+			<ui:param name="lookupSuffix" value="-Company" />
+			<ui:param name="lookupRendered" value="#{reservation.to.companyHolder and reservation.active and aonRole.saleOperator}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator or !aonRole.financeOperator}" />
+			<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
+			<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{reservation.onCompanyChanged}" type="lookupChangeListener" />
+		</ui:include>
+	</aon:div>
+
+	<aon:outputLabel value="#{bundle.aon_amount} #{bundle.aon_total}" rendered="#{!reservation.new}" />
+	<aon:panelGrid columns="3" columnClasses="aon-width-130, aon-width-130, aon-width-auto" rendered="#{!reservation.new}">
+		<aon:div>
+			<aon:outputText	value="#{reservation.to.total}"	styleClass="aon-bold">
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+		</aon:div>
+		<aon:div>
+			<aon:outputLabel value="#{pmsBundle.pms_room_count}:" styleClass="aon-margin-right aon-italic" />
+			<aon:outputText	value="#{reservation.to.roomCount}" styleClass="aon-bold" />
+		</aon:div>
+		<aon:div>
+			<aon:outputLabel value="#{pmsBundle.pms_pax_count}:" styleClass="aon-margin-right aon-italic" />
+			<aon:outputText	value="#{reservation.to.personCount}" styleClass="aon-bold" />
+		</aon:div>
+	</aon:panelGrid>
+
+	<aon:outputLabel for="Seller_id" value="#{pmsBundle.pms_seller}" />
+	<aon:outputText value="#{reservation.to.seller.registry.fullName}" styleClass="aon-bold" 
+		rendered="#{!reservation.active or !aonRole.saleOperator}"  />
+	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{reservation.to.seller}" />
+		<ui:param name="lookupRendered" value="#{reservation.active and aonRole.saleOperator}" />
+		<ui:param name="skipLabel" value="#{true}" />
+		<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator}" />
+		<ui:param name="skipGoToButton" value="#{!aonRole.saleOperator}" />
+	</ui:include>
+
+	<aon:outputLabel for="ProjectReservation_roomItem" value="#{pmsBundle.pms_room_type}" 
+		rendered="#{reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_roomItem" value="#{reservation.roomItem}" 
+		rendered="#{reservation.new}" required="true">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{reservation.hotelRoomItems}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_roomTariff" value="#{productBundle.product_tariff}" 
+		rendered="#{reservation.new}" />
+	<aon:selectOneMenu id="ProjectReservation_roomTariff" value="#{reservation.roomTariff}" 
+		rendered="#{reservation.new}" required="true">
+		<f:selectItem itemLabel="-" value="#{null}" />
+		<f:selectItems value="#{pmsCollections.tariffs}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{pmsBundle.pms_hotel}" />
+	<aon:inputTextarea id="ProjectReservation_comments" value="#{reservation.to.comments}"
+		cols="80" rows="5" />
+
+	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark} #{pmsBundle.pms_reservation}" />
+	<aon:inputTextarea id="ProjectReservation_remarks" value="#{reservation.to.remarks}"
+		cols="80" rows="5" />
+
 </ui:composition>

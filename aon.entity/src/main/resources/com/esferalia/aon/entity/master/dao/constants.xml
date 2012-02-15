@@ -286,8 +286,8 @@
 		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,customer.id,active"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservation" sqlName="project_reservation">
-		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,endDate,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,tariff_id,taxableBase,vatQuota,otherTaxQuota,total,remarks,crs,status"/>
-		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,endDate,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,tariff.id,taxableBase,vatQuota,otherTaxQuota,total,remarks,crs,status"/>
+		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,tariff_id,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status"/>
+		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,startTime,endDate,endTime,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,tariff.id,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationRoom" sqlName="project_reservation_room">
 		<alias names="adults,children,item_id,projectReservation_endDate,projectReservation_hotel_id,projectReservation_id,projectReservation_startDate,roomIndex,tariff_id" />

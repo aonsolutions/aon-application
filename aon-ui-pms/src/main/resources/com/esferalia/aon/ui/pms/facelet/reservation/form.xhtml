@@ -14,7 +14,6 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
-				<ui:param name="skipSaveButton" value="#{!reservation.active or !aonRole.saleOperator}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="reservation-Invoice"
@@ -35,7 +34,11 @@
 				</c:if>
 
 				<c:if test="#{!reservation.new}">
-					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formContent.xhtml" />
+					<aon:panelGrid columns="4" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-400,
+										aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/formContent.xhtml" />
+					</aon:panelGrid>
 
 					<aon:panelTabSet id="reservationTab" selectedTab="#{reservation.selectedTab}">
 						<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">

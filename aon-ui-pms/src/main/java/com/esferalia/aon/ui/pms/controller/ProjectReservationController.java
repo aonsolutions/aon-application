@@ -1,6 +1,10 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,6 +58,8 @@ import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 public class ProjectReservationController extends BasicController implements IPmsConstants {
 
 	private String selectedTab;
+	private String startTime;
+	private String endTime;
 	private int nights;
 	private String guestName;
 	private String guestSurname;
@@ -70,6 +76,42 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
+	}
+
+	public String getStartTime() {
+		if (StringUtils.isEmpty(startTime)) {
+			ProjectReservation reservation = (ProjectReservation)getTo();
+			if (reservation.getStartTime() != null) {
+				startTime = new SimpleDateFormat("HH:mm").format(reservation.getStartTime());
+			} else {
+				startTime = "14:00";
+			}
+		}
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	public void resetStartTime() {
+		setStartTime(null);
+	}
+	
+	public String getEndTime() {
+		if (StringUtils.isEmpty(endTime)) {
+			ProjectReservation reservation = (ProjectReservation)getTo();
+			if (reservation.getEndTime() != null) {
+				endTime = new SimpleDateFormat("HH:mm").format(reservation.getEndTime());
+			} else {
+				endTime = "12:00";
+			}
+		}
+		return endTime;
+	}
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+	public void resetEndTime() {
+		setEndTime(null);
 	}
 
 	public int getNights() {
@@ -168,6 +210,25 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void setInvoiceModel(DataModel invoiceModel) {
 		this.invoiceModel = invoiceModel;
+	}
+
+	public List<SelectItem> getReservationTimes() {
+		List<SelectItem> hours = new LinkedList<SelectItem>();
+		DateFormat formatter = new SimpleDateFormat("HH:mm");
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		for (int i=0; i<24; i++) {
+			calendar.set(Calendar.HOUR_OF_DAY, i);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			SelectItem item = new SelectItem(formatter.format(calendar.getTime()), formatter.format(calendar.getTime()));
+			hours.add(item);
+
+			calendar.set(Calendar.MINUTE, 30);
+			item = new SelectItem(formatter.format(calendar.getTime()), formatter.format(calendar.getTime()));
+			hours.add(item);
+		}
+		return hours;
 	}
 
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
@@ -318,10 +379,15 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-	public void onHolderChanged(ValueChangeEvent event) {
+	public void onHolderChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setBookingHolder((BookingHolder)event.getNewValue());
+			if (reservation.isCompanyHolder()) {
+				reservation.setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+			} else {
+				reservation.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+			}
 			resetRoomTariff();
 		}
 	}
