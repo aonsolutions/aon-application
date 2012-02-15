@@ -25,6 +25,16 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rpm-maven-plugin</artifactId>
 				<version>2.0.1</version>
+	                                                   <configuration>
+                                                                <requires>
+                                                                        <require>openoffice.org-core</require>
+                                                                        <require>openoffice.org-headless</require>
+                                                                        <require>openoffice.org-calc</require>
+                                                                        <require>openoffice.org-draw</require>
+                                                                        <require>openoffice.org-writer</require>
+                                                                        <require>openoffice.org-impress</require>
+                                                                </requires>
+	                                                   </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
