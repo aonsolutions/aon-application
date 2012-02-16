@@ -92,40 +92,10 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	
 	private static ByteBuffer getPdfByeBuffer ( Integer id ) 
 			throws SQLException, IOException  {
-		Connection connection = AonServletUtils.getConnection();
 
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-		try {
-
-			stmt = connection.prepareStatement("SELECT *" 
-					+ " FROM " + SQLConstants.RATTACH + " WHERE "
-					+ RattachColumns.ID + "= ? ");
-
-
-			stmt.setInt(1, id);
+			RAttach rattach = getRAttach(id);
 			
-			rs = stmt.executeQuery();
-			
-			if (!rs.next()) {
-				throw new NoSuchDocumentException(id);
-			}
-			
-			MimeType mimeType = 
-					mimeTypeOf(rs.getInt(RattachColumns.MIMETYPE));
-			Blob blob = rs.getBlob(RattachColumns.DATA);
-			byte bytes[] = blob.getBytes(1, (int) blob.length());
-			
-			return getPdfByeBuffer(id, mimeType, bytes);
-
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-		}
+			return getPdfByeBuffer(id, rattach.mimeType, rattach.bytes);
 	}
 	
 	private static ByteBuffer getPdfByeBuffer ( Integer id, MimeType mimeType, byte [] bytes ) 
@@ -190,17 +160,5 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
 		ImageIO.write(img, format, os);
 
-	}
-
-	private static class NoSuchDocumentException extends IOException {
-		private int id;
-		
-		public NoSuchDocumentException(int id) {
-			this.id = id;
-		}
-		
-		public int getId() {
-			return id;
-		}
 	}
 }

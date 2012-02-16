@@ -71,6 +71,14 @@
     <servlet-name>salaryExporterServlet</servlet-name>
     <url-pattern>/salary/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>openDocumentConverter</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocumentConverterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>openDocumentConverter</servlet-name>
+    <url-pattern>/document/*</url-pattern>
+  </servlet-mapping>
   <context-param>
     <description>
 			Improving render phase performance. You should increase

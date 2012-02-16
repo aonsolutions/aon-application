@@ -230,7 +230,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		public void print() {
 			Salary salary = salaries.get(currentIndex());
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + ".pdf");
-			Window.alert( printURL);
 			Window.open(printURL, "_blank", null);
 		}
 

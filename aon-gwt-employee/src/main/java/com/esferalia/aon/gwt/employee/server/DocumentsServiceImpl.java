@@ -174,7 +174,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 				int height = (int) ( pdfPage.getBBox().getHeight() * zoom );
 				
 				// TODO : aon_gwt_employee ???
-				printStream.printf("<div class='page' ><img style='width:%dpx;height:%dpx;'  src='openDocument2Image/%d.png?%s=%d&%s=%f'></img> </div>",
+				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%f'></img> </div>",
 						width,
 						height,
 						doc.getId(),

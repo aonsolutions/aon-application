@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.employee.shared.Document;
+import com.esferalia.aon.gwt.employee.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
@@ -179,7 +181,9 @@ public class Documents extends Composite {
 		
 		@Override
 		public void print() {
-			// TODO Auto-generated method stub
+			Document doc = documents.get(currentIndex());
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "document/" + doc.getId() + ".pdf");
+			Window.open(printURL, "_blank", null);
 		}
 
 		@Override

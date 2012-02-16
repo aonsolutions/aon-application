@@ -1,8 +1,19 @@
 package com.esferalia.aon.gwt.employee.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -17,15 +28,28 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.employee.server.OpenDocumentConverterServlet.NoSuchDocumentException;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
+
+	protected  static class NoSuchDocumentException extends IOException {
+		private int id;
+		
+		public NoSuchDocumentException(int id) {
+			this.id = id;
+		}
+		
+		public int getId() {
+			return id;
+		}
+	}
 
 	private static final int DEFAULT_OFFICE_PORT = 2002;
 
 	
 	
-	
-	/*
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -33,20 +57,47 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 		try {
 
 			String requestURI = req.getRequestURI();
-			String extension = OpenDocumentConverterServlet.getExtn(requestURI);
-			String rattach = OpenDocumentConverterServlet.getWithoutExtn(requestURI);
+			String extension = AonServletUtils.getExtn(requestURI);
+			String rattachIdStr = AonServletUtils.getWithoutExtn(requestURI);
+			int rattachId = Integer.parseInt(rattachIdStr);
 
-			int rattachId = Integer.parseInt(rattach);
-
-			OutputStream os = resp.getOutputStream();
 			MimeType mimeType = MimeType.getByExtension(extension);
 			
-			//resp.setContentType(String.format("image/%s", format));
+			RAttach rattach = getRAttach(rattachId);
+			
+			String tmpDir = System.getProperty("java.io.tmpdir");
+
+			File inputFile = 
+					new File(tmpDir, rattachId + "." + rattach.mimeType.getExtension() ); 
+			
+			FileOutputStream inputFileOs = 
+					new FileOutputStream(inputFile);
+			inputFileOs.write(rattach.bytes);
+			inputFileOs.close();
+			
+			File outputFile = 
+					new File(tmpDir, rattachId + "." + mimeType.getExtension() ); 
+			
+			convert(inputFile, outputFile);
+
+			resp.setContentType(mimeType.getName());
+			
+			InputStream outputFileIs = 
+					new FileInputStream(outputFile);
+			OutputStream os = resp.getOutputStream();
+			
+			byte buff [] = new byte [1024] ;
+			int read = -1;
+			while ( ( read = outputFileIs.read(buff, 0 , buff.length) ) != -1 ) {
+				os.write(buff, 0, read );
+			}
+			
+			os.flush();
 			
 		} catch (SQLException e) {
 			throw new ServletException(e);
 		} 
-	}*/
+	}
 	
 
 	
@@ -81,6 +132,51 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 		}finally {
 			officeManager.stop();
 		}
+	}
+
+	protected static RAttach getRAttach ( Integer id ) 
+			throws SQLException, IOException  {
+		Connection connection = AonServletUtils.getConnection();
+
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			stmt = connection.prepareStatement("SELECT *" 
+					+ " FROM " + SQLConstants.RATTACH + " WHERE "
+					+ RattachColumns.ID + "= ? ");
+
+
+			stmt.setInt(1, id);
+			
+			rs = stmt.executeQuery();
+			
+			if (!rs.next()) {
+				throw new OpenDocumentConverterServlet.NoSuchDocumentException(id);
+			}
+
+			RAttach rattach  = new RAttach();
+			Blob blob = rs.getBlob(RattachColumns.DATA);
+			rattach.bytes = blob.getBytes(1, (int) blob.length());
+			rattach.mimeType = mimeTypeOf(rs.getInt(RattachColumns.MIMETYPE));
+			
+			return rattach;
+			
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+		}
+	}
+	
+	protected static class RAttach {
+		
+		byte [] bytes;
+		MimeType mimeType;
+	
 	}
 	
 }
