@@ -13,6 +13,13 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="reservation-Refresh"
+						value="#{pmsBundle.pms_to_refresh}"	immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh"
+						actionListener="#{reservation.onSearch}"
+						reRender="aonContent" />
+				</ui:define>							
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
