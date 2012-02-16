@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:outputLabel for="ProjectReservation_hotel_id" value="#{pmsBundle.pms_hotel}" />
@@ -209,6 +210,30 @@
 			<aon:outputText	value="#{reservation.to.total}"	styleClass="aon-bold">
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
+			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info"/>
+			<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto">
+				<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120,aon-noborder aon-bold aon-text-right">
+					<aon:outputLabel value="#{bundle.aon_taxable_base}:" />
+					<aon:outputText	value="#{reservation.to.taxableBase}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+
+					<aon:outputLabel value="#{bundle.aon_vat}:" />
+					<aon:outputText	value="#{reservation.to.vatQuota}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+
+					<aon:outputLabel value="#{pmsBundle.pms_other_tax}:" />
+					<aon:outputText	value="#{reservation.to.otherTaxQuota}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+
+					<aon:outputLabel value="#{bundle.aon_total}:" />
+					<aon:outputText	value="#{reservation.to.total}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+				</aon:panelGrid>
+			</rich:toolTip>
 		</aon:div>
 		<aon:div>
 			<aon:outputLabel value="#{pmsBundle.pms_room_count}:" styleClass="aon-margin-right aon-italic" />
