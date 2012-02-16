@@ -253,6 +253,6 @@
 
 	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark} #{pmsBundle.pms_reservation}" />
 	<aon:inputTextarea id="ProjectReservation_remarks" value="#{reservation.to.remarks}"
-		cols="80" rows="5" />
+		cols="80" rows="5" disabled="#{!aonRole.admin}" />
 
 </ui:composition>
