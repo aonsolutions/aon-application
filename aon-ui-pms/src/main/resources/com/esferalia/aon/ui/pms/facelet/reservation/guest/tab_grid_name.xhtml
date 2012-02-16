@@ -10,11 +10,13 @@
 		<aon:panelGrid columns="2" columnClasses="aon-italic,">
 			<aon:outputLabel for="ProjectReservationGuest_name" value="#{bundle.aon_name}"/>
 			<aon:inputText id="ProjectReservationGuest_name#{suffix}" styleClass="aon-margin-left aon-form-input-text"
-				value="#{controller.to.name}" required="true" size="30" maxlength="64" />
+				value="#{controller.to.name}" required="true" size="30" maxlength="64"
+				onblur="toUpperCase(this);" />
 
 			<aon:outputLabel for="ProjectReservationGuest_surname" value="#{bundle.aon_surname}"/>
 			<aon:inputText id="ProjectReservationGuest_surname#{suffix}" styleClass="aon-margin-left aon-form-input-text"
-				value="#{controller.to.surname}" required="true" size="30" maxlength="64" />
+				value="#{controller.to.surname}" required="true" size="30" maxlength="64"
+				onblur="toUpperCase(this);" />
 		</aon:panelGrid>
  	</aon:div>
 </ui:composition>

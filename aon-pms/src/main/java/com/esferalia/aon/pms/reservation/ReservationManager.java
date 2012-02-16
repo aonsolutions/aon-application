@@ -270,9 +270,9 @@ public class ReservationManager implements IReservationConstants {
 				reservationGuest.setProjectReservation(reservation);
 				reservationGuest.setDomain(getReservationUtils().getDomain());
 				reservationGuest.setGuestIndex(Integer.parseInt(guest.getResGuestRPH()));
-				reservationGuest.setSurname(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getSurname());
+				reservationGuest.setSurname(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getSurname().toUpperCase());
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfGivenNameArray() > 0) {
-					reservationGuest.setName(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getGivenNameArray(0));
+					reservationGuest.setName(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getGivenNameArray(0).toUpperCase());
 				}
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfNamePrefixArray() > 0) {
 					reservationGuest.setTreatment(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getNamePrefixArray(0));
