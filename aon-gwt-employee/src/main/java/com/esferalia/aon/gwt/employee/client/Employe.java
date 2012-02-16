@@ -94,6 +94,10 @@ public class Employe implements EntryPoint, Salaries.Handler {
 		public IReport current() {
 			return this;
 		}
+		
+		@Override
+		public void print() {
+		}
 
 		@Override
 		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
