@@ -7,6 +7,7 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.RADDRESS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.REGISTRY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
+import static com.esferalia.aon.gwt.employee.server.AonServletUtils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.time.DateUtils;
 
 
+import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import com.code.aon.common.BeanManager;
@@ -118,6 +120,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public String getSalaryReceiptHTML(Salary salary, float zoomRatio)
 			throws IllegalArgumentException {
 
+			Map<Object, Object> parameters = 
+					new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
+			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
+			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
+			
+			return  getSalaryReceiptHTML(salary, parameters);
+	}
+
+	public String getSalaryReceiptHTML(Salary salary, Map<Object, Object> parameters )
+			throws IllegalArgumentException {
+
 		try {
 
 			initFacesContext();
@@ -139,13 +154,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
-			
-			Map<Object, Object> parameters = 
-					new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
-			if ( zoomRatio == 0.20f ) {
-				parameters.put(JRHtmlExporterParameter.PAGE_INDEX, 0);
-			}
 			reportManager.execute(out, IPayrollConstants.SALARY_REPORT, parameters);
 
 			return out.toString();
@@ -161,7 +169,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
-
+	
 
 	public String getCostReceiptHTML(Cost cost, float zoomRatio)
 			throws IllegalArgumentException {
@@ -237,6 +245,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Map<Object, Object> parameters = new HashMap<Object, Object>();
 			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
+			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
+			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 			reportManager.execute(out, IPayrollConstants.COST_REPORT, parameters);
 
 			return out.toString();

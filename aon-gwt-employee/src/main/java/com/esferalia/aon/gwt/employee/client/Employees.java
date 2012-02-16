@@ -12,12 +12,15 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
@@ -57,8 +60,8 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		employeesService = GWT.create(EmployeesService.class);
-
 		initWidget(tree);
+
 
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
@@ -222,6 +225,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		public IReport current() {
 			return this;
 		}
+		
+		@Override
+		public void print() {
+			Salary salary = salaries.get(currentIndex());
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + ".pdf");
+			Window.alert( printURL);
+			Window.open(printURL, "_blank", null);
+		}
 
 		@Override
 		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
@@ -248,6 +259,12 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		@Override
 		public IReport current() {
 			return this;
+		}
+		
+		@Override
+		public void print() {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override

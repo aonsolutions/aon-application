@@ -176,3 +176,12 @@ body,table td,select,button {
 	margin: 0; 
 	padding: 0; 
 } 		
+
+.page {
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #D4D0C8;
+	box-shadow: 5px 5px 10px 5px #D4D0C8;
+}

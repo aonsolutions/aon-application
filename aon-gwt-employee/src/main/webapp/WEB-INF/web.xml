@@ -61,7 +61,15 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>openDocument2ImageServlet</servlet-name>
-    <url-pattern>/aon_gwt_employee/openDocument2Image/*</url-pattern>
+    <url-pattern>/openDocument2Image/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>salaryExporterServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.SalaryExporterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>salaryExporterServlet</servlet-name>
+    <url-pattern>/salary/*</url-pattern>
   </servlet-mapping>
   <context-param>
     <description>

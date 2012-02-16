@@ -10,8 +10,6 @@
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 15px;
-			border: 1px solid #D4D0C8;
-			box-shadow: 5px 5px 10px 5px #D4D0C8;
 		}
 		
 	</ui:style>
@@ -54,7 +52,7 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
+								<g:Button ui:field='print' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
 								<g:HTMLPanel styleName="aon-spin-control" >
 									<g:HTMLPanel styleName="aon-spin-control-element" >
 										<g:Button ui:field='first'  stylePrimaryName='aon-dataScroller-button aon-dataScroller-button-first'  />

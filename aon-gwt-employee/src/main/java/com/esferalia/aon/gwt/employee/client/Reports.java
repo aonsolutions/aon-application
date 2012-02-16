@@ -2,18 +2,20 @@ package com.esferalia.aon.gwt.employee.client;
 
 
 
-import com.esferalia.aon.gwt.employee.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Reports extends ResizeComposite {
@@ -27,6 +29,9 @@ public class Reports extends ResizeComposite {
 	@UiField Button next;
 	@UiField Button previous;
 	@UiField Button last;
+
+	@UiField Button print;
+	
 	@UiField HTML 	container;
 	
 	
@@ -64,6 +69,14 @@ public class Reports extends ResizeComposite {
 				onReportChanged();
 			}
 		});
+		print.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				IReport report = reports.current();
+				report.print();
+			}
+		});
+		
 	}
 	
 	

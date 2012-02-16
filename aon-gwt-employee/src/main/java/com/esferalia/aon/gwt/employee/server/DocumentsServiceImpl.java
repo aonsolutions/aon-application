@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.employee.server;
 
 import static com.esferalia.aon.payroll.sql.SQLConstants.CATEGORY;
 import static com.esferalia.aon.payroll.sql.SQLConstants.RATTACH;
+import static com.esferalia.aon.gwt.employee.server.AonServletUtils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -28,6 +29,8 @@ import com.esferalia.aon.gwt.employee.shared.Document;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
 
 @SuppressWarnings("serial")
 public class DocumentsServiceImpl extends AonRemoteServiceServlet implements DocumentsService {
@@ -155,9 +158,31 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 
 		@Override
 		public void transform(Document doc, OutputStream os) throws Exception {
+			
+			float zoom = OpenDocument2ImageServlet.DEFAULT_ZOOM;
+			
 			PrintStream printStream = new PrintStream(os);
-			// TODO : aon_gwt_employee ???
-			printStream.printf("<div><img src='aon_gwt_employee/openDocument2Image/%d.png'></img> </div>", doc.getId() );
+			
+			PDFFile pdfFile = OpenDocument2ImageServlet.getPDFFile(doc.getId());
+			
+			for (int page = 1; page <= pdfFile.getNumPages(); page++) {
+				
+				PDFPage pdfPage = pdfFile.getPage(page);
+
+				// get the width and height for the doc at the default zoom
+				int width = (int) ( pdfPage.getBBox().getWidth() * zoom);
+				int height = (int) ( pdfPage.getBBox().getHeight() * zoom );
+				
+				// TODO : aon_gwt_employee ???
+				printStream.printf("<div class='page' ><img style='width:%dpx;height:%dpx;'  src='openDocument2Image/%d.png?%s=%d&%s=%f'></img> </div>",
+						width,
+						height,
+						doc.getId(),
+						OpenDocument2ImageServlet.PAGE_PARAM,
+						page,
+						OpenDocument2ImageServlet.ZOOM_PARAM,
+						zoom);
+			}		
 		}
 	}
 
@@ -207,29 +232,10 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			}
 		}
 		
-		void serialize(org.w3c.dom.Document  w3cDocument, OutputStream os ) throws Exception {
-	        DOMSource domSource = new DOMSource( w3cDocument );
-	        StreamResult streamResult = new StreamResult( os );
-
-	        TransformerFactory tf = TransformerFactory.newInstance();
-	        Transformer serializer = tf.newTransformer();
-	        
-	        // TODO set encoding from a parameter
-	        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-	        serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
-	        serializer.setOutputProperty( OutputKeys.METHOD, "html" );
-
-	        serializer.transform( domSource, streamResult );
-		}
-
 		
 		
-		void transform(InputStream is, OutputStream os) throws Exception {
-			org.w3c.dom.Document w3cDocument = getDocument(is);
-			serialize(w3cDocument, os);
-		}
+		abstract void transform(InputStream is, OutputStream os) throws Exception;
 		
-		abstract org.w3c.dom.Document getDocument(InputStream is ) throws Exception;
 	}
 	
 	
@@ -237,10 +243,6 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 		
 		private static  IDocument2HtmlConverter INSTANCE = new Noop2HtmlConverter();
 		
-		@Override
-		org.w3c.dom.Document getDocument(InputStream is) throws Exception {
-			return null;
-		}
 		
 		@Override
 		void transform(InputStream is, OutputStream os) throws Exception {

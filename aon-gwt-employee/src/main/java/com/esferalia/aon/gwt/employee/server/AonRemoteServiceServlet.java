@@ -2,12 +2,7 @@ package com.esferalia.aon.gwt.employee.server;
 
 import java.sql.Connection;
 
-import javax.faces.FactoryFinder;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.context.FacesContextFactory;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,46 +51,15 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 		return request.getSession(false);
 	}
 
-	
-	protected  static Connection getConnection() {
-		String sessionFactory = HibernateUtil
-				.getSessionFactoryName(Salary.class.getName());
-		return HibernateUtil.getSQLConnection(sessionFactory);
-	}
-	
 	protected void initFacesContext() {
-		try {
-			LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder
-					.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-			FacesContextFactory facesContextFactory = (FacesContextFactory) FactoryFinder
-					.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
-
-			Lifecycle lifecycle = lifecycleFactory
-					.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-
-			ServletContext context = getServletContext();
-			HttpServletRequest request = getThreadLocalRequest();
-			HttpServletResponse response = getThreadLocalResponse();
-
-			FacesContext facesContext = facesContextFactory.getFacesContext(
-					context, request, response, lifecycle);
-
-			UIViewRoot view = facesContext.getApplication().getViewHandler()
-					.createView(facesContext, "/home.xhtml");
-
-			facesContext.setViewRoot(view);
-
-		} catch (Throwable throwable) {
-			// TODO: Do some usefull with this.
-			throwable.printStackTrace();
-		}
+		ServletContext context = getServletContext();
+		HttpServletRequest request = getThreadLocalRequest();
+		HttpServletResponse response = getThreadLocalResponse();
+		AonServletUtils.initFacesContext(context, request, response);
 	}
-
+	
 	protected void releaseFacesContext() {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (facesContext != null) {
-			facesContext.release();
-		}
+		AonServletUtils.releaseFacesContext();
 	}
 
 }

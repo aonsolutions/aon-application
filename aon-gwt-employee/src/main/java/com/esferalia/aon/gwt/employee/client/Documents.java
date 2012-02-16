@@ -176,6 +176,11 @@ public class Documents extends Composite {
 		public IReport current() {
 			return this;
 		}
+		
+		@Override
+		public void print() {
+			// TODO Auto-generated method stub
+		}
 
 		@Override
 		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
