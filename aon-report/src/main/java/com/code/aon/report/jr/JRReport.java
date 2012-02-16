@@ -271,6 +271,8 @@ public class JRReport {
 				Map<String, Object> fillMap = new HashMap<String, Object>();
 				Map<JRExporterParameter, Object> exporterMap = new HashMap<JRExporterParameter, Object>();
 				
+				factory.fillJRParametersMap(fillMap, exporterMap);
+
 				for (int i = 0; i < params.length; i++) {
 					for (Object key : params[i].keySet() ) {
 						if (key instanceof JRExporterParameter ) {
@@ -282,8 +284,6 @@ public class JRReport {
 						}
 					}
 				}
-				
-				factory.fillJRParametersMap(fillMap, exporterMap);
 
 				passDefaultParameters(fillMap);
 				passCustomParameters(fillMap);
