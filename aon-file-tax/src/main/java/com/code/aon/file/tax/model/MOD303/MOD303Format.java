@@ -8,33 +8,31 @@ public enum MOD303Format {
 	ALAVA_2010(2011
 			,Administration.ALAVA
 			,MimeType.MIME_XML
-			,null)
-//	,BIZKAIA_2010(2010
-//			,Administration.BIZKAIA
-//			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
+			,Alava2010MOD303Factory.class)
+	,BIZKAIA_2012(2011
+			,Administration.BIZKAIA
+			,MimeType.MIME_TXT
+			,Bizkaia2012MOD303Factory.class)
 	,GIPUZKOA_2010(2010
 			,Administration.GIPUZKOA
 			,MimeType.MIME_TXT
-			,"/com/code/aon/file/tax/model/MOD303/xml/2010_GIPUZKOA_Declaration.xml")
-//	,NAVARRA_2010(2010
-//			,Administration.NAVARRA
-//			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
+			,Gipuzkoa2010MOD303Factory.class)
 	,AEAT_2010(2010
 			,Administration.COMMON_TERRITORY
 			,MimeType.MIME_TXT
-			,"/com/code/aon/file/tax/model/MOD303/xml/2010_AEAT_Declaration.xml")
+			,Aeat2010MOD303Factory.class)
 	;
 
 	private Integer year;
 	private Administration administration;
-	private String declarationMetadataResource;
+	private Class<? extends IMOD303Factory> factory;
 	private MimeType mimeType;
 
 
-	private MOD303Format(Integer year,Administration administration,MimeType mimeType,String declarationMetadataResource)	{
+	private MOD303Format(Integer year,Administration administration,MimeType mimeType,Class<? extends IMOD303Factory> factory)	{
 		this.year = year;
 		this.administration = administration;
-		this.declarationMetadataResource = declarationMetadataResource;
+		this.factory = factory;
 		this.mimeType = mimeType;
 	}
 
@@ -52,11 +50,11 @@ public enum MOD303Format {
 		this.year = year;
 	}
 	
-	public String getDeclarationMetadataResource() {
-		return declarationMetadataResource;
+	public Class<? extends IMOD303Factory> getFactory() {
+		return factory;
 	}
-	public void setDeclarationMetadataResource(String declarationMetadataResource) {
-		this.declarationMetadataResource = declarationMetadataResource;
+	public void setFactory(Class<? extends IMOD303Factory> factory) {
+		this.factory = factory;
 	}
 
 	public MimeType getMimeType() {

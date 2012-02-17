@@ -1,5 +1,8 @@
 package com.code.aon.file.tax.model.MOD303.data;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 
 
@@ -10,10 +13,15 @@ public class Declaration {
 	private boolean replacement;
 	private boolean complementary;
 	private boolean taxRefundRegistry;
+	private String bankName;
 	private String ccc1;
 	private String ccc2;
 	private String ccc3;
 	private String ccc4;
+	
+	private boolean generalProrataApplied;
+	private boolean specialProrataApplied;
+	private double prorata;
 
 	private String document;
 	private Integer startPeriod;
@@ -24,54 +32,33 @@ public class Declaration {
 	private Integer addressNumber;
 	private String entity;
 	private String city;
+	private String provinceID;
 	private String province;
 	private Integer zip;
 	private String telephone;
 	private String fax;
 	private String email;
 	
-	private double baseOutputVat4;
-	private double percentOutputVat4;
-	private double quotaOutputVat4;
-	private double baseOutputVat8;
-	private double percentOutputVat8;
-	private double quotaOutputVat8;
-	private double baseOutputVat18;
-	private double percentOutputVat18;
-	private double quotaOutputVat18;
-	private double baseOutputVat7;
-	private double percentOutputVat7;
-	private double quotaOutputVat7;
-	private double baseOutputVat16;
-	private double percentOutputVat16;
-	private double quotaOutputVat16;
-	private double baseSurcharge05;
-	private double percentSurcharge05;
-	private double quotaSurcharge05;
-	private double baseSurcharge1;
-	private double percentSurcharge1;
-	private double quotaSurcharge1;
-	private double baseSurcharge4;
-	private double percentSurcharge4;
-	private double quotaSurcharge4;
-	private double baseIntracommunitary4;
-	private double percentIntracommunitary4;
-	private double quotaIntracommunitary4;
-	private double baseIntracommunitary8;
-	private double percentIntracommunitary8;
-	private double quotaIntracommunitary8;
-	private double baseIntracommunitary18;
-	private double percentIntracommunitary18;
-	private double quotaIntracommunitary18;
-	private double baseIntracommunitary7;
-	private double percentIntracommunitary7;
-	private double quotaIntracommunitary7;
-	private double baseIntracommunitary16;
-	private double percentIntracommunitary16;
-	private double quotaIntracommunitary16;
+	private int todayDay;
+	private String todayMonth;
+	private int todayYear;
+	
+	
+	private Map<String,Breakdown> outputVat = new TreeMap<String, Breakdown>();
+	private Map<String,Breakdown> surcharge = new TreeMap<String, Breakdown>();
+	private Map<String,Breakdown> intracommunitary = new TreeMap<String, Breakdown>();
+	
 	private double baseIntracommunitary;
 	private double quotaIntracommunitary;
+	
+	private double baseInvPasive;
+	private double quotaInvPasive;
+
+	private double baseModifications;
+	private double quotaModifications;
+	
 	private double outputTotal;
+	
 	private double innerCommonOperationsBase;
 	private double innerCommonOperationsQuota;
 	private double innerInvestmentOperationsBase;
@@ -96,12 +83,15 @@ public class Declaration {
 	private double intracommunitaryDeliveries;
 	private double exportationTotal;
 	private double nonTaxableTotal;
+	private double invSujPasNotIncluded;
+	private double presIntraServices;
 	
 	private double alavaPercent; 
 	private double gipuzkoaPercent; 
 	private double bizkaiaPercent; 
 	private double navarraPercent; 
 	private double commonTerritoryPercent;
+	private double regularizationResult;
 	private double quota;
 	private double previousYearCompensateQuota;
 	private double extraCharge;
@@ -109,6 +99,9 @@ public class Declaration {
 	private double deposit;
 	private double compensate;
 	private double payBack;
+	private double previousPayBack;
+	private double previousDeposit;
+	private double totalDebt;
 	private boolean withoutActivity;
 	private String depositBankEntity;
 	private String depositBankOffice;
@@ -118,6 +111,22 @@ public class Declaration {
 	private String payBackBankOffice;
 	private String payBackBankControl;
 	private String payBackBankAccount;
+	
+	private Map<String,Breakdown> innerAssetPurchases = new TreeMap<String, Breakdown>();
+	private double baseInnerAssetPurchases;
+	private double quotaInnerAssetPurchases;
+	private double deductibleQuotaInnerAssetPurchases;
+	private Map<String,Breakdown> expenses = new TreeMap<String, Breakdown>();
+	private double baseExpenses;
+	private double quotaExpenses;
+	private double deductibleQuotaExpenses;
+	private Map<String,Breakdown> investmentAsset = new TreeMap<String, Breakdown>();
+	private double baseInvestmentAsset;
+	private double quotaInvestmentAsset;
+	private double deductibleQuotaInvestmentAsset;
+	private double baseTotalAddInfo;
+	private double quotaTotalAddInfo;
+	private double deductibleQuotaTotalAddInfo;
 
 	public Integer getYear() {
 		return year;
@@ -126,6 +135,26 @@ public class Declaration {
 		this.year = year;
 	}
 	public String getPeriod() {
+		return period;
+	}
+	public String getPeriodForBizkaia() {
+		if ("01".equals(period)) return "01M";
+		if ("02".equals(period)) return "02M";
+		if ("03".equals(period)) return "03M";
+		if ("04".equals(period)) return "04M";
+		if ("05".equals(period)) return "05M";
+		if ("06".equals(period)) return "06M";
+		if ("07".equals(period)) return "07M";
+		if ("08".equals(period)) return "08M";
+		if ("09".equals(period)) return "09M";
+		if ("10".equals(period)) return "10M";
+		if ("11".equals(period)) return "11M";
+		if ("12".equals(period)) return "12M";
+		if ("T1".equals(period)) return "01T";
+		if ("T2".equals(period)) return "02T";
+		if ("T3".equals(period)) return "03T";
+		if ("T4".equals(period)) return "0A"; // ¿?
+		if ("An".equals(period)) return "0A"; // ¿?
 		return period;
 	}
 	public void setPeriod(String period) {
@@ -240,7 +269,12 @@ public class Declaration {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
+	public String getProvinceID() {
+		return provinceID;
+	}
+	public void setProvinceID(String provinceID) {
+		this.provinceID = provinceID;
+	}
 	public String getProvince() {
 		return province;
 	}
@@ -273,6 +307,31 @@ public class Declaration {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public int getTodayDay() {
+		return todayDay;
+	}
+	public void setTodayDay(int todayDay) {
+		this.todayDay = todayDay;
+	}
+	public String getTodayMonth() {
+		return todayMonth;
+	}
+	public void setTodayMonth(String todayMonth) {
+		this.todayMonth = todayMonth;
+	}
+	public int getTodayYear() {
+		return todayYear;
+	}
+	public void setTodayYear(int todayYear) {
+		this.todayYear = todayYear;
+	}
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
 	public String getCcc1() {
 		return ccc1;
 	}
@@ -297,242 +356,42 @@ public class Declaration {
 	public void setCcc4(String ccc4) {
 		this.ccc4 = ccc4;
 	}
-	
-	public double getBaseOutputVat4() {
-		return baseOutputVat4;
+	public boolean isGeneralProrataApplied() {
+		return generalProrataApplied;
 	}
-	public void setBaseOutputVat4(double baseOutputVat4) {
-		this.baseOutputVat4 = baseOutputVat4;
+	public void setGeneralProrataApplied(boolean generalProrataApplied) {
+		this.generalProrataApplied = generalProrataApplied;
 	}
-	public double getPercentOutputVat4() {
-		return percentOutputVat4;
+	public boolean isSpecialProrataApplied() {
+		return specialProrataApplied;
 	}
-	public void setPercentOutputVat4(double percentOutputVat4) {
-		this.percentOutputVat4 = percentOutputVat4;
+	public void setSpecialProrataApplied(boolean specialProrataApplied) {
+		this.specialProrataApplied = specialProrataApplied;
 	}
-	public double getQuotaOutputVat4() {
-		return quotaOutputVat4;
+	public double getProrata() {
+		return prorata;
 	}
-	public void setQuotaOutputVat4(double quotaOutputVat4) {
-		this.quotaOutputVat4 = quotaOutputVat4;
+	public void setProrata(double prorata) {
+		this.prorata = prorata;
 	}
-	public double getBaseOutputVat8() {
-		return baseOutputVat8;
+	public Map<String, Breakdown> getOutputVat() {
+		return outputVat;
 	}
-	public void setBaseOutputVat8(double baseOutputVat8) {
-		this.baseOutputVat8 = baseOutputVat8;
+	public void setOutputVat(Map<String, Breakdown> outputVat) {
+		this.outputVat = outputVat;
 	}
-	public double getPercentOutputVat8() {
-		return percentOutputVat8;
+	public Map<String, Breakdown> getSurcharge() {
+		return surcharge;
 	}
-	public void setPercentOutputVat8(double percentOutputVat8) {
-		this.percentOutputVat8 = percentOutputVat8;
+	public void setSurcharge(Map<String, Breakdown> surcharge) {
+		this.surcharge = surcharge;
 	}
-	public double getQuotaOutputVat8() {
-		return quotaOutputVat8;
+	public Map<String, Breakdown> getIntracommunitary() {
+		return intracommunitary;
 	}
-	public void setQuotaOutputVat8(double quotaOutputVat8) {
-		this.quotaOutputVat8 = quotaOutputVat8;
+	public void setIntracommunitary(Map<String, Breakdown> intracommunitary) {
+		this.intracommunitary = intracommunitary;
 	}
-	public double getBaseOutputVat18() {
-		return baseOutputVat18;
-	}
-	public void setBaseOutputVat18(double baseOutputVat18) {
-		this.baseOutputVat18 = baseOutputVat18;
-	}
-	public double getPercentOutputVat18() {
-		return percentOutputVat18;
-	}
-	public void setPercentOutputVat18(double percentOutputVat18) {
-		this.percentOutputVat18 = percentOutputVat18;
-	}
-	public double getQuotaOutputVat18() {
-		return quotaOutputVat18;
-	}
-	public void setQuotaOutputVat18(double quotaOutputVat18) {
-		this.quotaOutputVat18 = quotaOutputVat18;
-	}
-	public double getBaseOutputVat7() {
-		return baseOutputVat7;
-	}
-	public void setBaseOutputVat7(double baseOutputVat7) {
-		this.baseOutputVat7 = baseOutputVat7;
-	}
-	public double getPercentOutputVat7() {
-		return percentOutputVat7;
-	}
-	public void setPercentOutputVat7(double percentOutputVat7) {
-		this.percentOutputVat7 = percentOutputVat7;
-	}
-	public double getQuotaOutputVat7() {
-		return quotaOutputVat7;
-	}
-	public void setQuotaOutputVat7(double quotaOutputVat7) {
-		this.quotaOutputVat7 = quotaOutputVat7;
-	}
-	public double getBaseOutputVat16() {
-		return baseOutputVat16;
-	}
-	public void setBaseOutputVat16(double baseOutputVat16) {
-		this.baseOutputVat16 = baseOutputVat16;
-	}
-	public double getPercentOutputVat16() {
-		return percentOutputVat16;
-	}
-	public void setPercentOutputVat16(double percentOutputVat16) {
-		this.percentOutputVat16 = percentOutputVat16;
-	}
-	public double getQuotaOutputVat16() {
-		return quotaOutputVat16;
-	}
-	public void setQuotaOutputVat16(double quotaOutputVat16) {
-		this.quotaOutputVat16 = quotaOutputVat16;
-	}
-	public double getBaseSurcharge05() {
-		return baseSurcharge05;
-	}
-	public void setBaseSurcharge05(double baseSurcharge05) {
-		this.baseSurcharge05 = baseSurcharge05;
-	}
-	public double getPercentSurcharge05() {
-		return percentSurcharge05;
-	}
-	public void setPercentSurcharge05(double percentSurcharge05) {
-		this.percentSurcharge05 = percentSurcharge05;
-	}
-	public double getQuotaSurcharge05() {
-		return quotaSurcharge05;
-	}
-	public void setQuotaSurcharge05(double quotaSurcharge05) {
-		this.quotaSurcharge05 = quotaSurcharge05;
-	}
-	public double getBaseSurcharge1() {
-		return baseSurcharge1;
-	}
-	public void setBaseSurcharge1(double baseSurcharge1) {
-		this.baseSurcharge1 = baseSurcharge1;
-	}
-	public double getPercentSurcharge1() {
-		return percentSurcharge1;
-	}
-	public void setPercentSurcharge1(double percentSurcharge1) {
-		this.percentSurcharge1 = percentSurcharge1;
-	}
-	public double getQuotaSurcharge1() {
-		return quotaSurcharge1;
-	}
-	public void setQuotaSurcharge1(double quotaSurcharge1) {
-		this.quotaSurcharge1 = quotaSurcharge1;
-	}
-	public double getBaseSurcharge4() {
-		return baseSurcharge4;
-	}
-	public void setBaseSurcharge4(double baseSurcharge4) {
-		this.baseSurcharge4 = baseSurcharge4;
-	}
-	public double getPercentSurcharge4() {
-		return percentSurcharge4;
-	}
-	public void setPercentSurcharge4(double percentSurcharge4) {
-		this.percentSurcharge4 = percentSurcharge4;
-	}
-	public double getQuotaSurcharge4() {
-		return quotaSurcharge4;
-	}
-	public void setQuotaSurcharge4(double quotaSurcharge4) {
-		this.quotaSurcharge4 = quotaSurcharge4;
-	}
-	public double getBaseIntracommunitary4() {
-		return baseIntracommunitary4;
-	}
-	public void setBaseIntracommunitary4(double baseIntracommunitary4) {
-		this.baseIntracommunitary4 = baseIntracommunitary4;
-	}
-	public double getPercentIntracommunitary4() {
-		return percentIntracommunitary4;
-	}
-	public void setPercentIntracommunitary4(double percentIntracommunitary4) {
-		this.percentIntracommunitary4 = percentIntracommunitary4;
-	}
-	public double getQuotaIntracommunitary4() {
-		return quotaIntracommunitary4;
-	}
-	public void setQuotaIntracommunitary4(double quotaIntracommunitary4) {
-		this.quotaIntracommunitary4 = quotaIntracommunitary4;
-	}
-	public double getBaseIntracommunitary8() {
-		return baseIntracommunitary8;
-	}
-	public void setBaseIntracommunitary8(double baseIntracommunitary8) {
-		this.baseIntracommunitary8 = baseIntracommunitary8;
-	}
-	public double getPercentIntracommunitary8() {
-		return percentIntracommunitary8;
-	}
-	public void setPercentIntracommunitary8(double percentIntracommunitary8) {
-		this.percentIntracommunitary8 = percentIntracommunitary8;
-	}
-	public double getQuotaIntracommunitary8() {
-		return quotaIntracommunitary8;
-	}
-	public void setQuotaIntracommunitary8(double quotaIntracommunitary8) {
-		this.quotaIntracommunitary8 = quotaIntracommunitary8;
-	}
-	public double getBaseIntracommunitary18() {
-		return baseIntracommunitary18;
-	}
-	public void setBaseIntracommunitary18(double baseIntracommunitary18) {
-		this.baseIntracommunitary18 = baseIntracommunitary18;
-	}
-	public double getPercentIntracommunitary18() {
-		return percentIntracommunitary18;
-	}
-	public void setPercentIntracommunitary18(double percentIntracommunitary18) {
-		this.percentIntracommunitary18 = percentIntracommunitary18;
-	}
-	public double getQuotaIntracommunitary18() {
-		return quotaIntracommunitary18;
-	}
-	public void setQuotaIntracommunitary18(double quotaIntracommunitary18) {
-		this.quotaIntracommunitary18 = quotaIntracommunitary18;
-	}
-	public double getBaseIntracommunitary7() {
-		return baseIntracommunitary7;
-	}
-	public void setBaseIntracommunitary7(double baseIntracommunitary7) {
-		this.baseIntracommunitary7 = baseIntracommunitary7;
-	}
-	public double getPercentIntracommunitary7() {
-		return percentIntracommunitary7;
-	}
-	public void setPercentIntracommunitary7(double percentIntracommunitary7) {
-		this.percentIntracommunitary7 = percentIntracommunitary7;
-	}
-	public double getQuotaIntracommunitary7() {
-		return quotaIntracommunitary7;
-	}
-	public void setQuotaIntracommunitary7(double quotaIntracommunitary7) {
-		this.quotaIntracommunitary7 = quotaIntracommunitary7;
-	}
-	public double getBaseIntracommunitary16() {
-		return baseIntracommunitary16;
-	}
-	public void setBaseIntracommunitary16(double baseIntracommunitary16) {
-		this.baseIntracommunitary16 = baseIntracommunitary16;
-	}
-	public double getPercentIntracommunitary16() {
-		return percentIntracommunitary16;
-	}
-	public void setPercentIntracommunitary16(double percentIntracommunitary16) {
-		this.percentIntracommunitary16 = percentIntracommunitary16;
-	}
-	public double getQuotaIntracommunitary16() {
-		return quotaIntracommunitary16;
-	}
-	public void setQuotaIntracommunitary16(double quotaIntracommunitary16) {
-		this.quotaIntracommunitary16 = quotaIntracommunitary16;
-	}
-	
 	public double getBaseIntracommunitary() {
 		return baseIntracommunitary;
 	}
@@ -544,6 +403,30 @@ public class Declaration {
 	}
 	public void setQuotaIntracommunitary(double quotaIntracommunitary) {
 		this.quotaIntracommunitary = quotaIntracommunitary;
+	}
+	public double getBaseInvPasive() {
+		return baseInvPasive;
+	}
+	public void setBaseInvPasive(double baseInvPasive) {
+		this.baseInvPasive = baseInvPasive;
+	}
+	public double getQuotaInvPasive() {
+		return quotaInvPasive;
+	}
+	public void setQuotaInvPasive(double quotaInvPasive) {
+		this.quotaInvPasive = quotaInvPasive;
+	}
+	public double getBaseModifications() {
+		return baseModifications;
+	}
+	public void setBaseModifications(double baseModifications) {
+		this.baseModifications = baseModifications;
+	}
+	public double getQuotaModifications() {
+		return quotaModifications;
+	}
+	public void setQuotaModifications(double quotaModifications) {
+		this.quotaModifications = quotaModifications;
 	}
 	public double getOutputTotal() {
 		return outputTotal;
@@ -728,7 +611,18 @@ public class Declaration {
 	public void setNonTaxableTotal(double nonTaxableTotal) {
 		this.nonTaxableTotal = nonTaxableTotal;
 	}
-	
+	public double getInvSujPasNotIncluded() {
+		return invSujPasNotIncluded;
+	}
+	public void setInvSujPasNotIncluded(double invSujPasNotIncluded) {
+		this.invSujPasNotIncluded = invSujPasNotIncluded;
+	}
+	public double getPresIntraServices() {
+		return presIntraServices;
+	}
+	public void setPresIntraServices(double presIntraServices) {
+		this.presIntraServices = presIntraServices;
+	}
 	public double getAlavaPercent() {
 		return alavaPercent;
 	}
@@ -758,6 +652,12 @@ public class Declaration {
 	}
 	public void setCommonTerritoryPercent(double commonTerritoryPercent) {
 		this.commonTerritoryPercent = commonTerritoryPercent;
+	}
+	public double getRegularizationResult() {
+		return regularizationResult;
+	}
+	public void setRegularizationResult(double regularizationResult) {
+		this.regularizationResult = regularizationResult;
 	}
 	public double getQuota() {
 		return quota;
@@ -800,6 +700,24 @@ public class Declaration {
 	}
 	public void setPayBack(double payBack) {
 		this.payBack = payBack;
+	}
+	public double getPreviousPayBack() {
+		return previousPayBack;
+	}
+	public void setPreviousPayBack(double previousPayBack) {
+		this.previousPayBack = previousPayBack;
+	}
+	public double getPreviousDeposit() {
+		return previousDeposit;
+	}
+	public void setPreviousDeposit(double previousDeposit) {
+		this.previousDeposit = previousDeposit;
+	}
+	public double getTotalDebt() {
+		return totalDebt;
+	}
+	public void setTotalDebt(double totalDebt) {
+		this.totalDebt = totalDebt;
 	}
 	public boolean isWithoutActivity() {
 		return withoutActivity;
@@ -863,8 +781,100 @@ public class Declaration {
 	public void setPayBackBankAccount(String payBackBankAccount) {
 		this.payBackBankAccount = payBackBankAccount;
 	}
+	
+	public Map<String, Breakdown> getInnerAssetPurchases() {
+		return innerAssetPurchases;
+	}
+	public void setInnerAssetPurchases(Map<String, Breakdown> innerAssetPurchases) {
+		this.innerAssetPurchases = innerAssetPurchases;
+	}
+	public double getBaseInnerAssetPurchases() {
+		return baseInnerAssetPurchases;
+	}
+	public void setBaseInnerAssetPurchases(double baseInnerAssetPurchases) {
+		this.baseInnerAssetPurchases = baseInnerAssetPurchases;
+	}
+	public double getQuotaInnerAssetPurchases() {
+		return quotaInnerAssetPurchases;
+	}
+	public void setQuotaInnerAssetPurchases(double quotaInnerAssetPurchases) {
+		this.quotaInnerAssetPurchases = quotaInnerAssetPurchases;
+	}
+	public double getDeductibleQuotaInnerAssetPurchases() {
+		return deductibleQuotaInnerAssetPurchases;
+	}
+	public void setDeductibleQuotaInnerAssetPurchases(double deductibleQuotaInnerAssetPurchases) {
+		this.deductibleQuotaInnerAssetPurchases = deductibleQuotaInnerAssetPurchases;
+	}
+	public Map<String, Breakdown> getExpenses() {
+		return expenses;
+	}
+	public void setExpenses(Map<String, Breakdown> expenses) {
+		this.expenses = expenses;
+	}
+	public double getBaseExpenses() {
+		return baseExpenses;
+	}
+	public void setBaseExpenses(double baseExpenses) {
+		this.baseExpenses = baseExpenses;
+	}
+	public double getQuotaExpenses() {
+		return quotaExpenses;
+	}
+	public void setQuotaExpenses(double quotaExpenses) {
+		this.quotaExpenses = quotaExpenses;
+	}
+	public double getDeductibleQuotaExpenses() {
+		return deductibleQuotaExpenses;
+	}
+	public void setDeductibleQuotaExpenses(double deductibleQuotaExpenses) {
+		this.deductibleQuotaExpenses = deductibleQuotaExpenses;
+	}
+	public Map<String, Breakdown> getInvestmentAsset() {
+		return investmentAsset;
+	}
+	public void setInvestmentAsset(Map<String, Breakdown> investmentAsset) {
+		this.investmentAsset = investmentAsset;
+	}
+	public double getBaseInvestmentAsset() {
+		return baseInvestmentAsset;
+	}
+	public void setBaseInvestmentAsset(double baseInvestmentAsset) {
+		this.baseInvestmentAsset = baseInvestmentAsset;
+	}
+	public double getQuotaInvestmentAsset() {
+		return quotaInvestmentAsset;
+	}
+	public void setQuotaInvestmentAsset(double quotaInvestmentAsset) {
+		this.quotaInvestmentAsset = quotaInvestmentAsset;
+	}
+	public double getDeductibleQuotaInvestmentAsset() {
+		return deductibleQuotaInvestmentAsset;
+	}
+	public void setDeductibleQuotaInvestmentAsset(double deductibleQuotaInvestmentAsset) {
+		this.deductibleQuotaInvestmentAsset = deductibleQuotaInvestmentAsset;
+	}
+	public double getBaseTotalAddInfo() {
+		return baseTotalAddInfo;
+	}
+	public void setBaseTotalAddInfo(double baseTotalAddInfo) {
+		this.baseTotalAddInfo = baseTotalAddInfo;
+	}
+	public double getQuotaTotalAddInfo() {
+		return quotaTotalAddInfo;
+	}
+	public void setQuotaTotalAddInfo(double quotaTotalAddInfo) {
+		this.quotaTotalAddInfo = quotaTotalAddInfo;
+	}
+	public double getDeductibleQuotaTotalAddInfo() {
+		return deductibleQuotaTotalAddInfo;
+	}
+	public void setDeductibleQuotaTotalAddInfo(double deductibleQuotaTotalAddInfo) {
+		this.deductibleQuotaTotalAddInfo = deductibleQuotaTotalAddInfo;
+	}
 	@Override
 	public String toString() {
 		return getDocument() + " " + getName();
 	}
+	
 }

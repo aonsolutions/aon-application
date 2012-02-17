@@ -1,74 +1,41 @@
 package com.code.aon.file.tax.model.MOD303;
 
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
-import com.code.aon.file.format.core.DiskRegisterLoader;
-import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD303.check.CheckDeclaration;
 import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
-public class MOD303 extends AbstractFileFiller{
+public class MOD303 {
 
-	private static String DECLARATION = "DECLARATION";
-	
-	private Declaration declaration;
-	private MOD303Format format; 
-	
-	public MOD303(Declaration declaration, MOD303Format format,PrintWriter writer ) throws FileNotFoundException, UnsupportedEncodingException {
-		super(writer);
-		if (declaration == null)  {
-			throw new IllegalArgumentException("Declaration can not be null!");
+	public List<Exception> create(List<Declaration> declarations, MOD303Format format,PrintWriter writer) {
+		if (declarations == null || declarations.size() == 0 )  {
+			throw new IllegalArgumentException("Declarations can not be null!");
 		}
 		if (format == null)  {
 			throw new IllegalArgumentException("Format can not be null!");
 		}
-		this.declaration = declaration;
-		this.format = format;
-		if (format.getDeclarationMetadataResource() != null) {
-			InputStream input = MOD303.class.getResourceAsStream(format.getDeclarationMetadataResource());
-			DiskRegisterLoader.load(input, manager);
-		} else {
-			// ALAVA. formato XML. 
-		}
-	}
-
-	public ArrayList<Exception> create( ) {
+		List<Exception> exceptions = new LinkedList<Exception>();
 		try{
-			Map<String,Object> properties = new HashMap<String,Object>();
-			properties.put(MOD303.DECLARATION, declaration);
-			if (CheckDeclaration.parse(declaration,exceptions)==false) {
-				throw new Fd0Exception( "ABORTED: ",declaration.toString());
+			MOD303FactoryManager factoryManger = MOD303FactoryManager.getInstance();
+			IMOD303Factory factory = factoryManger.getFactory(format);
+			if (factory == null) {
+				throw new IllegalArgumentException("No se encontró un formateador váalido para " + format);
 			}
-			if (format.getDeclarationMetadataResource() != null) {
-				createLine("Declaration",properties);	
-			} else {
-				MOD303XMLFactoryManager factoryManger = MOD303XMLFactoryManager.getInstance();
-				IMOD303XMLFactory factory = factoryManger.getFactory(format);
-				if (factory != null) {
-					factory.createDocument(declaration, getOutput().getOut() );
-				}
-			}
+			exceptions.addAll( factory.createDocument(declarations, writer ) );
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 
 			else {
 				ex.printStackTrace();
-				Fd0Exception e = new Fd0Exception( ex.getMessage(),declaration.toString());
+				Fd0Exception e = new Fd0Exception( ex.getMessage()," ");
 				exceptions.add (e);
 			}
 		}
-		output.flush();
+		writer.flush();
 		return exceptions;
 	}
 }

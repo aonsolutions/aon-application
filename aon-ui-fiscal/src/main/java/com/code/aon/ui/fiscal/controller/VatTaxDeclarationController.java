@@ -1,9 +1,11 @@
 package com.code.aon.ui.fiscal.controller;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -18,7 +20,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.file.format.output.FileOutput;
@@ -206,16 +207,16 @@ public class VatTaxDeclarationController extends LinesController {
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		MOD303Writer mod303Writer = new MOD303Writer();
 		VatTaxDeclaration vatTaxDeclaration = (VatTaxDeclaration) getTo();
-		setFileOutput( mod303Writer.createMOD303(vatTaxDeclaration,getFormat(vatTaxDeclaration)) );
-        if (getFileOutput() != null) {
-        	if (getFileOutput().getErrors().size() > 0) {
-        		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
-        		AonUtil.addErrorMessage("");
-        		int i = 0;
-        		for (Exception ex:getFileOutput().getErrors()) {
-        			AonUtil.addErrorMessage(++i + ") " + ex.getLocalizedMessage());
-        		}
-            }
+		List<VatTaxDeclaration> declarations = new LinkedList<VatTaxDeclaration>();
+		declarations.add(vatTaxDeclaration);
+		setFileOutput( mod303Writer.createMOD303(declarations,getFormat(vatTaxDeclaration)) );
+        if (getFileOutput() != null && getFileOutput().getErrors().size() > 0) {
+    		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+    		AonUtil.addErrorMessage("");
+    		int i = 0;
+    		for (Exception ex:getFileOutput().getErrors()) {
+    			AonUtil.addErrorMessage(++i + ") " + ex.getLocalizedMessage());
+    		}
         }
 	}
 	
@@ -255,13 +256,12 @@ public class VatTaxDeclarationController extends LinesController {
 	        String year = dec.getVatTax().getYear().toString();
 	        String period = dec.getVatTax().getPeriod().toString();
 	        String fileName = format.getFileName(year, period); 
-//			String fileName = "MOD303"+ dec.getVatTax().getYear()
-//				+dec.getVatTax().getPeriod()+"."
-//				+getFormat(dec).getMimeType().getExtension();
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 
 	        ServletOutputStream output = response.getOutputStream();
-	        InputStream input = new FileInputStream(getFileOutput().getFile());
+	        InputStream input = getFileOutput().getFile() != null
+	        		?new FileInputStream(getFileOutput().getFile())
+	        		:new ByteArrayInputStream(getFileOutput().getContent());
 	        int size = IOUtils.copy(input, output);
 	        if (size > 0) {
 		        response.setHeader("Content-Length", String.valueOf(size));

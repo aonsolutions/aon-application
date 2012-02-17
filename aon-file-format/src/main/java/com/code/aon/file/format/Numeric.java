@@ -46,6 +46,8 @@ public class Numeric implements Format {
 		this.applyPattern((String)newPattern);
 	}
 
+	private String scaleSeparator;
+	
 	/**
 	 * Assigns a pattern
 	 * 
@@ -53,11 +55,16 @@ public class Numeric implements Format {
 	 */
 	public void applyPattern(String newPattern) {
 		this.pattern = newPattern.trim();
+		scaleSeparator = getScaleSeparator((String)this.pattern);
 		precision = getPrecision((String)this.pattern);
 		scale = getScale((String)this.pattern);
 		sign = getSign((String)this.pattern);
 		decimalFormat = new DecimalFormat(this.fillPattern());
 		decimalFormat.setMinimumFractionDigits(this.scale);
+	}
+
+	private String getScaleSeparator(String pattern) {
+		return (pattern.contains(DECIMAL_SEPARATOR))?DECIMAL_SEPARATOR:SCALE_SEPARATOR;
 	}
 
 	protected boolean isSigned() {
@@ -110,8 +117,13 @@ public class Numeric implements Format {
 					scale = tmp.substring(tmp.indexOf(".") + 1, tmp.length());
 				}
 		}
-		String result = this.fillPrecision(precision.length()) + precision + scale;
+		String result = this.fillPrecision(precision.length()) + precision + getDecimalSeparator() + scale;
 		return signValue + result;
+	}
+
+	private String getDecimalSeparator() {
+		return  ( (scaleSeparator == DECIMAL_SEPARATOR)?".":"");
+		
 	}
 
 	protected String getSignValue(boolean positive) {
@@ -140,7 +152,7 @@ public class Numeric implements Format {
 	 * @return the int precision
 	 */
 	public int getDecimalPrecision(String pattern) {
-		int scaleParen = pattern.lastIndexOf(SCALE_SEPARATOR);
+		int scaleParen = pattern.lastIndexOf(scaleSeparator);
 		String tmp;
 		if (scaleParen == -1) {
 			return 0;
@@ -157,6 +169,7 @@ public class Numeric implements Format {
 		return Integer.parseInt( tmp.substring(firstParen + 1, lastParen) );
 	}
 
+	
 	/**
 	 * Returns the precision 
 	 * 
@@ -164,7 +177,7 @@ public class Numeric implements Format {
 	 * @return the precision
 	 */
 	public int getPrecision(String pattern) {
-		int scaleParen = pattern.indexOf(SCALE_SEPARATOR);
+		int scaleParen = pattern.indexOf(scaleSeparator);
 		String tmp;
 		if (scaleParen == -1) {
 			tmp = new String(pattern.trim());
@@ -189,7 +202,7 @@ public class Numeric implements Format {
 	 * @return the scale
 	 */
 	public int getScale(String pattern) {
-		int scaleParen = pattern.indexOf(SCALE_SEPARATOR);
+		int scaleParen = pattern.indexOf(scaleSeparator);
 		String tmp = new String(pattern.substring(scaleParen + 1, pattern.length()).trim());
 		if (scaleParen == -1) {
 			return 0;
@@ -246,9 +259,18 @@ public class Numeric implements Format {
 
 	static public void main(String[] args) {
 	  Numeric num = new Numeric();
+	  
 	  num.applyPattern("S9(8)V99");
 	  Object str = new Double("-316.5457");
 	  System.out.println (num.format(str));
+	  
+	  str = new Double("316.5457");
+	  System.out.println (num.format(str));
+	  
+	  num.applyPattern("S9(8).99999999999");
+	  str = new Double("-316.5457");
+	  System.out.println (num.format(str));
+	  
 	  str = new Double("316.5457");
 	  System.out.println (num.format(str));
 	}

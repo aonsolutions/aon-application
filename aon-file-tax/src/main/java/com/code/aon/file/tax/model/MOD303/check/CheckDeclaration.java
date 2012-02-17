@@ -1,13 +1,14 @@
 package com.code.aon.file.tax.model.MOD303.check;
 
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
+@Deprecated
 public class CheckDeclaration extends Check {
 	
 	private static final String ERR_1 = "ERROR_DECLARATION_1";
@@ -15,7 +16,7 @@ public class CheckDeclaration extends Check {
 		
 
 	
-	public static boolean parse(Declaration declaration,ArrayList<Exception> exceptions){
+	public static boolean parse(Declaration declaration,List<Exception> exceptions){
 		boolean status = true;
 		if (StringUtils.isBlank(declaration.getDocument())){
 			exceptions.add( new Fd0Exception( getMessage(ERR_1) ,declaration.toString()) );

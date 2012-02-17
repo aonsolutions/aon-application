@@ -1,18 +1,19 @@
 package com.code.aon.file.format.output;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 public class FileOutput {
 
-	private ArrayList<Exception> errors;
+	private List<Exception> errors;
 	private File file;
+	private byte[] content;
 
-	public ArrayList<Exception> getErrors() {
+	public List<Exception> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(ArrayList<Exception> errors) {
+	public void setErrors(List<Exception> errors) {
 		this.errors = errors;
 	}
 
@@ -24,4 +25,12 @@ public class FileOutput {
 		this.file = file;
 	}
 
+	public byte[] getContent() {
+		return content;
+	}
+	public void setContent(byte[] content) {
+		this.content = content;
+	}
+
+	
 }
