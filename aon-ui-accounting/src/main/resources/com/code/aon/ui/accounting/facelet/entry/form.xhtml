@@ -44,7 +44,7 @@
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{!accountEntry.new and accountEntry.updatable}"
+							rendered="#{!accountEntry.new and accountEntry.updatable and accountEntry.manual}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 						</aon:commandButton>
 

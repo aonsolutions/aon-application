@@ -118,7 +118,10 @@ public class AccountEntryController extends BasicController {
             } else {
     			flag = isManual();
     			if (!flag && isInvoice()) {
-    				flag = isAccountInvoice(entry);
+    				//flag = isAccountInvoice(entry);
+    				// TODO Cambiar de nombre al siguiente método.
+    				isAccountInvoice(entry);
+    				flag = true;
     			}
             }
 		} catch (ManagerBeanException e) {
