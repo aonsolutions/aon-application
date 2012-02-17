@@ -342,13 +342,13 @@ public class ReservationUtils implements IReservationConstants {
 
 	public Customer obtainAgency(ProfileInfo agencyInfo) throws ManagerBeanException {
 		if (agencyInfo != null) {
-			String agencyId = agencyInfo.getUniqueID().getID();
-			String agencyContext = agencyInfo.getUniqueID().getIDContext();
-			if (StringUtils.isNotEmpty(agencyId) && StringUtils.isNotEmpty(agencyContext)) {
+			String code = agencyInfo.getUniqueID().getID();
+			String context = agencyInfo.getUniqueID().getIDContext();
+			if (StringUtils.isNotEmpty(code) && StringUtils.isNotEmpty(context)) {
 				IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), agencyContext.toUpperCase());
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), agencyId);
+				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context.toUpperCase());
+				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), code);
 				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
 				RegistryAddInfo rAddInfo = null;
 				for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
@@ -431,7 +431,7 @@ public class ReservationUtils implements IReservationConstants {
 	public void verifySellerEntity(ProjectReservation reservation, SourceType sellerSource) {
 		if (isSellerUnknown()) {
 			String remarks = reservation.getRemarks();
-			remarks = "CANAL DE VENTA DESCONOCIDO: " + sellerSource.getRequestorID().getID() + "\n" + remarks;
+			remarks = "CANAL DE VENTA DESCONOCIDO [CRO: " + sellerSource.getRequestorID().getID() + "]\n" + remarks;
 			reservation.setRemarks(remarks);
 			reservation.setStatus(ReservationStatus.BLOCKED);
 		}
@@ -440,11 +440,12 @@ public class ReservationUtils implements IReservationConstants {
 	public void verifyAgencyEntity(ProjectReservation reservation, ProfileInfo agencyInfo) {
 		if (isAgencyUnknown()) {
 			String remarks = reservation.getRemarks();
+			String agencyContext = agencyInfo.getUniqueID().getIDContext().toUpperCase();
 			String agencyName = "";
 			if (agencyInfo.getProfile().getCompanyInfo().sizeOfCompanyNameArray() > 0) {
 				agencyName = agencyInfo.getProfile().getCompanyInfo().getCompanyNameArray(0).getStringValue();
 			}
-			remarks = "AGENCIA DESCONOCIDA: " + agencyInfo.getUniqueID().getID() + " - " + agencyName + "\n" + remarks;
+			remarks = "AGENCIA DESCONOCIDA [" + agencyContext + ": " + agencyInfo.getUniqueID().getID() + " - " + agencyName + "]\n" + remarks;
 			reservation.setRemarks(remarks);
 			reservation.setStatus(ReservationStatus.BLOCKED);
 		}
@@ -457,7 +458,7 @@ public class ReservationUtils implements IReservationConstants {
 			if (companyInfo.getProfile().getCompanyInfo().sizeOfCompanyNameArray() > 0) {
 				companyName = companyInfo.getProfile().getCompanyInfo().getCompanyNameArray(0).getStringValue();
 			}
-			remarks = "EMPRESA DESCONOCIDA: " + companyInfo.getUniqueID().getID() + " - " + companyName + "\n" + remarks;
+			remarks = "EMPRESA DESCONOCIDA [COMPANY: " + companyInfo.getUniqueID().getID() + " - " + companyName + "]\n" + remarks;
 			reservation.setRemarks(remarks);
 			reservation.setStatus(ReservationStatus.BLOCKED);
 		}
