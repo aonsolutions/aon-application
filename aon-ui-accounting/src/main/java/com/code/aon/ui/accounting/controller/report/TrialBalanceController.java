@@ -286,9 +286,9 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		return getCollection();
 	}
 
-	public void onPeriodChanged(ValueChangeEvent event) {
+	public void onPeriodChanged(ActionEvent event) {
 		try {
-			Period period = (Period) event.getNewValue();
+			Period period = getParameters().getPeriod();
 			if (period == null) {
 					Date first = getAccountingUtil().getFirstPeriodInitialDate();
 					getParameters().setFromDate(first);
