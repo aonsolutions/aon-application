@@ -342,12 +342,13 @@ public class ReservationUtils implements IReservationConstants {
 
 	public Customer obtainAgency(ProfileInfo agencyInfo) throws ManagerBeanException {
 		if (agencyInfo != null) {
-			String iata = agencyInfo.getUniqueID().getID();
-			if (StringUtils.isNotEmpty(iata)) {
+			String agencyId = agencyInfo.getUniqueID().getID();
+			String agencyContext = agencyInfo.getUniqueID().getIDContext();
+			if (StringUtils.isNotEmpty(agencyId) && StringUtils.isNotEmpty(agencyContext)) {
 				IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), IATA);
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), iata);
+				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), agencyContext.toUpperCase());
+				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), agencyId);
 				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
 				RegistryAddInfo rAddInfo = null;
 				for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
