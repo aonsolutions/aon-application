@@ -228,11 +228,16 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		
 		@Override
 		public void print() {
+			download();
+		}
+		
+		@Override
+		public void download() {
 			Salary salary = salaries.get(currentIndex());
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + ".pdf");
 			Window.open(printURL, "_blank", null);
 		}
-
+		
 		@Override
 		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Salary salary = salaries.get(currentIndex());
@@ -262,6 +267,11 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		
 		@Override
 		public void print() {
+			download();
+		}
+		
+		@Override
+		public void download() {
 			Cost cost = costs.get(currentIndex());
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/" 
 					+ cost.getMonth()  

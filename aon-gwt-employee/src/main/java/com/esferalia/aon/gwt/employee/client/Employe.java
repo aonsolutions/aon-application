@@ -97,6 +97,12 @@ public class Employe implements EntryPoint, Salaries.Handler {
 		
 		@Override
 		public void print() {
+			// TODO Hey here is someting that need be implemented.
+		}
+		
+		@Override
+		public void download() {
+			// TODO Hey here is someting that need be implemented.
 		}
 
 		@Override

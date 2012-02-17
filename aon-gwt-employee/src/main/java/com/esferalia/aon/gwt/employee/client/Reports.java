@@ -108,7 +108,7 @@ public class Reports extends ResizeComposite {
 			@Override
 			public void execute() {
 				IReport report = reports.current();
-				report.print();
+				report.download();
 			}
 		});
 

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.gwt.employee.shared.Document;
-import com.esferalia.aon.gwt.employee.shared.Salary;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -185,6 +184,16 @@ public class Documents extends Composite {
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "document/" + doc.getId() + ".pdf");
 			Window.open(printURL, "_blank", null);
 		}
+		
+		@Override
+		public void download() {
+			Document doc = documents.get(currentIndex());
+			String extension = getExtension(doc);
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "document/" 
+					+ doc.getId() 
+					+ ( extension != null ? "." + extension : "" ) );
+			Window.open(printURL, "_blank", null);
+		}
 
 		@Override
 		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
@@ -192,6 +201,14 @@ public class Documents extends Composite {
 			//callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
 			documentsService.getAsHTML(doc, callback);
 		}
+		
+		private String getExtension(Document doc) {
+			String description = doc.getDescription();
+			int index = description.lastIndexOf('.');
+			return index == -1 ? null : description.substring(description.lastIndexOf('.') + 1 ) ;
+			
+		}
+		
 	}
 	
 	@SuppressWarnings("serial")
