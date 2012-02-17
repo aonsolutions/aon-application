@@ -65,31 +65,30 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			
 			RAttach rattach = getRAttach(rattachId);
 			
-			String tmpDir = System.getProperty("java.io.tmpdir");
-
-			File inputFile = 
-					new File(tmpDir, rattachId + "." + rattach.mimeType.getExtension() ); 
-			
-			FileOutputStream inputFileOs = 
-					new FileOutputStream(inputFile);
-			inputFileOs.write(rattach.bytes);
-			inputFileOs.close();
-			
-			File outputFile = 
-					new File(tmpDir, rattachId + "." + mimeType.getExtension() ); 
-			
-			convert(inputFile, outputFile);
-
 			resp.setContentType(mimeType.getName());
-			
-			InputStream outputFileIs = 
-					new FileInputStream(outputFile);
 			OutputStream os = resp.getOutputStream();
-			
-			byte buff [] = new byte [1024] ;
-			int read = -1;
-			while ( ( read = outputFileIs.read(buff, 0 , buff.length) ) != -1 ) {
-				os.write(buff, 0, read );
+
+			if ( rattach.mimeType == mimeType ) {
+				os.write(rattach.bytes);
+			} else { 
+				String tmpDir = System.getProperty("java.io.tmpdir");
+				File inputFile = 
+						new File(tmpDir, rattachId + "." + rattach.mimeType.getExtension() ); 
+				FileOutputStream inputFileOs = 
+						new FileOutputStream(inputFile);
+				inputFileOs.write(rattach.bytes);
+				inputFileOs.close();
+				
+				File outputFile = 
+						new File(tmpDir, rattachId + "." + mimeType.getExtension() ); 
+				convert(inputFile, outputFile);
+				InputStream outputFileIs = 
+						new FileInputStream(outputFile);
+				byte buff [] = new byte [1024] ;
+				int read = -1;
+				while ( ( read = outputFileIs.read(buff, 0 , buff.length) ) != -1 ) {
+					os.write(buff, 0, read );
+				}
 			}
 			
 			os.flush();

@@ -98,7 +98,7 @@ public class Reports extends ResizeComposite {
 		
 		IReport report = reports.current();
 		
-		report.getAsHTML(1.30f, new AsyncCallback<String>() {
+		report.getAsHTML(130, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String html) {
 				container.setHTML(html);

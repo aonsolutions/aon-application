@@ -187,7 +187,7 @@ public class Documents extends Composite {
 		}
 
 		@Override
-		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Document doc = documents.get(currentIndex());
 			//callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
 			documentsService.getAsHTML(doc, callback);

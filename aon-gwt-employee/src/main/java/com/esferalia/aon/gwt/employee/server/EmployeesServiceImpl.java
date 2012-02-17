@@ -117,12 +117,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	
-	public String getSalaryReceiptHTML(Salary salary, float zoomRatio)
+	public String getSalaryReceiptHTML(Salary salary, int zoom)
 			throws IllegalArgumentException {
 
 			Map<Object, Object> parameters = 
 					new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not roud to int*/);
 			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
 			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
 			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
@@ -171,7 +171,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 
-	public String getCostReceiptHTML(Cost cost, float zoomRatio)
+	public String getCostReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
@@ -244,7 +244,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
 			Map<Object, Object> parameters = new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoomRatio);
+			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not round to int*/);
 			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
 			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
 			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");

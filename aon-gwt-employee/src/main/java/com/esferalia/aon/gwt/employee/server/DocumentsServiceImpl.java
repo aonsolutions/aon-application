@@ -159,7 +159,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 		@Override
 		public void transform(Document doc, OutputStream os) throws Exception {
 			
-			float zoom = OpenDocument2ImageServlet.DEFAULT_ZOOM;
+			int zoom = OpenDocument2ImageServlet.DEFAULT_ZOOM;
 			
 			PrintStream printStream = new PrintStream(os);
 			
@@ -170,11 +170,11 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 				PDFPage pdfPage = pdfFile.getPage(page);
 
 				// get the width and height for the doc at the default zoom
-				int width = (int) ( pdfPage.getBBox().getWidth() * zoom);
-				int height = (int) ( pdfPage.getBBox().getHeight() * zoom );
+				double width =  pdfPage.getBBox().getWidth() * zoom / 100 ;
+				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
 				
 				// TODO : aon_gwt_employee ???
-				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%f'></img> </div>",
+				printStream.printf("<div class='page' style='width:%fpx;height:%fpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
 						width,
 						height,
 						doc.getId(),

@@ -234,9 +234,9 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		}
 
 		@Override
-		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Salary salary = salaries.get(currentIndex());
-			employeesService.getSalaryReceiptHTML(salary, zoomRatio, callback);
+			employeesService.getSalaryReceiptHTML(salary, zoom, callback);
 		}
 	}
 
@@ -267,9 +267,9 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		}
 
 		@Override
-		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Cost cost = costs.get(currentIndex());
-			employeesService.getCostReceiptHTML(cost, zoomRatio, callback);
+			employeesService.getCostReceiptHTML(cost, zoom, callback);
 		}
 	}
 }

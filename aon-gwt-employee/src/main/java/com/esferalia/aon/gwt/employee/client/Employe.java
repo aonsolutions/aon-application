@@ -100,8 +100,8 @@ public class Employe implements EntryPoint, Salaries.Handler {
 		}
 
 		@Override
-		public void getAsHTML(float zoomRatio, AsyncCallback<String> callback) {
-			employeesService.getSalaryReceiptHTML(salary, zoomRatio, callback);
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
+			employeesService.getSalaryReceiptHTML(salary, zoom, callback);
 		}
 	}
 

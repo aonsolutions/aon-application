@@ -30,7 +30,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Salaries extends Composite implements AsyncCallback<List<Salary>> {
 
-	private static final float THUMBNAIL_ZOOM_RATION = 0.20f;
+	private static final int THUMBNAIL_ZOOM_RATION = 20;
 
 	private static final DateTimeFormat DATE_TIME_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);

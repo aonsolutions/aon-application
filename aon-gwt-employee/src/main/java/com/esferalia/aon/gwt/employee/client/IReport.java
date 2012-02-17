@@ -6,6 +6,6 @@ public interface IReport {
 	
 	void print();
 
-	void getAsHTML(float zoomRatio, AsyncCallback<String> callback);
+	void getAsHTML(int zoom, AsyncCallback<String> callback);
 	
 }

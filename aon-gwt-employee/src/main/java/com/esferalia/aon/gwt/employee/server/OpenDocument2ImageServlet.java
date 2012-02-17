@@ -31,7 +31,7 @@ import com.sun.pdfview.PDFPage;
 
 public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 
-	static final float DEFAULT_ZOOM = 1.3f;
+	static final int DEFAULT_ZOOM = 130;
 	static final String DEFAULT_FORMAT = "png";
 
 	public static final String ZOOM_PARAM = "zoom";
@@ -61,8 +61,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			Map<String, String[]> params = req.getParameterMap();
 			int page = params.containsKey(PAGE_PARAM) ? Integer.parseInt(params
 					.get(PAGE_PARAM)[0]) : 1;
-			float zoom = params.containsKey(ZOOM_PARAM) ? Float
-					.parseFloat(params.get(ZOOM_PARAM)[0]) : DEFAULT_ZOOM;
+			int zoom = params.containsKey(ZOOM_PARAM) ? Integer
+					.parseInt(params.get(ZOOM_PARAM)[0]) : DEFAULT_ZOOM;
 
 			resp.setContentType(String.format("image/%s", format));
 			
@@ -130,7 +130,7 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 	}
 
 	private static void pdf2Image(PDFFile pdffile , OutputStream os, int page,
-			String format, float zoom) throws IOException {
+			String format, int zoom) throws IOException {
 
 		PDFPage pdfPage = pdffile.getPage(page);
 
@@ -145,8 +145,8 @@ public class OpenDocument2ImageServlet extends OpenDocumentConverterServlet {
 			rect1 = new Rectangle(0, 0, rect.height, rect.width);
 		}
 		
-		int zoomWidth = Math.round(rect.width * zoom );
-		int zoomHeight = Math.round( rect.height * zoom );
+		int zoomWidth = rect.width * zoom / 100 ;
+		int zoomHeight = rect.height * zoom / 100 ;
 		
 		// generate the image
 		BufferedImage img = ( BufferedImage ) pdfPage.getImage(
