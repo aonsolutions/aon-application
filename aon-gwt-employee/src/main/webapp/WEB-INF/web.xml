@@ -72,6 +72,14 @@
     <url-pattern>/salary/*</url-pattern>
   </servlet-mapping>
   <servlet>
+    <servlet-name>costExporterServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.CostExporterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>costExporterServlet</servlet-name>
+    <url-pattern>/cost/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>openDocumentConverter</servlet-name>
     <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocumentConverterServlet</servlet-class>
   </servlet>

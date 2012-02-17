@@ -104,7 +104,8 @@ body,table td,select,button {
 }
 
 .gwt-MenuBar-vertical .gwt-MenuItem {
-	padding: 4px 40px 4px 2px
+	min-width :125px;
+	padding: 4px 40px 4px 2px;
 }
 
 .gwt-MenuBar .gwt-MenuItem:hover,

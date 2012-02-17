@@ -21,21 +21,24 @@
 				<g:MenuBar >
 					<g:MenuItem text="Archivo">
 						<g:MenuBar vertical="true">
-							<g:MenuItem text="Descargar como" >
+							<g:MenuItem ui:field="downloadMenuItem"  text="Descargar" />
+							<!--  g:MenuItem text="Descargar como..." >
 								<g:MenuBar vertical="true" >
 									<g:MenuItem text="PDF" />
 								</g:MenuBar>
-							</g:MenuItem>
-							<g:MenuItem text="Enviar por correo electrónico al trabajador" />
-							<g:MenuItem text="Enviar por correo electrónico como archivo adjunto..." />
+							</g:MenuItem-->
+							<!--  g:MenuItem text="Enviar por correo electrónico al trabajador" /-->
+							<!--   g:MenuItem text="Enviar por correo electrónico como archivo adjunto..." /-->
 							<g:MenuItem styleName="gwt-MenuItemSeparator"><div class="menuSeparatorInner"></div></g:MenuItem> 
-							<g:MenuItem text="Imprimir" />
+							<g:MenuItem ui:field="printMenuItem" text="Imprimir..." />
 						</g:MenuBar>
 					</g:MenuItem>
-					<!--  
 					<g:MenuItem text="Ver">
+						<g:MenuBar vertical="true">
+							<g:MenuItem ui:field="reduceMenuItem" text="Reducir" />
+							<g:MenuItem ui:field="enlargeMenuItem" text="Ampliar" />
+						</g:MenuBar>
 					</g:MenuItem>
-					-->
 				</g:MenuBar>
 				
 				<g:FlowPanel styleName="aon-finding-title-toolbar" >
@@ -52,20 +55,20 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='print' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
+								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
 								<g:HTMLPanel styleName="aon-spin-control" >
 									<g:HTMLPanel styleName="aon-spin-control-element" >
-										<g:Button ui:field='first'  stylePrimaryName='aon-dataScroller-button aon-dataScroller-button-first'  />
+										<g:Button ui:field='firstButton'  stylePrimaryName='aon-dataScroller-button aon-dataScroller-button-first'  />
 									</g:HTMLPanel>
 									<g:HTMLPanel  styleName="aon-spin-control-element" >
-										<g:Button ui:field='previous' styleName='aon-dataScroller-button aon-dataScroller-button-previous' />
+										<g:Button ui:field='previousButton' styleName='aon-dataScroller-button aon-dataScroller-button-previous' />
 									</g:HTMLPanel>
 									<g:Label ui:field='text'  styleName="aon-spin-control-element aon-nowrap" > 1 de ..	</g:Label>
 									<g:HTMLPanel styleName="aon-spin-control-element" >
-										<g:Button ui:field='next' styleName='aon-dataScroller-button aon-dataScroller-button-next' />
+										<g:Button ui:field='nextButton' styleName='aon-dataScroller-button aon-dataScroller-button-next' />
 									</g:HTMLPanel>
 									<g:HTMLPanel styleName="aon-spin-control-element" >
-										<g:Button ui:field='last' styleName='aon-dataScroller-button aon-dataScroller-button-last' />
+										<g:Button ui:field='lastButton' styleName='aon-dataScroller-button aon-dataScroller-button-last' />
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 							</g:HTMLPanel>

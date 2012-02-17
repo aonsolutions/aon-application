@@ -262,8 +262,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		
 		@Override
 		public void print() {
-			// TODO Auto-generated method stub
-			
+			Cost cost = costs.get(currentIndex());
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/" 
+					+ cost.getMonth()  
+					+ "_" + cost.getYear()  
+					+ "_" + cost.getEnterpriseId() 
+					+ "_" + cost.getWorkplaceId() 
+					+  ".pdf");
+			Window.open(printURL, "_blank", null);
 		}
 
 		@Override
