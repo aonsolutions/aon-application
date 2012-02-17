@@ -12,6 +12,7 @@
 			value="#{pmsBundle.pms_hotel}" />
 		<aon:selectOneMenu id="ProjectReservation_hotel_id"
 			value="#{searchController.hotel}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 		</aon:selectOneMenu>
 	</c:if>
