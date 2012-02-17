@@ -10,6 +10,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("documents")
 public interface DocumentsService extends RemoteService {
 	
-	String getAsHTML(Document doc);
+	String getAsHTML(Document doc, int zoom);
 	List<Document> getEnterpriseDocuments();
 }

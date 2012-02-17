@@ -47,13 +47,13 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 	}
 	
 	@Override
-	public String getAsHTML(Document doc) {
+	public String getAsHTML(Document doc, int zoom) {
 		IDocument2HtmlConverter converter = 
 				getDocument2HtmlConverter(doc);
 		try {
 			ByteArrayOutputStream os = 
 					new ByteArrayOutputStream();
-			converter.transform(doc, os);
+			converter.transform(doc, os, zoom);
 			os.flush();
 			return os.toString();
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 	
 	
 	private static interface IDocument2HtmlConverter {
-		void transform(Document doc, OutputStream os) throws Exception;
+		void transform(Document doc, OutputStream os, int zoom) throws Exception;
 	}
 
 
@@ -157,9 +157,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 		private static  IDocument2HtmlConverter INSTANCE = new OpenDocument2HtmlConverter();
 
 		@Override
-		public void transform(Document doc, OutputStream os) throws Exception {
-			
-			int zoom = OpenDocument2ImageServlet.DEFAULT_ZOOM;
+		public void transform(Document doc, OutputStream os, int zoom) throws Exception {
 			
 			PrintStream printStream = new PrintStream(os);
 			
@@ -188,7 +186,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 
 	private abstract static class Document2HtmlConverter implements IDocument2HtmlConverter{
 		@Override
-		public void transform(Document doc, OutputStream os) throws Exception {
+		public void transform(Document doc, OutputStream os, int zoom) throws Exception {
 			Connection connection = getConnection();
 
 			ResultSet rs = null;

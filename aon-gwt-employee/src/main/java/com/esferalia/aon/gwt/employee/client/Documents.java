@@ -199,7 +199,7 @@ public class Documents extends Composite {
 		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Document doc = documents.get(currentIndex());
 			//callback.onSuccess(  "<div><img src='aon_gwt_employee/pdf2Image/"+ doc.getId() +".png'></img> </div>");
-			documentsService.getAsHTML(doc, callback);
+			documentsService.getAsHTML(doc, zoom, callback);
 		}
 		
 		private String getExtension(Document doc) {

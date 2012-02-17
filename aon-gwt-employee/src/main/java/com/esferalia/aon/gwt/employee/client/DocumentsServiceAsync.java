@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface DocumentsServiceAsync {
 
-	void getAsHTML(Document doc, AsyncCallback<String> callback);
+	void getAsHTML(Document doc, int zoom, AsyncCallback<String> callback);
 	void getEnterpriseDocuments(AsyncCallback<List<Document>> callback);
 
 }
