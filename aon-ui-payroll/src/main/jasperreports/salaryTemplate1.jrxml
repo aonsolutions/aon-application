@@ -604,9 +604,9 @@
 				</frame>
 				<frame>
 					<reportElement style="cell" x="186" y="26" width="88" height="26"/>
-					<rectangle radius="10">
-						<reportElement mode="Opaque" x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
-					</rectangle>
+					<ellipse>
+						<reportElement x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
+					</ellipse>
 					<staticText>
 						<reportElement style="label" mode="Opaque" x="76" y="15" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -625,9 +625,9 @@
 				</frame>
 				<frame>
 					<reportElement style="cell" x="98" y="52" width="88" height="26"/>
-					<rectangle radius="10">
-						<reportElement mode="Opaque" x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
-					</rectangle>
+					<ellipse>
+						<reportElement x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
+					</ellipse>
 					<staticText>
 						<reportElement style="label" mode="Opaque" x="76" y="15" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -709,7 +709,7 @@
 						<text><![CDATA[1]]></text>
 					</staticText>
 					<staticText>
-						<reportElement style="label" x="13" y="2" width="532" height="10"/>
+						<reportElement style="label" x="14" y="2" width="530" height="10"/>
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Base de Horas Extras]]></text>
 					</staticText>
@@ -725,7 +725,7 @@
 						<text><![CDATA[2]]></text>
 					</staticText>
 					<staticText>
-						<reportElement style="label" x="13" y="2" width="532" height="10"/>
+						<reportElement style="label" x="14" y="2" width="530" height="10"/>
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Base de Horas Extras No autorizadas]]></text>
 					</staticText>
@@ -741,7 +741,7 @@
 						<text><![CDATA[3]]></text>
 					</staticText>
 					<staticText>
-						<reportElement style="label" x="13" y="2" width="532" height="10"/>
+						<reportElement style="label" x="14" y="2" width="530" height="10"/>
 						<textElement verticalAlignment="Middle"/>
 						<text><![CDATA[Base de Formación Pofesional y Contingencias Comunes]]></text>
 					</staticText>
