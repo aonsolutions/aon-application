@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.3636363636363635"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
@@ -17,8 +17,9 @@
 		</box>
 	</style>
 	<style name="table">
-		<box>
+		<box topPadding="0" bottomPadding="0">
 			<pen lineWidth="0.0"/>
+			<topPen lineWidth="0.0"/>
 			<bottomPen lineWidth="0.0"/>
 		</box>
 	</style>
@@ -34,7 +35,7 @@
 	</style>
 	<style name="title_CH" style="title" hAlign="Center" vAlign="Middle"/>
 	<style name="table_TD">
-		<box>
+		<box topPadding="0" bottomPadding="0">
 			<pen lineWidth="0.5"/>
 			<topPen lineWidth="0.0"/>
 			<bottomPen lineWidth="0.0"/>
@@ -188,7 +189,7 @@
 							<printWhenExpression><![CDATA[$F{salary}.getSeniority() > 0]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
-						<textFieldExpression><![CDATA[$F{salary}.getSeniority() + " años"]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{salary}.getSeniority() + ( $F{salary}.getSeniority() == 1 ? " año" :" años" )]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
@@ -470,7 +471,7 @@
 		<band height="36">
 			<frame>
 				<reportElement style="cell" x="0" y="0" width="555" height="36"/>
-				<box>
+				<box topPadding="0" bottomPadding="0">
 					<topPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.0"/>
 				</box>
@@ -544,7 +545,9 @@
 						<text><![CDATA[PRORRATA PAGAS EXTR.]]></text>
 					</staticText>
 					<textField pattern="#,##0.00">
-						<reportElement style="text" x="0" y="13" width="88" height="13"/>
+						<reportElement style="text" x="0" y="13" width="88" height="13">
+							<printWhenExpression><![CDATA[$F{salary}.getExtraPayProration() != 0.00]]></printWhenExpression>
+						</reportElement>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getExtraPayProration()]]></textFieldExpression>
 					</textField>
@@ -552,10 +555,10 @@
 				<frame>
 					<reportElement style="cell" x="98" y="26" width="88" height="26"/>
 					<ellipse>
-						<reportElement x="77" y="15" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
+						<reportElement x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
 					</ellipse>
 					<staticText>
-						<reportElement style="label" x="77" y="15" width="10" height="10" forecolor="#FFFFFF"/>
+						<reportElement style="label" mode="Opaque" x="76" y="15" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<text><![CDATA[1]]></text>
 					</staticText>
@@ -565,7 +568,7 @@
 						<text><![CDATA[BASE H.E.]]></text>
 					</staticText>
 					<textField pattern="#,##0.00">
-						<reportElement style="text" x="11" y="13" width="66" height="13">
+						<reportElement style="text" x="14" y="13" width="60" height="13">
 							<printWhenExpression><![CDATA[$F{salary}.getOvertimeBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
@@ -602,10 +605,10 @@
 				<frame>
 					<reportElement style="cell" x="186" y="26" width="88" height="26"/>
 					<rectangle radius="10">
-						<reportElement mode="Opaque" x="77" y="15" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
+						<reportElement mode="Opaque" x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
 					</rectangle>
 					<staticText>
-						<reportElement style="label" x="77" y="15" width="10" height="10" forecolor="#FFFFFF"/>
+						<reportElement style="label" mode="Opaque" x="76" y="15" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<text><![CDATA[3]]></text>
 					</staticText>
@@ -615,33 +618,33 @@
 						<text><![CDATA[BASE AT Y EP]]></text>
 					</staticText>
 					<textField pattern="#,##0.00">
-						<reportElement style="text" x="11" y="13" width="66" height="13"/>
+						<reportElement style="text" x="14" y="13" width="60" height="13"/>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
 					<reportElement style="cell" x="98" y="52" width="88" height="26"/>
-					<ellipse>
-						<reportElement x="77" y="15" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
-					</ellipse>
+					<rectangle radius="10">
+						<reportElement mode="Opaque" x="74" y="13" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
+					</rectangle>
+					<staticText>
+						<reportElement style="label" mode="Opaque" x="76" y="15" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<text><![CDATA[2]]></text>
+					</staticText>
 					<staticText>
 						<reportElement style="title" x="2" y="2" width="86" height="11"/>
 						<textElement/>
 						<text><![CDATA[BASE H.E. NO AUTORIZ.]]></text>
 					</staticText>
 					<textField pattern="#,##0.00">
-						<reportElement style="text" x="11" y="13" width="62" height="13">
+						<reportElement style="text" x="14" y="13" width="60" height="13">
 							<printWhenExpression><![CDATA[$F{salary}.getOvertimeBase() != 0.00]]></printWhenExpression>
 						</reportElement>
 						<textElement/>
 						<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase()]]></textFieldExpression>
 					</textField>
-					<staticText>
-						<reportElement style="label" x="77" y="15" width="10" height="10" forecolor="#FFFFFF"/>
-						<textElement textAlignment="Center" verticalAlignment="Middle"/>
-						<text><![CDATA[2]]></text>
-					</staticText>
 				</frame>
 				<frame>
 					<reportElement style="cell" x="281" y="0" width="88" height="26"/>
@@ -696,12 +699,12 @@
 					<text><![CDATA[RECIBÍ]]></text>
 				</staticText>
 				<frame>
-					<reportElement x="10" y="104" width="545" height="13"/>
+					<reportElement x="10" y="90" width="545" height="13"/>
 					<ellipse>
-						<reportElement x="2" y="2" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
+						<reportElement x="0" y="0" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
 					</ellipse>
 					<staticText>
-						<reportElement style="label" x="2" y="2" width="10" height="10" forecolor="#FFFFFF"/>
+						<reportElement style="label" mode="Opaque" x="2" y="2" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<text><![CDATA[1]]></text>
 					</staticText>
@@ -712,12 +715,12 @@
 					</staticText>
 				</frame>
 				<frame>
-					<reportElement x="10" y="117" width="545" height="13"/>
+					<reportElement x="10" y="110" width="545" height="13"/>
 					<ellipse>
-						<reportElement x="2" y="2" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
+						<reportElement x="0" y="0" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
 					</ellipse>
 					<staticText>
-						<reportElement style="label" x="2" y="2" width="10" height="10" forecolor="#882688"/>
+						<reportElement style="label" mode="Opaque" x="2" y="2" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<text><![CDATA[2]]></text>
 					</staticText>
@@ -730,17 +733,17 @@
 				<frame>
 					<reportElement x="10" y="130" width="545" height="13"/>
 					<ellipse>
-						<reportElement x="2" y="2" width="10" height="10" forecolor="#FFFFFF" backcolor="#882688"/>
+						<reportElement x="0" y="0" width="13" height="13" forecolor="#FFFFFF" backcolor="#882688"/>
 					</ellipse>
 					<staticText>
-						<reportElement style="label" x="2" y="2" width="10" height="10" forecolor="#FFFFFF"/>
+						<reportElement style="label" mode="Opaque" x="2" y="2" width="9" height="9" forecolor="#FFFFFF" backcolor="#882688"/>
 						<textElement textAlignment="Center" verticalAlignment="Middle"/>
 						<text><![CDATA[3]]></text>
 					</staticText>
 					<staticText>
 						<reportElement style="label" x="13" y="2" width="532" height="10"/>
 						<textElement verticalAlignment="Middle"/>
-						<text><![CDATA[Base de Formación Pofesinal y Contingencias Comines]]></text>
+						<text><![CDATA[Base de Formación Pofesional y Contingencias Comunes]]></text>
 					</staticText>
 				</frame>
 			</frame>
