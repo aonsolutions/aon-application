@@ -1,12 +1,13 @@
 package com.code.aon.file.tax.model.MOD303;
 
 import java.io.Writer;
+import java.util.List;
 
 import com.code.aon.file.tax.model.MOD303.data.Declaration;
 
-public interface IMOD303XMLFactory {
+public interface IMOD303Factory {
 
-	void createDocument(Declaration declaration, Writer out);
+	List<Exception> createDocument(List<Declaration> declarations, Writer out);
 
 
 }
