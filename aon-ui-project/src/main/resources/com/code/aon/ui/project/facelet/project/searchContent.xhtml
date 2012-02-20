@@ -63,28 +63,30 @@
 		<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
 	</aon:selectOneMenu>
 	
-	<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
-	<aon:selectOneMenu id="Project_commercial"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-	</aon:selectOneMenu>
-
-	<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
-	<aon:selectOneMenu id="Project_tas"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-	</aon:selectOneMenu>
-
-	<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
-	<aon:selectOneMenu id="Project_dossier"
-		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-		<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-	</aon:selectOneMenu>
+	<c:if test="#{!aonConfiguration.bean.project.skipProjectFlags}">
+		<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
+		<aon:selectOneMenu id="Project_commercial"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	
+		<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
+		<aon:selectOneMenu id="Project_tas"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	
+		<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
+		<aon:selectOneMenu id="Project_dossier"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
+		</aon:selectOneMenu>
+	</c:if>
 
 </ui:composition>

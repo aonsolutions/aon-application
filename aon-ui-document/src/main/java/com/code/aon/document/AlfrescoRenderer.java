@@ -103,12 +103,10 @@ public class AlfrescoRenderer implements CriterionVisitor {
 		Object data = expression.getData();
 		if ( data instanceof Date ) {
 			out.append( ISO8601DateFormat.format( (Date) data) );
+		} else if ( data instanceof Integer ) {
+			out.append( data.toString() );
 		} else {
-			String value = data.toString();
-			if ( value.indexOf("*") != -1 ) {
-				value = "\"" + value + "\""; 
-			}
-			out.append( value );			
+			out.append( "\"" + data.toString() + "\"" );			
 		}
 	}
 

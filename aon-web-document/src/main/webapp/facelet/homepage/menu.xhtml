@@ -57,11 +57,13 @@
 			</aon:dropDownMenu>				
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
 				styleClass="aon-inputText aon-skip-focus"
+				onclick="selectAllText(this);"
 				size="28" maxlength="32" tabindex="32767" >
 				<rich:hotKey key="return" handler="mainSearch();return false;"/>
 				<a4j:jsFunction name="mainSearch"
 					action="enterpriseDocument_search" reRender="aonContent"
-					actionListener="#{enterpriseDocumentSearch.onMainSearch}" />		
+					actionListener="#{enterpriseDocumentSearch.onMainSearch}" />	
+				<rich:jQuery name="selectAllText" timing="onJScall" query="select();" />
 			</aon:inputText>
 		</h:panelGrid>			
 	</ui:define>

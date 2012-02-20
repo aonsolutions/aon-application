@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -299,11 +300,20 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	}
 
 	public void onMainSearch(ActionEvent event) {
+		reset();
 		setText( getMainText() );
+		setMainText( AonUtil.getMessage(BUNDLE_NAME, INPUT_SEARCH_TEXT) );
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ec.onBasicViewSelect(event);
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
-		edc.onSearch(event);
+		try {
+			edc.clearCriteria();
+			edc.onSearch(event);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onMainSearch exception: ", e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}				
 	}
 	
 }

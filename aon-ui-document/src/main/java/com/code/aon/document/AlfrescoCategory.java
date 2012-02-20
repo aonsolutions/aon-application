@@ -71,11 +71,7 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 	}
 	
 	public String getSearchValue() {
-		StringBuffer sb = new StringBuffer();
-		sb.append( "\"" );
-		sb.append( getSearhPath(id) );
-		sb.append( "/member\"" );
-		return sb.toString();
+		return getSearhPath(id) + "/member";
 	}
 
 	public String getSearhPath() {
