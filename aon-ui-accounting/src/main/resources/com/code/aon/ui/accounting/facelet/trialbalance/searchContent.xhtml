@@ -17,11 +17,13 @@
 	<aon:outputLabel
 		for="AccountEntryDetail_accountEntry_accountPeriod"
 		value="#{accountingBundle.accounting_period}" />
-	<aon:selectOneMenu 
-		reRender="AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To,SearchButton,SearchWarning" ajaxSingle="true"
-		valueChangeListener="#{controller.onPeriodChanged}"
-		id="AccountEntryDetail_accountEntry_accountPeriod"
+	<aon:selectOneMenu id="AccountEntryDetail_accountEntry_accountPeriod"
 		value="#{controller.parameters.period}">
+		<a4j:support event="onchange"
+			actionListener="#{controller.onPeriodChanged}" 
+			reRender="AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To,balance-search,SearchWarning"
+			ajaxSingle="true" />
+		
 		<f:selectItem itemLabel="-" itemValue="" />
 		<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 	</aon:selectOneMenu>
@@ -103,8 +105,8 @@
 			value="#{controller.parameters.fromDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
-			<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
-			<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+			<a4j:support event="oninputchange" reRender="balance-search,SearchWarning" ajaxSingle="true" />
+			<a4j:support event="onchanged" reRender="balance-search,SearchWarning" ajaxSingle="true" />
 		</aon:selectInputDate>
 
 		<aon:outputLabel
@@ -116,8 +118,8 @@
 			value="#{controller.parameters.toDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
-			<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
-			<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+			<a4j:support event="oninputchange" reRender="balance-search,SearchWarning" ajaxSingle="true" />
+			<a4j:support event="onchanged" reRender="balance-search,SearchWarning" ajaxSingle="true" />
 		</aon:selectInputDate>
 	</aon:div>
 
