@@ -259,7 +259,7 @@ public class ReservationManager implements IReservationConstants {
 				rex.setRecord(reservationCrsCode);
 				throw rex;
 			} else {
-				throw new ReservationException("Unknown error", reservationCrsCode, 1);
+				throw new ReservationException("Unknown error: " + ex.getMessage(), reservationCrsCode, 1);
 			}
 		}
 	}
@@ -276,6 +276,8 @@ public class ReservationManager implements IReservationConstants {
 				reservationGuest.setSurname(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getSurname().toUpperCase());
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfGivenNameArray() > 0) {
 					reservationGuest.setName(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getGivenNameArray(0).toUpperCase());
+				} else {
+					reservationGuest.setName(StringUtils.EMPTY);
 				}
 				if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().sizeOfNamePrefixArray() > 0) {
 					reservationGuest.setTreatment(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getPersonName().getNamePrefixArray(0));
