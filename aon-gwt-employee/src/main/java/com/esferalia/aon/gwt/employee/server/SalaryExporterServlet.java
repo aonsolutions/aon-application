@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.employee.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.velocity.runtime.parser.node.GetExecutor;
+import org.jfree.chart.servlet.ServletUtilities;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,12 +23,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.EnterpriseUser;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.web.employee.controller.ManagerController;
 
 @SuppressWarnings("serial")
 public class SalaryExporterServlet extends HttpServlet {
@@ -71,10 +79,15 @@ public class SalaryExporterServlet extends HttpServlet {
 			
 			OutputStream os = resp.getOutputStream();
 			
-			reportManager.execute(os, IPayrollConstants.SALARY_REPORT);
+			int enterpriseId = AonServletUtils.getEnterpriseID(req.getSession());
+			String salaryReport = AonServletUtils.getSalaryReport(enterpriseId); 
+			
+			reportManager.execute(os, salaryReport);
 			
 			os.flush();
 			
+		} catch (SQLException e) {
+			throw new ServletException(e);
 		} catch (ReportException e) {
 			throw new ServletException(e);
 		}catch (ManagerBeanException e) {
@@ -85,6 +98,7 @@ public class SalaryExporterServlet extends HttpServlet {
 		
 		
 	}
+
 	
 	private static OutputFormat getOutputFormat(String extension) {
 		return OUTPUT_FORMATS.get(extension);

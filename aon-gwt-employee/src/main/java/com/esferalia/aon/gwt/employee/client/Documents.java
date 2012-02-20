@@ -189,10 +189,21 @@ public class Documents extends Composite {
 		public void download() {
 			Document doc = documents.get(currentIndex());
 			String extension = getExtension(doc);
+			download(extension);
+		}
+		
+		@Override
+		public void download(String format) {
+			Document doc = documents.get(currentIndex());
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "document/" 
 					+ doc.getId() 
-					+ ( extension != null ? "." + extension : "" ) );
+					+ ( format != null ? "." + format : "" ) );
 			Window.open(printURL, "_blank", null);
+		}
+		
+		@Override
+		public String[] getSupportedFormats() {
+			return new String []{};
 		}
 
 		@Override

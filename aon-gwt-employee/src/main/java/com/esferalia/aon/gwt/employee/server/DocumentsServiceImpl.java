@@ -172,9 +172,9 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 				double height = pdfPage.getBBox().getHeight() * zoom / 100 ;
 				
 				// TODO : aon_gwt_employee ???
-				printStream.printf("<div class='page' style='width:%fpx;height:%fpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
-						width,
-						height,
+				printStream.printf("<div class='page' style='width:%dpx;height:%dpx;'   ><img src='openDocument2Image/%d.png?%s=%d&%s=%d'></img> </div>",
+						(long)width,
+						(long)height,
 						doc.getId(),
 						OpenDocument2ImageServlet.PAGE_PARAM,
 						page,

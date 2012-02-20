@@ -154,7 +154,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
-			reportManager.execute(out, IPayrollConstants.SALARY_REPORT, parameters);
+			String salaryReport = getSalaryReport();
+			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
 
@@ -264,6 +265,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 
+	private String getSalaryReport() throws ReportException {
+		Connection connection = getConnection();
+		int enterpriseId = getEnterpriseID();
+		try {
+			return AonServletUtils.getSalaryReport(connection, enterpriseId);
+		} catch (SQLException e) {
+			throw new ReportException(e.getLocalizedMessage());
+		}
+	}
 
 	private static List<Salary> getSalaries(Connection connection, Integer contractId)
 			throws SQLException {
@@ -539,7 +549,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 		
 	}
-
 
 
 	private static void groups(ResultSet rs, GroupHandler... handlers)

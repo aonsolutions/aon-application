@@ -1,6 +1,11 @@
 package com.esferalia.aon.gwt.employee.server;
 
+import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_DATA;
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -11,9 +16,16 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.company.EnterpriseUser;
+import com.code.aon.registry.Registry;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.esferalia.aon.gwt.employee.shared.Salary;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.web.employee.controller.ManagerController;
 
 class AonServletUtils {
 
@@ -62,6 +74,55 @@ class AonServletUtils {
 		if (facesContext != null) {
 			facesContext.release();
 		}
+	}
+
+	protected static Integer getEnterpriseID(HttpSession session) {
+		ManagerController controller = (ManagerController) session
+				.getAttribute(ManagerController.CONTROLLER_NAME);
+		EnterpriseUser enterpriseUser = controller.getLoggedUser();
+		com.code.aon.company.Enterprise aonEnterprise = enterpriseUser
+				.getEnterprise();
+		Registry registry = aonEnterprise.getRegistry();
+		return registry.getId();
+	}
+
+	protected static String getSalaryReport(Integer enterpriseID )
+		throws SQLException {
+		return getSalaryReport(getConnection(), enterpriseID );
+	}
+
+	protected static String getSalaryReport(Connection connection, Integer enterpriseID )
+		throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+	
+		try {
+			String sql = "SELECT * " + 
+					" FROM " +  ENTERPRISE_DATA
+					+ " WHERE " + EnterpriseDataColumns.ENTERPRISE + " = ? "
+					+ " AND " + EnterpriseDataColumns.NAME + " = ? ";
+	
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, enterpriseID);
+			stmt.setString(2, ICompanyConstants.REPORT_SALARY_PARAM);
+			rs = stmt.executeQuery();
+			
+			if ( !rs.next() ) {
+				return IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+			}
+	
+			return rs.getString(EnterpriseDataColumns.EXPRESSION);
+	
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				rs.close();
+			}
+		}
+	
+		
 	}
 
 }

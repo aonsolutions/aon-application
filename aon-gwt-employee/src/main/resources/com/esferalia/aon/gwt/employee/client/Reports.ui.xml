@@ -55,6 +55,7 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='excelButton' styleName='aon-finding-toolbar-item aon-icon-excel' text="Excel" /> 
 								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
 								<g:HTMLPanel styleName="aon-spin-control" >
 									<g:HTMLPanel styleName="aon-spin-control-element" >

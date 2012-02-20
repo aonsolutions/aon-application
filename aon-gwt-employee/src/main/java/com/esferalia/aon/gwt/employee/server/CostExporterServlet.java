@@ -43,6 +43,7 @@ public class CostExporterServlet extends HttpServlet {
 			new HashMap<String, OutputFormat>(){
 		{
 			put("pdf", OutputFormat.PDF);
+			put("xls", OutputFormat.XLS);
 		}
 	};
 	

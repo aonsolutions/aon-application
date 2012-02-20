@@ -104,7 +104,19 @@ public class Employe implements EntryPoint, Salaries.Handler {
 		public void download() {
 			// TODO Hey here is someting that need be implemented.
 		}
-
+		
+		@Override
+		public void download(String format) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public String[] getSupportedFormats() {
+			// TODO Auto-generated method stub
+			return new String []{};
+		}
+		
 		@Override
 		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			employeesService.getSalaryReceiptHTML(salary, zoom, callback);

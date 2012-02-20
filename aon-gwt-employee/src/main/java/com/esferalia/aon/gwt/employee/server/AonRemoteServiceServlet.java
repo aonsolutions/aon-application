@@ -36,13 +36,7 @@ public class AonRemoteServiceServlet extends RemoteServiceServlet {
 
 	protected Integer getEnterpriseID() {
 		HttpSession session = getSession();
-		ManagerController controller = (ManagerController) session
-				.getAttribute(ManagerController.CONTROLLER_NAME);
-		EnterpriseUser enterpriseUser = controller.getLoggedUser();
-		com.code.aon.company.Enterprise aonEnterprise = enterpriseUser
-				.getEnterprise();
-		Registry registry = aonEnterprise.getRegistry();
-		return registry.getId();
+		return AonServletUtils.getEnterpriseID(session);
 	}
 
 

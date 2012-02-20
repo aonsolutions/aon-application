@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.employee.client;
 
 
 
+import java.util.Arrays;
+
 import com.aeat.jaxb.TipoRetenidoSalida2011.Reduccion;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,6 +33,7 @@ public class Reports extends ResizeComposite {
 	private static final int DEFAULT_ZOOM = 130;
 	
 	
+	
 	interface Binder extends UiBinder<Widget, Reports> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
@@ -41,6 +44,7 @@ public class Reports extends ResizeComposite {
 	@UiField Button lastButton;
 
 	@UiField Button printButton;
+	@UiField Button excelButton;
 	
 	@UiField MenuItem printMenuItem;
 	@UiField MenuItem downloadMenuItem;
@@ -94,6 +98,14 @@ public class Reports extends ResizeComposite {
 			}
 		});
 		
+		excelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent arg0) {
+				IReport report = reports.current();
+				report.download("xls");
+			}
+		});
+
 		printMenuItem.setCommand(new Command() {
 			
 			@Override
@@ -147,6 +159,10 @@ public class Reports extends ResizeComposite {
 		setEnabled(nextButton, reports.hasNext());
 		setEnabled(lastButton, reports.hasNext());
 		
+		IReport report = reports.current();
+
+		setVisible(excelButton, support(report, "xls"));
+		
 		text.setText( ( reports.currentIndex() + 1 ) + " de " + reports.size() );
 		
 		getAsHTML();
@@ -185,5 +201,23 @@ public class Reports extends ResizeComposite {
 		button.setStyleName(newStyleName);
 	}
 	
+	private void setVisible( Button button, boolean visible ){
+		
+		if ( button.isVisible() == visible){
+			return;
+		}
+		
+		button.setVisible(visible);
+	}
 
+	private static boolean support ( IReport report, String format) {
+		String supportedFormats [] = report.getSupportedFormats();
+		for (int i = 0; i < supportedFormats.length; i++) {
+			if ( format.equals(supportedFormats[i])){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

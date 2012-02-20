@@ -233,8 +233,13 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		
 		@Override
 		public void download() {
+			download("pdf");
+		}
+		
+		@Override
+		public void download(String format) {
 			Salary salary = salaries.get(currentIndex());
-			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + ".pdf");
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + "." + format );
 			Window.open(printURL, "_blank", null);
 		}
 		
@@ -243,6 +248,13 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			Salary salary = salaries.get(currentIndex());
 			employeesService.getSalaryReceiptHTML(salary, zoom, callback);
 		}
+		
+		@Override
+		public String[] getSupportedFormats() {
+			// TODO Auto-generated method stub
+			return new String [] {};
+		}
+		
 	}
 
 	private class CostReportsModel extends AbstractReportsModel<IReport>
@@ -272,13 +284,18 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		
 		@Override
 		public void download() {
+			download("pdf");
+		}
+		
+		@Override
+		public void download(String format) {
 			Cost cost = costs.get(currentIndex());
 			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/" 
 					+ cost.getMonth()  
 					+ "_" + cost.getYear()  
 					+ "_" + cost.getEnterpriseId() 
 					+ "_" + cost.getWorkplaceId() 
-					+  ".pdf");
+					+  "." + format);
 			Window.open(printURL, "_blank", null);
 		}
 
@@ -286,6 +303,11 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
 			Cost cost = costs.get(currentIndex());
 			employeesService.getCostReceiptHTML(cost, zoom, callback);
+		}
+		
+		@Override
+		public String[] getSupportedFormats() {
+			return new String [] {"xls"};
 		}
 	}
 }
