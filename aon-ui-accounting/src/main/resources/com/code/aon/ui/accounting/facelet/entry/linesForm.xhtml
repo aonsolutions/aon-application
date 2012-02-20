@@ -8,6 +8,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
+	<aon:outputText value="#{accountEntry.updatable}" />
+	<aon:outputText value="#{accountEntry.invoice}" />
+	
 	<aon:div id="linesContainer" style="width: 99%;" >
 		<aon:div rendered="#{!accountEntry.new}" >
 
