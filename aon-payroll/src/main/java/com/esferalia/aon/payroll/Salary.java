@@ -105,6 +105,14 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		return true;
 	}
 
+	@Transient
+	public int getSeniority() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getSeniorityDate());
+		int seniorityYear =  cal.get(Calendar.YEAR);
+		return getYear() - seniorityYear;
+	}
+
 	// *******************************************************
 	// ********************* COSTOS **************************
 	// *******************************************************
