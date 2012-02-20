@@ -175,9 +175,9 @@ public class ReservationManager implements IReservationConstants {
 			checkOutTime.setTime(checkOut);
 			checkOutTime.set(checkOutTime.get(Calendar.YEAR), checkOutTime.get(Calendar.MONTH), checkOutTime.get(Calendar.DATE), 12, 0, 0);
 			SourceType sellerSource = findPosSource(posType.getSourceArray(), CRO_SOURCE);
-			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
+			ProfileInfo agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, SOLRES);
 			if (agencyInfo == null) {
-				agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, SOLRES);
+				agencyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), AGENCY_TYPE, IATA);
 			}
 			String agencyRebate = findTpaExtensionsAttribute(reservationType.getTPAExtensions(), DISCOUNT_MODE, null);
 			ProfileInfo companyInfo = findProfileInfo(reservationType.getResGuests().getResGuestArray(), COMPANY_TYPE, null);
