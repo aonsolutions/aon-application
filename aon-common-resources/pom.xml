@@ -103,6 +103,18 @@
 							<xmlValidation>true</xmlValidation>
 						</configuration>
 					</execution>
+					<execution>
+						<id>AMILIBIA</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/amilibia</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/amilibia</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
