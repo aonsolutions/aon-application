@@ -19,11 +19,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.enumeration.Shift;
 
 public class PmsCollectionsController {
 
 	private List<SelectItem> reservationStatuses;
 	private List<SelectItem> bookingHolders;
+	private List<SelectItem> shifts;
 
 	public Hotel getHotel() {
 		return null;
@@ -65,6 +67,19 @@ public class PmsCollectionsController {
 			}
 		}
 		return reservationStatuses;
+	}
+	
+	public List<SelectItem> getShifts() {
+		if (shifts == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			shifts = new LinkedList<SelectItem>();
+			for (Shift shift : Shift.values()) {
+				String name = shift.getName(locale);
+				SelectItem item = new SelectItem(shift, name);
+				shifts.add(item);
+			}
+		}
+		return shifts;
 	}
 
 	public List<SelectItem> getBookingHolders() {

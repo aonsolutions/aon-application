@@ -3,7 +3,9 @@ package com.esferalia.aon.ui.pms.controller;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -17,6 +19,7 @@ import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.PosShift;
@@ -27,15 +30,20 @@ public class PosClosingController {
 	
 	private PosShift posShift;
 	private Hotel hotel;
-	private CashCountCalculator calculator;
+	private CashCalculatorController calculator;
+	private boolean isNew;
+	private List<SelectItem> openedPosList;
 	
-	public CashCountCalculator getCalculator() {
-		if(calculator == null){
-			calculator = new CashCountCalculator();
-		}
+	public boolean isNew() {
+		return isNew;
+	}
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	public CashCalculatorController getCalculator() {
 		return calculator;
 	}
-	public void setCalculator(CashCountCalculator calculator) {
+	public void setCalculator(CashCalculatorController calculator) {
 		this.calculator = calculator;
 	}
 	public PosShift getPosShift() {
@@ -51,26 +59,55 @@ public class PosClosingController {
 		this.hotel = hotel;
 	}
 	
-	public List<SelectItem> getOpenedPos() throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
-		Criteria criteria = new Criteria();
-		criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME));
-		criteria.addNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
-		if(getHotel()!=null && getHotel().getId()!=null){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getWorkPlace().getId());
+	public List<SelectItem> getOpenedPosList() throws ManagerBeanException {
+		if(openedPosList==null){
+			openedPosList = new LinkedList<SelectItem>();
 		}
-		for(ITransferObject to: bean.getList(criteria)){
-			PosShift ps = (PosShift) to;
-			SelectItem item = new SelectItem(ps, ps.getPos().getName()+", Apertura:"+ps.getStartTime()+", Turno:"+ps.getShift());
-			list.add(item);
-		}
-		return list;
+		return openedPosList;
+	}
+	public void setOpenedPosList(List<SelectItem> openedPosList) {
+		this.openedPosList = openedPosList;
 	}
 	
+	private void buildOpenedPosList() throws ManagerBeanException {
+		if(getHotel()!=null && getHotel().getId()!=null){
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
+			Criteria criteria = new Criteria();
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME));
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), getHotel().getWorkPlace().getId());
+			for(ITransferObject to: bean.getList(criteria)){
+				PosShift ps = (PosShift) to;
+				SelectItem item = new SelectItem(ps, ps.getPos().getName()+", Apertura:"+ps.getStartTime()+", Turno:"+ps.getShift().getName(locale));
+				getOpenedPosList().add(item);
+			}
+		}
+	}
+	
+	
 	public void onInit( ActionEvent event ){
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		controller.init();
+		setCalculator(controller);
+		setHotel(null);
 		setPosShift(null);
+		setOpenedPosList(null);
+		setNew(true);
 	}	
+	
+	public void onReset( ActionEvent event ){
+		onInit(event);
+	}
+	
+	public void onHotelChange( ActionEvent event ){
+		try {
+			setOpenedPosList(null);
+			buildOpenedPosList();
+		} catch (ManagerBeanException e) {
+			// TODO: handle exception
+		}
+	}
 	
 	public void onAccept( ActionEvent event ){
 		try {
@@ -80,6 +117,7 @@ public class PosClosingController {
 			PosShiftController controller = (PosShiftController) FormUtil.getController("posShift");
 			controller.select(event, getPosShift());
 			acceptCashAmount();
+			setNew(false);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
 			throw new AbortProcessingException(msg, e);
@@ -107,6 +145,8 @@ public class PosClosingController {
 	}
 	public void onShowCalculatorWindow( ActionEvent event ){
 		getCalculator().setAmounts( new int[15] );
+		getCalculator().setInitialAmount(false);
+		getCalculator().setPosShift(getPosShift());
 	}
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){

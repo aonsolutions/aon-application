@@ -17,9 +17,9 @@
 				<ui:param name="controller" value="#{posShift}" />
 			</ui:include>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" id="posShiftPanel">
 
-				<aon:panelGrid id="posShiftPanel" columns="2" >
+				<aon:panelGrid columns="2" styleClass="aon-width-400">
 				
 					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 					<aon:div>
@@ -27,11 +27,10 @@
 							value="#{posShift.to.pos.workPlace.description}" />
 						<aon:selectOneMenu rendered="#{posShift.new}"
 							value="#{posShift.hotel}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true">
-							</a4j:support>
-							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true">
-							</a4j:support>
+							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" />
+							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" />
 						</aon:selectOneMenu>
 					</aon:div>
 				
@@ -76,6 +75,8 @@
 					<aon:div>
 						<aon:inputText value="#{posShift.to.initialAmount}" >
 							<f:validateDoubleRange minimum="0.0" />
+							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:inputText>
 						<aon:commandButton 
 							reRender="showCalculatorWindow"
@@ -90,12 +91,14 @@
 				
 				<br />
 				
-				<aon:panelGrid columns="2" >
+				<aon:panelGrid columns="2" styleClass="aon-width-400">
 					<aon:outputLabel for="PosShiftCount_amount" value="#{pmsBundle.pms_cash_payMethod_name}" />
 					<aon:div>
 						<aon:inputText id="PosShiftCount_amount" 
 							value="#{posShift.calculator.cashAmount}" >
 							<f:validateDoubleRange minimum="0.0" />
+							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:inputText>
 						<aon:commandButton 
 							reRender="showCalculatorWindow" 
@@ -105,17 +108,29 @@
 								value="#{true}" />								
 						</aon:commandButton>
 					</aon:div>
+					
+					<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
+					<aon:outputText value="#{posShift.to.initialAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_bank_income}" />
+					<aon:outputText value="#{posShift.calculator.cashAmount - posShift.to.initialAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					
 				</aon:panelGrid>
 				
 			</aon:div>
-			
-			<!--  
+
+<!-- PARA CUANDO EN EL RECUENTO DE CAJA SE TENGAN EN CUENTA TODAS LAS FORMAS DE PAGO -->   			
+<!--  
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div rendered="#{posShift.to!=null and posShift.to.endTime!=null}">
 				
 					<aon:panelTabSet id="countTab">
 						<aon:panelTab label="#{pmsBundle.pms_cash_count}">
-							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posClosing/count_grid.xhtml">
+							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
 								<ui:param name="controller" value="#{posShiftCount}" />
 								<ui:param name="modalController" value="#{posShift}" />
 							</ui:include>
@@ -124,10 +139,10 @@
 				</aon:div>
 			
 			</aon:div>
-			-->
+-->
 		</aon:form>
 		
-		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posClosing/calculatorModal.xhtml" >
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/calculator/calculatorModal.xhtml" >
 			<ui:param name="controller" value="#{posShift}" />								
 			<ui:param name="modalReRender" value="posForm" />
 		</ui:include>

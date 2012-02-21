@@ -27,6 +27,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		PosShiftController controller = (PosShiftController) this.getController();
+		controller.setPosShift((PosShift) this.getController().getTo());
 		try {
 			if( getPosShiftCount()!=null ){
 				controller.getCalculator().setCashAmount(getPosShiftCount().getAmount());
@@ -80,6 +81,18 @@ public class PosShiftControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			// TODO: handle exception
 		}
+	}
+	
+	@Override
+	public void beforeBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		((PosShiftController)this.getController()).init();
+	}
+	
+	@Override
+	public void beforeBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		((PosShiftController)this.getController()).init();
 	}
 	
 	private void acceptCashAmount() throws ManagerBeanException {

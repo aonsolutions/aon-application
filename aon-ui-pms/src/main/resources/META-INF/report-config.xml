@@ -39,12 +39,15 @@
 	<!--  *********  Pos Closing Cash Count  ********* -->
 	<report id="cashDetailCount" description="Pos closing cash count Report">
 		<template path="/com/esferalia/aon/ui/pms/report/cashDetailCount.jasper" />
-		<collection provider="#{cashCountCalculator}" />
+		<collection provider="#{cashCalculator}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="posShift" value="#{cashCalculator.getPosShift}" />
+			<param id="initialAmount" value="#{cashCalculator.isInitialAmount}" />
+			<param id="calcTotal" value="#{cashCalculator.getCalcTotal}" />
 		</params>
 	</report>
 

@@ -16,6 +16,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Pos;
 import com.esferalia.aon.pms.PosShift;
@@ -25,15 +26,13 @@ public class PosOpeningController {
 	
 	private PosShift posShift;
 	private Hotel hotel;
-	private CashCountCalculator calculator;
+	private CashCalculatorController calculator;
+	private List<SelectItem> closedPosList;
 	
-	public CashCountCalculator getCalculator() {
-		if(calculator == null){
-			calculator = new CashCountCalculator();
-		}
+	public CashCalculatorController getCalculator() {
 		return calculator;
 	}
-	public void setCalculator(CashCountCalculator calculator) {
+	public void setCalculator(CashCalculatorController calculator) {
 		this.calculator = calculator;
 	}
 
@@ -50,31 +49,57 @@ public class PosOpeningController {
 		this.hotel = hotel;
 	}
 	
-	public List<SelectItem> getClosedPos() throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		String sqlSelect = "SELECT Pos.*"
-			+ " FROM pos as Pos"
-			+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
-			+ " WHERE  (PosShift.end_time is not null"
-			+ " OR PosShift.start_time is null)"
-			+ (getHotel() == null ? "" : " AND Pos.workPlace = " + getHotel().getWorkPlace().getId()) 
-			+ " GROUP BY Pos.name"
-			+ " ORDER BY Pos.name"
-			;
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		for(Object to: sqlQuery.list()){
-			Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
-			SelectItem item = new SelectItem(pos, pos.getName());
-			list.add(item);
+	public List<SelectItem> getClosedPosList() throws ManagerBeanException {
+		if(closedPosList==null){
+			closedPosList = new LinkedList<SelectItem>();
 		}
-		return list;
+		return closedPosList;
+	}
+	public void setClosedPosList(List<SelectItem> closedPosList) {
+		this.closedPosList = closedPosList;
+	}
+	
+	private void buildClosedPosList() throws ManagerBeanException {
+		if(getHotel()!=null && getHotel().getId()!=null){
+			if(closedPosList==null){
+				closedPosList = new LinkedList<SelectItem>();
+				String sqlSelect = "SELECT Pos.*"
+						+ " FROM pos as Pos"
+						+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
+						+ " WHERE  (PosShift.end_time is not null"
+						+ " OR PosShift.start_time is null)"
+						+ (getHotel() == null ? "" : " AND Pos.workPlace = " + getHotel().getWorkPlace().getId()) 
+						+ " GROUP BY Pos.name"
+						+ " ORDER BY Pos.name"
+						;
+				Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+				Query sqlQuery = session.createSQLQuery(sqlSelect);
+				for(Object to: sqlQuery.list()){
+					Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
+					SelectItem item = new SelectItem(pos, pos.getName());
+					closedPosList.add(item);
+				}
+			}
+		}
 	}
 
-
 	public void onInit( ActionEvent event ){
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		controller.init();
+		setCalculator(controller);
+		setClosedPosList(null);
+		setHotel(null);
 		setPosShift(new PosShift());
 		getPosShift().setStartTime(new Date());
+	}
+
+	public void onHotelChange( ActionEvent event ){
+		try {
+			setClosedPosList(null);
+			buildClosedPosList();
+		} catch (ManagerBeanException e) {
+			// TODO: handle exception
+		}
 	}
 	public void onAccept( ActionEvent event ){
 		try {
@@ -93,6 +118,8 @@ public class PosOpeningController {
 	
 	public void onShowCalculatorWindow( ActionEvent event ){
 		getCalculator().setAmounts( new int[15] );
+		getCalculator().setInitialAmount(true);
+		getCalculator().setPosShift(getPosShift());
 	}
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){

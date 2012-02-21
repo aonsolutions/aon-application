@@ -935,7 +935,7 @@
 	<table name="pm_type_detail_account" class="com.esferalia.aon.entity.master.PayMethodTypeDetailAccount" />
 	
 	<table name="pos_shift">
-		<column name="shift" type="int"/>
+		<column name="shift" type="com.esferalia.aon.pms.enumeration.Shift"/>
 	</table>
 		
 	<table name="process_detail">
@@ -1026,6 +1026,10 @@
 	
 	<table name="proposal" >
 		<column name="status" type="com.code.aon.purchase.enumeration.ProposalStatus" />
+	</table>
+	
+	<table name="proposal_detail" >
+		<column name="status" type="com.code.aon.purchase.enumeration.ProposalDetailStatus" />
 	</table>
 	
 	<table name="purchase">

@@ -354,8 +354,8 @@
 
 	<!-- ** AON PURCHASE  **************************************************** -->
 	<bean class="com.code.aon.purchase.ProposalDetail" sqlName="proposal_detail">
-		<alias 	names="description,discountExpr,domain,id,item_id,price,proposal_id,proposal_issueDate,proposal_status,proposal_workPlace_id,quantity" />
-		<hibernate names="description,discountExpr,domain,id,item.id,price,proposal.id,proposal.issueDate,proposal.status,proposal.workPlace.id,quantity" />
+		<alias 	names="description,discountExpr,domain,id,item_id,price,proposal_id,proposal_issueDate,proposal_status,proposal_workPlace_id,proposal_workplaceDepartment_department_id,proposal_workplaceDepartment_id,proposal_workplaceDepartment_workPlace_id,quantity,status,supplier_id" />
+		<hibernate names="description,discountExpr,domain,id,item.id,price,proposal.id,proposal.issueDate,proposal.status,proposal.workPlace.id,proposal.workplaceDepartment.department.id,proposal.workplaceDepartment.id,proposal.workplaceDepartment.workPlace.id,quantity,status,supplier.id" />
   	</bean>
 
 	<!-- ** AON REGISTRY  **************************************************** -->

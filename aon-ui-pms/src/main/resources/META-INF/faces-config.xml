@@ -67,7 +67,7 @@
 			<map-entries>
 				<map-entry>
 					<key>WorkplaceDepartment_workPlace_id</key>
-                    <value>id</value>
+                    <value>workPlace.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -102,7 +102,7 @@
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>id</key>
+					<key>workPlace.id</key>
 					<value>workPlace.id</value>
 				</map-entry>
 			</map-entries>
@@ -632,6 +632,13 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
+	<!-- ************* CASH CALCULATOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>cashCalculator</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.CashCalculatorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
+	
 	<!-- ************* CASH COUNT CALCULATOR ***************** -->
 	<managed-bean>
 		<managed-bean-name>cashCountCalculator</managed-bean-name>
@@ -702,7 +709,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* POS CLOSING COUNT ***************** -->
+	<!-- ************* POS SHIFT COUNT ***************** -->
 	<managed-bean>
 		<managed-bean-name>posShiftCount</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -900,7 +907,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>posOpening_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posOpening/form.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posShift/opening/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
 
@@ -908,7 +915,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>posClosing_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posClosing/form.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posShift/closing/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
 	

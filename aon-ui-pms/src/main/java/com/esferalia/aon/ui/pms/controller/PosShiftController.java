@@ -16,6 +16,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Pos;
 import com.esferalia.aon.pms.PosShift;
@@ -26,17 +27,14 @@ public class PosShiftController extends BasicController {
 	
 	private PosShift posShift;
 	private Hotel hotel;
-	private CashCountCalculator calculator;
+	private CashCalculatorController calculator;
 	private boolean cashCalculator;
 	
 	
-	public CashCountCalculator getCalculator() {
-		if(calculator == null){
-			calculator = new CashCountCalculator();
-		}
+	public CashCalculatorController getCalculator() {
 		return calculator;
 	}
-	public void setCalculator(CashCountCalculator calculator) {
+	public void setCalculator(CashCalculatorController calculator) {
 		this.calculator = calculator;
 	}
 	public boolean isCashCalculator() {
@@ -62,7 +60,7 @@ public class PosShiftController extends BasicController {
 		String sqlSelect = "SELECT Pos.*"
 			+ " FROM pos as Pos"
 			+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
-			+ (getHotel() == null ? "" : " WHERE Pos.workplace = " + getHotel().getWorkPlace().getId()) 
+			+ (getHotel() == null ? " WHERE Pos.id is null " : " WHERE Pos.workplace = " + getHotel().getWorkPlace().getId()) 
 			+ " GROUP BY Pos.name"
 			+ " ORDER BY Pos.name"
 			;
@@ -78,6 +76,14 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void onInit( ActionEvent event ){
+		init();
+	}
+	
+	public void init( ){
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		controller.init();
+		setCalculator(controller);
+		setHotel(null);
 		setPosShift(new PosShift());
 		getPosShift().setStartTime(new Date());
 	}
@@ -85,11 +91,15 @@ public class PosShiftController extends BasicController {
 	public void onShowCalculatorWindow( ActionEvent event ){
 		setCashCalculator(false);
 		getCalculator().setAmounts( new int[15] );
+		getCalculator().setInitialAmount(true);
+		getCalculator().setPosShift(getPosShift());
 	}
 	
 	public void onShowCashCalculatorWindow( ActionEvent event ){
-		onShowCalculatorWindow( event );
 		setCashCalculator(true);
+		getCalculator().setAmounts( new int[15] );
+		getCalculator().setInitialAmount(false);
+		getCalculator().setPosShift(getPosShift());
 	}
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){

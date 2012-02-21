@@ -1,29 +1,22 @@
-package com.code.aon.purchase.enumeration;
+package com.esferalia.aon.pms.enumeration;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-/**
- * Enumeration to identify the different status of a proposal.
- */
-public enum ProposalStatus implements IResourceable {
+public enum Shift implements IResourceable {
 
-    /** PENDING. */
-    PENDING,
-	
-    /** PARTIAL PROCESSED. */
-    PARTIAL_PROCESSED,
-
-    /** PROCESSED. */
-    PROCESSED;
-	
-    /** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";
+	MORNING,
+	AFTERNOON,
+	NIGHT
+	;
+    
+	/** Message file base path. */
+    private static final String BASE_NAME = "com.esferalia.aon.pms.i18n.messages";
 
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_purchase_proposal_status_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_shift_";
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -37,5 +30,5 @@ public enum ProposalStatus implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
-
+    
 }

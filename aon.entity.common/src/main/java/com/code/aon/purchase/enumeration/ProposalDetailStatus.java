@@ -6,16 +6,13 @@ import java.util.ResourceBundle;
 import com.code.aon.common.enumeration.IResourceable;
 
 /**
- * Enumeration to identify the different status of a proposal.
+ * Enumeration to identify the different status of a proposal detail.
  */
-public enum ProposalStatus implements IResourceable {
+public enum ProposalDetailStatus implements IResourceable {
 
     /** PENDING. */
     PENDING,
 	
-    /** PARTIAL PROCESSED. */
-    PARTIAL_PROCESSED,
-
     /** PROCESSED. */
     PROCESSED;
 	
@@ -23,7 +20,7 @@ public enum ProposalStatus implements IResourceable {
     private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";
 
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_purchase_proposal_status_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_purchase_proposal_detail_status_";
     
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
