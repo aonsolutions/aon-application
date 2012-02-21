@@ -262,6 +262,17 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		getContentService().write(ed.getId(), Constants.PROP_CONTENT, ed.getData(), contentFormat);		
 	}
 	
+	public void updateContent( EnterpriseDocument ed ) throws DAOException {
+		try {
+			startSession();
+			insertContent(ed);
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error updating content of " + ed.getId() );
+		} finally {
+			endSession();
+		}
+	}	
+	
 	private void removeScope( EnterpriseDocument ed ) throws DAOException {
 		String name = userManager.getScope(ed.getId(), Constants.COORDINATOR);
 		if ( name != null ) {

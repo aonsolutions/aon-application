@@ -415,7 +415,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return this.pojoClass;
 	}
 
-	private String getErrorMessage( ITransferObject to, Throwable t, String key  ) {
+	protected String getErrorMessage( ITransferObject to, Throwable t, String key  ) {
 		String name = ((IAlfrescoTransferObject)to).getName();
 		String errorMessage = t.getMessage();
 		if ( StringUtils.isBlank(errorMessage) ) {

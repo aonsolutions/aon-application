@@ -67,8 +67,18 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	
 	private Criteria lastCriteria;
 	
+	private boolean updateContent;
+	
 	public EnterpriseDocumentController() {
 		this.projectListener = new EnterpriseProjectListener(this);
+	}
+	
+	public boolean isUpdateContent() {
+		return updateContent;
+	}
+
+	public void setUpdateContent(boolean updateContent) {
+		this.updateContent = updateContent;
 	}
 
 	@Override
@@ -111,6 +121,7 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	public void fileUploaded(UploadEvent event) {
 		AttachmentUtil.fileUploaded(event, this);
 		getEnterpriseDocument().setName( getAonFile().getFileName() );
+		setUpdateContent(true);
 	}
 	
 	private String getName( EnterpriseDocument ed ) {
@@ -166,6 +177,7 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	public void reset() throws ManagerBeanException {
 		setAonFile(null);
 		setLastDocument(null);
+		setUpdateContent(false);
 	}
 	
 	public void masiveUpload( ActionEvent event ) {
@@ -266,4 +278,5 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 		this.lastCriteria = getCriteria();
 		clearCriteria();
 	}
+
 }
