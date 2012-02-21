@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posOpeningForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posOpening_module}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{posOpening.onAccept}"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{posOpening.posShift.id!=null}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						actionListener="#{posOpening.onReset}"
+						accesskey="#{bundle.aon_key_reset}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid id="posOpeningPanel" columns="2" styleClass="aon-width-400">
+				
+					<aon:outputLabel 
+						value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:outputText rendered="#{posOpening.posShift.id!=null}" 
+							value="#{posOpening.posShift.startTime}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						<aon:outputText value="&#160;" />
+					</aon:div>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
+					<aon:selectOneMenu 
+						value="#{posOpening.posShift.shift}" >
+						<f:selectItems value="#{pmsCollections.shifts}" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+					<aon:selectOneMenu 
+						value="#{posOpening.hotel}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						<a4j:support event="onchange" reRender="posOpeningPanel" ignoreDupResponses="true" 
+							actionListener="#{posOpening.onHotelChange}" />
+						<a4j:support event="oninputchanged" reRender="posOpeningPanel" ignoreDupResponses="true" 
+							actionListener="#{posOpening.onHotelChange}" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel value="#{pmsBundle.pms_pos}" />
+					<aon:selectOneMenu 
+						value="#{posOpening.posShift.pos}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{posOpening.closedPosList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
+					<aon:div>
+						<aon:inputText value="#{posOpening.posShift.initialAmount}" >
+							<f:validateDoubleRange minimum="0.0" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posOpening.onShowCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posOpening.calculator.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
+					
+				</aon:panelGrid>
+				
+			</aon:div>
+		</aon:form>
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/calculator/calculatorModal.xhtml" >
+			<ui:param name="controller" value="#{posOpening}" />								
+			<ui:param name="modalReRender" value="posOpeningForm" />
+		</ui:include>
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posClosingForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posClosing_module}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						rendered="#{posClosing.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{posClosing.onAccept}"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{!posClosing.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						actionListener="#{posClosing.onReset}"
+						accesskey="#{bundle.aon_key_reset}" />
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area" id="posClosingPanel">
+
+				<aon:panelGrid columns="2" styleClass="aon-width-400" >
+				
+					<c:if test="#{posClosing.new}">
+						<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+						<aon:selectOneMenu 
+							value="#{posClosing.hotel}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+								actionListener="#{posClosing.onHotelChange}" />
+							<a4j:support event="oninputchanged" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+								actionListener="#{posClosing.onHotelChange}" />
+						</aon:selectOneMenu>
+					
+						<aon:outputLabel for="PosClosing_posShift" value="#{pmsBundle.pms_pos}" />
+						<aon:selectOneMenu id="PosClosing_posShift" required="true" 
+							value="#{posClosing.posShift}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{posClosing.openedPosList}" />
+							<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true" />
+						</aon:selectOneMenu>
+					</c:if>
+					
+					<c:if test="#{!posClosing.new}">
+						<aon:outputText value="#{pmsBundle.pms_hotel}" />
+						<aon:outputText value="#{posClosing.hotel.workPlace.description}" />
+					
+						<aon:outputText value="#{pmsBundle.pms_pos}" />
+						<aon:outputText value="#{posClosing.posShift.pos.name}" />
+						
+						<aon:outputText value="#{pmsBundle.pms_shift}" />
+						<aon:outputText value="#{posClosing.posShift.shift}" />
+						
+						<aon:outputText value="#{pmsBundle.pms_opening}" />
+						<aon:outputText value="#{posClosing.posShift.startTime}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:outputText value="#{pmsBundle.pms_closing}" />
+						<aon:outputText value="#{posClosing.posShift.endTime}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+						
+						<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
+						<aon:outputText value="#{posClosing.posShift.initialAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						
+						<aon:outputText value="#{pmsBundle.pms_cash_payMethod_name}" />
+						<aon:outputText value="#{posClosing.calculator.cashAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						
+						<aon:outputLabel value="#{pmsBundle.pms_bank_income}" />
+						<aon:outputText value="#{posClosing.calculator.cashAmount - posClosing.posShift.initialAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+					</c:if>
+					
+				</aon:panelGrid>
+				
+				<br />
+				
+				<aon:panelGrid id="amountPanel" columns="2" styleClass="aon-width-400" 
+					rendered="#{posClosing.posShift!=null and posClosing.new}">
+				
+					<aon:outputLabel for="PosShiftCount_amount" value="#{pmsBundle.pms_cash_payMethod_name}" />
+					<aon:div>
+						<aon:inputText id="PosShiftCount_amount" required="true" 
+							value="#{posClosing.calculator.cashAmount}" >
+							<f:validateDoubleRange minimum="0.0" />
+							<a4j:support event="onchange" reRender="amountPanel" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="amountPanel" ignoreDupResponses="true" ajaxSingle="true" />
+						</aon:inputText>
+						<aon:commandButton 
+							reRender="showCalculatorWindow" ajaxSingle="true"
+							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+							actionListener="#{posClosing.onShowCalculatorWindow}" >
+							<f:setPropertyActionListener target="#{posClosing.calculator.showCalculatorWindow}"
+								value="#{true}" />								
+						</aon:commandButton>
+					</aon:div>
+					
+					<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
+					<aon:outputText value="#{posClosing.posShift.initialAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_bank_income}" />
+					<aon:outputText value="#{posClosing.calculator.cashAmount - posClosing.posShift.initialAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					
+				</aon:panelGrid>
+			</aon:div>
+				
+<!-- PARA CUANDO EN EL RECUENTO DE CAJA SE TENGAN EN CUENTA TODAS LAS FORMAS DE PAGO -->   
+<!--
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div rendered="#{posClosing.posShift!=null and posClosing.posShift.id!=null}">
+					<aon:panelTabSet id="countTab">
+						<aon:panelTab label="#{pmsBundle.pms_cash_count}">
+							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
+								<ui:param name="controller" value="#{posShiftCount}" />
+								<ui:param name="modalController" value="#{posClosing}" />
+							</ui:include>
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</aon:div>
+			</aon:div>
+-->
+	
+		</aon:form>
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/calculator/calculatorModal.xhtml" >
+			<ui:param name="controller" value="#{posClosing}" />								
+			<ui:param name="modalReRender" value="posClosingForm" />
+		</ui:include>
+		
+	</ui:define>
+</ui:composition>
