@@ -22,6 +22,8 @@
 				<ui:param name="controller" value="#{reservationIO}" />
 
 				<ui:define name="searchContent">
+				
+					<aon:methodParam name="searchAction" value="reservationIO_list" />
 					
 					<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
 						<aon:outputLabel for="ProjectReservation_hotel_id"
