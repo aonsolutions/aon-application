@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.esferalia.aon.entity.master.ProjectReservationServiceDetailDB;
@@ -29,5 +30,17 @@ public class ProjectReservationServiceDetail extends ProjectReservationServiceDe
     public double getTaxes() {
     	return 0;
     }
+
+    @Transient
+    public double getSalesPrice() {
+		ItemPricesManager pricesManager = new ItemPricesManager();
+		return pricesManager.getSalesPrice(getItem(), getPrice());
+	}
+
+    @Transient
+    public double getTotalPrice() {
+		ItemPricesManager pricesManager = new ItemPricesManager();
+		return pricesManager.getSalesPrice(getItem(), getTaxableBase());
+	}
 
 }

@@ -32,15 +32,15 @@ public class Item extends ItemDB implements IPriceable {
     private Set<ItemSupplier> suppliers = new HashSet<ItemSupplier>();
 
     public void setPrice(double price) {
-        super.setPrice( CommonUtil.round(price, 4));
+        super.setPrice(CommonUtil.round(price, 4));
     }
     
 	public void setProfitPercent(double profitPercent) {
-		super.setProfitPercent( CommonUtil.round(profitPercent, 3));
+		super.setProfitPercent(CommonUtil.round(profitPercent, 3));
 	}
 	
     public void setPurchasePrice(double purchasePrice) {
-		super.setPurchasePrice( CommonUtil.round(purchasePrice, 4));
+		super.setPurchasePrice(CommonUtil.round(purchasePrice, 4));
 	}
 
     @Transient

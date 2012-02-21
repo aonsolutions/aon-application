@@ -13,8 +13,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
@@ -31,6 +33,7 @@ import com.esferalia.aon.pms.reservation.ReservationUtils;
 public class ProjectReservationServiceController extends LinesController {
 
 	private IPriceStrategy priceStrategy;
+	private ItemPricesManager pricesManager;
 	private boolean showServiceDetailWindow;
 	private ProjectReservationRoom serviceReservationRoom;
 	private Date serviceFromDate;
@@ -43,6 +46,13 @@ public class ProjectReservationServiceController extends LinesController {
 			priceStrategy = PriceStrategyFactory.getPriceStrategy();
 		}
 		return priceStrategy;
+	}
+
+	public ItemPricesManager getPricesManager(){
+		if(pricesManager == null){
+			pricesManager = new ItemPricesManager();
+		}
+		return pricesManager;
 	}
 
 	public boolean isShowServiceDetailWindow() {
@@ -144,7 +154,7 @@ public class ProjectReservationServiceController extends LinesController {
 			for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
 				ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
 				setServiceQuantity(reservationServiceDetail.getQuantity());
-				setServicePrice(reservationServiceDetail.getPrice());
+				setServicePrice(reservationServiceDetail.getSalesPrice());
 			}
 		}
 	}
@@ -180,26 +190,39 @@ public class ProjectReservationServiceController extends LinesController {
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setQuantity(getServiceQuantity());
 			Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-			setServicePrice(getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff));
+			setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
 		}
 	}	
 
 	public void onQuantityChanged(ValueChangeEvent event) {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
-		if (reservationService.getItem() != null && reservationService.getItem().getId() != null) {
+		Item item = reservationService.getItem();
+		if (item != null && item.getId() != null) {
 			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-				setServiceQuantity((Double)event.getNewValue());
+				setServiceQuantity(CommonUtil.round((Double)event.getNewValue()));
 	
 				ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 				reservationServiceDetail.setProjectReservationService(reservationService);
 				reservationServiceDetail.setQuantity(getServiceQuantity());
 				Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-				setServicePrice(getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff));
+				setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
 			} else {
 				setServiceQuantity(1);
 			}
 		}
 	}	
+
+	public void onSalesPriceChanged(ValueChangeEvent event) {
+		ProjectReservationService reservationService = (ProjectReservationService)getTo();
+		Item item = reservationService.getItem();
+		if (item != null && item.getId() != null) {
+			if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+				setServicePrice(CommonUtil.round((Double)event.getNewValue()));
+			} else {
+				setServicePrice(0);
+			}
+		}
+	}
 
 	public void onAssignReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
@@ -208,7 +231,7 @@ public class ProjectReservationServiceController extends LinesController {
 		Date fromDate = getServiceFromDate();
 		Date toDate = getServiceToDate();
 		double quantity = getServiceQuantity();
-		double price = getServicePrice();
+		double price = getPricesManager().getPrice(reservationService.getItem(), getServicePrice(), 4);
 		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
 
 		onAccept(event);
@@ -225,7 +248,7 @@ public class ProjectReservationServiceController extends LinesController {
 			reservationService.setRoomNumber(null);
 		}
 
-		calculateReservationTotals();
+		refreshReservationTotals();
 	}
 
 	public void onRemoveReservationService(ActionEvent event) throws ManagerBeanException {
@@ -236,10 +259,10 @@ public class ProjectReservationServiceController extends LinesController {
 
     	onRemove(event);
 
-		calculateReservationTotals();
+    	refreshReservationTotals();
 	}
 
-	private void calculateReservationTotals() throws ManagerBeanException {
+	private void refreshReservationTotals() throws ManagerBeanException {
 		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
 		masterController.accept(null);
 	}

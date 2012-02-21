@@ -123,11 +123,12 @@
 											reRender="ProjectReservationService_price"
 											focus="ProjectReservationService_price" /> 
 
-										<aon:outputLabel for="ProjectReservationService_price" 
+										<aon:outputLabel for="ProjectReservationService_salesPrice" 
 											value="#{bundle.aon_price}" />
-										<aon:inputText id="ProjectReservationService_price" 
+										<aon:inputText id="ProjectReservationService_salesPrice" 
 											value="#{controller.servicePrice}" size="5" required="true"
-											disabled="#{reservation.to.crs or controller.to.extra}" /> 
+											disabled="#{reservation.to.crs or controller.to.extra}" 
+											valueChangeListener="#{controller.onSalesPriceChanged}" />
 
 									</aon:panelGrid>
 								</aon:div>

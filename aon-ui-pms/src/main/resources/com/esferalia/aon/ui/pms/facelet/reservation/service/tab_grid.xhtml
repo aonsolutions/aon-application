@@ -109,10 +109,9 @@
 					<aon:outputText value="&#160;" />
 				</aon:column>
 
-				<aon:column colspan="4"
-					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
-					<aon:panelGrid columns="5" columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-150, aon-noborder aon-width-150, 
-													aon-noborder aon-width-150, aon-noborder aon-width-auto">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:panelGrid columns="4" 
+						columnClasses="aon-noborder aon-width-150, aon-noborder aon-width-100, aon-noborder aon-width-120, aon-noborder aon-width-auto">
 						<aon:div>
 							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
 							<aon:outputText value="#{serviceDetail.effectiveDate}" styleClass="aon-italic">
@@ -128,24 +127,31 @@
 						</aon:div>
 						<aon:div>
 							<aon:outputLabel value="#{bundle.aon_price}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{serviceDetail.price}" styleClass="aon-italic">
+							<aon:outputText value="#{serviceDetail.salesPrice}" styleClass="aon-italic">
 								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 						</aon:div>
 						<aon:div>
-							<aon:outputLabel value="#{bundle.aon_amount}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{serviceDetail.taxableBase}" styleClass="aon-italic">
+							<aon:outputLabel value="#{bundle.aon_total}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{serviceDetail.totalPrice}" styleClass="aon-italic">
 								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
-						</aon:div>
-						<aon:div>
-							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{serviceDetail.projectReservationRoomDetail.assetActivity.asset.name}" styleClass="aon-italic"
-								rendered="#{serviceDetail.projectReservationRoomDetail != null}" />
-							<aon:outputText value="--" styleClass="aon-italic"
-								rendered="#{serviceDetail.projectReservationRoomDetail == null}" />
 						</aon:div>
 					</aon:panelGrid>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:outputText value="&#160;" />
+				</aon:column>
+
+				<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:div>
+						<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+						<aon:outputText value="#{serviceDetail.projectReservationRoomDetail.assetActivity.asset.name}" styleClass="aon-italic"
+							rendered="#{serviceDetail.projectReservationRoomDetail != null}" />
+						<aon:outputText value="--" styleClass="aon-italic"
+							rendered="#{serviceDetail.projectReservationRoomDetail == null}" />
+					</aon:div>
 				</aon:column>
 
 			</rich:subTable>

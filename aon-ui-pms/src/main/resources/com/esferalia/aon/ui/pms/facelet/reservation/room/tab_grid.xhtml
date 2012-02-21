@@ -59,35 +59,35 @@
 				<aon:outputText value="#{to.roomIndex}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
 				</f:facet>
 				<aon:outputText value="#{to.roomNumber}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 				<f:facet name="header">
 					<aon:outputLabel value="#{productBundle.product_tariff}" />
 				</f:facet>
 				<aon:outputText value="#{to.tariff.code} - #{to.tariff.name}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_adults}" />
 				</f:facet>
 				<aon:outputText value="#{to.adults}" />
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-numberColumn">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_children}" />
 				</f:facet>
@@ -137,18 +137,14 @@
 							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
 							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
 						</aon:div>
-						<aon:div>
-							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" 
-								rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}" />
-							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic"
-								rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}" />
+						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">
+							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic" />
 							<aon:outputText value="&#160;" />
 						</aon:div>
-						<aon:div>
-							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right"
-								rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}" />
-							<aon:outputText value="#{roomDetail.room.hotel.workPlace.description}" styleClass="aon-italic"
-								rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}" />
+						<aon:div rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}">
+							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.room.hotel.workPlace.description}" styleClass="aon-italic" />
 							<aon:outputText value="&#160;" />
 						</aon:div>
 					</aon:panelGrid>
