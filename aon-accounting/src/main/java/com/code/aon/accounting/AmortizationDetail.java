@@ -15,11 +15,14 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.util.CommonUtil;
 
 /**
@@ -206,20 +209,51 @@ public class AmortizationDetail implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() !=  getClass()) return false;
+		final AmortizationDetail o = (AmortizationDetail) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+			.append(this.getAmortization(), o.getAmortization())
+			.append(this.getFromDate(), o.getFromDate())
+			.append(this.getToDate(), o.getToDate())
+			.append(this.getCoefficient(), o.getCoefficient())
+			.append(this.getAllocation(), o.getAllocation())
+			.append(this.getFiscalAllocation(), o.getFiscalAllocation())
+			.append(this.getStatus(), o.getStatus())
+			.append(this.getAccountEntry(), o.getAccountEntry())
+			.append(this.getAccumulated(), o.getAccumulated())
+			.append(this.getPending(), o.getPending())
+			.append(this.getFiscalAccumulated(), o.getFiscalAccumulated())
+			.append(this.getFiscalPending(), o.getFiscalPending())
+			.isEquals();
 		}
-		if (obj instanceof AmortizationDetail) {
-			AmortizationDetail account = (AmortizationDetail) obj;
-			if (ObjectUtils.equals(getId(), account.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getId(), o.getId());
 	}
 
 	@Override
 	public int hashCode() {
-		return 0;
+		return new HashCodeBuilder()
+			.append(this.getId())
+			.append(this.getAmortization())
+			.append(this.getFromDate())
+			.append(this.getToDate())
+			.append(this.getCoefficient())
+			.append(this.getAllocation())
+			.append(this.getFiscalAllocation())
+			.append(this.getStatus())
+			.append(this.getAccountEntry())
+			.append(this.getAccumulated())
+			.append(this.getPending())
+			.append(this.getFiscalAccumulated())
+			.append(this.getFiscalPending())
+			.toHashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

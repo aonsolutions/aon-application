@@ -39,15 +39,20 @@ public class AmortizationDetailListener extends ControllerAdapter {
 		prepareForRefresh(event);
 	}
 
+	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		AmortizationDetailController adc = (AmortizationDetailController) event.getController();
+		adc.setSummaryModel(null);
+	}
+	
 	private void prepareForRefresh(ControllerEvent event) {
 		try {
 			AmortizationDetailController adc = (AmortizationDetailController) event.getController();
 			adc.forceRefresh();
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible actualizar los totles de la lista.";
+			String msg = "Imposible actualizar los totales de la lista.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
-
 	}
 }

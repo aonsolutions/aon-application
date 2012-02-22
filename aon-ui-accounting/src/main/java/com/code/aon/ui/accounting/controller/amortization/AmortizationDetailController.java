@@ -1,10 +1,15 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
@@ -14,6 +19,7 @@ import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
@@ -23,10 +29,79 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AmortizationDetailController extends LinesController {
 
+	private DataModel summaryModel;
+	private AmortizationDetail annualSummary;
+	
+	public AmortizationDetail getAnnualSummary() {
+		return annualSummary;
+	}
+	public void setAnnualSummary(AmortizationDetail annualSummary) {
+		this.annualSummary = annualSummary;
+	}
+
+	public DataModel getSummaryModel() {
+		try {
+			if (summaryModel == null) {
+				summaryModel = initializeSummaryModel();
+			}
+			return summaryModel;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	private DataModel initializeSummaryModel() throws ManagerBeanException {
+		Amortization a = (Amortization) getMasterController().getTo();
+		List<AmortizationDetail> list = new LinkedList<AmortizationDetail>();
+		int year = -1;
+		AmortizationDetail detail = null;
+		double accumulated = 0.0;
+		double pending = a.getAmount();
+		double fiscalAccumulated = 0.0;
+		double fiscalPending = a.getAmount();
+		for (AmortizationDetail ad : getAmortizationList() ) {
+			int detailYear= CommonUtil.getYear( ad.getFromDate() );
+			if ( year != detailYear ) {
+				year = detailYear;
+				detail = new AmortizationDetail();
+				detail.setFromDate(ad.getFromDate());
+				detail.setAllocation(0.0);
+				detail.setFiscalAllocation(0.0);
+				detail.setCoefficient(0.0);
+				detail.setAmortization(a);
+				list.add(detail);
+			}
+			accumulated = CommonUtil.round(accumulated + ad.getAllocation());
+			pending = CommonUtil.round(pending - ad.getAllocation());
+			fiscalAccumulated= CommonUtil.round(fiscalAccumulated + ad.getFiscalAllocation());
+			fiscalPending = CommonUtil.round(fiscalPending - ad.getFiscalAllocation());
+			detail.setToDate(ad.getToDate());
+			detail.setCoefficient( CommonUtil.round(detail.getCoefficient() + ad.getCoefficient()));
+			detail.setAllocation( CommonUtil.round(detail.getAllocation() + ad.getAllocation()));
+			detail.setAccumulated( accumulated );
+			detail.setPending(pending);
+			detail.setFiscalAllocation( CommonUtil.round(detail.getFiscalAllocation() + ad.getFiscalAllocation()));
+			detail.setFiscalAccumulated( fiscalAccumulated );
+			detail.setFiscalPending(fiscalPending);
+		}
+		return new ListDataModel( list );
+	}
+	
+	public void setSummaryModel(DataModel summaryModel) {
+		this.summaryModel = summaryModel;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
 		return (List<AmortizationDetail>) getModel().getWrappedData();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<AmortizationDetail> getAmortizationSummaryList() throws ManagerBeanException {
+		return (List<AmortizationDetail>) getSummaryModel().getWrappedData();
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationListComplete() throws ManagerBeanException {
 		AmortizationController ac = (AmortizationController) getMasterController();
@@ -59,6 +134,7 @@ public class AmortizationDetailController extends LinesController {
 		Amortization a = (Amortization) getMasterController().getTo();
 		a.setDetailsInitialized(false);
 		calculateTotals(details);
+		setSummaryModel(null);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -136,4 +212,55 @@ public class AmortizationDetailController extends LinesController {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	
+	public void onAnnualSelect(ActionEvent event) {
+		AmortizationDetail detail = (AmortizationDetail) getSummaryModel().getRowData();
+		setAnnualSummary(detail);
+	}
+	public void onAnnualUpdate(ActionEvent event) {
+		try {
+			Date yearFirst = getAnnualSummary().getFromDate();
+			Date yearLast = getAnnualSummary().getToDate();
+			
+			// Se averigua cuantas cuotas están dentro del period anual para 
+			// repartir la amortización fiscal equitativamente en todas ellas. 
+			int count = 0;
+			for (AmortizationDetail ad : getAmortizationList() ) {
+				Date first = ad.getFromDate();
+				Date last = ad.getToDate();
+				if ((DateUtils.isSameDay(yearFirst, first) || yearFirst.before(first)) &&
+				    (DateUtils.isSameDay(yearLast, last) || yearLast.after(last))) {
+					++count;
+				}
+			}
+			
+			// Se calcula la dotación fiscal para cada periodo, la última se calcula por diferencia.				
+			Double fiscalAllocation = CommonUtil.round(getAnnualSummary().getFiscalAllocation() / count);
+			Double diff = CommonUtil.round((fiscalAllocation * count) - getAnnualSummary().getFiscalAllocation());
+			Double lastFiscalAllocation = (diff == 0.0)?fiscalAllocation:CommonUtil.round(fiscalAllocation + diff);
+							
+			// Se modifica las cuotas con las nueva dotación fiscal.
+			int i = 0;
+			for (AmortizationDetail ad : getAmortizationList() ) {
+				Date first = ad.getFromDate();
+				Date last = ad.getToDate();
+				if ((DateUtils.isSameDay(yearFirst, first) || yearFirst.before(first)) &&
+				    (DateUtils.isSameDay(yearLast, last) || yearLast.after(last))) {
+					ad.setFiscalAllocation(++i<count?fiscalAllocation:lastFiscalAllocation);
+					getManagerBean().update(ad);
+				}
+				
+			}
+			forceRefresh();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al modificar la dotación fiscal.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+	}
+	public void onAnnualCancel(ActionEvent event) {
+		setAnnualSummary(null);
+	}
+	
 }

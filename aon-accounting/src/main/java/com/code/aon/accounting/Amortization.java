@@ -279,6 +279,12 @@ public class Amortization implements ITransferObject,IConfidentialable {
 		}
 	}
 
+	@Transient
+	public boolean isYearly()  {
+		return (getFeePeriod() == AmortizationPeriod.YEARLY);
+	}
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

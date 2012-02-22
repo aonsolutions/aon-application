@@ -10,26 +10,29 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum AmortizationPeriod implements IResourceable {
 	
-	YEARLY,
-
-	MONTHLY;
+	YEARLY(1),
+	MONTHLY(12),
+	BI_MONTHLY(6),
+	QUARTERLY(4),
+	FOUR_MONTHLY(3),
+	HALF_YEARLY(2);
 	
-	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.accounting.i18n.messages";
 
-    /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_amortization_period_";
-	
-	/**
-	 * Returns a <code>String</code> with the transalation <code>Locale</code>
-	 * for the locale.
-	 * 
-	 * @param locale Required Locale.
-	 * 
-	 * @return String a <code>String</code>.
-	 */
+
+    private int yearFraction; 
+    
+    private AmortizationPeriod(int yearFraction) {
+    	this.yearFraction = yearFraction;
+    }
+    
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
+	public double getYearFraction() {
+		return yearFraction;
+	}
 }

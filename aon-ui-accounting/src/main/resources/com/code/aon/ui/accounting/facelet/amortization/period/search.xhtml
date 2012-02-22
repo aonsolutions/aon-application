@@ -30,6 +30,16 @@
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Amortization_month"
+						value="#{bundle.aon_month}" />
+					<aon:selectOneMenu id="Amortization_month"  
+						value="#{periodAmortization.month}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{commonCollections.months}" />
+					</aon:selectOneMenu>
+										
+									
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

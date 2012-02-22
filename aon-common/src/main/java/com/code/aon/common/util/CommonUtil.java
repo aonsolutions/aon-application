@@ -1,5 +1,6 @@
 package com.code.aon.common.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -73,11 +74,7 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getYearLastDay(int year) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 31);
-		calendar.set(Calendar.MONTH, 11);
-		calendar.set(Calendar.YEAR, year);
-		return calendar.getTime();
+		return getDate(year, 11, 31);
 	}
 
 	/**
@@ -90,11 +87,7 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getYearLastDay(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.DAY_OF_MONTH, 31);
-		calendar.set(Calendar.MONTH, 11);
-		return calendar.getTime();
+		return getDate(getYear(date), 11, 31);
 	}
 
 	/**
@@ -106,11 +99,7 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getYearFirstDay(int year) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		calendar.set(Calendar.MONTH, 0);
-		calendar.set(Calendar.YEAR, year);
-		return calendar.getTime();
+		return getDate(year, 0, 1);
 	}
 
 	/**
@@ -122,11 +111,7 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getYearFirstDay(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		calendar.set(Calendar.MONTH, 0);
-		return calendar.getTime();
+		return getDate(getYear(date), 0, 1);
 	}
 
 	/**
@@ -276,7 +261,8 @@ public class CommonUtil {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.MONTH, month);
 		c.set(Calendar.DAY_OF_MONTH, day);
-		return c.getTime();
+		Date date = c.getTime();
+		return DateUtils.truncate(date, Calendar.DAY_OF_MONTH); 
 
 	}
 
@@ -289,10 +275,7 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getMonthFirstDay(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		return calendar.getTime();
+		return getDate(getYear(date),getMonth(date),1 );
 	}
 
 	/**
@@ -305,9 +288,85 @@ public class CommonUtil {
 	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getMonthLastDay(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.set(Calendar.DAY_OF_MONTH, CommonUtil.daysInMonth(date));
-		return calendar.getTime();
+		return getDate(getYear(date),getMonth(date), CommonUtil.daysInMonth(date) );
+	}
+	
+	public static Date getBiMonthFirstDay(Date date) {
+		int month = getMonth(date) / 2;
+		month = month * 2; 
+		return getDate(getYear(date),month,1 );
+	}
+	
+	public static Date getBiMonthLastDay(Date date) {
+		int month = (getMonth(date) / 2);
+		month = (month * 2) + 1;
+		Date tmp = getDate(getYear(date), month, getDay(date));
+		return getMonthLastDay(tmp);
+	}
+	
+	public static Date getQuarterFirstDay(Date date) {
+		int month = getMonth(date) / 3;
+		month = month * 3; 
+		return getDate(getYear(date),month,1 );
+	}
+	
+	public static Date getQuarterLastDay(Date date) {
+		int month = getMonth(date) / 3;
+		month = (month * 3) + 2; 
+		Date tmp = getDate(getYear(date), month, getDay(date));
+		return getMonthLastDay(tmp);
+	}
+
+	public static Date getFourMonthFirstDay(Date date) {
+		int month = getMonth(date) / 4;
+		month = month * 4; 
+		return getDate(getYear(date),month,1 );
+	}
+	
+	public static Date getFourMonthLastDay(Date date) {
+		int month = getMonth(date) / 4;
+		month = (month * 4) + 3; 
+		Date tmp = getDate(getYear(date), month, getDay(date));
+		return getMonthLastDay(tmp);
+	}
+
+	public static Date getHalfYearFirstDay(Date date) {
+		int month = getMonth(date) / 6;
+		month = month * 6; 
+		return getDate(getYear(date),month,1 );
+	}
+	
+	public static Date getHalfYearLastDay(Date date) {
+		int month = getMonth(date) / 6;
+		month = (month * 6) + 5; 
+		Date tmp = getDate(getYear(date), month, getDay(date));
+		return getMonthLastDay(tmp);
+	}
+	
+	public static void main(String[] args) {
+		Date date = getDate(2012, 7, 23);
+		
+		SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy");
+		System.out.println( "Fecha ..: " + formatter.format(date));
+		System.out.println( "Primer dia del año ..: " + formatter.format(getYearFirstDay(date)));
+		System.out.println( "Último dia del año ..: " + formatter.format(getYearLastDay(date)));
+		System.out.println();
+		System.out.println( "Primer dia del semestre ..: " + formatter.format(getHalfYearFirstDay(date)));
+		System.out.println( "Último dia del semestre ..: " + formatter.format(getHalfYearLastDay(date)));
+		System.out.println();
+		System.out.println( "Primer dia del cuatrimestre ..: " + formatter.format(getFourMonthFirstDay(date)));
+		System.out.println( "Último dia del cuatrimestre ..: " + formatter.format(getFourMonthLastDay(date)));
+		System.out.println();
+		System.out.println( "Primer dia del trimestre ..: " + formatter.format(getQuarterFirstDay(date)));
+		System.out.println( "Último dia del trimestre ..: " + formatter.format(getQuarterLastDay(date)));
+		System.out.println();
+		System.out.println( "Primer dia del bimestre ..: " + formatter.format(getBiMonthFirstDay(date)));
+		System.out.println( "Último dia del bimestre ..: " + formatter.format(getBiMonthLastDay(date)));
+		System.out.println();
+		System.out.println( "Primer dia del mes ..: " + formatter.format(getMonthFirstDay(date)));
+		System.out.println( "Último dia del mes ..: " + formatter.format(getMonthLastDay(date)));
+
+		
+		getYearLastDay(date);
 	}
 }
