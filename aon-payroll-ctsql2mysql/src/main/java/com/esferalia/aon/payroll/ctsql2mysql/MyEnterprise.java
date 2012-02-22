@@ -10,6 +10,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
@@ -82,10 +83,12 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		
 
 		Integer 		id;
+		Integer 		scopeId;
 		Administration 	economicAgreement;
 	
-		public Enterprise(Integer id, String ceCon) {
+		public Enterprise(Integer id, String ceCon, Integer scopeId) {
 			this.id = id;
+			this.scopeId = scopeId;
 			this.economicAgreement = ADMINISTRATIONS_MAP.get(ceCon);
 		}
 		
@@ -154,6 +157,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
+		
 		ctsqlDB.visitDelegacion(this);
 		ctsqlDB.visitDomicilio(this);
 	}
@@ -255,7 +259,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			cifs.get(emprnif.getNumdoc());
 	
 		if ( registry != null ) {
-			enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon()) );
+			enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon(), scopeId) );
 			return;
 		}
 		
@@ -295,7 +299,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		}
 		
 		cifs.put(emprnif.getNumdoc(), registry);
-		enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon()));
+		enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon(),scopeId));
 
 		customerChilds.put(emprnif.getNumdoc(), registry);
 		
@@ -439,6 +443,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			type = DefaultMysqlDB.enum2short(CCCType.ASSIMILATEDS);
 		else if ( "A".equals(tipccc))
 			type = DefaultMysqlDB.enum2short(CCCType.TRADE_REPRESENTATIVE);
+		else if ( "B".equals(tipccc))
+			type = DefaultMysqlDB.enum2short(CCCType.FELLOWS); // TODO B: ???
+		else if ( "E".equals(tipccc))
+			type = DefaultMysqlDB.enum2short(CCCType.HOME_EMPLOYEES); // TODO E: ???
 		
 		Activity activity = activities.get(empract.getCdg());
 		
@@ -460,6 +468,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio ) throws SQLException {
 		
 		Enterprise enterprise = enterprises.get(emprdom.getCodemp());
+		
+		
 		
 		if ( enterprise == null )
 		{
@@ -545,8 +555,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						enterprise.id, 
 						description, 
 						raddress, 
+						enterprise.scopeId,
 						MysqlDB.enum2short(enterprise.economicAgreement),
 						true);
+				
 				mysqlDB.insertPayroll_workplace(
 						workplace, 
 						agreement, 

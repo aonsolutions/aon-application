@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
+import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.SPANISH;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -146,11 +147,13 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 					cgPercentage = 4.70;
 				}
 				MysqlDB.info("nomina[{}]: Calculating prc_cgc {}/{} = {}.",
-						nomina.getCdg(), importeCg, cgcBase, String.format("%.2f %%", cgPercentage) );
+						nomina.getCdg(), importeCg, cgcBase, String.format(SPANISH, "%.2f", cgPercentage) );
 				
 			}
 			
-			String cgFunction = String.format("%.2f %%", cgPercentage);
+			
+			
+			String cgFunction = String.format(SPANISH, "%.2f", cgPercentage);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.COMMON_CONTINGENCY), "CGC", cgFunction,
 					null, importeCg);
@@ -171,7 +174,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 					accPercentage = 1.70;
 				}
 				MysqlDB.info("nomina[{}]: Calculating Acc {}/{} = {}.",
-						nomina.getCdg(), importeAcc, cgpBase , String.format("%.2f %%", accPercentage) );
+						nomina.getCdg(), importeAcc, cgpBase , String.format(SPANISH, "%.2f", accPercentage) );
 			}
 
 			if (accPercentage == 1.65 || accPercentage == 1.70) {
@@ -179,17 +182,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				double uePercentage = accPercentage - jobPercentage;
 
 				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format("%.2f %%", jobPercentage);
+				String jobFunction = String.format(SPANISH, "%.2f", jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.JOB_TRAINING), "FP", jobFunction,
 						null, importeJob);
 
-				String ueFunction = String.format("%.2f %%", uePercentage);
+				String ueFunction = String.format(SPANISH, "%.2f", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.UNEMPLOYMENT), "DESMP", ueFunction,
 						null, importeAcc - importeJob);
 			} else {
-				String accFunction = String.format("%.2f %%", accPercentage);
+				String accFunction = String.format(SPANISH, "%.2f", accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
 						"CGP", accFunction, null, importeAcc);
@@ -199,7 +202,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		Double importeHex = toDouble(nomina.getImporte_hex());
 		if (importeHex > 0) {
 			BigDecimal hexPercentage = nomina.getPrc_hex();
-			String hexFunction = String.format("%.2f %%",
+			String hexFunction = String.format(SPANISH, "%.2f",
 					hexPercentage != null ? hexPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.STRUCTURAL_OVERTIME), "ESTR", hexFunction,
@@ -209,7 +212,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		Double importeHexNo = toDouble(nomina.getImporte_hexno());
 		if (importeHexNo > 0) {
 			BigDecimal hexNoPercentage = nomina.getPrc_hexno();
-			String hexNoFunction = String.format("%.2f %%",
+			String hexNoFunction = String.format("SPANISH, %.2f",
 					hexNoPercentage != null ? hexNoPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.NON_STRUCTURAL_OVERTIME), "NESTR",
@@ -220,7 +223,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = nomina.getPrc_irpf();
-			String irpfFunction = String.format("%.2f %%",
+			String irpfFunction = String.format(SPANISH, "%.2f",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.IRPF), "IRPF", irpfFunction, null,
@@ -343,7 +346,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				0.00, baseIRPF, 0.00, baseIRPF, 0.00, totalIrpf,
 				nominaex.getFeccobreal());
 
-		String function = String.format("%.2f %%",
+		String function = String.format(SPANISH, "%.2f",
 				totalPayment != null ? totalPayment : 0);
 
 		Concept<PaymentType> concept = concepts.getPaymentConcept(nominaex
@@ -362,7 +365,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = nominaex.getIrpf();
-			String irpfFunction = String.format("%.2f %%",
+			String irpfFunction = String.format(SPANISH, "%.2f",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.IRPF), "IRPF", irpfFunction, null,
@@ -577,7 +580,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = finiquito.getIrpf();
-			String description = String.format("%.2f %%",
+			String description = String.format(SPANISH, "%.2f",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(
 					this.salaryId,
@@ -590,7 +593,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		}
 		if (importeCg > 0) {
 			BigDecimal cgPercentage = finiquito.getPrccg();
-			String cgFunction = String.format("%.2f %%",
+			String cgFunction = String.format(SPANISH, "%.2f",
 					cgPercentage != null ? cgPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.COMMON_CONTINGENCY), 
@@ -609,17 +612,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				double uePercentage = accPercentage - jobPercentage;
 
 				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format("%.2f %%", jobPercentage);
+				String jobFunction = String.format(SPANISH, "%.2f", jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.JOB_TRAINING), "FP", jobFunction,
 						null, importeJob);
 
-				String ueFunction = String.format("%.2f %%", uePercentage);
+				String ueFunction = String.format(SPANISH, "%.2f", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.UNEMPLOYMENT), "DESMP", ueFunction,
 						null, importeAcc - importeJob);
 			} else {
-				String accFunction = String.format("%.2f %%", accPercentage);
+				String accFunction = String.format(SPANISH, "%.2f", accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
 						"CGP", accFunction, null, importeAcc);

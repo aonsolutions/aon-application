@@ -22,6 +22,7 @@ CLASSPATH=$CLASSPATH:/usr/share/java/aon-customer.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-calendar.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-salary.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-payroll.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/aon-entity-common.jar
 
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-cli.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/commons-lang.jar

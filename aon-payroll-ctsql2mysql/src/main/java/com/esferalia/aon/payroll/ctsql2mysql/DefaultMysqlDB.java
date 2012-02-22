@@ -40,7 +40,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
  *
  */
 @SuppressWarnings("serial")
-public class DefaultMysqlDB extends AbstractMysqlDB {
+public class DefaultMysqlDB extends AbstractDomainMysqlDB {
 
 	
 	protected static class CNAENotFoundException extends Exception {

@@ -168,6 +168,14 @@ public class MysqlDB extends DefaultMysqlDB{
             };
             DBContext.main(mysqlDBArgs);
             
+            String mysqlDomainDBArgs [] = {
+            		"-url", url,
+            		"-user", user,
+            		"-passwd", passwd,
+            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractDomainMysqlDB.java" ,
+            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/MysqlDomainDB.java.vm" 
+            };
+            DBContext.main(mysqlDomainDBArgs);
             
     	}
         catch( ParseException exp ) {

@@ -198,6 +198,7 @@
 									<dependency>
 										<includes>
 											<include>com.code.aon:aon.config</include>
+											<include>com.code.aon:aon.config</include>
 											<include>com.code.aon:aon.common</include>
 											<include>com.code.aon:aon.registry</include>
 											<include>com.code.aon:aon.company</include>
@@ -205,6 +206,7 @@
 											<include>com.esferalia.aon:aon.salary</include>
 											<include>com.esferalia.aon:aon.payroll</include>
 											<include>com.esferalia.aon:aon.calendar</include>
+											<include>com.esferalia.aon:aon.entity.common</include>
 											<include>com.transtools:ctsql-jdbc:2.2.3.6</include>
 										</includes>
 									</dependency>
@@ -250,6 +252,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.calendar-${project.version}.jar</location>
 											<destination>aon-calendar.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.entity.common-${project.version}.jar</location>
+											<destination>aon-entity-common.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/ctsql-jdbc-2.2.3.6.jar</location>
