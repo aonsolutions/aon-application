@@ -114,8 +114,6 @@ public class PosClosingController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setEndTime(new Date());
 			setPosShift((PosShift) bean.update(getPosShift()));
-			PosShiftController controller = (PosShiftController) FormUtil.getController("posShift");
-			controller.select(event, getPosShift());
 			acceptCashAmount();
 			setNew(false);
 		} catch (ManagerBeanException e) {

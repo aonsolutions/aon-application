@@ -48,9 +48,7 @@
 					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
 					<aon:selectOneMenu 
 						value="#{posShift.to.shift}" >
-						<f:selectItem itemLabel=" Mañana " itemValue="1" />
-						<f:selectItem itemLabel=" Tarde " itemValue="2" />
-						<f:selectItem itemLabel=" Noche " itemValue="3" />
+						<f:selectItems value="#{pmsCollections.shifts}" />
 					</aon:selectOneMenu>
 				
 					<aon:outputLabel 
