@@ -84,14 +84,16 @@ public class RackSearchListener extends ControllerSearchListener {
 		}
 
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-		criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-		for (ITransferObject ito : itemBean.getList(criteria)) {
-			Item item = (Item)ito;
-			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-			roomItems.add(roomItem);
+		if (items.size() > 0) {
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			criteria = new Criteria();
+			criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			for (ITransferObject ito : itemBean.getList(criteria)) {
+				Item item = (Item)ito;
+				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+				roomItems.add(roomItem);
+			}
 		}
 		return roomItems;
 	}
