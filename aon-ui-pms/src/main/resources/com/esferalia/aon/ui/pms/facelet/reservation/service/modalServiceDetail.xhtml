@@ -69,7 +69,8 @@
 									</aon:commandButton>	
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
-									<aon:panelGrid columns="2" styleClass="aon-width-all">
+									<aon:panelGrid columns="2" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
 
 										<aon:outputLabel for="ProjectReservationService_roomItem"
 											value="#{pmsBundle.pms_room}"
@@ -101,33 +102,43 @@
 
 										<aon:outputLabel for="Item_id" 
 											value="#{pmsBundle.pms_service}" />
+										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}" />
 										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{controller.to.item}" />
 											<ui:param name="idRequired" value="#{true}" />
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="skipGoToButton" value="#{true}" />
-											<ui:param name="lookupDisabled" value="#{reservation.to.crs or controller.to.extra}" />
+											<ui:param name="lookupRendered" value="#{!reservation.to.crs and !controller.to.extra}" />
 											<ui:param name="lookupInputOnFocus" value="ProjectReservationService_quantity" />
-											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_price" />
+											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_salesPrice" />
 											<aon:methodParam name="lookupChangeListener"
 												value="#{controller.onItemChanged}" type="lookupChangeListener" />
 										</ui:include>
 
 										<aon:outputLabel for="ProjectReservationService_quantity" 
 											value="#{pmsBundle.pms_units}" />
+										<aon:outputText	value="#{controller.serviceQuantity}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}">
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+										</aon:outputText>
 										<aon:inputText id="ProjectReservationService_quantity" 
 											value="#{controller.serviceQuantity}" size="5" required="true"
-											disabled="#{reservation.to.crs or controller.to.extra}" 
+											rendered="#{!reservation.to.crs and !controller.to.extra}" 
 											valueChangeListener="#{controller.onQuantityChanged}" 
-											reRender="ProjectReservationService_price"
-											focus="ProjectReservationService_price" /> 
+											reRender="ProjectReservationService_salesPrice"
+											focus="ProjectReservationService_salesPrice" />
 
 										<aon:outputLabel for="ProjectReservationService_salesPrice" 
-											value="#{bundle.aon_price}" />
+											value="#{bundle.aon_unit_price}" />
+										<aon:outputText	value="#{controller.servicePrice}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}">
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+										</aon:outputText>
 										<aon:inputText id="ProjectReservationService_salesPrice" 
 											value="#{controller.servicePrice}" size="5" required="true"
-											disabled="#{reservation.to.crs or controller.to.extra}" 
+											rendered="#{!reservation.to.crs and !controller.to.extra}" 
 											valueChangeListener="#{controller.onSalesPriceChanged}" />
 
 									</aon:panelGrid>

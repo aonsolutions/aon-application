@@ -25,7 +25,7 @@
 				<aon:commandLink id="Service-selectButton"
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{reservation.active and (!reservation.to.crs or reservation.to.roomAssignedCount > 1)}"
+					rendered="#{reservation.active and (!reservation.to.crs or reservation.to.roomAssignedCount > 0)}"
 					actionListener="#{controller.onSelect}"
 					reRender="showServiceDetailWindow"
 					onkeyup="#{dataTableId}KeyUp(this)"
@@ -66,19 +66,19 @@
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" />
 			</aon:column>
 
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
+				</f:facet>
+				<aon:outputText value="#{to.roomNumber}" />
+			</aon:column>
+
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_source}" />
 				</f:facet>
 				<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.extra}" />
 				<aon:outputText value="#{pmsBundle.pms_hotel}" rendered="#{to.extra}" />
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
-				</f:facet>
-				<aon:outputText value="#{to.roomNumber}" />
 			</aon:column>
 		</ui:define>
 
@@ -132,16 +132,12 @@
 							</aon:outputText>
 						</aon:div>
 						<aon:div>
-							<aon:outputLabel value="#{bundle.aon_total}:" styleClass="aon-margin-right" />
+							<aon:outputLabel value="#{bundle.aon_amount}:" styleClass="aon-margin-right" />
 							<aon:outputText value="#{serviceDetail.totalPrice}" styleClass="aon-italic">
 								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 						</aon:div>
 					</aon:panelGrid>
-				</aon:column>
-
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
-					<aon:outputText value="&#160;" />
 				</aon:column>
 
 				<aon:column colspan="2" styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
@@ -152,6 +148,10 @@
 						<aon:outputText value="--" styleClass="aon-italic"
 							rendered="#{serviceDetail.projectReservationRoomDetail == null}" />
 					</aon:div>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-yellow-column">
+					<aon:outputText value="&#160;" />
 				</aon:column>
 
 			</rich:subTable>
