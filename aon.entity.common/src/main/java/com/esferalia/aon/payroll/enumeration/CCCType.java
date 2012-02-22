@@ -21,7 +21,11 @@ public enum CCCType implements IResourceable {
     
 	TRADE_REPRESENTATIVE,
 	
-	ASSIMILATEDS;
+	ASSIMILATEDS,
+	
+	FELLOWS,
+	
+	HOME_EMPLOYEES;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
