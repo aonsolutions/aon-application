@@ -12,17 +12,8 @@
 
 		<f:facet name="header">
 			<rich:columnGroup>
-				<aon:column styleClass="aon-dataTable-header">
+				<aon:column styleClass="aon-dataTable-header" colspan="4">
 					<aon:outputText value="&#160;" />
-				</aon:column>
-				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{bundle.aon_date_from}" />
-				</aon:column>
-				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{bundle.aon_date_to}" />
-				</aon:column>
-				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{bundle.aon_percentage}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header" colspan="3">
 					<aon:outputText
@@ -33,14 +24,13 @@
 						value="#{accountingBundle.accounting_fiscal_amortization}" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{accountingBundle.accounting_tax_adjust}" />
+					<aon:outputText value="&#160;" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText value="#{bundle.aon_status}" />
+					<aon:outputText value="&#160;" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
-					<aon:outputText
-						value="#{accountingBundle.accounting_account_entry}" />
+					<aon:outputText value="&#160;" />
 				</aon:column>
 				<aon:column styleClass="aon-dataTable-header">
 					<aon:outputText value="&#160;" />
@@ -55,31 +45,56 @@
 			<aon:commandButton actionListener="#{amortizationDetail.onSelect}"
 				rendered="#{to!=amortizationDetail.to}"
 				styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+			<f:facet name="footer">
+					<aon:commandButton id="amortizationDetail-reset"
+						title="#{bundle.aon_reset}" 
+						actionListener="#{amortizationDetail.onReset}" 
+						rendered="#{!amortizationDetail.new}"
+						styleClass="aon-editDataTable-button aon-icon-reset"/>
+			</f:facet>
 		</aon:column>
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputLabel for="AmortizationDetail_fromDate" value="#{bundle.aon_date_from}" />
 			</f:facet>
 			<aon:outputText value="#{to.fromDate}">
 				<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
+			<f:facet name="footer">
+				<aon:div styleClass="aon-nowrap">
+					<aon:selectInputDate id="AmortizationDetail_fromDate"
+						rendered="#{amortizationDetail.new}" required="true"
+						value="#{amortizationDetail.to.fromDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
+			</f:facet>
 		</aon:column>
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputLabel for="AmortizationDetail_toDate" value="#{bundle.aon_date_to}" />
 			</f:facet>
 			<aon:outputText value="#{to.toDate}">
 				<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
+			<f:facet name="footer">
+				<aon:div styleClass="aon-nowrap">
+					<aon:selectInputDate id="AmortizationDetail_toDate"
+						rendered="#{amortizationDetail.new}" required="true"
+						value="#{amortizationDetail.to.toDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</aon:div>
+			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputText value="%" />
 			</f:facet>
 			<aon:outputText value="#{to.coefficient}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -89,9 +104,9 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+				<aon:outputLabel for="AmortizationDetail_allocation" value="#{accountingBundle.accounting_allocation}" />
 			</f:facet>
-			<aon:inputText
+			<aon:inputText id="AmortizationDetail_allocation"
 				rendered="#{amortizationDetail.to == to and to.updatable}"
 				required="true" value="#{to.allocation}" size="8">
 			</aon:inputText>
@@ -100,6 +115,12 @@
 				value="#{to.allocation}">
 				<f:convertNumber pattern="#,##0.00" />
 			</aon:outputText>
+			<f:facet name="footer">
+				<aon:inputText id="AmortizationDetail_allocation-New"
+					rendered="#{amortizationDetail.new}"
+					required="true" value="#{amortizationDetail.to.allocation}" size="8">
+				</aon:inputText>
+			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -122,15 +143,22 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="#{accountingBundle.accounting_allocation}" />
+				<aon:outputLabel for="AmortizationDetail_fiscalAllocation" value="#{accountingBundle.accounting_allocation}" />
 			</f:facet>
-			<aon:inputText rendered="#{amortizationDetail.to == to}"
+			<aon:inputText id="AmortizationDetail_fiscalAllocation"
+				rendered="#{amortizationDetail.to == to}"
 				required="true" value="#{to.fiscalAllocation}" size="8">
 			</aon:inputText>
 			<aon:outputText rendered="#{amortizationDetail.to != to}"
 				value="#{to.fiscalAllocation}">
 				<f:convertNumber pattern="#,##0.00" />
 			</aon:outputText>
+			<f:facet name="footer">
+				<aon:inputText id="AmortizationDetail_fiscalAllocation-New"
+					rendered="#{amortizationDetail.new}"
+					required="true" value="#{amortizationDetail.to.fiscalAllocation}" size="8">
+				</aon:inputText>
+			</f:facet>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -153,7 +181,7 @@
 
 		<aon:column styleClass="aon-editDataTable-numberColumn">
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputText value="#{accountingBundle.accounting_tax_adjust}" />
 			</f:facet>
 			<aon:outputText value="#{to.taxAdjust}">
 				<f:convertNumber pattern="#,##0.00" />
@@ -162,7 +190,7 @@
 
 		<aon:column styleClass="aon-editDataTable-textColumn">
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputText value="#{bundle.aon_status}" />
 			</f:facet>
 			<aon:outputText value="#{to.status}"
 				rendered="#{amortizationDetail.to != to or to.scored}" />
@@ -179,7 +207,7 @@
 
 		<aon:column styleClass="aon-editDataTable-iconColumn">
 			<f:facet name="header">
-				<aon:outputText value="&#160;" />
+				<aon:outputText value="#{accountingBundle.accounting_account_entry}" />
 			</f:facet>
 			<aon:commandButton actionListener="#{amortizationDetail.onUnrecord}"
 				title="#{accountingBundle.accounting_unrecord}"
@@ -233,6 +261,23 @@
 					styleClass="aon-editDataTable-button aon-icon-delete"
 					accesskey="#{bundle.aon_key_remove_line}" />
 			</aon:div>
+			<f:facet name="footer">
+				<aon:div styleClass="aon-nowrap">
+					<aon:commandButton id="amortizationDetailTable-save-New"
+						title="#{bundle.aon_accept} (ALT+#{bundle.aon_key_save_line})"
+						actionListener="#{amortizationDetail.onAccept}"
+						rendered="#{amortizationDetail.new}"
+						reRender="amortizationForm"
+						styleClass="aon-editDataTable-button aon-icon-accept"
+						focus="accountId" accesskey="#{bundle.aon_key_save_line}" />
+					<aon:commandButton id="amortizationDetailTable-cancel-New"
+						title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel_line})"
+						actionListener="#{amortizationDetail.onCancel}" immediate="true"
+						rendered="#{amortizationDetail.new}"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel_line}" />
+				</aon:div>
+			</f:facet>
 		</aon:column>
 	</aon:editDataTable>
 	

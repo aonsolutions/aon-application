@@ -2,7 +2,9 @@ package com.code.aon.ui.accounting.event;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
+import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController;
@@ -17,6 +19,17 @@ public class AmortizationDetailListener extends ControllerAdapter {
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		AmortizationDetail detail = (AmortizationDetail) event.getController().getTo();
 		detail.setCoefficient(CommonUtil.round(detail.getAllocation() * 100 / detail.getAmortization().getAmount()));
+	}
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		AmortizationDetailController adc = (AmortizationDetailController) event.getController();
+		AmortizationDetail detail = (AmortizationDetail) adc.getTo();
+		Amortization a = (Amortization) adc.getMasterController().getTo();
+		if (detail.getCoefficient() == null) {
+			detail.setCoefficient(CommonUtil.round(detail.getAllocation() * 100 / a.getAmount()));	
+		}
+		detail.setStatus(AmortizationDetailStatus.BLOCKED);
+		
 	}
 
 	@Override
