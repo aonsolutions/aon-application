@@ -35,6 +35,7 @@ import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -54,6 +55,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
 import com.esferalia.aon.pms.reservation.ReservationInvoicing;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 
 public class ProjectReservationController extends BasicController implements IPmsConstants {
@@ -423,12 +425,49 @@ public class ProjectReservationController extends BasicController implements IPm
 		accept(event);
 	}
 	
-	public void onUnblock(ActionEvent event) throws ManagerBeanException {
+	public void onUnblock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.ACTIVE);
 		accept(event);
 	}
 
+	public boolean isCancelled() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return reservation.isCancelled();
+	}
+
+	public boolean isCancellable() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		return (value == null || ((Double)value).doubleValue() == 0);
+	}
+
+	public void onCancelReservation(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+
+		ReservationUtils reservationUtils = new ReservationUtils();
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+	    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+		}
+
+		reservation.setStatus(ReservationStatus.CANCELLED);
+		accept(event);
+
+    	IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
+    	reservationRoomController.onSearch(event);
+		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
+    	reservationServiceController.onSearch(event);
+	}
+	
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {

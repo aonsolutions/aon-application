@@ -5,6 +5,7 @@ public interface IPmsConstants {
 	String COLLECTIONS_CONTROLLER_NAME = "pmsCollections";
 	String RESERVATION_CONTROLLER_NAME = "reservation";
 	String RESERVATION_SEARCH_LISTENER_NAME = "reservationSearch";
+	String RESERVATION_ROOM_CONTROLLER_NAME = "reservationRoom";
 	String RESERVATION_SERVICE_CONTROLLER_NAME = "reservationService";
 	String ROOM_AVAILABILITY_CONTROLLER_NAME = "roomAvailability";
 	String RACK_CONTROLLER_NAME = "rack";

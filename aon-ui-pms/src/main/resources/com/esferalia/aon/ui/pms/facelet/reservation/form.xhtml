@@ -25,6 +25,13 @@
 						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
 							value="#{true}" />
 					</aon:commandButton>
+					<c:if test="#{aonRole.admin}">
+						<aon:commandButton id="reservation-Cancel"
+							value="#{pmsBundle.pms_to_cancel_reservation}"
+							immediate="#{true}" rendered="#{!reservation.cancelled and reservation.cancellable}"
+							styleClass="aon-finding-toolbar-item aon-icon-removed"
+							actionListener="#{reservation.onCancelReservation}" />
+					</c:if>
 				</ui:define>
 			</ui:decorate>
 
