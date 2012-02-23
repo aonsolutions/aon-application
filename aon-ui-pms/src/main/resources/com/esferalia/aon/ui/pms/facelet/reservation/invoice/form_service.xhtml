@@ -14,7 +14,7 @@
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
 				<aon:dataTable id="serviceList"
-					value="#{controller.reservationInvoiceTo.services}" var="hotelInvoiceService">
+					value="#{controller.reservationInvoiceTo.services}" rowKeyVar="hotelInvoiceServiceKey" var="hotelInvoiceService">
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 						<aon:outputLabel for="ProjectReservation_serviceItem"
@@ -26,7 +26,7 @@
 							value="#{hotelInvoiceService.item}" required="true">
 							<a4j:support event="onchange" 
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv" />
+								reRender="invoiceServicesDiv,invoiceFinancesDiv" />
 							<f:selectItems value="#{controller.hotelServices}" />
 						</aon:selectOneMenu>
 					</aon:column>
@@ -42,7 +42,7 @@
 							required="true" size="1">
 							<a4j:support event="onchange" 
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv" />
+								reRender="invoiceServicesDiv,invoiceFinancesDiv" />
 						</aon:inputText>
 					</aon:column>
 
@@ -58,11 +58,11 @@
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange"
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv"
+								reRender="invoiceServicesDiv,invoiceFinancesDiv"
 								focus="ProjectReservation_serviceToDate" />
 							<a4j:support event="onchanged"
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv"
+								reRender="invoiceServicesDiv,invoiceFinancesDiv"
 								focus="ProjectReservation_serviceToDate" />
 						</aon:selectInputDate>
 					</aon:column>
@@ -79,33 +79,57 @@
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange"
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv"
+								reRender="invoiceServicesDiv,invoiceFinancesDiv"
 								focus="Service-newButton" />
 							<a4j:support event="onchanged"
 								actionListener="#{controller.onInvoiceServiceChanged}"
-								reRender="ProjectReservation_serviceAmount,invoiceFinancesDiv"
+								reRender="invoiceServicesDiv,invoiceFinancesDiv"
 								focus="Service-newButton" />
 						</aon:selectInputDate>
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-40 aon-editDataTable-textColumn">
 						<aon:outputLabel for="ProjectReservation_serviceAmount" 
-							value="#{bundle.aon_total}" />
+							value="#{bundle.aon_amount}" />
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
-						<aon:outputText id="ProjectReservation_serviceAmount" value="#{hotelInvoiceService.total}">
-							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-						</aon:outputText>
-						<aon:commandButton
-							id="Service-newButton" title="#{bundle.aon_reset}"
-							styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
-							rendered="#{hotelInvoiceService == controller.reservationInvoiceTo.lastService}"
-							actionListener="#{controller.onNewService}"
-							reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv" />
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-width-50,aon-noborder aon-width-auto">
+							<aon:outputText id="ProjectReservation_serviceAmount" value="#{hotelInvoiceService.total}">
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+							<aon:div>
+								<aon:commandButton
+									id="Service-removeButton" title="#{bundle.aon_remove}"
+									styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
+									rendered="#{hotelInvoiceService != controller.reservationInvoiceTo.firstService}"
+									actionListener="#{controller.onRemoveService}"
+									reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv">
+									<f:param name="hotelInvoiceServiceIndex" value="#{hotelInvoiceServiceKey}"/>
+								</aon:commandButton>
+								<aon:commandButton
+									id="Service-newButton" title="#{bundle.aon_reset}"
+									styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
+									rendered="#{hotelInvoiceService == controller.reservationInvoiceTo.lastService}"
+									actionListener="#{controller.onNewService}"
+									reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv" />
+							</aon:div>
+						</aon:panelGrid>
 					</aon:column>
 
 				</aon:dataTable>
+
+				<aon:panelGrid columns="3" styleClass="aon-margin-top aon-noborder"
+					columnClasses="aon-width-120,aon-width-120,aon-width-auto">
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="#{pmsBundle.pms_total_services}:" styleClass="aon-bold" />
+					<aon:div>
+						<aon:outputText value="#{controller.servicesAmount}" styleClass="aon-bold">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" €" styleClass="aon-bold" />
+					</aon:div>
+				</aon:panelGrid>
 			</aon:div>
 		</aon:div>
 	</aon:div>

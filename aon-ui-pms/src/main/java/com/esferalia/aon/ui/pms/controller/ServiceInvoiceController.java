@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -246,6 +247,13 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		}
 	}
 
+	public void onRemoveService(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        int serviceIndex = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get("hotelInvoiceServiceIndex"));
+        getReservationInvoiceTo().getServices().remove(serviceIndex);
+		onInvoiceServiceChanged(null);
+	}
+
 	public int getInvoiceServicesCount() {
 		return getReservationInvoiceTo().getServicesCount();
 	}
@@ -272,7 +280,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		onNewFinance(null);
 	}
 
-	private double getServicesAmount() {
+	public double getServicesAmount() {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
 		for (HotelService hotelService : getReservationInvoiceTo().getServices()) {
 			if (hotelService.getItem() != null) {
@@ -296,7 +304,18 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
-	private double getFinancesAmount() {
+	public void onRemoveFinance(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        int financeIndex = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get("hotelInvoiceFinanceIndex"));
+
+        Finance financeToRemove = getReservationInvoiceTo().getFinances().get(financeIndex);
+        getReservationInvoiceTo().getFinances().remove(financeIndex);
+
+        Finance previousFinance = getReservationInvoiceTo().getFinances().get(financeIndex-1);
+        previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
+	}
+
+	public double getFinancesAmount() {
 		double amount = 0;
 		for (Finance finance : getReservationInvoiceTo().getFinances()) {
 			amount += CommonUtil.round(finance.getAmount());

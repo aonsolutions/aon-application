@@ -14,7 +14,7 @@
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
 				<aon:dataTable id="financeList"
-					value="#{controller.reservationInvoiceTo.finances}" var="hotelInvoiceFinance">
+					value="#{controller.reservationInvoiceTo.finances}" rowKeyVar="hotelInvoiceFinanceKey" var="hotelInvoiceFinance">
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 						<aon:outputLabel for="ProjectReservation_financePayMethod"
@@ -48,17 +48,38 @@
 						<aon:div rendered="#{controller.reservationInvoiceTo.directCustomer}">
 							<aon:inputText id="ProjectReservation_financeAmount"
 								value="#{hotelInvoiceFinance.amount}"
-								required="true" size="5" />
+								required="true" size="5"
+								reRender="invoiceFinancesDiv" />
+							<aon:commandButton
+								id="Finance-removeButton" title="#{bundle.aon_remove}"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
+								rendered="#{hotelInvoiceFinance != controller.reservationInvoiceTo.firstFinance}"
+								actionListener="#{controller.onRemoveFinance}"
+								reRender="invoiceFinancesDiv">
+								<f:param name="hotelInvoiceFinanceIndex" value="#{hotelInvoiceFinanceKey}"/>
+							</aon:commandButton>
 							<aon:commandButton
 								id="Finance-newButton" title="#{bundle.aon_reset}"
-								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-icon-reset"
+								styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
 								rendered="#{hotelInvoiceFinance == controller.reservationInvoiceTo.lastFinance}"
 								actionListener="#{controller.onNewFinance}"
-								reRender="financeList" />
+								reRender="invoiceFinancesDiv" />
 						</aon:div>
 					</aon:column>
 
 				</aon:dataTable>
+
+				<aon:panelGrid columns="3" styleClass="aon-margin-top aon-noborder"
+					columnClasses="aon-width-120,aon-width-120,aon-width-auto">
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="#{pmsBundle.pms_total_finances}:" styleClass="aon-bold" />
+					<aon:div>
+						<aon:outputText value="#{controller.financesAmount}" styleClass="aon-bold">
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						<aon:outputText value=" €" styleClass="aon-bold" />
+					</aon:div>
+				</aon:panelGrid>
 			</aon:div>
 		</aon:div>
 	</aon:div>

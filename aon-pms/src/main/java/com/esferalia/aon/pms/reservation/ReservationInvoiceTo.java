@@ -145,12 +145,20 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		return getServices().size();
 	}
 
+	public HotelService getFirstService() {
+		return getServices().get(0);
+	}
+
 	public HotelService getLastService() {
 		return getServices().get(getServices().size()-1);
 	}
 
 	public int getFinancesCount() {
 		return getFinances().size();
+	}
+
+	public Finance getFirstFinance() {
+		return getFinances().get(0);
 	}
 
 	public Finance getLastFinance() {

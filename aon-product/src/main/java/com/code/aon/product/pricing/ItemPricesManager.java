@@ -83,7 +83,7 @@ public class ItemPricesManager {
 				priceable.setPrice(0);
 				priceable.setProfitPercent(0);
 			} else {
-				priceable.setPrice(getPrice(priceable, salesPrice, 2));
+				priceable.setPrice(getPrice(priceable, salesPrice, 4));
 				if (calculateProfit) {
 					priceable.setProfitPercent(getProfit(priceable.getProfitablePrice(), priceable.getPrice()));
 				}

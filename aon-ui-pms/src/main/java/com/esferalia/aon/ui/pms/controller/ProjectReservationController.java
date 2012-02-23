@@ -595,7 +595,7 @@ public class ProjectReservationController extends BasicController implements IPm
         previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
 	}
 
-	private double getFinancesAmount() {
+	public double getFinancesAmount() {
 		double amount = 0;
 		for (Finance finance : getReservationInvoiceTo().getFinances()) {
 			amount += CommonUtil.round(finance.getAmount());
