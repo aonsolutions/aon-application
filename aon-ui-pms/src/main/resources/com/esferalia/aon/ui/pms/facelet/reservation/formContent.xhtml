@@ -28,13 +28,13 @@
 			title="#{pmsBundle.pms_to_block}"
 			immediate="true" rendered="#{!reservation.new and reservation.active and aonRole.saleOperator}"
 			styleClass="aon-icon-commandButton aon-icon-lock aon-margin-left">
-		</aon:commandButton>										
+		</aon:commandButton>
 		<aon:commandButton id="unblock" value="&#160;"
 			actionListener="#{reservation.onUnblock}"
 			title="#{pmsBundle.pms_to_unblock}"
 			immediate="true" rendered="#{reservation.blocked and aonRole.saleOperator}"
 			styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-		</aon:commandButton>										
+		</aon:commandButton>
 	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />
@@ -72,16 +72,10 @@
 
 	<aon:outputLabel for="ProjectReservation_project_id" value="#{pmsBundle.pms_reservation_id}"
 		rendered="#{!reservation.new}" />
-	<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" 
-		styleClass="aon-bold" rendered="#{!reservation.new}" />
-
-	<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
-	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
-		<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
-			rendered="#{reservation.to.crs or !reservation.active or !aonRole.saleOperator}" />
-		<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
-			size="16" maxlength="16" required="true"
-			rendered="#{!reservation.to.crs and reservation.active and aonRole.saleOperator}" />
+	<aon:panelGrid columns="2" columnClasses="aon-width-130,aon-width-auto"
+		rendered="#{!reservation.new}">
+		<aon:outputText	id="ProjectReservation_project_id" value="#{reservation.to.id}" 
+			styleClass="aon-bold" />
 		<aon:div>
 			<aon:outputLabel for="ProjectReservation_crsCode" value="#{pmsBundle.pms_crs}:"
 				styleClass="aon-margin-right aon-italic" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
@@ -89,6 +83,13 @@
 				styleClass="aon-bold" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
 		</aon:div>
 	</aon:panelGrid>
+
+	<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
+	<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
+		rendered="#{reservation.to.crs or !reservation.active or !aonRole.saleOperator}" />
+	<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
+		size="30" maxlength="32" required="true"
+		rendered="#{!reservation.to.crs and reservation.active and aonRole.saleOperator}" />
 
 	<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
@@ -111,7 +112,7 @@
 				focus="ProjectReservation_nights" />
 		</aon:selectInputDate>
 		<aon:div>
-			<aon:outputLabel for="ProjectReservation_nights" value="#{pmsBundle.pms_nights}" 
+			<aon:outputLabel for="ProjectReservation_nights" value="#{pmsBundle.pms_nights}:" 
 				styleClass="aon-margin-right aon-italic" />
 			<aon:outputText value="#{reservation.nights}" styleClass="aon-bold" 
 				rendered="#{reservation.to.crs or !reservation.active or reservation.to.inUse or !aonRole.saleOperator}" />

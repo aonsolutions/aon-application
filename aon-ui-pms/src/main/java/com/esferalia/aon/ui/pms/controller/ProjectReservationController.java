@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -323,14 +324,16 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-		criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
-		criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-		for (ITransferObject ito : itemBean.getList(criteria)) {
-			Item item = (Item)ito;
-			SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
-			roomItems.add(roomItem);
+		if (items.size() > 0) {
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			criteria = new Criteria();
+			criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			for (ITransferObject ito : itemBean.getList(criteria)) {
+				Item item = (Item)ito;
+				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+				roomItems.add(roomItem);
+			}
 		}
 		return roomItems;
 	}
@@ -579,6 +582,17 @@ public class ProjectReservationController extends BasicController implements IPm
 		double amount = CommonUtil.round(reservation.getTotal() - getFinancesAmount());
 		finance.setAmount(amount);
 		getReservationInvoiceTo().getFinances().add(finance);
+	}
+
+	public void onRemoveFinance(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        int financeIndex = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get("hotelInvoiceFinanceIndex"));
+
+        Finance financeToRemove = getReservationInvoiceTo().getFinances().get(financeIndex);
+        getReservationInvoiceTo().getFinances().remove(financeIndex);
+
+        Finance previousFinance = getReservationInvoiceTo().getFinances().get(financeIndex-1);
+        previousFinance.setAmount(CommonUtil.round(previousFinance.getAmount() + financeToRemove.getAmount()));
 	}
 
 	private double getFinancesAmount() {
