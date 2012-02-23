@@ -178,6 +178,8 @@
 		<mapping class="com.code.aon.project.ProjectType"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
