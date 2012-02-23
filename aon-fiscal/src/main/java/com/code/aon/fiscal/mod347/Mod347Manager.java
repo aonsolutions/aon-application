@@ -60,7 +60,18 @@ public class Mod347Manager {
 				detail.setName(rs.getString(NAME_ALIAS));
 				Country country = Country.valueOf( rs.getString(COUNTRY_ALIAS) ); 
 				detail.setCountry( country );
-				detail.setProvince( Province.values()[rs.getInt( PROVINCE_ALIAS )] );
+				Province province = null;
+				if (country == Country.ES) {
+					int prov = rs.getInt( PROVINCE_ALIAS );
+					try {
+						province = Province.values()[prov];
+					} catch (ArrayIndexOutOfBoundsException e) {
+						province = Province.DESCONOCIDO;
+					}
+				} else {
+					province = Province.NO_RESIDENTE;
+				}
+				detail.setProvince( province );				
 				detail.setAmount(CommonUtil.round(rs.getDouble(AMOUNT_ALIAS)));
 				detail.setFirstQuarterAmount(CommonUtil.round(rs.getDouble(FIRST_QUARTER_ALIAS)));
 				detail.setSecondQuarterAmount(CommonUtil.round(rs.getDouble(SECOND_QUARTER_ALIAS)));

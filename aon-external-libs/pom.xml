@@ -3,19 +3,19 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>6.24</version>
+		<version>6.24.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-external-libs</artifactId>
-	<version>6.24</version>
+	<version>6.24.1</version>
 	<description>AON EXTERNAL LIBS</description>
 	<name>AON EXTERNAL LIBS</name>
 
 	<scm>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.x/aon-external-libs</url>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.x/aon-external-libs</connection>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.x/aon-external-libs</developerConnection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.1.x/aon-external-libs</url>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.1.x/aon-external-libs</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.24.1.x/aon-external-libs</developerConnection>
 	</scm>
 
 	<repositories>
