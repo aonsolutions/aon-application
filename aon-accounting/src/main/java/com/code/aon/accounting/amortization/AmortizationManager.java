@@ -174,10 +174,10 @@ public class AmortizationManager {
 
 	private Date ensurePeriodLast(IManagerBean bean, Amortization a, Date last) throws ManagerBeanException {
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-		c.addLessThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
-		c.addGreaterThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE), last);
-		c.addOrder(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
+		c.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE), last);
+		c.addOrder(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE));
 		List<ITransferObject> list = bean.getList(c);
 		if (list != null && list.size() > 0) {
 			AmortizationDetail exists = (AmortizationDetail) list.get(0);
