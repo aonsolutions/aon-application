@@ -31,18 +31,15 @@ public class EnterpriseTreeData {
 
 	private Serializable id;
 	
-	private String label;
-	
-	private EnterpriseTreeType type;
-	
 	private MimeType mimeType;
+	
+	private AonTreeKey key;
 	
 	private int count;
 
-	public EnterpriseTreeData(Serializable id, String label, EnterpriseTreeType type) {
+	public EnterpriseTreeData(Serializable id, AonTreeKey key) {
 		this.id = id;
-		this.label = label;
-		this.type = type;
+		this.key = key;
 	}
 
 	public Serializable getId() {
@@ -50,26 +47,26 @@ public class EnterpriseTreeData {
 	}
 
 	public String getLabel() {
-		return label;
+		return key.getLabel();
 	}
 
 	public EnterpriseTreeType getType() {
-		return type;
+		return key.getType();
 	}
 
 	public String getTypeName() {
-		return type.toString();
+		return getType().toString();
 	}
 	
 	public void actionListener( ActionEvent event ) {
-		if ( this.type.getActionListener() != null ) {
+		if ( getType().getActionListener() != null ) {
 			FacesContext ctx = FacesContext.getCurrentInstance();
-			this.type.getActionListener().invoke(ctx.getELContext(), new Object[]{event});			
+			getType().getActionListener().invoke(ctx.getELContext(), new Object[]{event});			
 		}
 	}
-	
-	public String getKey() {
-		return getType().toString() + getId();
+
+	public AonTreeKey getKey() {
+		return this.key;
 	}
 	
 	public int getCount() {
@@ -78,6 +75,10 @@ public class EnterpriseTreeData {
 
 	public void incCount() {
 		this.count++;
+	}
+
+	public void decCount() {
+		this.count--;
 	}
 	
 	public void setCount(int count) {
@@ -132,9 +133,8 @@ public class EnterpriseTreeData {
 		final EnterpriseTreeData o = (EnterpriseTreeData) obj;
 		return new EqualsBuilder()
 			.append(this.id, o.id)
-			.append(this.label, o.label)
+			.append(this.key, o.key)
 			.append(this.mimeType, o.mimeType)
-			.append(this.type, o.type)
 			.isEquals();
 	}
 	
