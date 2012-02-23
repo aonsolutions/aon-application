@@ -41,7 +41,16 @@
 							value="#{true}" />
 					</aon:commandButton>
 					
-					<aon:htmlCommandLink id="amortizationForm-report"
+					<aon:htmlCommandLink id="amortizationFormAnnual-report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						value="#{accountingBundle.accounting_annual_summary}" target="_blank"
+						rendered="#{!amortization.to.yearly}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="amortizationFormAnnual" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+
+					<aon:htmlCommandLink id="amortizationAForm-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						value="#{bundle.aon_report}" target="_blank"
 						action="#{report.onExecute}">
@@ -131,8 +140,7 @@
 
 					<aon:outputLabel for="Amortization_amortizationPeriod"
 						value="#{accountingBundle.accounting_amortization_period}" />
-					<aon:selectOneMenu id="Amortization_amortizationPeriod"
-						disabled="true"
+					<aon:selectOneMenu id="Amortization_amortizationPeriod" required="true"
 						value="#{amortization.to.feePeriod}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems
@@ -228,11 +236,14 @@
 						value="#{amortization.to.comments}" size="145" />
 				</aon:panelGrid>
 
-				<aon:panel id="AmortizationDetails" rendered="#{!amortization.new}">
-					<ui:include
-						src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
-				</aon:panel>
-
+				<aon:panelTabSet id="amortizationTab" selectedTab="#{amortization.selectedTab}" rendered="#{!amortization.new}">
+					<aon:panelTab id="YearSummary" label="#{accountingBundle.accounting_annual_summary}" rendered="#{!amortization.to.yearly}">
+						<ui:include src="/com/code/aon/ui/accounting/facelet/amortization/form_summary_lines.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="AmortizationDetails" label="#{accountingBundle.accounting_amortization_details}">
+						<ui:include src="/com/code/aon/ui/accounting/facelet/amortization/form_lines.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
 		<ui:include src="modalSale.xhtml" />

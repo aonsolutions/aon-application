@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.entity.master.AmortizationDetailDB;
 
@@ -79,4 +80,10 @@ public class AmortizationDetail extends AmortizationDetailDB {
 	public void setChecked(boolean checked) {
 		this.checked = checked;
 	}
+	
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+	
 }

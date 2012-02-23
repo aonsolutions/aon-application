@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -14,6 +15,7 @@ import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -28,6 +30,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class PeriodAmortizationController extends BasicController {
 
 	private Period period;
+	private Month month;
+	
 	private double accumulated;
 	private double pending;
 	private double totalAmount;
@@ -55,14 +59,28 @@ public class PeriodAmortizationController extends BasicController {
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
+	
+	public Month getMonth() {
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
 
 	@Override
 	public void onSearch(ActionEvent event) {
 		try {
 			clearCriteria();
 			String alias = getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE);
-			getCriteria().addGreaterThanOrEqualExpression(alias, getPeriod().getInitiationDate());
-			getCriteria().addLessThanOrEqualExpression(alias, getPeriod().getDeadline());
+			Date fromDate = getPeriod().getInitiationDate();
+			Date toDate = getPeriod().getDeadline();
+			if ( getMonth() != null ) {
+				int year = CommonUtil.getYear(fromDate);
+				fromDate = CommonUtil.getDate(year, getMonth().getValue(), 1);
+				toDate = CommonUtil.getMonthLastDay(fromDate);
+			}
+			getCriteria().addGreaterThanOrEqualExpression(alias, fromDate);
+			getCriteria().addLessThanOrEqualExpression(alias, toDate);
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());

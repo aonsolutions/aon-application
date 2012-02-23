@@ -26,6 +26,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class AmortizationController extends BasicController {
 
 	private boolean salePanelVisible;
+	private String selectedTab;
 
 	public boolean isSalePanelVisible() {
 		return salePanelVisible;
@@ -33,7 +34,13 @@ public class AmortizationController extends BasicController {
 	public void setSalePanelVisible(boolean salePanelVisible) {
 		this.salePanelVisible = salePanelVisible;
 	}
-
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+	
 	public boolean isUpdatable() {
 		try {
 			if (isNew()) {

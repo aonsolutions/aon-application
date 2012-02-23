@@ -88,4 +88,10 @@ public class Amortization extends AmortizationDB {
 			}
 		}
 	}
+
+	@Transient
+	public boolean isYearly()  {
+		return (getFeePeriod() == AmortizationPeriod.YEARLY);
+	}
+	
 }
