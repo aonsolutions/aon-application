@@ -17,6 +17,7 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="skipAfterSearch" value="true" />
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{amortization.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="amortization_list" />
