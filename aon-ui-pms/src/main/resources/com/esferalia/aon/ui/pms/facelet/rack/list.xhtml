@@ -19,7 +19,7 @@
 				<ui:define name="additionalToolbarContent">
 					<aon:div styleClass="aon-spin-control">
 						<aon:commandButton id="previousView" 
-							styleClass="aon-commandButton aon-text-center"
+							styleClass="aon-commandButton aon-text-center" style="padding-left:0.5em !important;"
 							value="#{bundle.aon_previous}" ignoreDupResponses="true"
 							reRender="aonContent"
 							actionListener="#{rack.onDecreaseStartDate}" />
@@ -31,7 +31,7 @@
 							<f:selectItem itemLabel="#{bundle.aon_month}" itemValue="2" />
 						</aon:selectOneMenu>
 						<aon:commandButton id="nextView"
-							styleClass="aon-commandButton"
+							styleClass="aon-commandButton aon-text-center" style="padding-left:0.5em !important;"
 							value="#{bundle.aon_next}" ignoreDupResponses="true"
 							reRender="aonContent"
 							actionListener="#{rack.onIncreaseStartDate}" />

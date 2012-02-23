@@ -69,19 +69,6 @@ public class PmsCollectionsController {
 		return reservationStatuses;
 	}
 	
-	public List<SelectItem> getShifts() {
-		if (shifts == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			shifts = new LinkedList<SelectItem>();
-			for (Shift shift : Shift.values()) {
-				String name = shift.getName(locale);
-				SelectItem item = new SelectItem(shift, name);
-				shifts.add(item);
-			}
-		}
-		return shifts;
-	}
-
 	public List<SelectItem> getBookingHolders() {
 		if (bookingHolders == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -122,5 +109,17 @@ public class PmsCollectionsController {
 		return tariffs;
 	}
 	
+	public List<SelectItem> getShifts() {
+		if (shifts == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			shifts = new LinkedList<SelectItem>();
+			for (Shift shift : Shift.values()) {
+				String name = shift.getName(locale);
+				SelectItem item = new SelectItem(shift, name);
+				shifts.add(item);
+			}
+		}
+		return shifts;
+	}
 
 }
