@@ -141,6 +141,9 @@
 		<mapping class="com.esferalia.aon.payroll.SystemData"/>
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
+		
+		<!-- AON-PRODUCT Mapping files -->  
+		<mapping class="com.code.aon.product.Catalogue"/>
 
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.person.Person"/>

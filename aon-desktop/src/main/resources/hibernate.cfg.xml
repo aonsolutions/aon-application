@@ -104,6 +104,9 @@
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>		
 		
+		<!-- AON-PRODUCT Mapping files -->  
+		<mapping class="com.code.aon.product.Catalogue"/>
+		
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
 		<mapping class="com.code.aon.project.Project"/>

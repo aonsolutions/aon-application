@@ -72,6 +72,9 @@
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
+		
+		<!-- AON-PRODUCT Mapping files -->  
+		<mapping class="com.code.aon.product.Catalogue"/>
 				
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>

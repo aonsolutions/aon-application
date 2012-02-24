@@ -42,6 +42,9 @@
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>		
 		<mapping class="com.code.aon.geozone.GeoTree"/>		
+		
+		<!-- AON-PRODUCT Mapping files -->  
+		<mapping class="com.code.aon.product.Catalogue"/>
 
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
