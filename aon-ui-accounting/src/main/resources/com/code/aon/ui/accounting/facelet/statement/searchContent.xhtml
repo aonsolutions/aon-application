@@ -21,10 +21,12 @@
 
 			<aon:outputLabel for="accountPeriod"
 				value="#{accountingBundle.accounting_period}" />
-			<aon:selectOneMenu id="accountPeriod" ajaxSingle="true"
-				reRender="entryDate-From,entryDate-To,SearchButton,SearchWarning"
-				valueChangeListener="#{trialBalance.onPeriodChanged}"
+			<aon:selectOneMenu id="accountPeriod" 
 				value="#{trialBalance.parameters.period}">
+				<a4j:support event="onchange"
+					actionListener="#{trialBalance.onPeriodChanged}" 
+					reRender="entryDate-From,entryDate-To,statement-search,SearchWarning"
+					ajaxSingle="true" />
 				<f:selectItem itemLabel="-" itemValue="" />
 				<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 			</aon:selectOneMenu>
@@ -100,9 +102,9 @@
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
 					<a4j:support event="oninputchange"
-						reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						reRender="statement-search,SearchWarning" ajaxSingle="true" />
 					<a4j:support event="onchanged"
-						reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						reRender="statement-search,SearchWarning" ajaxSingle="true" />
 				</aon:selectInputDate>
 
 				<aon:outputLabel for="entryDate-To"
@@ -113,9 +115,9 @@
 					timeZone="#{timeZoneController.timeZone}"
 					popupDateFormat="#{bundle.aon_date_pattern}">
 					<a4j:support event="oninputchange"
-						reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						reRender="statement-search,SearchWarning" ajaxSingle="true" />
 					<a4j:support event="onchanged"
-						reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+						reRender="statement-search,SearchWarning" ajaxSingle="true" />
 				</aon:selectInputDate>
 			</aon:div>
 
