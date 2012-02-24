@@ -79,15 +79,28 @@
 							<aon:outputText value="#{to.status}" />
 						</aon:column>
 	
-						<aon:column alias="Item.price"
-							styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_taxable_base}" />
-							</f:facet>
-							<aon:outputText value="#{to.price}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-							</aon:outputText>
-						</aon:column>
+						<c:if test="#{!aonConfiguration.bean.product.showSalesPrice}">
+							<aon:column alias="Item.price"
+								styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_taxable_base}" />
+								</f:facet>
+								<aon:outputText value="#{to.price}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+							</aon:column>
+						</c:if>
+	
+						<c:if test="#{aonConfiguration.bean.product.showSalesPrice}">
+							<aon:column styleClass="aon-editDataTable-numberColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_sales_price}" />
+								</f:facet>
+								<aon:outputText value="#{to.salesPrice}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+							</aon:column>
+						</c:if>
 	
 					</ui:define>
 				</ui:decorate>	
