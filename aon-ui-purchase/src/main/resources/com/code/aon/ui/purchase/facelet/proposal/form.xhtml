@@ -36,23 +36,34 @@
 
 					<aon:outputLabel for="Proposal_workPlce" 
 						value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu id="Proposal_workPlce" 
-						value="#{proposal.to.workPlace}">
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-						<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" />
-						<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:outputText	value="#{proposal.to.workPlace.description}" styleClass="aon-bold"
+							rendered="#{!proposal.new}" />
+						<aon:selectOneMenu id="Proposal_workPlce" 
+							value="#{proposal.to.workPlace}"
+							rendered="#{proposal.new}" >
+							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+							<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" />
+							<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
+						</aon:selectOneMenu>
+					</aon:div>
 			
 					<aon:outputLabel for="Proposal_department" 
 						value="#{companyBundle.company_department}" />
-					<aon:selectOneMenu id="Proposal_department" 
-						value="#{proposal.to.workplaceDepartment}">
-						<f:selectItems value="#{proposal.workplaceDepartments}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:outputText	value="#{proposal.to.workplaceDepartment.department.name}" styleClass="aon-bold"
+							rendered="#{!proposal.new}" />
+						<aon:selectOneMenu id="Proposal_department" 
+							value="#{proposal.to.workplaceDepartment}"
+							rendered="#{proposal.new}" >
+							<f:selectItems value="#{proposal.workplaceDepartments}" />
+						</aon:selectOneMenu>
+					</aon:div>	
 
 					<aon:outputLabel for="Proposal_remarks" 
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="Proposal_remarks" 
+						disabled="#{proposal.processed}"
 						value="#{proposal.to.remarks}" cols="80" rows="4"  />
 				
 				</aon:panelGrid>

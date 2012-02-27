@@ -80,6 +80,13 @@
 											value="#{purchaseBundle.purchase_module}" />
 									</aon:div>
 								</c:if>								
+								<c:if test="#{aonRole.purchaseOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchasePrint" 
+											action="purchasePrint_search" actionListener="#{purchasePrint.onEditSearch}"
+											value="#{purchaseBundle.purchase_purchasePrint_module}" />
+									</aon:div>
+								</c:if>								
 								<c:if test="#{aonRole.warehouseOperator}">
 	 								<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="income" 

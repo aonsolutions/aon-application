@@ -1,20 +1,26 @@
 package com.code.aon.ui.purchase.controller;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -42,6 +48,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -53,6 +60,8 @@ import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseController extends BasicController implements IPurchaseConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class.getName());
 
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
@@ -470,6 +479,15 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
 	}
+	
+	public String getDescription(ITransferObject parent) {
+		Purchase purchase = (Purchase) parent;
+		return "purchase_" + purchase.getReferenceCode().replace("/", "-");
+	}
+	
+	public PurchaseEmailUtil getEmailController() {
+		return emailUtil;
+	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
 		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
@@ -482,6 +500,22 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
 		}
 	}		
+	
+	@SuppressWarnings("unchecked")
+	public byte[] getPurchaseData(Purchase purchase) throws ManagerBeanException {
+		ITransferObject to = purchase;
+		try {
+			ReportManager reportManager = new ReportManager();
+			reportManager.setCollectionProvider( new SingleCollectionProvider(to) );
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			reportManager.execute( out, "purchaseForm");
+			return out.toByteArray();
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
 	
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();

@@ -141,6 +141,7 @@
 			<value>#{itemCompositionChildListener}</value>				
 			<value>#{itemTariffChildListener}</value>
 			<value>#{itemCatalogueChildListener}</value>
+			<value>#{itemSupplierChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

@@ -54,7 +54,7 @@ public class ProposalSearchListener extends ControllerSearchListener {
 		super.init();
 		setWorkPlace(new WorkPlace());
 		setWorkplaceDepartment(new WorkplaceDepartment());
-		ProposalStatus[] defaultProposalStatus = {ProposalStatus.PENDING};
+		ProposalStatus[] defaultProposalStatus = {ProposalStatus.PENDING, ProposalStatus.PARTIAL_PROCESSED};
 		setProposalStatuses(defaultProposalStatus);
 	}
 	

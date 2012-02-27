@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="purchasePrintList">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchasePrint_module}" />
+				<ui:param name="controller" value="#{purchasePrint}" />
+				<ui:param name="skipResetButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton value="&#160;" id="sendEmail"
+						actionListener="#{purchasePrint.onInitSendEmail}"
+						reRender="showNewMessageWindow"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
+					</aon:commandButton>											
+					<aon:htmlCommandLink id="purchasePrint-report"
+						value="#{purchaseBundle.purchase_module}" target="_blank"
+						action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="purchasePrint" />
+					</aon:htmlCommandLink>
+				</ui:define>				
+				
+			</ui:decorate>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="purchasePrintData" value="#{purchasePrint.model}" sortMode="multi"
+					var="to" rows="20" rendered="#{purchasePrint.model.rowCount > 0}">
+
+					<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/list_content.xhtml" >
+						<ui:param name="controller" value="#{purchasePrint}" />
+					</ui:include>
+
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="purchasePrintData" showNote="true" />
+			</aon:div>
+			
+		</aon:form>
+
+		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+				<ui:param name="skipSendButton" value="true" />
+				<ui:param name="skipRecipients" value="true" />
+				<ui:param name="skipAttachments" value="true" />
+				<ui:param name="windowHeight" value="420" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="send"
+						value="#{webmailBundle.webmail_send}"
+						styleClass="aon-icon-accept aon-finding-toolbar-item"
+						actionListener="#{purchasePrint.onSendPurchasesByEmail}"
+						reRender="#{sendButtonReRender}" >
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+			
+			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+				<ui:param name="logPanelTitle" value="#{purchaseBundle.purchase_send_email_title}" />
+			</ui:include>		
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

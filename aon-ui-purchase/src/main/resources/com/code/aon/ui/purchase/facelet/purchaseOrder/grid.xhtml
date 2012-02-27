@@ -14,28 +14,17 @@
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_purchaseOrder_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 				
-				<!--  
-					<aon:htmlCommandLink id="purchaseOrder_list"
-						disabled="true"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{purchaseBundle.purchase_detail}"
-						action="#{report.onExecute}">
-						<f:param name="reportKey" value="purchaseOrder" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>	
-					
 					<aon:commandButton id="purchaseOrder_confirm"
-						disabled="true"
-						value="#{purchaseBundle.purchase_to_close}" immediate="#{true}" 
+						value="#{bundle.aon_accept}" 
 						rendered="#{purchaseOrder.model.rowCount > 0 }"
-						styleClass="aon-finding-toolbar-item aon-icon-favorite"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{purchaseOrder.onPurchaseConfirm}"
-						reRender="purchaseOrderForm">
+						action="purchaseOrder_list">
 					</aon:commandButton>
-				-->
-				
+					
 				</ui:define>
 			</ui:decorate>
 			
@@ -53,6 +42,10 @@
 							
 							<aon:rowSelector actionListener="#{purchaseOrder.onSelectGroup}" />
 							
+							<aon:column styleClass="aon-editDataTable-iconColumn">
+								<aon:outputText value="&#160;" />
+							</aon:column>
+							
 							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_quantity}" />
@@ -63,7 +56,7 @@
 								</aon:outputText>
 							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputText value="#{productBundle.product_item}" />
 								</f:facet>
@@ -71,20 +64,15 @@
 									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
 							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{purchaseBundle.purchase_request_count}" />
 								</f:facet>
 								<aon:outputText value="#{to.totalItem}" 
 									styleClass="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex?'aon-bold':'none'}"/>
 							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-								<aon:outputText value="&#160;" />
-							</aon:column>
 					
-							<ui:include 
-								src="/com/code/aon/ui/purchase/facelet/purchaseOrder/detail_grid.xhtml" />
+							<ui:include src="/com/code/aon/ui/purchase/facelet/purchaseOrder/detail_grid.xhtml" />
 								
 						</aon:dataTable>
 						<aon:dataScroller2 for="proposalDetailDataList" showNote="true" />
@@ -94,7 +82,6 @@
 						<aon:div styleClass="aon-panelGrid-search-info">
 							<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
 						</aon:div>	
-						
 								
 						<aon:panelGrid columns="2"  style="width:100%;"
 							columnClasses="aon-panelGrid-odd aon-width-50, 
@@ -123,6 +110,13 @@
 								<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 							</aon:selectOneMenu>
 							
+							<aon:outputLabel value="#{companyBundle.company_department}" />
+							<aon:selectOneMenu id="Proposal_workplceDepartment_department" 
+								value="#{purchaseOrder.params.department}">
+								<f:selectItem itemLabel=" - " itemValue="null" />
+								<f:selectItems value="#{companyCollections.departments}" />
+							</aon:selectOneMenu>
+							
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="search" ignoreDupResponses="true"
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
@@ -132,7 +126,6 @@
 						</aon:panelGrid>
 					</aon:div>
 					
-			
 				</aon:panelGrid>
 			</aon:div>
 			

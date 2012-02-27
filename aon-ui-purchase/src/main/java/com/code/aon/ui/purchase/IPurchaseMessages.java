@@ -8,5 +8,11 @@ public interface IPurchaseMessages {
 	String PURCHASE_EMAIL_SUBJECT = "purchase_email_subject";
 	String PURCHASE_EMAIL_BODY = "purchase_email_body";
 	
+	
+	String PURCHASE_WITHOUT_EMAIL = "purchase_without_email";
+	String PURCHASE_SEND_EMAIL = "purchase_send_email";
+	String PURCHASE_SEND_EMAIL_ERROR = "purchase_send_email_error";
+	String PURCHASE_SEND_EMAIL_FNINISH = "purchase_send_email_finish";
+	
 }
 

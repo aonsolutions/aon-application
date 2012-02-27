@@ -12,52 +12,59 @@
 		rendered="#{purchaseOrder.productIndex==purchaseOrder.model.rowIndex}"
 		value="#{purchaseOrder.detailModel}" >
 		
-		<rich:column colspan="4" 
+		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+			<aon:commandLink  
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				actionListener="#{purchaseOrder.onSelectDetail}"
+				 >
+			</aon:commandLink>
+		</aon:column>
+		
+		<rich:column colspan="3" 
 			style="padding: 0px; border: none;background-color: #{purchaseOrder.detailModel.rowIndex%2==0?'#FBEDB6;':'#FDF9E7;' }"
 			styleClass="aon-width-all aon-noborder" >
 			
-			<h:panelGrid columns="5" style="font-size: 0.9em; width: 100%;"
+			<h:panelGrid columns="4" style="font-size: 0.9em; width: 100%;"
 				cellpadding="0" cellspacing="0" border="0"
 				columnClasses="
-					aon-noborder ,
 					aon-noborder,
 					aon-noborder,
 					aon-noborder,
 					aon-noborder
 					" >
 				
-					<aon:div styleClass="aon-width-20 ">
-						<aon:commandLink  
-							styleClass="aon-table-row-link" value="&#160;"
-							immediate="true" ajaxSingle="true" requestDelay="100"
-							actionListener="#{purchaseOrder.onSelectDetail}"
-							 >
-						</aon:commandLink>
-					</aon:div>
-				
-					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn">
+					<aon:div styleClass="aon-width-300 aon-editDataTable-textColumn">
 						<aon:outputText value="#{detail.proposal.workPlace.description}" />
 						<aon:outputText value=" (#{detail.proposal.workplaceDepartment.department.name})" />
 					</aon:div>
-			
-					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn aon-noborder">
-						<aon:outputText value="#{companyBundle.company_department}:" />
-						<aon:outputText value="#{detail.proposal.workplaceDepartment.department.name}" />
-					</aon:div>
-			
-					<aon:div styleClass="aon-width-200 aon-editDataTable-textColumn aon-noborder">
+					
+					<aon:div styleClass="aon-width-120 aon-editDataTable-textColumn aon-noborder">
 						<aon:outputText value="#{bundle.aon_quantity}:" />
 						<aon:outputText value="#{detail.quantity}"
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
-						<aon:inputText value="#{detail.quantity}" 
+						<aon:inputText value="#{detail.quantity}" size="5"
 							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}" >
 							<f:validateDoubleRange minimum="0.0" />
 						</aon:inputText>
 					</aon:div>
+					
+					<aon:div styleClass="aon-width-auto aon-editDataTable-textColumn aon-noborder">
+						<aon:outputText value="#{supplierBundle.supplier_supplier}:" />
+						<aon:outputText value="#{detail.supplier.registry.fullName}"
+							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}" />
+						<aon:selectOneMenu 
+							value="#{detail.supplier}" 
+							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}" >
+							<f:selectItem itemLabel=" - " itemValue="null" />
+							<f:selectItems value="#{purchaseOrder.itemSuppliers}" />
+						</aon:selectOneMenu>
+							
+					</aon:div>
 				
-					<aon:div styleClass="aon-width-70  aon-noborder">
+					<aon:div styleClass="aon-width-60  aon-noborder">
 						<aon:outputText value="&#160;" title="#{detail.proposal.remarks}" 
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and detail.proposal.remarks!=null}" 
 							styleClass="aon-editDataTable-button aon-icon-info" />

@@ -9,8 +9,38 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipResetButton" value="#{true}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="skipResetButton" value="#{true}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
 		
 		<ui:define name="columns">
+		
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:commandLink id="ProposalDetail-selectButton"
+					styleClass="aon-table-row-link" value="&#160;"
+					immediate="true" ajaxSingle="true" requestDelay="100"
+					rendered="#{to.pending}"
+					actionListener="#{proposalDetail.onSelect}"
+					onkeyup="#{dataTableId}KeyUp(this)"
+					onfocus="#{dataTableId}SelectRow(this)"
+					onblur="#{dataTableId}DeselectRow(this)"
+					focus="#{(focusOnSelect != null)?(focusOnSelect):''}" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton
+							id="ProposalDetail-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							rendered="#{!proposal.processed}" 
+							actionListener="#{proposalDetail.onReset}"
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
@@ -49,7 +79,36 @@
 					</aon:inputText>
 				</f:facet>
 			</aon:column>
-
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_price}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.price}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<f:facet name="footer">
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputLabel value="#{bundle.aon_total}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity * to.item.price}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<f:facet name="footer">
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}" />
+			</aon:column>
+			
 		</ui:define>
 
 	</ui:decorate>
