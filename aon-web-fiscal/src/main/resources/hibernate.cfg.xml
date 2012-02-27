@@ -88,7 +88,7 @@
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkPlaceDepartment"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
