@@ -31,20 +31,29 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
 	@Transient
 	public String getRoomNumber() throws ManagerBeanException {
-		if (roomNumber == null) {
-			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID), getId());
-			criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), false);
-			for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
-				roomNumber = ((ProjectReservationRoomDetail)ito).getRoom().getAsset().getName();
-				break;
-			}
-		}
+		roomNumber = obtainRoom(false).getAsset().getName();
 		return roomNumber;
 	}
 	public void setRoomNumber(String roomNumber) {
 		this.roomNumber = roomNumber;
+	}
+	
+	@Transient
+	public String getFirstRoomNumber() throws ManagerBeanException {
+		return obtainRoom(true).getAsset().getName();
+	}
+	
+	private Room obtainRoom(boolean ascendingDateOrder) throws ManagerBeanException{
+		Room room = null;
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID), getId());
+		criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), ascendingDateOrder);
+		for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
+			room = ((ProjectReservationRoomDetail)ito).getRoom();
+			break;
+		}
+		return room;
 	}
 
 }
