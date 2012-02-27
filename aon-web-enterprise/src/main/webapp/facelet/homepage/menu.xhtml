@@ -41,6 +41,12 @@
 				action="menu_warehouse" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-warehouse" />
 		</c:if>
+		<c:if test="#{aonRole.accountingOperator}">		
+			<aon:commandLink id="accounting"
+				value="#{appBundle.menu_accounting}"
+				action="menu_accounting" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-accounting" />
+		</c:if>				
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"
