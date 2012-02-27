@@ -20,6 +20,7 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
 	private boolean showRoomDetail;
 	private String roomNumber;
+	private String firstRoomNumber;
 
 	@Transient
 	public boolean isShowRoomDetail() {
@@ -31,7 +32,9 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
 	@Transient
 	public String getRoomNumber() throws ManagerBeanException {
-		roomNumber = obtainRoom(false).getAsset().getName();
+		if (roomNumber == null) {
+			roomNumber = obtainRoom(false).getAsset().getName();
+		}
 		return roomNumber;
 	}
 	public void setRoomNumber(String roomNumber) {
@@ -40,7 +43,13 @@ public class ProjectReservationRoom extends ProjectReservationRoomDB {
 	
 	@Transient
 	public String getFirstRoomNumber() throws ManagerBeanException {
-		return obtainRoom(true).getAsset().getName();
+		if(firstRoomNumber==null){
+			firstRoomNumber = obtainRoom(true).getAsset().getName();
+		}
+		return firstRoomNumber;
+	}
+	public void setFirstRoomNumber(String firstRoomNumber) {
+		this.firstRoomNumber = firstRoomNumber;
 	}
 	
 	private Room obtainRoom(boolean ascendingDateOrder) throws ManagerBeanException{
