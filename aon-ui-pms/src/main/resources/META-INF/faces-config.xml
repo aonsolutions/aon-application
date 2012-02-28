@@ -802,6 +802,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
+	<!-- ************* BOOKING LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>bookingList</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BookingListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
+	
 	<!-- ******************************** -->
 	<!-- ********** NAVIGATION ********** -->
 	<!-- ******************************** -->
@@ -959,6 +966,18 @@
 		<navigation-case>
 			<from-outcome>boardList_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/boardList/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Booking List ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bookingList_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/bookingList/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bookingList_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/bookingList/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

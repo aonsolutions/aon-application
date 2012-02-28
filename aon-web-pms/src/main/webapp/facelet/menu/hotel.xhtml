@@ -110,8 +110,10 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="pos_closing" 
-										action="posClosing_form" actionListener="#{posClosing.onInit}"
-										value="#{pmsBundle.pms_posClosing_module}">
+										action="posClosing_form" 
+										value="#{pmsBundle.pms_posCashCount_module}">
+										<aon:actionListener method="#{posShift.onEditSearch}" />
+										<aon:actionListener method="#{posClosing.onInit}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -153,6 +155,25 @@
 							</aon:div>
 							
 						</aon:panelGrid>
+<!--
+						<aon:panelGrid id="group_hotel_booking"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-pos aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_occupation_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bookingList" 
+										action="bookingList_search" actionListener="#{bookingList.onInit}"
+										value="#{pmsBundle.pms_bookingList_module}">
+									</aon:commandLink>
+								</aon:div>
+								
+							</aon:div>
+							
+						</aon:panelGrid>
+-->
 					</aon:panelGroup>
 						
 				</h:panelGrid>

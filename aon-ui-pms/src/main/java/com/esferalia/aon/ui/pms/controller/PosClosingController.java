@@ -10,13 +10,18 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -31,15 +36,8 @@ public class PosClosingController {
 	private PosShift posShift;
 	private Hotel hotel;
 	private CashCalculatorController calculator;
-	private boolean isNew;
 	private List<SelectItem> openedPosList;
-	
-	public boolean isNew() {
-		return isNew;
-	}
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
-	}
+
 	public CashCalculatorController getCalculator() {
 		return calculator;
 	}
@@ -57,6 +55,38 @@ public class PosClosingController {
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+	
+	public Double getTotalCashAmount() {
+		if(getPosShift()!=null && getPosShift().getId()!=null){
+			String sqlSelect;
+			try {
+				sqlSelect = "SELECT sum(amount)"
+						+ " FROM pos_shift_count"
+						+ " WHERE pos_shift = " + getPosShift().getId()
+						+ getCashPayMethodClause()
+						+ " GROUP BY pos_shift";
+			} catch (ManagerBeanException e) {
+				return null;
+			}
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+			Query sqlQuery = session.createSQLQuery(sqlSelect);
+			return (Double) sqlQuery.uniqueResult();
+		}
+		return null;
+	}
+	
+	private String getCashPayMethodClause() throws ManagerBeanException {
+		String clause = "";
+		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
+		for(ITransferObject to: bean.getList(criteria)){
+			PayMethod pm = (PayMethod) to;
+			clause += (clause.isEmpty()?" AND (":" OR ") + " pay_method = " + pm.getId();
+		}
+		clause += " )";
+		return clause;
 	}
 	
 	public List<SelectItem> getOpenedPosList() throws ManagerBeanException {
@@ -93,7 +123,6 @@ public class PosClosingController {
 		setHotel(null);
 		setPosShift(null);
 		setOpenedPosList(null);
-		setNew(true);
 	}	
 	
 	public void onReset( ActionEvent event ){
@@ -105,7 +134,18 @@ public class PosClosingController {
 			setOpenedPosList(null);
 			buildOpenedPosList();
 		} catch (ManagerBeanException e) {
-			// TODO: handle exception
+			String msg = "Error al buscar los POS";
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+	
+	public void onPosChange( ActionEvent event ){
+		try {
+			BasicController controller = (BasicController) FormUtil.getController("posShift");
+			controller.select(event, getPosShift().getId());
+		} catch (ManagerBeanException e) {
+			String msg = "Error al seleccionar el turno";
+			throw new AbortProcessingException(msg, e);
 		}
 	}
 	
@@ -114,33 +154,12 @@ public class PosClosingController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setEndTime(new Date());
 			setPosShift((PosShift) bean.update(getPosShift()));
-			acceptCashAmount();
-			setNew(false);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
 			throw new AbortProcessingException(msg, e);
 		}
 	}	
 	
-	private void acceptCashAmount() throws ManagerBeanException {
-		if (getCashPayMethod()==null) {
-			String msg = "No existe la forma de pago 'EFECTIVO'";
-			throw new AbortProcessingException(msg);
-		}
-		IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
-		PosShiftCount psc = new PosShiftCount();
-		psc.setDomain(getPosShift().getDomain());
-		psc.setPosShift(getPosShift());
-		psc.setPayMethod(getCashPayMethod());
-		psc.setAmount(getCalculator().getCashAmount());
-		bean.insert(psc);
-	}
-	private PayMethod getCashPayMethod() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
-		return bean.getList(criteria).isEmpty()?null:(PayMethod)bean.getList(criteria).get(0);
-	}
 	public void onShowCalculatorWindow( ActionEvent event ){
 		getCalculator().setAmounts( new int[15] );
 		getCalculator().setInitialAmount(false);

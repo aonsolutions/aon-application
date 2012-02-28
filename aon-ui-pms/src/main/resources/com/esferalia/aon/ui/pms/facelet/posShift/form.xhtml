@@ -69,6 +69,13 @@
 						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
 					</aon:selectInputDate>
 					
+					<!--  
+					<aon:outputLabel for="PosShift_remarks"
+						value="#{bundle.aon_remark}" />
+					<aon:inputTextarea id="PosShift_remarks" cols="80" rows="3"
+						value="#{posShift.to.remarks}" />
+					-->
+					
 					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
 					<aon:div>
 						<aon:inputText value="#{posShift.to.initialAmount}" >
@@ -85,47 +92,16 @@
 						</aon:commandButton>
 					</aon:div>
 					
-				</aon:panelGrid>
-				
-				<br />
-				
-				<aon:panelGrid columns="2" styleClass="aon-width-400">
-					<aon:outputLabel for="PosShiftCount_amount" value="#{pmsBundle.pms_cash_payMethod_name}" />
-					<aon:div>
-						<aon:inputText id="PosShiftCount_amount" 
-							value="#{posShift.calculator.cashAmount}" >
-							<f:validateDoubleRange minimum="0.0" />
-							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
-							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
-						</aon:inputText>
-						<aon:commandButton 
-							reRender="showCalculatorWindow" 
-							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
-							actionListener="#{posShift.onShowCashCalculatorWindow}" >
-							<f:setPropertyActionListener target="#{posShift.calculator.showCalculatorWindow}"
-								value="#{true}" />								
-						</aon:commandButton>
-					</aon:div>
-					
-					<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
-					<aon:outputText value="#{posShift.to.initialAmount}" >
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-					
 					<aon:outputLabel value="#{pmsBundle.pms_bank_income}" />
-					<aon:outputText value="#{posShift.calculator.cashAmount - posShift.to.initialAmount}" >
+					<aon:outputText value="#{posShift.totalCashAmount - posShift.to.initialAmount}" >
 						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 					</aon:outputText>
 					
 				</aon:panelGrid>
 				
-			</aon:div>
-
-<!-- PARA CUANDO EN EL RECUENTO DE CAJA SE TENGAN EN CUENTA TODAS LAS FORMAS DE PAGO -->   			
-<!--  
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div rendered="#{posShift.to!=null and posShift.to.endTime!=null}">
+				<br />				
 				
+				<aon:div rendered="#{!posShift.new}">
 					<aon:panelTabSet id="countTab">
 						<aon:panelTab label="#{pmsBundle.pms_cash_count}">
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
@@ -135,9 +111,8 @@
 						</aon:panelTab>
 					</aon:panelTabSet>
 				</aon:div>
-			
+				
 			</aon:div>
--->
 		</aon:form>
 		
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/calculator/calculatorModal.xhtml" >

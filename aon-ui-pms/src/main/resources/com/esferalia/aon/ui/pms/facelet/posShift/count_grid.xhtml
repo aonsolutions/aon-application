@@ -10,6 +10,12 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="newSaveButtonReRender" value="aonContent" />
+		<ui:param name="saveButtonReRender" value="aonContent" />
+		<ui:param name="removeButtonReRender" value="aonContent" />
+		
+		<ui:param name="skipLineEdition" value="#{disabledGrid}" />
+		<ui:param name="skipResetButton" value="#{disabledGrid}" />
 
 		<ui:define name="columns">
 
@@ -50,7 +56,7 @@
 						reRender="showCalculatorWindow"
 						rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
 						styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
-						actionListener="#{modalController.onShowCalculatorWindow}" >
+						actionListener="#{modalController.onShowCashCalculatorWindow}" >
 						<f:setPropertyActionListener target="#{modalController.calculator.showCalculatorWindow}"
 							value="#{true}" />								
 					</aon:commandButton>
@@ -65,7 +71,7 @@
 							reRender="showCalculatorWindow"
 							rendered="#{controller.to.payMethod.type=='CASH_BASIS'}"
 							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
-							actionListener="#{modalController.onShowCalculatorWindow}" >
+							actionListener="#{modalController.onShowCashCalculatorWindow}" >
 							<f:setPropertyActionListener target="#{modalController.calculator.showCalculatorWindow}"
 								value="#{true}" />								
 						</aon:commandButton>

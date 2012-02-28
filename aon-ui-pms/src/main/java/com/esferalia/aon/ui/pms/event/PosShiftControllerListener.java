@@ -40,50 +40,6 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
-	public void beforeBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		checkClosingWithCash();
-		PosShift ps = (PosShift) this.getController().getTo();
-		ps.setUser(UserUtils.getInstance().getLoggedUser());
-	}
-	
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		checkClosingWithCash();
-	}
-
-	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
-		PosShiftController controller = (PosShiftController) this.getController();
-		PosShift ps = (PosShift) controller.getTo();
-		try {
-			if(ps.getEndTime()!=null){
-				acceptCashAmount();
-			} 
-		} catch (ManagerBeanException e) {
-			// TODO: handle exception
-		}
-	}
-	
-	@Override
-	public void afterBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		PosShiftController controller = (PosShiftController) this.getController();
-		PosShift ps = (PosShift) controller.getTo();
-		try {
-			if(ps.getEndTime()!=null){
-				acceptCashAmount();
-			} else {
-				removeCashAmount();
-			}
-		} catch (ManagerBeanException e) {
-			// TODO: handle exception
-		}
-	}
-	
-	@Override
 	public void beforeBeanReset(ControllerEvent event)
 			throws ControllerListenerException {
 		((PosShiftController)this.getController()).init();
@@ -94,35 +50,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		((PosShiftController)this.getController()).init();
 	}
-	
-	private void acceptCashAmount() throws ManagerBeanException {
-		PosShiftController controller = (PosShiftController) this.getController();
-		if ( controller.getCalculator().getCashAmount()==null ) {
-			String msg = "El importe en efectivo no puede ser nulo.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		PosShiftCount psc = getPosShiftCount();
-		if( psc == null ){
-			psc = new PosShiftCount();
-			psc.setPosShift(controller.getPosShift());
-			psc.setPayMethod(getCashPayMethod());
-		}
-		psc.setAmount(controller.getCalculator().getCashAmount());
-		IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
-		bean.insertOrUpdate(psc);
-	}
-	
-	private void removeCashAmount() throws ManagerBeanException {
-		PosShiftController controller = (PosShiftController) this.getController();
-		PosShiftCount psc = getPosShiftCount();
-		if( psc != null ){
-			IManagerBean bean = BeanManager.getManagerBean(PosShiftCount.class);
-			bean.remove(psc);
-			controller.getCalculator().setCashAmount(null);
-		}
-	}
-	
+
 	private PayMethod getCashPayMethod() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
@@ -147,20 +75,5 @@ public class PosShiftControllerListener extends ControllerAdapter {
 		return list.isEmpty()?null:(PosShiftCount)list.get(0);
 			
 	}
-	
-	private void checkClosingWithCash() {
-		PosShiftController controller = (PosShiftController) this.getController();
-		PosShift ps = (PosShift) controller.getTo();
-		if ( ps.getEndTime()!=null && controller.getCalculator().getCashAmount()==null ) {
-			String msg = "El importe en efectivo no puede ser nulo.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		} else if ( controller.getCalculator().getCashAmount()!=null && ps.getEndTime()==null ) {
-			String msg = "No se puede grabar el importe en efectivo sin una fecha de cierre.";
-			AonUtil.addErrorMessage(msg);
-			controller.getCalculator().setCashAmount(null);
-		}
-	}
-	
 	
 }

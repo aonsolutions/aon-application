@@ -61,24 +61,24 @@ public class PosOpeningController {
 	
 	private void buildClosedPosList() throws ManagerBeanException {
 		if(getHotel()!=null && getHotel().getId()!=null){
-			if(closedPosList==null){
-				closedPosList = new LinkedList<SelectItem>();
-				String sqlSelect = "SELECT Pos.*"
-						+ " FROM pos as Pos"
-						+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
-						+ " WHERE  (PosShift.end_time is not null"
-						+ " OR PosShift.start_time is null)"
-						+ (getHotel() == null ? "" : " AND Pos.workPlace = " + getHotel().getWorkPlace().getId()) 
-						+ " GROUP BY Pos.name"
-						+ " ORDER BY Pos.name"
-						;
-				Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-				Query sqlQuery = session.createSQLQuery(sqlSelect);
-				for(Object to: sqlQuery.list()){
-					Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
-					SelectItem item = new SelectItem(pos, pos.getName());
-					closedPosList.add(item);
-				}
+			closedPosList = new LinkedList<SelectItem>();
+			String sqlSelect = "SELECT Pos.*"
+					+ " FROM pos as Pos"
+					+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
+					+ " WHERE (PosShift.end_time is not null"
+					+ " OR PosShift.start_time is null)"
+					+ (getHotel() == null ? "" : " AND Pos.workPlace = " + getHotel().getWorkPlace().getId()) 
+//						+ (getPosShift().getShift() == null ? "" : " AND PosShift.shift NOT IN (:shift)")// + getPosShift().getShift().ordinal()) 
+					+ " GROUP BY Pos.id"
+					+ " ORDER BY Pos.name"
+					;
+			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+			Query sqlQuery = session.createSQLQuery(sqlSelect);
+//			sqlQuery.setInteger("shift", getPosShift().getShift().ordinal());
+			for(Object to: sqlQuery.list()){
+				Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
+				SelectItem item = new SelectItem(pos, pos.getName());
+				closedPosList.add(item);
 			}
 		}
 	}
@@ -93,9 +93,8 @@ public class PosOpeningController {
 		getPosShift().setStartTime(new Date());
 	}
 
-	public void onHotelChange( ActionEvent event ){
+	public void onSearchPos( ActionEvent event ){
 		try {
-			setClosedPosList(null);
 			buildClosedPosList();
 		} catch (ManagerBeanException e) {
 			// TODO: handle exception

@@ -11,12 +11,18 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Pos;
 import com.esferalia.aon.pms.PosShift;
@@ -25,11 +31,14 @@ import com.esferalia.aon.pms.PosShiftCount;
 
 public class PosShiftController extends BasicController {
 	
+	private final String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
+	private final String POS_SHIFT_COUNT_CONTROLLER_NAME = "posShiftCount";
+	private final String POS_SHIFT_CONTROLLER_NAME = "posShift";
+	
 	private PosShift posShift;
 	private Hotel hotel;
 	private CashCalculatorController calculator;
 	private boolean cashCalculator;
-	
 	
 	public CashCalculatorController getCalculator() {
 		return calculator;
@@ -56,14 +65,42 @@ public class PosShiftController extends BasicController {
 		this.hotel = hotel;
 	}
 	
+	public Double getTotalCashAmount() {
+		String sqlSelect;
+		try {
+			sqlSelect = "SELECT sum(amount)"
+					+ " FROM pos_shift_count"
+					+ " WHERE pos_shift = " + ((PosShift)getTo()).getId()
+					+ getCashPayMethodClause()
+					+ " GROUP BY pos_shift";
+		} catch (ManagerBeanException e) {
+			return null;
+		}
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query sqlQuery = session.createSQLQuery(sqlSelect);
+		return (Double) sqlQuery.uniqueResult();
+	}
+	
+	private String getCashPayMethodClause() throws ManagerBeanException {
+		String clause = "";
+		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
+		for(ITransferObject to: bean.getList(criteria)){
+			PayMethod pm = (PayMethod) to;
+			clause += (clause.isEmpty()?" AND (":" OR ") + " pay_method = " + pm.getId();
+		}
+		clause += " )";
+		return clause;
+	}
+	
 	public List<SelectItem> getPosList() throws ManagerBeanException {
 		String sqlSelect = "SELECT Pos.*"
 			+ " FROM pos as Pos"
 			+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
 			+ (getHotel() == null ? " WHERE Pos.id is null " : " WHERE Pos.workplace = " + getHotel().getWorkPlace().getId()) 
 			+ " GROUP BY Pos.name"
-			+ " ORDER BY Pos.name"
-			;
+			+ " ORDER BY Pos.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query sqlQuery = session.createSQLQuery(sqlSelect);
 		List<SelectItem> list = new LinkedList<SelectItem>();
@@ -80,7 +117,7 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void init( ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setHotel(null);
@@ -103,18 +140,15 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){
-		IController controller = FormUtil.getController("posShiftCount");
 		if( isCashCalculator() ){
+			IController controller = FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME);
 			getCalculator().setCashAmount(getCalculator().getCalcTotal());
-		} else if( controller.getTo() != null ){
-			PosShiftCount c = (PosShiftCount) controller.getTo();
-			c.setAmount(getCalculator().getCalcTotal());
+			((PosShiftCount)controller.getTo()).setAmount(getCalculator().getCalcTotal());
 		} else {
-			controller = FormUtil.getController("posShift");
+			IController controller = FormUtil.getController(POS_SHIFT_CONTROLLER_NAME);
 			PosShift c = (PosShift) controller.getTo();
 			c.setInitialAmount(getCalculator().getCalcTotal());
-		}
+		} 
 	}
-	
 	
 }
