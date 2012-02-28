@@ -33,7 +33,8 @@
 						<aon:form prependId="false">			
 							<h:outputLink id="logout" styleClass="aon-logout"
 								value="http://login.aonsolutions.es/">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+								<aon:outputText styleClass="aon-logout-text"
+									value="#{securityBundle.aon_login_user_logout}" />
 								<a4j:support event="onclick"
 									onsubmit="disableRFAjax()"
 									ajaxSingle="true" immediate="true" bypassUpdates="true"
