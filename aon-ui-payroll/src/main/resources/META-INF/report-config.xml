@@ -65,6 +65,19 @@
 		</params>
 	</report>
 
+	<report id="salaryTemplate2" description="Current Salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryTemplate2.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+			<!--
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+			-->
+		</params>
+	</report>
+
 	<report id="salaryList" description="Salary List report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<bean key="com.esferalia.aon.payroll.Salary" />
