@@ -2,10 +2,6 @@ package com.code.aon.ui.util;
 
 import java.util.Properties;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -22,20 +18,22 @@ public class DataSourceUtil {
 	 * @return the dB properties
 	 */
 	public static Properties getDBProperties() {
-    	ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-    	HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
-    	return DataSourceUtil.getDBProperties(request);
+		String server = AonUtil.getServerName();
+		String context = AonUtil.getContextPath();
+    	return DataSourceUtil.getDBProperties(server, context, AonUtil.isSkipLdap());
 	}
 	
 	/**
 	 * Gets the DB properties.
 	 *
-	 * @param request the request
+	 * @param server the server
+	 * @param context the context
+	 * @param skipLdap the skip ldap
 	 * @return the DB properties
 	 */
-	public static Properties getDBProperties( HttpServletRequest request ) {
-    	String domain = DomainResolver.getDomain(request);
-    	String application = DomainResolver.getApplication(request.getContextPath());
+	public static Properties getDBProperties( String server, String context, boolean skipLdap ) {
+    	String domain = DomainResolver.getDomain(server, skipLdap);
+    	String application = DomainResolver.getApplication(context);
     	BasicPrincipal bp = new BasicPrincipal(domain, application);
     	return ConnectionProvider.getDBProperties(new AuthPrincipal(bp.getName()));
 	}	

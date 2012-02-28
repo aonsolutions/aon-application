@@ -1,8 +1,5 @@
 package com.code.aon.ui.common.controller;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ldap.IAonObjectClasses;
@@ -18,13 +15,13 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     /**
      * Gets the domain.
      *
-     * @param request the request
+     * @param host the server name
+     * @param skipLdap the skip ldap
      * @return the domain
      */
-    public static String getDomain( HttpServletRequest request ) {
-    	String host = request.getServerName();
-    	if (! AonUtil.isSkipLdap() ) {
-    		host = DomainUtil.getDomain(host);
+    public static String getDomain( String host, boolean skipLdap ) {
+    	if (! skipLdap ) {
+    		return DomainUtil.getDomain(host);
     	}
     	return host;    	
     }
@@ -45,9 +42,7 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
      * @return the domain
      */
     public String getDomain() {
-    	FacesContext ctx = FacesContext.getCurrentInstance();
-    	HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-    	return getDomain(request);
+    	return getDomain(AonUtil.getServerName(), AonUtil.isSkipLdap());
     }
     
 }
