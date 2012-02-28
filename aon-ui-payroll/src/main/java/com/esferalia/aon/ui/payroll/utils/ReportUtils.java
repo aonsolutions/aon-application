@@ -1,10 +1,19 @@
 package com.esferalia.aon.ui.payroll.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import net.sf.jasperreports.engine.JRImageRenderer;
+import net.sf.jasperreports.engine.JRRenderable;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -33,13 +42,19 @@ public class ReportUtils {
 	
 	public static final <T> T first( Set<T> set, String property, Object value) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		for (T t : set) {
+			System.out.println(t.getClass().getName() + ", " + property + "=" + value );
 			if ( value == PropertyUtils.getProperty(t, property) ){
 				return t;
 			}
 		}
+		System.out.println(" Not found , " + property + "=" + value );
 		return null;
 		
 	}
 	
+	public static JRRenderable getRenderer(RegistryAttachment rattach) {
+		System.out.println(rattach.getMimeType() + "-" + rattach.getId() );
+		return JRImageRenderer.getInstance(rattach.getData());
+	}
 	
 }
