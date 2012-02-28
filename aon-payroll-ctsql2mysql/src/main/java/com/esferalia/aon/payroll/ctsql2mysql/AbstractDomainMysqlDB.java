@@ -15,6 +15,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.LinkedList;
 
 import java.io.Reader;
-import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +186,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_attach(Integer contract, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	protected int insertContract_attach(Integer contract, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		return super.insertContract_attach( 1, contract, mimeType, description, data, type, scope, security_level, attach_date );
 	}
@@ -203,7 +203,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertIattach(Integer item, Short mimeType, String description, InputStream data, Short type)
+	protected int insertIattach(Integer item, Short mimeType, String description, Blob data, Short type)
 	throws SQLException {
 		return super.insertIattach( 1, item, mimeType, description, data, type );
 	}
@@ -969,7 +969,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCertifica2_batch_attach(Integer certifica2_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected int insertCertifica2_batch_attach(Integer certifica2_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		return super.insertCertifica2_batch_attach( 1, certifica2_batch, mimeType, description, data, type, scope, attach_date );
 	}
@@ -1167,7 +1167,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_attach(Integer offer, Short mimeType, String description, InputStream data)
+	protected int insertOffer_attach(Integer offer, Short mimeType, String description, Blob data)
 	throws SQLException {
 		return super.insertOffer_attach( 1, offer, mimeType, description, data );
 	}
@@ -1177,7 +1177,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param project Identificador del Proyecto
 	 * @param domain Identificador del Dominio
 	 * @param hotel Identificador del Hotel
-	 * @param code Codigo de la Reserva
+	 * @param code Localizador de la Reserva
 	 * @param creation_date Fecha de creacion
 	 * @param modification_date Fecha de modificacion
 	 * @param start_date Fecha de entrada
@@ -1623,13 +1623,14 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @param discount_expr Descuentos del Detalle de Pedido
 	 * @param taxes Tasas del Detalle de Pedido
 	 * @param status Estado del Detalle de Pedido
+	 * @param proposal_detail Identificador del Detalle de Solicitud
 	 * @param delivered Cantidad entregada del Detalle de Pedido
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPurchase_detail(Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
+	protected int insertPurchase_detail(Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Integer proposal_detail, Double delivered)
 	throws SQLException {
-		return super.insertPurchase_detail( 1, purchase, project, line, item, description, quantity, price, discount_expr, taxes, status, delivered );
+		return super.insertPurchase_detail( 1, purchase, project, line, item, description, quantity, price, discount_expr, taxes, status, proposal_detail, delivered );
 	}
 
 	/**
@@ -1818,7 +1819,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRattach(Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	protected int insertRattach(Integer registry, Integer category, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		return super.insertRattach( 1, registry, category, mimeType, description, data, type, scope, security_level, attach_date );
 	}
@@ -3888,7 +3889,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_attach(Integer invoice, Short mimeType, String description, InputStream data)
+	protected int insertInvoice_attach(Integer invoice, Short mimeType, String description, Blob data)
 	throws SQLException {
 		return super.insertInvoice_attach( 1, invoice, mimeType, description, data );
 	}
@@ -4250,7 +4251,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	protected int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
 	throws SQLException {
 		return super.insertContract( 1, person, workplace, enterprise_ccc, start_date, end_date, calendar, document, description, status, registration, seniority_date, enterprise_activity, ss_regime, agreement_level_category );
 	}
@@ -4524,7 +4525,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLeave_batch_attach(Integer leave_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected int insertLeave_batch_attach(Integer leave_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		return super.insertLeave_batch_attach( 1, leave_batch, mimeType, description, data, type, scope, attach_date );
 	}
@@ -4567,7 +4568,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFan_batch_attach(Integer fan_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected int insertFan_batch_attach(Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		return super.insertFan_batch_attach( 1, fan_batch, mimeType, description, data, type, scope, attach_date );
 	}
@@ -4658,7 +4659,7 @@ public class AbstractDomainMysqlDB extends AbstractMysqlDB  {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_batch_attach(Integer contract_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected int insertContract_batch_attach(Integer contract_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		return super.insertContract_batch_attach( 1, contract_batch, mimeType, description, data, type, scope, attach_date );
 	}

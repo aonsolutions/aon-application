@@ -15,6 +15,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.LinkedList;
 
 import java.io.Reader;
-import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String version_number; 
 	}
 	
-	private void insertDb_version( List<Db_version> db_versions )
+	protected void insertDb_version( List<Db_version> db_versions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = db_versions.size();
@@ -156,7 +156,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer pcategory_group; 
 	}
 	
-	private void insertPcategory( List<Pcategory> pcategorys )
+	protected void insertPcategory( List<Pcategory> pcategorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pcategorys.size();
@@ -331,7 +331,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertAgreement_data( List<Agreement_data> agreement_datas )
+	protected void insertAgreement_data( List<Agreement_data> agreement_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_datas.size();
@@ -519,7 +519,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workplace; 
 	}
 	
-	private void insertWarehouse( List<Warehouse> warehouses )
+	protected void insertWarehouse( List<Warehouse> warehouses )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = warehouses.size();
@@ -691,7 +691,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean delivery_valuated; 
 	}
 	
-	private void insertCustomer( List<Customer> customers )
+	protected void insertCustomer( List<Customer> customers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = customers.size();
@@ -846,7 +846,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer item; 
 	}
 	
-	private void insertPos( List<Pos> poss )
+	protected void insertPos( List<Pos> poss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = poss.size();
@@ -1025,7 +1025,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String content; 
 	}
 	
-	private void insertMessage_content( List<Message_content> message_contents )
+	protected void insertMessage_content( List<Message_content> message_contents )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = message_contents.size();
@@ -1188,7 +1188,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double deductible_quota; 
 	}
 	
-	private void insertInvoice_tax( List<Invoice_tax> invoice_taxs )
+	protected void insertInvoice_tax( List<Invoice_tax> invoice_taxs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_taxs.size();
@@ -1407,14 +1407,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer contract; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Short security_level; 
 		protected Date attach_date; 
 	}
 	
-	private void insertContract_attach( List<Contract_attach> contract_attachs )
+	protected void insertContract_attach( List<Contract_attach> contract_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_attachs.size();
@@ -1463,7 +1463,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_attach.data == null )
 				contract_attachStmt.setNull(offset++, -4);
 			else
-				contract_attachStmt.setBinaryStream(offset++, contract_attach.data);
+				contract_attachStmt.setBlob(offset++, contract_attach.data);
 			if ( contract_attach.type == null )
 				contract_attachStmt.setNull(offset++, -6);
 			else
@@ -1542,7 +1542,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertContract_attach(Integer id, Integer domain, Integer contract, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	protected void insertContract_attach(Integer id, Integer domain, Integer contract, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 
 		Contract_attach contract_attach_ = new Contract_attach();
@@ -1582,7 +1582,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract_attach(Integer domain, Integer contract, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	public int insertContract_attach(Integer domain, Integer contract, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		int id = nextContract_attachId();
 
@@ -1625,11 +1625,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer item; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 	}
 	
-	private void insertIattach( List<Iattach> iattachs )
+	protected void insertIattach( List<Iattach> iattachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = iattachs.size();
@@ -1678,7 +1678,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( iattach.data == null )
 				iattachStmt.setNull(offset++, -4);
 			else
-				iattachStmt.setBinaryStream(offset++, iattach.data);
+				iattachStmt.setBlob(offset++, iattach.data);
 			if ( iattach.type == null )
 				iattachStmt.setNull(offset++, -6);
 			else
@@ -1742,7 +1742,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertIattach(Integer id, Integer domain, Integer item, Short mimeType, String description, InputStream data, Short type)
+	protected void insertIattach(Integer id, Integer domain, Integer item, Short mimeType, String description, Blob data, Short type)
 	throws SQLException {
 
 		Iattach iattach_ = new Iattach();
@@ -1776,7 +1776,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertIattach(Integer domain, Integer item, Short mimeType, String description, InputStream data, Short type)
+	public int insertIattach(Integer domain, Integer item, Short mimeType, String description, Blob data, Short type)
 	throws SQLException {
 		int id = nextIattachId();
 
@@ -1820,7 +1820,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String add_info; 
 	}
 	
-	private void insertTas_item( List<Tas_item> tas_items )
+	protected void insertTas_item( List<Tas_item> tas_items )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tas_items.size();
@@ -2013,7 +2013,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String quote_expression; 
 	}
 	
-	private void insertPayment_concept( List<Payment_concept> payment_concepts )
+	protected void insertPayment_concept( List<Payment_concept> payment_concepts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = payment_concepts.size();
@@ -2217,7 +2217,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double cost; 
 	}
 	
-	private void insertCost_profile( List<Cost_profile> cost_profiles )
+	protected void insertCost_profile( List<Cost_profile> cost_profiles )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cost_profiles.size();
@@ -2380,7 +2380,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertFeature( List<Feature> features )
+	protected void insertFeature( List<Feature> features )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = features.size();
@@ -2569,7 +2569,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date charge_date; 
 	}
 	
-	private void insertSalary( List<Salary> salarys )
+	protected void insertSalary( List<Salary> salarys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salarys.size();
@@ -2998,7 +2998,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertCommission( List<Commission> commissions )
+	protected void insertCommission( List<Commission> commissions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commissions.size();
@@ -3172,7 +3172,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 	}
 	
-	private void insertSupplier( List<Supplier> suppliers )
+	protected void insertSupplier( List<Supplier> suppliers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = suppliers.size();
@@ -3291,7 +3291,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer source_id; 
 	}
 	
-	private void insertSignature( List<Signature> signatures )
+	protected void insertSignature( List<Signature> signatures )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = signatures.size();
@@ -3471,7 +3471,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 	}
 	
-	private void insertUser_scope( List<User_scope> user_scopes )
+	protected void insertUser_scope( List<User_scope> user_scopes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = user_scopes.size();
@@ -3635,7 +3635,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertAsset( List<Asset> assets )
+	protected void insertAsset( List<Asset> assets )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = assets.size();
@@ -3802,7 +3802,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String location; 
 	}
 	
-	private void insertItem_warehouse( List<Item_warehouse> item_warehouses )
+	protected void insertItem_warehouse( List<Item_warehouse> item_warehouses )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = item_warehouses.size();
@@ -3994,7 +3994,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double initial_amount; 
 	}
 	
-	private void insertPos_shift( List<Pos_shift> pos_shifts )
+	protected void insertPos_shift( List<Pos_shift> pos_shifts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pos_shifts.size();
@@ -4194,7 +4194,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short security_level; 
 	}
 	
-	private void insertRnote( List<Rnote> rnotes )
+	protected void insertRnote( List<Rnote> rnotes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rnotes.size();
@@ -4392,7 +4392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user_id; 
 	}
 	
-	private void insertFavorite( List<Favorite> favorites )
+	protected void insertFavorite( List<Favorite> favorites )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = favorites.size();
@@ -4580,7 +4580,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double cost; 
 	}
 	
-	private void insertDaily_tracking( List<Daily_tracking> daily_trackings )
+	protected void insertDaily_tracking( List<Daily_tracking> daily_trackings )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = daily_trackings.size();
@@ -4819,7 +4819,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertLoan( List<Loan> loans )
+	protected void insertLoan( List<Loan> loans )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = loans.size();
@@ -5079,7 +5079,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertProject( List<Project> projects )
+	protected void insertProject( List<Project> projects )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = projects.size();
@@ -5309,7 +5309,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Timestamp value_date; 
 	}
 	
-	private void insertQuestion_value( List<Question_value> question_values )
+	protected void insertQuestion_value( List<Question_value> question_values )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = question_values.size();
@@ -5499,7 +5499,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double fourth_quarter_amount; 
 	}
 	
-	private void insertFs_mod347_detail( List<Fs_mod347_detail> fs_mod347_details )
+	protected void insertFs_mod347_detail( List<Fs_mod347_detail> fs_mod347_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_mod347_details.size();
@@ -5743,7 +5743,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String value; 
 	}
 	
-	private void insertWeb_info_style( List<Web_info_style> web_info_styles )
+	protected void insertWeb_info_style( List<Web_info_style> web_info_styles )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = web_info_styles.size();
@@ -5911,7 +5911,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double amount; 
 	}
 	
-	private void insertSalary_payment( List<Salary_payment> salary_payments )
+	protected void insertSalary_payment( List<Salary_payment> salary_payments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_payments.size();
@@ -6110,7 +6110,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertContract_data( List<Contract_data> contract_datas )
+	protected void insertContract_data( List<Contract_data> contract_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_datas.size();
@@ -6299,7 +6299,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String signature; 
 	}
 	
-	private void insertEc_paymethod( List<Ec_paymethod> ec_paymethods )
+	protected void insertEc_paymethod( List<Ec_paymethod> ec_paymethods )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ec_paymethods.size();
@@ -6474,7 +6474,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertEnterprise_data( List<Enterprise_data> enterprise_datas )
+	protected void insertEnterprise_data( List<Enterprise_data> enterprise_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = enterprise_datas.size();
@@ -6671,7 +6671,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String province; 
 	}
 	
-	private void insertFs_renting_detail( List<Fs_renting_detail> fs_renting_details )
+	protected void insertFs_renting_detail( List<Fs_renting_detail> fs_renting_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_renting_details.size();
@@ -6911,7 +6911,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer template; 
 	}
 	
-	private void insertMk_action( List<Mk_action> mk_actions )
+	protected void insertMk_action( List<Mk_action> mk_actions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = mk_actions.size();
@@ -7113,7 +7113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer supplier; 
 	}
 	
-	private void insertProposal_detail( List<Proposal_detail> proposal_details )
+	protected void insertProposal_detail( List<Proposal_detail> proposal_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = proposal_details.size();
@@ -7341,7 +7341,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double res_deductible_quota; 
 	}
 	
-	private void insertFs_vat_detail( List<Fs_vat_detail> fs_vat_details )
+	protected void insertFs_vat_detail( List<Fs_vat_detail> fs_vat_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_vat_details.size();
@@ -7636,7 +7636,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date pay_date; 
 	}
 	
-	private void insertOffer_detail_commission( List<Offer_detail_commission> offer_detail_commissions )
+	protected void insertOffer_detail_commission( List<Offer_detail_commission> offer_detail_commissions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = offer_detail_commissions.size();
@@ -7824,7 +7824,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user_id; 
 	}
 	
-	private void insertFavorite_category( List<Favorite_category> favorite_categorys )
+	protected void insertFavorite_category( List<Favorite_category> favorite_categorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = favorite_categorys.size();
@@ -7988,7 +7988,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double percent; 
 	}
 	
-	private void insertGeozone_irpf_handicap( List<Geozone_irpf_handicap> geozone_irpf_handicaps )
+	protected void insertGeozone_irpf_handicap( List<Geozone_irpf_handicap> geozone_irpf_handicaps )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = geozone_irpf_handicaps.size();
@@ -8152,7 +8152,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertProject_type( List<Project_type> project_types )
+	protected void insertProject_type( List<Project_type> project_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_types.size();
@@ -8324,7 +8324,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean creditNature; 
 	}
 	
-	private void insertBalance_detail( List<Balance_detail> balance_details )
+	protected void insertBalance_detail( List<Balance_detail> balance_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = balance_details.size();
@@ -8552,7 +8552,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertInvoice_tax_account( List<Invoice_tax_account> invoice_tax_accounts )
+	protected void insertInvoice_tax_account( List<Invoice_tax_account> invoice_tax_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_tax_accounts.size();
@@ -8723,7 +8723,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer replaced_number; 
 	}
 	
-	private void insertFs_mod347( List<Fs_mod347> fs_mod347s )
+	protected void insertFs_mod347( List<Fs_mod347> fs_mod347s )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_mod347s.size();
@@ -8944,7 +8944,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 	}
 	
-	private void insertProduct_account( List<Product_account> product_accounts )
+	protected void insertProduct_account( List<Product_account> product_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = product_accounts.size();
@@ -9116,7 +9116,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer child; 
 	}
 	
-	private void insertPcategory_tree( List<Pcategory_tree> pcategory_trees )
+	protected void insertPcategory_tree( List<Pcategory_tree> pcategory_trees )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pcategory_trees.size();
@@ -9286,7 +9286,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String document_number; 
 	}
 	
-	private void insertAccount_entry_detail( List<Account_entry_detail> account_entry_details )
+	protected void insertAccount_entry_detail( List<Account_entry_detail> account_entry_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entry_details.size();
@@ -9499,7 +9499,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double amount; 
 	}
 	
-	private void insertGeozone_irpf( List<Geozone_irpf> geozone_irpfs )
+	protected void insertGeozone_irpf( List<Geozone_irpf> geozone_irpfs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = geozone_irpfs.size();
@@ -9671,7 +9671,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer catalogue; 
 	}
 	
-	private void insertTariff_catalogue( List<Tariff_catalogue> tariff_catalogues )
+	protected void insertTariff_catalogue( List<Tariff_catalogue> tariff_catalogues )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tariff_catalogues.size();
@@ -9841,7 +9841,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double fiscal_allocation; 
 	}
 	
-	private void insertAmortization_detail( List<Amortization_detail> amortization_details )
+	protected void insertAmortization_detail( List<Amortization_detail> amortization_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = amortization_details.size();
@@ -10053,7 +10053,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertDomain( List<Domain> domains )
+	protected void insertDomain( List<Domain> domains )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = domains.size();
@@ -10226,7 +10226,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short priority; 
 	}
 	
-	private void insertNotice( List<Notice> notices )
+	protected void insertNotice( List<Notice> notices )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = notices.size();
@@ -10464,7 +10464,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertSalary_bonus( List<Salary_bonus> salary_bonuss )
+	protected void insertSalary_bonus( List<Salary_bonus> salary_bonuss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_bonuss.size();
@@ -10643,13 +10643,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer certifica2_batch; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Date attach_date; 
 	}
 	
-	private void insertCertifica2_batch_attach( List<Certifica2_batch_attach> certifica2_batch_attachs )
+	protected void insertCertifica2_batch_attach( List<Certifica2_batch_attach> certifica2_batch_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = certifica2_batch_attachs.size();
@@ -10698,7 +10698,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( certifica2_batch_attach.data == null )
 				certifica2_batch_attachStmt.setNull(offset++, -4);
 			else
-				certifica2_batch_attachStmt.setBinaryStream(offset++, certifica2_batch_attach.data);
+				certifica2_batch_attachStmt.setBlob(offset++, certifica2_batch_attach.data);
 			if ( certifica2_batch_attach.type == null )
 				certifica2_batch_attachStmt.setNull(offset++, -6);
 			else
@@ -10772,7 +10772,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertCertifica2_batch_attach(Integer id, Integer domain, Integer certifica2_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected void insertCertifica2_batch_attach(Integer id, Integer domain, Integer certifica2_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 
 		Certifica2_batch_attach certifica2_batch_attach_ = new Certifica2_batch_attach();
@@ -10810,7 +10810,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertCertifica2_batch_attach(Integer domain, Integer certifica2_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	public int insertCertifica2_batch_attach(Integer domain, Integer certifica2_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		int id = nextCertifica2_batch_attachId();
 
@@ -10854,7 +10854,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer task; 
 	}
 	
-	private void insertProcess_task( List<Process_task> process_tasks )
+	protected void insertProcess_task( List<Process_task> process_tasks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = process_tasks.size();
@@ -11026,7 +11026,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertBonus_concept( List<Bonus_concept> bonus_concepts )
+	protected void insertBonus_concept( List<Bonus_concept> bonus_concepts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = bonus_concepts.size();
@@ -11193,7 +11193,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAmortization_type( List<Amortization_type> amortization_types )
+	protected void insertAmortization_type( List<Amortization_type> amortization_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = amortization_types.size();
@@ -11388,7 +11388,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer sales_detail; 
 	}
 	
-	private void insertDelivery_detail( List<Delivery_detail> delivery_details )
+	protected void insertDelivery_detail( List<Delivery_detail> delivery_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = delivery_details.size();
@@ -11610,7 +11610,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer calendar; 
 	}
 	
-	private void insertPayroll_workplace( List<Payroll_workplace> payroll_workplaces )
+	protected void insertPayroll_workplace( List<Payroll_workplace> payroll_workplaces )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = payroll_workplaces.size();
@@ -11791,7 +11791,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertCatalogue( List<Catalogue> catalogues )
+	protected void insertCatalogue( List<Catalogue> catalogues )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = catalogues.size();
@@ -11964,7 +11964,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer session_id; 
 	}
 	
-	private void insertAction_entry( List<Action_entry> action_entrys )
+	protected void insertAction_entry( List<Action_entry> action_entrys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = action_entrys.size();
@@ -12137,7 +12137,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short evaluation; 
 	}
 	
-	private void insertAbsence( List<Absence> absences )
+	protected void insertAbsence( List<Absence> absences )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = absences.size();
@@ -12318,7 +12318,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short salary_type; 
 	}
 	
-	private void insertSystem_payment( List<System_payment> system_payments )
+	protected void insertSystem_payment( List<System_payment> system_payments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = system_payments.size();
@@ -12557,7 +12557,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double price; 
 	}
 	
-	private void insertItem_tariff( List<Item_tariff> item_tariffs )
+	protected void insertItem_tariff( List<Item_tariff> item_tariffs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = item_tariffs.size();
@@ -12744,7 +12744,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String title; 
 	}
 	
-	private void insertCno( List<Cno> cnos )
+	protected void insertCno( List<Cno> cnos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cnos.size();
@@ -12900,7 +12900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer fbatch; 
 	}
 	
-	private void insertAccount_entry_fbatch( List<Account_entry_fbatch> account_entry_fbatchs )
+	protected void insertAccount_entry_fbatch( List<Account_entry_fbatch> account_entry_fbatchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entry_fbatchs.size();
@@ -13064,7 +13064,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertSeller( List<Seller> sellers )
+	protected void insertSeller( List<Seller> sellers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = sellers.size();
@@ -13168,10 +13168,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer offer; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 	}
 	
-	private void insertOffer_attach( List<Offer_attach> offer_attachs )
+	protected void insertOffer_attach( List<Offer_attach> offer_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = offer_attachs.size();
@@ -13220,7 +13220,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( offer_attach.data == null )
 				offer_attachStmt.setNull(offset++, -4);
 			else
-				offer_attachStmt.setBinaryStream(offset++, offer_attach.data);
+				offer_attachStmt.setBlob(offset++, offer_attach.data);
 		}
 		offer_attachStmt.executeUpdate();
 		offer_attachInserted += size;
@@ -13279,7 +13279,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param data Archivo Adjunto en binario
 	 * @throws SQLException
 	*/
-	protected void insertOffer_attach(Integer id, Integer domain, Integer offer, Short mimeType, String description, InputStream data)
+	protected void insertOffer_attach(Integer id, Integer domain, Integer offer, Short mimeType, String description, Blob data)
 	throws SQLException {
 
 		Offer_attach offer_attach_ = new Offer_attach();
@@ -13311,7 +13311,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertOffer_attach(Integer domain, Integer offer, Short mimeType, String description, InputStream data)
+	public int insertOffer_attach(Integer domain, Integer offer, Short mimeType, String description, Blob data)
 	throws SQLException {
 		int id = nextOffer_attachId();
 
@@ -13375,7 +13375,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertProject_reservation( List<Project_reservation> project_reservations )
+	protected void insertProject_reservation( List<Project_reservation> project_reservations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservations.size();
@@ -13536,7 +13536,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param project Identificador del Proyecto
 	 * @param domain Identificador del Dominio
 	 * @param hotel Identificador del Hotel
-	 * @param code Codigo de la Reserva
+	 * @param code Localizador de la Reserva
 	 * @param creation_date Fecha de creacion
 	 * @param modification_date Fecha de modificacion
 	 * @param start_date Fecha de entrada
@@ -13600,7 +13600,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int project_reservationCount = project_reservations.size();
 		
-		if ( 294 * project_reservationCount >=  this.maxAllowedPacket ){
+		if ( 310 * project_reservationCount >=  this.maxAllowedPacket ){
 			insertProject_reservation(project_reservations);
 			project_reservations.clear();
 		} 
@@ -13632,7 +13632,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertProcess_detail( List<Process_detail> process_details )
+	protected void insertProcess_detail( List<Process_detail> process_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = process_details.size();
@@ -13859,7 +13859,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertRelationship( List<Relationship> relationships )
+	protected void insertRelationship( List<Relationship> relationships )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = relationships.size();
@@ -14015,7 +14015,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer invoice; 
 	}
 	
-	private void insertAccount_entry_invoice( List<Account_entry_invoice> account_entry_invoices )
+	protected void insertAccount_entry_invoice( List<Account_entry_invoice> account_entry_invoices )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entry_invoices.size();
@@ -14180,7 +14180,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 	}
 	
-	private void insertTax_account( List<Tax_account> tax_accounts )
+	protected void insertTax_account( List<Tax_account> tax_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tax_accounts.size();
@@ -14353,7 +14353,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertInventory( List<Inventory> inventorys )
+	protected void insertInventory( List<Inventory> inventorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = inventorys.size();
@@ -14527,7 +14527,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean term_general; 
 	}
 	
-	private void insertCommercial_term( List<Commercial_term> commercial_terms )
+	protected void insertCommercial_term( List<Commercial_term> commercial_terms )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commercial_terms.size();
@@ -14710,7 +14710,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean term_general; 
 	}
 	
-	private void insertOffer_term( List<Offer_term> offer_terms )
+	protected void insertOffer_term( List<Offer_term> offer_terms )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = offer_terms.size();
@@ -14897,7 +14897,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
+	protected void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commercial_activitys.size();
@@ -15053,7 +15053,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer segment; 
 	}
 	
-	private void insertRsegment( List<Rsegment> rsegments )
+	protected void insertRsegment( List<Rsegment> rsegments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rsegments.size();
@@ -15225,7 +15225,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workplace; 
 	}
 	
-	private void insertProject_tas( List<Project_tas> project_tass )
+	protected void insertProject_tas( List<Project_tas> project_tass )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_tass.size();
@@ -15377,7 +15377,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertProcess_transition_type( List<Process_transition_type> process_transition_types )
+	protected void insertProcess_transition_type( List<Process_transition_type> process_transition_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = process_transition_types.size();
@@ -15536,7 +15536,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String expression; 
 	}
 	
-	private void insertDeduction_concept( List<Deduction_concept> deduction_concepts )
+	protected void insertDeduction_concept( List<Deduction_concept> deduction_concepts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = deduction_concepts.size();
@@ -15749,7 +15749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String salary_processing_days; 
 	}
 	
-	private void insertCertifica2_batch_detail( List<Certifica2_batch_detail> certifica2_batch_details )
+	protected void insertCertifica2_batch_detail( List<Certifica2_batch_detail> certifica2_batch_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = certifica2_batch_details.size();
@@ -16117,7 +16117,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertContract_batch( List<Contract_batch> contract_batchs )
+	protected void insertContract_batch( List<Contract_batch> contract_batchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_batchs.size();
@@ -16312,7 +16312,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertQuality_skill( List<Quality_skill> quality_skills )
+	protected void insertQuality_skill( List<Quality_skill> quality_skills )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = quality_skills.size();
@@ -16470,7 +16470,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date last_access; 
 	}
 	
-	private void insertEc_target( List<Ec_target> ec_targets )
+	protected void insertEc_target( List<Ec_target> ec_targets )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ec_targets.size();
@@ -16651,7 +16651,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 	}
 	
-	private void insertBalance( List<Balance> balances )
+	protected void insertBalance( List<Balance> balances )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = balances.size();
@@ -16824,7 +16824,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double max_value; 
 	}
 	
-	private void insertQualification( List<Qualification> qualifications )
+	protected void insertQualification( List<Qualification> qualifications )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = qualifications.size();
@@ -16999,7 +16999,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double surcharge; 
 	}
 	
-	private void insertTax_detail( List<Tax_detail> tax_details )
+	protected void insertTax_detail( List<Tax_detail> tax_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tax_details.size();
@@ -17187,7 +17187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertSupplier_account( List<Supplier_account> supplier_accounts )
+	protected void insertSupplier_account( List<Supplier_account> supplier_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = supplier_accounts.size();
@@ -17351,7 +17351,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String code; 
 	}
 	
-	private void insertBank( List<Bank> banks )
+	protected void insertBank( List<Bank> banks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = banks.size();
@@ -17516,7 +17516,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertActivity_type( List<Activity_type> activity_types )
+	protected void insertActivity_type( List<Activity_type> activity_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = activity_types.size();
@@ -17689,7 +17689,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer quantity; 
 	}
 	
-	private void insertCourse_evaluation( List<Course_evaluation> course_evaluations )
+	protected void insertCourse_evaluation( List<Course_evaluation> course_evaluations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_evaluations.size();
@@ -17881,7 +17881,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean ceuta_melilla; 
 	}
 	
-	private void insertIrpf_data( List<Irpf_data> irpf_datas )
+	protected void insertIrpf_data( List<Irpf_data> irpf_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = irpf_datas.size();
@@ -18206,7 +18206,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer next_process_detail; 
 	}
 	
-	private void insertProcess_detail_transition( List<Process_detail_transition> process_detail_transitions )
+	protected void insertProcess_detail_transition( List<Process_detail_transition> process_detail_transitions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = process_detail_transitions.size();
@@ -18389,7 +18389,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workplace; 
 	}
 	
-	private void insertCustomer_fee( List<Customer_fee> customer_fees )
+	protected void insertCustomer_fee( List<Customer_fee> customer_fees )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = customer_fees.size();
@@ -18647,10 +18647,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String discount_expr; 
 		protected Double taxes; 
 		protected Short status; 
+		protected Integer proposal_detail; 
 		protected Double delivered; 
 	}
 	
-	private void insertPurchase_detail( List<Purchase_detail> purchase_details )
+	protected void insertPurchase_detail( List<Purchase_detail> purchase_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = purchase_details.size();
@@ -18658,7 +18659,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( purchase_detailStmt != null ) {
 				purchase_detailStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -18667,7 +18668,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			purchase_detailStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO purchase_detail (id,domain,purchase,project,line,item,description,quantity,price,discount_expr,taxes,status,delivered)"  
+				"INSERT INTO purchase_detail (id,domain,purchase,project,line,item,description,quantity,price,discount_expr,taxes,status,proposal_detail,delivered)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			purchase_detailStmtSize = size;
@@ -18724,6 +18725,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				purchase_detailStmt.setNull(offset++, -6);
 			else
 				purchase_detailStmt.setShort(offset++, purchase_detail.status);
+			if ( purchase_detail.proposal_detail == null )
+				purchase_detailStmt.setNull(offset++, 4);
+			else
+				purchase_detailStmt.setInt(offset++, purchase_detail.proposal_detail);
 			if ( purchase_detail.delivered == null )
 				purchase_detailStmt.setNull(offset++, 8);
 			else
@@ -18790,10 +18795,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos del Detalle de Pedido
 	 * @param taxes Tasas del Detalle de Pedido
 	 * @param status Estado del Detalle de Pedido
+	 * @param proposal_detail Identificador del Detalle de Solicitud
 	 * @param delivered Cantidad entregada del Detalle de Pedido
 	 * @throws SQLException
 	*/
-	protected void insertPurchase_detail(Integer id, Integer domain, Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
+	protected void insertPurchase_detail(Integer id, Integer domain, Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Integer proposal_detail, Double delivered)
 	throws SQLException {
 
 		Purchase_detail purchase_detail_ = new Purchase_detail();
@@ -18809,13 +18815,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		purchase_detail_.discount_expr = discount_expr;
 		purchase_detail_.taxes = taxes;
 		purchase_detail_.status = status;
+		purchase_detail_.proposal_detail = proposal_detail;
 		purchase_detail_.delivered = delivered;
 
 		purchase_details.add(purchase_detail_);
 		
 		int purchase_detailCount = purchase_details.size();
 		
-		if ( 1188 * purchase_detailCount >=  this.maxAllowedPacket ){
+		if ( 1198 * purchase_detailCount >=  this.maxAllowedPacket ){
 			insertPurchase_detail(purchase_details);
 			purchase_details.clear();
 		} 
@@ -18835,11 +18842,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param discount_expr Descuentos del Detalle de Pedido
 	 * @param taxes Tasas del Detalle de Pedido
 	 * @param status Estado del Detalle de Pedido
+	 * @param proposal_detail Identificador del Detalle de Solicitud
 	 * @param delivered Cantidad entregada del Detalle de Pedido
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertPurchase_detail(Integer domain, Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
+	public int insertPurchase_detail(Integer domain, Integer purchase, Integer project, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Integer proposal_detail, Double delivered)
 	throws SQLException {
 		int id = nextPurchase_detailId();
 
@@ -18856,13 +18864,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		purchase_detail_.discount_expr = discount_expr;
 		purchase_detail_.taxes = taxes;
 		purchase_detail_.status = status;
+		purchase_detail_.proposal_detail = proposal_detail;
 		purchase_detail_.delivered = delivered;
 
 		purchase_details.add(purchase_detail_);
 		
 		int purchase_detailCount = purchase_details.size();
 		
-		if ( 1188 * purchase_detailCount >=  this.maxAllowedPacket ){
+		if ( 1198 * purchase_detailCount >=  this.maxAllowedPacket ){
 			insertPurchase_detail(purchase_details);
 			purchase_details.clear();
 		} 
@@ -18886,7 +18895,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertPm_type_detail( List<Pm_type_detail> pm_type_details )
+	protected void insertPm_type_detail( List<Pm_type_detail> pm_type_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pm_type_details.size();
@@ -19051,7 +19060,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertHoliday_detail( List<Holiday_detail> holiday_details )
+	protected void insertHoliday_detail( List<Holiday_detail> holiday_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = holiday_details.size();
@@ -19224,7 +19233,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertTarget_item( List<Target_item> target_items )
+	protected void insertTarget_item( List<Target_item> target_items )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = target_items.size();
@@ -19396,7 +19405,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAgreement_level_category( List<Agreement_level_category> agreement_level_categorys )
+	protected void insertAgreement_level_category( List<Agreement_level_category> agreement_level_categorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_level_categorys.size();
@@ -19563,7 +19572,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String issue_date; 
 	}
 	
-	private void insertAgreement_extra( List<Agreement_extra> agreement_extras )
+	protected void insertAgreement_extra( List<Agreement_extra> agreement_extras )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_extras.size();
@@ -19752,7 +19761,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean editable; 
 	}
 	
-	private void insertHoliday( List<Holiday> holidays )
+	protected void insertHoliday( List<Holiday> holidays )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = holidays.size();
@@ -19924,7 +19933,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertPm_type_detail_account( List<Pm_type_detail_account> pm_type_detail_accounts )
+	protected void insertPm_type_detail_account( List<Pm_type_detail_account> pm_type_detail_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pm_type_detail_accounts.size();
@@ -20090,7 +20099,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double rate; 
 	}
 	
-	private void insertCommission_category( List<Commission_category> commission_categorys )
+	protected void insertCommission_category( List<Commission_category> commission_categorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commission_categorys.size();
@@ -20268,7 +20277,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAcademic_year( List<Academic_year> academic_years )
+	protected void insertAcademic_year( List<Academic_year> academic_years )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = academic_years.size();
@@ -20416,7 +20425,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertBank_concept_account( List<Bank_concept_account> bank_concept_accounts )
+	protected void insertBank_concept_account( List<Bank_concept_account> bank_concept_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = bank_concept_accounts.size();
@@ -20580,7 +20589,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertCreditor_account( List<Creditor_account> creditor_accounts )
+	protected void insertCreditor_account( List<Creditor_account> creditor_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = creditor_accounts.size();
@@ -20751,7 +20760,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean recorded; 
 	}
 	
-	private void insertFinance_tracking( List<Finance_tracking> finance_trackings )
+	protected void insertFinance_tracking( List<Finance_tracking> finance_trackings )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = finance_trackings.size();
@@ -20971,14 +20980,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer category; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Short security_level; 
 		protected Date attach_date; 
 	}
 	
-	private void insertRattach( List<Rattach> rattachs )
+	protected void insertRattach( List<Rattach> rattachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rattachs.size();
@@ -21031,7 +21040,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( rattach.data == null )
 				rattachStmt.setNull(offset++, -4);
 			else
-				rattachStmt.setBinaryStream(offset++, rattach.data);
+				rattachStmt.setBlob(offset++, rattach.data);
 			if ( rattach.type == null )
 				rattachStmt.setNull(offset++, -6);
 			else
@@ -21111,7 +21120,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertRattach(Integer id, Integer domain, Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	protected void insertRattach(Integer id, Integer domain, Integer registry, Integer category, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 
 		Rattach rattach_ = new Rattach();
@@ -21153,7 +21162,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertRattach(Integer domain, Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	public int insertRattach(Integer domain, Integer registry, Integer category, Short mimeType, String description, Blob data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		int id = nextRattachId();
 
@@ -21198,7 +21207,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer contract_leave_detail; 
 	}
 	
-	private void insertLeave_batch_detail( List<Leave_batch_detail> leave_batch_details )
+	protected void insertLeave_batch_detail( List<Leave_batch_detail> leave_batch_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = leave_batch_details.size();
@@ -21371,7 +21380,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double delivered; 
 	}
 	
-	private void insertSales_detail( List<Sales_detail> sales_details )
+	protected void insertSales_detail( List<Sales_detail> sales_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = sales_details.size();
@@ -21613,7 +21622,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short month; 
 	}
 	
-	private void insertSystem_deduction( List<System_deduction> system_deductions )
+	protected void insertSystem_deduction( List<System_deduction> system_deductions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = system_deductions.size();
@@ -21824,7 +21833,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertMake( List<Make> makes )
+	protected void insertMake( List<Make> makes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = makes.size();
@@ -21980,7 +21989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer item; 
 	}
 	
-	private void insertRoom( List<Room> rooms )
+	protected void insertRoom( List<Room> rooms )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rooms.size();
@@ -22085,7 +22094,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertRbank_account( List<Rbank_account> rbank_accounts )
+	protected void insertRbank_account( List<Rbank_account> rbank_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rbank_accounts.size();
@@ -22249,7 +22258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertModel( List<Model> models )
+	protected void insertModel( List<Model> models )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = models.size();
@@ -22412,7 +22421,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String title; 
 	}
 	
-	private void insertCnae( List<Cnae> cnaes )
+	protected void insertCnae( List<Cnae> cnaes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cnaes.size();
@@ -22568,7 +22577,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer enterprise_ccc; 
 	}
 	
-	private void insertFan_batch_detail( List<Fan_batch_detail> fan_batch_details )
+	protected void insertFan_batch_detail( List<Fan_batch_detail> fan_batch_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fan_batch_details.size();
@@ -22731,7 +22740,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertDepartment( List<Department> departments )
+	protected void insertDepartment( List<Department> departments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = departments.size();
@@ -22891,7 +22900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Timestamp value_date; 
 	}
 	
-	private void insertTarget_profile( List<Target_profile> target_profiles )
+	protected void insertTarget_profile( List<Target_profile> target_profiles )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = target_profiles.size();
@@ -23106,7 +23115,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 	}
 	
-	private void insertPurchase( List<Purchase> purchases )
+	protected void insertPurchase( List<Purchase> purchases )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = purchases.size();
@@ -23424,7 +23433,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String slogan; 
 	}
 	
-	private void insertWeb_info( List<Web_info> web_infos )
+	protected void insertWeb_info( List<Web_info> web_infos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = web_infos.size();
@@ -23609,7 +23618,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer linked_bank_statement_link; 
 	}
 	
-	private void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
+	protected void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = bank_statement_links.size();
@@ -23813,7 +23822,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertCourse_alumn( List<Course_alumn> course_alumns )
+	protected void insertCourse_alumn( List<Course_alumn> course_alumns )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_alumns.size();
@@ -23978,7 +23987,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short liquidation_type; 
 	}
 	
-	private void insertFan_batch( List<Fan_batch> fan_batchs )
+	protected void insertFan_batch( List<Fan_batch> fan_batchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fan_batchs.size();
@@ -24190,7 +24199,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer rbank; 
 	}
 	
-	private void insertFs_renting( List<Fs_renting> fs_rentings )
+	protected void insertFs_renting( List<Fs_renting> fs_rentings )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_rentings.size();
@@ -24675,7 +24684,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double quantity; 
 	}
 	
-	private void insertWarehouse_transfer_detail( List<Warehouse_transfer_detail> warehouse_transfer_details )
+	protected void insertWarehouse_transfer_detail( List<Warehouse_transfer_detail> warehouse_transfer_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = warehouse_transfer_details.size();
@@ -24850,7 +24859,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String alias; 
 	}
 	
-	private void insertQuestion( List<Question> questions )
+	protected void insertQuestion( List<Question> questions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = questions.size();
@@ -25048,7 +25057,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer attach; 
 	}
 	
-	private void insertRecord_data( List<Record_data> record_datas )
+	protected void insertRecord_data( List<Record_data> record_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = record_datas.size();
@@ -25294,7 +25303,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertAlumn_loan( List<Alumn_loan> alumn_loans )
+	protected void insertAlumn_loan( List<Alumn_loan> alumn_loans )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = alumn_loans.size();
@@ -25492,7 +25501,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer calendar; 
 	}
 	
-	private void insertCalendar( List<Calendar> calendars )
+	protected void insertCalendar( List<Calendar> calendars )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = calendars.size();
@@ -25800,7 +25809,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer authorization_number; 
 	}
 	
-	private void insertEc_offer_pay_info( List<Ec_offer_pay_info> ec_offer_pay_infos )
+	protected void insertEc_offer_pay_info( List<Ec_offer_pay_info> ec_offer_pay_infos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ec_offer_pay_infos.size();
@@ -25969,7 +25978,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertAsset_activity( List<Asset_activity> asset_activitys )
+	protected void insertAsset_activity( List<Asset_activity> asset_activitys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = asset_activitys.size();
@@ -26186,7 +26195,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String country; 
 	}
 	
-	private void insertProject_reservation_guest( List<Project_reservation_guest> project_reservation_guests )
+	protected void insertProject_reservation_guest( List<Project_reservation_guest> project_reservation_guests )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservation_guests.size();
@@ -26471,7 +26480,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double sunday_hours; 
 	}
 	
-	private void insertCalendar_period( List<Calendar_period> calendar_periods )
+	protected void insertCalendar_period( List<Calendar_period> calendar_periods )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = calendar_periods.size();
@@ -26775,7 +26784,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String code; 
 	}
 	
-	private void insertSystem_cost( List<System_cost> system_costs )
+	protected void insertSystem_cost( List<System_cost> system_costs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = system_costs.size();
@@ -26977,7 +26986,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short security_level; 
 	}
 	
-	private void insertFbatch( List<Fbatch> fbatchs )
+	protected void insertFbatch( List<Fbatch> fbatchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fbatchs.size();
@@ -27191,7 +27200,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String sign; 
 	}
 	
-	private void insertCertifica2_batch( List<Certifica2_batch> certifica2_batchs )
+	protected void insertCertifica2_batch( List<Certifica2_batch> certifica2_batchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = certifica2_batchs.size();
@@ -27371,7 +27380,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertInvoice_detail_account( List<Invoice_detail_account> invoice_detail_accounts )
+	protected void insertInvoice_detail_account( List<Invoice_detail_account> invoice_detail_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_detail_accounts.size();
@@ -27535,7 +27544,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double rate; 
 	}
 	
-	private void insertCommission_type( List<Commission_type> commission_types )
+	protected void insertCommission_type( List<Commission_type> commission_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commission_types.size();
@@ -27704,7 +27713,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short priority; 
 	}
 	
-	private void insertAlarm( List<Alarm> alarms )
+	protected void insertAlarm( List<Alarm> alarms )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = alarms.size();
@@ -27908,7 +27917,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 	}
 	
-	private void insertPay_method( List<Pay_method> pay_methods )
+	protected void insertPay_method( List<Pay_method> pay_methods )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pay_methods.size();
@@ -28068,13 +28077,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	public static class Ec_catalogue {
 		protected Integer id; 
 		protected Integer catalogue; 
-		protected InputStream catalogue_img; 
-		protected InputStream catalogue_icon; 
+		protected Blob catalogue_img; 
+		protected Blob catalogue_icon; 
 		protected Short type; 
 		protected Boolean visible; 
 	}
 	
-	private void insertEc_catalogue( List<Ec_catalogue> ec_catalogues )
+	protected void insertEc_catalogue( List<Ec_catalogue> ec_catalogues )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ec_catalogues.size();
@@ -28111,11 +28120,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( ec_catalogue.catalogue_img == null )
 				ec_catalogueStmt.setNull(offset++, -4);
 			else
-				ec_catalogueStmt.setBinaryStream(offset++, ec_catalogue.catalogue_img);
+				ec_catalogueStmt.setBlob(offset++, ec_catalogue.catalogue_img);
 			if ( ec_catalogue.catalogue_icon == null )
 				ec_catalogueStmt.setNull(offset++, -4);
 			else
-				ec_catalogueStmt.setBinaryStream(offset++, ec_catalogue.catalogue_icon);
+				ec_catalogueStmt.setBlob(offset++, ec_catalogue.catalogue_icon);
 			if ( ec_catalogue.type == null )
 				ec_catalogueStmt.setNull(offset++, -6);
 			else
@@ -28182,7 +28191,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param visible Indica si es visible en internet
 	 * @throws SQLException
 	*/
-	protected void insertEc_catalogue(Integer id, Integer catalogue, InputStream catalogue_img, InputStream catalogue_icon, Short type, Boolean visible)
+	protected void insertEc_catalogue(Integer id, Integer catalogue, Blob catalogue_img, Blob catalogue_icon, Short type, Boolean visible)
 	throws SQLException {
 
 		Ec_catalogue ec_catalogue_ = new Ec_catalogue();
@@ -28214,7 +28223,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertEc_catalogue(Integer catalogue, InputStream catalogue_img, InputStream catalogue_icon, Short type, Boolean visible)
+	public int insertEc_catalogue(Integer catalogue, Blob catalogue_img, Blob catalogue_icon, Short type, Boolean visible)
 	throws SQLException {
 		int id = nextEc_catalogueId();
 
@@ -28256,7 +28265,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertWorkactivity( List<Workactivity> workactivitys )
+	protected void insertWorkactivity( List<Workactivity> workactivitys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = workactivitys.size();
@@ -28434,7 +28443,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 		protected String name; 
 		protected Short skin; 
-		protected InputStream header_img; 
+		protected Blob header_img; 
 		protected String series; 
 		protected Boolean commerce; 
 		protected Short show_login; 
@@ -28453,9 +28462,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String header_color; 
 		protected String telephone; 
 		protected Short row_items; 
-		protected InputStream left_banner; 
-		protected InputStream right_banner; 
-		protected InputStream welcome_banner; 
+		protected Blob left_banner; 
+		protected Blob right_banner; 
+		protected Blob welcome_banner; 
 		protected Short ecommerce_status; 
 		protected Double shipping_costs; 
 		protected Double free_shipping; 
@@ -28465,7 +28474,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String email; 
 	}
 	
-	private void insertEc_config( List<Ec_config> ec_configs )
+	protected void insertEc_config( List<Ec_config> ec_configs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = ec_configs.size();
@@ -28510,7 +28519,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( ec_config.header_img == null )
 				ec_configStmt.setNull(offset++, -4);
 			else
-				ec_configStmt.setBinaryStream(offset++, ec_config.header_img);
+				ec_configStmt.setBlob(offset++, ec_config.header_img);
 			if ( ec_config.series == null )
 				ec_configStmt.setNull(offset++, 1);
 			else
@@ -28586,15 +28595,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( ec_config.left_banner == null )
 				ec_configStmt.setNull(offset++, -4);
 			else
-				ec_configStmt.setBinaryStream(offset++, ec_config.left_banner);
+				ec_configStmt.setBlob(offset++, ec_config.left_banner);
 			if ( ec_config.right_banner == null )
 				ec_configStmt.setNull(offset++, -4);
 			else
-				ec_configStmt.setBinaryStream(offset++, ec_config.right_banner);
+				ec_configStmt.setBlob(offset++, ec_config.right_banner);
 			if ( ec_config.welcome_banner == null )
 				ec_configStmt.setNull(offset++, -4);
 			else
-				ec_configStmt.setBinaryStream(offset++, ec_config.welcome_banner);
+				ec_configStmt.setBlob(offset++, ec_config.welcome_banner);
 			if ( ec_config.ecommerce_status == null )
 				ec_configStmt.setNull(offset++, -6);
 			else
@@ -28708,7 +28717,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param email Email de contacto
 	 * @throws SQLException
 	*/
-	protected void insertEc_config(Integer id, Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
+	protected void insertEc_config(Integer id, Boolean active, String name, Short skin, Blob header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, Blob left_banner, Blob right_banner, Blob welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
 	throws SQLException {
 
 		Ec_config ec_config_ = new Ec_config();
@@ -28794,7 +28803,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertEc_config(Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
+	public int insertEc_config(Boolean active, String name, Short skin, Blob header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, Blob left_banner, Blob right_banner, Blob welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
 	throws SQLException {
 		int id = nextEc_configId();
 
@@ -28866,7 +28875,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer probability; 
 	}
 	
-	private void insertProject_commercial( List<Project_commercial> project_commercials )
+	protected void insertProject_commercial( List<Project_commercial> project_commercials )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_commercials.size();
@@ -29000,7 +29009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String observation; 
 	}
 	
-	private void insertCourse_observation( List<Course_observation> course_observations )
+	protected void insertCourse_observation( List<Course_observation> course_observations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_observations.size();
@@ -29155,7 +29164,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String title; 
 	}
 	
-	private void insertCnae2009( List<Cnae2009> cnae2009s )
+	protected void insertCnae2009( List<Cnae2009> cnae2009s )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cnae2009s.size();
@@ -29313,7 +29322,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertSalary_data( List<Salary_data> salary_datas )
+	protected void insertSalary_data( List<Salary_data> salary_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_datas.size();
@@ -29497,7 +29506,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer campaign_action; 
 	}
 	
-	private void insertSurvey_response( List<Survey_response> survey_responses )
+	protected void insertSurvey_response( List<Survey_response> survey_responses )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = survey_responses.size();
@@ -29693,7 +29702,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertEvaluation_observation( List<Evaluation_observation> evaluation_observations )
+	protected void insertEvaluation_observation( List<Evaluation_observation> evaluation_observations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = evaluation_observations.size();
@@ -29862,7 +29871,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String second_surname; 
 	}
 	
-	private void insertPerson( List<Person> persons )
+	protected void insertPerson( List<Person> persons )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = persons.size();
@@ -29997,7 +30006,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertInstructor( List<Instructor> instructors )
+	protected void insertInstructor( List<Instructor> instructors )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = instructors.size();
@@ -30112,7 +30121,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short salary_type; 
 	}
 	
-	private void insertContract_payment( List<Contract_payment> contract_payments )
+	protected void insertContract_payment( List<Contract_payment> contract_payments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_payments.size();
@@ -30367,7 +30376,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double prior_deduct_home_loan_amount; 
 	}
 	
-	private void insertIrpf_regularization( List<Irpf_regularization> irpf_regularizations )
+	protected void insertIrpf_regularization( List<Irpf_regularization> irpf_regularizations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = irpf_regularizations.size();
@@ -30636,7 +30645,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean december; 
 	}
 	
-	private void insertCashflow_forecast( List<Cashflow_forecast> cashflow_forecasts )
+	protected void insertCashflow_forecast( List<Cashflow_forecast> cashflow_forecasts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cashflow_forecasts.size();
@@ -30940,7 +30949,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertAccount_entry( List<Account_entry> account_entrys )
+	protected void insertAccount_entry( List<Account_entry> account_entrys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entrys.size();
@@ -31136,7 +31145,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer child; 
 	}
 	
-	private void insertGeotree( List<Geotree> geotrees )
+	protected void insertGeotree( List<Geotree> geotrees )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = geotrees.size();
@@ -31303,7 +31312,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workplace; 
 	}
 	
-	private void insertItem_supplier( List<Item_supplier> item_suppliers )
+	protected void insertItem_supplier( List<Item_supplier> item_suppliers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = item_suppliers.size();
@@ -31491,7 +31500,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertCustomer_account( List<Customer_account> customer_accounts )
+	protected void insertCustomer_account( List<Customer_account> customer_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = customer_accounts.size();
@@ -31656,7 +31665,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer position; 
 	}
 	
-	private void insertSurvey_question( List<Survey_question> survey_questions )
+	protected void insertSurvey_question( List<Survey_question> survey_questions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = survey_questions.size();
@@ -31836,7 +31845,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertCourse( List<Course> courses )
+	protected void insertCourse( List<Course> courses )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = courses.size();
@@ -32065,7 +32074,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double quantity; 
 	}
 	
-	private void insertStock( List<Stock> stocks )
+	protected void insertStock( List<Stock> stocks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = stocks.size();
@@ -32241,7 +32250,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertRbank( List<Rbank> rbanks )
+	protected void insertRbank( List<Rbank> rbanks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rbanks.size();
@@ -32442,7 +32451,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String pymnt_days; 
 	}
 	
-	private void insertRpaymethod( List<Rpaymethod> rpaymethods )
+	protected void insertRpaymethod( List<Rpaymethod> rpaymethods )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rpaymethods.size();
@@ -32666,7 +32675,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 	}
 	
-	private void insertSales( List<Sales> saless )
+	protected void insertSales( List<Sales> saless )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = saless.size();
@@ -33007,7 +33016,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 	}
 	
-	private void insertIncome( List<Income> incomes )
+	protected void insertIncome( List<Income> incomes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = incomes.size();
@@ -33310,7 +33319,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer cnae2009; 
 	}
 	
-	private void insertEnterprise_activity( List<Enterprise_activity> enterprise_activitys )
+	protected void insertEnterprise_activity( List<Enterprise_activity> enterprise_activitys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = enterprise_activitys.size();
@@ -33503,7 +33512,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertCertifica2_batch_data( List<Certifica2_batch_data> certifica2_batch_datas )
+	protected void insertCertifica2_batch_data( List<Certifica2_batch_data> certifica2_batch_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = certifica2_batch_datas.size();
@@ -33708,7 +33717,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String content; 
 	}
 	
-	private void insertWeb_info_page_resource( List<Web_info_page_resource> web_info_page_resources )
+	protected void insertWeb_info_page_resource( List<Web_info_page_resource> web_info_page_resources )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = web_info_page_resources.size();
@@ -33882,7 +33891,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double ims_amount; 
 	}
 	
-	private void insertCnae2009_rate( List<Cnae2009_rate> cnae2009_rates )
+	protected void insertCnae2009_rate( List<Cnae2009_rate> cnae2009_rates )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = cnae2009_rates.size();
@@ -34064,7 +34073,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertFbatch_detail( List<Fbatch_detail> fbatch_details )
+	protected void insertFbatch_detail( List<Fbatch_detail> fbatch_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fbatch_details.size();
@@ -34252,7 +34261,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short discharge_cause; 
 	}
 	
-	private void insertContract_leave( List<Contract_leave> contract_leaves )
+	protected void insertContract_leave( List<Contract_leave> contract_leaves )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_leaves.size();
@@ -34483,7 +34492,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double hours; 
 	}
 	
-	private void insertCalendar_holiday( List<Calendar_holiday> calendar_holidays )
+	protected void insertCalendar_holiday( List<Calendar_holiday> calendar_holidays )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = calendar_holidays.size();
@@ -34671,7 +34680,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertWorkgroup( List<Workgroup> workgroups )
+	protected void insertWorkgroup( List<Workgroup> workgroups )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = workgroups.size();
@@ -34882,7 +34891,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short ascendents_65_entirely; 
 	}
 	
-	private void insertIrpf_result( List<Irpf_result> irpf_results )
+	protected void insertIrpf_result( List<Irpf_result> irpf_results )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = irpf_results.size();
@@ -35421,7 +35430,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertCategory( List<Category> categorys )
+	protected void insertCategory( List<Category> categorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = categorys.size();
@@ -35581,7 +35590,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user; 
 	}
 	
-	private void insertMk_action_target( List<Mk_action_target> mk_action_targets )
+	protected void insertMk_action_target( List<Mk_action_target> mk_action_targets )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = mk_action_targets.size();
@@ -35782,7 +35791,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short withholding_type; 
 	}
 	
-	private void insertTax( List<Tax> taxs )
+	protected void insertTax( List<Tax> taxs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = taxs.size();
@@ -35991,7 +36000,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user_id; 
 	}
 	
-	private void insertSession( List<Session> sessions )
+	protected void insertSession( List<Session> sessions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = sessions.size();
@@ -36194,7 +36203,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer parent; 
 	}
 	
-	private void insertInvoicing_group( List<Invoicing_group> invoicing_groups )
+	protected void insertInvoicing_group( List<Invoicing_group> invoicing_groups )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoicing_groups.size();
@@ -36351,7 +36360,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertProject_activity( List<Project_activity> project_activitys )
+	protected void insertProject_activity( List<Project_activity> project_activitys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_activitys.size();
@@ -36529,7 +36538,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short security_level; 
 	}
 	
-	private void insertRegistry( List<Registry> registrys )
+	protected void insertRegistry( List<Registry> registrys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = registrys.size();
@@ -36762,7 +36771,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer source_id; 
 	}
 	
-	private void insertMail_account( List<Mail_account> mail_accounts )
+	protected void insertMail_account( List<Mail_account> mail_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = mail_accounts.size();
@@ -37096,7 +37105,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 	}
 	
-	private void insertCreditor( List<Creditor> creditors )
+	protected void insertCreditor( List<Creditor> creditors )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = creditors.size();
@@ -37230,7 +37239,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 	}
 	
-	private void insertDelivery( List<Delivery> deliverys )
+	protected void insertDelivery( List<Delivery> deliverys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = deliverys.size();
@@ -37532,7 +37541,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertAccount_period( List<Account_period> account_periods )
+	protected void insertAccount_period( List<Account_period> account_periods )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_periods.size();
@@ -37716,7 +37725,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean append_signature; 
 	}
 	
-	private void insertMk_template( List<Mk_template> mk_templates )
+	protected void insertMk_template( List<Mk_template> mk_templates )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = mk_templates.size();
@@ -37921,7 +37930,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertSeries( List<Series> seriess )
+	protected void insertSeries( List<Series> seriess )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = seriess.size();
@@ -38175,7 +38184,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertFs_vat_declaration( List<Fs_vat_declaration> fs_vat_declarations )
+	protected void insertFs_vat_declaration( List<Fs_vat_declaration> fs_vat_declarations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_vat_declarations.size();
@@ -38481,7 +38490,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertCourse_level( List<Course_level> course_levels )
+	protected void insertCourse_level( List<Course_level> course_levels )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_levels.size();
@@ -38633,7 +38642,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertWorkplace( List<Workplace> workplaces )
+	protected void insertWorkplace( List<Workplace> workplaces )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = workplaces.size();
@@ -38833,7 +38842,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer children; 
 	}
 	
-	private void insertProject_reservation_room( List<Project_reservation_room> project_reservation_rooms )
+	protected void insertProject_reservation_room( List<Project_reservation_room> project_reservation_rooms )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservation_rooms.size();
@@ -39029,7 +39038,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user_id; 
 	}
 	
-	private void insertAction_denied( List<Action_denied> action_denieds )
+	protected void insertAction_denied( List<Action_denied> action_denieds )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = action_denieds.size();
@@ -39193,7 +39202,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAgreement_level( List<Agreement_level> agreement_levels )
+	protected void insertAgreement_level( List<Agreement_level> agreement_levels )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_levels.size();
@@ -39357,7 +39366,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workgroup; 
 	}
 	
-	private void insertUser_workgroup( List<User_workgroup> user_workgroups )
+	protected void insertUser_workgroup( List<User_workgroup> user_workgroups )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = user_workgroups.size();
@@ -39522,7 +39531,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Time end_time; 
 	}
 	
-	private void insertCourse_schedule( List<Course_schedule> course_schedules )
+	protected void insertCourse_schedule( List<Course_schedule> course_schedules )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_schedules.size();
@@ -39696,7 +39705,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertRrelationship( List<Rrelationship> rrelationships )
+	protected void insertRrelationship( List<Rrelationship> rrelationships )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rrelationships.size();
@@ -39878,7 +39887,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer cost_profile; 
 	}
 	
-	private void insertTask_holder( List<Task_holder> task_holders )
+	protected void insertTask_holder( List<Task_holder> task_holders )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = task_holders.size();
@@ -39997,7 +40006,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertWeb_info_page( List<Web_info_page> web_info_pages )
+	protected void insertWeb_info_page( List<Web_info_page> web_info_pages )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = web_info_pages.size();
@@ -40183,7 +40192,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertCampaign( List<Campaign> campaigns )
+	protected void insertCampaign( List<Campaign> campaigns )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = campaigns.size();
@@ -40403,7 +40412,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double prorata; 
 	}
 	
-	private void insertFs_vat( List<Fs_vat> fs_vats )
+	protected void insertFs_vat( List<Fs_vat> fs_vats )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_vats.size();
@@ -40638,7 +40647,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short month; 
 	}
 	
-	private void insertContract_deduction( List<Contract_deduction> contract_deductions )
+	protected void insertContract_deduction( List<Contract_deduction> contract_deductions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_deductions.size();
@@ -40860,7 +40869,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String note; 
 	}
 	
-	private void insertNote( List<Note> notes )
+	protected void insertNote( List<Note> notes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = notes.size();
@@ -41038,7 +41047,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertCourse_subject( List<Course_subject> course_subjects )
+	protected void insertCourse_subject( List<Course_subject> course_subjects )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_subjects.size();
@@ -41184,7 +41193,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertObservation( List<Observation> observations )
+	protected void insertObservation( List<Observation> observations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = observations.size();
@@ -41333,7 +41342,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer user_id; 
 	}
 	
-	private void insertAction_favorite( List<Action_favorite> action_favorites )
+	protected void insertAction_favorite( List<Action_favorite> action_favorites )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = action_favorites.size();
@@ -41505,7 +41514,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer account; 
 	}
 	
-	private void insertLoan_account( List<Loan_account> loan_accounts )
+	protected void insertLoan_account( List<Loan_account> loan_accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = loan_accounts.size();
@@ -41671,7 +41680,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertSalary_embargo( List<Salary_embargo> salary_embargos )
+	protected void insertSalary_embargo( List<Salary_embargo> salary_embargos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_embargos.size();
@@ -41862,7 +41871,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String withholding_subkey; 
 	}
 	
-	private void insertFs_prof_retention( List<Fs_prof_retention> fs_prof_retentions )
+	protected void insertFs_prof_retention( List<Fs_prof_retention> fs_prof_retentions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fs_prof_retentions.size();
@@ -42118,7 +42127,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean unique_parent; 
 	}
 	
-	private void insertIrpf_data_descendients( List<Irpf_data_descendients> irpf_data_descendientss )
+	protected void insertIrpf_data_descendients( List<Irpf_data_descendients> irpf_data_descendientss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = irpf_data_descendientss.size();
@@ -42319,7 +42328,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Timestamp value_date; 
 	}
 	
-	private void insertSurvey_workflow( List<Survey_workflow> survey_workflows )
+	protected void insertSurvey_workflow( List<Survey_workflow> survey_workflows )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = survey_workflows.size();
@@ -42532,7 +42541,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean composition_price; 
 	}
 	
-	private void insertProduct( List<Product> products )
+	protected void insertProduct( List<Product> products )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = products.size();
@@ -42768,7 +42777,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertProcess( List<Process> processs )
+	protected void insertProcess( List<Process> processs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = processs.size();
@@ -42937,7 +42946,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertContract_leave_detail( List<Contract_leave_detail> contract_leave_details )
+	protected void insertContract_leave_detail( List<Contract_leave_detail> contract_leave_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_leave_details.size();
@@ -43145,7 +43154,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertProposal( List<Proposal> proposals )
+	protected void insertProposal( List<Proposal> proposals )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = proposals.size();
@@ -43350,7 +43359,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String barcode; 
 	}
 	
-	private void insertItem( List<Item> items )
+	protected void insertItem( List<Item> items )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = items.size();
@@ -43590,7 +43599,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer target_warehouse; 
 	}
 	
-	private void insertWarehouse_transfer( List<Warehouse_transfer> warehouse_transfers )
+	protected void insertWarehouse_transfer( List<Warehouse_transfer> warehouse_transfers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = warehouse_transfers.size();
@@ -43789,7 +43798,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short level; 
 	}
 	
-	private void insertAccount( List<Account> accounts )
+	protected void insertAccount( List<Account> accounts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = accounts.size();
@@ -43976,7 +43985,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertBrand( List<Brand> brands )
+	protected void insertBrand( List<Brand> brands )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = brands.size();
@@ -44135,7 +44144,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertTarget_seller( List<Target_seller> target_sellers )
+	protected void insertTarget_seller( List<Target_seller> target_sellers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = target_sellers.size();
@@ -44327,7 +44336,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer bonus_concept; 
 	}
 	
-	private void insertContract_bonus( List<Contract_bonus> contract_bonuss )
+	protected void insertContract_bonus( List<Contract_bonus> contract_bonuss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_bonuss.size();
@@ -44538,7 +44547,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 	}
 	
-	private void insertFinance( List<Finance> finances )
+	protected void insertFinance( List<Finance> finances )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = finances.size();
@@ -44822,7 +44831,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer workgroup; 
 	}
 	
-	private void insertTask_holder_workgroup( List<Task_holder_workgroup> task_holder_workgroups )
+	protected void insertTask_holder_workgroup( List<Task_holder_workgroup> task_holder_workgroups )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = task_holder_workgroups.size();
@@ -44987,7 +44996,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean system; 
 	}
 	
-	private void insertGeozone( List<Geozone> geozones )
+	protected void insertGeozone( List<Geozone> geozones )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = geozones.size();
@@ -45158,7 +45167,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertPcategory_group( List<Pcategory_group> pcategory_groups )
+	protected void insertPcategory_group( List<Pcategory_group> pcategory_groups )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pcategory_groups.size();
@@ -45313,7 +45322,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertSegment( List<Segment> segments )
+	protected void insertSegment( List<Segment> segments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = segments.size();
@@ -45473,7 +45482,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double amount; 
 	}
 	
-	private void insertSalary_deduction( List<Salary_deduction> salary_deductions )
+	protected void insertSalary_deduction( List<Salary_deduction> salary_deductions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_deductions.size();
@@ -45698,7 +45707,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double total; 
 	}
 	
-	private void insertInvoice( List<Invoice> invoices )
+	protected void insertInvoice( List<Invoice> invoices )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoices.size();
@@ -46093,10 +46102,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer invoice; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 	}
 	
-	private void insertInvoice_attach( List<Invoice_attach> invoice_attachs )
+	protected void insertInvoice_attach( List<Invoice_attach> invoice_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_attachs.size();
@@ -46145,7 +46154,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice_attach.data == null )
 				invoice_attachStmt.setNull(offset++, -4);
 			else
-				invoice_attachStmt.setBinaryStream(offset++, invoice_attach.data);
+				invoice_attachStmt.setBlob(offset++, invoice_attach.data);
 		}
 		invoice_attachStmt.executeUpdate();
 		invoice_attachInserted += size;
@@ -46204,7 +46213,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param data Archivo Adjunto en binario
 	 * @throws SQLException
 	*/
-	protected void insertInvoice_attach(Integer id, Integer domain, Integer invoice, Short mimeType, String description, InputStream data)
+	protected void insertInvoice_attach(Integer id, Integer domain, Integer invoice, Short mimeType, String description, Blob data)
 	throws SQLException {
 
 		Invoice_attach invoice_attach_ = new Invoice_attach();
@@ -46236,7 +46245,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice_attach(Integer domain, Integer invoice, Short mimeType, String description, InputStream data)
+	public int insertInvoice_attach(Integer domain, Integer invoice, Short mimeType, String description, Blob data)
 	throws SQLException {
 		int id = nextInvoice_attachId();
 
@@ -46288,7 +46297,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer warehouse; 
 	}
 	
-	private void insertInvoice_detail( List<Invoice_detail> invoice_details )
+	protected void insertInvoice_detail( List<Invoice_detail> invoice_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_details.size();
@@ -46548,7 +46557,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertLeave_batch( List<Leave_batch> leave_batchs )
+	protected void insertLeave_batch( List<Leave_batch> leave_batchs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = leave_batchs.size();
@@ -46712,7 +46721,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer asset_activity; 
 	}
 	
-	private void insertProject_reservation_room_detail( List<Project_reservation_room_detail> project_reservation_room_details )
+	protected void insertProject_reservation_room_detail( List<Project_reservation_room_detail> project_reservation_room_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservation_room_details.size();
@@ -46876,7 +46885,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short type; 
 	}
 	
-	private void insertCourse_instructor( List<Course_instructor> course_instructors )
+	protected void insertCourse_instructor( List<Course_instructor> course_instructors )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_instructors.size();
@@ -47040,7 +47049,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer finance_tracking; 
 	}
 	
-	private void insertAccount_entry_finance_tracking( List<Account_entry_finance_tracking> account_entry_finance_trackings )
+	protected void insertAccount_entry_finance_tracking( List<Account_entry_finance_tracking> account_entry_finance_trackings )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entry_finance_trackings.size();
@@ -47208,7 +47217,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String discount_expr; 
 	}
 	
-	private void insertItem_composition( List<Item_composition> item_compositions )
+	protected void insertItem_composition( List<Item_composition> item_compositions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = item_compositions.size();
@@ -47407,7 +47416,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date end_date; 
 	}
 	
-	private void insertAgreement_level_data( List<Agreement_level_data> agreement_level_datas )
+	protected void insertAgreement_level_data( List<Agreement_level_data> agreement_level_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_level_datas.size();
@@ -47603,7 +47612,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer purchase_detail; 
 	}
 	
-	private void insertIncome_detail( List<Income_detail> income_details )
+	protected void insertIncome_detail( List<Income_detail> income_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = income_details.size();
@@ -47833,7 +47842,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertWorkplace_department( List<Workplace_department> workplace_departments )
+	protected void insertWorkplace_department( List<Workplace_department> workplace_departments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = workplace_departments.size();
@@ -48019,7 +48028,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer raddress; 
 	}
 	
-	private void insertRmedia( List<Rmedia> rmedias )
+	protected void insertRmedia( List<Rmedia> rmedias )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rmedias.size();
@@ -48240,7 +48249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String location; 
 	}
 	
-	private void insertCommercial_tracking( List<Commercial_tracking> commercial_trackings )
+	protected void insertCommercial_tracking( List<Commercial_tracking> commercial_trackings )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commercial_trackings.size();
@@ -48486,7 +48495,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String alias; 
 	}
 	
-	private void insertRaddress( List<Raddress> raddresss )
+	protected void insertRaddress( List<Raddress> raddresss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = raddresss.size();
@@ -48731,7 +48740,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer application_id; 
 	}
 	
-	private void insertAction( List<Action> actions )
+	protected void insertAction( List<Action> actions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = actions.size();
@@ -48904,7 +48913,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertSurvey( List<Survey> surveys )
+	protected void insertSurvey( List<Survey> surveys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = surveys.size();
@@ -49079,7 +49088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer surveyResponse; 
 	}
 	
-	private void insertSurvey_response_detail( List<Survey_response_detail> survey_response_details )
+	protected void insertSurvey_response_detail( List<Survey_response_detail> survey_response_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = survey_response_details.size();
@@ -49269,7 +49278,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date value_date; 
 	}
 	
-	private void insertRaddinfo( List<Raddinfo> raddinfos )
+	protected void insertRaddinfo( List<Raddinfo> raddinfos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = raddinfos.size();
@@ -49450,7 +49459,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean grouped; 
 	}
 	
-	private void insertInvoicing_group_detail( List<Invoicing_group_detail> invoicing_group_details )
+	protected void insertInvoicing_group_detail( List<Invoicing_group_detail> invoicing_group_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoicing_group_details.size();
@@ -49625,7 +49634,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double rate; 
 	}
 	
-	private void insertCommission_item( List<Commission_item> commission_items )
+	protected void insertCommission_item( List<Commission_item> commission_items )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commission_items.size();
@@ -49813,7 +49822,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertCampaign_type( List<Campaign_type> campaign_types )
+	protected void insertCampaign_type( List<Campaign_type> campaign_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = campaign_types.size();
@@ -49980,7 +49989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double discount; 
 	}
 	
-	private void insertCatalogue_item( List<Catalogue_item> catalogue_items )
+	protected void insertCatalogue_item( List<Catalogue_item> catalogue_items )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = catalogue_items.size();
@@ -50167,7 +50176,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAcademic_skill( List<Academic_skill> academic_skills )
+	protected void insertAcademic_skill( List<Academic_skill> academic_skills )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = academic_skills.size();
@@ -50325,7 +50334,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Date start_date; 
 		protected Date end_date; 
 		protected Integer calendar; 
-		protected InputStream document; 
+		protected Blob document; 
 		protected String description; 
 		protected Short status; 
 		protected Integer registration; 
@@ -50335,7 +50344,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer agreement_level_category; 
 	}
 	
-	private void insertContract( List<Contract> contracts )
+	protected void insertContract( List<Contract> contracts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contracts.size();
@@ -50396,7 +50405,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract.document == null )
 				contractStmt.setNull(offset++, -4);
 			else
-				contractStmt.setBinaryStream(offset++, contract.document);
+				contractStmt.setBlob(offset++, contract.document);
 			if ( contract.description == null )
 				contractStmt.setNull(offset++, 12);
 			else
@@ -50493,7 +50502,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param agreement_level_category Identificador unico de la Categoria Profesional
 	 * @throws SQLException
 	*/
-	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	protected void insertContract(Integer id, Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
 	throws SQLException {
 
 		Contract contract_ = new Contract();
@@ -50545,7 +50554,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	public int insertContract(Integer domain, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, Blob document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
 	throws SQLException {
 		int id = nextContractId();
 
@@ -50601,7 +50610,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertOffer_detail( List<Offer_detail> offer_details )
+	protected void insertOffer_detail( List<Offer_detail> offer_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = offer_details.size();
@@ -50824,7 +50833,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short security_level; 
 	}
 	
-	private void insertAmortization( List<Amortization> amortizations )
+	protected void insertAmortization( List<Amortization> amortizations )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = amortizations.size();
@@ -51076,7 +51085,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer calendar; 
 	}
 	
-	private void insertEnterprise( List<Enterprise> enterprises )
+	protected void insertEnterprise( List<Enterprise> enterprises )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = enterprises.size();
@@ -51182,7 +51191,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double mark; 
 	}
 	
-	private void insertMark( List<Mark> marks )
+	protected void insertMark( List<Mark> marks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = marks.size();
@@ -51356,7 +51365,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double discount; 
 	}
 	
-	private void insertCatalogue_category( List<Catalogue_category> catalogue_categorys )
+	protected void insertCatalogue_category( List<Catalogue_category> catalogue_categorys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = catalogue_categorys.size();
@@ -51536,7 +51545,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double percent; 
 	}
 	
-	private void insertGeozone_irpf_descendant( List<Geozone_irpf_descendant> geozone_irpf_descendants )
+	protected void insertGeozone_irpf_descendant( List<Geozone_irpf_descendant> geozone_irpf_descendants )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = geozone_irpf_descendants.size();
@@ -51702,7 +51711,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean e_invoice; 
 	}
 	
-	private void insertCompany( List<Company> companys )
+	protected void insertCompany( List<Company> companys )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = companys.size();
@@ -51819,7 +51828,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer bank_statement; 
 	}
 	
-	private void insertAccount_entry_bank_statement( List<Account_entry_bank_statement> account_entry_bank_statements )
+	protected void insertAccount_entry_bank_statement( List<Account_entry_bank_statement> account_entry_bank_statements )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_entry_bank_statements.size();
@@ -51988,7 +51997,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer invoice_detail; 
 	}
 	
-	private void insertProject_reservation_service_detail( List<Project_reservation_service_detail> project_reservation_service_details )
+	protected void insertProject_reservation_service_detail( List<Project_reservation_service_detail> project_reservation_service_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservation_service_details.size();
@@ -52195,7 +52204,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String cost_concept; 
 	}
 	
-	private void insertSalary_cost( List<Salary_cost> salary_costs )
+	protected void insertSalary_cost( List<Salary_cost> salary_costs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = salary_costs.size();
@@ -52385,7 +52394,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short status; 
 	}
 	
-	private void insertProject_dossier( List<Project_dossier> project_dossiers )
+	protected void insertProject_dossier( List<Project_dossier> project_dossiers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_dossiers.size();
@@ -52502,7 +52511,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer commission; 
 	}
 	
-	private void insertCommission_type_commission( List<Commission_type_commission> commission_type_commissions )
+	protected void insertCommission_type_commission( List<Commission_type_commission> commission_type_commissions )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = commission_type_commissions.size();
@@ -52669,7 +52678,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double cost; 
 	}
 	
-	private void insertInventory_detail( List<Inventory_detail> inventory_details )
+	protected void insertInventory_detail( List<Inventory_detail> inventory_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = inventory_details.size();
@@ -52856,7 +52865,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertScope( List<Scope> scopes )
+	protected void insertScope( List<Scope> scopes )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = scopes.size();
@@ -53021,7 +53030,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String bank_account; 
 	}
 	
-	private void insertTarget_supplier( List<Target_supplier> target_suppliers )
+	protected void insertTarget_supplier( List<Target_supplier> target_suppliers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = target_suppliers.size();
@@ -53260,7 +53269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean extra; 
 	}
 	
-	private void insertProject_reservation_service( List<Project_reservation_service> project_reservation_services )
+	protected void insertProject_reservation_service( List<Project_reservation_service> project_reservation_services )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = project_reservation_services.size();
@@ -53448,7 +53457,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer contract; 
 	}
 	
-	private void insertContract_batch_detail( List<Contract_batch_detail> contract_batch_details )
+	protected void insertContract_batch_detail( List<Contract_batch_detail> contract_batch_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_batch_details.size();
@@ -53610,7 +53619,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertCustomer_segment( List<Customer_segment> customer_segments )
+	protected void insertCustomer_segment( List<Customer_segment> customer_segments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = customer_segments.size();
@@ -53757,13 +53766,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer leave_batch; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Date attach_date; 
 	}
 	
-	private void insertLeave_batch_attach( List<Leave_batch_attach> leave_batch_attachs )
+	protected void insertLeave_batch_attach( List<Leave_batch_attach> leave_batch_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = leave_batch_attachs.size();
@@ -53812,7 +53821,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( leave_batch_attach.data == null )
 				leave_batch_attachStmt.setNull(offset++, -4);
 			else
-				leave_batch_attachStmt.setBinaryStream(offset++, leave_batch_attach.data);
+				leave_batch_attachStmt.setBlob(offset++, leave_batch_attach.data);
 			if ( leave_batch_attach.type == null )
 				leave_batch_attachStmt.setNull(offset++, -6);
 			else
@@ -53886,7 +53895,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertLeave_batch_attach(Integer id, Integer domain, Integer leave_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected void insertLeave_batch_attach(Integer id, Integer domain, Integer leave_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 
 		Leave_batch_attach leave_batch_attach_ = new Leave_batch_attach();
@@ -53924,7 +53933,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertLeave_batch_attach(Integer domain, Integer leave_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	public int insertLeave_batch_attach(Integer domain, Integer leave_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		int id = nextLeave_batch_attachId();
 
@@ -53977,7 +53986,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String quote_expression; 
 	}
 	
-	private void insertAgreement_payment( List<Agreement_payment> agreement_payments )
+	protected void insertAgreement_payment( List<Agreement_payment> agreement_payments )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreement_payments.size();
@@ -54220,13 +54229,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer fan_batch; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Date attach_date; 
 	}
 	
-	private void insertFan_batch_attach( List<Fan_batch_attach> fan_batch_attachs )
+	protected void insertFan_batch_attach( List<Fan_batch_attach> fan_batch_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = fan_batch_attachs.size();
@@ -54275,7 +54284,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( fan_batch_attach.data == null )
 				fan_batch_attachStmt.setNull(offset++, -4);
 			else
-				fan_batch_attachStmt.setBinaryStream(offset++, fan_batch_attach.data);
+				fan_batch_attachStmt.setBlob(offset++, fan_batch_attach.data);
 			if ( fan_batch_attach.type == null )
 				fan_batch_attachStmt.setNull(offset++, -6);
 			else
@@ -54349,7 +54358,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertFan_batch_attach(Integer id, Integer domain, Integer fan_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected void insertFan_batch_attach(Integer id, Integer domain, Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 
 		Fan_batch_attach fan_batch_attach_ = new Fan_batch_attach();
@@ -54387,7 +54396,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertFan_batch_attach(Integer domain, Integer fan_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	public int insertFan_batch_attach(Integer domain, Integer fan_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		int id = nextFan_batch_attachId();
 
@@ -54429,7 +54438,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAuto_concept( List<Auto_concept> auto_concepts )
+	protected void insertAuto_concept( List<Auto_concept> auto_concepts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = auto_concepts.size();
@@ -54588,7 +54597,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String extra; 
 	}
 	
-	private void insertWeb_info_page_detail( List<Web_info_page_detail> web_info_page_details )
+	protected void insertWeb_info_page_detail( List<Web_info_page_detail> web_info_page_details )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = web_info_page_details.size();
@@ -54777,7 +54786,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double amount; 
 	}
 	
-	private void insertPos_shift_count( List<Pos_shift_count> pos_shift_counts )
+	protected void insertPos_shift_count( List<Pos_shift_count> pos_shift_counts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = pos_shift_counts.size();
@@ -54948,7 +54957,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertJob_type( List<Job_type> job_types )
+	protected void insertJob_type( List<Job_type> job_types )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = job_types.size();
@@ -55104,7 +55113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertTariff( List<Tariff> tariffs )
+	protected void insertTariff( List<Tariff> tariffs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tariffs.size();
@@ -55267,13 +55276,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer contract_batch; 
 		protected Short mimeType; 
 		protected String description; 
-		protected InputStream data; 
+		protected Blob data; 
 		protected Short type; 
 		protected Integer scope; 
 		protected Date attach_date; 
 	}
 	
-	private void insertContract_batch_attach( List<Contract_batch_attach> contract_batch_attachs )
+	protected void insertContract_batch_attach( List<Contract_batch_attach> contract_batch_attachs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_batch_attachs.size();
@@ -55322,7 +55331,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_batch_attach.data == null )
 				contract_batch_attachStmt.setNull(offset++, -4);
 			else
-				contract_batch_attachStmt.setBinaryStream(offset++, contract_batch_attach.data);
+				contract_batch_attachStmt.setBlob(offset++, contract_batch_attach.data);
 			if ( contract_batch_attach.type == null )
 				contract_batch_attachStmt.setNull(offset++, -6);
 			else
@@ -55396,7 +55405,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param attach_date Fecha del Archivo Adjunto
 	 * @throws SQLException
 	*/
-	protected void insertContract_batch_attach(Integer id, Integer domain, Integer contract_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	protected void insertContract_batch_attach(Integer id, Integer domain, Integer contract_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 
 		Contract_batch_attach contract_batch_attach_ = new Contract_batch_attach();
@@ -55434,7 +55443,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertContract_batch_attach(Integer domain, Integer contract_batch, Short mimeType, String description, InputStream data, Short type, Integer scope, Date attach_date)
+	public int insertContract_batch_attach(Integer domain, Integer contract_batch, Short mimeType, String description, Blob data, Short type, Integer scope, Date attach_date)
 	throws SQLException {
 		int id = nextContract_batch_attachId();
 
@@ -55477,7 +55486,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer agreement; 
 	}
 	
-	private void insertEnterprise_agreement( List<Enterprise_agreement> enterprise_agreements )
+	protected void insertEnterprise_agreement( List<Enterprise_agreement> enterprise_agreements )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = enterprise_agreements.size();
@@ -55648,7 +55657,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer geozone; 
 	}
 	
-	private void insertInvoice_address( List<Invoice_address> invoice_addresss )
+	protected void insertInvoice_address( List<Invoice_address> invoice_addresss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = invoice_addresss.size();
@@ -55873,7 +55882,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String username; 
 	}
 	
-	private void insertMessage_log( List<Message_log> message_logs )
+	protected void insertMessage_log( List<Message_log> message_logs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = message_logs.size();
@@ -56077,7 +56086,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer project; 
 	}
 	
-	private void insertCampaign_project( List<Campaign_project> campaign_projects )
+	protected void insertCampaign_project( List<Campaign_project> campaign_projects )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = campaign_projects.size();
@@ -56241,7 +56250,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertApplication( List<Application> applications )
+	protected void insertApplication( List<Application> applications )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = applications.size();
@@ -56407,7 +56416,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Double duration; 
 	}
 	
-	private void insertContract_calendar_event( List<Contract_calendar_event> contract_calendar_events )
+	protected void insertContract_calendar_event( List<Contract_calendar_event> contract_calendar_events )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_calendar_events.size();
@@ -56596,7 +56605,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean representative_labor; 
 	}
 	
-	private void insertRdir_staff( List<Rdir_staff> rdir_staffs )
+	protected void insertRdir_staff( List<Rdir_staff> rdir_staffs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = rdir_staffs.size();
@@ -56846,7 +56855,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short repeat_period; 
 	}
 	
-	private void insertTask( List<Task> tasks )
+	protected void insertTask( List<Task> tasks )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = tasks.size();
@@ -57122,7 +57131,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertAgreement( List<Agreement> agreements )
+	protected void insertAgreement( List<Agreement> agreements )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = agreements.size();
@@ -57311,7 +57320,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String external_reference; 
 	}
 	
-	private void insertOffer( List<Offer> offers )
+	protected void insertOffer( List<Offer> offers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = offers.size();
@@ -57675,7 +57684,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer feature; 
 	}
 	
-	private void insertAsset_feature( List<Asset_feature> asset_features )
+	protected void insertAsset_feature( List<Asset_feature> asset_features )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = asset_features.size();
@@ -57843,7 +57852,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertContract_embargo( List<Contract_embargo> contract_embargos )
+	protected void insertContract_embargo( List<Contract_embargo> contract_embargos )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = contract_embargos.size();
@@ -58040,7 +58049,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer balancing_account; 
 	}
 	
-	private void insertAccount_helper( List<Account_helper> account_helpers )
+	protected void insertAccount_helper( List<Account_helper> account_helpers )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = account_helpers.size();
@@ -58216,7 +58225,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertSystem_data( List<System_data> system_datas )
+	protected void insertSystem_data( List<System_data> system_datas )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = system_datas.size();
@@ -58411,7 +58420,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String name; 
 	}
 	
-	private void insertBank_concept( List<Bank_concept> bank_concepts )
+	protected void insertBank_concept( List<Bank_concept> bank_concepts )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = bank_concepts.size();
@@ -58567,7 +58576,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer weight; 
 	}
 	
-	private void insertCourse_academicskill( List<Course_academicskill> course_academicskills )
+	protected void insertCourse_academicskill( List<Course_academicskill> course_academicskills )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = course_academicskills.size();
@@ -58733,7 +58742,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer geozone; 
 	}
 	
-	private void insertEnterprise_ccc( List<Enterprise_ccc> enterprise_cccs )
+	protected void insertEnterprise_ccc( List<Enterprise_ccc> enterprise_cccs )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = enterprise_cccs.size();
@@ -58918,7 +58927,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Integer scope; 
 	}
 	
-	private void insertTarget( List<Target> targets )
+	protected void insertTarget( List<Target> targets )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = targets.size();
@@ -59053,7 +59062,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String description; 
 	}
 	
-	private void insertMk_campaign( List<Mk_campaign> mk_campaigns )
+	protected void insertMk_campaign( List<Mk_campaign> mk_campaigns )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = mk_campaigns.size();
@@ -59220,7 +59229,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short another_descendient; 
 	}
 	
-	private void insertIrpf_data_ascendants( List<Irpf_data_ascendants> irpf_data_ascendantss )
+	protected void insertIrpf_data_ascendants( List<Irpf_data_ascendants> irpf_data_ascendantss )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = irpf_data_ascendantss.size();
@@ -59421,7 +59430,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String comments; 
 	}
 	
-	private void insertBank_statement( List<Bank_statement> bank_statements )
+	protected void insertBank_statement( List<Bank_statement> bank_statements )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = bank_statements.size();
@@ -59693,7 +59702,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Boolean active; 
 	}
 	
-	private void insertHotel( List<Hotel> hotels )
+	protected void insertHotel( List<Hotel> hotels )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = hotels.size();
@@ -59890,7 +59899,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected Short priority; 
 	}
 	
-	private void insertItem_alternative( List<Item_alternative> item_alternatives )
+	protected void insertItem_alternative( List<Item_alternative> item_alternatives )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = item_alternatives.size();
@@ -60066,7 +60075,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String password; 
 	}
 	
-	private void insertUser( List<User> users )
+	protected void insertUser( List<User> users )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = users.size();
@@ -60262,7 +60271,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		protected String value; 
 	}
 	
-	private void insertApp_param( List<App_param> app_params )
+	protected void insertApp_param( List<App_param> app_params )
 	throws SQLException {
 		long start = System.currentTimeMillis();
 		int size = app_params.size();

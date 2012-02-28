@@ -1,10 +1,34 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileChannel.MapMode;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
+import javax.sql.rowset.serial.SerialBlob;
+
+import org.hibernate.cfg.annotations.ArrayBinder;
+
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
@@ -20,8 +44,10 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprban;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Rattach;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidTelephoneException;
@@ -121,6 +147,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private DefaultMysqlDB 						mysqlDB;
 	private ICalendars							calendars;
 	private IAgreements							agreements;
+	private File								logosAndSignaturesDir;
 
 	private Map<Integer, Map<String, Integer>> 	cccs;
 
@@ -136,12 +163,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<Integer, Map<Integer,Integer>> 	workplaces ;
 	private Map<Integer, Integer> 				calendarsMap;
 	
-	private Map<Integer, Map<Integer,String>> workplaces_old_agreements ;
+	private Map<Integer, Map<Integer,String>> 	workplaces_old_agreements ;
+	private Map<Integer, Map<RegistryAttachmentType, List<String>>>		images;
+	
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars, File logosAndSignaturesDir ) {
 		this.mysqlDB = mysqlDB;
 		this.agreements = agreements;
 		this.calendars = calendars;
+		this.logosAndSignaturesDir = logosAndSignaturesDir;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Enterprise>();
@@ -152,6 +182,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		this.workplaces_old_agreements = new HashMap<Integer, Map<Integer,String>>();
 		this.customerChilds = new HashMap<String,Integer>();
 		this.calendarsMap = new HashMap<Integer, Integer>();
+		this.images = new Hashtable<Integer, Map<RegistryAttachmentType,List<String>>>();
 	}
 	
 
@@ -362,6 +393,11 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	@Override
 	public void visitEmpract_emprnif(Empract empract, Emprnif emprnif) throws SQLException {
 		
+		Enterprise enterprise = enterprises.get(empract.getCodemp());
+
+		insertLogo(enterprise, empract);
+		insertSignature(enterprise, empract);
+
 		Integer cnae = null;
 		try {
 			cnae = mysqlDB.getCnae2009Id(empract.getCnae2009());
@@ -374,7 +410,6 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			return ;
 		}
 		
-		Enterprise enterprise = enterprises.get(empract.getCodemp());
 		// TODO : Cómo elegimos el tipo de actividad ?
 		Integer cnae2009 = null;
 		String cnae2009Str = empract.getCnae2009() ;
@@ -403,6 +438,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		activities.put(empract.getCdg(), activity );
 		
 		empract.visitEmprccc_empract(this);
+		
 		
 		//emprnif.visitOtrperc_emprnif(this);
 	}
@@ -621,4 +657,92 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		return DefaultMysqlDB.get( workplaces_old_agreements, oldCdgEmp, oldCdgDomicilio);
 	}
 	
+	
+	private void insertLogo(Enterprise enterprise, Empract empract) throws SQLException{
+		insertImage(enterprise, empract, RegistryAttachmentType.LOGO, "L");
+	}
+
+	private void insertSignature(Enterprise enterprise, Empract empract) throws SQLException{
+		insertImage(enterprise, empract, RegistryAttachmentType.SIGNATURE, "F");
+	}
+
+	private void insertImage(Enterprise enterprise, Empract empract, RegistryAttachmentType type, String preffix) throws SQLException{
+		
+		if ( logosAndSignaturesDir == null  || 
+				!logosAndSignaturesDir.exists()){
+			return ;
+		}
+		
+		File file = new File(logosAndSignaturesDir, 
+				String.format("%s%s.bmp", preffix, empract.getCdg()));
+		if ( !file.exists() ) {
+			return;
+		}
+		String description = null;
+		try {
+			int length = ( int ) file.length();
+			byte bytes [ ] = new byte [ length ];
+			InputStream is = new FileInputStream(file);
+			is.read(bytes);
+			
+			
+			try {
+				String md5 = hash(bytes);
+				List<String> md5s = DefaultMysqlDB.get(images, enterprise.id, type);
+				if ( md5s == null ) {
+					md5s = new ArrayList<String>();
+					md5s.add(md5);
+					DefaultMysqlDB.save(images, enterprise.id, type, md5s);
+					MysqlDB.info("empreact[{}]: new {} {}. {}", 
+							empract.getCdg(), type.toString() , md5, enterprise.id);
+
+				}
+				else { 
+					if ( !md5s.contains(md5)) {
+						description = empract.getCnae2009();
+						MysqlDB.error("empreact[{}]: has different {} {}. {}", 
+								empract.getCdg(), type.toString() , md5, enterprise.id);
+						md5s.add(md5);
+					}
+					else {
+						MysqlDB.info("empreact[{}]: {} {} already saved. {}", 
+								empract.getCdg(), type.toString(), md5, enterprise.id);
+					}
+				}
+			} catch (NoSuchAlgorithmException e1) {
+			}
+			
+			Blob blob = new SerialBlob(bytes);
+			Rattach rattach = new Rattach();
+			rattach.registry = enterprise.id;
+			rattach.domain = 1;
+			rattach.mimeType = DefaultMysqlDB.enum2short(MimeType.MIME_BMP);
+			rattach.data = blob;
+			rattach.description = description;
+			rattach.type = DefaultMysqlDB.enum2short(type);
+			rattach.scope = scopeId;
+			rattach.security_level = 0;
+			List<Rattach> rattachs = 
+					Collections.nCopies(1, rattach);
+			mysqlDB.insertRattach(rattachs);
+			is.close();
+		} catch (IOException e) {
+		} 
+	}
+	
+	private static final char[] HEXADECIMAL = { '0', '1', '2', '3',
+        '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	
+	private  String hash(byte input []) throws NoSuchAlgorithmException  {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] bytes = md.digest(input);
+        StringBuilder sb = new StringBuilder(2 * bytes.length);
+        for (int i = 0; i < bytes.length; i++) {
+            int low = (int)(bytes[i] & 0x0f);
+            int high = (int)((bytes[i] & 0xf0) >> 4);
+            sb.append(HEXADECIMAL[high]);
+            sb.append(HEXADECIMAL[low]);
+        }
+        return sb.toString();
+	}
 }

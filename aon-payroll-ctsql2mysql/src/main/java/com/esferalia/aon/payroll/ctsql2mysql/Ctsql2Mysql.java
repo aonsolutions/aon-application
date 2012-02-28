@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -60,6 +61,7 @@ public class Ctsql2Mysql
 	private boolean dryRun;
 	
 	private Date fromDate;
+	private File imagesDir;
 	
 
 	public Ctsql2Mysql(String args [] ) {
@@ -133,6 +135,13 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "trapasar los datos a partir de esta fecha M/d/Y" );
     	Option fromDateOption = OptionBuilder.create( "from" );
 
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "dir" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "ruta del directorio de imagenes ( logos y firmas )" );
+    	Option imagesDirOption = OptionBuilder.create( "images" );
+
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -142,6 +151,7 @@ public class Ctsql2Mysql
     	options.addOption(ctsqlPasswdOption);
     	options.addOption(mysqlPasswdOption);
     	options.addOption(fromDateOption);
+    	options.addOption(imagesDirOption);
     	
     	CommandLineParser parser = new PosixParser();   
 
@@ -169,6 +179,11 @@ public class Ctsql2Mysql
             if ( fromString != null ) {
 	        	fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
 	        }
+
+            String imagesDirPath = line.getOptionValue(imagesDirOption.getOpt());
+            if ( imagesDirPath != null ) {
+            	imagesDir = new File(imagesDirPath);
+            }
 
 		} catch (Exception e) {
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
@@ -203,6 +218,7 @@ public class Ctsql2Mysql
 	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
 	        
 	        mysqlWriter.setFromDate(fromDate);
+	        mysqlWriter.setImagesDir(imagesDir);
 	        
 	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
 	        mysqlWriter.writeAll(ctsqlReader);
