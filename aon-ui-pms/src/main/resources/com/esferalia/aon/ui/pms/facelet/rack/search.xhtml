@@ -9,13 +9,27 @@
 	<ui:define name="content">
 		<aon:form id="rackSearch">
 
-			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:decorate 
+				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_rack_module}" />
 				<ui:param name="controller" value="#{rack}" />
 				<ui:param name="skipClearButton" value="#{true}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipBackButton" value="#{true}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:div styleClass="aon-spin-control">
+						<aon:outputText value="#{bundle.aon_results}" styleClass="aon-margin-left" />
+						<aon:selectOneMenu 
+							styleClass="aon-margin-left aon-margin-right"
+							value="#{rack.pageLimit}">
+							<f:selectItem itemLabel="20" itemValue="20" />
+							<f:selectItem itemLabel="50" itemValue="50" />
+							<f:selectItem itemLabel="100" itemValue="100" />
+							<f:selectItem itemLabel="#{bundle.aon_all}" itemValue="-1" />
+						</aon:selectOneMenu>
+					</aon:div>
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">

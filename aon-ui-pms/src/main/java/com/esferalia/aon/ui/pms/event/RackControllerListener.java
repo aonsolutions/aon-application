@@ -21,12 +21,11 @@ import com.esferalia.aon.ui.pms.controller.RackController;
 public class RackControllerListener extends ControllerAdapter {
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterModelSearched(ControllerEvent event) throws ControllerListenerException {
 		RackController controller = (RackController)event.getController();
 		try {
 			List<Integer> rooms = new LinkedList<Integer>();
-			for (ITransferObject ito : (List<ITransferObject>)controller.getModel().getWrappedData()) {
+			for (ITransferObject ito : controller.getManagerBean().getList(controller.getCriteria())) {
 				Room room = (Room)ito;
 				rooms.add(room.getId());
 			}

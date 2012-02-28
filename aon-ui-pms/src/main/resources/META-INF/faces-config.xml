@@ -503,10 +503,6 @@
 			<value>rack</value>
 		</managed-property>				
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Room_hotel_id,Room_asset_name</value>
 		</managed-property>		

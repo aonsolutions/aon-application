@@ -26,15 +26,31 @@
 						<aon:selectOneMenu 
 							styleClass="aon-margin-left aon-margin-right"
 							value="#{rack.filterParams.startDateIncrease}">
-							<f:selectItem itemLabel="#{bundle.aon_day}" itemValue="0" />
-							<f:selectItem itemLabel="#{bundle.aon_week}" itemValue="1" />
 							<f:selectItem itemLabel="#{bundle.aon_month}" itemValue="2" />
+							<f:selectItem itemLabel="#{bundle.aon_week}" itemValue="1" />
+							<f:selectItem itemLabel="#{bundle.aon_day}" itemValue="0" />
 						</aon:selectOneMenu>
 						<aon:commandButton id="nextView"
 							styleClass="aon-commandButton aon-text-center" style="padding-left:0.5em !important;"
 							value="#{bundle.aon_next}" ignoreDupResponses="true"
 							reRender="aonContent"
 							actionListener="#{rack.onIncreaseStartDate}" />
+					</aon:div>
+					<aon:div styleClass="aon-spin-control">
+						<aon:outputText value="#{bundle.aon_results}" styleClass="aon-margin-left" />
+						<aon:selectOneMenu 
+							styleClass="aon-margin-left aon-margin-right"
+							value="#{rack.pageLimit}">
+							<f:selectItem itemLabel="20" itemValue="20" />
+							<f:selectItem itemLabel="50" itemValue="50" />
+							<f:selectItem itemLabel="100" itemValue="100" />
+							<f:selectItem itemLabel="#{bundle.aon_all}" itemValue="-1" />
+						</aon:selectOneMenu>
+						<aon:commandButton id="refreshView"
+							styleClass="aon-commandButton aon-text-center" style="padding-left:0.5em !important;"
+							value="#{pmsBundle.pms_to_refresh}" ignoreDupResponses="true"
+							reRender="aonContent"
+							actionListener="#{rack.onSearch}" />
 					</aon:div>
 				</ui:define>
 			</ui:decorate>
