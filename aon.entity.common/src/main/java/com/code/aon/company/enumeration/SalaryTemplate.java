@@ -11,7 +11,7 @@ public enum SalaryTemplate implements IResourceable {
 	
 	,TEMPLATE1("salaryTemplate1")
 	
-//	,TEMPLATE2("salaryTemplate2")
+	,TEMPLATE2("salaryTemplate2")
 	
 	;      
 	
