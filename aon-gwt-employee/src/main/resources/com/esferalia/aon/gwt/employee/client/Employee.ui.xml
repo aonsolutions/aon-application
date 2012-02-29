@@ -2,8 +2,8 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employee='urn:import:com.esferalia.aon.gwt.employee.client'>
 
 	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
-	<ui:data field='notesgroupIe6Data' src='notesgroup_ie6.gif' />
 	<ui:data field='employeesgroupIe6Data' src='employeesgroup_ie6.gif' />
+	<ui:data field='salariesgroupIe6Data' src='salariesgroup_ie6.gif' />
 	<ui:data field='documentsgroupIe6Data' src='documentsgroup_ie6.gif' />
 
 	<ui:style>
@@ -15,17 +15,20 @@
 
 	 @if user.agent ie6 {
 	   @url employeesgroupIe6 employeesgroupIe6Data;
+	   @url salariesgroupIe6 salariesgroupIe6Data;
+	   @url documentsgroupIe6 documentsgroupIe6Data;
 	
 	
-	   .notesIcon {
-	     background-image: notesgroupIe6;
+
+	   .employeesIcon {
+	     background-image: employeesgroupIe6;
 	     width: 31px;
 	     height: 22px;
 	     float: left;
 	   }
 
-	   .employeesIcon {
-	     background-image: employeesgroupIe6;
+	   .salariesIcon {
+	     background-image: salariesgroupIe6;
 	     width: 31px;
 	     height: 22px;
 	     float: left;
@@ -40,13 +43,14 @@
 
 	 } @else {
 	
-	@sprite .notesIcon {
-	     gwt-image: 'notesgroup';
-	     float: left;
-	   }
 
 	@sprite .employeesIcon {
 	     gwt-image: 'employeesgroup';
+	     float: left;
+	   }
+
+	@sprite .salariesIcon {
+	     gwt-image: 'salariesgroup';
 	     float: left;
 	   }
 
@@ -59,8 +63,8 @@
 	 
 	</ui:style>
 
-	<ui:image field='notesgroup' src='notesgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
+	<ui:image field='salariesgroup' src='salariesgroup.png' />
 	<ui:image field='documentsgroup' src='documentsgroup.png' />
 	<ui:image field='gradient' src='gradient_bg_dark.png'
 		repeatStyle='Horizontal' />
@@ -77,7 +81,7 @@
 
 					<g:StackLayoutPanel unit='EM'>
 
-						<g:stack>
+						<g:stack ui:field="employeesStack" >
 							<g:header size='3'>									
 								<div class='{style.stackHeader}'>
 									<div class='{style.employeesIcon}' />
@@ -88,17 +92,17 @@
 								<employee:Employees ui:field='employees' />
 							</g:ScrollPanel>
 						</g:stack>
-						<g:stack>
+						<g:stack ui:field="salariesStack" >
 							<g:header size='3'>
 								<div class='{style.stackHeader}'>
-									<div class='{style.notesIcon}' />
-									NOTAS
+									<div class='{style.salariesIcon}' />
+									NOMINAS
 								</div>
 							</g:header>
 							<g:ScrollPanel>
 							</g:ScrollPanel>
 						</g:stack>
-						<g:stack>
+						<g:stack ui:field="documentsStack" >
 							<g:header size='3'>
 								<div class='{style.stackHeader}'>
 									<div class='{style.documentsIcon}' />

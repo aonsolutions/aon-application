@@ -139,8 +139,6 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 			stmt = connection.prepareStatement("SELECT *" 
 					+ " FROM " + SQLConstants.RATTACH + " WHERE "
 					+ RattachColumns.ID + "= ? ");
-
-
 			stmt.setInt(1, id);
 			
 			rs = stmt.executeQuery();

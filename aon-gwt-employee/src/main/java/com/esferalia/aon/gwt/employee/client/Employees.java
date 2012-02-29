@@ -175,7 +175,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 									salaries.size()));
 						}
 						IReportsModel<IReport> reports = new SalaryReportsModel(
-								salaries);
+								salaries, employeesService);
 						salariesItem.setUserObject(reports);
 					}
 				});
@@ -204,57 +204,6 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			int childs) {
 		return AbstractImagePrototype.create(imageProto).getHTML() + " "
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
-	}
-
-	private class SalaryReportsModel extends AbstractReportsModel<IReport>
-			implements IReport {
-
-		private List<Salary> salaries;
-
-		public SalaryReportsModel(List<Salary> salaries) {
-			this.salaries = salaries;
-			first();
-		}
-
-		@Override
-		public int size() {
-			return salaries.size();
-		}
-
-		@Override
-		public IReport current() {
-			return this;
-		}
-		
-		@Override
-		public void print() {
-			download();
-		}
-		
-		@Override
-		public void download() {
-			download("pdf");
-		}
-		
-		@Override
-		public void download(String format) {
-			Salary salary = salaries.get(currentIndex());
-			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + "." + format );
-			Window.open(printURL, "_blank", null);
-		}
-		
-		@Override
-		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-			Salary salary = salaries.get(currentIndex());
-			employeesService.getSalaryReceiptHTML(salary, zoom, callback);
-		}
-		
-		@Override
-		public String[] getSupportedFormats() {
-			// TODO Auto-generated method stub
-			return new String [] {};
-		}
-		
 	}
 
 	private class CostReportsModel extends AbstractReportsModel<IReport>

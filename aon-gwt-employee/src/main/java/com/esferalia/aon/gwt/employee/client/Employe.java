@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Employe implements EntryPoint, Salaries.Handler {
+public class Employe implements EntryPoint{
 
 	interface GWTResources extends ClientBundle {
 		@NotStrict
@@ -64,16 +64,11 @@ public class Employe implements EntryPoint, Salaries.Handler {
 		// Create a remote service proxy to talk to the server-side Employees
 		// service.
 		employeesService = GWT.create(EmployeesService.class);
-
-		salaries.addHandler(this);
-	}
-
-	@Override
-	public void onSalarySelected(Salary salary) {
 		
-		employeDetail.getSalaryReceipt().setReports(new SalaryReportsModel(salary));
+		salaries.setEmployeeDetail(employeDetail);
 
 	}
+
 
 	private class SalaryReportsModel extends AbstractReportsModel<IReport>
 			implements IReport {

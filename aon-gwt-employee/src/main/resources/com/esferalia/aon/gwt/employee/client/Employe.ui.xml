@@ -2,7 +2,6 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:employe='urn:import:com.esferalia.aon.gwt.employee.client'>
 
 	<!-- GIFs needed for ie6 work arounds. Can't use <ui:image>, it makes PNGs -->
-	<ui:data field='notesgroupIe6Data' src='notesgroup_ie6.gif' />
 	<ui:data field='salariesgroupIe6Data' src='salariesgroup_ie6.gif' />
 	<ui:data field='documentsgroupIe6Data' src='documentsgroup_ie6.gif' />
 
@@ -12,17 +11,9 @@
 	  
 	}
 	 @if user.agent ie6 {
-	   @url notesgroupIe6 notesgroupIe6Data;
-	   @url documentsgroupIe6 notesgroupIe6Data;
 	   @url salariesgroupIe6 salariesgroupIe6Data;
+	   @url documentsgroupIe6 documentsgroupIe6Data;
 	
-	   .notesIcon {
-	     background-image: notesgroupIe6;
-	     width: 31px;
-	     height: 22px;
-	     float: left;
-	   }
-
 	   .salariesIcon {
 	     background-image: salariesgroupIe6;
 	     width: 31px;
@@ -39,10 +30,6 @@
 
 	 } @else {
 	
-	@sprite .notesIcon {
-	     gwt-image: 'notesgroup';
-	     float: left;
-	   }
 
 	@sprite .salariesIcon {
 	     gwt-image: 'salariesgroup';
@@ -57,7 +44,6 @@
 	 }
 	</ui:style>
 
-	<ui:image field='notesgroup' src='notesgroup.png' />
 	<ui:image field='salariesgroup' src='salariesgroup.png' />
 	<ui:image field='documentsgroup' src='documentsgroup.png' />
 
@@ -77,7 +63,7 @@
 							<g:header size='3'>
 								<div class='{style.stackHeader}'>
 									<div class='{style.salariesIcon}' />
-									Nominas
+									NOMINAS
 								</div>
 							</g:header>
 							<g:ScrollPanel>
@@ -87,18 +73,8 @@
 						<g:stack>
 							<g:header size='3'>
 								<div class='{style.stackHeader}'>
-									<div class='{style.notesIcon}' />
-									Notas
-								</div>
-							</g:header>
-							<g:ScrollPanel>
-							</g:ScrollPanel>
-						</g:stack>
-						<g:stack>
-							<g:header size='3'>
-								<div class='{style.stackHeader}'>
 									<div class='{style.documentsIcon}' />
-									Documentos
+									DOCUMENTS
 								</div>
 							</g:header>
 							<g:ScrollPanel>

@@ -16,11 +16,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.faces.FactoryFinder;
 import javax.faces.component.UIViewRoot;
@@ -103,13 +106,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			else {
 				Integer personId = getPersonID();
 				Integer enterpriseId = getEnterpriseID();
-				List<Integer> contractIds = 
-						getContractIDs(connection, enterpriseId, personId);
-				List<Salary> salaries = new LinkedList<Salary>();
-				for (Integer contractId : contractIds) {
-					salaries.addAll(getSalaries(connection, contractId));
-				}
-				return salaries;
+				Date maxChargeDate = Calendar.getInstance().getTime();
+				return getSalaries(connection, enterpriseId, personId, maxChargeDate);
 			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
@@ -127,7 +125,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
 			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 			
-			return  getSalaryReceiptHTML(salary, parameters);
+			
+			Map<Object, Object> images = new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images );
+			String imagesUri = String.format( "jasper_image/salary/%d/", salary.getId());  
+			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri );
+
+			String html  = getSalaryReceiptHTML(salary, parameters);
+			
+			for (Entry<Object, Object> image : images.entrySet()) {
+				String name = String.format("%s%s", imagesUri, image.getKey());
+				JasperImageServlet.saveImage(name,  ( byte [] )image.getValue());
+			}
+			
+			return html;
 	}
 
 	public String getSalaryReceiptHTML(Salary salary, Map<Object, Object> parameters )
@@ -513,31 +524,49 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	
-	private static List<Integer> getContractIDs(Connection connection, Integer enterpriseID, Integer personId)
-		throws SQLException {
+	private static List<Salary> getSalaries(Connection connection, Integer enterpriseID, Integer personId, Date toDate)
+			throws SQLException {
+
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + 
-					" FROM " + CONTRACT +
-					", " + WORKPLACE +
-					" WHERE " + CONTRACT + "." +  ContractColumns.WORKPLACE + " = " + WORKPLACE + "." + WorkplaceColumns.ID + 
-					" AND " + CONTRACT + "." + ContractColumns.PERSON + " = ? "+
-					" AND " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " = ? ";
+			
+			
+			String sql = "SELECT " + SALARY + ".* "  
+					+" FROM " + SALARY 
+					+", " + CONTRACT 
+					+", " + WORKPLACE 
+					+" WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = " + CONTRACT + "." +  ContractColumns.ID
+					+" AND " + CONTRACT + "." +  ContractColumns.WORKPLACE + " = " + WORKPLACE + "." + WorkplaceColumns.ID  
+					+" AND " + CONTRACT + "." + ContractColumns.PERSON + " = ? "
+					+" AND " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " = ? "
+					+" AND " + SALARY + "." + SalaryColumns.CHARGE_DATE + " <= ? "
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC" ;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, personId);
 			stmt.setInt(2, enterpriseID);
+			stmt.setDate(3, new java.sql.Date(toDate.getTime()));
 			rs = stmt.executeQuery();
-			
-			List<Integer> ids = new LinkedList<Integer>();
-			
-			while ( rs.next() ) {
-				ids.add(rs.getInt(tableCol(CONTRACT, ContractColumns.ID)));
-			}
-			return ids;
 
+
+			List<Salary> salaries = new LinkedList<Salary>();
+			while (rs.next()) {
+				Salary salary = new Salary();
+				salary.setId(rs.getInt(SalaryColumns.ID));
+				
+				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
+				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
+				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
+				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
+				
+				salary.setType(getSalaryType((Integer) rs.getObject(SalaryColumns.TYPE)));
+				
+				salaries.add(salary);
+			}
+
+			return salaries;
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -546,9 +575,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				rs.close();
 			}
 		}
-
-		
 	}
+
 
 
 	private static void groups(ResultSet rs, GroupHandler... handlers)

@@ -87,6 +87,14 @@
     <servlet-name>openDocumentConverter</servlet-name>
     <url-pattern>/document/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>jasperImageServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.JasperImageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jasperImageServlet</servlet-name>
+    <url-pattern>/jasper_image/*</url-pattern>
+  </servlet-mapping>
   <context-param>
     <description>
 			Improving render phase performance. You should increase

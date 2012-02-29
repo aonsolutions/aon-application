@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.employee.server;
 
+
+import static com.esferalia.aon.payroll.sql.SQLConstants.APP_PARAM;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE_DATA;
 
 import java.sql.Connection;
@@ -23,6 +25,8 @@ import com.code.aon.company.EnterpriseUser;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.esferalia.aon.gwt.employee.shared.Salary;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AppParamColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.web.employee.controller.ManagerController;
@@ -108,11 +112,13 @@ class AonServletUtils {
 			rs = stmt.executeQuery();
 			
 			if ( !rs.next() ) {
-				return IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+				return getDefaultSalaryReport(connection, enterpriseID );
 			}
 	
-			return rs.getString(EnterpriseDataColumns.EXPRESSION);
-	
+			String expression = rs.getString(EnterpriseDataColumns.EXPRESSION);
+			
+			return expression != null ? expression : getDefaultSalaryReport(connection, enterpriseID );
+			
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -124,5 +130,39 @@ class AonServletUtils {
 	
 		
 	}
+
+	protected static String getDefaultSalaryReport(Connection connection, Integer enterpriseID )
+			throws SQLException {
+			ResultSet rs = null;
+			PreparedStatement stmt = null;
+		
+			try {
+				String sql = "SELECT * "  
+						+ " FROM " +  APP_PARAM
+						+ " WHERE " + AppParamColumns.NAME + " = ? ";
+		
+				stmt = connection.prepareStatement(sql);
+				stmt.setString(1, ICompanyConstants.REPORT_SALARY_PARAM);
+				rs = stmt.executeQuery();
+				
+				if ( !rs.next() ) {
+					return IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+				}
+		
+				String value = rs.getString(AppParamColumns.VALUE);
+				
+				return value != null ? value : IPayrollConstants.DEFAULT_SALARY_TEMPLATE;
+		
+			} finally {
+				if (rs != null) {
+					rs.close();
+				}
+				if (stmt != null) {
+					rs.close();
+				}
+			}
+		
+			
+		}
 
 }
