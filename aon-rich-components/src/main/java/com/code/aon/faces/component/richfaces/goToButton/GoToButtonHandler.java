@@ -8,6 +8,7 @@ import javax.el.ValueExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,8 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		TagAttribute backActionTag = getAttribute(BACK_ACTION);
 		if ( backActionTag != null ) {
 			backAction = backActionTag.getValue(ctx);
-		} else {
+		}
+		if ( StringUtils.isEmpty(backAction) ) {
 			backAction = AonUtil.getConfigurationController().getCurrentAction();
 		}
 		gtal.setBackAction(backAction);

@@ -20,7 +20,7 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
 					<c:if test="#{(communicationCenter.actionSelected) and (communicationCenter.pendingTargets &gt; 0)}" >
-						<c:if test="#{aonConfiguration.bean.campaign.showPhoneActionMediaType}" >
+						<c:if test="#{aonConfiguration.bean.marketingCampaign.showPhoneActionMediaType}" >
 							<c:if test="#{communicationCenter.action.mediaType  == 'PHONE'}" >
 								<aon:commandButton id="accept" value="#{marketingBundle.marketing_survey}"
 									action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
@@ -106,7 +106,7 @@
 							</ui:include>								
 						</c:if>					
 					
-						<c:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.campaign.showSurvey}" >
+						<c:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.marketingCampaign.showSurvey}" >
 							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
 								<ui:param name="lookupDisabled" value="#{true}" />
@@ -123,6 +123,7 @@
 									<ui:param name="lookupTo" value="#{communicationCenter.target}" />
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupDisabled" value="#{true}" />
+									<ui:param name="goToBackAction" value="communicationCenter" />
 									<ui:param name="goToBackActionListener"
 										value="communicationCenter.onTargetBackActionListener" />									
 									<ui:define name="afterLookupContent2">
@@ -160,7 +161,7 @@
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
-		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
+		<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
