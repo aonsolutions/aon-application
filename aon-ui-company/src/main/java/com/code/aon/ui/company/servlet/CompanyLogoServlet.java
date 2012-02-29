@@ -1,5 +1,7 @@
 package com.code.aon.ui.company.servlet;
 
+import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +75,10 @@ public class CompanyLogoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
 		OutputStream out = null;
 		try {
-			Properties dbProperties = DataSourceUtil.getDBProperties(req);
+			String server = req.getServerName();
+			String context = req.getContextPath();
+			boolean skipLdap = BooleanUtils.toBoolean(getServletConfig().getInitParameter(SKIP_LDAP)); 
+			Properties dbProperties = DataSourceUtil.getDBProperties(server, context, skipLdap);
 			if (! dbProperties.isEmpty() ) {
 				CompanyDisplay companyDisplay = new CompanyDisplay(dbProperties);
 				if ( companyDisplay.isLogoDefined() ) {

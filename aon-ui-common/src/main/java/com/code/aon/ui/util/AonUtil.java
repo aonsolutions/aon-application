@@ -17,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -224,6 +225,17 @@ public class AonUtil {
 		return ec.getRequestContextPath();
 	}
 
+	/**
+	 * Gets the server name.
+	 * 
+	 * @return the server name
+	 */
+	public static String getServerName() {
+    	ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+    	HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+		return request.getServerName();
+	}
+	
 	/**
 	 * Adds <code>message</code> to the messages collection
 	 * 

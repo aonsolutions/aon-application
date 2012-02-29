@@ -875,7 +875,7 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>campaignAction_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/campaign/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingCampaign/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>campaignActionTarget_search</from-outcome>
