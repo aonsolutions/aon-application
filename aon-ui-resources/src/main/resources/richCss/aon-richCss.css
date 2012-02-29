@@ -107,6 +107,14 @@ color:#000;
 
 .aon-noborder{border:0 !important;}
 .aon-border{border:#ccc 1px solid;}
+.aon-border-left{border-left:#ccc 1px solid;}
+.aon-border-right{border-right:#ccc 1px solid;}
+.aon-border-top{border-top:#ccc 1px solid;}
+.aon-border-bottom{border-bottom:#ccc 1px solid;}
+.aon-border-left-black{border-left:#000 2px solid;}
+.aon-border-right-black{border-right:#000 2px solid;}
+.aon-border-top-black{border-top:#000 2px solid;}
+.aon-border-bottom-black{border-bottom:#000 2px solid;}
 
 .aon-input-required {
 	color:#2152A5;
