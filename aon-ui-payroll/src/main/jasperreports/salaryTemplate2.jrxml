@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="232"/>
+	<property name="ireport.y" value="184"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
-	<style name="label" vAlign="Middle" fontSize="7"/>
+	<style name="label" vAlign="Middle" fontSize="8"/>
 	<style name="title" style="label" hAlign="Center" isBold="true"/>
 	<style name="head" style="title" hAlign="Left" fontSize="9"/>
 	<style name="amount" style="label" hAlign="Right"/>
@@ -49,7 +49,7 @@
 	<style name="base_box" style="label_box" hAlign="Right">
 		<box rightPadding="2"/>
 	</style>
-	<style name="title_CH" style="title" hAlign="Center" vAlign="Middle" isBold="false">
+	<style name="title_CH" style="title" hAlign="Center" vAlign="Middle" fontSize="6" isBold="false">
 		<box>
 			<pen lineWidth="0.5"/>
 			<topPen lineWidth="0.5"/>
@@ -114,7 +114,8 @@
 	<variable name="impTotal" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
-	<variable name="address" class="com.code.aon.registry.RegistryAddress">
+	<variable name="address" class="com.code.aon.registry.RegistryAddress" resetType="Page">
+		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getPerson().getRegistry().getAddresses(), "addressType", AddressType.MAIN)]]></initialValueExpression>
 	</variable>
 	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
@@ -144,7 +145,7 @@
 						<textElement/>
 						<textFieldExpression><![CDATA["C"+ $F{salary}.getContract().getWorkPlace().getEnterprise().getId()
     + "E" + $F{salary}.getContract().getWorkPlace().getEnterprise().getId()
-    + "A" + $F{salary}.getContract().getActivity().getId()
+    + ( $F{salary}.getContract().getActivity().getId() != null ? "A" + $F{salary}.getContract().getActivity().getId() : "" )
     + "D" + $F{salary}.getContract().getWorkPlace().getAddress().getId()]]></textFieldExpression>
 					</textField>
 					<textField>
@@ -312,7 +313,7 @@
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format("{0,date,dd/MM/yyyy}", $F{salary}.getIssueDate())]]></textFieldExpression>
 				</textField>
 				<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
-					<reportElement x="11" y="23" width="239" height="43">
+					<reportElement x="9" y="15" width="239" height="51">
 						<printWhenExpression><![CDATA[$V{logo} != null]]></printWhenExpression>
 					</reportElement>
 					<graphicElement fill="Solid"/>
@@ -401,59 +402,59 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="85">
+						<jr:column width="92">
 							<jr:columnHeader height="12">
 								<staticText>
-									<reportElement style="title_CH" x="2" y="0" width="83" height="12"/>
+									<reportElement style="title_CH" x="2" y="0" width="90" height="12"/>
 									<textElement/>
 									<text><![CDATA[TIPO]]></text>
 								</staticText>
 							</jr:columnHeader>
 							<jr:detailCell height="12">
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[0].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Salario Base]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[1].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Personales]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[2].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Puesto Trabajo]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[3].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Cantidad/Calidad]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[4].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Devengos Sup. Mes]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[7].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
 									<text><![CDATA[Indemnizaciones]]></text>
 								</staticText>
 								<staticText>
-									<reportElement style="text_TD" x="4" y="0" width="81" height="12">
+									<reportElement style="text_TD" x="4" y="0" width="88" height="12">
 										<printWhenExpression><![CDATA[$F{paymentConcept} != null && $F{paymentConcept}.matches("P[^0,1,2,3,4,7].*")]]></printWhenExpression>
 									</reportElement>
 									<textElement/>
@@ -461,10 +462,10 @@
 								</staticText>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="49">
+						<jr:column width="42">
 							<jr:columnHeader height="12">
 								<staticText>
-									<reportElement style="title_CH" x="2" y="0" width="47" height="12"/>
+									<reportElement style="title_CH" x="2" y="0" width="40" height="12"/>
 									<textElement/>
 									<text><![CDATA[UNIDADES]]></text>
 								</staticText>
@@ -620,27 +621,27 @@
 					</textField>
 				</frame>
 				<staticText>
-					<reportElement style="label_box" x="272" y="18" width="29" height="14"/>
+					<reportElement style="label_box" x="288" y="18" width="29" height="14"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Grupo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label_box" x="301" y="18" width="65" height="14"/>
+					<reportElement style="label_box" x="317" y="18" width="65" height="14"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Bases]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label_box" x="366" y="18" width="36" height="14"/>
+					<reportElement style="label_box" x="382" y="18" width="36" height="14"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[%]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label_box" x="402" y="18" width="65" height="14"/>
+					<reportElement style="label_box" x="418" y="18" width="65" height="14"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Aportación]]></text>
 				</staticText>
 				<frame>
-					<reportElement style="label_box" x="272" y="32" width="29" height="14"/>
+					<reportElement style="label_box" x="288" y="32" width="29" height="14"/>
 					<textField>
 						<reportElement style="label" x="0" y="0" width="29" height="14"/>
 						<textElement textAlignment="Center"/>
@@ -648,7 +649,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="301" y="32" width="65" height="14"/>
+					<reportElement style="label_box" x="317" y="32" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$F{salary}.getCommonBase() != 0.00]]></printWhenExpression>
@@ -658,7 +659,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="402" y="32" width="65" height="14"/>
+					<reportElement style="label_box" x="418" y="32" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$V{importeCg} != 0.00]]></printWhenExpression>
@@ -668,7 +669,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="366" y="32" width="36" height="14"/>
+					<reportElement style="label_box" x="382" y="32" width="36" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="34" height="14">
 							<printWhenExpression><![CDATA[$V{prcCg} != 0.00]]></printWhenExpression>
@@ -678,7 +679,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="402" y="46" width="65" height="14"/>
+					<reportElement style="label_box" x="418" y="46" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$V{importeAcc} != 0.00]]></printWhenExpression>
@@ -688,7 +689,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="301" y="46" width="65" height="14"/>
+					<reportElement style="label_box" x="317" y="46" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$F{salary}.getProfessionalBase() != 0.00]]></printWhenExpression>
@@ -698,7 +699,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="366" y="46" width="36" height="14"/>
+					<reportElement style="label_box" x="382" y="46" width="36" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="34" height="14">
 							<printWhenExpression><![CDATA[$V{prcAcc} != 0.00]]></printWhenExpression>
@@ -708,7 +709,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="402" y="60" width="65" height="14"/>
+					<reportElement style="label_box" x="418" y="60" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$V{importeHex} != 0.00]]></printWhenExpression>
@@ -718,7 +719,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="366" y="60" width="36" height="14"/>
+					<reportElement style="label_box" x="382" y="60" width="36" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="34" height="14">
 							<printWhenExpression><![CDATA[$V{prcHex} != 0.00]]></printWhenExpression>
@@ -728,7 +729,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="301" y="60" width="65" height="14"/>
+					<reportElement style="label_box" x="317" y="60" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$F{salary}.getOvertimeBase() != 0.00]]></printWhenExpression>
@@ -738,7 +739,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="402" y="74" width="65" height="14"/>
+					<reportElement style="label_box" x="418" y="74" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$V{importeHexNo} != 0.00]]></printWhenExpression>
@@ -748,7 +749,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="366" y="74" width="36" height="14"/>
+					<reportElement style="label_box" x="382" y="74" width="36" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="34" height="14">
 							<printWhenExpression><![CDATA[$V{prcHexNo} != 0.00]]></printWhenExpression>
@@ -758,7 +759,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement style="label_box" x="301" y="74" width="65" height="14"/>
+					<reportElement style="label_box" x="317" y="74" width="65" height="14"/>
 					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$F{salary}.getNonEstructuralOvertimeBase() != 0.00]]></printWhenExpression>
@@ -768,22 +769,22 @@
 					</textField>
 				</frame>
 				<staticText>
-					<reportElement style="label" x="186" y="32" width="85" height="14"/>
+					<reportElement style="label" x="186" y="32" width="102" height="14"/>
 					<textElement/>
 					<text><![CDATA[Contingencias Grales.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label" x="186" y="46" width="114" height="14"/>
+					<reportElement style="label" x="186" y="46" width="131" height="14"/>
 					<textElement/>
 					<text><![CDATA[Conceptos recaudación conj.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label" x="186" y="60" width="114" height="14"/>
+					<reportElement style="label" x="186" y="60" width="131" height="14"/>
 					<textElement/>
 					<text><![CDATA[Horas extra por fuerza mayor]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label" x="186" y="74" width="115" height="14"/>
+					<reportElement style="label" x="186" y="74" width="131" height="14"/>
 					<textElement/>
 					<text><![CDATA[Otras horas extra]]></text>
 				</staticText>
@@ -883,8 +884,8 @@
 					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getEmployeeDocument()]]></textFieldExpression>
 				</textField>
-				<image scaleImage="RetainShape" isUsingCache="false">
-					<reportElement x="12" y="17" width="239" height="43">
+				<image scaleImage="RetainShape" hAlign="Center" isUsingCache="false">
+					<reportElement x="6" y="17" width="150" height="43">
 						<printWhenExpression><![CDATA[$V{signature} != null]]></printWhenExpression>
 					</reportElement>
 					<graphicElement fill="Solid"/>
