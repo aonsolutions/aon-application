@@ -419,6 +419,16 @@ public class ProjectReservationController extends BasicController implements IPm
 		return reservation.isBlocked();
 	}
 
+	public boolean isCancelled() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return reservation.isCancelled();
+	}
+
+	public boolean isInvoiced() {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return reservation.isInvoiced();
+	}
+
 	public void onBlock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.BLOCKED);
@@ -429,11 +439,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.ACTIVE);
 		accept(event);
-	}
-
-	public boolean isCancelled() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isCancelled();
 	}
 
 	public boolean isCancellable() throws ManagerBeanException {
@@ -649,9 +654,12 @@ public class ProjectReservationController extends BasicController implements IPm
 			try {
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, false);
-	
-				reservation.setStatus(ReservationStatus.INVOICED);
-				accept(event);
+
+				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
+				if (savedReservation.getStatus() != reservation.getStatus()) {
+					reservation.setStatus(savedReservation.getStatus());
+					accept(event);
+				}
 			} catch (ManagerBeanException ex) {
 				AonUtil.addErrorMessage(ex.getMessage());
 				throw new AbortProcessingException(ex.getMessage(), ex);
@@ -719,12 +727,20 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onRectify(ActionEvent event) {
 		setInvoiceModel(null);
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
 			ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 			reservationInvoicing.rectify(getInvoiceToRectificate(), getReservationInvoiceTo());
 
-			IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
-			reservationServiceController.onSearch(null);
+			ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
+			if (savedReservation.getStatus() != reservation.getStatus()) {
+				reservation.setStatus(savedReservation.getStatus());
+				accept(event);
+			}
+			if (getInvoiceToRectificate().isService()) {
+				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
+				reservationServiceController.onSearch(null);
+			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);

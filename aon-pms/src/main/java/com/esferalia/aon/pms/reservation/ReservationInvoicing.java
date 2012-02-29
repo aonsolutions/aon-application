@@ -201,7 +201,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					invoiceDetail.setVatQuota(0);
 				}
 			}
-			invoiceDetail.setUpdateEnabled(line == reservationServiceDetailList.size());
+			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
 			invoiceDetailBean.insert(invoiceDetail);
 		}
 	}
@@ -237,7 +237,7 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 				invoiceDetail.setTaxableBase(strategy.getBasePrice(invoiceDetail));
 				invoiceDetail.setWorkPlace(reservationInvoiceTo.getHotel().getWorkPlace());
-				invoiceDetail.setUpdateEnabled(service.equals(reservationInvoiceTo.getLastService()));
+				invoiceDetail.getInvoice().setUpdateEnabled(service.equals(reservationInvoiceTo.getLastService()));
 				invoiceDetailBean.insert(invoiceDetail);
 
 				if (reservation != null) {
