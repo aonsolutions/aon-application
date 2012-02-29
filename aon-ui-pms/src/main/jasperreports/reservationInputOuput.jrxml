@@ -404,7 +404,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservation}.isGuestHolder()?$R{report_direct_client}:$F{projectReservation}.getAgency().getRegistry().getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{projectReservation}.getAgency()!=null?$F{projectReservation}.getAgency().getRegistry().getFullName():
+($F{projectReservation}.getCompany()!=null?$F{projectReservation}.getCompany().getRegistry().getFullName():
+$R{report_direct_client})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="446" y="0" width="40" height="14"/>

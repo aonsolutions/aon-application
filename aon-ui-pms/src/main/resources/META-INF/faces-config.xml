@@ -661,7 +661,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>PosShift_startTime</value>
+			<value>PosShift_startTime desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

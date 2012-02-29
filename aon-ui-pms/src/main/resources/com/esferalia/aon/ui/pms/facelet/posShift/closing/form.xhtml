@@ -16,6 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posCashCount_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{pmsBundle.pms_close_pos}"
+						disabled="#{posShiftCount.model!=null and posShiftCount.model.rowCount==0}"
 						rendered="#{posClosing.posShift.endTime==null}"
 						reRender="aonContent"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -26,84 +27,85 @@
 
 			<aon:div styleClass="aon-scroll-area" id="posClosingPanel">
 
-				<aon:panelGrid columns="2" styleClass="aon-width-400" >
-				
-					<c:if test="#{!(posClosing.posShift!=null and posShiftCount.model.rowCount>0)}">
-						<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
-						<aon:selectOneMenu
-							disabled="#{posClosing.posShift!=null and posShiftCount.model!=null and posShiftCount.model.rowCount>0}" 
-							value="#{posClosing.hotel}" >
-							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
-								actionListener="#{posClosing.onHotelChange}" />
-							<a4j:support event="oninputchanged" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
-								actionListener="#{posClosing.onHotelChange}" />
-						</aon:selectOneMenu>
+				<aon:panelGrid columns="2" columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder,  aon-panelGrid-even aon-vertical-align-top aon-noborder">
+					<aon:panelGrid columns="2" styleClass="aon-width-400" >
 					
-						<aon:outputLabel for="PosClosing_posShift" value="#{pmsBundle.pms_pos}" />
-						<aon:selectOneMenu id="PosClosing_posShift" required="true"
-							disabled="#{posClosing.posShift!=null and posShiftCount.model!=null and posShiftCount.model.rowCount>0}" 
-							value="#{posClosing.posShift}" >
-							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-							<f:selectItems value="#{posClosing.openedPosList}" />
-							<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true" 
-								actionListener="#{posClosing.onPosChange}" />
-						</aon:selectOneMenu>
+						<c:if test="#{!(posClosing.posShift!=null and posShiftCount.model.rowCount>0)}">
+							<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+							<aon:selectOneMenu
+								disabled="#{posClosing.posShift!=null and posShiftCount.model!=null and posShiftCount.model.rowCount>0}" 
+								value="#{posClosing.hotel}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+								<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+									actionListener="#{posClosing.onHotelChange}" />
+								<a4j:support event="oninputchanged" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+									actionListener="#{posClosing.onHotelChange}" />
+							</aon:selectOneMenu>
 						
-						<!--  
+							<aon:outputLabel for="PosClosing_posShift" value="#{pmsBundle.pms_pos}" />
+							<aon:selectOneMenu id="PosClosing_posShift" required="true"
+								disabled="#{posClosing.posShift!=null and posShiftCount.model!=null and posShiftCount.model.rowCount>0}" 
+								value="#{posClosing.posShift}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItems value="#{posClosing.openedPosList}" />
+								<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true" 
+									actionListener="#{posClosing.onPosChange}" />
+							</aon:selectOneMenu>
+							
+						</c:if>
+						
+						<c:if test="#{posClosing.posShift!=null and posShiftCount.model.rowCount>0}">
+							<aon:outputText value="#{pmsBundle.pms_hotel}" />
+							<aon:outputText value="#{posClosing.hotel.workPlace.description}" />
+						
+							<aon:outputText value="#{pmsBundle.pms_pos}" />
+							<aon:outputText value="#{posClosing.posShift.pos.name}" />
+							
+							<aon:outputText value="#{pmsBundle.pms_shift}" />
+							<aon:outputText value="#{posClosing.posShift.shift}" />
+							
+							<aon:outputText value="#{pmsBundle.pms_opening}" />
+							<aon:outputText value="#{posClosing.posShift.startTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							
+							<aon:outputText value="#{pmsBundle.pms_closing}" />
+							<aon:outputText value="#{posClosing.posShift.endTime}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							
+							<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
+							<aon:outputText value="#{posClosing.posShift.initialAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+							
+							<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
+								value="#{pmsBundle.pms_cash_payMethod_name}" />
+							<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
+								value="#{posClosing.totalCashAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+							
+							<aon:outputLabel rendered="#{posClosing.totalCashAmount>0}"
+								value="#{pmsBundle.pms_bank_income}" />
+							<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
+								value="#{posClosing.totalCashAmount - posClosing.posShift.initialAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+						</c:if>
+						
+					</aon:panelGrid>
+					
+					<aon:panelGrid columns="2" styleClass="aon-width-600" >
 						<aon:outputLabel for="PosClosig_remarks"
 							value="#{bundle.aon_remark}" />
-						<aon:inputTextarea id="PosClosing_remarks" cols="80" rows="3"
-							disabled="#{posClosing.posShift == null}"
+						<aon:inputTextarea id="PosClosing_remarks" cols="80" rows="6"
+							disabled="#{posClosing.posShift.endTime!=null}"
 							value="#{posClosing.posShift.remarks}" />
-						-->
-						
-						
-					</c:if>
-					
-					<c:if test="#{posClosing.posShift!=null and posShiftCount.model.rowCount>0}">
-						<aon:outputText value="#{pmsBundle.pms_hotel}" />
-						<aon:outputText value="#{posClosing.hotel.workPlace.description}" />
-					
-						<aon:outputText value="#{pmsBundle.pms_pos}" />
-						<aon:outputText value="#{posClosing.posShift.pos.name}" />
-						
-						<aon:outputText value="#{pmsBundle.pms_shift}" />
-						<aon:outputText value="#{posClosing.posShift.shift}" />
-						
-						<aon:outputText value="#{pmsBundle.pms_opening}" />
-						<aon:outputText value="#{posClosing.posShift.startTime}">
-							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-						
-						<aon:outputText value="#{pmsBundle.pms_closing}" />
-						<aon:outputText value="#{posClosing.posShift.endTime}">
-							<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-						
-						<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
-						<aon:outputText value="#{posClosing.posShift.initialAmount}" >
-							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-						</aon:outputText>
-						
-						<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
-							value="#{pmsBundle.pms_cash_payMethod_name}" />
-						<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
-							value="#{posClosing.totalCashAmount}" >
-							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-						</aon:outputText>
-						
-						<aon:outputLabel rendered="#{posClosing.totalCashAmount>0}"
-							value="#{pmsBundle.pms_bank_income}" />
-						<aon:outputText rendered="#{posClosing.totalCashAmount>0}"
-							value="#{posClosing.totalCashAmount - posClosing.posShift.initialAmount}" >
-							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-						</aon:outputText>
-					</c:if>
-					
+					</aon:panelGrid>
 				</aon:panelGrid>
 				
 				<br />

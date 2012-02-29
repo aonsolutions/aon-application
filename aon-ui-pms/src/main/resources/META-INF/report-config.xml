@@ -6,11 +6,27 @@
 
 <report-config>
 
-	<!--  *********  Pos Shift Count  ********* -->
-	<report id="posShiftCount" description="Pos Shift Count Report">
-		<template path="/com/esferalia/aon/ui/pms/report/posShiftCount.jasper" />
+	<!--  *********  Pos Shift ********* -->
+	<report id="posShift" description="Pos Shift Count Report">
+		<template path="/com/esferalia/aon/ui/pms/report/posShift.jasper" />
+		<!--  
 		<bean key="com.esferalia.aon.pms.PosShift" />
-		<criteria provider="#{posShift}"/>
+		<criteria provider="#{posShift}" />
+		-->
+		<collection provider="#{posShift}" forceRefresh="true" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+
+	<!--  *********  Pos Shift List ********* -->
+	<report id="posShiftList" description="Pos Shift Count Report">
+		<template path="/com/esferalia/aon/ui/pms/report/posShiftList.jasper" />
+		<bean key="com.esferalia.aon.pms.PosShift" />
+		<criteria provider="#{posShift}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />

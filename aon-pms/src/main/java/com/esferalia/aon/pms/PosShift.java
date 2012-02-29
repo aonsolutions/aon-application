@@ -23,6 +23,7 @@ public class PosShift extends PosShiftDB {
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();
 	private Double finalAmount;
+	private String remarks;
 	
 	public void setFinalAmount(Double finalAmount) {
 		this.finalAmount = finalAmount;
@@ -46,5 +47,16 @@ public class PosShift extends PosShiftDB {
 		finalAmount = (Double)sqlQuery.list().get(0);
 		return finalAmount;
 	}
+
+	@Transient
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+	
+	
 
 }
