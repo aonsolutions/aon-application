@@ -14,6 +14,8 @@ CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/api.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/slf4j/simple.jar
 
 
+CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils.jar
+CLASSPATH=$CLASSPATH:/usr/share/java/aon-master.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-config.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-common.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-registry.jar

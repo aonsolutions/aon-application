@@ -22,6 +22,22 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
 
+        <repositories>
+                <repository>
+                        <id>dynamicJasper-public-repository</id>
+                        <name>DynamicJasper public Repository</name>
+                        <url>http://archiva.fdvs.com.ar/repository/public1/</url>
+                        <releases>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+        </repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -127,6 +143,22 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-dbutils</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-master</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -186,6 +218,8 @@
 							<requires>
 								<require>slf4j</require>
 								<require>inotify-java</require>
+								<require>aon-dbutils</require>
+								<require>aon-master</require>
 								<require>jakarta-commons-cli</require>
 								<require>jakarta-commons-lang</require>
 								<require>jakarta-commons-logging</require>

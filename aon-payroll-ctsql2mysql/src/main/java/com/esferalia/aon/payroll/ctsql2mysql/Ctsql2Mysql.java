@@ -1,12 +1,16 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,6 +20,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.AonSQLFile;
+import com.code.aon.dbutils.AonSQLScript;
 
 
 
@@ -196,11 +204,38 @@ public class Ctsql2Mysql
 		return DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
 	}
 	
-	protected Connection getMysqlConnection() throws SQLException {
+	protected Connection getMysqlConnection() throws SQLException{
 		return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
 	}
 
-	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException {
+	
+	protected Connection getMysqlConnectionEx() throws SQLException, AonSQLException, IOException {
+		try {
+			return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
+		} catch ( SQLException e ) {
+
+			Pattern pattern = Pattern.compile("(jdbc:mysql://[^/]+)/([^/?]+)");
+			
+			Matcher matcher = pattern.matcher(mysqlURL);
+			System.out.println(matcher.find());
+			String mysqlServerURL = matcher.group(1);
+			String dbName = matcher.group(2);
+
+			Connection connection = 
+					DriverManager.getConnection(mysqlServerURL, mysqlUser, mysqlPasswd);
+			
+			URL createURL = getCreateScript();
+            AonSQLFile sqlCreateFile = new AonSQLFile(createURL.openStream());
+            sqlCreateFile.setDbName(dbName);
+            sqlCreateFile.setFileName( createURL.getFile());
+            AonSQLScript script = new AonSQLScript(sqlCreateFile, connection);
+            script.execute();
+            
+			return connection;
+		}
+	}
+
+	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException, AonSQLException, IOException {
 		if ( ctsqlURL == null ){
 			return;
 		}
@@ -211,7 +246,7 @@ public class Ctsql2Mysql
         try {
 	        ctsqlConnection = getCtsqlConnection();  
 	        	
-	        mysqlConnection =  getMysqlConnection();
+	        mysqlConnection =  getMysqlConnectionEx();
 	
 	        mysqlConnection.setAutoCommit(false);
 	        
@@ -235,15 +270,28 @@ public class Ctsql2Mysql
         }
 	}
 	
-	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException
+	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException, AonSQLException, IOException
     {
+		//String dbName = matcher.group(2);
+		
 		new Ctsql2Mysql(args).transfer();
     }
 
 	public boolean isDryRun() {
 		return dryRun;
 	}
-
 	
+	
+
+	private static  URL getCreateScript() {
+        String name = "com/esferalia/aon/payroll/ctsql2mysql/create.database.sql";
+        return getScript(name);
+	}
+
+	private static  URL getScript(String name) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return cl.getResource(name);
+    }
+
 }
 
