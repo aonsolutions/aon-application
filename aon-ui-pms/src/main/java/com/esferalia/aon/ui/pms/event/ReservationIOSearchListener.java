@@ -8,6 +8,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationIOSearchListener extends ControllerSearchListener {
 
@@ -58,6 +59,7 @@ public class ReservationIOSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
 		}
