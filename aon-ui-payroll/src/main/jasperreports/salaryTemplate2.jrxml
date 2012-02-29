@@ -864,12 +864,12 @@
 					<reportElement x="106" y="5" width="6" height="6" forecolor="#FFFFFF" backcolor="#000000"/>
 				</rectangle>
 				<staticText>
-					<reportElement style="label" x="115" y="2" width="287" height="12"/>
+					<reportElement style="label" x="115" y="2" width="301" height="12"/>
 					<textElement/>
 					<text><![CDATA[Aportación trabajador a cuotas Seguridad Social]]></text>
 				</staticText>
 				<textField pattern="#,##0.00">
-					<reportElement style="amount" x="403" y="2" width="63" height="12"/>
+					<reportElement style="amount" x="418" y="2" width="63" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
 				</textField>
@@ -877,12 +877,12 @@
 					<reportElement x="106" y="17" width="6" height="6" forecolor="#FFFFFF" backcolor="#000000"/>
 				</rectangle>
 				<textField>
-					<reportElement style="label" x="115" y="14" width="287" height="12"/>
+					<reportElement style="label" x="115" y="14" width="301" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format("Retención a cuenta I.R.P.F (D) {0,number,#,##0.00}% sobre {1,number,#,##0.00}", $V{prcIrpf}, $F{salary}.getIrpfBase())]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00">
-					<reportElement style="amount" x="403" y="14" width="63" height="12"/>
+					<reportElement style="amount" x="418" y="14" width="63" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getTotalIrpf()]]></textFieldExpression>
 				</textField>
