@@ -25,7 +25,7 @@
 				<aon:commandLink id="Room-selectButton"
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{reservation.active}"
+					rendered="#{reservation.active or reservation.invoiced}"
 					actionListener="#{controller.onSelect}"
 					reRender="showRoomDetailWindow"
 					onkeyup="#{dataTableId}KeyUp(this)"

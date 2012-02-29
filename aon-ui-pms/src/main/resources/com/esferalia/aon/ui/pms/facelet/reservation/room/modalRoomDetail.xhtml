@@ -50,7 +50,7 @@
 									<aon:commandButton id="roomDetail-cancel"
 										styleClass="aon-finding-toolbar-item aon-icon-removed"
 										value="#{pmsBundle.pms_room_assign_cancel}"
-										rendered="#{controller.to.roomNumber != null}"
+										rendered="#{reservation.active and controller.to.roomNumber != null}"
 										actionListener="#{controller.onCancelReservationRoom}"
 										reRender="showRoomDetailWindow" immediate="true">
 										<f:setPropertyActionListener
