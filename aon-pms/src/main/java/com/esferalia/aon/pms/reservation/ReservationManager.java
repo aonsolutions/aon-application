@@ -570,7 +570,7 @@ public class ReservationManager implements IReservationConstants {
 			for (int i=0; i<resGlobalInfoType.getTotal().getTaxes().sizeOfTaxArray(); i++) {
 				TaxType taxType = resGlobalInfoType.getTotal().getTaxes().getTaxArray(i);
 				if (taxType.getTaxDescriptionArray(0) != null && taxType.getTaxDescriptionArray(0).getTextArray(0).getStringValue().equals(type)) {
-					taxQuota += taxType.getAmount().doubleValue();
+					taxQuota += (taxType.getAmount() != null) ? taxType.getAmount().doubleValue() : 0;
 				}
 			}
 		}
