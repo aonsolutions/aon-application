@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="214"/>
+	<property name="ireport.y" value="189"/>
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
@@ -115,13 +115,12 @@
 		<variableExpression><![CDATA[$F{salary}.getTotalPayment()]]></variableExpression>
 	</variable>
 	<variable name="address" class="com.code.aon.registry.RegistryAddress" resetType="Page">
-		<variableExpression><![CDATA[]]></variableExpression>
 		<initialValueExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getPerson().getRegistry().getAddresses(), "addressType", AddressType.MAIN)]]></initialValueExpression>
 	</variable>
 	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
 		<variableExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.SIGNATURE)]]></variableExpression>
 	</variable>
-	<variable name="logo" class="com.code.aon.registry.RegistryAttachment">
+	<variable name="logo" class="com.code.aon.registry.RegistryAttachment" resetType="Page">
 		<initialValueExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.LOGO)]]></initialValueExpression>
 	</variable>
 	<background>
@@ -132,8 +131,8 @@
 			<frame>
 				<reportElement style="box" x="0" y="0" width="555" height="212"/>
 				<textField>
-					<reportElement style="label" x="266" y="0" width="272" height="23"/>
-					<textElement>
+					<reportElement style="label" x="266" y="1" width="272" height="23"/>
+					<textElement verticalAlignment="Bottom">
 						<font size="17" isBold="true" isItalic="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["RECIBO DE NÓMINA"]]></textFieldExpression>
@@ -920,7 +919,7 @@
 					<text><![CDATA[Recibi]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="head" x="304" y="5" width="169" height="12"/>
+					<reportElement style="head" x="277" y="5" width="196" height="12"/>
 					<textElement textAlignment="Right"/>
 					<text><![CDATA[LIQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
