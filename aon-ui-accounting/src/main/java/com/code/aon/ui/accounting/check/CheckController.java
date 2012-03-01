@@ -1,5 +1,6 @@
-package com.code.aon.ui.accounting.controller;
+package com.code.aon.ui.accounting.check;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,39 +10,35 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.ui.accounting.check.AccountEntryEnabledCheck;
-import com.code.aon.ui.accounting.check.AccountingCheckException;
-import com.code.aon.ui.accounting.check.AccountingCheckParams;
-import com.code.aon.ui.accounting.check.BalanceCheck;
-import com.code.aon.ui.accounting.check.EmptyAccountEntryCheck;
-import com.code.aon.ui.accounting.check.IAccountCheck;
-import com.code.aon.ui.accounting.check.ICheckEntry;
-import com.code.aon.ui.accounting.check.ParentEntryCheck;
-import com.code.aon.ui.accounting.check.UnbalancedAccountEntryCheck;
+import com.code.aon.ui.accounting.check.modules.account.AccountEnabledCheck;
+import com.code.aon.ui.accounting.check.modules.account.ParentEntryCheck;
+import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
+import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountEntryCheck;
+import com.code.aon.ui.accounting.check.modules.balance.BalanceCheck;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class AccountCheckController {
+public class CheckController {
 
-	private AccountingCheckParams params;
+	private CheckParams params;
 
-	private List<IAccountCheck> accountChecks;
+	private List<ICheckModule> accountChecks;
 	private List<ICheckEntry> checkEntryList;
 	private DataModel accountCheckModel;
 	
-	public AccountingCheckParams getParams() {
+	public CheckParams getParams() {
 		return params;
 	}
 
-	public void setParams(AccountingCheckParams params) {
+	public void setParams(CheckParams params) {
 		this.params = params;
 	}
 
-	public List<IAccountCheck> getAccountChecks() {
+	public List<ICheckModule> getAccountChecks() {
 		if (accountChecks == null) {
-			accountChecks = new LinkedList<IAccountCheck>();
+			accountChecks = new LinkedList<ICheckModule>();
 			accountChecks.add( new ParentEntryCheck() );
-			accountChecks.add( new AccountEntryEnabledCheck() );
+			accountChecks.add( new AccountEnabledCheck() );
 			accountChecks.add( new EmptyAccountEntryCheck() );
 			accountChecks.add( new UnbalancedAccountEntryCheck() );
 			accountChecks.add( new BalanceCheck() );
@@ -50,12 +47,12 @@ public class AccountCheckController {
 	}
 
 	public void checkUnbalancedAccountEntry() {
-		for (IAccountCheck accountCheck: getAccountChecks()) {
+		for (ICheckModule accountCheck: getAccountChecks()) {
 			accountCheck.setEnabled((accountCheck instanceof UnbalancedAccountEntryCheck));
 		}
 	}
 	
-	public void setAccountChecks(List<IAccountCheck> accountChecks) {
+	public void setAccountChecks(List<ICheckModule> accountChecks) {
 		this.accountChecks = accountChecks;
 	}
 
@@ -83,8 +80,8 @@ public class AccountCheckController {
 	
 
 	public void onInitialize(ActionEvent event) {
-		setParams(new AccountingCheckParams());
-		for (IAccountCheck accountCheck: getAccountChecks()) {
+		setParams(new CheckParams());
+		for (ICheckModule accountCheck: getAccountChecks()) {
 			accountCheck.setEnabled(true);
 		}
 		setAccountCheckModel(null);
@@ -93,18 +90,21 @@ public class AccountCheckController {
 	public void onExecute(ActionEvent event) {
 		try {
 			executeCheck();
-		} catch (AccountingCheckException e) {
+		} catch (AonCheckException e) {
 			String msg = "Error en el proceso de verificación. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 	}
 	
-	public void executeCheck() throws AccountingCheckException{
+	public void executeCheck() throws AonCheckException{
 		setCheckEntryList(null);
-		for (IAccountCheck accountCheck: getAccountChecks()) {
-			if (accountCheck.isEnabled()) { 
+		for (ICheckModule accountCheck: getAccountChecks()) {
+			if (accountCheck.isEnabled()) {
+				Date now = new Date();
 				accountCheck.onExecute( getParams() );
+				long milis = (new Date()).getTime() - now.getTime();
+				System.out.println(accountCheck.getLabel() + ": " + ( (double) milis / 1000) + " segundos.");
 				getCheckEntryList().addAll( accountCheck.getCheckList() );
 			}
 		}
@@ -113,19 +113,29 @@ public class AccountCheckController {
 	public void onFix(ActionEvent event) {
 		try {
 			ICheckEntry entry = (ICheckEntry) getAccountCheckModel().getRowData();
-			entry.fix();
-		} catch (AccountingCheckException e) {
+			entry.onFix(event);
+		} catch (AonCheckException e) {
 			String msg = "Error en la corrección de la incidencia. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 	}
+	public String fixAction() {
+		try {
+			ICheckEntry entry = (ICheckEntry) getAccountCheckModel().getRowData();
+			return entry.fixAction();
+		} catch (AonCheckException e) {
+			String msg = "Error en la navegación de la incidencia. " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
 	
-	public void checkEmptyAccountEntry(Period p) throws AccountingCheckException{
-		setParams(new AccountingCheckParams());
+	public void checkEmptyAccountEntry(Period p) throws AonCheckException{
+		setParams(new CheckParams());
 		getParams().setPeriod(p);
-		List<IAccountCheck> list = getAccountChecks();
-		for (IAccountCheck accountCheck: list) {
+		List<ICheckModule> list = getAccountChecks();
+		for (ICheckModule accountCheck: list) {
 			accountCheck.setEnabled(accountCheck instanceof EmptyAccountEntryCheck);
 		}
 		executeCheck();

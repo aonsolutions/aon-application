@@ -1,24 +1,32 @@
-package com.code.aon.ui.accounting.check;
+package com.code.aon.ui.accounting.check.modules.account.entry;
+
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.accounting.check.AonCheckException;
+import com.code.aon.ui.accounting.check.CheckEntryAdapter;
+import com.code.aon.ui.util.AonUtil;
 
-public class EmptyAccountCheckEntry extends CheckEntryAdapter {
+public class EmptyAccountEntryCheckEntry extends CheckEntryAdapter {
 
 	private boolean fixed = false;
 	private String fixLabel = "Borrar Apunte";
 
 	@Override
-	public void fix() throws AccountingCheckException {
+	public void onFix(ActionEvent event) throws AonCheckException{
 		try {
 			AccountEntry entry = (AccountEntry) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 			bean.remove(entry);
 			fixed = true;
 		} catch (ManagerBeanException e) {
-			throw new AccountingCheckException(e.getMessage(),e);
+			String message = "No se pudo borrar el apunte contable. [" + e.getMessage() + "]";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
 		}
 	}
 
@@ -35,7 +43,7 @@ public class EmptyAccountCheckEntry extends CheckEntryAdapter {
 	@Override
 	public String getMessage() {
 		AccountEntry entry = (AccountEntry) getTo();
-		return super.getMessage() + "(" + entry.getId() + ")";
+		return super.getMessage() + "(" + entry.getId() + ")";	
 	}
 
 	@Override

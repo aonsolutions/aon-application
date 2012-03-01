@@ -1,17 +1,13 @@
-package com.code.aon.ui.accounting.check;
+package com.code.aon.ui.accounting.check.modules.account.entry;
 
 import com.code.aon.accounting.AccountEntry;
+import com.code.aon.ui.accounting.check.CheckEntryAdapter;
 
 public class UnbalancedAccountEntryCheckEntry extends CheckEntryAdapter {
 
 	@Override
-	public void fix() throws AccountingCheckException {
-		//TODO Como mucho ir al apunte.
-	}
-
-	@Override
 	public boolean isFixAvailable() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -22,7 +18,7 @@ public class UnbalancedAccountEntryCheckEntry extends CheckEntryAdapter {
 	@Override
 	public String getMessage() {
 		AccountEntry entry = (AccountEntry) getTo();
-		return super.getMessage() + "(" + entry.getId() + ")";
+		return super.getMessage() + " ( Id: " + entry.getId() + " )";
 	}
 
 	@Override
