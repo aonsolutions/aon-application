@@ -138,16 +138,112 @@
 									styleClass="aon-panelGrid-search-info-internal"/>
 						</aon:div>
 						
-						<aon:panelGrid id="searchContentID" columns="2">
-							<aon:outputText value="&#160;" />
+						<aon:panelGrid id="searchContentID" columns="4">
+							
 							<aon:div>
-								<aon:selectBooleanCheckbox id="mod347_generateLines" value="#{mod347.to.generateLines}"/>
+								<aon:selectBooleanCheckbox id="mod347_generateLines" value="#{mod347.to.generateLines}"
+									reRender="searchContentID" />
 								<aon:outputLabel for="mod347_generateLines" value="#{fiscalBundle.fiscal_mod347_generate_lines}" />
 							</aon:div>
+							<aon:outputText value="&#160;" />
+							<aon:outputText value="&#160;" />
+							<aon:outputText value="&#160;" />
+							
+							<c:if test="#{mod347.to.generateLines}">
+								<aon:outputText value="&#160;" />
+								<aon:div>
+									<aon:selectBooleanCheckbox id="mod347_taxDateEnabled"  
+										value="#{mod347.params.taxDateEnabled}"/>
+									<aon:outputLabel for="mod347_taxDateEnabled" value="#{fiscalBundle.fiscal_mod347_generate_from_tax_date}" />
+								</aon:div>
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />
+								
+								<aon:outputText value="&#160;" />
+								<aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_groupedByNIF"  
+											value="#{mod347.params.groupedByNIF}"/>
+										<aon:outputLabel for="mod347_groupedByNIF" value="#{fiscalBundle.fiscal_mod347_grouped_by_nif}" />
+									</aon:div>
+									<aon:div>
+										<aon:outputText style="margin-left: 20px;" 
+											value="#{fiscalBundle.fiscal_mod347_grouped_by_nif_bis}" />
+									</aon:div>
+								</aon:div>
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />
+																	
 
-							<aon:outputLabel for="mod347_minimum" value="#{fiscalBundle.fiscal_mod347_minimum_amount}" />
-							<aon:inputText id="mod347_minimum" size="10" value="#{mod347.to.minimumAmount}"
-								required="true"/>
+								<aon:outputLabel for="mod347_minimum" value="#{fiscalBundle.fiscal_mod347_minimum_amount}" />
+								<aon:inputText id="mod347_minimum" size="10" value="#{mod347.to.minimumAmount}"
+									required="true" />
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />									
+
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />
+								<aon:outputText value="&#160;" />									
+								<aon:outputText value="&#160;" />
+								
+								<aon:outputText value="#{fiscalBundle.fiscal_mod347_output_invoices}" />
+								<aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_exports"  
+											value="#{mod347.params.excludeExports}"/>
+										<aon:outputLabel for="mod347_output_exports" value="#{fiscalBundle.fiscal_mod347_output_exports}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_output_intracommunitary_deliveries"  
+											value="#{mod347.params.excludeIntracommunitaryDeliveries}"/>
+										<aon:outputLabel for="mod347_output_intracommunitary_deliveries" value="#{fiscalBundle.fiscal_mod347_output_intracommunitary_deliveries}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_output_extracommunitary_services"  
+											value="#{mod347.params.excludeOutputExtracommunitaryServices}"/>
+										<aon:outputLabel for="mod347_output_extracommunitary_services" value="#{fiscalBundle.fiscal_mod347_output_extracommunitary_services}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_output_intracommunitary_services"  
+											value="#{mod347.params.excludeOutputIntracommunitaryServices}"/>
+										<aon:outputLabel for="mod347_output_intracommunitary_services" value="#{fiscalBundle.fiscal_mod347_output_intracommunitary_services}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_output_national_zero_excluded"  
+											value="#{mod347.params.excludeOutputNationalZero}"/>
+										<aon:outputLabel for="mod347_output_national_zero_excluded" value="#{fiscalBundle.fiscal_mod347_output_national_zero_excluded}" />
+									</aon:div>							
+								</aon:div>							
+	
+								<aon:outputText value="#{fiscalBundle.fiscal_mod347_input_invoices}" />
+								<aon:div>
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_input_imports"  
+											value="#{mod347.params.excludeImports}"/>
+										<aon:outputLabel for="mod347_input_imports" value="#{fiscalBundle.fiscal_mod347_input_imports}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_input_intracommunitary_adquisitions"  
+											value="#{mod347.params.excludeIntracommunitaryAdquisitions}"/>
+										<aon:outputLabel for="mod347_input_intracommunitary_adquisitions" value="#{fiscalBundle.fiscal_mod347_input_intracommunitary_adquisitions}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_input_extracommunitary_services"  
+											value="#{mod347.params.excludeInputExtracommunitaryServices}"/>
+										<aon:outputLabel for="mod347_input_extracommunitary_services" value="#{fiscalBundle.fiscal_mod347_input_extracommunitary_services}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_input_intracommunitary_services"  
+											value="#{mod347.params.excludeInputIntracommunitaryServices}"/>
+										<aon:outputLabel for="mod347_input_intracommunitary_services" value="#{fiscalBundle.fiscal_mod347_input_intracommunitary_services}" />
+									</aon:div>							
+									<aon:div>
+										<aon:selectBooleanCheckbox id="mod347_input_national_zero_excluded"  
+											value="#{mod347.params.excludeInputNationalZero}"/>
+										<aon:outputLabel for="mod347_input_national_zero_excluded" value="#{fiscalBundle.fiscal_mod347_input_national_zero_excluded}" />
+									</aon:div>							
+								</aon:div>							
+							</c:if>
 						</aon:panelGrid>
 					</aon:div>
 				</c:if>

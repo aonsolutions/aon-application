@@ -20,6 +20,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.enumeration.Mod347Status;
+import com.code.aon.fiscal.mod347.Mod347Parameters;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD347Writer;
 import com.code.aon.ui.form.BasicController;
@@ -29,8 +30,8 @@ public class Mod347Controller extends BasicController {
 
 	private FileOutput fileOutput;
 	private FiscalParametersController fiscalParams;
-	private boolean quarterBreakdownEnabled;
-
+	private Mod347Parameters params;
+	
 	public FiscalParametersController getFiscalParams() {
 		if (fiscalParams == null) {
 			fiscalParams = (FiscalParametersController) AonUtil.getRegisteredBean( FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
@@ -38,12 +39,13 @@ public class Mod347Controller extends BasicController {
 		return fiscalParams;
 	}
 
-	public boolean isQuarterBreakdownEnabled() {
-		return quarterBreakdownEnabled;
+	public Mod347Parameters getParams() {
+		return params;
 	}
-	public void setQuarterBreakdownEnabled(boolean quarterBreakdownEnabled) {
-		this.quarterBreakdownEnabled = quarterBreakdownEnabled;
+	public void setParams(Mod347Parameters params) {
+		this.params = params;
 	}
+
 
 	public FileOutput getFileOutput() {
 		return fileOutput;

@@ -16,6 +16,11 @@ public class Mod347ControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Mod347Controller c = (Mod347Controller) event.getController();
+
+		Mod347Parameters params = new Mod347Parameters();
+		params.initialize();
+		c.setParams(params);
+		
 		c.setFileOutput(null);
 		Mod347 mod347= (Mod347) c.getTo();
 		mod347.setAdministration(c.getFiscalParams().getDefaultAdministration());
@@ -24,16 +29,26 @@ public class Mod347ControllerListener extends ControllerAdapter {
 		mod347.setMinimumAmount(Mod347.MINIMUM_AMOUNT);
 		mod347.setGenerateLines(true);
 	}
+	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		Mod347Controller c = (Mod347Controller) event.getController();
+		Mod347 mod347= (Mod347) c.getTo();
+		if (mod347.isGenerateLines() && mod347.getMinimumAmount() < 0) {
+			throw new ControllerListenerException("El importe mínimo ha de ser un número positivo.");
+		}
+	}
+
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Mod347Controller c = (Mod347Controller) event.getController();
+			Mod347Parameters params = c.getParams();
 			c.setFileOutput(null);
 			Mod347 mod347= (Mod347) c.getTo();
 			if (mod347.isGenerateLines()) {
 				Mod347Manager manager = new Mod347Manager();
-				Mod347Parameters params = new Mod347Parameters();
 				params.setMod347(mod347);
 				manager.generateDetails(params);
 			}
