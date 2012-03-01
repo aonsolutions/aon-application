@@ -2,7 +2,7 @@ package com.code.aon.ui.accounting.check;
 
 import com.code.aon.accounting.Period;
 
-public class AccountingCheckParams {
+public class CheckParams {
 	
 	private Period period;
 
