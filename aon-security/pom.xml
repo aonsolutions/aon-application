@@ -21,6 +21,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+		    <groupId>commons-dbutils</groupId>
+		    <artifactId>commons-dbutils</artifactId>
+		    <version>1.3</version>
+			<scope>compile</scope>
+		</dependency>     				
+		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
 			<version>1.8.1</version>

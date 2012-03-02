@@ -23,7 +23,7 @@ public class LdapLoginModule extends JBossLoginModule {
 	private final static Logger LOGGER = LoggerFactory.getLogger(LdapLoginModule.class);
 
 	@SuppressWarnings("unchecked")
-	public Map updateOptions( Map map ) {
+	private Map updateOptions( Map map ) {
 		Map newOptions = new HashMap();
     	try {
     		String objectName = (String) map.get( IConstants.DEPLOYER_OBJECT_NAME );
