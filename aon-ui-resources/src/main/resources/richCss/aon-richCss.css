@@ -1874,9 +1874,10 @@ color:#000;
 .aon-finding-toolbar{
 	background:transparent url(images/aon-content/aon-content-title-internal.png) left center repeat-y;
 	padding:0 1em;
+	width: 100%;
 	}
 .aon-finding-toolbar-item-group{
-	padding: 3px 2em 3px 1em;
+	padding: 3px 0;
 	}
 
 .aon-finding-toolbar-item{

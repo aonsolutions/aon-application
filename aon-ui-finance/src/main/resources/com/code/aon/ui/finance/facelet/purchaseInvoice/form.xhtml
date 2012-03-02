@@ -21,48 +21,8 @@
 					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
+					<ui:param name="showMoreMenu" value="#{true}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
-							<aon:commandButton id="incomeTransfer"
-								value="#{financeBundle.finance_invoice_deliveries}"
-								immediate="#{true}" rendered="#{!purchaseInvoice.new and !purchaseInvoice.recorded}"
-								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-								actionListener="#{purchaseInvoice.onIncomeTransferShow}"
-								reRender="showIncomeTransferWindow">
-								<f:setPropertyActionListener target="#{purchaseInvoice.showIncomeTransferWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</c:if>
-						<aon:commandButton id="finances"
-							value="#{bundle.aon_key_finance_description}"
-							title="#{bundle.aon_key_finance_accelerator}"
-							actionListener="#{purchaseInvoice.generateFinances}"
-							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
-							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							accesskey="#{bundle.aon_key_finance}">
-							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
-								value="#{null}" />
-							<f:setPropertyActionListener target="#{purchaseInvoice.backAction}"
-								value="#{null}" />
-						</aon:commandButton>
-						<c:if test="#{aonRole.accountingOperator}">
-							<aon:commandButton id="record"
-								value="#{financeBundle.finance_record}"
-								actionListener="#{purchaseInvoice.onRecordInvoice}"
-								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
-								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-								reRender="purchaseInvoiceForm" 
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandButton id="unrecord"
-								value="#{financeBundle.finance_unrecord}"
-								actionListener="#{purchaseInvoice.onUnrecordInvoice}"
-								rendered="#{purchaseInvoice.recorded and !purchaseInvoice.accountSource}"
-								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-								reRender="purchaseInvoiceForm"
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-					     </c:if>
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{purchaseInvoice.onSendInvoiceByEmail}"
@@ -79,7 +39,50 @@
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
 							<f:param name="reportKey" value="purchaseInvoice" />
 						</aon:htmlCommandLink>
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+							<aon:menuItem id="incomeTransfer"
+								value="#{financeBundle.finance_invoice_deliveries}"
+								immediate="#{true}" rendered="#{!purchaseInvoice.new and !purchaseInvoice.recorded}"
+								iconClass="aon-icon-sincronize"
+								actionListener="#{purchaseInvoice.onIncomeTransferShow}"
+								reRender="showIncomeTransferWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showIncomeTransferWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</c:if>
+						<aon:menuItem id="finances"
+							value="#{bundle.aon_key_finance_description}"
+							title="#{bundle.aon_key_finance_accelerator}"
+							actionListener="#{purchaseInvoice.generateFinances}"
+							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
+							iconClass="aon-icon-tree"
+							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
+								value="#{null}" />
+							<f:setPropertyActionListener target="#{purchaseInvoice.backAction}"
+								value="#{null}" />
+						</aon:menuItem>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:menuItem id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{purchaseInvoice.onRecordInvoice}"
+								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
+								iconClass="aon-icon-task-assume"
+								reRender="purchaseInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:menuItem id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{purchaseInvoice.onUnrecordInvoice}"
+								rendered="#{purchaseInvoice.recorded and !purchaseInvoice.accountSource}"
+								iconClass="aon-icon-task-liberate"
+								reRender="purchaseInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					     </c:if>
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or (!purchaseInvoice.to.signed)}" />
