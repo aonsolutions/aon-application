@@ -339,7 +339,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{firstRoomNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{checkin}?$F{firstRoomNumber}:$F{roomNumber}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="35" y="0" width="50" height="14"/>
@@ -497,7 +497,8 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservation}.isGuestHolder()?$F{projectReservation}.getTotal():
+				<textFieldExpression><![CDATA[$F{projectReservation}.isGuestHolder()?
+((!$F{projectReservation}.isInvoiced() && !$P{checkin}?"*":"")+$F{projectReservation}.getTotal()):
 ($F{projectReservation}.isAgencyHolder()?$F{projectReservation}.getAgency().getRegistry().getPayMethod().getPayment().getName():
 ($F{projectReservation}.isCompanyHolder()?$F{projectReservation}.getCompany().getRegistry().getPayMethod().getPayment().getName():"")
 )]]></textFieldExpression>
