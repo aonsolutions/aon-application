@@ -8,7 +8,8 @@ import com.code.aon.accounting.util.AccountHelperManager;
 import com.code.aon.accounting.util.AccountJournalManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.ui.accounting.check.AccountingCheckException;
+import com.code.aon.ui.accounting.check.AonCheckException;
+import com.code.aon.ui.accounting.check.CheckController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountRegeneratorController {
@@ -53,7 +54,7 @@ public class AccountRegeneratorController {
 	public void regenerateAccount(ActionEvent event) {
 		try {
 			if (isJournal() ) {
-				AccountCheckController acc=(AccountCheckController)AonUtil.getRegisteredBean("accountCheck");
+				CheckController acc=(CheckController)AonUtil.getRegisteredBean("accountCheck");
 				acc.checkEmptyAccountEntry(this.getPeriod());
 				if(acc.getCheckEntryList()==null || acc.getCheckEntryList().size()==0){
 					regenerateJournalCounter();
@@ -66,7 +67,7 @@ public class AccountRegeneratorController {
 			if (isHelper()) {
 				regenerateAccountHelper();	
 			}
-		} catch (AccountingCheckException e) {
+		} catch (AonCheckException e) {
 			String msg = "- Se produjeron errores al regenerar el número de diario.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);

@@ -27,8 +27,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.accounting.check.CheckController;
 import com.code.aon.ui.accounting.check.ICheckEntry;
-import com.code.aon.ui.accounting.controller.AccountCheckController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -146,7 +146,7 @@ public class EndPeriodEntriesController {
 	}
 
 	private boolean periodRight() {
-		AccountCheckController acc = (AccountCheckController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_CHECK_CONTROLLER);
+		CheckController acc = (CheckController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_CHECK_CONTROLLER);
 		acc.onInitialize(null);
 		acc.checkUnbalancedAccountEntry();
 		acc.getParams().setPeriod(getParams().getPeriod());
