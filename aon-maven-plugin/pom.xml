@@ -3,20 +3,20 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.25</version>
+		<version>6.26-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-maven-plugin</artifactId>
-	<version>6.25</version>
+	<version>6.26-SNAPSHOT</version>
 	<description>AON MAVEN PLUGIN</description>
 	<packaging>maven-plugin</packaging>
 	<name>AON-MAVEN-PLUGIN</name>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon-master</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon-master</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon-master</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.1.x/aon-master</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.1.x/aon-master</connection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.1.x/aon-master</url>
 	</scm>
 
 
