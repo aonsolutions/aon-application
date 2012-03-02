@@ -1,4 +1,4 @@
-package com.code.aon.ui.accounting.check;
+package com.code.aon.ui.accounting.check.modules.balance;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.enumeration.BalanceType;
@@ -16,9 +17,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.ui.accounting.check.AonCheckException;
+import com.code.aon.ui.accounting.check.CheckCategory;
+import com.code.aon.ui.accounting.check.CheckParams;
+import com.code.aon.ui.accounting.check.ICheckEntry;
+import com.code.aon.ui.accounting.check.ICheckModule;
 
-public class BalanceCheck implements IAccountCheck{
+public class BalanceCheck implements ICheckModule{
 
 	private String label = "Chequeo de cuentas ausentes o duplicadas en los balances oficiales.";
 	private boolean enabled;
@@ -28,14 +33,14 @@ public class BalanceCheck implements IAccountCheck{
 	 * Comprueba que todos los apuntes tengan lineas
 	 */
 	@Override
-	public void onExecute(AccountingCheckParams params) throws AccountingCheckException{
+	public void onExecute(CheckParams params) throws AonCheckException{
 		list = new LinkedList<ICheckEntry>();
 		boolean prev = HibernateUtil.mustCloseSession();
 		try {
 			HibernateUtil.setCloseSession(false);
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			String codeAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE);
-			String entryAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
+			String codeAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE);
+			String entryAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 			
 			for (ITransferObject to: balanceBean.getList(null)) {
@@ -100,9 +105,9 @@ public class BalanceCheck implements IAccountCheck{
 				}
 			}
 		} catch (ManagerBeanException e) {
-			throw new AccountingCheckException(e.getMessage(),e);
+			throw new AonCheckException(e.getMessage(),e);
 		} catch (ExpressionException e) {
-			throw new AccountingCheckException(e.getMessage(),e);
+			throw new AonCheckException(e.getMessage(),e);
 		} finally {
 			HibernateUtil.setCloseSession(prev);
 		}
@@ -126,6 +131,11 @@ public class BalanceCheck implements IAccountCheck{
 	@Override
 	public String getLabel() {
 		return label;
+	}
+	
+	@Override
+	public CheckCategory getCategory() {
+		return CheckCategory.ACCOUNTING;
 	}
 
 }

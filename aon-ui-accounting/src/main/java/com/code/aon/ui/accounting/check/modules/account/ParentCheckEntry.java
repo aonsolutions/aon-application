@@ -1,20 +1,15 @@
-package com.code.aon.ui.accounting.check;
+package com.code.aon.ui.accounting.check.modules.account;
 
 import com.code.aon.account.Account;
+import com.code.aon.ui.accounting.check.CheckEntryAdapter;
 
 public class ParentCheckEntry extends CheckEntryAdapter {
 
 
 	@Override
-	public void fix() throws AccountingCheckException {
-		//TODO Crear cuentas de nivel inferior.
-	}
-
-	@Override
 	public boolean isFixed() {
 		return false;
 	}
-
 
 	@Override
 	public boolean isFixAvailable() {
@@ -29,7 +24,7 @@ public class ParentCheckEntry extends CheckEntryAdapter {
 	@Override
 	public String getMessage() {
 		Account account = (Account) getTo();
-		return super.getMessage() + "(" + account.getId() + " " + account.getDescription() + ")";
+		return super.getMessage() + "(" + account.getCode() + " " + account.getDescription() + ")";	
 	}
 
 }
