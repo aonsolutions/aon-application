@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/header.xhtml" >
+		<ui:define name="afterVersionContent">
+			<aon:graphicImage title="Google"
+				value="#{aonResource.resolveLocal['/images/google.png']}" />			
+			<aon:div layout="inline" style="font-family: Arial, sans-serif;font-size: 13px;" >
+				<h:outputLink value="http://mail.google.com" target="_blank">
+					<aon:outputText value="#{webmailBundle.webmail_main}" />
+				</h:outputLink> 			
+				<h:outputLink value="https://mail.google.com/mail/#contacts" target="_blank">
+					<aon:outputText value="#{webmailBundle.webmail_email}" />
+				</h:outputLink> 			
+				<h:outputLink value="http://www.google.com/calendar" target="_blank">
+					<aon:outputText value="Calendar" />
+				</h:outputLink> 			
+				<h:outputLink value="http://docs.google.com" target="_blank">
+					<aon:outputText value="Docs" />
+				</h:outputLink>
+			</aon:div> 			
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

@@ -96,9 +96,11 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
@@ -270,6 +272,8 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
