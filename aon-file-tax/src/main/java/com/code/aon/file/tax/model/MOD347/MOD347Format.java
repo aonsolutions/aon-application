@@ -4,9 +4,12 @@ import com.code.aon.config.enumeration.Administration;
 
 public enum MOD347Format {
 
-	ALAVA(2010,Administration.ALAVA
+	ALAVA_2010(2010,Administration.ALAVA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_ALAVA_Declared.xml"),
+	ALAVA_2011(2011,Administration.ALAVA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_ALAVA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_ALAVA_Declared.xml"),
 	BIZKAIA_2010(2010,Administration.BIZKAIA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_BIZKAIA_Declared.xml"),
@@ -19,9 +22,12 @@ public enum MOD347Format {
 	GIPUZKOA_2011(2011,Administration.GIPUZKOA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2011_GIPUZKOA_Declared.xml"),
-	NAVARRA(2010,Administration.NAVARRA
+	NAVARRA_2010(2010,Administration.NAVARRA
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_NAVARRA_Declared.xml"),
+	NAVARRA_2011(2011,Administration.NAVARRA
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_NAVARRA_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD347/xml/2011_NAVARRA_Declared.xml"),
 	AEAT_2010(2010,Administration.COMMON_TERRITORY
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Deponent.xml"
 			,"/com/code/aon/file/tax/model/MOD347/xml/2010_AEAT_Declared.xml"),
