@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+
+	<bean description="Agrega el usuario y fecha de cracion / modificacion">
+		<pojo>com.code.aon.common.audit.IAuditable</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.common.audit.AuditableBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

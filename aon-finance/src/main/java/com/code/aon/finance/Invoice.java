@@ -24,6 +24,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -42,7 +43,7 @@ import com.esferalia.aon.entity.master.InvoiceDB;
 
 @Entity
 @Table(name="invoice", uniqueConstraints = @UniqueConstraint(columnNames={"series", "number", "type"}))
-public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableContainer, ITaxInfo, IScopable {
+public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableContainer, ITaxInfo, IScopable, IAuditable {
 	
 	private static final long serialVersionUID = 5692053383866684819L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Invoice.class.getName());
