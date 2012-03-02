@@ -96,6 +96,32 @@
 						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Hotel_phone"
+						value="#{bundle.aon_phone}" />
+					<aon:div>
+						<aon:inputText id="Hotel_phone"
+							value="#{hotel.to.phone}"
+							size="16" maxlength="16" />
+						<aon:outputLabel for="Hotel_email" styleClass="aon-italic aon-margin-left"
+							value="Email" />
+						<aon:inputText id="Hotel_email"
+							value="#{hotel.to.email}"
+							style="margin-left: 5px;" size="50" maxlength="64" />
+					</aon:div>
+
+					<aon:outputLabel for="Hotel_fax"
+						value="#{bundle.aon_fax}" />
+					<aon:div>
+						<aon:inputText id="Hotel_fax"
+							value="#{hotel.to.fax}"
+							size="16" maxlength="16" />
+						<aon:outputLabel for="Hotel_web" styleClass="aon-italic aon-margin-left"
+							value="#{bundle.aon_web}" />
+						<aon:inputText id="Hotel_web"
+							value="#{hotel.to.web}"
+							style="margin-left: 10px;" size="50" maxlength="64" />
+					</aon:div>
+
 					<aon:outputLabel for="Customer_id" 
 						value="#{pmsBundle.pms_direct_customer}" />
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
