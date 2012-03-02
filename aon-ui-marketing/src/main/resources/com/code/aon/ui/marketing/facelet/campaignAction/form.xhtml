@@ -64,7 +64,7 @@
 						<ui:param name="lookupTo" value="#{campaignAction.to.template}" />
 					</ui:include>					
 
-					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
+					<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
 						<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{campaignAction.to.survey}" />
 						</ui:include>					
@@ -96,7 +96,7 @@
 				
 			</aon:div>
 		</aon:form>	
-		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
+		<c:if test="#{aonConfiguration.bean.marketingCampaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />

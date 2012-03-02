@@ -31,6 +31,7 @@
 		</c:if>
 		<c:if test="#{!skipGoToButton}">
 			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
+				backAction="#{goToBackAction}"
 				backActionListener="#{goToBackActionListener}" />
 		</c:if>
 		<c:if test="#{!skipSearchButton}">
