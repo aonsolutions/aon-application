@@ -88,6 +88,9 @@ public class PeriodEntriesManager {
 	}
 	
 	private AccountEntry saveOperatingEntry(SecurityLevel securityLevel) throws ManagerBeanException {
+		if (params.isClosingEntry()) {
+			deleteIfExists(params.getPeriod(),AccountEntryType.CLOSING,securityLevel);	
+		}
 		deleteIfExists(params.getPeriod(),AccountEntryType.OPERATING,securityLevel);
 		List<?> list = getUnbalancedAccounts(params.getPeriod(), AccountEntryType.OPERATING,securityLevel);
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
@@ -144,13 +147,15 @@ public class PeriodEntriesManager {
 		return entry;
 	}
 
-	private void deleteIfExists(Period period, AccountEntryType type, SecurityLevel securityLevel) throws ManagerBeanException {
+	public void deleteIfExists(Period period, AccountEntryType type, SecurityLevel securityLevel) throws ManagerBeanException {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), type);
-		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		if (securityLevel != null) {
+			criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		}
 		List<ITransferObject> list = entryBean.getList(criteria);
 		for (ITransferObject to : list) {
 			AccountEntry entry = (AccountEntry) to;
