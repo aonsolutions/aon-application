@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.enumeration.BalanceType;
@@ -22,6 +21,8 @@ import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
 import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.check.ICheckModule;
+
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BalanceCheck implements ICheckModule{
 
@@ -39,8 +40,8 @@ public class BalanceCheck implements ICheckModule{
 		try {
 			HibernateUtil.setCloseSession(false);
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			String codeAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE);
-			String entryAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			String codeAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE);
+			String entryAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 			
 			for (ITransferObject to: balanceBean.getList(null)) {
