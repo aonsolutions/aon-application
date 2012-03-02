@@ -418,6 +418,7 @@ public class AonExporter extends GenericExporter{
 		map.put("ActivityType","com.code.aon.project.ActivityType");
 		map.put("Project","com.code.aon.project.Project");
 		map.put("ProjectActivity","com.code.aon.project.ProjectActivity");
+		map.put("ProjectAttachment","com.code.aon.project.ProjectAttachment");
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS

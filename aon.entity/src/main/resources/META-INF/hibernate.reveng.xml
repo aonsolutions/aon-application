@@ -638,6 +638,7 @@
 
 	<table name="invoice_attach" class="com.esferalia.aon.entity.master.InvoiceAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+		<column name="type" type="com.code.aon.finance.enumeration.InvoiceAttachmentType" />
 	</table>
 
 	<table name="invoice_detail">
@@ -936,6 +937,7 @@
 	
 	<table name="pos_shift">
 		<column name="shift" type="com.esferalia.aon.pms.enumeration.Shift"/>
+		<column name="remarks" type="text"/>
 	</table>
 		
 	<table name="process_detail">
@@ -976,6 +978,10 @@
 		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
 	</table>
 	
+	<table name="project_attach" class="com.esferalia.aon.entity.master.ProjectAttachment">
+		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
+	</table>
+
 	<table name="project_commercial">
 		<primary-key>
 			<key-column name="project" property="id" type="java.lang.Integer"/>
@@ -991,6 +997,7 @@
 		</primary-key>
 		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
+		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
 		<foreign-key constraint-name="FK_PROJECT_RESERVATION_AGENCY">
 			<many-to-one property="agency" />
