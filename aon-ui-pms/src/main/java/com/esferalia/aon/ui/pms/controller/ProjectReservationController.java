@@ -419,14 +419,38 @@ public class ProjectReservationController extends BasicController implements IPm
 		return reservation.isBlocked();
 	}
 
+	public boolean isModelBlocked() {
+		if (model.isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)model.getRowData();
+			return reservation.isBlocked();
+		}
+		return false;
+	}
+
 	public boolean isCancelled() {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		return reservation.isCancelled();
 	}
 
+	public boolean isModelCancelled() {
+		if (model.isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)model.getRowData();
+			return reservation.isCancelled();
+		}
+		return false;
+	}
+
 	public boolean isInvoiced() {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		return reservation.isInvoiced();
+	}
+
+	public boolean isModelInvoiced() {
+		if (model.isRowAvailable()) {
+			ProjectReservation reservation = (ProjectReservation)model.getRowData();
+			return reservation.isInvoiced();
+		}
+		return false;
 	}
 
 	public void onBlock(ActionEvent event) {

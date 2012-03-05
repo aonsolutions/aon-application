@@ -468,7 +468,10 @@ color:#000;
  .aon-icon-exception{
 	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
  }
- .aon-icon-pay{
+ .aon-icon-wrong{
+	background:transparent url(images/aon-icon/aon-icon-wrong.png) scroll left center no-repeat;	
+ }
+.aon-icon-pay{
 	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
  .aon-icon-return{

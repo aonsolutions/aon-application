@@ -30,17 +30,29 @@
 
 						<aon:column styleClass="aon-editDataTable-iconColumn">
 							<aon:commandLink id="#{dataTableId}-selectButton" 
-								styleClass="#{(reservation.pendingRoomAssignation) ? 
-												'aon-icon-point-red' : 
-												((reservation.pendingServiceAssignation) ? 
-													'aon-icon-point-yellow' : 
-													'aon-icon-point-green')}" 
+								styleClass="#{(reservation.modelInvoiced) ? 
+												('aon-icon-predetermine') :
+												((reservation.modelCancelled) ?
+													('aon-icon-wrong') :
+													((reservation.modelBlocked) ?
+														('aon-icon-lock') :
+														((reservation.pendingRoomAssignation) ?
+															('aon-icon-point-red') :
+															((reservation.pendingServiceAssignation) ?
+																('aon-icon-point-yellow') :
+																('aon-icon-point-green')))))}" 
 								value="&#160;&#160;&#160;&#160;"
-								title="#{(reservation.pendingRoomAssignation) ?
-											pmsBundle.pms_room_assignation_pending_msg : 
-											((reservation.pendingServiceAssignation) ? 
-												pmsBundle.pms_service_assignation_pending_msg : 
-												'OK')}" 
+								title="#{(reservation.modelInvoiced) ? 
+											(pmsBundle.pms_invoiced) :
+											((reservation.modelCancelled) ?
+												(pmsBundle.pms_cancelled) :
+												((reservation.modelBlocked) ?
+													(pmsBundle.pms_blocked) :
+													((reservation.pendingRoomAssignation) ?
+														(pmsBundle.pms_room_assignation_pending_msg) :
+														((reservation.pendingServiceAssignation) ?
+															(pmsBundle.pms_service_assignation_pending_msg) :
+															('OK')))))}" 
 								immediate="true" ajaxSingle="true" requestDelay="100"
 								action="#{rowSelectorAction}"
 								actionListener="#{rowSelectorActionListener}"
