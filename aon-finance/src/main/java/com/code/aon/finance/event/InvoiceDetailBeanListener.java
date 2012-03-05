@@ -157,7 +157,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		double quota = 0.0;
 
 		Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
-		if (!invoice.isSales() || invoice.isNational() || invoice.isIntracommunity()) {
+		if (invoice.isNational() || !invoice.isSales()) {
 			if (invoiceDetail.isTaxDataInDetail()) {
 				percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
 				quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
