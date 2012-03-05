@@ -167,6 +167,7 @@
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
 		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectAttachment"/>
 		<mapping class="com.code.aon.project.ProjectActivity"/>
 		<mapping class="com.code.aon.project.ProjectType"/>
 				
