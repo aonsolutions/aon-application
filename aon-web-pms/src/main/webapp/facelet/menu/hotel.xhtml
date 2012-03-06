@@ -35,7 +35,7 @@
 									<aon:commandLink id="reservationIO" 
 										value="#{pmsBundle.pms_reservationIO_module}"
 										action="reservationIO_search" >
-										<aon:actionListener method="#{reservationIO.onEditSearch}" />
+										<aon:actionListener method="#{reservationIO.onInit}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -155,7 +155,7 @@
 							</aon:div>
 							
 						</aon:panelGrid>
-<!--
+
 						<aon:panelGrid id="group_hotel_booking"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-pos aon-direct-access-panel">
@@ -173,7 +173,7 @@
 							</aon:div>
 							
 						</aon:panelGrid>
--->
+
 					</aon:panelGroup>
 						
 				</h:panelGrid>
