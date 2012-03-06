@@ -30,7 +30,7 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	private double transfered;
 
     public void setPrice(double price) {
-        super.setPrice( CommonUtil.round(price, 4));
+        super.setPrice(CommonUtil.round(price, 4));
     }
 
     @Transient
@@ -40,7 +40,7 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	@Transient
 	public double getTransfered() {
 		double pending = getPendingQuantity();
-		setTransfered( (getTransfered() > pending) ? pending : getTransfered() );
+		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
 	public void setTransfered(double transfered) {
