@@ -81,6 +81,21 @@
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
+	<aon:outputLabel for="ProjectReservation_guest" 
+		value="#{pmsBundle.pms_guest}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_guestName"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
+		<aon:inputText id="ProjectReservation_guestName"
+			value="#{searchController.guestName}"
+			size="20" />
+		<aon:outputLabel for="ProjectReservation_guestSurname"
+			styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
+		<aon:inputText id="ProjectReservation_guestSurname"
+			value="#{searchController.guestSurname}"
+			size="25" />
+	</aon:div>
+
 	<aon:outputText value="#{bundle.aon_status}"/>
 	<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
 		<f:selectItems value="#{pmsCollections.reservationStatuses}"/>

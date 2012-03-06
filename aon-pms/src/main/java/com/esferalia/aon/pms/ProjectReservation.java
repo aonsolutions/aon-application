@@ -2,10 +2,15 @@ package com.esferalia.aon.pms;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -34,9 +39,19 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
+	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
 
 	public ProjectReservation() {
 		setStatus(ReservationStatus.ACTIVE);
+	}
+
+	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<ProjectReservationGuest> getGuests() {
+		return this.guests;
+	}
+	public void setGuests(Set<ProjectReservationGuest> guests) {
+		this.guests = guests;
 	}
 
 	@Transient

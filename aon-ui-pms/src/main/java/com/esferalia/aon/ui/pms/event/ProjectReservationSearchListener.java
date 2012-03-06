@@ -1,12 +1,14 @@
 package com.esferalia.aon.ui.pms.event;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -17,6 +19,8 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	private Hotel hotel;
 	private Customer agency;
 	private ReservationStatus[] reservationStatuses;
+	private String guestName;
+	private String guestSurname;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -42,12 +46,30 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		this.reservationStatuses = reservationStatuses;
 	}
 	
+	public String getGuestName() {
+		return guestName;
+	}
+
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
+	}
+
+	public String getGuestSurname() {
+		return guestSurname;
+	}
+
+	public void setGuestSurname(String guestSurname) {
+		this.guestSurname = guestSurname;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE, ReservationStatus.INVOICED};
 		setReservationStatuses(defaultReservationStatus);
+		setGuestName(null);
+		setGuestSurname(null);
 	}
 	
 	@Override
@@ -61,6 +83,12 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		if (!ArrayUtils.isEmpty(getReservationStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_STATUS);
 			addEnumToCriteria(criteria, status, getReservationStatuses());
+		}
+		if (StringUtils.isNotEmpty(getGuestName())) {
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.name"), "%"+getGuestName()+"%"));
+		}
+		if (StringUtils.isNotEmpty(getGuestSurname())) {
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.surname"), "%"+getGuestSurname()+"%"));
 		}
 	}
 
