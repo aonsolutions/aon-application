@@ -80,11 +80,11 @@
     <url-pattern>/cost/*</url-pattern>
   </servlet-mapping>
   <servlet>
-    <servlet-name>openDocumentConverter</servlet-name>
+    <servlet-name>openDocumentConverterServlet</servlet-name>
     <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocumentConverterServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>openDocumentConverter</servlet-name>
+    <servlet-name>openDocumentConverterServlet</servlet-name>
     <url-pattern>/document/*</url-pattern>
   </servlet-mapping>
   <servlet>
@@ -94,6 +94,14 @@
   <servlet-mapping>
     <servlet-name>jasperImageServlet</servlet-name>
     <url-pattern>/jasper_image/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>documentServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.DocumentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>documentServlet</servlet-name>
+    <url-pattern>/rattach/*</url-pattern>
   </servlet-mapping>
   <context-param>
     <description>

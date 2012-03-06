@@ -81,7 +81,7 @@ public class Salaries extends Composite {
 							imageItemHTML(images.salaries(), 
 									title));
 					typeItem.addItem(salaryItem);
-					IReportsModel<IReport> model = 
+					IReportsModel<IDocument> model = 
 							new SalaryReportsModel(salary, employeesService);
 					salaryItem.setUserObject(model);
 				}
@@ -99,7 +99,7 @@ public class Salaries extends Composite {
 					return;
 				}
 				if ( userObject instanceof IReportsModel ) {
-					employeeDetail.getSalaryReceipt().setReports((IReportsModel<IReport>)userObject);
+					employeeDetail.getSalaryReceipt().setReports((IReportsModel<IDocument>)userObject);
 				}
 			}
 		});

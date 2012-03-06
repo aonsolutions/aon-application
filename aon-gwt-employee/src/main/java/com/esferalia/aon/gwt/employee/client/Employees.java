@@ -62,12 +62,10 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		employeesService = GWT.create(EmployeesService.class);
 		initWidget(tree);
 
-
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
 
 		employeesService.getEnterprise(this);
-
 
 	}
 
@@ -90,9 +88,8 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 				images.enterprise(), enterprise.getName(), workplaces.size()));
 
 		List<Cost> enterpriseCosts = enterprise.getCosts();
-		IReportsModel<IReport> reports = 
-				new CostReportsModel(enterpriseCosts);
-		enterpriseItem.setUserObject(reports);
+		IReportsModel<IDocument> documents = new CostReportsModel(enterpriseCosts);
+		enterpriseItem.setUserObject(documents);
 
 		tree.addItem(enterpriseItem);
 
@@ -106,10 +103,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 					employees.size(), images.workplace());
 
 			List<Cost> workplaceCosts = workplace.getCosts();
-			IReportsModel<IReport> workplaceReports = 
-					new CostReportsModel(workplaceCosts);
+			IReportsModel<IDocument> workplaceReports = new CostReportsModel(
+					workplaceCosts);
 			workplaceItem.setUserObject(workplaceReports);
 
+			TreeItem workplaceSalariesItem = addImageItem(workplaceItem,
+					"Nominas", workplaceCosts.size(), images.salaries());
+			workplaceSalariesItem.setUserObject(new SalaryCostReportsModel(workplaceCosts));
+			
 			for (Employee employee : employees) {
 				String fullName = employee.getFullname();
 				// fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
@@ -144,7 +145,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
 		if (userObject instanceof IReportsModel<?>) {
-			onReportsSelected((IReportsModel<IReport>) userObject);
+			onReportsSelected((IReportsModel<IDocument>) userObject);
 		}
 	}
 
@@ -174,15 +175,15 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 									images.salaries(), "Nominas",
 									salaries.size()));
 						}
-						IReportsModel<IReport> reports = new SalaryReportsModel(
+						IReportsModel<IDocument> documents = new SalaryReportsModel(
 								salaries, employeesService);
-						salariesItem.setUserObject(reports);
+						salariesItem.setUserObject(documents);
 					}
 				});
 	}
 
-	private void onReportsSelected(IReportsModel<IReport> reports) {
-		employeeDetail.getSalaryReceipt().setReports(reports);
+	private void onReportsSelected(IReportsModel<IDocument> documents) {
+		employeeDetail.getSalaryReceipt().setReports(documents);
 	}
 
 	/**
@@ -206,8 +207,8 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
 	}
 
-	private class CostReportsModel extends AbstractReportsModel<IReport>
-			implements IReport {
+	private class CostReportsModel extends AbstractReportsModel<IDocument>
+			implements IDocument {
 
 		private List<Cost> costs;
 
@@ -222,29 +223,27 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		}
 
 		@Override
-		public IReport current() {
+		public IDocument current() {
 			return this;
 		}
-		
+
 		@Override
 		public void print() {
 			download();
 		}
-		
+
 		@Override
 		public void download() {
 			download("pdf");
 		}
-		
+
 		@Override
 		public void download(String format) {
 			Cost cost = costs.get(currentIndex());
-			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/" 
-					+ cost.getMonth()  
-					+ "_" + cost.getYear()  
-					+ "_" + cost.getEnterpriseId() 
-					+ "_" + cost.getWorkplaceId() 
-					+  "." + format);
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/"
+					+ cost.getMonth() + "_" + cost.getYear() + "_"
+					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
+					+ "." + format);
 			Window.open(printURL, "_blank", null);
 		}
 
@@ -253,10 +252,62 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			Cost cost = costs.get(currentIndex());
 			employeesService.getCostReceiptHTML(cost, zoom, callback);
 		}
-		
+
 		@Override
 		public String[] getSupportedFormats() {
-			return new String [] {"xls"};
+			return new String[] { "xls" };
+		}
+	}
+
+	private class SalaryCostReportsModel extends AbstractReportsModel<IDocument>
+			implements IDocument {
+
+		private List<Cost> costs;
+
+		public SalaryCostReportsModel(List<Cost> costs) {
+			this.costs = costs;
+			first();
+		}
+
+		@Override
+		public int size() {
+			return costs.size();
+		}
+
+		@Override
+		public IDocument current() {
+			return this;
+		}
+
+		@Override
+		public void print() {
+			download();
+		}
+
+		@Override
+		public void download() {
+			download("pdf");
+		}
+
+		@Override
+		public void download(String format) {
+			Cost cost = costs.get(currentIndex());
+			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/"
+					+ cost.getMonth() + "_" + cost.getYear() + "_"
+					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
+					+ "." + format);
+			Window.open(printURL, "_blank", null);
+		}
+
+		@Override
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
+			Cost cost = costs.get(currentIndex());
+			employeesService.getSalaryReceiptHTML(cost, zoom, callback);
+		}
+
+		@Override
+		public String[] getSupportedFormats() {
+			return new String[] {};
 		}
 	}
 }

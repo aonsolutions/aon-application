@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.employee.client;
 
 
-public abstract class AbstractReportsModel<E  extends IReport> implements IReportsModel<E> {
+public abstract class AbstractReportsModel<E  extends IDocument> implements IReportsModel<E> {
 	
 	private int current ;
 	

@@ -114,7 +114,7 @@ public class Documents extends Composite {
 				TreeItem item = event.getSelectedItem();
 				Object userObject = item.getUserObject();
 				if (userObject instanceof IReportsModel<?>) {
-					onReportsSelected((IReportsModel<IReport>) userObject);
+					onReportsSelected((IReportsModel<IDocument>) userObject);
 				}
 
 			}
@@ -125,8 +125,8 @@ public class Documents extends Composite {
 		this.employeeDetail = employeeDetail;
 	}
 
-	private void onReportsSelected(IReportsModel<IReport> reports) {
-		employeeDetail.getSalaryReceipt().setReports(reports);
+	private void onReportsSelected(IReportsModel<IDocument> documents) {
+		employeeDetail.getSalaryReceipt().setReports(documents);
 	}
 
 	/**
@@ -152,8 +152,8 @@ public class Documents extends Composite {
 	
 	
 
-	private class DocumentReportsModel extends AbstractReportsModel<IReport>
-			implements IReport {
+	private class DocumentReportsModel extends AbstractReportsModel<IDocument>
+			implements IDocument {
 
 		private List<Document> documents;
 
@@ -174,7 +174,7 @@ public class Documents extends Composite {
 		}
 
 		@Override
-		public IReport current() {
+		public IDocument current() {
 			return this;
 		}
 		

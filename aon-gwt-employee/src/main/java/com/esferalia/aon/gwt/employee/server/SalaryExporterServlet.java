@@ -3,9 +3,13 @@ package com.esferalia.aon.gwt.employee.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.record.formula.functions.Match;
 import org.apache.velocity.runtime.parser.node.GetExecutor;
 import org.jfree.chart.servlet.ServletUtilities;
 
@@ -44,35 +49,25 @@ public class SalaryExporterServlet extends HttpServlet {
 		}
 	};
 	
-	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
 		String requestURI = req.getRequestURI();
 		String extension = AonServletUtils.getExtn(requestURI);
-		String salaryIdStr = AonServletUtils.getWithoutExtn(requestURI);
-		int salaryId = Integer.parseInt(salaryIdStr);
+		String salaryRequestStr = AonServletUtils.getWithoutExtn(requestURI);
 		
 		try {
 			ServletContext ctx = getServletContext();
 			AonServletUtils.initFacesContext(ctx, req, resp);
 			
-			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_ID),
-					salaryId);
-			List<ITransferObject> list = beanManager.getList(criteria);
-			com.esferalia.aon.payroll.Salary aonSalary = (com.esferalia.aon.payroll.Salary) list
-					.get(0);
-
+			Criteria criteria =  getCriteria(salaryRequestStr);
+			
 			ReportManager reportManager = new ReportManager();
 			OutputFormat outputFormat = getOutputFormat(extension);
 			reportManager.setOutputFormat(outputFormat);
-			reportManager.setCollectionProvider(new SingleCollectionProvider(
-					aonSalary));
+			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria));
+			
 			
 			MimeType mimeType = MimeType.getByExtension(extension);
 			resp.setContentType(mimeType.getName());
@@ -95,13 +90,69 @@ public class SalaryExporterServlet extends HttpServlet {
 		} finally{
 			AonServletUtils.releaseFacesContext();
 		}
-		
-		
 	}
 
-	
 	private static OutputFormat getOutputFormat(String extension) {
 		return OUTPUT_FORMATS.get(extension);
+	}
+	
+	
+	private static Pattern MONTH_PATTERN = 
+			Pattern.compile("(\\d{1,2})_(\\d{4})_(\\d+)_(\\d+)");
+
+	private static Criteria getCriteria(String request) throws ManagerBeanException {
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
+		Criteria criteria = new Criteria();
+
+		Matcher matcher = 
+				MONTH_PATTERN.matcher(request);
+		
+		if ( !matcher.matches() ) {
+			int salaryId = Integer.parseInt(request);
+			criteria.addEqualExpression(
+					beanManager.getFieldName(IEntityAlias.SALARY_ID ),
+					salaryId);
+		} else {
+
+			int month = Integer.parseInt(matcher.group(1));
+			int year = Integer.parseInt(matcher.group(2));
+	
+			Calendar calendar = Calendar.getInstance();
+			calendar.set( Calendar.YEAR, year);
+			calendar.set( Calendar.MONTH, month);
+			calendar.set( Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+			calendar.set( Calendar.HOUR, 0);
+			calendar.set( Calendar.MINUTE, 0);
+			calendar.set( Calendar.SECOND, 0);
+			Date startDate = calendar.getTime();
+			calendar.set(Calendar.DAY_OF_MONTH, 
+					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+			Date endDate = calendar.getTime();
+	
+			int enterpriseId = Integer.parseInt(matcher.group(3));
+			int workplaceId = Integer.parseInt(matcher.group(4));
+	
+			if ( workplaceId != 0  ){
+				criteria.addEqualExpression(
+						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID ),
+						workplaceId);
+			}
+			else {
+				criteria.addEqualExpression(
+						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID ),
+						enterpriseId );
+			}
+			
+			criteria.addBetweenExpression(
+					beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
+					startDate, 
+					endDate );
+			
+			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+		}
+		return criteria;
 	}
 	
 }

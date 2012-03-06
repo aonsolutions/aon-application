@@ -30,9 +30,7 @@ public class Reports extends ResizeComposite {
 	private static final int MIN_ZOOM =  25;
 	private static final int MAX_ZOOM =  500;
 
-	private static final int DEFAULT_ZOOM = 130;
-	
-	
+	private static final int DEFAULT_ZOOM = 135;
 	
 	interface Binder extends UiBinder<Widget, Reports> { }
 	private static final Binder binder = GWT.create(Binder.class);
@@ -57,7 +55,7 @@ public class Reports extends ResizeComposite {
 	
 	private int zoom = DEFAULT_ZOOM;
 
-	private	IReportsModel<IReport> 		reports;
+	private	IReportsModel<IDocument> 		documents;
 	
 	public Reports() {
 		initWidget(binder.createAndBindUi(this));
@@ -65,44 +63,44 @@ public class Reports extends ResizeComposite {
 		firstButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				reports.first();
+				documents.first();
 				onReportChanged();
 			}
 		});
 		previousButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				reports.previous();
+				documents.previous();
 				onReportChanged();
 			}
 		});
 		nextButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				reports.next();
+				documents.next();
 				onReportChanged();
 			}
 		});
 		lastButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				reports.last();
+				documents.last();
 				onReportChanged();
 			}
 		});
 		printButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				IReport report = reports.current();
-				report.print();
+				IDocument document = documents.current();
+				document.print();
 			}
 		});
 		
 		excelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
-				IReport report = reports.current();
-				report.download("xls");
+				IDocument document = documents.current();
+				document.download("xls");
 			}
 		});
 
@@ -110,8 +108,8 @@ public class Reports extends ResizeComposite {
 			
 			@Override
 			public void execute() {
-				IReport report = reports.current();
-				report.print();
+				IDocument document = documents.current();
+				document.print();
 			}
 		});
 		
@@ -119,8 +117,8 @@ public class Reports extends ResizeComposite {
 			
 			@Override
 			public void execute() {
-				IReport report = reports.current();
-				report.download();
+				IDocument document = documents.current();
+				document.download();
 			}
 		});
 
@@ -145,8 +143,8 @@ public class Reports extends ResizeComposite {
 	}
 	
 	
-	public void setReports ( IReportsModel<IReport> reports){
-		this.reports = reports;
+	public void setReports ( IReportsModel<IDocument> documents){
+		this.documents = documents;
 		onReportChanged();
 	}
 	
@@ -154,24 +152,24 @@ public class Reports extends ResizeComposite {
 	private void onReportChanged(){
 		
 		
-		setEnabled(firstButton, reports.hasPrevious());
-		setEnabled(previousButton, reports.hasPrevious());
-		setEnabled(nextButton, reports.hasNext());
-		setEnabled(lastButton, reports.hasNext());
+		setEnabled(firstButton, documents.hasPrevious());
+		setEnabled(previousButton, documents.hasPrevious());
+		setEnabled(nextButton, documents.hasNext());
+		setEnabled(lastButton, documents.hasNext());
 		
-		IReport report = reports.current();
+		IDocument document = documents.current();
 
-		setVisible(excelButton, support(report, "xls"));
+		setVisible(excelButton, support(document, "xls"));
 		
-		text.setText( ( reports.currentIndex() + 1 ) + " de " + reports.size() );
+		text.setText( ( documents.currentIndex() + 1 ) + " de " + documents.size() );
 		
 		getAsHTML();
 	}
 	
 	private void getAsHTML() {
-		IReport report = reports.current();
+		IDocument document = documents.current();
 		
-		report.getAsHTML(zoom, new AsyncCallback<String>() {
+		document.getAsHTML(zoom, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String html) {
 				container.setHTML(html);
@@ -210,8 +208,8 @@ public class Reports extends ResizeComposite {
 		button.setVisible(visible);
 	}
 
-	private static boolean support ( IReport report, String format) {
-		String supportedFormats [] = report.getSupportedFormats();
+	private static boolean support ( IDocument document, String format) {
+		String supportedFormats [] = document.getSupportedFormats();
 		for (int i = 0; i < supportedFormats.length; i++) {
 			if ( format.equals(supportedFormats[i])){
 				return true;

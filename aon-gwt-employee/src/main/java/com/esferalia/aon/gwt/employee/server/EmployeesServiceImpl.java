@@ -10,12 +10,13 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.WORKPLACE;
 import static com.esferalia.aon.gwt.employee.server.AonServletUtils.*;
 
 import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -85,6 +86,15 @@ import com.esferalia.aon.web.employee.controller.ManagerController;
 @SuppressWarnings("serial")
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService {
+	
+	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = 
+			new HashMap<Object, Object>() {
+		{
+			put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
+			put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
+			put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
+		}
+	};
 
 	public Enterprise getEnterprise() throws IllegalArgumentException {
 		try {
@@ -119,11 +129,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 
 			Map<Object, Object> parameters = 
-					new HashMap<Object, Object>();
+					new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
 			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not roud to int*/);
-			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
-			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
-			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 			
 			
 			Map<Object, Object> images = new HashMap<Object, Object>();
@@ -132,6 +139,35 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri );
 
 			String html  = getSalaryReceiptHTML(salary, parameters);
+			
+			for (Entry<Object, Object> image : images.entrySet()) {
+				String name = String.format("%s%s", imagesUri, image.getKey());
+				JasperImageServlet.saveImage(name,  ( byte [] )image.getValue());
+			}
+			
+			return html;
+	}
+
+	public String getSalaryReceiptHTML(Cost cost, int zoom)
+			throws IllegalArgumentException {
+
+			Map<Object, Object> parameters = 
+					new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
+			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not roud to int*/);
+			
+			
+			Map<Object, Object> images = new HashMap<Object, Object>();
+			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images );
+			
+			String imagesUri = String.format( "jasper_image/salary/%d/%d/%d/%d/",
+					cost.getMonth(),
+					cost.getYear(),
+					cost.getWorkplaceId(),
+					cost.getEnterpriseId() );  
+			
+			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri );
+
+			String html  = getSalaryReceiptHTML(cost, parameters);
 			
 			for (Entry<Object, Object> image : images.entrySet()) {
 				String name = String.format("%s%s", imagesUri, image.getKey());
@@ -154,14 +190,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			criteria.addEqualExpression(
 					beanManager.getFieldName(IEntityAlias.SALARY_ID),
 					salary.getId());
-			List<ITransferObject> list = beanManager.getList(criteria);
-			com.esferalia.aon.payroll.Salary aonSalary = (com.esferalia.aon.payroll.Salary) list
-					.get(0);
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			reportManager.setCollectionProvider(new SingleCollectionProvider(
-					aonSalary));
+			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
@@ -182,66 +214,43 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	}
 	
+	public String getSalaryReceiptHTML(Cost cost, Map<Object, Object> parameters )
+			throws IllegalArgumentException {
+		try {
 
+			initFacesContext();
+
+			ReportManager reportManager = new ReportManager();
+			reportManager.setOutputFormat(OutputFormat.HTML);
+			reportManager.setCollectionProvider(getSalariesProvider(cost));
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
+			String salaryReport = getSalaryReport();
+			reportManager.execute(out, salaryReport, parameters);
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();			
+		}
+	}
+	
 	public String getCostReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 		try {
 			initFacesContext();
 
-			IManagerBean beanManager = BeanManager
-					.getManagerBean(com.esferalia.aon.payroll.Salary.class);
-			Criteria criteria = new Criteria();
-			
-			Calendar calendar = Calendar.getInstance();
-			calendar.set( Calendar.YEAR, cost.getYear());
-			calendar.set( Calendar.MONTH, cost.getMonth());
-			calendar.set( Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
-			calendar.set( Calendar.HOUR, 0);
-			calendar.set( Calendar.MINUTE, 0);
-			calendar.set( Calendar.SECOND, 0);
-					
-			Date startDate = calendar.getTime();
-			
-			calendar.set(Calendar.DAY_OF_MONTH, 
-					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-			Date endDate = calendar.getTime();
-			
-			if ( cost.getWorkplaceId() != 0  ){
-				criteria.addEqualExpression(
-						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID ),
-						cost.getWorkplaceId() );
-			}
-			else {
-				criteria.addEqualExpression(
-						beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID ),
-						cost.getEnterpriseId() );
-			}
-			
-			criteria.addBetweenExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
-					startDate, 
-					endDate );
-			
-			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-			criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
-			
-			final List<ITransferObject> list = beanManager.getList(criteria);
-			
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
 			
-			reportManager.setCollectionProvider(new ICollectionProvider() {
-				@Override
-				public Collection<ITransferObject> getCollection() {
-					return list;
-				}
-
-				@Override
-				public Collection<ITransferObject> getCollection(boolean forceRefresh)
-						throws ManagerBeanException {
-					return list;
-				}
-			});
+			reportManager.setCollectionProvider(getSalariesProvider(cost) );
 			
 			// Really I hate this spaghetti piece of code. 
 			// For pass 'month' & 'year' to a report, we 
@@ -255,11 +264,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
-			Map<Object, Object> parameters = new HashMap<Object, Object>();
+			Map<Object, Object> parameters = new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
 			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not round to int*/);
-			parameters.put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
-			parameters.put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
-			parameters.put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 			reportManager.execute(out, IPayrollConstants.COST_REPORT, parameters);
 
 			return out.toString();
@@ -285,6 +291,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new ReportException(e.getLocalizedMessage());
 		}
 	}
+	
+	
+	private static ICollectionProvider getSalariesProvider(Cost cost) throws ManagerBeanException{
+		IManagerBean beanManager = BeanManager
+				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
+		Criteria criteria = new Criteria();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set( Calendar.YEAR, cost.getYear());
+		calendar.set( Calendar.MONTH, cost.getMonth());
+		calendar.set( Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
+		calendar.set( Calendar.HOUR, 0);
+		calendar.set( Calendar.MINUTE, 0);
+		calendar.set( Calendar.SECOND, 0);
+				
+		Date startDate = calendar.getTime();
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 
+				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endDate = calendar.getTime();
+		
+		if ( cost.getWorkplaceId() != 0  ){
+			criteria.addEqualExpression(
+					beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID ),
+					cost.getWorkplaceId() );
+		}
+		else {
+			criteria.addEqualExpression(
+					beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID ),
+					cost.getEnterpriseId() );
+		}
+		
+		criteria.addBetweenExpression(
+				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
+				startDate, 
+				endDate );
+		
+		criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+		criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+		
+		
+		return new AonServletUtils.SalaryProvider(criteria);
+	}
+
 
 	private static List<Salary> getSalaries(Connection connection, Integer contractId)
 			throws SQLException {
@@ -739,4 +789,5 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		
 		return new java.sql.Date ( calendar.getTimeInMillis());
 	}
+
 }

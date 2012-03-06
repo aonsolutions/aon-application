@@ -70,52 +70,5 @@ public class Employe implements EntryPoint{
 	}
 
 
-	private class SalaryReportsModel extends AbstractReportsModel<IReport>
-			implements IReport {
-
-		private Salary salary;
-
-		public SalaryReportsModel(Salary salary) {
-			this.salary = salary;
-			first();
-		}
-
-		@Override
-		public int size() {
-			return 1;
-		}
-
-		@Override
-		public IReport current() {
-			return this;
-		}
-		
-		@Override
-		public void print() {
-			// TODO Hey here is someting that need be implemented.
-		}
-		
-		@Override
-		public void download() {
-			// TODO Hey here is someting that need be implemented.
-		}
-		
-		@Override
-		public void download(String format) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public String[] getSupportedFormats() {
-			// TODO Auto-generated method stub
-			return new String []{};
-		}
-		
-		@Override
-		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
-			employeesService.getSalaryReceiptHTML(salary, zoom, callback);
-		}
-	}
 
 }

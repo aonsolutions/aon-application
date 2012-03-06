@@ -10,8 +10,8 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-class SalaryReportsModel extends AbstractReportsModel<IReport>
-		implements IReport {
+class SalaryReportsModel extends AbstractReportsModel<IDocument>
+		implements IDocument {
 
 	private List<Salary> salaries;
 	
@@ -33,7 +33,7 @@ class SalaryReportsModel extends AbstractReportsModel<IReport>
 	}
 
 	@Override
-	public IReport current() {
+	public IDocument current() {
 		return this;
 	}
 	

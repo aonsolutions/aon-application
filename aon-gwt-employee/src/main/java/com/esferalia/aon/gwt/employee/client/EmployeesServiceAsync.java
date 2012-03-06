@@ -18,6 +18,8 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
+	void getSalaryReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
 	void getSalaryReceiptHTML(Salary salary, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 }

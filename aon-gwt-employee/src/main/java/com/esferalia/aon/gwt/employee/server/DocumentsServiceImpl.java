@@ -24,6 +24,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.gwt.employee.client.DocumentsService;
 import com.esferalia.aon.gwt.employee.shared.Document;
 import com.esferalia.aon.payroll.sql.SQLConstants;
@@ -73,9 +74,9 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 
 			String sql = "SELECT * " + 
 						 " FROM " + RATTACH +
-						 " , " + CATEGORY + 
-						 " WHERE " + RATTACH + "." + RattachColumns.REGISTRY + " = ? " +
-						 " AND " +  RATTACH + "." + RattachColumns.CATEGORY + " = " + CATEGORY + "." + CategoryColumns.ID ;
+						 " LEFT JOIN  " + CATEGORY + " ON ( " + RATTACH + "." + RattachColumns.CATEGORY + " = " + CATEGORY + "." + CategoryColumns.ID + " )" +
+						 " WHERE " + RATTACH + "." + RattachColumns.REGISTRY + " = ? "  + 
+						 " AND " + RATTACH + "." + RattachColumns.TYPE + " NOT IN ( " + RegistryAttachmentType.LOGO.ordinal() + "," + RegistryAttachmentType.SIGNATURE.ordinal() + ")";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
@@ -143,6 +144,11 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			put(MimeType.MIME_MS_POWER_POINT_2007, OpenDocument2HtmlConverter.INSTANCE );
 			put(MimeType.MIME_HTML, Noop2HtmlConverter.INSTANCE );
 			put(MimeType.MIME_TXT, Noop2HtmlConverter.INSTANCE );
+
+			put(MimeType.MIME_BMP, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_JPEG, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_PNG, Image2HtmlConverter.INSTANCE );
+			put(MimeType.MIME_GIF, Image2HtmlConverter.INSTANCE );
 		}
 	};
 	
@@ -181,6 +187,24 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 						OpenDocument2ImageServlet.ZOOM_PARAM,
 						zoom);
 			}		
+		}
+	}
+
+	private static class Image2HtmlConverter implements IDocument2HtmlConverter {
+		
+		private static  IDocument2HtmlConverter INSTANCE = new Image2HtmlConverter();
+
+		@Override
+		public void transform(Document doc, OutputStream os, int zoom) throws Exception {
+			
+			PrintStream printStream = new PrintStream(os);
+			
+			MimeType mimeType = MimeType.get(doc.getMimeType());
+			
+			// TODO : aon_gwt_employee ???
+			printStream.printf("<div class='page'  ><img src='rattach/%d.%s'></img> </div>",
+					doc.getId(),
+					mimeType.getExtension());
 		}
 	}
 

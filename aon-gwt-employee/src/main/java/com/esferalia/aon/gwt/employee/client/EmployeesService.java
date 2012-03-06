@@ -17,5 +17,6 @@ public interface EmployeesService extends RemoteService {
 	Enterprise getEnterprise() throws IllegalArgumentException;
 	List<Salary> getSalaries(Employee employee) throws IllegalArgumentException;
 	String getCostReceiptHTML(Cost cost, int zoom) throws IllegalArgumentException;
+	String getSalaryReceiptHTML(Cost cost, int zoom) throws IllegalArgumentException;
 	String getSalaryReceiptHTML(Salary salary, int zoom) throws IllegalArgumentException;
 }

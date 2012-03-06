@@ -6,10 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -24,8 +20,6 @@ import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 
 public class OpenDocumentConverterServlet extends HttpServlet {
 
@@ -58,7 +52,7 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 
 			MimeType mimeType = MimeType.getByExtension(extension);
 			
-			RAttach rattach = getRAttach(rattachId);
+			AonServletUtils.RAttach rattach = AonServletUtils.getRAttach(rattachId);
 			
 			resp.setContentType(mimeType.getName());
 			OutputStream os = resp.getOutputStream();
@@ -126,49 +120,6 @@ public class OpenDocumentConverterServlet extends HttpServlet {
 		}finally {
 			officeManager.stop();
 		}
-	}
-
-	protected static RAttach getRAttach ( Integer id ) 
-			throws SQLException, IOException  {
-		Connection connection = AonServletUtils.getConnection();
-
-		ResultSet rs = null;
-		PreparedStatement stmt = null;
-		try {
-
-			stmt = connection.prepareStatement("SELECT *" 
-					+ " FROM " + SQLConstants.RATTACH + " WHERE "
-					+ RattachColumns.ID + "= ? ");
-			stmt.setInt(1, id);
-			
-			rs = stmt.executeQuery();
-			
-			if (!rs.next()) {
-				throw new OpenDocumentConverterServlet.NoSuchDocumentException(id);
-			}
-
-			RAttach rattach  = new RAttach();
-			Blob blob = rs.getBlob(RattachColumns.DATA);
-			rattach.bytes = blob.getBytes(1, (int) blob.length());
-			rattach.mimeType = mimeTypeOf(rs.getInt(RattachColumns.MIMETYPE));
-			
-			return rattach;
-			
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-		}
-	}
-	
-	protected static class RAttach {
-		
-		byte [] bytes;
-		MimeType mimeType;
-	
 	}
 	
 }
