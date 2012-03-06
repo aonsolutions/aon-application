@@ -2,7 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salaryx" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.3636363636363635"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="50"/>
+	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
+	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<style name="label" vAlign="Bottom" fontSize="9"/>
 	<style name="title" fontSize="11" isBold="true" isUnderline="true"/>
 	<style name="title1" style="label" fontSize="10" isBold="true"/>
@@ -53,9 +55,9 @@
 	</subDataset>
 	<subDataset name="fills"/>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=153]]>
+		<![CDATA[FROM Salary WHERE Id=52048]]>
 	</queryString>
-	<field name="salary" class="com.esferalia.aon.salary.ISalary"/>
+	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="supplements" class="java.util.List">
 		<variableExpression><![CDATA[$F{salary}.getPayments().getSalarySupplements().getValues()]]></variableExpression>
 	</variable>
@@ -74,8 +76,8 @@
 	<variable name="remainLines" class="java.lang.Integer">
 		<variableExpression><![CDATA[$V{supplements}.size() <= 6 ? 6 - Math.max(1, $V{supplements}.size()) : 23]]></variableExpression>
 	</variable>
-	<variable name="amountPattern" class="java.lang.String">
-		<variableExpression><![CDATA["{0,choice,-1#{0,number,'#,##0.00'}|0#|1#{0,number,'#,##0.00'}}"]]></variableExpression>
+	<variable name="signature" class="com.code.aon.registry.RegistryAttachment">
+		<variableExpression><![CDATA[ReportUtils.first( $F{salary}.getContract().getWorkPlace().getEnterprise().getDocuments(), "registryAttachmentType", RegistryAttachmentType.SIGNATURE)]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
@@ -247,10 +249,10 @@
 					<textElement/>
 					<text><![CDATA[Salario base]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="33" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getPayments().getBaseSalary().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getPayments().getBaseSalary().getAmount() == 0.00 ? "" :  $F{salary}.getPayments().getBaseSalary().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label" x="24" y="46" width="324" height="13"/>
@@ -307,30 +309,30 @@
 					<textElement/>
 					<text><![CDATA[Horas extraordinarias]]></text>
 				</staticText>
-				<textField pattern="" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="0" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern}, $F{salary}.getPayments().getOvertimeHours().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getPayments().getOvertimeHours().getAmount() == 0.00 ? "" : $F{salary}.getPayments().getOvertimeHours().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="13" width="324" height="13"/>
 					<textElement/>
 					<text><![CDATA[Gratificaciones extraordinarias]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="13" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getPayments().getSpecialBonuses().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getPayments().getSpecialBonuses().getAmount() == 0 ? "" : $F{salary}.getPayments().getSpecialBonuses().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="26" width="324" height="13"/>
 					<textElement/>
 					<text><![CDATA[Salario en Especie]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="26" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getPayments().getSalaryInKind().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getPayments().getSalaryInKind().getAmount() == 0.00 ? "" : $F{salary}.getPayments().getSalaryInKind().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2" x="14" y="42" width="531" height="13"/>
@@ -485,10 +487,10 @@
 					<textElement/>
 					<text><![CDATA[A. TOTAL DEVENGADO]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="445" y="29" width="100" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getTotalPayment())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getTotalPayment()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -561,13 +563,13 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="45" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="45" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getCommonContingency().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getCommonContingency().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getCommonContingency().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="58" width="259" height="13"/>
@@ -576,13 +578,13 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="58" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="58" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getUnemployment().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getUnemployment().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getUnemployment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="71" width="259" height="13"/>
@@ -591,13 +593,13 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="71" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="71" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getJobTraining().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getJobTraining().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getJobTraining().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label" x="24" y="84" width="325" height="13"/>
@@ -611,13 +613,13 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="97" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="97" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getStructuralOvertime().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="34" y="110" width="249" height="13"/>
@@ -626,18 +628,18 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="110" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="110" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getNonStructuralOvertime().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getNonStructuralOvertime().getAmount()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="123" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getSocialSecurityContributions())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getSocialSecurityContributions() == 0.00 ? "" : $F{salary}.getDeductions().getSocialSecurityContributions()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="136" width="269" height="13"/>
@@ -646,13 +648,13 @@
 				</staticText>
 				<textField isBlankWhenNull="true">
 					<reportElement style="amount" x="283" y="136" width="40" height="13"/>
-					<textElement/>
+					<textElement textAlignment="Center"/>
 					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getDescription()]]></textFieldExpression>
 				</textField>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="136" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getIrpf().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getIrpf().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getIrpf().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="123" width="324" height="13"/>
@@ -664,30 +666,30 @@
 					<textElement/>
 					<text><![CDATA[3. Anticipos]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="149" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getAdvancePayment().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getAdvancePayment().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="162" width="334" height="13"/>
 					<textElement/>
 					<text><![CDATA[4. Valor de los productos recibidos en especie]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="162" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getInKind().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getInKind().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getInKind().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="175" width="334" height="13"/>
 					<textElement/>
 					<text><![CDATA[5. Otras deducciones]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="175" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getDeductions().getOther().getAmount())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getDeductions().getOther().getAmount() == 0.00 ? "" : $F{salary}.getDeductions().getOther().getAmount()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title1_dotts" x="239" y="191" width="206" height="13"/>
@@ -697,7 +699,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement style="total1" x="445" y="191" width="100" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalDeduction()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getTotalDeduction() == 0.00 ? "" : $F{salary}.getTotalDeduction()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title1_dotts" x="161" y="208" width="284" height="13"/>
@@ -707,7 +709,7 @@
 				<textField isBlankWhenNull="true">
 					<reportElement style="total1" x="445" y="208" width="100" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid() == 0.00 ? "" : $F{salary}.getTotalLiquid()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="label" x="350" y="225" width="195" height="13"/>
@@ -720,7 +722,7 @@
 					<text><![CDATA[RECIBÍ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="label" x="14" y="241" width="334" height="13"/>
+					<reportElement style="label" x="14" y="225" width="334" height="13"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Firma y sello de la empresa]]></text>
 				</staticText>
@@ -778,60 +780,60 @@
 					<textElement/>
 					<text><![CDATA[Remuneración mensual]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="46" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getRemuneration())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getRemuneration() == 0.00 ? "" : $F{salary}.getRemuneration()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="label_dotts" x="24" y="59" width="324" height="13"/>
 					<textElement/>
 					<text><![CDATA[Prorrata de pagas extraordinarias]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="amount" x="348" y="59" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getExtraPayProration())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getExtraPayProration() == 0.00 ? "" : $F{salary}.getExtraPayProration()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title1" x="24" y="72" width="324" height="13"/>
 					<textElement textAlignment="Right"/>
 					<text><![CDATA[TOTAL]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="348" y="72" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getCommonBase())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? "" : $F{salary}.getCommonBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="85" width="334" height="32"/>
 					<textElement/>
 					<text><![CDATA[2. Base de cotización por contingencias profesionales (AT y EP) y conceptos de recaudación conjunta (desempleo, formación profesional, Fondo de Garantía Salarial)]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="348" y="104" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getProfessionalBase())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="118" width="334" height="13"/>
 					<textElement/>
 					<text><![CDATA[3. Base de cotización adicional por horas extraordinarias]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="348" y="118" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getOvertimeBase())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() == 0.00 ? "" : $F{salary}.getOvertimeBase()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement style="title2_dotts" x="14" y="131" width="334" height="13"/>
 					<textElement/>
 					<text><![CDATA[5. Base sujeta a retención del IRPF]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="348" y="131" width="97" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format($V{amountPattern},$F{salary}.getIrpfBase())]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? "": $F{salary}.getIrpfBase()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

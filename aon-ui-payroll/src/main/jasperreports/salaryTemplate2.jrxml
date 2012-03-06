@@ -6,6 +6,7 @@
 	<import value="com.code.aon.registry.enumeration.RegistryAttachmentType"/>
 	<import value="com.esferalia.aon.salary.enumeration.PaymentType"/>
 	<import value="com.code.aon.registry.enumeration.AddressType"/>
+	<import value="com.esferalia.aon.salary.enumeration.DeductionType"/>
 	<import value="com.esferalia.aon.ui.payroll.utils.ReportUtils"/>
 	<style name="label" vAlign="Middle" fontSize="8"/>
 	<style name="title" style="label" hAlign="Center" isBold="true"/>
@@ -67,13 +68,24 @@
 		<field name="expression" class="java.lang.String"/>
 		<field name="paymentConcept" class="java.lang.String"/>
 	</subDataset>
+	<subDataset name="deduction">
+		<field name="type" class="com.esferalia.aon.salary.enumeration.DeductionType"/>
+		<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
+		<field name="amount" class="java.lang.Double"/>
+		<field name="description" class="java.lang.String"/>
+		<field name="expression" class="java.lang.String"/>
+		<field name="deductionConcept" class="java.lang.String"/>
+	</subDataset>
 	<subDataset name="fill"/>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=155418 OR Id=135790 OR Id=139736]]>
+		<![CDATA[FROM Salary WHERE Id=155418 OR Id=1135790 OR Id=1139736 OR Id=152047]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
-	<variable name="payments" class="java.util.Set">
+	<variable name="payments" class="java.util.List">
 		<variableExpression><![CDATA[ReportUtils.sort($F{salary}.getSalaryPayments(), "paymentConcept")]]></variableExpression>
+	</variable>
+	<variable name="deductions" class="java.util.List">
+		<variableExpression><![CDATA[ReportUtils.reduce($F{salary}.getSalaryDeductions(), "type", DeductionType.COMMON_CONTINGENCY, DeductionType.COMMON_CONTINGENCY, DeductionType.IRPF, DeductionType.ADVANCE_PAYMENT, DeductionType.IN_KIND, DeductionType.OTHER )]]></variableExpression>
 	</variable>
 	<variable name="remainLines" class="java.lang.Integer">
 		<variableExpression><![CDATA[23 -  ( $V{payments} != null ? Math.max(1,$V{payments}.size()): 1 )]]></variableExpression>
@@ -104,9 +116,6 @@
 	</variable>
 	<variable name="prcHexNo" class="java.lang.Double">
 		<variableExpression><![CDATA[$V{importeHexNo}  / $F{salary}.getNonEstructuralOvertimeBase() * 100]]></variableExpression>
-	</variable>
-	<variable name="prcIrpf" class="java.lang.Double">
-		<variableExpression><![CDATA[($F{salary}.getIrpfBase() != 0 ? $F{salary}.getTotalIrpf()  / $F{salary}.getIrpfBase() * 100 : 0.00 )]]></variableExpression>
 	</variable>
 	<variable name="totalLiquido" class="java.lang.Double">
 		<variableExpression><![CDATA[$F{salary}.getTotalLiquid()]]></variableExpression>
@@ -849,44 +858,83 @@
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement style="box" x="0" y="95" width="555" height="83"/>
+				<reportElement style="box" x="0" y="95" width="555" height="26"/>
 				<box>
 					<topPen lineWidth="0.0"/>
-					<bottomPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
 				</box>
 				<staticText>
 					<reportElement style="head" x="5" y="2" width="96" height="12"/>
 					<textElement/>
 					<text><![CDATA[III. DEDUCCIONES:]]></text>
 				</staticText>
-				<rectangle>
-					<reportElement x="106" y="5" width="6" height="6" forecolor="#FFFFFF" backcolor="#000000"/>
-				</rectangle>
-				<staticText>
-					<reportElement style="label" x="115" y="2" width="301" height="12"/>
-					<textElement/>
-					<text><![CDATA[Aportación trabajador a cuotas Seguridad Social]]></text>
-				</staticText>
-				<textField pattern="#,##0.00">
-					<reportElement style="amount" x="418" y="2" width="63" height="12"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
-				</textField>
-				<rectangle>
-					<reportElement x="106" y="17" width="6" height="6" forecolor="#FFFFFF" backcolor="#000000"/>
-				</rectangle>
-				<textField>
-					<reportElement style="label" x="115" y="14" width="301" height="12"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[java.text.MessageFormat.format("Retención a cuenta I.R.P.F (D) {0,number,#,##0.00}% sobre {1,number,#,##0.00}", $V{prcIrpf}, $F{salary}.getIrpfBase())]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00">
-					<reportElement style="amount" x="418" y="14" width="63" height="12"/>
-					<textElement/>
-					<textFieldExpression><![CDATA[$F{salary}.getTotalIrpf()]]></textFieldExpression>
-				</textField>
+				<componentElement>
+					<reportElement key="deductions_table" x="106" y="2" width="375" height="12"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="deduction">
+							<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($V{deductions})]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="9">
+							<jr:detailCell height="12">
+								<rectangle>
+									<reportElement x="0" y="3" width="6" height="6" forecolor="#FFFFFF" backcolor="#000000"/>
+								</rectangle>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="301">
+							<jr:detailCell height="12">
+								<staticText>
+									<reportElement style="label" x="0" y="0" width="301" height="12">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.COMMON_CONTINGENCY]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<text><![CDATA[Aportación trabajador a cuotas Seguridad Social]]></text>
+								</staticText>
+								<textField>
+									<reportElement style="label" x="0" y="0" width="301" height="12">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.IRPF && "IRPF".equals($F{deductionConcept})]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<textFieldExpression><![CDATA[java.text.MessageFormat.format("Retención a cuenta I.R.P.F (D) {0}% sobre {1,number,#,##0.00}", $F{description}, $F{salary}.getMoneyIrpfBase())]]></textFieldExpression>
+								</textField>
+								<textField>
+									<reportElement style="label" x="0" y="0" width="301" height="12">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.IRPF && "IRPFE".equals($F{deductionConcept})]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<textFieldExpression><![CDATA[java.text.MessageFormat.format("Ingreso a cuenta I.R.P.F (E) {0}% sobre {1,number,#,##0.00}", $F{description}, $F{salary}.getInkindIrpfBase())]]></textFieldExpression>
+								</textField>
+								<textField>
+									<reportElement style="label" x="0" y="0" width="301" height="12">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.OTHER]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="63">
+							<jr:detailCell height="12">
+								<textField pattern="#,##0.00">
+									<reportElement style="amount" x="0" y="0" width="63" height="12">
+										<printWhenExpression><![CDATA[$F{type} == DeductionType.COMMON_CONTINGENCY]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{salary}.getSocialSecurityContributions()]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0.00">
+									<reportElement style="amount" x="0" y="0" width="63" height="12">
+										<printWhenExpression><![CDATA[$F{type} != DeductionType.COMMON_CONTINGENCY]]></printWhenExpression>
+									</reportElement>
+									<textElement/>
+									<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
 				<frame>
-					<reportElement x="277" y="26" width="275" height="12"/>
+					<reportElement positionType="Float" x="277" y="14" width="275" height="12"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -903,7 +951,24 @@
 				</frame>
 			</frame>
 			<frame>
-				<reportElement style="box" x="0" y="178" width="555" height="81"/>
+				<reportElement style="box" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="121" width="555" height="12"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<componentElement>
+					<reportElement key="fill_table" positionType="Float" x="3" y="0" width="549" height="12"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="fill">
+							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(6 - Math.max(1, $V{deductions}.size()))]]></dataSourceExpression>
+						</datasetRun>
+						<jr:column width="88">
+							<jr:detailCell height="12"/>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</frame>
+			<frame>
+				<reportElement style="box" positionType="FixRelativeToBottom" x="0" y="181" width="555" height="78"/>
 				<box>
 					<topPen lineWidth="0.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -924,13 +989,13 @@
 					<text><![CDATA[LIQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
 				<line>
-					<reportElement x="479" y="17" width="70" height="1" backcolor="#000000"/>
+					<reportElement x="480" y="17" width="70" height="1" backcolor="#000000"/>
 				</line>
 				<line>
-					<reportElement x="549" y="7" width="1" height="11" backcolor="#000000"/>
+					<reportElement x="550" y="7" width="1" height="11" backcolor="#000000"/>
 				</line>
 				<textField pattern="#,##0.00">
-					<reportElement style="base_box" mode="Opaque" x="477" y="5" width="72" height="12" backcolor="#DEDEDE"/>
+					<reportElement style="base_box" mode="Opaque" x="478" y="5" width="72" height="12" backcolor="#DEDEDE"/>
 					<textElement>
 						<font isBold="true"/>
 					</textElement>
