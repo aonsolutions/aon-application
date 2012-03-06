@@ -1,36 +1,24 @@
 package com.esferalia.aon.payroll.calculator.test;
 
+import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.util.Calendar;
 import java.util.Date;
 
-import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.sql.AbstractSQL.AgreementExtra;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-
-import static  com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate; 
 
 public class ContractExtraCalculatorTest extends AbstractSalaryCalculatorTest{
 

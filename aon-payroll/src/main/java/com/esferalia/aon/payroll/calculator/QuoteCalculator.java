@@ -4,8 +4,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.SSRegimeTypeVisitor;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;

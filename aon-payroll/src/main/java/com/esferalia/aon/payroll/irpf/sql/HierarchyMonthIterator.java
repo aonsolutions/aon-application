@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.irpf.sql;
 
 import java.util.Iterator;
+
 import com.esferalia.aon.payroll.calculator.AbstractIterator;
 
 public abstract class HierarchyMonthIterator<E> extends AbstractIterator<E> {

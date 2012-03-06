@@ -1,19 +1,13 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.AgreementExtra.parseAgreementDate;
-
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -21,10 +15,6 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.payroll.calculator.AbstractIterator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
-import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -92,56 +82,6 @@ public class SQLContractExtraCalculatorContext
 	public static interface AgreementExtraCallback {
 		public void sqlContractExtraCalculatorContext(IContractSalaryCalculatorContext ctx)throws AonException;
 	}
-
-	public static void foreachAgreementExtra(Connection connection, int year , Criteria criteria, AgreementExtraCallback cb) 
-	 throws SQLException, ExpressionException, AonException {
-		String sql = CriteriaUtilities.toSQLString(criteria, "SELECT *  FROM agreement_extra");
-		ResultSet rs = null;
-		Statement stmt = null;
-		try {
-			stmt = connection.createStatement();
-			rs = stmt.executeQuery(sql);
-			while ( rs.next() ) {
-				Date startDate = 
-					parseAgreementDate(rs.getString(AgreementExtraColumns.START_DATE), year);
-				Date endDate =  
-					parseAgreementDate(rs.getString(AgreementExtraColumns.END_DATE), year);
-				
-				if ( ! startDate.after(endDate) ) {
-				
-					Date issueDate =  
-						parseAgreementDate(rs.getString(AgreementExtraColumns.ISSUE_DATE), year);
-
-					Criteria agreementCriteria = 
-							new Criteria();
-					agreementCriteria.addEqualExpression(
-							SQLConstants.AGREEMENT_LEVEL + "." + AgreementLevelColumns.AGREEMENT, 
-							rs.getInt(AgreementExtraColumns.AGREEMENT));
-					
-					SQLContractExtraCalculatorContext ctx = 
-						new SQLContractExtraCalculatorContext(connection, 
-								startDate, 
-								endDate, 
-								issueDate, 
-								issueDate,
-								agreementCriteria);
-					while ( ctx.next() ) {
-						cb.sqlContractExtraCalculatorContext(ctx);
-					}
-					ctx.close();
-				}
-			}
-		}
-		finally {
-			if ( stmt != null ){
-				stmt.close();
-			}
-			if ( stmt != null ){
-				stmt.close();
-			}
-		}
-	}
-	
 	
 	private static class FilterCollection<E> extends AbstractIterator<E>{
 		

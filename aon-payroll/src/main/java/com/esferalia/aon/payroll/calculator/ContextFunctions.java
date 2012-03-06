@@ -1,10 +1,10 @@
 package com.esferalia.aon.payroll.calculator;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 
 import java.lang.reflect.Method;
 import java.util.Calendar;
@@ -15,11 +15,10 @@ import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 
 public class ContextFunctions {

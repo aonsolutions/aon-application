@@ -2,22 +2,11 @@ package com.esferalia.aon.payroll.calculator.test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.ParseException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.dao.CriteriaUtilities;
-import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.sql.AbstractSQL.Salary;
-import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.payroll.sql.SQLReader;
-import com.esferalia.aon.salary.expression.ExpressionException;
 
 public abstract class AbstractCalculatorTest {
 

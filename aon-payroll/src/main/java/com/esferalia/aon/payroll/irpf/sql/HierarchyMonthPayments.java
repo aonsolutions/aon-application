@@ -1,16 +1,11 @@
 package com.esferalia.aon.payroll.irpf.sql;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Calendar;
 
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 
 public class HierarchyMonthPayments extends HierarchyMonthIterator<IContractPayment> {

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.code.aon.common.AonException;
-import com.code.aon.ql.util.ExpressionException;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
