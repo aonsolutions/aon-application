@@ -53,8 +53,8 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
-import com.esferalia.aon.pms.reservation.ReservationInvoicing;
+import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
+import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 

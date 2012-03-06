@@ -1,4 +1,4 @@
-package com.esferalia.aon.pms.reservation;
+package com.esferalia.aon.pms.invoicing;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
 
 public class ReservationInvoiceTo implements IReservationConstants {
 

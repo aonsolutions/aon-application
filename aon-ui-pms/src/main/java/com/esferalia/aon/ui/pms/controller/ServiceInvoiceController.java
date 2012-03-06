@@ -40,9 +40,9 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
-import com.esferalia.aon.pms.reservation.ReservationInvoiceTo;
-import com.esferalia.aon.pms.reservation.ReservationInvoiceTo.HotelService;
-import com.esferalia.aon.pms.reservation.ReservationInvoicing;
+import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
+import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 
 public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
 

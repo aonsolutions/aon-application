@@ -24,12 +24,6 @@ public class PosShift extends PosShiftDB {
 	private static final long serialVersionUID = 1L;
 	
 	private Set<PosShiftCount> posShiftCount = new HashSet<PosShiftCount>();
-	private Double finalAmount;
-	private String remarks;
-	
-	public void setFinalAmount(Double finalAmount) {
-		this.finalAmount = finalAmount;
-	}
 	
 	@OneToMany(mappedBy = "posShift", cascade={CascadeType.ALL})
 	public Set<PosShiftCount> getPosShiftCount() {
@@ -40,33 +34,13 @@ public class PosShift extends PosShiftDB {
 	}
 	
 	@Transient
-	public Double getFinalAmount() throws ManagerBeanException {
-		/*String sqlSelect = "SELECT sum(PosShiftCount.amount)"
-				+ " FROM pos_shift_count as PosShiftCount"
-				+ " WHERE  PosShiftCount.pos_shift = " + getId();
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		finalAmount = (Double)sqlQuery.list().get(0);
-		return finalAmount;*/
-
+	public double getFinalAmount() throws ManagerBeanException {
 		IManagerBean posShiftCountBean = BeanManager.getManagerBean(PosShiftCount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), getId());
 		Projection projection = Projection.sum(posShiftCountBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_AMOUNT));
 		Object value = posShiftCountBean.getUniqueResult(projection, criteria);
-		finalAmount = (value == null) ? 0 : (Double)value;
-		return finalAmount;
+		return (value == null) ? 0 : ((Double)value).doubleValue();
 	}
-
-	@Transient
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
-	
-	
 
 }

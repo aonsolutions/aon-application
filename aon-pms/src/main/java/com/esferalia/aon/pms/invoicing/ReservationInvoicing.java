@@ -1,4 +1,4 @@
-package com.esferalia.aon.pms.reservation;
+package com.esferalia.aon.pms.invoicing;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +41,9 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
-import com.esferalia.aon.pms.reservation.ReservationInvoiceTo.HotelService;
+import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ReservationInvoicing implements IReservationConstants {
 
@@ -285,6 +287,7 @@ public class ReservationInvoicing implements IReservationConstants {
 					break;
 				} else {
 					finance.setInvoice(invoice);
+					finance.setRegistry(invoice.getRegistry());
 					finance.setPayment(false);
 					finance.setDueDate(invoice.getIssueDate());
 					finance.setScope(invoice.getScope());
