@@ -40,8 +40,18 @@
 			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
+				<value>#{aonResource.resolveLocal['/css/aio.css']}</value>
 			</list-entries>
 		</managed-property>
+	   <managed-property>
+	      <property-name>properties</property-name>
+	      <map-entries>
+	         <map-entry>
+	            <key>hideApplicationVersion</key>
+	            <value>#{true}</value>
+	         </map-entry>
+	      </map-entries>
+	   </managed-property>      	    				
 	</managed-bean>
 
 	<!-- =================== Application Menu Navigation Rules ================= -->	

@@ -30,6 +30,7 @@
 			<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
+						<ui:insert name="beforeLogoutContent" />
 						<aon:form prependId="false">			
 							<h:outputLink id="logout" styleClass="aon-logout"
 								value="http://login.aonsolutions.es/">
