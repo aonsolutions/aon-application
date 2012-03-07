@@ -29,6 +29,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.PosShift;
 import com.esferalia.aon.pms.PosShiftCount;
+import com.esferalia.aon.pms.invoicing.PosInvoicing;
 
 
 public class PosClosingController {
@@ -154,6 +155,8 @@ public class PosClosingController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setEndTime(new Date());
 			setPosShift((PosShift) bean.update(getPosShift()));
+			PosInvoicing posInvoicing = new PosInvoicing();
+			posInvoicing.completeInvoice(getPosShift());
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
 			throw new AbortProcessingException(msg, e);

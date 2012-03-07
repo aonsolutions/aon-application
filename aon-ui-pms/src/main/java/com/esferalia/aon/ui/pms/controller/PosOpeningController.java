@@ -20,6 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Pos;
 import com.esferalia.aon.pms.PosShift;
+import com.esferalia.aon.pms.invoicing.PosInvoicing;
 
 
 public class PosOpeningController {
@@ -62,16 +63,6 @@ public class PosOpeningController {
 	private void buildClosedPosList() throws ManagerBeanException {
 		if(getHotel()!=null && getHotel().getId()!=null){
 			closedPosList = new LinkedList<SelectItem>();
-//			String sqlSelect = "SELECT Pos.*" 
-//			+ " FROM pos as Pos LEFT JOIN pos_shift as PosShift on Pos.id = PosShift.pos"  
-//			+ " WHERE Pos.workPlace = " +getHotel().getWorkPlace().getId() 
-//			+ " AND (PosShift.shift <> "+getPosShift().getShift().ordinal()+" OR PosShift.shift is null)" 
-//			+ " GROUP BY Pos.id"
-//			+ " ORDER BY Pos.name"
-//			;
-			
-			
-			
 			String sqlSelect = "SELECT *"
 			+ " FROM pos"  
 			+ " WHERE workplace = "+getHotel().getWorkPlace().getId() 
@@ -85,9 +76,6 @@ public class PosOpeningController {
 			+ " GROUP BY id" 
 			+ " ORDER BY name"
 			;
-			
-			
-			
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 			Query sqlQuery = session.createSQLQuery(sqlSelect);
 			for(Object to: sqlQuery.list()){
@@ -112,15 +100,17 @@ public class PosOpeningController {
 		try {
 			buildClosedPosList();
 		} catch (ManagerBeanException e) {
-			// TODO: handle exception
+			closedPosList = new LinkedList<SelectItem>();
 		}
 	}
 	public void onAccept( ActionEvent event ){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
-			getPosShift().setStartTime(new Date(getPosShift().getStartTime().getTime()));
+			getPosShift().setStartTime(new Date());
 			getPosShift().setUser(UserUtils.getInstance().getLoggedUser());
-			bean.insertOrUpdate(getPosShift());
+			setPosShift((PosShift) bean.insertOrUpdate(getPosShift()));
+			PosInvoicing posInvoicing = new PosInvoicing();
+			posInvoicing.createInvoice(getPosShift());
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar la apertura de caja";
 			throw new AbortProcessingException(msg, e);

@@ -76,6 +76,9 @@ public class PosInvoicing implements IReservationConstants {
 	}
 
 	public void completeInvoice(PosShift posShift) throws ManagerBeanException {
+		if (posShift.getInvoice()==null) {
+			throw new ManagerBeanException("El turno no tiene Factura asociada.");
+		}
 		if (posShift.getInvoice().isRecorded()) {
 			throw new ManagerBeanException("La Factura ya esta Contabilizada.");
 		}
