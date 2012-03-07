@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	private int issueDay;
 	private boolean defaultTaxInfo;
 	private boolean updateEnabled;
+	private boolean attachmentAvailable;
 
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 	private Set<Finance> finances = new HashSet<Finance>();
@@ -92,6 +95,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	public Set<InvoiceAttachment> getAttachments() {
 		return attachments;
 	}
@@ -328,4 +332,14 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return payMethodName;
 	}
 
+	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")
+	public boolean isAttachmentAvailable() {
+		return attachmentAvailable;
+	}
+	
+	public void setAttachmentAvailable(boolean customer) {
+		this.attachmentAvailable = customer;
+	}
+	
+	
 }
