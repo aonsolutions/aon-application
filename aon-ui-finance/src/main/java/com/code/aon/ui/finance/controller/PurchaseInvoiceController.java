@@ -1,10 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
@@ -186,9 +190,8 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		try {
 			Criteria criteria = new Criteria();
 			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
-			criteria.addEqualExpression(invoiceAlias, ((Invoice)to).getId());
-			String typeAlias;
-			typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE);
+			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
+			String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE);
 			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
@@ -214,4 +217,32 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 
+	public boolean isAttachmentAvailable() {
+		IManagerBean bean = getAttachmentBean();
+		try {
+			Criteria criteria = new Criteria();
+			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
+			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
+			// String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_TYPE);
+			// TODO Poner bien cuando funcione la generación de alias con formulas
+			String typeAlias = "InvoiceAttachment.type";
+			criteria.addEqualExpression(typeAlias, InvoiceAttachmentType.INVOICE);
+			return bean.getCount(criteria) > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error getting invoice pdf file " + getInvoice(), e );
+		}
+		return false;
+	}
+	
+	public List<SelectItem> getInvoiceAttachmentTypes() {
+		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
+		if (! isAttachmentAvailable() ) {
+			String name = INVOICE.getName(AonUtil.getCurrentLocale());
+			invoiceAttachmentTypes.add( new SelectItem(INVOICE, name) );
+		}
+		String name = RECEIPT.getName(AonUtil.getCurrentLocale());
+		invoiceAttachmentTypes.add( new SelectItem(RECEIPT, name) );
+		return invoiceAttachmentTypes;
+	}
+	
 }

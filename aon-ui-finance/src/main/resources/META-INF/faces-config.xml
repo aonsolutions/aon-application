@@ -1546,6 +1546,7 @@
 				<value>#{saleInvoiceAddressListener}</value>
 				<value>#{saleInvoiceDetailListener}</value>
 				<value>#{saleInvoiceFinanceListener}</value>
+				<value>#{saleInvoiceAttachListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1889,6 +1890,88 @@
 			<value>saleInvoice</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!--  **** SALE INVOICE ATTACHMENT **** --> 
+	<managed-bean>
+		<managed-bean-name>saleInvoiceAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.AttachmentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>saleInvoiceAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>InvoiceAttachment_type,InvoiceAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>saleInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{saleInvoiceAttachControllerListener}</value> 
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>saleInvoiceAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.event.AttachmentControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>saleInvoiceAttachListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>saleInvoiceAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceAttachment_invoice_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ PURCHASE INVOICE ************* -->
 	<managed-bean>
@@ -1919,7 +2002,7 @@
 				<value>#{purchaseInvoiceAddressListener}</value>
 				<value>#{purchaseInvoiceDetailListener}</value>
 				<value>#{purchaseInvoiceFinanceListener}</value>
-				<value>#{purchaseInvoiceAttachment}</value>
+				<value>#{purchaseInvoiceAttachListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -2016,14 +2099,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>purchaseInvoiceAttachment</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceAttachmentListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 
 	<!-- ************ PURCHASE INVOICE ADDRESS ************* -->
 	<managed-bean>
@@ -2251,6 +2326,88 @@
 		<managed-property>
 			<property-name>sourceControllerName</property-name>
 			<value>purchaseInvoice</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** PURCHASE INVOICE ATTACHMENT **** --> 
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.AttachmentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>purchaseInvoiceAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>InvoiceAttachment_type,InvoiceAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>purchaseInvoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{purchaseInvoiceAttachControllerListener}</value> 
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.faces.controller.event.AttachmentControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>purchaseInvoiceAttachListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>purchaseInvoiceAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>InvoiceAttachment_invoice_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 	</managed-bean>
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +20,7 @@ import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -34,14 +36,14 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
-import com.code.aon.ui.sign.controller.ISignatureController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
+public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
@@ -232,6 +234,14 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
+	}
+
+	public List<SelectItem> getInvoiceAttachmentTypes() {
+		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
+		InvoiceAttachmentType type = InvoiceAttachmentType.RECEIPT;
+		String name = type.getName(AonUtil.getCurrentLocale());
+		invoiceAttachmentTypes.add( new SelectItem(type, name) );
+		return invoiceAttachmentTypes;
 	}
 	
 }

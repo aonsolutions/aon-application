@@ -35,6 +35,7 @@ import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
@@ -79,6 +80,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private boolean showProjectWindow;
 	private boolean showDetailProjectWindow;
 	private boolean showRectificationWindow;
+	private boolean showDocumentWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
@@ -311,6 +313,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowRectificationWindow(boolean value) {
 		this.showRectificationWindow = value;
+	}
+	
+	public boolean isShowDocumentWindow() {
+		return showDocumentWindow;
+	}
+
+	public void setShowDocumentWindow(boolean showDocumentWindow) {
+		this.showDocumentWindow = showDocumentWindow;
 	}
 
 	public String getRectificationSeries() {
@@ -661,13 +671,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	@Override
 	public boolean isSigned(ITransferObject to) {
-		return ((Invoice) to).isSigned();
+		return getInvoice().isSigned();
 	}
 
 	@Override
 	public IAttachment newAttachment(ITransferObject parent) {
 		InvoiceAttachment attachment = new InvoiceAttachment();
 		attachment.setInvoice((Invoice) parent);
+		attachment.setType(InvoiceAttachmentType.INVOICE);
 		return attachment;
 	}
 

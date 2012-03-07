@@ -93,6 +93,14 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</c:if>
+						<aon:menuItem id="documents"
+							value="#{bundle.aon_documents}"
+							rendered="#{!saleInvoice.new}"
+							iconClass="aon-icon-payroll"
+							reRender="showDocumentWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showDocumentWindow}"
+								value="#{true}" />							
+						</aon:menuItem>						
 						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
@@ -473,6 +481,10 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+			<ui:param name="attachmentController" value="#{saleInvoiceAttach}" />
 		</ui:include>
 		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/delivery/modalTransfer.xhtml" />
