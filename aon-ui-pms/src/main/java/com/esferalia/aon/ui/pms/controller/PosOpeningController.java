@@ -3,7 +3,9 @@ package com.esferalia.aon.ui.pms.controller;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -110,7 +112,8 @@ public class PosOpeningController {
 			getPosShift().setUser(UserUtils.getInstance().getLoggedUser());
 			setPosShift((PosShift) bean.insertOrUpdate(getPosShift()));
 			PosInvoicing posInvoicing = new PosInvoicing();
-			posInvoicing.createInvoice(getPosShift(), "");
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(locale));
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar la apertura de caja";
 			throw new AbortProcessingException(msg, e);
