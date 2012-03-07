@@ -110,7 +110,7 @@ public class PosOpeningController {
 			getPosShift().setUser(UserUtils.getInstance().getLoggedUser());
 			setPosShift((PosShift) bean.insertOrUpdate(getPosShift()));
 			PosInvoicing posInvoicing = new PosInvoicing();
-			posInvoicing.createInvoice(getPosShift());
+			posInvoicing.createInvoice(getPosShift(), "");
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar la apertura de caja";
 			throw new AbortProcessingException(msg, e);

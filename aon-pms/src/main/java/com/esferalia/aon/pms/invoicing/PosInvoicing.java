@@ -1,7 +1,6 @@
 package com.esferalia.aon.pms.invoicing;
 
 import java.util.Date;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -40,7 +40,7 @@ public class PosInvoicing implements IReservationConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PosInvoicing.class.getName());
 	
-	public void createInvoice(PosShift posShift) throws ManagerBeanException {
+	public void createInvoice(PosShift posShift, String comments) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -52,7 +52,7 @@ public class PosInvoicing implements IReservationConstants {
 
 				HibernateUtil.beginTransaction(sessionName);
 
-				Invoice invoice = createInvoice(hotel, posShift.getStartTime(), posShift.getShift().getName(new Locale("ES")));
+				Invoice invoice = createInvoice(hotel, posShift.getStartTime(), comments);
 				createInvoiceDetail(invoice, hotel, posShift.getPos().getItem());
 				savePosInvoice(invoice, posShift);
 
@@ -76,8 +76,8 @@ public class PosInvoicing implements IReservationConstants {
 	}
 
 	public void completeInvoice(PosShift posShift) throws ManagerBeanException {
-		if (posShift.getInvoice()==null) {
-			throw new ManagerBeanException("El turno no tiene Factura asociada.");
+		if (posShift.getInvoice() == null) {
+			throw new ManagerBeanException("El Turno no tiene Factura asociada.");
 		}
 		if (posShift.getInvoice().isRecorded()) {
 			throw new ManagerBeanException("La Factura ya esta Contabilizada.");
@@ -168,11 +168,15 @@ public class PosInvoicing implements IReservationConstants {
 		invoiceDetailBean.insert(invoiceDetail);
 	}
 
-	private void completeInvoiceDetail(Invoice invoice, double amount) throws ManagerBeanException {
+	private void completeInvoiceDetail(Invoice invoice, double total) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)invoice.getDetailList().get(0);
 		if (invoiceDetail != null) {
-			invoiceDetail.setPrice(amount);
-			invoiceDetail.setTaxableBase(amount);
+			ItemPricesManager pricesManager = new ItemPricesManager();
+			double taxableBase = pricesManager.getPrice(invoiceDetail.getItem(), total, 2);
+
+			invoiceDetail.setQuantity(1);
+			invoiceDetail.setPrice(taxableBase);
+			invoiceDetail.setTaxableBase(taxableBase);
 
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			invoiceDetailBean.update(invoiceDetail);
