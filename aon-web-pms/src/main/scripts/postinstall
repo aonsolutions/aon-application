@@ -15,6 +15,9 @@ if ! aondir_has_app $APP; then
         aondir-addrole Confidentiality $APP &>/dev/null
         aondir-addrole Product $APP &>/dev/null
         aondir-addrole Commercial $APP &>/dev/null
+        aondir-addrole Sale $APP &>/dev/null
+        aondir-addrole Purchase $APP &>/dev/null
+        aondir-addrole Warehouse $APP &>/dev/null
         aondir-addrole Finance $APP &>/dev/null
         aondir-addrole Accounting $APP &>/dev/null
         aondir-addrole Statistics $APP &>/dev/null

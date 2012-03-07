@@ -309,6 +309,9 @@
 	<security-role><role-name>Confidentiality</role-name></security-role>
 	<security-role><role-name>Product</role-name></security-role>
 	<security-role><role-name>Commercial</role-name></security-role>
+	<security-role><role-name>Sale</role-name></security-role>
+	<security-role><role-name>Purchase</role-name></security-role>
+	<security-role><role-name>Warehouse</role-name></security-role>
 	<security-role><role-name>Finance</role-name></security-role>
 	<security-role><role-name>Accounting</role-name></security-role>
 	<security-role><role-name>Statistics</role-name></security-role>
