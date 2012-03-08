@@ -329,7 +329,7 @@ public class ReservationInvoicing implements IReservationConstants {
 	private String obtainDetailDescription(Date effectiveDate, String room, String description) {
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	String date = StringUtils.rightPad(formatter.format(effectiveDate), 11);
-    	room = (room == null) ? "" : StringUtils.rightPad(room, 6);
+    	room = (room == null) ? " - " : StringUtils.rightPad(room, 6);
     	return (date + room + description);
 	}
 
