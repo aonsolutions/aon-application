@@ -146,12 +146,12 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	}
 
 	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
-		String whereSeries = "";
+		String andSeries = "";
 		String andId = "";
 		if (StringUtils.isEmpty(invoice.getSeries())) {
-			whereSeries = "WHERE (invoice.series IS NULL OR invoice.series = '') ";
+			andSeries = "AND (invoice.series IS NULL OR invoice.series = '') ";
 		} else {
-			whereSeries = "WHERE invoice.series = '" + invoice.getSeries() + "' ";
+			andSeries = "AND invoice.series = '" + invoice.getSeries() + "' ";
 		}
 		if (invoice.getId() != null) {
 			andId = "AND invoice.id <> " + invoice.getId();
@@ -159,11 +159,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 		String select = "SELECT invoice.id id " +
     					"FROM invoice as invoice " +
-    					whereSeries +
+    					"WHERE " + DomainManager.getSQLWhereClause("invoice.domain") + " " +
+    					andSeries +
     					"AND invoice.number = " + invoice.getNumber() + " " +
     					"AND invoice.type = " + invoice.getType().ordinal() + " " + 
-    					andId +
-    					"AND " + DomainManager.getSQLWhereClause("invoice.domain");
+    					andId;
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
         List<?> list = query
