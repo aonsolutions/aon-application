@@ -83,6 +83,20 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
+						
+						<aon:column alias="ProjectReservationRoom.projectReservation.agency.id" 
+							label="#{pmsBundle.pms_agency}" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_agency}" />
+							</f:facet>
+							<aon:outputText rendered="#{to.projectReservation.agency!=null}" 
+								value="#{to.projectReservation.agency.registry.fullName}" />
+							<aon:outputText rendered="#{to.projectReservation.company!=null}"
+								value="#{to.projectReservation.company.registry.fullName}" />
+							<aon:outputText rendered="#{to.projectReservation.agency==null and to.projectReservation.company==null}"
+								value="Directo" />
+						</aon:column>
 
 						<aon:column alias="ProjectReservationRoom.projectReservation.id"
 							styleClass="aon-editDataTable-textColumn">
