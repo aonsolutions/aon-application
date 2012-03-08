@@ -9,9 +9,11 @@ public enum SalaryTemplate implements IResourceable {
 
 	DEFAULT("salary")
 	
-	,TEMPLATE1("salaryTemplate1")
+	,NOMINASTA("nominasta")
+
+	,NOMINASTA_LDH("nominasta_ldh")
 	
-	,TEMPLATE2("salaryTemplate2")
+	,IDAZKIAK_ES("idazkiak_es")
 	
 	;      
 	
