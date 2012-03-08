@@ -81,7 +81,7 @@
 			showAddInfo="true"
 		/>
 		<finance:invoice
-			showWarehouseData="false" 
+			showWarehouseData="true" 
 			showTasData="false" 
 			showSendEmail="true"
 		/>
