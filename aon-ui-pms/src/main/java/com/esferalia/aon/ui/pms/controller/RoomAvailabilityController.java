@@ -15,6 +15,7 @@ import org.hibernate.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.pms.Hotel;
@@ -83,11 +84,11 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 	}
 	
 	private List<?> obtainAvailableRoomList() {
-		String whereClause = "WHERE";
+		String whereClause = "WHERE " + DomainManager.getSQLWhereClause("Room.domain");
 		if (getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null) {
-			whereClause += " Room.hotel = " + getFilterParams().getHotel().getId();
+			whereClause += " AND Room.hotel = " + getFilterParams().getHotel().getId();
 		} else {
-			whereClause += " Room.hotel IS NOT NULL";
+			whereClause += " AND Room.hotel IS NOT NULL";
 		}
 		if (getFilterParams().getItem() != null && getFilterParams().getItem().getId() != null) {
 			whereClause += " AND Room.item = " + getFilterParams().getItem().getId();
@@ -96,7 +97,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 			whereClause += " AND Room.asset IN (SELECT id FROM asset WHERE name LIKE :name)";
 		}
 		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
-			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE date BETWEEN :start AND :end)";
+			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE " + DomainManager.getSQLWhereClause("domain") + " AND date BETWEEN :start AND :end)";
 		}
 		if (getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0) {
 			String featureClause = "";

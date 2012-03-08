@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -350,6 +351,7 @@ public class SummaryProvider {
 			}
 		}
 		buf.append(" WHERE a.entryEnabled = 1");
+		buf.append(" AND " + DomainManager.getSQLWhereClause("a.domain"));
 		if (!StringUtils.isEmpty(params.getAccountExpression())) {
 			buf.append(" AND ");
 			buf.append(params.getAccountSQLExpression("a.code"));
@@ -388,7 +390,8 @@ public class SummaryProvider {
 			buf.append(",MONTH(ae.entry_date)");
 		}
 		buf.append(" FROM account_entry_detail aed, account_entry ae");
-		buf.append(" WHERE aed.account = ?"); 
+		buf.append(" WHERE aed.account = ?");
+		buf.append(" AND " + DomainManager.getSQLWhereClause("aed.domain"));
 		buf.append(" AND aed.account_entry = ae.id");
 		buf.append(" AND ae.entry_date >= ?");
 		buf.append(" AND ae.entry_date < ?");

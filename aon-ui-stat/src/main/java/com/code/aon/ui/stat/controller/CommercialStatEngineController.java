@@ -31,6 +31,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -876,7 +877,8 @@ public class CommercialStatEngineController {
 
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain") 
+				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
 				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -894,7 +896,8 @@ public class CommercialStatEngineController {
 	private void getPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
 				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -911,7 +914,8 @@ public class CommercialStatEngineController {
 	private void getDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.seller.id = " + seller.getId()
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.offer.seller.id = " + seller.getId()
 				+ " AND   OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
@@ -1767,21 +1771,6 @@ public class CommercialStatEngineController {
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
     	}
-		
-		/*String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.target.id = "
-				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		offerList = query.list();*/
 		setOfferBackAction("commercial_target_stats_year");
 	}
 
@@ -1883,7 +1872,8 @@ public class CommercialStatEngineController {
 
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ " where " +DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -1901,7 +1891,8 @@ public class CommercialStatEngineController {
 	private void getTargetPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.target.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND  CommercialTracking.status = 0 AND  CommercialTracking.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -1918,7 +1909,8 @@ public class CommercialStatEngineController {
 	private void getTargetDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.target.id = " + target.getId()
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.offer.target.id = " + target.getId()
 				+ " AND   OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
@@ -1953,8 +1945,9 @@ public class CommercialStatEngineController {
 	private void getProductDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.product = " + product.getId()
-				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.item.product = " + product.getId()
+				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
@@ -1988,8 +1981,9 @@ public class CommercialStatEngineController {
 	private void getCategoryDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.product.category = " + productCategory.getId()
-				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ " where " +DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.item.product.category = " + productCategory.getId()
+				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())

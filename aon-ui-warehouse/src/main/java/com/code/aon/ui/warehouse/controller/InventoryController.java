@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -100,7 +101,8 @@ public class InventoryController extends BasicController {
 	        Query q = session.createQuery(
 	                "select item " +
 	                "from Item as item, Product prod, ProductCategory cat " +
-	                "where item.product=prod.id " +
+	                "where " + DomainManager.getSQLWhereClause("item.domain") +
+	                "and item.product=prod.id " +
 	                "and prod.category=cat.id " +
 	                "and prod.inventoriable=true " +
 	                " order by prod.category,item.detail");

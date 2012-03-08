@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -30,7 +31,8 @@ public class RetentionCollection {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE i.type != 1 and it.tax_type = 2");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append(" AND i.type != 1 and it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");
 			}
@@ -121,7 +123,8 @@ public class RetentionCollection {
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
-			stmt.append(" WHERE i.type != 1 and it.tax_type = 2");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append("  AND i.type != 1 and it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}
@@ -246,7 +249,8 @@ public class RetentionCollection {
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
-			stmt.append(" WHERE i.type != 1 and it.tax_type = 2");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append("  AND i.type != 1 and it.tax_type = 2");
 			if (params.getFromInvoiceDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
 			}

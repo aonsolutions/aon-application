@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -93,9 +94,10 @@ public class FinanceCheckingController {
 		}
 		String select = "SELECT invoice " +
 						"FROM Invoice invoice " +
-						"WHERE invoice.id NOT IN (SELECT finance.invoice.id FROM Finance finance WHERE finance.invoice IS NOT NULL) " +
+						"WHERE " + DomainManager.getSQLWhereClause("invoice.domain") +
+						" AND invoice.id NOT IN (SELECT finance.invoice.id FROM Finance finance WHERE finance.invoice IS NOT NULL) " +
 						dateCriteria +
-						"ORDER BY invoice.issueDate, invoice.referenceCode";
+						" ORDER BY invoice.issueDate, invoice.referenceCode";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		noFinanceInvoiceList = query.list();

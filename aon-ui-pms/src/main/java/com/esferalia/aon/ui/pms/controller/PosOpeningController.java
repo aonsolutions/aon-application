@@ -15,6 +15,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -66,6 +67,7 @@ public class PosOpeningController {
 			String sqlSelect = "SELECT *"
 			+ " FROM pos"  
 			+ " WHERE workplace = "+getHotel().getWorkPlace().getId() 
+			+ " AND "+DomainManager.getSQLWhereClause("pos.domain")
 			+ " AND id NOT IN ( " 
 			+ " SELECT Pos.id"
 			+ " FROM pos as Pos LEFT JOIN pos_shift as PosShift on Pos.id = PosShift.pos" 

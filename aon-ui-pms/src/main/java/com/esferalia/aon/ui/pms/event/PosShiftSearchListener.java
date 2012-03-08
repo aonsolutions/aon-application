@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
@@ -59,7 +60,8 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		String sqlSelect = "SELECT Pos.*"
 			+ " FROM pos as Pos"
 			+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
-			+ (getHotel() == null ? "" : " WHERE Pos.workplace = " + getHotel().getWorkPlace().getId()) 
+			+ " WHERE " + DomainManager.getSQLWhereClause("Pos.domain")
+			+ (getHotel() == null ? "" : " AND Pos.workplace = " + getHotel().getWorkPlace().getId()) 
 			+ " GROUP BY Pos.name"
 			+ " ORDER BY Pos.name"
 			;

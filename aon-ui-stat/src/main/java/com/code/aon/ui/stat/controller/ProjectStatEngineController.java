@@ -34,6 +34,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -280,7 +281,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Offer> getApprovedOffers() throws ManagerBeanException {
-		String select = "select Offer from Offer as Offer where Offer.status in (1, 4) AND Offer.project.id = "
+		String select = "select Offer from Offer as Offer where "+DomainManager.getSQLWhereClause("Offer.domain")+" AND Offer.status in (1, 4) AND Offer.project.id = "
 				+ project.getId() + " order by Offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -290,7 +291,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Invoice> getSaleInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where Invoice.type = 1 AND Invoice.project.id = "
+		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type = 1 AND Invoice.project.id = "
 				+ project.getId() + " order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -300,7 +301,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Invoice> getCostInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where Invoice.type <> 1 AND Invoice.project.id = "
+		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type <> 1 AND Invoice.project.id = "
 				+ project.getId() + " order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());

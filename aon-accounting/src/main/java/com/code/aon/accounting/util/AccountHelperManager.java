@@ -16,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -114,15 +115,16 @@ public class AccountHelperManager {
 				Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 				
 				// Borrado de las filas actuales.
-				String delete = "delete from AccountHelper as ah";
+				String delete = "delete from AccountHelper as ah where " + DomainManager.getSQLWhereClause("ah.domain");
 		        int rows = session.createQuery(delete).executeUpdate();
 		        LOGGER.info( "Filas borradas: "  +  rows );
 
 		        IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
-				String select = "select detail.account, detail.balancingAccount, count(*)" +
-								" from AccountEntryDetail as detail " +
-								" where detail.balancingAccount is not null" +
-								" group by detail.account, detail.balancingAccount ";
+				String select = "SELECT detail.account, detail.balancingAccount, count(*)" +
+								" FROM AccountEntryDetail AS detail " +
+								" WHERE " + DomainManager.getSQLWhereClause("detail.domain") +
+								" AND detail.balancingAccount is not null" +
+								" GROUP BY detail.account, detail.balancingAccount ";
 				
 		        Query query = session.createQuery(select);
 		        List<?> list = query.list();

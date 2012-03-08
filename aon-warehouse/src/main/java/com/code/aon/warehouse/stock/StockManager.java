@@ -11,11 +11,11 @@ import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.enumeration.PriceType;
 
 public class StockManager {
-	private static String incomeStmt = " SELECT invDet.price "
+	private String incomeStmt = " SELECT invDet.price "
 	+ " FROM income_detail incDet "
 	+ " INNER JOIN invoice_detail invDet ON incDet.id = invDet.source_id AND invDet.source = 4 "
 	+ " INNER JOIN invoice inv ON invDet.invoice = inv.id "
-	+ " WHERE incDet.item = ? "
+	+ " WHERE  incDet.item = ? "
 	+ " ORDER BY inv.issue_date DESC, inv.id DESC ";
 
 	

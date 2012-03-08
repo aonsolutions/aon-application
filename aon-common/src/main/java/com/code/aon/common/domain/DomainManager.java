@@ -1,5 +1,11 @@
 package com.code.aon.common.domain;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+
 
 public class DomainManager {
 
@@ -28,7 +34,7 @@ public class DomainManager {
 					
 					@Override
 					public Integer getCurrentDomain() {
-						return new Integer(1);
+						 return new Integer(1);
 					}
 				};
 			}
@@ -52,5 +58,31 @@ public class DomainManager {
 		return getDomainProvider().getCurrentDomain();
 	}
 
+	public static Expression getCurrentDomainExpression(String alias) {
+		// TODO esta expression, debería completarse con los dominios 
+		// parents o como quiera que se haga cuando se piense.
+		return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
+	}
+	
+	public static String getSQLWhereClause(String columnidentifier) {
+		// TODO esta clausula, debería completarse con los dominios 
+		// parents o como quiera que se haga cuando se piense.
+		return (" " + columnidentifier + " = " + getCurrentDomain() + " ");
+	}
+
+	public static String getStaticSQLWhereClause(String columnidentifier) {
+		// TODO esta clausula, debería completarse con los dominios 
+		// parents o como quiera que se haga cuando se piense.
+		return (" " + columnidentifier + " = ? ");
+	}
+
+	public static int fillHostVariables(PreparedStatement stmt, int parameterIndex) throws SQLException {
+		// TODO esta clausula, debería completarse con los dominios 
+		// parents o como quiera que se haga cuando se piense.
+		stmt.setInt(parameterIndex, getCurrentDomain());
+		
+		// Devuelve el número de variables asignadas.
+		return 1;
+	}
 	
 }

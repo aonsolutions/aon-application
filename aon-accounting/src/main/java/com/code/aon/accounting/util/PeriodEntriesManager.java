@@ -21,6 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
@@ -241,7 +242,9 @@ public class PeriodEntriesManager {
 		StringBuilder sw = new StringBuilder();
 		sw.append("SELECT account.id,SUM(debit),SUM(credit)");
 		sw.append(" FROM AccountEntryDetail ");
-		sw.append("WHERE accountEntry.accountPeriod = '");
+		sw.append(" WHERE ");
+		sw.append( DomainManager.getSQLWhereClause("accountEntry.domain") );
+		sw.append(" AND accountEntry.accountPeriod = '");
 		sw.append(period.getId());
 		sw.append("'");
 		if (accountEntryType == AccountEntryType.OPERATING) {

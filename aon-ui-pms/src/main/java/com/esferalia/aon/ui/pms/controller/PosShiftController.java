@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
@@ -98,7 +99,8 @@ public class PosShiftController extends BasicController {
 		String sqlSelect = "SELECT Pos.*"
 			+ " FROM pos as Pos"
 			+ " LEFT JOIN pos_shift as PosShift on PosShift.pos = Pos.id"
-			+ (getHotel() == null ? " WHERE Pos.id is null " : " WHERE Pos.workplace = " + getHotel().getWorkPlace().getId()) 
+			+ " WHERE " + DomainManager.getSQLWhereClause("Pos.domain") 
+			+ " AND " + (getHotel() == null ? " Pos.id is null " : " Pos.workplace = " + getHotel().getWorkPlace().getId()) 
 			+ " GROUP BY Pos.name"
 			+ " ORDER BY Pos.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());

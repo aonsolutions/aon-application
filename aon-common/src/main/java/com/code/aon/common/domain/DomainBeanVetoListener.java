@@ -1,17 +1,10 @@
-package com.esferalia.aon.entity.event;
+package com.code.aon.common.domain;
 
-import com.code.aon.asset.Asset;
-import com.code.aon.asset.IAsset;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.domain.IDomain;
 import com.code.aon.common.event.FinderBeanEvent;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.project.IProject;
-import com.code.aon.project.Project;
-import com.code.aon.registry.IRegistry;
-import com.code.aon.registry.Registry;
 
 public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -56,7 +49,7 @@ public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException {
 		String className  = evt.getEntityClass().getSimpleName();
 		String alias = className + DOMAIN_PROPERTY;
-		evt.getCriteria().addEqualExpression(alias, DomainManager.getCurrentDomain());
+		evt.getCriteria().addExpression(DomainManager.getCurrentDomainExpression(alias));
 	}
 
 }

@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -304,7 +305,7 @@ public class RegistryStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public void getInvoices() throws ManagerBeanException {
-		String select = "select Invoice " + "from Invoice as Invoice " + "where Invoice.type=1  AND Invoice.registry.id = "
+		String select = "select Invoice " + "from Invoice as Invoice " + "where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type=1  AND Invoice.registry.id = "
 				+ registry.getId() + "order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -313,7 +314,7 @@ public class RegistryStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public void getPendingFinances() throws ManagerBeanException {
-		String select = "select Finance " + "from Finance as Finance " + "where Finance.invoice.type=1 AND Finance.financeStatus = 0 AND Finance.invoice.registry.id = "
+		String select = "select Finance " + "from Finance as Finance " + "where "+DomainManager.getSQLWhereClause("Finance.domain")+" AND Finance.invoice.type=1 AND Finance.financeStatus = 0 AND Finance.invoice.registry.id = "
 				+ registry.getId() + "order by Finance.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -323,7 +324,7 @@ public class RegistryStatEngineController {
 	@SuppressWarnings("unchecked")
 	public void getBoughtProducts() throws ManagerBeanException {
 		String select = "select distinct(InvoiceDetail) " + "from InvoiceDetail as InvoiceDetail "
-				+ "where InvoiceDetail.invoice.type = 1 AND InvoiceDetail.invoice.registry.id = " + registry.getId()
+				+ "where "+DomainManager.getSQLWhereClause("InvoiceDetail.domain")+" AND InvoiceDetail.invoice.type = 1 AND InvoiceDetail.invoice.registry.id = " + registry.getId()
 				+ "order by InvoiceDetail.invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -332,7 +333,7 @@ public class RegistryStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public void getPendingDeliveries() throws ManagerBeanException {
-		String select = "select Delivery " + "from Delivery as Delivery " + "where Delivery.status = 0 AND Delivery.customer.registry.id = "
+		String select = "select Delivery from Delivery as Delivery where "+DomainManager.getSQLWhereClause("Delivery.domain")+" AND Delivery.status = 0 AND Delivery.customer.registry.id = "
 				+ registry.getId() + "order by Delivery.issueTime desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -341,7 +342,7 @@ public class RegistryStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public void getPendingSales() throws ManagerBeanException {
-		String select = "select Sales " + "from Sales as Sales " + "where Sales.status = 0 AND Sales.customer.registry.id = " + registry.getId()
+		String select = "select Sales " + "from Sales as Sales " + "where "+DomainManager.getSQLWhereClause("Sales.domain")+" AND Sales.status = 0 AND Sales.customer.registry.id = " + registry.getId()
 				+ "order by Sales.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
@@ -351,7 +352,7 @@ public class RegistryStatEngineController {
 	@SuppressWarnings("unchecked")
 	public void getPendingOffers() throws ManagerBeanException {
 
-		String select = "select Offer " + "from Offer as Offer " + "where Offer.status = 0 AND Offer.target.registry.id = " + registry.getId()
+		String select = "select Offer " + "from Offer as Offer " + "where "+DomainManager.getSQLWhereClause("Offer.domain")+" AND Offer.status = 0 AND Offer.target.registry.id = " + registry.getId()
 				+ "order by Offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);

@@ -11,6 +11,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -39,10 +40,11 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT customer " +
-						"FROM Customer customer " +
-						"WHERE customer.id NOT IN (SELECT rPayMethod.registry.id FROM RegistryPayMethod rPayMethod) " +
+						" FROM Customer customer " +
+						" WHERE " + DomainManager.getSQLWhereClause("customer.domain") +
+						" AND customer.id NOT IN (SELECT rPayMethod.registry.id FROM RegistryPayMethod rPayMethod) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name";
+						" ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -52,11 +54,12 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 	private List<ITransferObject> obtainNegotiableNoBankAccountList() {
 		String select = "SELECT customer " +
 						"FROM Customer customer, RegistryPayMethod rPayMethod " +
-						"WHERE customer.id = rPayMethod.registry.id " +
-						"AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
-						"AND customer.id NOT IN (SELECT rBank.registry.id FROM RegistryBank rBank) " +
+						" WHERE " + DomainManager.getSQLWhereClause("customer.domain") +
+						" AND  customer.id = rPayMethod.registry.id " +
+						" AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
+						" AND customer.id NOT IN (SELECT rBank.registry.id FROM RegistryBank rBank) " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name";
+						" ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -66,11 +69,12 @@ public class CustomerFinanceCheckingPrinter implements ICollectionProvider, IFin
 	private List<ITransferObject> obtainNoNegotiableBankAccountList() {
 		String select = "SELECT customer " +
 						"FROM Customer customer, RegistryBank rBank, RegistryPayMethod rPayMethod " +
-						"WHERE customer.id = rBank.registry.id " +
-						"AND customer.id = rPayMethod.registry.id " +
-						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						" WHERE " + DomainManager.getSQLWhereClause("customer.domain") +
+						" AND customer.id = rBank.registry.id " +
+						" AND customer.id = rPayMethod.registry.id " +
+						" AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						obtainPrintCondition() +
-						"ORDER BY customer.registry.name";
+						" ORDER BY customer.registry.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();

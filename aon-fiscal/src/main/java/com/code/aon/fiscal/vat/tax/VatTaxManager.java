@@ -17,6 +17,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -59,7 +60,8 @@ public class VatTaxManager {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE it.tax_type = 1");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append(" AND it.tax_type = 1");
 			stmt.append(" AND i.tax_date >= ?");
 			stmt.append(" AND i.tax_date <= ?");
 			if (params.getInvoiceStatus() == InvoiceStatus.SCORED) {

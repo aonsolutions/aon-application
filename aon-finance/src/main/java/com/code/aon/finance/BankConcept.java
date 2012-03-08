@@ -11,6 +11,7 @@ import org.hibernate.Session;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.esferalia.aon.entity.master.BankConceptDB;
 
 @Entity
@@ -25,7 +26,8 @@ public class BankConcept extends BankConceptDB {
 	public Account getAccount() {
 		if (account == null) {
 			String select = "select account from BankConceptAccount as bankConceptAccount " +
-							"where bankConceptAccount.bankConcept.id = " + getId();
+							" where bankConceptAccount.bankConcept.id = " + getId() +
+							" and " + DomainManager.getSQLWhereClause("bankConceptAccount.domain");
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 	    	Query query = session.createQuery(select);
 			Iterator<?> iterator = query.list().iterator();

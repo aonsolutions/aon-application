@@ -36,6 +36,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.desktop.DesktopNoticeSummary;
 import com.code.aon.desktop.IDesktopConstants;
@@ -90,6 +91,7 @@ public class DesktopController implements IDesktopConstants {
         String select = "select notice.type, count(*) " +
                         "from Notice as notice, Alarm as alarm " +
                         "where notice.id = alarm.sourceId " +
+                        "and " + DomainManager.getSQLWhereClause("notice.domain") +
                         "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
                         "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
                         "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " " +

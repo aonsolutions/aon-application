@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD340.IMOD340Provider;
@@ -126,7 +127,7 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 	public void initializeIssuedInvoices() throws Fd0Exception {
 		try {
 			String sessionName = HibernateUtil.getSessionFactoryName();
-			issuedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("WHERE i.type = 1")
+			issuedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.type = 1")
 				, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
@@ -177,7 +178,7 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 	public void initializeReceivedInvoices() throws Fd0Exception {
 		try {
 			String sessionName = HibernateUtil.getSessionFactoryName();
-			receivedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("WHERE i.type != 1"), 
+			receivedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.type != 1"), 
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
@@ -225,7 +226,7 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 	public void initializeInvestmentInvoices() throws Fd0Exception {
 		try {
 			String sessionName = HibernateUtil.getSessionFactoryName();
-			investmentPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("WHERE i.investment = 1"), 
+			investmentPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.investment = 1"), 
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
@@ -275,7 +276,7 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 	public void initializeIntracommunitaryInvoices() throws Fd0Exception {
 		try {
 			String sessionName = HibernateUtil.getSessionFactoryName();
-			intracommunitaryPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("WHERE i.transaction = 1"), 
+			intracommunitaryPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.transaction = 1"), 
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			if (params.getFromDate() != null) {
@@ -332,6 +333,9 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
+			stmt.append(" WHERE ");
+			stmt.append( DomainManager.getSQLWhereClause("it.domain") );
+			stmt.append(" AND ");
 			stmt.append(where);
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");

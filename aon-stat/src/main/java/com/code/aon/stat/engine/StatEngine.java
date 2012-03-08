@@ -13,6 +13,7 @@ import java.util.List;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.stat.Stat;
@@ -30,6 +31,7 @@ public class StatEngine {
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -111,6 +113,7 @@ public class StatEngine {
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -188,6 +191,7 @@ public class StatEngine {
 			stmt.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -266,6 +270,7 @@ public class StatEngine {
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -336,6 +341,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -409,6 +415,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -488,12 +495,13 @@ public class StatEngine {
 		try {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
-			stmt.append("FROM invoice_detail id  ");
-			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
-			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" FROM invoice_detail id  ");
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -569,11 +577,12 @@ public class StatEngine {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
-			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
-			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -656,6 +665,7 @@ public class StatEngine {
 			stmt.append(" SUM(id.taxable_base), YEAR(i.issue_date)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -732,6 +742,7 @@ public class StatEngine {
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -808,6 +819,7 @@ public class StatEngine {
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -878,11 +890,12 @@ public class StatEngine {
 		try {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT p.id,p.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
-			stmt.append("FROM invoice_detail id  ");
-			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
-			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
+			stmt.append(" FROM invoice_detail id  ");
+			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
+			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -959,6 +972,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -1032,6 +1046,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("id.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.issue_date >= ?");
@@ -1107,6 +1122,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = od.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
@@ -1192,6 +1208,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN seller s ON (o.seller = s.registry)");
 			stmt.append(" INNER JOIN registry r ON (s.registry = r.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
 			}
@@ -1274,7 +1291,8 @@ public class StatEngine {
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN raddress s ON (o.address = s.id)");
 			stmt.append(" INNER JOIN geozone g ON (s.geozone = g.id)");
-
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
+			
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
 			}
@@ -1358,6 +1376,7 @@ public class StatEngine {
 			stmt.append(" INNER JOIN item ON (item.id = od.item)");
 			stmt.append(" INNER JOIN product p ON (p.id = item.product)");
 			stmt.append(" INNER JOIN pcategory c ON (p.category = c.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
 
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
@@ -1450,6 +1469,8 @@ public class StatEngine {
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN target t ON (o.target = t.registry)");
 			stmt.append(" INNER JOIN registry r ON (t.registry = r.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
+			
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
 			}

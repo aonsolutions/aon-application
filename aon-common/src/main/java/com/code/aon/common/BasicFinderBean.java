@@ -104,6 +104,7 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public List<ITransferObject> getList(Criteria criteria) throws ManagerBeanException {
 		try {
+			criteria = criteria==null?new Criteria():criteria;
 			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			List<ITransferObject> ret = dao.getList(criteria);
@@ -121,6 +122,7 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public List<ITransferObject> getList(Criteria criteria, int offset, int count) throws ManagerBeanException {
 		try {
+			criteria = criteria==null?new Criteria():criteria;
 			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			List<ITransferObject> ret = dao.getList(criteria, offset, count);
@@ -132,11 +134,12 @@ public class BasicFinderBean implements IFinderBean {
 		}
 	}
 
-	public List getList(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
+	public List<?> getList(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
 		try {
+			criteria = criteria==null?new Criteria():criteria;
 			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
-			List ret = dao.getList(projectionList, criteria);
+			List<?> ret = dao.getList(projectionList, criteria);
 			return ret;
 		} catch (DAOException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -147,6 +150,7 @@ public class BasicFinderBean implements IFinderBean {
 
 	public Object getUniqueResult(Projection projection, Criteria criteria) throws ManagerBeanException {
 		try {
+			criteria = criteria==null?new Criteria():criteria;
 			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			Object ret = dao.getUniqueResult(projection, criteria);
@@ -181,6 +185,7 @@ public class BasicFinderBean implements IFinderBean {
 				obl = criteria.getOrderByList();
 				criteria.setOrderByList( null );
 			}
+			criteria = criteria==null?new Criteria():criteria;
 			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
 			fireVetoableBeanSearched(evt);
 			int count = dao.getCount(criteria);
@@ -196,13 +201,14 @@ public class BasicFinderBean implements IFinderBean {
 	}
 
 	private FinderBeanEvent getNewFinderBeanEvent(Criteria criteria) {
-		return new FinderBeanEvent(criteria==null?new Criteria():criteria,getPOJOClass());
+		return new FinderBeanEvent(criteria,getPOJOClass());
 	}
 
 	/* 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IFinderBean#getPOJOClass()
 	 */
+	@SuppressWarnings("unchecked")
 	public Class<ITransferObject> getPOJOClass() {
 		return (Class<ITransferObject>) dao.getPOJOClass();
 	}

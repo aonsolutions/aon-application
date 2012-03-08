@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 
 public class WithholdingManager {
 	
@@ -27,7 +28,7 @@ public class WithholdingManager {
 			select.append(" SELECT pr.enterprise entID,r.name entName,pr.document doc, ROUND(SUM(pr.taxable_base),2) base,ROUND(SUM(pr.quota),2)  quota");
 			select.append(" FROM fs_prof_retention pr");
 			select.append(" INNER JOIN registry r ON (r.id = pr.enterprise)");
-			select.append(" WHERE 1=1");
+			select.append(" WHERE " + DomainManager.getSQLWhereClause("pr.domain"));
 			if (params.getEnterprise() != null && params.getEnterprise().getId() != null) {
 				select.append(" AND pr.enterprise = ? " );	
 			}
@@ -44,7 +45,8 @@ public class WithholdingManager {
 			select.append(" INNER JOIN salary s ON sd.salary = s.id");
 			select.append(" INNER JOIN contract c ON s.contract = c.id");
 			select.append(" INNER JOIN workplace w ON c.workplace = w.id");
-			select.append(" WHERE sd.deduction_concept = 'IRPF'");
+			select.append(" WHERE " + DomainManager.getSQLWhereClause("sd.domain"));
+			select.append(" AND sd.deduction_concept = 'IRPF'");
 			if (params.getEnterprise() != null && params.getEnterprise().getId() != null) {
 				select.append(" AND w.enterprise = ? " );	
 			}
@@ -139,7 +141,7 @@ public class WithholdingManager {
 			select.append("	,pr.document doc");
 			select.append("	,ROUND(SUM(pr.taxable_base),2) base,ROUND(SUM(pr.quota),2)  quota"); 
 			select.append(" FROM fs_prof_retention pr ");
-			select.append(" WHERE 1=1 ");
+			select.append(" WHERE " + DomainManager.getSQLWhereClause("pr.domain"));
 			if (params.getEnterprise() != null && params.getEnterprise().getId() != null) {
 				select.append(" AND pr.enterprise = ? " );	
 			}
@@ -158,7 +160,8 @@ public class WithholdingManager {
 			select.append(" INNER JOIN salary s ON sd.salary = s.id"); 
 			select.append(" INNER JOIN contract c ON s.contract = c.id ");
 			select.append(" INNER JOIN workplace w ON c.workplace = w.id ");
-			select.append(" WHERE sd.deduction_concept = 'IRPF' ");
+			select.append(" WHERE " + DomainManager.getSQLWhereClause("sd.domain"));
+			select.append(" AND sd.deduction_concept = 'IRPF' ");
 			if (params.getEnterprise() != null && params.getEnterprise().getId() != null) {
 				select.append(" AND w.enterprise = ? " );	
 			}

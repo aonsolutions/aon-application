@@ -11,6 +11,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Series;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -66,7 +67,8 @@ public class SeriesNumberUtil {
 		String hqlQuery = 
 			"SELECT MAX(" + table.toLowerCase() + ".number)"
 				+ " FROM " + table + " " + table.toLowerCase()
-				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'");
+				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'")
+				+ " AND "	+ DomainManager.getSQLWhereClause(table.toLowerCase() + ".domain");
 		if (criteria != null) {
 			hqlQuery = CriteriaUtilities.toSQLString(criteria, hqlQuery);
 		}

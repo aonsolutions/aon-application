@@ -14,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
@@ -43,7 +44,8 @@ public class RentingProvider {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE i.type != 1 "); // No Ventas
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("i.domain"));
+			stmt.append(" AND i.type != 1 "); // No Ventas
 			stmt.append(" AND it.tax_type = 2"); // IRPF
 			stmt.append(" AND it.withholding_type = 1"); // IRPF de alquileres
 			stmt.append(" AND i.tax_date >= ?");
@@ -107,7 +109,8 @@ public class RentingProvider {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE i.type != 1 "); // No Ventas
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("i.domain"));
+			stmt.append(" AND i.type != 1 "); // No Ventas
 			stmt.append(" AND it.tax_type = 2"); // IRPF
 			stmt.append(" AND it.withholding_type = 1"); // IRPF de alquileres
 			stmt.append(" AND i.tax_date >= ?");

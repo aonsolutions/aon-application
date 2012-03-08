@@ -841,7 +841,7 @@
 	<!-- ********** ACCOUNT CHECK CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountCheck</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountCheckController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.check.CheckController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

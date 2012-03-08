@@ -40,6 +40,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.report.IReportConstants;
 import com.code.aon.report.OutputFormat;
@@ -141,7 +142,10 @@ public class JRReport {
 			String factoryName = HibernateUtil.getSessionFactoryName();
 			Session session = HibernateUtil.getSession(factoryName);
 			String name = "REPORT_" + reportKey;
-	        String select = "select app_param.value from ApplicationParameter as app_param where app_param.name = '" + name + "'";
+	        String select = "SELECT app_param.value " 
+			        		+" FROM ApplicationParameter as app_param " 
+			        		+" WHERE "+ DomainManager.getSQLWhereClause("app_param.domain")
+			        		+" AND app_param.name = '" + name + "'";
 			Query query = session.createQuery(select);
 			List<String> list = query.list();
 			if (! list.isEmpty() ) {

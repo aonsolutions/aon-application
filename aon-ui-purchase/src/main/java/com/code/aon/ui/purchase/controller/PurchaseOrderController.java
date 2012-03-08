@@ -21,6 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
@@ -133,7 +134,8 @@ public class PurchaseOrderController {
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		String select = "SELECT ProposalDetail, sum(ProposalDetail.quantity), count(ProposalDetail.id)" 
 				+ " FROM ProposalDetail as ProposalDetail" 
-				+ " WHERE ProposalDetail.status = " + ProposalDetailStatus.PENDING.ordinal()
+				+ " WHERE " + DomainManager.getSQLWhereClause("ProposalDetail.domain")
+				+ " AND ProposalDetail.status = " + ProposalDetailStatus.PENDING.ordinal()
 				+ (getParams().getStartDate() != null ? " AND ProposalDetail.proposal.issueDate >= :startDate" : "")
 				+ (getParams().getEndDate() != null ? " AND ProposalDetail.proposal.issueDate <= :endDate" : "")
 				+ ((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ? " AND ProposalDetail.proposal.workplaceDepartment.workPlace = :workplaceId"  : "")

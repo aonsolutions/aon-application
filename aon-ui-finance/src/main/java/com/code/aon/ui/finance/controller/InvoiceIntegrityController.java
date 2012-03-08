@@ -16,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -35,10 +36,11 @@ public class InvoiceIntegrityController {
 	private static String FINANCE_UPDATE_STMT =
 		"UPDATE finance set rdocument = ?,rdocument_type=?,rdocument_country=?,rname=? WHERE invoice = ?";
 		
-	private static String MAIN_STMT =
+	private String MAIN_STMT =
 	"select count(*) count,r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
 	+" FROM invoice i, registry r"
-	+" WHERE i.issue_date BETWEEN ? AND ?"
+	+" WHERE " + DomainManager.getStaticSQLWhereClause("i.domain")
+	+" AND i.issue_date BETWEEN ? AND ?"
 	+" AND i.registry = r.id"
 	+" AND (r.document != i.rdocument"
 	+" OR r.document_type != i.rdocument_type"
@@ -46,7 +48,7 @@ public class InvoiceIntegrityController {
 	+" OR r.name != i.rname)"
 	+" GROUP BY id,rd,rdt,rdc,rn";
 
-	private static String STMT =
+	private String STMT =
 		"select r.id id,r.document rd ,r.document_type rdt ,r.document_country rdc,r.name rn"
 		+" ,i.id iid,i.rdocument ird ,i.rdocument_type irdt ,i.rdocument_country irdc,i.rname irn"
 		+" FROM invoice i, registry r"
@@ -107,7 +109,8 @@ public class InvoiceIntegrityController {
 			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(MAIN_STMT,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
+			int i = 1;
+			i = DomainManager.fillHostVariables(ps, i);
 			ps.setDate(++i, new java.sql.Date( getStartDate().getTime()));
 			ps.setDate(++i, new java.sql.Date( getEndDate().getTime()));
 			rs = ps.executeQuery();

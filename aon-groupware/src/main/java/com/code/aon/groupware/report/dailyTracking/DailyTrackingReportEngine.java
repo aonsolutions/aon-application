@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.groupware.enumeration.DailyTrackingReportType;
 
 public class DailyTrackingReportEngine {
@@ -33,24 +34,6 @@ public class DailyTrackingReportEngine {
 			+ " FROM DailyTracking dt " 
 			+ " left outer join dt.registry as reg";
 	
-//	private static final String JOBS_BY_CUSTOMER = "SELECT "
-//			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  "
-//			+ " thd.id as userId" 
-//			+ ", thr.name as userName" 
-//			+ ", SUM(dt.trackingDuration) as duration" 
-//			+ ", job.id as jobId"
-//			+ ", job.description as jobDescription"
-//			+ ", reg.id as registryId"
-//			+ ", reg.name as registryName)"
-//			+ " FROM DailyTracking dt " 
-//			+ " inner join dt.taskHolder as thd "
-//			+ " left outer join dt.taskHolder.registry as thr "
-//			+ " inner join dt.jobType as job"
-//			+ " left outer join dt.registry as reg"
-//			+ " left outer join dt.project as prj "
-//			+ " left outer join dt.project.projectType as prt "
-//			+ " left outer join dt.activityType as aty";
-
 	private static final String SENTENCE = "SELECT "
 			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  dt.id as id"
 			+ ", thd.id as userId, thr.name as userName, dt.trackingDate as date"
@@ -79,8 +62,6 @@ public class DailyTrackingReportEngine {
 			sentence.append(PROJECT_GRAPHIC);
 		} else if (reportType == DailyTrackingReportType.GRAPHIC_BY_JOB_TYPE) {
 			sentence.append(JOB_TYPE_GRAPHIC);
-//		} else if (reportType == DailyTrackingReportType.JOBS_BY_CUSTOMER) {
-//			sentence.append(JOBS_BY_CUSTOMER);
 		} else {
 			sentence.append(SENTENCE);
 		}
@@ -89,59 +70,30 @@ public class DailyTrackingReportEngine {
 	
 	private Object getWhere( DailyTrackingReportParams params ) {
 		StringBuilder where = new StringBuilder();
+		where.append(" WHERE " + DomainManager.getSQLWhereClause("dt.domain"));
 		if (params.getFromDate() != null) {
-			where.append("dt.trackingDate >= ?");
+			where.append(" AND dt.trackingDate >= ?");
 		}
 		if (params.getToDate() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.trackingDate <= ?");
+			where.append(" AND dt.trackingDate <= ?");
 		}
 		if (params.getTaskHolder() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.taskHolder.id = ?");
+			where.append(" AND dt.taskHolder.id = ?");
 		}
-
 		if (params.getProject() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.project.id = ?");
+			where.append(" AND dt.project.id = ?");
 		}
-
 		if (params.getActivityType() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.activityType.id = ?");
+			where.append(" AND dt.activityType.id = ?");
 		}
-
 		if (params.getRegistry() != null && params.getRegistry().getId()!=null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.registry.id = ?");
+			where.append(" AND dt.registry.id = ?");
 		}
-
 		if (params.getJobType() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.jobType.id = ?");
+			where.append(" AND dt.jobType.id = ?");
 		}
-
 		if (params.getProjectType() != null) {
-			if (where.length() > 0) {
-				where.append(AND);
-			}
-			where.append("dt.project.projectType.id = ?");
-		}
-
-		if (where.length() > 0) {
-			where.insert(0, " WHERE ");
+			where.append(" AND dt.project.projectType.id = ?");
 		}
 		return where.toString();
 	}

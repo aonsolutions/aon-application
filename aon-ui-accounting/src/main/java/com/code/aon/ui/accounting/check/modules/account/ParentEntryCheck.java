@@ -15,6 +15,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
@@ -38,6 +39,7 @@ public class ParentEntryCheck implements ICheckModule {
 			String select = 
 				"SELECT a.code,a.level,a.id"
 				+" FROM account a "
+				+" WHERE " + DomainManager.getSQLWhereClause("a.domain")
 				+" ORDER BY a.code";
 			SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
 			List<?> queryList = query

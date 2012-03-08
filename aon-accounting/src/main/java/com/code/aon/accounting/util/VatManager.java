@@ -15,6 +15,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -134,12 +135,15 @@ public class VatManager {
 			params.setCount( bean.getCount(criteria)); 
 			StringBuilder  stmt = new StringBuilder();
 			stmt.append(" select count(*) from invoice i WHERE"); 
-			stmt.append(" i.series = ?");
+			stmt.append(DomainManager.getSQLWhereClause("i.domain"));
+			stmt.append(" and i.series = ?");
 			stmt.append(" and i.number BETWEEN ? AND ?");
 			stmt.append(" and i.type != 1");
 			stmt.append(" and i.id not in ( ");
 			stmt.append("  select inv.id from invoice inv");
-			stmt.append("   where inv.issue_date >= ?");
+			stmt.append("   where ");
+			stmt.append(DomainManager.getSQLWhereClause("inv.domain"));
+			stmt.append("   and inv.issue_date >= ?");
 			stmt.append("   and inv.issue_date <= ?");
 			stmt.append("   and (inv.security_level = ?");
 			if (params.getSecurityLevel() == SecurityLevel.OFFICIAL) {

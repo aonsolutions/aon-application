@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
@@ -31,7 +32,8 @@ public class VatCollection {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE it.tax_type = 1");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append("  AND it.tax_type = 1");
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");
 			}
@@ -150,7 +152,8 @@ public class VatCollection {
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
-			stmt.append("  WHERE it.tax_type = 1 ");
+			stmt.append("  WHERE " + DomainManager.getSQLWhereClause("it.domain"));
+			stmt.append("  AND it.tax_type = 1 ");
 			if (params.getFromDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");
 			}

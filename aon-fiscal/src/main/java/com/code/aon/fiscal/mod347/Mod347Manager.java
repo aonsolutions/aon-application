@@ -12,10 +12,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
 import com.code.aon.fiscal.enumeration.Mod347Type;
@@ -144,6 +144,7 @@ public class Mod347Manager {
 		buf.append(" LEFT OUTER JOIN geozone gz2 ON ra2.geozone = gz2.id ");
 				
 		buf.append(" WHERE i.id=i.id");
+		buf.append(" AND " + DomainManager.getSQLWhereClause("i.domain"));
 		buf.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") +" >= ?");
 		buf.append(" AND " + (params.isTaxDateEnabled()?"i.tax_date":"i.issue_date") +" <= ?");
 		buf.append(" AND it.tax_type=1 ");

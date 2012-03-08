@@ -11,6 +11,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -41,11 +42,12 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT finance " +
 						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.id IS NULL " +
+						" WHERE " + DomainManager.getSQLWhereClause("finance.domain") +				
+						" AND finance.registry.id = customer.registry.id " +
+						" AND finance.payment = 0 " +
+						" AND finance.payMethod.id IS NULL " +
 						obtainPrintCondition() +
-						"ORDER BY finance.dueDate, finance.concept";
+						" ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -55,12 +57,13 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 	private List<ITransferObject> obtainNegotiableNoBankAccountList() {
 		String select = "SELECT finance " +
 						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"AND (finance.bankAccount IS NULL OR finance.bankAccount = '') " +
+						" WHERE " + DomainManager.getSQLWhereClause("finance.domain") +
+						" AND finance.registry.id = customer.registry.id " +
+						" AND finance.payment = 0 " +
+						" AND finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						" AND (finance.bankAccount IS NULL OR finance.bankAccount = '') " +
 						obtainPrintCondition() +
-						"ORDER BY finance.dueDate, finance.concept";
+						" ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();
@@ -70,13 +73,14 @@ public class FinanceCheckingPrinter implements ICollectionProvider, IFinanceCons
 	private List<ITransferObject> obtainNoNegotiableBankAccountList() {
 		String select = "SELECT finance " +
 						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"AND finance.bankAccount IS NOT NULL " +
-						"AND finance.bankAccount <> '' " +
+						" WHERE " + DomainManager.getSQLWhereClause("finance.domain") +
+						" AND finance.registry.id = customer.registry.id " +
+						" AND finance.payment = 0 " +
+						" AND finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						" AND finance.bankAccount IS NOT NULL " +
+						" AND finance.bankAccount <> '' " +
 						obtainPrintCondition() +
-						"ORDER BY finance.dueDate, finance.concept";
+						" ORDER BY finance.dueDate, finance.concept";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		return query.list();

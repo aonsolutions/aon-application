@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
@@ -160,8 +161,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     					"FROM invoice as invoice " +
     					whereSeries +
     					"AND invoice.number = " + invoice.getNumber() + " " +
-    					"AND invoice.type = " + invoice.getType().ordinal() + " " +
-    					andId;
+    					"AND invoice.type = " + invoice.getType().ordinal() + " " + 
+    					andId +
+    					"AND " + DomainManager.getSQLWhereClause("invoice.domain");
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
         List<?> list = query

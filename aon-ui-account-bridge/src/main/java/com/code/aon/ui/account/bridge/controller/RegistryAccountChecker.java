@@ -21,6 +21,7 @@ import com.code.aon.common.IFinderBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -200,10 +201,11 @@ public abstract class RegistryAccountChecker implements Serializable {
 		Session session = HibernateUtil.getSession(sessionFatoryName);
 		String pojo = getPojoName();
 		String stmt = "SELECT new com.code.aon.ui.account.bridge.controller.RegistryAccountCheckerTo(c) "
-				+ " FROM " + pojo + " as c ";
+				+ " FROM " + pojo + " as c "
+				+ " WHERE " + DomainManager.getSQLWhereClause(pojo + ".domain");
 		if (getCompanyName() != null) {
 			String c = StringUtils.replaceChars(getCompanyName(), "*", "%");
-			stmt += " WHERE registry.name LIKE '" + c + "' ";
+			stmt += " AND registry.name LIKE '" + c + "' ";
 		}
 		OrderByList l = getCriteria().getOrderByList();
 		if (l != null && l.getOrders().size() > 0) {
