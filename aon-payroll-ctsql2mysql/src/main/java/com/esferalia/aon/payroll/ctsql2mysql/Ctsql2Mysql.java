@@ -24,6 +24,7 @@ import org.apache.commons.cli.PosixParser;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.dbutils.AonSQLScript;
+import com.code.aon.master.VersionManager;
 
 
 
@@ -230,6 +231,9 @@ public class Ctsql2Mysql
             sqlCreateFile.setFileName( createURL.getFile());
             AonSQLScript script = new AonSQLScript(sqlCreateFile, connection);
             script.execute();
+            
+            VersionManager versionManager = new VersionManager();
+            versionManager.uptodateDatabase(connection);
             
 			return connection;
 		}

@@ -230,6 +230,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 					importeIrpf);
 		}
 
+		Double importeIrpfEspecie = toDouble(nomina.getBase_irpf_especie());
+
+		if (importeIrpfEspecie > 0) {
+			BigDecimal irpfPercentage = nomina.getPrc_irpf();
+			String irpfFunction = String.format(SPANISH, "%.2f",
+					irpfPercentage != null ? irpfPercentage : 0);
+			mysqlDB.insertSalary_deduction(this.salaryId,
+					enum2short(DeductionType.IRPF), "IRPFE", irpfFunction, null,
+					importeIrpfEspecie);
+		}
+
 		nomina.visitRel_nmd_nom(this);
 		nomina.visitRel_dto_nom(this);
 		
