@@ -1836,10 +1836,6 @@
 			<value>saleInvoice</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
@@ -2272,10 +2268,6 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>purchaseInvoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -2720,10 +2712,6 @@
 			<value>expenseInvoice</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
@@ -3082,10 +3070,6 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>undeductibleInvoice</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>

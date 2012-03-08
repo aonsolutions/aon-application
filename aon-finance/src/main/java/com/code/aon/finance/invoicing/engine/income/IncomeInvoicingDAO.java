@@ -59,7 +59,6 @@ public class IncomeInvoicingDAO implements IInvoicingDAO {
 	
 	public void updateSource(ITransferObject to) {
 		Income income = (Income)to;
-
 		try {
 			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 			income.setStatus(IncomeStatus.INVOICED);

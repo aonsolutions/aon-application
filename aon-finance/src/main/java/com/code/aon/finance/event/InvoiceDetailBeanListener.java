@@ -60,6 +60,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 
 		Invoice invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).get(detail.getInvoice().getId());
+		invoice.setUpdateEnabled(detail.getInvoice().isUpdateEnabled());
 		if (invoice.getProject() == null && detail.getProject() != null && detail.getProject().getId() != null) {
 			invoice.setProject(detail.getProject());
 		}
@@ -105,7 +106,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 					++index;
 				}
 			}
-	
+
 			updateInvoiceTotals(detail.getInvoice());
 		}
 		detail.setUpdateEnabled(true);
