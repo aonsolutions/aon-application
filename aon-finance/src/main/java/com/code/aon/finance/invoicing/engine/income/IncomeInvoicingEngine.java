@@ -47,12 +47,13 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 
 	public void invoiceIncomeList(Invoice invoice, List<Income> incomeList) throws ManagerBeanException {
 		for (Income income : incomeList) {
-			createInvoiceDetails(invoice, income);
+			boolean lastIncome = incomeList.indexOf(income) == (incomeList.size() - 1);
+			createInvoiceDetails(invoice, income, lastIncome);
 			getInvoicingDAO().updateSource(income);
 		}
 	}
 
-	private void createInvoiceDetails(Invoice invoice, Income income) throws ManagerBeanException {
+	private void createInvoiceDetails(Invoice invoice, Income income, boolean lastIncome) throws ManagerBeanException {
 		int line = calculateMaxLine(invoice);
 
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -74,6 +75,7 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 			invoiceDetail.setWorkPlace(income.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.INCOME);
 			invoiceDetail.setSourceId(incomeDetail.getId());
+			invoiceDetail.getInvoice().setUpdateEnabled(lastIncome && !iterator.hasNext());
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 		}

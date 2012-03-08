@@ -56,7 +56,9 @@
 										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
 										reRender="showIncomeTransferWindow,purchaseInvoiceForm"
 										actionListener="#{purchaseInvoice.onIncomeTransfer}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+					     				oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="incomeTransferModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener

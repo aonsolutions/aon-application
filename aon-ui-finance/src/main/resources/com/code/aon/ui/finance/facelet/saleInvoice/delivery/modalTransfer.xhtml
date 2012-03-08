@@ -56,7 +56,9 @@
 										rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
 										reRender="showDeliveryTransferWindow,saleInvoiceForm"
 										actionListener="#{saleInvoice.onDeliveryTransfer}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										onclick="Richfaces.showModalPanel('waitProccess')" 
+					     				oncomplete="Richfaces.hideModalPanel('waitProccess')">
 										<rich:componentControl for="deliveryTransferModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener

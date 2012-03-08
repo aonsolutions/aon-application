@@ -59,7 +59,6 @@ public class DeliveryInvoicingDAO implements IInvoicingDAO {
 	
 	public void updateSource(ITransferObject to) {
 		Delivery delivery = (Delivery)to;
-
 		try {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 			delivery.setStatus(DeliveryStatus.INVOICED);

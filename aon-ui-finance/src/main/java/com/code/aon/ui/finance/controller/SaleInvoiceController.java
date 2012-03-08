@@ -253,6 +253,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
+				invoiceDetail.setUpdateEnabled(!iterator.hasNext());
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
