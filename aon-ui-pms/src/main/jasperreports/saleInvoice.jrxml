@@ -701,7 +701,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement textAlignment="Center" verticalAlignment="Middle"/>
-								<textFieldExpression><![CDATA[$F{description}.substring( 0, 10 )]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{description}.length()>=10?$F{description}.substring( 0, 10 ):""]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -732,7 +732,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle"/>
-								<textFieldExpression><![CDATA[$F{description}.substring( 11, 16 )]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{description}.length()>=16?$F{description}.substring( 11, 16 ):""]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -770,7 +770,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textElement verticalAlignment="Middle"/>
-								<textFieldExpression><![CDATA[$F{description}.substring( 17, $F{description}.length() )]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{description}.length()>=17?$F{description}.substring( 17, $F{description}.length() ):""]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -790,6 +790,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{report_price}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
@@ -956,6 +974,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
@@ -1232,6 +1268,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1390,6 +1444,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>

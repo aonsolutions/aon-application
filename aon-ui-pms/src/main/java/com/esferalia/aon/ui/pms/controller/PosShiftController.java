@@ -153,4 +153,12 @@ public class PosShiftController extends BasicController {
 		} 
 	}
 	
+	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
+		PosShift ps = (PosShift) getTo();
+		if (ps!=null && ps.getInvoice()!=null) {
+			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
+			controller.select(event, ps.getInvoice().getId());
+		}
+	}
+	
 }

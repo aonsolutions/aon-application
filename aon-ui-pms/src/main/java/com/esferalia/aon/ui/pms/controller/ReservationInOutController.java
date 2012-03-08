@@ -101,16 +101,6 @@ public class ReservationInOutController implements ICollectionProvider {
 	
 	@SuppressWarnings("unchecked")
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		
-		String order = " ORDER BY";
-		if(shortOption.equals(SortTypes.RESERVATION.ordinal())){
-			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.id";
-		} else if(shortOption.equals(SortTypes.AGENCY.ordinal())){
-			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.agency.id";
-		} else if(shortOption.equals(SortTypes.ROOM_NUMBER.ordinal())){
-			order += " pReservationRoomDetail.assetActivity.asset.name";
-		}
-
 		String select = "SELECT pReservationRoom" 
 				+ " FROM ProjectReservationRoomDetail pReservationRoomDetail" 
 				+ " LEFT JOIN pReservationRoomDetail.projectReservationRoom as pReservationRoom"
@@ -118,9 +108,8 @@ public class ReservationInOutController implements ICollectionProvider {
 				+ ( getHotel() != null ? " AND pReservationRoomDetail.projectReservationRoom.projectReservation.hotel = " + getHotel().getId():"" )
 				+ ( isCheckin() ? " AND pReservationRoomDetail.projectReservationRoom.projectReservation.startDate BETWEEN :start AND :end":" AND pReservationRoomDetail.projectReservationRoom.projectReservation.endDate BETWEEN :start AND :end")
 				+ getScopeClause()
-				+ order
+				+ getOrder()
 				;
-
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
@@ -134,6 +123,18 @@ public class ReservationInOutController implements ICollectionProvider {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
 		return userScopeBean.getList(criteria);
+	}
+	
+	public String getOrder( ) {
+		String order = " ORDER BY";
+		if(shortOption.equals(SortTypes.RESERVATION.ordinal())){
+			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.id";
+		} else if(shortOption.equals(SortTypes.AGENCY.ordinal())){
+			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.agency.id";
+		} else if(shortOption.equals(SortTypes.ROOM_NUMBER.ordinal())){
+			order += " pReservationRoomDetail.assetActivity.asset.name";
+		}
+		return order;
 	}
 	
 	public String getScopeClause( ) throws ManagerBeanException {
@@ -155,7 +156,6 @@ public class ReservationInOutController implements ICollectionProvider {
 			}
 		}
 		return exp;
-		
 	}
 
 	@SuppressWarnings("rawtypes")

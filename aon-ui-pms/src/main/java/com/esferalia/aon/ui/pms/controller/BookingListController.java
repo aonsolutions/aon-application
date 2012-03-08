@@ -71,7 +71,6 @@ public class BookingListController implements ICollectionProvider {
 	
 	
 	private void buildBookingList() throws ManagerBeanException {
-		// TODO : construir lista de booking
 		
 		setBookingList(new LinkedList<BookingListController.Booking>());
 

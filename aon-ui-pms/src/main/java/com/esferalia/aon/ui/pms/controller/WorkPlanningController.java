@@ -9,6 +9,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -59,29 +61,33 @@ public class WorkPlanningController implements ICollectionProvider {
 		setDate(new Date());
 	}
 	
-	private ProjectReservationRoomDetail obtainActivity(Room room) throws ManagerBeanException {
+	private ProjectReservationRoomDetail obtainActivity(Room room, Date date) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 		Criteria criteria = new Criteria();
 		if(getHotel()!=null && getHotel().getId()!=null){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());
 		}
 		if(getDate()!=null){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), getDate());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), date);
 		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_ID), room.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		return (ProjectReservationRoomDetail) (list.isEmpty()?null:list.get(0));
 	}
-	private RoomWorkPlanning obtainAction(ProjectReservationRoomDetail reservation) throws ManagerBeanException {
-		
-		if(reservation!=null){
-			if(reservation.isLastNight()){
-				return RoomWorkPlanning.CHECKOUT;
-			} else if(reservation.isFirstNight()){
+	
+	private RoomWorkPlanning obtainRoomOperation(ProjectReservationRoomDetail reservationRoomDetail, Room room) throws ManagerBeanException {
+		if(reservationRoomDetail!=null){
+			if(reservationRoomDetail.isFirstNight()){
 				return RoomWorkPlanning.CHECKIN;
 			} else {
-				long days = CommonUtil.getDaysBetweenDates(reservation.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
+				long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
 				return days%3==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+			}
+		} else {
+			ProjectReservationRoomDetail previousReservationRoomDetail = obtainActivity(room, DateUtils.addDays(getDate(), -1));
+			boolean lastNight = previousReservationRoomDetail!=null?previousReservationRoomDetail.isLastNight():false;
+			if(lastNight){	
+				return RoomWorkPlanning.CHECKOUT;
 			}
 		}
 		return RoomWorkPlanning.FREE;
@@ -97,13 +103,12 @@ public class WorkPlanningController implements ICollectionProvider {
 		List<ITransferObject> list = bean.getList(criteria);
 		if( !list.isEmpty() ){
 			setRoomPlanningList(new LinkedList<WorkPlanningController.RoomPlanning>());
-			
 			for(ITransferObject to: list){
 				RoomPlanning rp = new RoomPlanning();
 				rp.setRoom((Room) to);
 				rp.setDate(getDate());
-				rp.setReservation(obtainActivity((Room) to));
-				rp.setAction(obtainAction(rp.getReservation()));
+				rp.setReservationRoomDetail(obtainActivity((Room) to, getDate()));
+				rp.setAction(obtainRoomOperation(rp.getReservationRoomDetail(), (Room) to));
 				getRoomPlanningList().add(rp);
 			}
 			setModel(new ListDataModel(getRoomPlanningList()));
@@ -117,7 +122,7 @@ public class WorkPlanningController implements ICollectionProvider {
 	public class RoomPlanning {
 		private Room room;
 		private Date date;
-		private ProjectReservationRoomDetail reservation;
+		private ProjectReservationRoomDetail reservationRoomDetail;
 		private RoomWorkPlanning action;
 		
 		public Room getRoom() {
@@ -132,13 +137,13 @@ public class WorkPlanningController implements ICollectionProvider {
 		public void setDate(Date date) {
 			this.date = date;
 		}
-		public ProjectReservationRoomDetail getReservation() throws ManagerBeanException {
-			return reservation;
+		public ProjectReservationRoomDetail getReservationRoomDetail() {
+			return reservationRoomDetail;
 		}
-		public void setReservation(ProjectReservationRoomDetail reservation) {
-			this.reservation = reservation;
+		public void setReservationRoomDetail(
+				ProjectReservationRoomDetail reservationRoomDetail) {
+			this.reservationRoomDetail = reservationRoomDetail;
 		}
-		
 		public RoomWorkPlanning getAction() throws ManagerBeanException{
 			return action;
 		}
