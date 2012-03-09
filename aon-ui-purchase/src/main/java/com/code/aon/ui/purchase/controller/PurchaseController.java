@@ -3,6 +3,7 @@ package com.code.aon.ui.purchase.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,6 +38,8 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.purchase.util.IEmailControllerListener;
+import com.code.aon.purchase.util.IEmailable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
@@ -59,7 +62,7 @@ import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseController extends BasicController implements IPurchaseConstants {
+public class PurchaseController extends BasicController implements IPurchaseConstants, IEmailable {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class.getName());
 
@@ -79,6 +82,32 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private String invoiceRefCode;
 	private Date invoiceDate;
 	private PurchaseEmailUtil emailUtil;
+	
+	private List<String> moreRecipients;
+	
+	private List<IEmailControllerListener> emailControllerListenerClasses;
+
+	
+	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
+		return emailControllerListenerClasses;
+	}
+
+	public void setEmailControllerListenerClasses(
+			List<IEmailControllerListener> emailControllerListenerClasses) {
+		this.emailControllerListenerClasses = emailControllerListenerClasses;
+	}
+
+	@Override
+	public List<String> getMoreRecipients() {
+		if(moreRecipients==null){
+			moreRecipients = new ArrayList<String>();
+		}
+		return moreRecipients;
+	}
+
+	public void setMoreRecipients(List<String> moreRecipients) {
+		this.moreRecipients = moreRecipients;
+	}
 	
     public PurchaseController() {
     	this.emailUtil = new PurchaseEmailUtil();
@@ -494,7 +523,8 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		if (webmailController.isLogged()) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
-			emailUtil.initMessageController(messageController, (Purchase) getTo());
+			fireBeforeEmailSend(event, getTo());
+			emailUtil.initMessageController(messageController, (Purchase) getTo(), getMoreRecipients());
 			messageController.setShowNewMessageWindow(true);
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
@@ -524,5 +554,17 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
 		}
 	}
+	
+
+	/*
+	 * 
+	 * EMAIL EVENTS LISTENERS
+	 * 
+	 */
+	protected void fireBeforeEmailSend(ActionEvent event, ITransferObject to) throws ManagerBeanException {
+		for(IEmailControllerListener l: getEmailControllerListenerClasses()){
+			l.beforeEmailSend(to);
+		}
+	}	
 
 }

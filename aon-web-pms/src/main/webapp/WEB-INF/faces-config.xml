@@ -230,5 +230,27 @@
 			<value>#{bankConceptAccountListener}</value>
 		</list-entries>
 	</managed-bean>
+	
+	<!-- ************ PURCHASE LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>purchasePrintEmailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.purchase.util.IEmailControllerListener</value-class>
+			<!--  aon.ui.purchase -->
+			<value>#{purchasePrintEmailListener}</value>
+		</list-entries>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>purchaseEmailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.purchase.util.IEmailControllerListener</value-class>
+			<!--  aon.ui.purchase -->
+			<value>#{purchaseEmailListener}</value>
+		</list-entries>
+	</managed-bean>
 
 </faces-config>

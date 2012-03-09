@@ -904,11 +904,25 @@
 	<!-- ********** OPTIONAL LISTENERS ********** -->
 	<!-- **************************************** -->
 	
-	<!-- ************* PURCHASE PMS PRINT ***************** -->
+	<!-- ************* PURCHASE PMS PRINT EMAIL ***************** -->
 	<managed-bean>
-		<managed-bean-name>purchasePmsPrint</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.event.PurchasePmsPrintListener</managed-bean-class>
+		<managed-bean-name>purchasePrintEmailListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PurchaseEmailListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>purchasePrint</value>
+		</managed-property>
+	</managed-bean>
+	<!-- ************* PURCHASE PMS EMAIL ***************** -->
+	<managed-bean>
+		<managed-bean-name>purchaseEmailListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PurchaseEmailListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>purchase</value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ******************************** -->

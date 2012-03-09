@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
@@ -11,6 +14,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +37,8 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 
 	private static final String REPORT_KEY = "purchaseForm";
 
-	public void initMessageController( MessageController messageController, Purchase purchase ) throws ManagerBeanException, IOException, ReportException {
-		String[] emails = getEmails( purchase.getSupplier().getRegistry() );
+	public void initMessageController( MessageController messageController, Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException, IOException, ReportException {
+		String[] emails = getEmails( purchase, moreRecipients );
 		initMessageController(messageController, emails, getEmailBody(purchase));
 		messageController.setSubject( getEmailSubject(purchase) );
 		messageController.addAttachment( getReport(purchase, REPORT_KEY) );
@@ -48,9 +52,18 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 			} else {
 				addresses[i] = new InternetAddress( emails[i] );	
 			}
-		} 
+		}
 		return addresses;
 	}		
+	private String[] getEmails( Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException {
+		List<String> emails = new ArrayList<String>(Arrays.asList(getEmails(purchase.getSupplier().getRegistry())));  
+		for( String e: moreRecipients ) {
+			if(!StringUtils.isEmpty(e)){
+				emails.add(e);
+			}
+		}
+		return emails.toArray(new String[emails.size()]);
+	}
 	
 	public String getEmailSubject( Purchase purchase ) {
 		String message = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_EMAIL_SUBJECT);
@@ -79,11 +92,15 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 	}
 	
 	public void sendPurchase( Purchase purchase, String subject, String content ) {
+		sendPurchase( purchase, null, subject, content );
+	}
+	
+	public void sendPurchase( Purchase purchase, List<String> moreRecipients, String subject, String content ) {
 		LogPanelController logger = LogPanelController.getInstance();
 		AonFile file = null;
 		AonFile xml = null;
 		try {
-			String[] emails = getEmails(purchase.getSupplier().getRegistry());
+			String[] emails = getEmails(purchase, moreRecipients);
 			if ( ArrayUtils.isEmpty(emails) ) {
 				String text = AonUtil.getMessage(BUNDLE_KEY, PURCHASE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, purchase.getReferenceCode(), purchase.getSupplier().getRegistry().getFullName() );				

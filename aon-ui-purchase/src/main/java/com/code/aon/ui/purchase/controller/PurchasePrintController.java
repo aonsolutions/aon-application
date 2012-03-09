@@ -62,7 +62,8 @@ public class PurchasePrintController extends PurchaseController {
 			emailUtil.changeMailAccount(account);
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
 			for( ITransferObject to : list ) {
-				emailUtil.sendPurchase( (Purchase) to, subject, content  );	
+				super.fireBeforeEmailSend(event, to);
+				emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
