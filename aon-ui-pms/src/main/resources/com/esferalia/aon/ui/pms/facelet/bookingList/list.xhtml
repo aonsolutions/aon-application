@@ -49,7 +49,7 @@
 									<aon:outputText value="&#160;" />
 								</rich:column>
 								
-								<rich:column colspan="4" >
+								<rich:column colspan="5" >
 									<aon:outputText value="#{pmsBundle.pms_rooms}" />
 								</rich:column>
 								
@@ -88,6 +88,13 @@
 								<aon:outputText value="#{pmsBundle.pms_occupation_group}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
+						</aon:column>				
+									
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_free}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomTotal - to.roomBusy}" />
 						</aon:column>				
 									
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">

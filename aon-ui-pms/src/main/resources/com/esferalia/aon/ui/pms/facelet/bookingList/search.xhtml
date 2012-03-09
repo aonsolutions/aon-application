@@ -26,7 +26,7 @@
 							columnClasses="aon-panelGrid-odd aon-width-50, 
 							aon-panelGrid-even aon-width-auto">
 					
-							<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
+							<c:if test="#{pmsCollections.currentUserHotelsCount > 0}">
 								<aon:outputLabel for="BookingList_hotel_id"
 									value="#{pmsBundle.pms_hotel}" />
 								<aon:selectOneMenu id="BookingList_hotel_id"
