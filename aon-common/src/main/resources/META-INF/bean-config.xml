@@ -6,6 +6,13 @@
 
 <bean-config>
 
+	<bean description="Soporte para las busquedas restringidas por domain">
+		<pojo>com.code.aon.common.domain.IDomain</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.common.domain.DomainBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 	<bean description="Agrega el usuario y fecha de cracion / modificacion">
 		<pojo>com.code.aon.common.audit.IAuditable</pojo>
 		<vetoListeners>
