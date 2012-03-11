@@ -144,6 +144,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			reset(true);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible seleccionar la percepcion";
+			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -237,7 +238,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 		} catch (ExpressionException e) {
 			return false;
 		} catch (SalaryException e) {
-			String msg = "Imposible evaluar lar percepciones de sistema";
+			String msg = "Imposible evaluar las percepciones de sistema";
 			AonUtil.addErrorMessage(msg);
 		}
 		return false;
@@ -246,13 +247,13 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	//**********************************************
 	// VARIABLES
 	//**********************************************
+
+	private ContractPaymentVariableHandler handler;
 	
 	@Override
 	public void initializeVariables(ActionEvent event) {
 		getHandler().initializeVariables(event);
 	}
-	
-	private ContractPaymentVariableHandler handler;
 	
 	@Override
 	public ContractPaymentVariableHandler getHandler() {

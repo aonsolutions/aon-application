@@ -70,7 +70,8 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			}
 			completeTO(getController(event));
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException();
+			String msg = "Error al guardar los datos. ";
+			throw new ControllerListenerException(msg + "(" +e+")");
 		}
 	}
 	
@@ -135,6 +136,9 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	
 	private ITransferObject completeMaster(ControllerEvent event, ContractLeave leave, ContractLeaveDetail detail) {
 		leave.setContract(((ContractLeaveController)getController()).getContract());
+		if(leave.getParent()!=null && leave.getParent().getId()==null){
+			leave.setParent(null);
+		}
 		if(detail.getType()==LeaveReportType.LEAVE){
 			leave.setStartDate(detail.getDate());
 		} else if(detail.getType()==LeaveReportType.DISCHARGE){

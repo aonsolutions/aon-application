@@ -148,6 +148,7 @@ public class EnterpriseParamsController {
 		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		data.setId(getAgreement().getId());
 		data.setEnterprise((Enterprise) controller.getTo());
+		data.setDomain(data.getEnterprise().getDomain());
 		data.setName(AGREEMENT);
 		data.setExpression(getAgreement().getExpression().toString());
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);

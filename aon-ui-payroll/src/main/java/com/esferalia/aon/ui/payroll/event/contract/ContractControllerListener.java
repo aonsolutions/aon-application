@@ -215,7 +215,10 @@ public class ContractControllerListener extends ControllerAdapter{
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
 				List<ITransferObject> list = bean.getList(criteria);
-				Agreement agreement = ((PayrollWorkPlace)list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
+				Agreement agreement = null;
+				if(!list.isEmpty()){
+					agreement = (list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
+				}
 				if(agreement!=null){
 					controller.setAgreement(agreement);
 				} else {
@@ -225,6 +228,8 @@ public class ContractControllerListener extends ControllerAdapter{
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, no se define ningun convenio
+			String msg = "Error al buscar el convenio. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
 		}
 	}
 	

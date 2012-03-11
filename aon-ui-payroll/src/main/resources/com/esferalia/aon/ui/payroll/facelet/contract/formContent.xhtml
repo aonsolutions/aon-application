@@ -73,8 +73,6 @@
 				inputSize="10" renderAsPopup="true" enableManualInput="true"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" reRender="seniorityDateContainer" ajaxSingle="true"/>
-				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
 			</aon:selectInputDate>
 			<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
 				title="#{payrollBundle.payroll_salary_start_date_seniority_date_difference}"
