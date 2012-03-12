@@ -285,7 +285,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
-			invoiceDetailBean.remove((InvoiceDetail) iter.next());
+			InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
+			invoiceDetail.setUpdateEnabled(false);
+			invoiceDetailBean.remove(invoiceDetail);
 		}
 	}
 
@@ -305,6 +307,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (rectified.getRectificationInvoice() != null && rectified.getRectificationInvoice().getId() == invoice.getId()) {
 			rectified.setRectificationType(RectificationType.NONE);
 			rectified.setRectificationInvoice(null);
+			rectified.setUpdateEnabled(false);
 			invoiceBean.update(rectified);
 		} else {
 			Criteria criteria = new Criteria();
@@ -316,6 +319,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 					rectified.setRectificationType(RectificationType.RECTIFIED);
 					rectified.setRectificationInvoice((Invoice)ito);
 				}
+				rectified.setUpdateEnabled(false);
 				invoiceBean.update(rectified);
 			}
 		}

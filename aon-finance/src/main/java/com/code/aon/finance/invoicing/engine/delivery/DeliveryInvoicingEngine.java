@@ -427,12 +427,13 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 
 	public void invoiceDeliveryList(Invoice invoice, List<Delivery> deliveryList) throws ManagerBeanException {
 		for (Delivery delivery : deliveryList) {
-			createInvoiceDetails(invoice, delivery);
+			boolean lastDelivery = deliveryList.indexOf(delivery) == (deliveryList.size() - 1);
+			createInvoiceDetails(invoice, delivery, lastDelivery);
 			getInvoicingDAO().updateSource(delivery);
 		}
 	}
 
-	private void createInvoiceDetails(Invoice invoice, Delivery delivery) throws ManagerBeanException {
+	private void createInvoiceDetails(Invoice invoice, Delivery delivery, boolean lastDelivery) throws ManagerBeanException {
 		int line = calculateMaxLine(invoice);
 
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -454,6 +455,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			invoiceDetail.setWorkPlace(delivery.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
+			invoiceDetail.getInvoice().setUpdateEnabled(lastDelivery && !iterator.hasNext());
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 		}

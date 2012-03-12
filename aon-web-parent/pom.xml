@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.25</version>
+		<version>6.25.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.parent</artifactId>
-	<version>6.25</version>
+	<version>6.25.1</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos WEB de AON</description>
 	<name>AON WEB ENTITY PARENT</name>
@@ -17,9 +17,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon.web.parent</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon.web.parent</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.x/aon.web.parent</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.1.x/aon.web.parent</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.1.x/aon.web.parent</connection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.25.1.x/aon.web.parent</url>
 	</scm>
 	<repositories>
 		<repository>
