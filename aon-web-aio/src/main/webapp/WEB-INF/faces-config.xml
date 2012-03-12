@@ -25,7 +25,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceContextPath</property-name>
-			<value>aon-desktop</value>
+			<value>aon-aio</value>
 		</managed-property>
 	</managed-bean>
 
@@ -58,9 +58,18 @@
 
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>menu_marketing</from-outcome>
+			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_commercial</from-outcome>
 			<to-view-id>/facelet/menu/commercial.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_management</from-outcome>
+			<to-view-id>/facelet/menu/management.xhtml</to-view-id> 
+		</navigation-case>
+		
 		<navigation-case>
 			<from-outcome>menu_sales</from-outcome>
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
@@ -100,10 +109,6 @@
 		<navigation-case>
 			<from-outcome>menu_payroll</from-outcome>
 			<to-view-id>/facelet/menu/payroll.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>menu_marketing</from-outcome>
-			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_asset</from-outcome>
