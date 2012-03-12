@@ -163,7 +163,7 @@
 				</textField>
 			</elementGroup>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="0" y="0" width="317" height="12">
+				<reportElement key="textField-5" x="-1" y="0" width="317" height="12">
 					<printWhenExpression><![CDATA[($F{item}!=null && $F{item}.getId()!=null)]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5">
