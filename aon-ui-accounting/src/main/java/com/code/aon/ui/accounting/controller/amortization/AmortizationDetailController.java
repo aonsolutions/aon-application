@@ -52,38 +52,40 @@ public class AmortizationDetailController extends LinesController {
 	}
 	
 	private DataModel initializeSummaryModel() throws ManagerBeanException {
-		Amortization a = (Amortization) getMasterController().getTo();
 		List<AmortizationDetail> list = new LinkedList<AmortizationDetail>();
-		int year = -1;
-		AmortizationDetail detail = null;
-		double accumulated = 0.0;
-		double pending = a.getAmount();
-		double fiscalAccumulated = 0.0;
-		double fiscalPending = a.getAmount();
-		for (AmortizationDetail ad : getAmortizationList() ) {
-			int detailYear= CommonUtil.getYear( ad.getFromDate() );
-			if ( year != detailYear ) {
-				year = detailYear;
-				detail = new AmortizationDetail();
-				detail.setFromDate(ad.getFromDate());
-				detail.setAllocation(0.0);
-				detail.setFiscalAllocation(0.0);
-				detail.setCoefficient(0.0);
-				detail.setAmortization(a);
-				list.add(detail);
+		if (!getMasterController().isNew()) { 
+			Amortization a = (Amortization) getMasterController().getTo();
+			int year = -1;
+			AmortizationDetail detail = null;
+			double accumulated = 0.0;
+			double pending = a.getAmount();
+			double fiscalAccumulated = 0.0;
+			double fiscalPending = a.getAmount();
+			for (AmortizationDetail ad : getAmortizationList() ) {
+				int detailYear= CommonUtil.getYear( ad.getFromDate() );
+				if ( year != detailYear ) {
+					year = detailYear;
+					detail = new AmortizationDetail();
+					detail.setFromDate(ad.getFromDate());
+					detail.setAllocation(0.0);
+					detail.setFiscalAllocation(0.0);
+					detail.setCoefficient(0.0);
+					detail.setAmortization(a);
+					list.add(detail);
+				}
+				accumulated = CommonUtil.round(accumulated + ad.getAllocation());
+				pending = CommonUtil.round(pending - ad.getAllocation());
+				fiscalAccumulated= CommonUtil.round(fiscalAccumulated + ad.getFiscalAllocation());
+				fiscalPending = CommonUtil.round(fiscalPending - ad.getFiscalAllocation());
+				detail.setToDate(ad.getToDate());
+				detail.setCoefficient( CommonUtil.round(detail.getCoefficient() + ad.getCoefficient()));
+				detail.setAllocation( CommonUtil.round(detail.getAllocation() + ad.getAllocation()));
+				detail.setAccumulated( accumulated );
+				detail.setPending(pending);
+				detail.setFiscalAllocation( CommonUtil.round(detail.getFiscalAllocation() + ad.getFiscalAllocation()));
+				detail.setFiscalAccumulated( fiscalAccumulated );
+				detail.setFiscalPending(fiscalPending);
 			}
-			accumulated = CommonUtil.round(accumulated + ad.getAllocation());
-			pending = CommonUtil.round(pending - ad.getAllocation());
-			fiscalAccumulated= CommonUtil.round(fiscalAccumulated + ad.getFiscalAllocation());
-			fiscalPending = CommonUtil.round(fiscalPending - ad.getFiscalAllocation());
-			detail.setToDate(ad.getToDate());
-			detail.setCoefficient( CommonUtil.round(detail.getCoefficient() + ad.getCoefficient()));
-			detail.setAllocation( CommonUtil.round(detail.getAllocation() + ad.getAllocation()));
-			detail.setAccumulated( accumulated );
-			detail.setPending(pending);
-			detail.setFiscalAllocation( CommonUtil.round(detail.getFiscalAllocation() + ad.getFiscalAllocation()));
-			detail.setFiscalAccumulated( fiscalAccumulated );
-			detail.setFiscalPending(fiscalPending);
 		}
 		return new ListDataModel( list );
 	}
