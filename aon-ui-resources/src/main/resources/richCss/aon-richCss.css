@@ -875,6 +875,15 @@ color:#000;
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
 }
+.aon-icon-winsuite{
+	background:transparent url(images/aon-icon/aon-icon-winsuite.png) no-repeat scroll center left;
+}
+.aon-icon-redtrabaja{
+	background:transparent url(images/aon-icon/aon-icon-redtrabaja.png) no-repeat scroll center left;
+}
+.aon-icon-contrata{
+	background:transparent url(images/aon-icon/aon-icon-contrata.png) no-repeat scroll center left;
+}
 .aon-icon-tree-units{
 	background:transparent url(images/aon-icon/aon-tree-units.png) scroll left center no-repeat;	
 }
@@ -2493,7 +2502,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-audatex{
 	background:transparent url(images/aon-main-menu/aon-icon-audatex.png) no-repeat scroll center left;
 }
-
+.aon-icon-logo{
+	background:transparent url(images/aon-icon/aon-icon-logo.png) no-repeat scroll center left;
+}
 .aon-subTable-green-header{
 	padding-left: 10px; 
 	border: none; 

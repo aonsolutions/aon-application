@@ -22,13 +22,13 @@
 							columnClasses="aon-padding"
 							headerClass="aon-icon-config aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.labor_menu_group}" />
+								<aon:outputText value="#{payrollBundle.labor_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="integral" 
 										action="#{enterprise.initialAction}" 
-										value="#{appBundle.menu_integral}">
+										value="#{payrollBundle.menu_integral}">
 										<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 										<aon:actionListener method="#{enterprise.onEditSearch}" />
 									</aon:commandLink>
@@ -70,7 +70,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-customer aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.entity_menu_group}" />
+								<aon:outputText value="#{payrollBundle.entity_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -93,7 +93,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-product aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.agreement_menu_group}" />
+								<aon:outputText value="#{payrollBundle.payroll_agreement_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -110,7 +110,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-winsuite aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.red_menu_group}" />
+								<aon:outputText value="#{payrollBundle.red_menu_group}" />
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 									
@@ -133,7 +133,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-redtrabaja aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.certificate_menu_group}" />
+								<aon:outputText value="#{payrollBundle.certificate_menu_group}" />
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 							
@@ -158,7 +158,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-aeat aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.fiscal_menu_group}" />
+								<aon:outputText value="#{appBundle.menu_fiscal}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -173,6 +173,33 @@
 										<aon:actionListener method="#{irpfTestLauncher.onStart}" />
 									</aon:commandLink>
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="profRetention" 
+										action="profRetention_search" 
+										actionListener="#{profRetention.onEditSearch}"
+										value="#{fiscalBundle.fiscal_professional_retention_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="model110" 
+										action="withholdingReport_search" 
+										actionListener="#{withholdingReport.onReset}"
+										value="#{fiscalBundle.fiscal_withholding_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfData" action="irpfData_search"
+										value="#{payrollBundle.payroll_irpfData_module}">
+										<aon:actionListener method="#{irpfData.onEditSearch}" />
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfDraft" action="irpfDraft_search"
+										actionListener="#{irpfDraft.onEditSearch}"
+										value="#{payrollBundle.payroll_irpfDraft_module}">
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -183,7 +210,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-query aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.calendar_menu_group}" />
+								<aon:outputText value="#{calendarBundle.aon_calendar_menu}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -238,48 +265,11 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<aon:panelGrid id="group_fiscal_payroll"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-aeat aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.fiscal_menu_group}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="profRetention" 
-										action="profRetention_search" 
-										actionListener="#{profRetention.onEditSearch}"
-										value="#{fiscalBundle.fiscal_professional_retention_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="model110" 
-										action="withholdingReport_search" 
-										actionListener="#{withholdingReport.onReset}"
-										value="#{fiscalBundle.fiscal_withholding_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpfData" action="irpfData_search"
-										value="#{payrollBundle.payroll_irpfData_module}">
-										<aon:actionListener method="#{irpfData.onEditSearch}" />
-										<aon:actionListener method="#{contract.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpfDraft" action="irpfDraft_search"
-										actionListener="#{irpfDraft.onEditSearch}"
-										value="#{payrollBundle.payroll_irpfDraft_module}">
-									</aon:commandLink>
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-						
 						<aon:panelGrid id="contrata_wizard"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-contrata aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.contrata_menu_group}" />
+								<aon:outputText value="#{payrollBundle.contrata_menu_group}" />
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -337,7 +327,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.predefined_menu_group}"/>
+								<aon:outputText value="#{payrollBundle.predefined_menu_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">

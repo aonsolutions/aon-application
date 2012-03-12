@@ -5,22 +5,26 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<c:if test="#{aonRole.config}">
-			<aon:commandLink id="groupware"
-				value="#{appBundle.menu_groupware}"
-				action="menu_groupware" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
+		<aon:outputText styleClass="aon-icon-logo" 
+			style="padding-left: 20px; margin-left: 12px;" 
+			value="&#160;"/>
+		
 		<c:if test="#{aonRole.commercialOperator}">
-			<aon:commandLink id="commercial"
-				value="#{commercialBundle.commercial_module_group}"
-				action="menu_commercial" immediate="true"
-				styleClass="aon-top-menu-item" />
 			<aon:commandLink id="marketing"
 				value="#{marketingBundle.marketing_marketing}"
 				action="menu_marketing" immediate="true"
 				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="commercial"
+				value="#{commercialBundle.commercial_module_group}"
+				action="menu_commercial" immediate="true"
+				styleClass="aon-top-menu-item" />
 		</c:if>
+
+		<aon:commandLink id="management" value="#{appBundle.menu_management}" 
+			action="menu_management" 
+			immediate="true" styleClass="aon-top-menu-item"/>
+
+<!-- 		
 		<c:if test="#{aonRole.saleOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
@@ -39,6 +43,7 @@
 				action="menu_expenses" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
+ -->
 		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="treasury"
 				value="#{financeBundle.finance_menu_group}"
@@ -49,6 +54,12 @@
 			<aon:commandLink id="warehouse"
 				value="#{warehouseBundle.warehouse_menu_group}"
 				action="menu_warehouse" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+		<c:if test="#{aonRole.config}">
+			<aon:commandLink id="groupware"
+				value="#{appBundle.menu_groupware}"
+				action="menu_groupware" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		<c:if test="#{aonRole.accountingOperator}">
@@ -65,10 +76,12 @@
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
+<!-- 		
 		<aon:commandLink id="asset"
 			value="#{assetBundle.asset_asset_main}"
 			action="menu_asset" immediate="true"
 			styleClass="aon-top-menu-item" />
+ -->
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"
