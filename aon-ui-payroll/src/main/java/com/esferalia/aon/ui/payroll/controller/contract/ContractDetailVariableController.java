@@ -15,12 +15,15 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public abstract class ContractDetailVariableController extends BasicController implements IVariablesHandler {
@@ -65,6 +68,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public void onSave(ActionEvent event) {
 		super.onAccept(event);
 		reset(false);
+		adjustMainDataFilter();
 	}
 	
 	@Override
@@ -101,6 +105,14 @@ public abstract class ContractDetailVariableController extends BasicController i
 	
 	public void onTypeChange(ActionEvent event) {
 		setConcepts(null);
+	}
+	
+	private void adjustMainDataFilter() {
+		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
+		tree.setSearchCurrent(false);
+		tree.setInactiveLastPeriod(InactiveLastPeriod.MANUAL);
+		tree.setInactiveDate(getInactiveDate());
+		tree.reloadTreeMainData(null);
 	}
 	
 	public List<SelectItem> getConcepts() {

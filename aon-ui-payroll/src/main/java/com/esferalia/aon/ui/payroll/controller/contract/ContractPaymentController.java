@@ -77,8 +77,9 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	public void onSave(ActionEvent event) {
 		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) master.getTo();
-		ContractPayment cd  = (ContractPayment) getTo();
-		cd.setContract(contract);
+		ContractPayment cp  = (ContractPayment) getTo();
+		cp.setContract(contract);
+		this.setInactiveDate(cp.getStartDate());
 		super.onSave(event);
 		initializePaymentModel();
 	}

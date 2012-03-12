@@ -23,10 +23,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -49,8 +49,10 @@ public class ContractDeductionController extends ContractDetailVariableControlle
 		Contract contract = (Contract) master.getTo();
 		ContractDeduction cd  = (ContractDeduction) getTo();
 		cd.setContract(contract);
+		this.setInactiveDate(cd.getStartDate());
 		super.onSave(event);
 	}
+	
 	@Override
 	protected void initialiceConcepts() {
 		setConcepts(new LinkedList<SelectItem>());

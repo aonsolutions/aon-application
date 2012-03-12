@@ -21,10 +21,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class ContractBonusController extends ContractDetailVariableController{
@@ -36,8 +36,9 @@ public class ContractBonusController extends ContractDetailVariableController{
 	public void onSave(ActionEvent event) {
 		IController master = FormUtil.getController("contract");
 		Contract contract = (Contract) master.getTo();
-		ContractBonus cd  = (ContractBonus) getTo();
-		cd.setContract(contract);
+		ContractBonus cb  = (ContractBonus) getTo();
+		cb.setContract(contract);
+		this.setInactiveDate(cb.getStartDate());
 		super.onSave(event);
 	}
 	
