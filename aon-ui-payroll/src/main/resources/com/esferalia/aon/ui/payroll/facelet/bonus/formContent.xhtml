@@ -69,7 +69,7 @@
 	</c:if>
 	
 	<c:if test="#{!skipResult}">
-		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<aon:outputLabel for="ContractBonus_result" value="#{payrollBundle.payroll_result}" />
 		<h:panelGrid columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
 				style="color:#{(controller.result!=null)?('black'):('red')};" >

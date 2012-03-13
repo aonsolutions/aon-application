@@ -23,7 +23,7 @@
 			
 		<aon:div id="contractMainDataForm" >
 		
-			<aon:div styleClass="aon-panelGrid-search"  
+			<aon:div styleClass="aon-panelGrid-search"  id="filterPanel"
 				style="margin-bottom:10px; padding:10px 0 10px 10px;">
 				<aon:panelGrid columns="3" 
 						columnClasses="aon-panelGrid-odd aon-width-100
@@ -121,26 +121,26 @@
 			<ui:param name="controller" value="#{contractPayment}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 			<ui:param name="contextDisabled" value="#{true}" />
-			<ui:param name="container" value="paymentGrid" />
+			<ui:param name="container" value="paymentGrid, filterPanel" />
 		</ui:include>
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
 			<ui:param name="controller" value="#{contractDeduction}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 			<ui:param name="contextDisabled" value="#{true}" />
-			<ui:param name="container" value="deductionGrid" />
+			<ui:param name="container" value="deductionGrid, filterPanel" />
 		</ui:include>
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/modalBonus.xhtml">
 			<ui:param name="controller" value="#{contractBonus}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 			<ui:param name="contextDisabled" value="#{true}" />
-			<ui:param name="container" value="bonusGrid" />
+			<ui:param name="container" value="bonusGrid, filterPanel" />
 		</ui:include>
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/modalEmbargo.xhtml">
 			<ui:param name="controller" value="#{contractEmbargo}" />
-			<ui:param name="container" value="embargoGrid" />
+			<ui:param name="container" value="embargoGrid, filterPanel" />
 		</ui:include>
 	</ui:define>
 		
