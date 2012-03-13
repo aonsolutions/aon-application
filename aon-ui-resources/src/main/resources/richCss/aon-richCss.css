@@ -2221,6 +2221,11 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 /***************************/
 /*    HOMEPAGE             */
 /***************************/
+.aon-company-header-label{
+	font-weight: bold;
+	font-size:14px;	
+}
+
 .aon-company-label{
 	font-weight: bold;
 	font-size:14px;

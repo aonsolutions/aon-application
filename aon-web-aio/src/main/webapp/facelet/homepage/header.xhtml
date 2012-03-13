@@ -7,7 +7,7 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/headerEx.xhtml" >
 		<ui:define name="userInfoContent">
-			<aon:outputText styleClass="aon-company-label" value="#{loggedUser.companyName}" />
+			<aon:outputText styleClass="aon-company-header-label" value="#{loggedUser.companyName}" />
 		</ui:define>	
 		<ui:define name="beforeLogoutContent">
 			<c:if test="#{loggedUser.logged}">		
