@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.6</version>
+			<version>3.7</version>
 		</dependency>
 		<dependency>
 			<groupId>jfree</groupId>
@@ -192,7 +192,7 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>4.1.2</version>
+			<version>4.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>oro</groupId>
@@ -296,7 +296,7 @@
 											<include>org.apache.velocity:velocity:1.6.4</include>
 											<include>velocity-tools:velocity-tools:1.2</include>
 											<include>com.lowagie:itext:2.1.7</include>
-											<include>org.apache.poi:poi:3.6</include>
+											<include>org.apache.poi:poi:3.7</include>
 											<include>jfree:jcommon:1.0.16</include>
 											<include>jfree:jfreechart:1.0.13</include>
 											<include>com.sun:jimi:1.0</include>
@@ -311,7 +311,7 @@
 											<include>com.esendex:Esendex:0.0.1</include>
 											<include>com.code.aon:aon.jsf.bridge:${project.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
-											<include>net.sf.jasperreports:jasperreports:4.1.2</include>
+											<include>net.sf.jasperreports:jasperreports:4.1.3</include>
 											<include>ar.com.fdvs:DynamicJasper:3.2.1</include>
 											<include>oro:oro:2.0.8</include>
 											<include>javax.mail:mail:1.4.2</include>
