@@ -25,18 +25,18 @@
 							columnClasses="aon-panelGrid-odd aon-width-50, 
 							aon-panelGrid-even aon-width-auto">
 					
-							<c:if test="#{pmsCollections.currentUserHotelsCount > 0}">
-								<aon:outputLabel for="ProjectReservation_hotel_id"
-									value="#{pmsBundle.pms_hotel}" />
-								<aon:selectOneMenu id="ProjectReservation_hotel_id"
-									value="#{workPlanning.hotel}" >
-									<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-								</aon:selectOneMenu>
-							</c:if>
+							<aon:outputLabel for="ProjectReservation_hotel_id"
+								value="#{pmsBundle.pms_hotel}" />
+							<aon:selectOneMenu id="ProjectReservation_hotel_id"
+								required="true"
+								value="#{workPlanning.hotel}" >
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							</aon:selectOneMenu>
 						
-							<aon:outputLabel for="ProjectReservation_startDate"
+							<aon:outputLabel for="ProjectReservation_date"
 								value="#{bundle.aon_date}" />
-							<aon:selectInputDate id="ProjectReservation_startDate"	
+							<aon:selectInputDate id="ProjectReservation_date"
+								required="true"	
 								value="#{workPlanning.date}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>

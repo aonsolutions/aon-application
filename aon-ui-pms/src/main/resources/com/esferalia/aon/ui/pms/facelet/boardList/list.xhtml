@@ -44,15 +44,13 @@
 						columnClasses="aon-panelGrid-even aon-noborder, 
 						aon-panelGrid-even aon-noborder">
 					
-						<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
-							<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
-								value="#{pmsBundle.pms_hotel}" />
-							<aon:selectOneMenu id="BoardList_hotel_id"
-								value="#{boardList.params.hotel}" >
-								<f:selectItem itemLabel=" - " itemValue="#{null}" />
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							</aon:selectOneMenu>
-						</c:if>
+						<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
+							value="#{pmsBundle.pms_hotel}" />
+						<aon:selectOneMenu id="BoardList_hotel_id"
+							value="#{boardList.params.hotel}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
+							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						</aon:selectOneMenu>
 					
 						<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
 							value="#{bundle.aon_date}" />

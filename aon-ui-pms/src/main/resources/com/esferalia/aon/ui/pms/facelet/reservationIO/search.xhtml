@@ -25,14 +25,13 @@
 				
 					<aon:methodParam name="searchAction" value="reservationIO_list" />
 					
-					<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
-						<aon:outputLabel for="ProjectReservation_hotel_id"
-							value="#{pmsBundle.pms_hotel}" />
-						<aon:selectOneMenu id="ProjectReservation_hotel_id" ajaxSingle="true"
-							value="#{reservationIOSearch.hotel}" >
-							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-						</aon:selectOneMenu>
-					</c:if>
+					<aon:outputLabel for="ProjectReservation_hotel_id"
+						value="#{pmsBundle.pms_hotel}" />
+					<aon:selectOneMenu id="ProjectReservation_hotel_id" ajaxSingle="true"
+						required="true"
+						value="#{reservationIOSearch.hotel}" >
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+					</aon:selectOneMenu>
 				
 					<aon:outputText value="#{bundle.aon_type}"/>
 					<aon:selectOneMenu value="#{reservationIOSearch.checkin}" ajaxSingle="true">

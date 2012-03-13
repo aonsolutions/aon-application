@@ -26,18 +26,18 @@
 							columnClasses="aon-panelGrid-odd aon-width-50, 
 							aon-panelGrid-even aon-width-auto">
 					
-							<c:if test="#{pmsCollections.currentUserHotelsCount > 0}">
-								<aon:outputLabel for="BookingList_hotel_id"
-									value="#{pmsBundle.pms_hotel}" />
-								<aon:selectOneMenu id="BookingList_hotel_id"
-									value="#{bookingList.hotel}" >
-									<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-								</aon:selectOneMenu>
-							</c:if>
+							<aon:outputLabel for="BookingList_hotel_id"
+								value="#{pmsBundle.pms_hotel}" />
+							<aon:selectOneMenu id="BookingList_hotel_id"
+								required="true"
+								value="#{bookingList.hotel}" >
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							</aon:selectOneMenu>
 						
 							<aon:outputLabel for="BookingList_startDate"
 								value="#{bundle.aon_date_from}" />
-							<aon:selectInputDate id="BookingList_startDate"	
+							<aon:selectInputDate id="BookingList_startDate"
+								required="true"	
 								value="#{bookingList.fromDate}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
@@ -45,7 +45,8 @@
 						
 							<aon:outputLabel for="BookingList_endDate"
 								value="#{bundle.aon_date_to}" />
-							<aon:selectInputDate id="BookingList_endDate"	
+							<aon:selectInputDate id="BookingList_endDate"
+								required="true"	
 								value="#{bookingList.toDate}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
