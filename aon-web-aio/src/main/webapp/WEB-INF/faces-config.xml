@@ -54,6 +54,15 @@
 	   </managed-property>      	    				
 	</managed-bean>
 
+	<!--  **** DESKTOP CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>desktop</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.DesktopController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>

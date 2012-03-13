@@ -16,3 +16,54 @@
 	font-size: 13px;	
 }	
 	
+/********** PANTALLA INICIAL desktop. 3 COLUMNAS portlets************/
+.aon-portlets-column1{
+	width:200px;
+	vertical-align:top;
+	padding:5px;
+}
+	
+.aon-portlets-column2{
+	width:*;
+	vertical-align:top;
+	padding:5px;
+}
+
+.aon-portlets-column3{
+	width:200px;
+	vertical-align:top;
+	padding:5px;
+}
+
+/************* CUADRO DERECHA  ****************/
+.aon-support{
+	border:#b2b2b2 1px solid;
+	margin:1em 0;
+	}
+.aon-support-title{
+	background:transparent url(../images/aon-support-background.png) scroll right top no-repeat;
+	color:#fff;
+	padding:5px 80px 5px 7px;
+	font-weight:bold;
+	}
+.aon-support-title div{
+	padding:7px 0 0 0;
+	font-weight:bold;
+   }
+.aon-support-telephone{
+	background:transparent url(../images/aon-arrow-left.png) scroll right center no-repeat;
+	padding-right:16px;
+	margin:5px 10px 0px 10px;
+	}
+.aon-support-telephone-internal{
+	background:transparent url(../images/aon-arrow-right.png) scroll left center no-repeat;
+	padding-left:18px;
+	color:#fd6e00;
+	font-size:22px;
+	font-weight:bold;
+	font-family:arial narrow, arial, sans;
+	}
+.aon-support-mail{
+	font-weight:bold;
+	margin: 0px 10px 10px 10px;
+ }
