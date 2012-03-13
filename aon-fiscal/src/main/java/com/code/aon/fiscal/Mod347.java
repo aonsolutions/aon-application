@@ -26,7 +26,7 @@ public class Mod347 extends Mod347DB {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final Double MINIMUM_AMOUNT = 3005.60;
+	public static final Double MINIMUM_AMOUNT = 3005.06;
 	
 	private Double minimumAmount;
 	private boolean generateLines;
