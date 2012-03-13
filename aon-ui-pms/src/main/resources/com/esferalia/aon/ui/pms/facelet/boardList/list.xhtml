@@ -9,7 +9,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="posShiftList">
+		<aon:form id="boardList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_boardList_module}" />
@@ -48,7 +48,8 @@
 							<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
 								value="#{pmsBundle.pms_hotel}" />
 							<aon:selectOneMenu id="BoardList_hotel_id"
-								value="#{boardList.hotel}" >
+								value="#{boardList.params.hotel}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
 								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 							</aon:selectOneMenu>
 						</c:if>
@@ -56,14 +57,14 @@
 						<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
 							value="#{bundle.aon_date}" />
 						<aon:selectInputDate id="BoardList_date"	
-							value="#{boardList.date}"
+							value="#{boardList.params.date}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-						<aon:outputLabel for="BoardList_boardItem_id" styleClass="aon-bold aon-margin-left"
+						<aon:outputLabel for="BoardList_boardItemFilter_id" styleClass="aon-bold aon-margin-left"
 							value="#{pmsBundle.pms_board}" />
-						<aon:selectOneMenu id="BoardList_boardItem_id"
-							value="#{boardList.boardItem}" >
+						<aon:selectOneMenu id="BoardList_boardItemFilter_id"
+							value="#{boardList.params.boardItemFilter}" >
 							<f:selectItem itemLabel=" - " itemValue="null" />
 							<f:selectItems value="#{boardList.boardItemList}" />
 						</aon:selectOneMenu>
@@ -71,7 +72,7 @@
 						<aon:outputText value="&#160;" />
 						<aon:div >
 							<h:selectBooleanCheckbox id="boardPageBreak" 
-								value="#{boardList.boardPageBreak}" />
+								value="#{boardList.params.boardPageBreak}" />
 							<aon:outputLabel for="boardPageBreak"
 								value="#{pmsBundle.pms_board_page_break}" />
 						</aon:div>

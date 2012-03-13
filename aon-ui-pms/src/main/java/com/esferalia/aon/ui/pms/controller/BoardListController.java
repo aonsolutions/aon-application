@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +33,26 @@ public class BoardListController implements ICollectionProvider {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BoardListController.class.getName());
 	
-	private Hotel hotel;
-	private Date date;
 	private ProductCategory category;
 	private List<RoomBoard> boardList;
 	private DataModel model;
-	private boolean boardPageBreak;
-	private Item boardItem;
+	private BoardParams params;
 	
+	public BoardParams getParams() {
+		return params;
+	}
+	public void setParams(BoardParams params) {
+		this.params = params;
+	}
+	public Hotel getHotel() {
+		return getParams().getHotel();
+	}
+	public Date getDate() {
+		return getParams().getDate();
+	}
+	public boolean isBoardPageBreak() {
+		return getParams().isBoardPageBreak();
+	}
 	public List<RoomBoard> getBoardList() {
 		return boardList;
 	}
@@ -59,47 +71,20 @@ public class BoardListController implements ICollectionProvider {
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
-	public Hotel getHotel() {
-		return hotel;
-	}
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
-	public boolean isBoardPageBreak() {
-		return boardPageBreak;
-	}
-	public void setBoardPageBreak(boolean boardPageBreak) {
-		this.boardPageBreak = boardPageBreak;
-	}
-	public Item getBoardItem() {
-		return boardItem;
-	}
-	public void setBoardItem(Item boardItem) {
-		this.boardItem = boardItem;
-	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
-		setDate(new Date());
-		setBoardPageBreak(true);
-		setBoardItem(null);
+		setParams(new BoardParams());
+		getParams().setDate(new Date());
+		getParams().setBoardPageBreak(true);
+		getParams().setBoardItemFilter(null);
 		onSearch(event);
 	}
 	
-	public List<ITransferObject> getBoardItems() {
+	private List<ITransferObject> boardItems() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Item.class);
 			Criteria criteria = new Criteria();
-			// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
-//			if(getCategory()!=null){
-//				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getCategory().getId());
-//			}
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), 4);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getBoardCategoryId());
 			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 			List<ITransferObject> list = bean.getList(criteria);
 			return list.isEmpty()?null:list;
@@ -111,9 +96,32 @@ public class BoardListController implements ICollectionProvider {
 		return null;
 	}
 	
+	private Integer getBoardCategoryId() {
+		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
+		return 4;
+	}
+	private boolean isBreakfastBoard(Item item){
+		// TODO: se asume como desayuno las 2 primeras pensiones de la categoria
+		if(boardItems()!=null){
+			if(boardItems().get(0)!=null && ((Item)boardItems().get(0)).getId().equals(item.getId())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<ITransferObject> getBoardItems() {
+		if(getParams().getBoardItemFilter()!=null && getParams().getBoardItemFilter().getId()!=null){
+			List<ITransferObject> list = new LinkedList<ITransferObject>(); 
+			list.add(getParams().getBoardItemFilter());
+			return list;
+		}
+		return boardItems();
+	}
+	
 	public List<SelectItem> getBoardItemList() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		for (ITransferObject ito : getBoardItems()) {
+		for (ITransferObject ito : boardItems()) {
 			Item i = (Item)ito;
 			SelectItem item = new SelectItem(i, i.getProduct().getName());
 			list.add(item);
@@ -132,77 +140,61 @@ public class BoardListController implements ICollectionProvider {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 			Criteria criteria = new Criteria();
-			if(getHotel()!=null && getHotel().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());
+			if (getParams().getHotel() != null && getParams().getHotel().getId() != null) {
+				criteria.addEqualExpression(
+						bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_HOTEL_ID),
+						getParams().getHotel().getId());
 			}
-			if(getDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE), getDate());
+			if (getParams().getDate() != null) {
+				criteria.addBetweenExpression(
+						bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE),
+						DateUtils.addDays(getParams().getDate(), -1), getParams().getDate());
 			}
 			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ID));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_CODE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
 			
 			reportList = new LinkedList<RoomBoard>();
 			compositeList = new LinkedList<RoomBoard>();
+			
+			RoomBoard roomBoard = null;
 			for(ITransferObject to: bean.getList(criteria)){
 				ProjectReservationServiceDetail d = (ProjectReservationServiceDetail) to;
-				if(getBoardItem()!=null && getBoardItem().getId()!=null){
-					Item item = getBoardItem();
-					RoomBoard board = new RoomBoard();
-					board.setItem(d.getItem());
-					board.setQuantity(d.getQuantity());
-					board.setProjectReservationService(d.getProjectReservationService());
+				for(ITransferObject to2: getBoardItems()){
+					Item item = (Item) to2;
 					if(d.getItem().getProduct().isComposition()){
 						for( ItemComposition ic: d.getItem().getItemCompositionList() ){
-							board = new RoomBoard();
-							board.setItem(ic.getCompositionItem());
-							board.setQuantity(ic.getQuantity());
-							board.setProjectReservationService(d.getProjectReservationService());
 							if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-								compositeList.add(board);
-							}
-						}
-					}
-					if(d.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-						reportList.add(board);
-					}
-				} else {
-					for(ITransferObject to2: getBoardItems()){
-						Item item = (Item) to2;
-						RoomBoard board = new RoomBoard();
-						board.setItem(d.getItem());
-						board.setQuantity(d.getQuantity());
-						board.setProjectReservationService(d.getProjectReservationService());
-						if(d.getItem().getProduct().isComposition()){
-							for( ItemComposition ic: d.getItem().getItemCompositionList() ){
-								board = new RoomBoard();
-								board.setItem(ic.getCompositionItem());
-								board.setQuantity(ic.getQuantity());
-								board.setProjectReservationService(d.getProjectReservationService());
-								if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-									compositeList.add(board);
+								if( (isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(d.getEffectiveDate(), DateUtils.addDays(getParams().getDate(), -1)))
+										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(d.getEffectiveDate(), getParams().getDate())) ){
+									roomBoard = new RoomBoard();
+									roomBoard.setItem(ic.getCompositionItem());
+									roomBoard.setQuantity(ic.getQuantity()*d.getQuantity());
+									roomBoard.setProjectReservationService(d.getProjectReservationService());
+									compositeList.add(roomBoard);
 								}
 							}
 						}
+					} else {
 						if(d.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-							reportList.add(board);
+							if( DateUtils.isSameDay(d.getEffectiveDate(), getParams().getDate()) ){
+								roomBoard = new RoomBoard();
+								roomBoard.setItem(d.getItem());
+								roomBoard.setQuantity(d.getQuantity());
+								roomBoard.setProjectReservationService(d.getProjectReservationService());
+								reportList.add(roomBoard);
+							}
 						}
 					}
 				}
-				
 			}
+			
 			for(RoomBoard board: compositeList){
-				if(getBoardItem()!=null && getBoardItem().getId()!=null){
-					Item item = getBoardItem();
+				for(ITransferObject to2: getBoardItems()){
+					Item item = (Item) to2;
 					if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
 						addCompositeItem(reportList, board);
-					}
-				} else {
-					for(ITransferObject to2: getBoardItems()){
-						Item item = (Item) to2;
-						if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-							addCompositeItem(reportList, board);
-						}
 					}
 				}
 			}
@@ -218,26 +210,30 @@ public class BoardListController implements ICollectionProvider {
 		if(reportList.isEmpty()){
 			reportList.add(board);
 		} else {
-			ListIterator<RoomBoard> it = reportList.listIterator();
-			while(it.hasNext()){
-				RoomBoard b = it.next();
-				if( b.isSameBoard(board) ){
-					if( b.isSameRoom(board) ){
-						reportList.get(it.nextIndex()-1).setQuantity(reportList.get(it.nextIndex()-1).getQuantity()+board.getQuantity());
+			int idx = 0;
+			for(RoomBoard rb: reportList){
+				if( rb.isSameBoard(board) ){
+					if( rb.isSameRoom(board) ){
+						rb.setQuantity(rb.getQuantity()+board.getQuantity());
 						break;
-					} else if( it.hasNext() 
-							&& reportList.get(it.nextIndex()).getItem().getProduct().getCode().compareToIgnoreCase(board.getItem().getProduct().getCode()) != 0 ) {
-						reportList.add(it.nextIndex(), board);
+					} else {
+						if( reportList.size()-1==idx
+								|| (board.getProjectReservationService().getRoomNumber().compareToIgnoreCase(rb.getProjectReservationService().getRoomNumber()) > 0 
+								&& !reportList.get(idx+1).isSameBoard(board)) ){
+							reportList.add(idx+1, board);
+							break;
+						} 
+					}
+				} else {
+					if( board.getItem().getProduct().getCode().compareToIgnoreCase(rb.getItem().getProduct().getCode()) < 0 ) {
+						reportList.add(idx, board);
+						break;
+					} else if( reportList.size()-1 == idx ) {
+						reportList.add(board);
 						break;
 					}
-				} else if( it.hasNext() 
-						&& board.getItem().getProduct().getCode().compareToIgnoreCase(reportList.get(it.nextIndex()).getItem().getProduct().getCode()) < 0 ) {
-					reportList.add(it.nextIndex(), board);
-					break;
-				} else if( !it.hasNext() ) {
-					reportList.add(board);
-					break;
 				}
+				idx++;
 			}
 		}
 	}
@@ -245,6 +241,38 @@ public class BoardListController implements ICollectionProvider {
 	/**************************************************/
 	/**************************************************/
 	
+	public class BoardParams {
+		private Hotel hotel;
+		private Date date;
+		private boolean boardPageBreak;
+		private Item boardItemFilter;
+		
+		public Hotel getHotel() {
+			return hotel;
+		}
+		public void setHotel(Hotel hotel) {
+			this.hotel = hotel;
+		}
+		public Date getDate() {
+			return date;
+		}
+		public void setDate(Date date) {
+			this.date = date;
+		}
+		public boolean isBoardPageBreak() {
+			return boardPageBreak;
+		}
+		public void setBoardPageBreak(boolean boardPageBreak) {
+			this.boardPageBreak = boardPageBreak;
+		}
+		public Item getBoardItemFilter() {
+			return boardItemFilter;
+		}
+		public void setBoardItemFilter(Item boardItemFilter) {
+			this.boardItemFilter = boardItemFilter;
+		}
+		
+	}
 	public class RoomBoard {
 		private Item item;
 		private ProjectReservationService projectReservationService;

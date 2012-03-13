@@ -40,7 +40,7 @@
 			<band height="5">
 				<break>
 					<reportElement x="0" y="2" width="100" height="1">
-						<printWhenExpression><![CDATA[$P{boardPageBreak}]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{boardPageBreak} && (!$V{PAGE_NUMBER}.equals( $V{boards_COUNT} ))]]></printWhenExpression>
 					</reportElement>
 				</break>
 			</band>
