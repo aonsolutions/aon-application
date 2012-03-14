@@ -10,12 +10,24 @@
 	<artifactId>tgc.ui.payroll</artifactId>
 	<description>TGC UI PAYROLL</description>
 	<name>TGC UI PAYROLL</name>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled> 
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>1.0-beta-2</version>
 				<executions>
 					<execution>
 						<id>CONTRACT</id>
@@ -60,12 +72,7 @@
 						<artifactId>jasperreports</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
-                                        <dependency>
-                                                <groupId>com.esferalia.aon</groupId>
-                                                <artifactId>aon.ui.payroll</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
- 				</dependencies>
+				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

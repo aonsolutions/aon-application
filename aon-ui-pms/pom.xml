@@ -10,19 +10,31 @@
 	<artifactId>aon.ui.pms</artifactId>
 	<description>AON UI PMS</description>
 	<name>AON UI PMS</name>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled> 
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>1.0-beta-2</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/esferalia/aon/ui/pms/report</outputDirectory>
 					<xmlValidation>true</xmlValidation>
 				</configuration>
 				<executions>
 					<execution>
-						<phase>prepare-package</phase>
+						<phase>compile</phase>
 						<goals>
 							<goal>compile-reports</goal>
 						</goals>
@@ -39,12 +51,7 @@
 						<artifactId>slf4j-jcl</artifactId>
 						<version>1.5.11</version>
 					</dependency>
-                                        <dependency>
-                                                <groupId>com.esferalia.aon</groupId>
-                                                <artifactId>aon.pms</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
- 				</dependencies>
+				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

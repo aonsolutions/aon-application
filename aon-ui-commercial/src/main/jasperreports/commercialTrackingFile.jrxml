@@ -79,7 +79,7 @@
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-17" x="3" y="28" width="412" height="20"/>
+				<reportElement key="textField-17" x="3" y="27" width="412" height="20"/>
 				<box topPadding="3" leftPadding="0"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="8"/>

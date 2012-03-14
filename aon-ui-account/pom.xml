@@ -10,12 +10,24 @@
   <artifactId>aon.ui.account</artifactId>
   <description>AON UI ACCOUNT</description>
   <name>AON UI ACCOUNT</name>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>Codehaus Public</id>
+			<url>https://nexus.codehaus.org/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled> 
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>1.0-beta-2</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/account/report</outputDirectory>
 					<xmlValidation>true</xmlValidation>
