@@ -50,7 +50,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Opaque" x="740" y="30" width="62" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -60,10 +60,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single">
+				<textElement verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Opaque" x="686" y="30" width="54" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -73,10 +74,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" positionType="Float" mode="Transparent" x="3" y="4" width="668" height="26" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -86,10 +88,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" lineSpacing="Single" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
 					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_cashFlowForecast_list}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_cashFlowForecast_list}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -107,7 +110,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date_from}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_from}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="313" y="0" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -120,7 +123,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_payment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_payment}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-5" mode="Opaque" x="0" y="0" width="219" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -133,7 +136,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-7" mode="Opaque" x="642" y="0" width="160" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -146,7 +149,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_bank}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_bank}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-3" mode="Opaque" x="266" y="0" width="47" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -159,7 +162,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date_to}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_date_to}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="625" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -172,7 +175,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_december_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_december_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="608" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -185,7 +188,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_november_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_november_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="591" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -198,7 +201,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_october_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_october_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="574" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -211,7 +214,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_september_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_september_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="557" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -224,7 +227,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_august_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_august_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="540" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -237,7 +240,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_july_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_july_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="523" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -250,7 +253,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_june_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_june_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="506" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -263,7 +266,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_may_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_may_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="489" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -276,7 +279,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_april_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_april_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="472" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -289,7 +292,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_march_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_march_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="455" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -302,7 +305,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_february_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_february_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="438" y="0" width="17" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -315,7 +318,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_january_abr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_january_abr}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="403" y="0" width="35" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -328,7 +331,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_day}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_day}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="358" y="0" width="45" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -341,7 +344,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_charge}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{finance_charge}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -352,10 +355,11 @@
 				<box>
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
 					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{startDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{startDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-9" x="642" y="0" width="160" height="14" isPrintWhenDetailOverflows="true"/>
@@ -365,7 +369,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryBank}.getBank().getName().length()>30?$F{registryBank}.getBank().getName().substring(0, 30):$F{registryBank}.getBank().getName()
+				<textFieldExpression><![CDATA[$F{registryBank}.getBank().getName().length()>30?$F{registryBank}.getBank().getName().substring(0, 30):$F{registryBank}.getBank().getName()
 +"["+
 $F{registryBank}.getBankAccount().getValue().substring(0, 4)
 +"..."+
@@ -380,7 +384,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="313" y="0" width="45" height="14"/>
@@ -390,7 +394,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{payment}?$F{amount}:null]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payment}?$F{amount}:null]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-8" x="266" y="0" width="47" height="14"/>
@@ -400,7 +404,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="625" y="0" width="17" height="14"/>
@@ -409,7 +413,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{december}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{december}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="608" y="0" width="17" height="14"/>
@@ -418,7 +422,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{november}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{november}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="591" y="0" width="17" height="14"/>
@@ -427,7 +431,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{october}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{october}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="574" y="0" width="17" height="14"/>
@@ -436,7 +440,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{september}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{september}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="557" y="0" width="17" height="14"/>
@@ -445,7 +449,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{august}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{august}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="540" y="0" width="17" height="14"/>
@@ -454,7 +458,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{july}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{july}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="523" y="0" width="17" height="14"/>
@@ -463,7 +467,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{june}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{june}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="506" y="0" width="17" height="14"/>
@@ -472,7 +476,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{may}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{may}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="489" y="0" width="17" height="14"/>
@@ -481,7 +485,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{april}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{april}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="472" y="0" width="17" height="14"/>
@@ -490,7 +494,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{march}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{march}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="455" y="0" width="17" height="14"/>
@@ -499,7 +503,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{february}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{february}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="438" y="0" width="17" height="14"/>
@@ -509,7 +513,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{january}?"•":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{january}?"•":""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="403" y="0" width="35" height="14"/>
@@ -519,7 +523,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{paymentDay}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{paymentDay}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-12" x="358" y="0" width="45" height="14"/>
@@ -529,7 +533,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{payment}?null:$F{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{payment}?null:$F{amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -550,7 +554,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{report_page} + " " + $V{PAGE_NUMBER} + " " + $R{report_of} + " "]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="787" y="0" width="15" height="20"/>
@@ -563,7 +567,7 @@ $F{registryBank}.getBankAccount().getValue().substring($F{registryBank}.getBankA
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

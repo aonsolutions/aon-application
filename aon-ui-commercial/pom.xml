@@ -9,24 +9,12 @@
 	<artifactId>aon.ui.commercial</artifactId>
 	<description>AON UI COMMERCIAL</description>
 	<name>AON UI COMMERCIAL</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled> 
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${jasperreportsMavenPluginVersion}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/commercial/report</outputDirectory>
 					<xmlValidation>true</xmlValidation>
@@ -45,10 +33,15 @@
 						<artifactId>jasperreports</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
+                                        <dependency>
+                                                <groupId>org.slf4j</groupId>
+                                                <artifactId>slf4j-jcl</artifactId>
+                                                <version>1.5.11</version>
+                                        </dependency>
 					<dependency>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-jcl</artifactId>
-						<version>1.5.11</version>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.commercial</artifactId>
+						<version>${project.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
