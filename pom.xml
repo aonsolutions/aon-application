@@ -351,19 +351,47 @@
 		<pluginRepository>
 			<id>aon</id>
 			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
+                        <snapshots>
+                                <enabled>false</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
 		</pluginRepository>
 		
 		<pluginRepository>
 			<id>aon.snapshots</id>
 			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
+                        <snapshots>
+                                <enabled>true</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>false</enabled>
+                        </releases>
 		</pluginRepository>
 
 		<pluginRepository>
 			<id>maven2-repository.dev.java.net</id>
 			<url>http://download.java.net/maven/2/</url>
+                        <snapshots>
+                                <enabled>false</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
 		</pluginRepository>
 		
-   	</pluginRepositories>
+                <pluginRepository>
+                        <id>Codehaus Public</id>
+                        <url>https://nexus.codehaus.org/content/groups/public/</url>
+                        <snapshots>
+                                <enabled>true</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                </pluginRepository>
+        </pluginRepositories>
 
 	<build>
 		<plugins>
