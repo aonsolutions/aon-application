@@ -134,7 +134,7 @@
 + ( new Boolean($P{printRecordData} && $P{recordData}!=null) ?
     ($P{recordData}.getRegistration().isEmpty()?"":$P{recordData}.getRegistration())
     + ($P{recordData}.getVolume().isEmpty()?"":", Tomo " + $P{recordData}.getVolume())
-    + ($P{recordData}.getSection().isEmpty()?"":", SecciÃ³n " + $P{recordData}.getSection())
+    + ($P{recordData}.getSection().isEmpty()?"":", Sección " + $P{recordData}.getSection())
     + ($P{recordData}.getPage().isEmpty()?"":", Folio " + $P{recordData}.getPage())
     + ($P{recordData}.getSheet().isEmpty()?"":", Hoja " + $P{recordData}.getSheet())
     + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
@@ -947,7 +947,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font isBold="false" pdfFontName="Helvetica"/>
 								</textElement>
-								<textFieldExpression><![CDATA[" â¬"]]></textFieldExpression>
+								<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
