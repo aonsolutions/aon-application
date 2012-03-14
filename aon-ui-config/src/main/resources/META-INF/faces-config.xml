@@ -28,6 +28,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* CHANGE PASSWORD ***************** -->
+	<managed-bean>
+		<managed-bean-name>changePassword</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ChangePasswordController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ USER ************** -->
 	<managed-bean>
 		<managed-bean-name>user</managed-bean-name>
@@ -724,11 +733,20 @@
 			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009Rate/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
 	<!-- =================== WORKGROUP ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>workgroup_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/workgroup/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CHANGE PASSWORD ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>changePassword_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/changePassword/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
