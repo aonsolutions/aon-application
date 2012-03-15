@@ -11,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -26,7 +27,8 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		PosShiftController controller = (PosShiftController) this.getController();
-		controller.setPosShift((PosShift) this.getController().getTo());
+		controller.setPosShift((PosShift) controller.getTo());
+		controller.setInvoiceModel(null);
 		try {
 			if( getPosShiftCount()!=null ){
 				controller.getCalculator().setCashAmount(getPosShiftCount().getAmount());
@@ -34,10 +36,18 @@ public class PosShiftControllerListener extends ControllerAdapter {
 				controller.getCalculator().setCashAmount(null);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO: handle exception
+			String msg = ">>>>>>>>>>>> afterBeanSelected: Error al actualizar el importe de la calculadora.";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg);
 		}
 	}
 	
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		PosShiftController controller = (PosShiftController) this.getController();
+		controller.setInvoiceModel(null);
+	}
+		
 	@Override
 	public void beforeBeanReset(ControllerEvent event)
 			throws ControllerListenerException {
@@ -48,8 +58,9 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		((PosShiftController)this.getController()).init();
+		((PosShift) getController().getTo()).setUser(UserUtils.getInstance().getLoggedUser());
 	}
-
+	
 	private PayMethod getCashPayMethod() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();

@@ -16,7 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posCashCount_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{pmsBundle.pms_close_pos}"
-						disabled="#{posShiftCount.model!=null and posShiftCount.model.rowCount==0}"
+						disabled="#{posClosing.posShift==null or (posShiftCount.model!=null and posShiftCount.model.rowCount==0)}"
 						rendered="#{posClosing.posShift.endTime==null}"
 						reRender="aonContent"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
