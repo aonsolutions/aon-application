@@ -44,6 +44,7 @@
 						<aon:selectInputDate id="PosShift_startTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
 							/>
@@ -52,6 +53,7 @@
 						<aon:selectInputDate id="PosShift_startTime-To"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
 							/>
@@ -64,6 +66,7 @@
 						<aon:selectInputDate id="PosShift_endTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
 							/>
@@ -72,6 +75,7 @@
 						<aon:selectInputDate id="PosShift_endTime-To"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
 							/>
