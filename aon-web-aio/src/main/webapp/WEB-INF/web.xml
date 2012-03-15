@@ -270,11 +270,6 @@
 		</listener-class>
 	</listener>
 	    
-	<context-param>
-		<param-name>com.code.aon.skipLdap</param-name>
-		<param-value>false</param-value>
-	</context-param>
-	    
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

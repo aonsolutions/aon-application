@@ -399,7 +399,7 @@
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>enterprise.id</value>
+					<value>registry.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -417,8 +417,8 @@
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Project_enterprise_id</key>
-					<value>id</value>
+					<key>Project_registry_id</key>
+					<value>registry.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
