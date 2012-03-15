@@ -6,26 +6,28 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/document/facelet/enterpriseTree/treeTemplate.xhtml">
+	template="/com/code/aon/ui/document/facelet/enterpriseDocumentTree/treeTemplate.xhtml">
 
 	<ui:define name="header">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 			<ui:param name="toolbarDescription" value="&#160;" />
 			<ui:define name="toolbarContent">
-				<aon:commandButton id="edit"
-					value="#{bundle.aon_edit}"
-					action="enterprise_form"
-					styleClass="aon-finding-toolbar-item aon-icon-accept" >
-					<f:setPropertyActionListener
-						target="#{enterprise.backAction}" value="enterprise_formTree" />						
-					<f:setPropertyActionListener
-						target="#{enterprise.backActionListener}" value="enterpriseTree.onBack" />
-				</aon:commandButton>
-				<aon:commandButton id="users"
-					value="#{documentBundle.document_users}" immediate="true"
-					action="enterpriseUsers" actionListener="#{enterpriseUser.onInit}"
-					styleClass="aon-finding-toolbar-item aon-icon-user"/>				
+				<c:if test="#{manager.alfrescoManagementEnabled}" >
+					<aon:commandButton id="edit"
+						value="#{bundle.aon_edit}"
+						action="enterprise_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						<f:setPropertyActionListener
+							target="#{enterprise.backAction}" value="enterprise_formTree" />						
+						<f:setPropertyActionListener
+							target="#{enterprise.backActionListener}" value="enterpriseDocumentTree.onBack" />
+					</aon:commandButton>
+					<aon:commandButton id="users"
+						value="#{documentBundle.document_users}" immediate="true"
+						action="enterpriseUsers" actionListener="#{enterpriseUser.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-user"/>
+				</c:if>
 				<aon:commandButton id="resetDocument"
 					title="#{bundle.aon_key_new_accelerator}"
 					value="#{documentBundle.document_new_document}"
@@ -37,7 +39,7 @@
 					value="#{bundle.aon_clear}" 
 					actionListener="#{enterpriseDocumentSearch.onClear}"
 					styleClass="aon-finding-toolbar-item aon-icon-rubber" >
-					<aon:actionListener method="#{enterpriseTree.onReloadTree}" />
+					<aon:actionListener method="#{enterpriseDocumentTree.onReloadTree}" />
 				</aon:commandButton>									
 				<aon:commandButton id="back"
 					title="#{bundle.aon_key_cancel_accelerator}"
@@ -55,7 +57,7 @@
 		<aon:div styleClass="aon-scroll-area">
 		
 			<aon:methodParam name="searchActionListener"
-				value="#{enterpriseTree.onReloadTree}" type="actionListener" />		
+				value="#{enterpriseDocumentTree.onReloadTree}" type="actionListener" />		
 			<ui:include
 				src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />			
 		

@@ -25,12 +25,12 @@
 		
 		<aon:div styleClass="treeContentDiv">
 			<aon:div styleClass="treeLeftContent"
-				style="width: #{enterpriseTree.splitterPosition}px">
-				<ui:include src="/com/code/aon/ui/document/facelet/enterpriseTree/tree.xhtml" />
+				style="width: #{enterpriseDocumentTree.splitterPosition}px">
+				<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocumentTree/tree.xhtml" />
 			</aon:div>
 			
 			<aon:div styleClass="treeRightContent"
-				style="left: #{enterpriseTree.splitterPosition+8}px">
+				style="left: #{enterpriseDocumentTree.splitterPosition+8}px">
 				<aon:form>
 					<aon:div styleClass="treeRightContentInner">
 						<aon:div>
@@ -56,7 +56,7 @@
 				anchorToWindow: true,
 				resizeToWidth: true,
 				showButtonDock: true,
-				sizeLeft: #{enterpriseTree.splitterPosition},
+				sizeLeft: #{enterpriseDocumentTree.splitterPosition},
 				minLeft: 150,
 				minRight: 600
 			});

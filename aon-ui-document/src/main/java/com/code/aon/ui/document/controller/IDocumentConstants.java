@@ -28,7 +28,7 @@ public interface IDocumentConstants {
 	
 	String ENTERPRISE_DOCUMENT_SEARCH = "enterpriseDocumentSearch";
 	
-	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
+	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseDocumentTree";
 
 	String ENTERPRISE_USER_CONTROLLER_NAME = "enterpriseUser";
 	

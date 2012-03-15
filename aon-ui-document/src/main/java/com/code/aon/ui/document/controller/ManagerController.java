@@ -102,6 +102,10 @@ public class ManagerController implements IEnterpriseController {
 		}
 	}
 
+	public boolean isAlfrescoManagementEnabled() {
+		return AonUtil.isSkipLdap();
+	}
+	
 	public boolean isAdministrator() {
 		return administrator;
 	}

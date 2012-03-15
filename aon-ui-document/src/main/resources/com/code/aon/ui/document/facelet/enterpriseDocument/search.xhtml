@@ -27,7 +27,7 @@
 				
 				<c:if test="#{enterpriseDocumentSearch.showList}">
 					<aon:methodParam name="rowSelectorAction" value="enterpriseDocument_formTree" />
-					<aon:methodParam name="rowSelectorActionListener" value="#{enterpriseTree.onShowDocument}" type="actionListener" />
+					<aon:methodParam name="rowSelectorActionListener" value="#{enterpriseDocumentTree.onShowDocument}" type="actionListener" />
 				
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 						<ui:param name="controller" value="#{enterpriseDocument}" />

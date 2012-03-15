@@ -6,16 +6,16 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<aon:form id="enterpriseTreeForm"  >
-		<rich:tree id="enterpriseTree"
+	<aon:form id="enterpriseDocumentTreeForm"  >
+		<rich:tree id="enterpriseDocumentTree"
 			
 			selectedClass="aon-tree-node-active"
 			highlightedClass="aon-tree-node-highlighted"			
-			adviseNodeSelected="#{enterpriseTree.adviseNodeSelected}" 
-			adviseNodeOpened="#{enterpriseTree.adviseNodeOpened}"
-			componentState="#{enterpriseTree.state}"
-			nodeSelectListener="#{enterpriseTree.processSelection}"
-			value="#{enterpriseTree.rootNode}" var="enterpriseNode" >
+			adviseNodeSelected="#{enterpriseDocumentTree.adviseNodeSelected}" 
+			adviseNodeOpened="#{enterpriseDocumentTree.adviseNodeOpened}"
+			componentState="#{enterpriseDocumentTree.state}"
+			nodeSelectListener="#{enterpriseDocumentTree.processSelection}"
+			value="#{enterpriseDocumentTree.rootNode}" var="enterpriseNode" >
 
 			<rich:treeNode styleClass="aon-width-all" 
 				icon="#{enterpriseNode.icon}"
@@ -34,7 +34,7 @@
 			</rich:treeNode>
 		</rich:tree>
 		<aon:inputText styleClass="aon-splitter-position" style="display:none;"
-			value="#{enterpriseTree.splitterPosition}" />		
+			value="#{enterpriseDocumentTree.splitterPosition}" />		
 	</aon:form>	
 	
 </ui:composition>

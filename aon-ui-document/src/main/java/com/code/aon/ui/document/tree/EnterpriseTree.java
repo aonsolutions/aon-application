@@ -133,11 +133,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadProjects( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);		
 		Criteria criteria = new Criteria();
-// [EUKE]
-//		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_DOMAIN), enterprise.getDomain());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), enterprise.getRegistry().getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
-// fin
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();
 		List<ITransferObject> list = bean.getList(criteria);
@@ -353,4 +350,10 @@ public class EnterpriseTree implements ICompanyConstants {
 		onReloadTree(event);
 	}		
 
+	public void onTreeViewSelect( ActionEvent event ) {
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		controller.onTreeViewSelect(event);
+		controller.setTreeTemplateSuffix("DocumentTree");
+	}
+	
 }

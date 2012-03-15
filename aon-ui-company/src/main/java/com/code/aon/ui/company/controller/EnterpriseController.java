@@ -46,7 +46,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private WorkPlace workplace;
 	private RegistryDirStaff dirStaff;
 	
-	private boolean treeView;
+	private String treeTemplateSuffix;
 	
 	private AonFile aonFile;
 	
@@ -75,13 +75,21 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
 
 	public boolean isTreeView() {
-		return treeView;
+		return (treeTemplateSuffix != null);
 	}
 
 	public void setTreeView(boolean treeView) {
-		this.treeView = treeView;
+		setTreeTemplateSuffix( treeView ? TREE_SUFFIX : null );
 	}
 	
+	public String getTreeTemplateSuffix() {
+		return treeTemplateSuffix;
+	}
+
+	public void setTreeTemplateSuffix(String treeTemplateSuffix) {
+		this.treeTemplateSuffix = treeTemplateSuffix;
+	}
+
 	public boolean isShowActivityNode() {
 		return showActivityNode;
 	}
@@ -289,14 +297,14 @@ public class EnterpriseController extends RegistryController implements ICompany
 	@Override
 	public String formAction() {
 		if ( isTreeView() ) {
-			return (formAction != null) ? formAction : super.formAction() + TREE_SUFFIX;	
+			return (formAction != null) ? formAction : super.formAction() + treeTemplateSuffix;	
 		}
 		return super.formAction();
 	}
 
 	@Override
 	public String searchAction() {
-		return isTreeView() ? super.searchAction() + TREE_SUFFIX : super.searchAction();
+		return isTreeView() ? super.searchAction() + treeTemplateSuffix : super.searchAction();
 	}
 	
 }
