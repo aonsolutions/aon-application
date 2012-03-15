@@ -5,7 +5,7 @@ import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CON
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.EnterpriseUser;
+import com.code.aon.config.User;
 import com.code.aon.document.dao.AlfrescoCategoryDAO;
 import com.code.aon.document.dao.AlfrescoDAO;
 import com.code.aon.ui.form.BasicController;
@@ -21,8 +21,7 @@ public class AlfrescoCategoryController extends BasicController {
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if ( this.alfrescoManagerBean == null ) {
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-			EnterpriseUser user = mc.getLoggedUser();
-			this.alfrescoDAO = new AlfrescoCategoryDAO(user.getLogin(), user.getPassword());
+			this.alfrescoDAO = new AlfrescoCategoryDAO(mc.getAlfrescoUser(), mc.getAlfrescoPassword());
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
 		return this.alfrescoManagerBean;

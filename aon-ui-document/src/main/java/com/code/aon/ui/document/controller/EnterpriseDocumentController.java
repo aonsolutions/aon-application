@@ -33,7 +33,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseUser;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.dao.AlfrescoDAO;
@@ -85,9 +84,8 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if ( this.alfrescoManagerBean == null ) {
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-			EnterpriseUser user = mc.getLoggedUser();
 			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
-			this.alfrescoDAO = new EnterpriseDocumentDAO(user.getLogin(), user.getPassword(), acc.getAlfrescoDAO(), mc.getUserManager());	
+			this.alfrescoDAO = new EnterpriseDocumentDAO(mc.getAlfrescoUser(), mc.getAlfrescoPassword(), acc.getAlfrescoDAO(), mc.getUserManager());	
 			ParentReference reference = null;
 			if ( mc.isMainEnterprise() ) {
 				reference = this.alfrescoDAO.getRootReference();

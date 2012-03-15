@@ -1,6 +1,8 @@
 package com.code.aon.ui.document.controller;
 
 
+import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_PASSWORD;
+import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_USER;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
@@ -8,11 +10,10 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACC
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
-import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
 
@@ -27,15 +28,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseUser;
+import com.code.aon.config.User;
 import com.code.aon.document.AlfrescoGroup;
 import com.code.aon.document.AlfrescoUserManager;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ql.Criteria;
+import com.code.aon.document.BasicAlfresco;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
@@ -51,9 +52,13 @@ public class ManagerController implements IEnterpriseController {
 	
 	public static final String CONTROLLER_NAME = "manager";
 
-	private Enterprise parentEnterprise;
+	private String alfrescoUser;
 	
-	private EnterpriseUser loggedUser;
+	private String alfrescoPassword;
+	
+	private Enterprise enterprise;
+	
+	private Enterprise parentEnterprise;
 	
 	private IControllerListener projectListener;
 	
@@ -66,29 +71,35 @@ public class ManagerController implements IEnterpriseController {
 	private List<SelectItem> userScopes;
 	
 	public ManagerController() {
-		AuthPrincipal principal = resolvePrincipal();
-		this.loggedUser = resolveUser( principal );
 		this.parentEnterprise = resolveParentEnterprise();
+		User user = UserUtils.getInstance().getLoggedUser();		
+		initAlfrescoUser( user );
+		this.enterprise = resolveEnterprise( user );
+		if ( this.enterprise == null ) {
+			this.enterprise = this.parentEnterprise;
+		}
 		if ( isMainEnterprise() ) {
 			initWebmail();
 		} else {
 			initEnterprise();
 		}
 		try {
-			this.userManager = new AlfrescoUserManager(loggedUser.getLogin(), loggedUser.getPassword());
+			this.userManager = new AlfrescoUserManager(getAlfrescoUser(), getAlfrescoPassword());
 			loadUserScopes();
 		} catch (DAOException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-		this.administrator = this.userManager.isAlfrescoAdministrator(loggedUser.getLogin());
+		this.administrator = this.userManager.isAlfrescoAdministrator(getAlfrescoUser());
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ec.setSkipResetButton(!this.administrator);
 		ec.setSkipRemoveButton(!this.administrator);
-		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
-		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
-		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
-		dm.setShow(false);
+		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());
+		if ( AonUtil.isSkipLdap() ) {
+			LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
+			lu.setCompanyName(enterprise.getRegistry().getFullName());
+			DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
+			dm.setShow(false);
+		}
 	}
 
 	public boolean isAdministrator() {
@@ -98,38 +109,21 @@ public class ManagerController implements IEnterpriseController {
 	public AlfrescoUserManager getUserManager() {
 		return userManager;
 	}
-
-	public EnterpriseUser getLoggedUser() {
-		return loggedUser;
+	
+	public String getAlfrescoUser() {
+		return alfrescoUser;
 	}
 
-	private AuthPrincipal resolvePrincipal() {
-		AuthPrincipal user = null;
-		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		return user;
+	public String getAlfrescoPassword() {
+		return alfrescoPassword;
 	}
 	
-	private EnterpriseUser resolveUser( AuthPrincipal principal ) {
+	private Enterprise resolveEnterprise( User user ) {
 		try {
-            IManagerBean bean = BeanManager.getManagerBean(EnterpriseUser.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_login"), principal.getShortName() );
-            List<ITransferObject> list = bean.getList(criteria);
-            if (! list.isEmpty() ) {
-                return (EnterpriseUser) list.get(0);
-            } else {
-            	String message = "El usuario no existe";
-            	LOGGER.error(message);
-    			AonUtil.addErrorMessage(message);
-    			throw new AbortProcessingException(message);
-            }
+            IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+            return (Enterprise) bean.get(user.getEnterprise());
         } catch (ManagerBeanException e) {
-        	LOGGER.error( "Error obtaining the USER related with the logged user: " + principal, e);
+        	LOGGER.error( "Error obtaining enterpise of the logged user: " + user, e);
         }
         return null;		
 	}
@@ -143,7 +137,7 @@ public class ManagerController implements IEnterpriseController {
 		List<Expression> initExpressions = new LinkedList<Expression>();
 		try {
 			String enterpriseId = controller.getFieldName(IEntityAlias.ENTERPRISE_ID);
-			Expression expr = ExpressionUtilities.getEqualExpression(enterpriseId, this.loggedUser.getEnterprise().getId());
+			Expression expr = ExpressionUtilities.getEqualExpression(enterpriseId, this.enterprise.getId());
 			initExpressions.add(expr);
 			controller.setInitExpressions(initExpressions);
 		} catch (ManagerBeanException e) {
@@ -154,12 +148,12 @@ public class ManagerController implements IEnterpriseController {
 	}	
 		
 	public boolean isMainEnterprise() {
-		return ObjectUtils.equals(this.loggedUser.getEnterprise(), this.parentEnterprise);
+		return ObjectUtils.equals(this.enterprise, this.parentEnterprise);
 	}
 
 	@Override
 	public Enterprise getEnterprise() {
-		return this.loggedUser.getEnterprise();
+		return this.enterprise;
 	}
 
 	public IControllerListener getProjectListener() {
@@ -167,18 +161,20 @@ public class ManagerController implements IEnterpriseController {
 	}
 	
 	public void initWebmail() {
-		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
-		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		try {
-			signature.setEnterprise(getEnterprise().getId());
-			mailConfig.setSignature(signature);
-			account.setEnterprise(getEnterprise().getId());
-			mailConfig.setMailAccount(account);
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> initWebmail exception ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+		if ( AonUtil.isSkipLdap() ) {
+			SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			try {
+				signature.setEnterprise(getEnterprise().getId());
+				mailConfig.setSignature(signature);
+				account.setEnterprise(getEnterprise().getId());
+				mailConfig.setMailAccount(account);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(">>>> initWebmail exception ",e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);
+			}			
 		}
 	}
 
@@ -199,6 +195,17 @@ public class ManagerController implements IEnterpriseController {
 		return null;
 	}
 
+	public void initAlfrescoUser( User user ) {
+		if ( AonUtil.isSkipLdap() ) {
+			this.alfrescoUser = user.getLogin();
+			this.alfrescoPassword = user.getPassword();
+		} else {
+			Properties properties = BasicAlfresco.getAlfrescoProperties();
+			this.alfrescoUser = properties.getProperty(SERVER_ADMIN_USER, "admin");
+			this.alfrescoPassword = properties.getProperty(SERVER_ADMIN_PASSWORD, "admin");
+		}
+	}	
+	
 	public Enterprise getParentEnterprise() {
 		return parentEnterprise;
 	}
