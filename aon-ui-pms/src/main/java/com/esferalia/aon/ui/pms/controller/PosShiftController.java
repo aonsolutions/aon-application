@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
@@ -18,6 +21,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -40,6 +44,19 @@ public class PosShiftController extends BasicController {
 	private Hotel hotel;
 	private CashCalculatorController calculator;
 	private boolean cashCalculator;
+	
+	private DataModel invoiceModel;
+	
+	public DataModel getInvoiceModel() {
+		if (invoiceModel == null) {
+			invoiceModel = new ListDataModel(getPosShiftInvoiceList((PosShift)getTo()));
+		}
+		return invoiceModel;
+	}
+
+	public void setInvoiceModel(DataModel invoiceModel) {
+		this.invoiceModel = invoiceModel;
+	}
 	
 	public CashCalculatorController getCalculator() {
 		return calculator;
@@ -64,6 +81,21 @@ public class PosShiftController extends BasicController {
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+	
+	private List<ITransferObject> getPosShiftInvoiceList(PosShift posShift) {
+		try {
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_DATE),posShift.getStartTime(), posShift.getEndTime()!=null?posShift.getEndTime():new Date());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_USER), posShift.getUser().getLogin());
+			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
+			return invoiceBean.getList(criteria);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al cargar los datos de Facturas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
 	}
 	
 	public Double getTotalCashAmount() {
@@ -153,11 +185,18 @@ public class PosShiftController extends BasicController {
 		} 
 	}
 	
-	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
+	public void onPrintShiftInvoice(ActionEvent event) throws ManagerBeanException {
 		PosShift ps = (PosShift) getTo();
 		if (ps!=null && ps.getInvoice()!=null) {
 			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
 			controller.select(event, ps.getInvoice().getId());
+		}
+	}
+	
+	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
+		if (invoiceModel.isRowAvailable()) {
+			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
+			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
 	}
 	

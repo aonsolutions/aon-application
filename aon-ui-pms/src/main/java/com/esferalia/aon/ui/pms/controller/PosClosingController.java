@@ -156,8 +156,10 @@ public class PosClosingController {
 			getPosShift().setEndTime(new Date());
 			PosShift ps = (PosShift) bean.update(getPosShift());
 			setPosShift(ps);
-			PosInvoicing posInvoicing = new PosInvoicing();
-			posInvoicing.completeInvoice(ps);
+			if(ps.getPos().isInvoiceable()){
+				PosInvoicing posInvoicing = new PosInvoicing();
+				posInvoicing.completeInvoice(ps);
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
 			throw new AbortProcessingException(msg, e);
