@@ -6,6 +6,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -19,18 +20,19 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="posShift_report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{bundle.aon_listing}"
+						value="#{pmsBundle.pms_count}"
+						rendered="#{!controller.new}"
 						action="#{report.onExecute}">
 						<f:param name="reportKey" value="posShift" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="posShiftInvoice-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						rendered="#{controller.to.invoice!=null}"
+						rendered="#{controller.to.pos.invoiceable}"
 						value="#{financeBundle.finance_invoice}"  
 						title="#{bundle.aon_report}"
 						action="#{report.onExecute}" 
-						actionListener="#{controller.onPrintInvoice}" >
+						actionListener="#{controller.onPrintShiftInvoice}" >
 						<f:param name="reportKey" value="saleInvoice" />
 					</aon:htmlCommandLink>
 				</ui:define>
@@ -129,13 +131,26 @@
 				<br />				
 				
 				<aon:div rendered="#{!posShift.new}">
-					<aon:panelTabSet id="countTab">
-						<aon:panelTab label="#{pmsBundle.pms_cash_count}">
+					<aon:panelTabSet id="posShiftTab">
+						<aon:panelTab id="cashCount" label="#{pmsBundle.pms_cash_count}">
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
 								<ui:param name="controller" value="#{posShiftCount}" />
 								<ui:param name="modalController" value="#{posShift}" />
 							</ui:include>
 						</aon:panelTab>
+						<c:if test="#{!posShift.to.pos.invoiceable}">
+							<aon:panelTab id="invoiceCount" label="#{pmsBundle.pms_invoice_count}">
+								<!--  
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" />
+								<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml" />
+								-->
+							</aon:panelTab>
+						</c:if>
+						<c:if test="#{!posShift.to.pos.invoiceable}">
+							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</aon:div>
 				
