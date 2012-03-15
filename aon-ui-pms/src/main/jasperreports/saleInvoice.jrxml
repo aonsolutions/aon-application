@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -91,6 +91,7 @@
 	<field name="project" class="com.code.aon.project.Project"/>
 	<field name="rectificationInvoice" class="com.code.aon.finance.Invoice"/>
 	<field name="rectificationInvoicesString" class="java.lang.String"/>
+	<field name="service" class="java.lang.Boolean"/>
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="currentInvoice" class="com.code.aon.finance.Invoice" resetType="Group" resetGroup="invoiceGroup">
 		<variableExpression><![CDATA[(com.code.aon.finance.Invoice)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
@@ -164,9 +165,9 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="79" splitType="Stretch">
+		<band height="87" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Top" isUsingCache="true" onErrorType="Blank">
-				<reportElement key="image-1" positionType="Float" mode="Opaque" x="21" y="0" width="166" height="75" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="21" y="0" width="166" height="87" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -179,7 +180,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-26" x="350" y="29" width="170" height="21" isPrintWhenDetailOverflows="true">
+				<reportElement key="textField-26" x="350" y="42" width="170" height="21" isPrintWhenDetailOverflows="true">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box bottomPadding="2">
@@ -209,7 +210,7 @@
 				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-25" x="350" y="50" width="170" height="12">
+				<reportElement key="textField-25" x="350" y="63" width="170" height="12">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -226,7 +227,7 @@
 + "(" + $V{reservation}.getHotel().getWorkPlace().getAddress().getGeozone().getName() + ")"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="208" y="50" width="123" height="12">
+				<reportElement key="textField-56" x="208" y="63" width="123" height="12">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -241,7 +242,7 @@
 				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getWeb().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="208" y="62" width="123" height="12">
+				<reportElement key="textField-56" x="208" y="75" width="123" height="12">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -256,7 +257,7 @@
 				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-24" x="350" y="62" width="170" height="12">
+				<reportElement key="textField-24" x="350" y="75" width="170" height="12">
 					<printWhenExpression><![CDATA[false]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -274,7 +275,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 + $R{aon_fax} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getFax().getValue()))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-56" x="350" y="17" width="170" height="12">
+				<reportElement key="textField-56" x="350" y="30" width="170" height="12">
 					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -290,6 +291,19 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentCountry() + "-"
 + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocument()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-23" x="350" y="17" width="170" height="13"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{company}.getName()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -459,8 +473,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="76" y="92" width="131" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="76" y="92" width="131" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -474,8 +488,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getId()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="55" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="21" y="92" width="55" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -489,8 +503,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_id} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="76" y="105" width="131" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="76" y="105" width="131" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -504,8 +518,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getCode()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="55" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="21" y="105" width="55" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -519,8 +533,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_code} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="207" y="92" width="40" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="207" y="92" width="40" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -534,8 +548,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_input} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="247" y="92" width="106" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="247" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -549,8 +563,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getStartDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="207" y="105" width="40" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="207" y="105" width="40" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -564,8 +578,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_output} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="247" y="105" width="106" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="247" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -609,8 +623,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="413" y="92" width="106" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="413" y="92" width="106" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -624,8 +638,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getRoomCount()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="60" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="353" y="92" width="60" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -639,8 +653,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_room_count} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="60" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="353" y="105" width="60" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -654,8 +668,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_room_persons} +": "]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="413" y="105" width="106" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="413" y="105" width="106" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -916,6 +930,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<box>
@@ -974,6 +1006,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
@@ -1286,6 +1336,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1319,8 +1387,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				</jr:table>
 			</componentElement>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="55" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="21" y="118" width="55" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1334,8 +1402,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_guest} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="76" y="118" width="131" height="26" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="76" y="118" width="131" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1349,8 +1417,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$V{reservation}.getGuestFullName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-52" positionType="Float" x="207" y="118" width="40" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-52" positionType="Float" x="207" y="118" width="40" height="13" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1364,8 +1432,8 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 				<textFieldExpression><![CDATA[$R{report_tariff} +": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-51" positionType="Float" x="247" y="118" width="272" height="26" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
+				<reportElement key="textField-51" positionType="Float" x="247" y="118" width="272" height="26" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$V{isReservation} && !$F{service}]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1444,6 +1512,24 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
