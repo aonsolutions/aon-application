@@ -48,8 +48,8 @@
  -->								
 								<c:if test="#{aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="sales" 
-											action="sales_search" actionListener="#{sales.onEditSearch}"
+										<aon:commandLink id="sales-management" 
+											action="sales_search-management" actionListener="#{sales.onEditSearch}"
 											value="#{salesBundle.sales_module}" />
 									</aon:div>
 								</c:if>
