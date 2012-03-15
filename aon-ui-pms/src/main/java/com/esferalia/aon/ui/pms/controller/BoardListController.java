@@ -101,7 +101,7 @@ public class BoardListController implements ICollectionProvider {
 		return 4;
 	}
 	private boolean isBreakfastBoard(Item item){
-		// TODO: se asume como desayuno las 2 primeras pensiones de la categoria
+		// TODO: se asume como desayuno la primera pension de la categoria
 		if(boardItems()!=null){
 			if(boardItems().get(0)!=null && ((Item)boardItems().get(0)).getId().equals(item.getId())){
 				return true;
@@ -130,7 +130,11 @@ public class BoardListController implements ICollectionProvider {
 	}
 	
 	public void onSearch(ActionEvent event) {
-		buildBoardList();
+		if (getParams().getHotel() != null && getParams().getHotel().getId() != null && getParams().getDate() != null) {
+			buildBoardList();
+		} else {
+			setBoardList(null);
+		}
 		setModel(new ListDataModel(getBoardList()));
 	}
 	
@@ -160,29 +164,29 @@ public class BoardListController implements ICollectionProvider {
 			
 			RoomBoard roomBoard = null;
 			for(ITransferObject to: bean.getList(criteria)){
-				ProjectReservationServiceDetail d = (ProjectReservationServiceDetail) to;
+				ProjectReservationServiceDetail serviceDetail = (ProjectReservationServiceDetail) to;
 				for(ITransferObject to2: getBoardItems()){
 					Item item = (Item) to2;
-					if(d.getItem().getProduct().isComposition()){
-						for( ItemComposition ic: d.getItem().getItemCompositionList() ){
+					if(serviceDetail.getItem().getProduct().isComposition()){
+						for( ItemComposition ic: serviceDetail.getItem().getItemCompositionList() ){
 							if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-								if( (isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(d.getEffectiveDate(), DateUtils.addDays(getParams().getDate(), -1)))
-										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(d.getEffectiveDate(), getParams().getDate())) ){
+								if( (isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), DateUtils.addDays(getParams().getDate(), -1)))
+										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate())) ){
 									roomBoard = new RoomBoard();
 									roomBoard.setItem(ic.getCompositionItem());
-									roomBoard.setQuantity(ic.getQuantity()*d.getQuantity());
-									roomBoard.setProjectReservationService(d.getProjectReservationService());
+									roomBoard.setQuantity(ic.getQuantity()*serviceDetail.getQuantity());
+									roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
 									compositeList.add(roomBoard);
 								}
 							}
 						}
 					} else {
-						if(d.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-							if( DateUtils.isSameDay(d.getEffectiveDate(), getParams().getDate()) ){
+						if(serviceDetail.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
+							if( DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate()) ){
 								roomBoard = new RoomBoard();
-								roomBoard.setItem(d.getItem());
-								roomBoard.setQuantity(d.getQuantity());
-								roomBoard.setProjectReservationService(d.getProjectReservationService());
+								roomBoard.setItem(serviceDetail.getItem());
+								roomBoard.setQuantity(serviceDetail.getQuantity());
+								roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
 								reportList.add(roomBoard);
 							}
 						}
