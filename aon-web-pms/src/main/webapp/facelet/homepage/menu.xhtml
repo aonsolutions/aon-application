@@ -9,7 +9,7 @@
 			value="#{pmsBundle.pms_hotel_group}"
 			action="menu_hotel" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-company" />
-		<c:if test="#{aonRole.financeOperator}">
+		<c:if test="#{aonRole.saleOperator or aonRole.financeOperator}">
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
 				action="menu_sales" immediate="true"
