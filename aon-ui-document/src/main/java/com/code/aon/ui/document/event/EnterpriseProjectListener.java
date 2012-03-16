@@ -32,10 +32,8 @@ public class EnterpriseProjectListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Project project = (Project) event.getController().getTo();
-// [EUKE]
-//		project.setEnterprise(enterpriseController.getEnterprise());
+		project.setRegistry(enterpriseController.getEnterprise().getRegistry());
 		project.setDomain(enterpriseController.getEnterprise().getDomain());
-// fin		
 	}
 
 	@Override
@@ -45,12 +43,10 @@ public class EnterpriseProjectListener extends ControllerAdapter {
 			if ((enterprise != null) && (enterprise.getId() != null)) {
 				try {
 					Criteria criteria = event.getController().getCriteria();
-// [EUKE]
-//					String enterpriseId = event.getController().getFieldName(IEntityAlias.PROJECT_ENTERPRISE_ID);
-//					criteria.addEqualExpression(enterpriseId, enterprise.getId());						
-					String enterpriseId = event.getController().getFieldName(IEntityAlias.PROJECT_DOMAIN);
-					criteria.addEqualExpression(enterpriseId, enterprise.getDomain());						
-					// fin		
+					String registryId = event.getController().getFieldName(IEntityAlias.PROJECT_REGISTRY_ID);
+					criteria.addEqualExpression(registryId, enterprise.getRegistry().getId());						
+					String active = event.getController().getFieldName(IEntityAlias.PROJECT_ACTIVE);
+					criteria.addEqualExpression(active, Boolean.TRUE);
 				} catch (ManagerBeanException e) {
 					throw new ControllerListenerException(e.getMessage(), e);
 				}
