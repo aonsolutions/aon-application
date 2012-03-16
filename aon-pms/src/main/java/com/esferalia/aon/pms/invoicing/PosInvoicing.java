@@ -1,5 +1,7 @@
 package com.esferalia.aon.pms.invoicing;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -156,7 +158,7 @@ public class PosInvoicing implements IReservationConstants {
 		invoiceDetail.setProject(null);
 		invoiceDetail.setLine(1);
 		invoiceDetail.setItem(item);
-		invoiceDetail.setDescription(item.getProduct().getName());
+		invoiceDetail.setDescription(obtainDetailDescription(invoice.getIssueDate(), null, item.getProduct().getName()));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(0);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -252,6 +254,13 @@ public class PosInvoicing implements IReservationConstants {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+	
+	private String obtainDetailDescription(Date effectiveDate, String room, String description) {
+    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	String date = StringUtils.rightPad(formatter.format(effectiveDate), 11);
+    	room = (room == null) ? StringUtils.rightPad(StringUtils.repeat("-", 5), 6) : StringUtils.rightPad(room, 6);
+    	return (date + room + description);
 	}
 
 }

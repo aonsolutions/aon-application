@@ -27,7 +27,7 @@
 			showEInvoice="true"
 			showDigitalCertificate="true"
 			showDirStaff="false"
-			showSaleInvoiceReportParams="true"
+			showSaleInvoiceReportParams="false"
 		/>
 		<company:enterprise 
 			showFinanceData="false" 

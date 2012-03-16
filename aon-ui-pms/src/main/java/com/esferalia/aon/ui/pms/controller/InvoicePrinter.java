@@ -12,10 +12,10 @@ import com.esferalia.aon.pms.ProjectReservation;
 
 
 
-public class ReservationInvoicePrinter {
+public class InvoicePrinter {
 	
-	public ReservationInvoicePrinter getInstance() {
-		return new ReservationInvoicePrinter();
+	public InvoicePrinter getInstance() {
+		return new InvoicePrinter();
 	}
 	
 	public ProjectReservation getProjectReservation(Integer projectId) throws ManagerBeanException {

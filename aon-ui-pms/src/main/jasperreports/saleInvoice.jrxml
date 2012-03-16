@@ -72,7 +72,7 @@
 	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
 	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
 	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
-	<parameter name="reservationInvoicePrinter" class="com.esferalia.aon.ui.pms.controller.ReservationInvoicePrinter" isForPrompting="false"/>
+	<parameter name="invoicePrinter" class="com.esferalia.aon.ui.pms.controller.InvoicePrinter" isForPrompting="false"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -98,8 +98,8 @@
 	</variable>
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="reservation" class="com.esferalia.aon.pms.ProjectReservation" resetType="Page">
-		<variableExpression><![CDATA[$P{reservationInvoicePrinter}.getProjectReservation($F{project}.getId())]]></variableExpression>
-		<initialValueExpression><![CDATA[$P{reservationInvoicePrinter}.getProjectReservation($F{project}.getId())]]></initialValueExpression>
+		<variableExpression><![CDATA[$P{invoicePrinter}.getProjectReservation($F{project}.getId())]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{invoicePrinter}.getProjectReservation($F{project}.getId())]]></initialValueExpression>
 	</variable>
 	<variable name="isReservation" class="java.lang.Boolean">
 		<variableExpression><![CDATA[$F{project}.isReservation()]]></variableExpression>
@@ -130,8 +130,8 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{printName}.name().equals( "LEFT_SIDE" ) ? $P{company}.getName() : "")
-+ (new Boolean($P{printName}.name().equals( "LEFT_SIDE" ) && $P{printRecordData} && $P{recordData}!=null) ? ", " : "")
+				<textFieldExpression><![CDATA[$P{company}.getName()
++ (new Boolean( $P{printRecordData} && $P{recordData}!=null) ? ", " : "")
 + ( new Boolean($P{printRecordData} && $P{recordData}!=null) ?
     ($P{recordData}.getRegistration().isEmpty()?"":$P{recordData}.getRegistration())
     + ($P{recordData}.getVolume().isEmpty()?"":", Tomo " + $P{recordData}.getVolume())
@@ -140,12 +140,11 @@
     + ($P{recordData}.getSheet().isEmpty()?"":", Hoja " + $P{recordData}.getSheet())
     + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
     : "")
-+ (new Boolean(($P{printName}.name().equals( "LEFT_SIDE" ) || $P{printRecordData} && $P{recordData}!=null) && $P{printNif}.name().equals( "LEFT_SIDE" )) ? ", " : "")
-+ ($P{printNif}.name().equals( "LEFT_SIDE" ) ?
-    $R{aon_company_document} + ": "
++ (new Boolean( $P{printRecordData} && $P{recordData}!=null && $P{company}.getDocument()!=null) ? ", " : "")
++ ($R{aon_company_document} + ": "
     +$P{company}.getDocumentCountry() + "-"
     +$P{company}.getDocument()
-    : "")]]></textFieldExpression>
+    )]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="-25" y="241" width="4" height="1"/>
@@ -180,9 +179,7 @@
 				<imageExpression><![CDATA[$P{logoImageFile}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-26" x="350" y="42" width="170" height="21" isPrintWhenDetailOverflows="true">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-26" x="350" y="42" width="170" height="21" isPrintWhenDetailOverflows="true"/>
 				<box bottomPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -192,12 +189,12 @@
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getAddress().getFullAddress()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{reservation}!=null?
+($V{reservation}.getHotel().getWorkPlace().getAddress().getFullAddress()):
+($P{address}.getFullAddress())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-23" x="350" y="4" width="170" height="13">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-23" x="350" y="4" width="170" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -210,9 +207,7 @@
 				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-25" x="350" y="63" width="170" height="12">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-25" x="350" y="63" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -222,62 +217,70 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{reservation}.getHotel().getWorkPlace().getAddress().getZip()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getZip() + " ")
+				<textFieldExpression><![CDATA[$V{reservation}!=null?
+(($V{reservation}.getHotel().getWorkPlace().getAddress().getZip()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getZip() + " ")
 + ($V{reservation}.getHotel().getWorkPlace().getAddress().getCity()==null?"":$V{reservation}.getHotel().getWorkPlace().getAddress().getCity() + " ")
-+ "(" + $V{reservation}.getHotel().getWorkPlace().getAddress().getGeozone().getName() + ")"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="208" y="63" width="123" height="12">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getWeb().getValue()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-56" x="208" y="75" width="123" height="12">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getEmail().getValue()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-24" x="350" y="75" width="170" height="12">
-					<printWhenExpression><![CDATA[false]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getPhone()==null?"":(
-$R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getPhone().getValue())
-+ ($V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getFax()==null?"":(" - "
-+ $R{aon_fax} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getFax().getValue()))]]></textFieldExpression>
++ "(" + $V{reservation}.getHotel().getWorkPlace().getAddress().getGeozone().getName() + ")"):
+(($P{address}.getZip()==null?"":$P{address}.getZip() + " ")
++ ($P{address}.getCity()==null?"":$P{address}.getCity() + " ")
++ "(" + $P{address}.getGeozone().getName() + ")")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-56" x="350" y="30" width="170" height="12">
-					<printWhenExpression><![CDATA[$V{isReservation}]]></printWhenExpression>
-				</reportElement>
+				<reportElement key="textField-56" x="208" y="63" width="123" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{reservation}!=null && $V{reservation}.getHotel()!=null && !$V{reservation}.getHotel().getWeb().isEmpty())?
+($V{reservation}.getHotel().getWeb()):
+($P{web}.getValue())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-56" x="208" y="75" width="123" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($V{reservation}!=null && $V{reservation}.getHotel()!=null && !$V{reservation}.getHotel().getEmail().isEmpty())?
+$V{reservation}.getHotel().getEmail():$P{email}.getValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-24" x="350" y="75" width="170" height="12"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(($V{reservation}!=null && !$V{reservation}.getHotel().getPhone().isEmpty())?
+($R{aon_telephone}+ ": "
+    + $V{reservation}.getHotel().getPhone()):
+((!$P{phone}.getValue().isEmpty())?
+($R{aon_telephone} + ": "
+    + $P{phone}.getValue()):""))
++ (($V{reservation}!=null && !$V{reservation}.getHotel().getFax().isEmpty())?
+(" - " + $R{aon_fax}+ ": "
+    + $V{reservation}.getHotel().getFax()):
+((!$P{fax}.getValue().isEmpty())?
+(" - " + $R{aon_fax} + ": "
+    + $P{fax}.getValue()):""))
+]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-56" x="350" y="30" width="170" height="12"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -288,9 +291,9 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_company_document} + ": "
-+ $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
-+ $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocumentCountry() + "-"
-+ $V{reservation}.getHotel().getWorkPlace().getEnterprise().getRegistry().getDocument()]]></textFieldExpression>
++ $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
++ $P{company}.getDocumentCountry() + "-"
++ $P{company}.getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="350" y="17" width="170" height="13"/>
@@ -314,7 +317,7 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 		<band height="381" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="22" y="330" width="495" height="38" isRemoveLineWhenBlank="true"/>
-				<box>
+				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
@@ -948,6 +951,60 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxableBase"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<box>
@@ -1006,6 +1063,60 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_date}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["dueDate"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
 									<property name="controlParameter" value="true"/>
@@ -1354,6 +1465,60 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="15">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["amount"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="true">
@@ -1512,6 +1677,60 @@ $R{aon_telephone} + ": " + $V{reservation}.getHotel().getWorkPlace().getEnterpri
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_taxable_base}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
 									<property name="controlParameter" value="true"/>
