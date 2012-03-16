@@ -334,7 +334,14 @@
 				<updatePolicy>true</updatePolicy>
 			</snapshots>
 		</repository>
- 
+ <!--  
+	..............................................................
+   	Desactivado porque no responde, funcionará porque la librería
+	DynamicJasper esta en el repositorio local si se borra el repo
+	local, fallara
+	..............................................................
+
+
 		<repository>
 			<id>dynamicJasper-public-repository</id>
 			<name>DynamicJasper public Repository</name>
@@ -347,7 +354,7 @@
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
-		</repository>
+-->		</repository>
 
 	</repositories>
 
