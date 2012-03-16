@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.26-SNAPSHOT</version>
+		<version>6.26</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.asset</artifactId>
-	<version>6.26-SNAPSHOT</version>
+	<version>6.26</version>
 	<description>AON UI ASSET</description>
 	<name>AON UI ASSET</name>
 	<dependencies>
