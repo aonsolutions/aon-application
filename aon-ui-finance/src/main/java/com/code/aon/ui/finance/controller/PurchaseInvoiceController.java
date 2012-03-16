@@ -218,15 +218,4 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
-	public List<SelectItem> getInvoiceAttachmentTypes() {
-		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
-		if (! isAttachmentAvailable() ) {
-			String name = INVOICE.getName(AonUtil.getCurrentLocale());
-			invoiceAttachmentTypes.add( new SelectItem(INVOICE, name) );
-		}
-		String name = RECEIPT.getName(AonUtil.getCurrentLocale());
-		invoiceAttachmentTypes.add( new SelectItem(RECEIPT, name) );
-		return invoiceAttachmentTypes;
-	}
-	
 }

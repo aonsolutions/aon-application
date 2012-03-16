@@ -1,5 +1,8 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
@@ -741,6 +744,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
+	
+	public List<SelectItem> getInvoiceAttachmentTypes() {
+		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
+		if (! isAttachmentAvailable() ) {
+			String name = INVOICE.getName(AonUtil.getCurrentLocale());
+			invoiceAttachmentTypes.add( new SelectItem(INVOICE, name) );
+		}
+		String name = RECEIPT.getName(AonUtil.getCurrentLocale());
+		invoiceAttachmentTypes.add( new SelectItem(RECEIPT, name) );
+		return invoiceAttachmentTypes;
+	}
 
 	public boolean isAttachmentAvailable() {
 		IManagerBean bean = getAttachmentBean();
