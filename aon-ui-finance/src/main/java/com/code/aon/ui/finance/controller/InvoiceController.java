@@ -741,4 +741,22 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
+
+	public boolean isAttachmentAvailable() {
+		IManagerBean bean = getAttachmentBean();
+		try {
+			Criteria criteria = new Criteria();
+			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
+			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
+			// String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_TYPE);
+			// TODO Poner bien cuando funcione la generación de alias con formulas
+			String typeAlias = "InvoiceAttachment.type";
+			criteria.addEqualExpression(typeAlias, InvoiceAttachmentType.INVOICE);
+			return bean.getCount(criteria) > 0;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error getting invoice pdf file " + getInvoice(), e );
+		}
+		return false;
+	}
+	
 }

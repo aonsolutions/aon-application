@@ -217,23 +217,6 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
-
-	public boolean isAttachmentAvailable() {
-		IManagerBean bean = getAttachmentBean();
-		try {
-			Criteria criteria = new Criteria();
-			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
-			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
-			// String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_TYPE);
-			// TODO Poner bien cuando funcione la generación de alias con formulas
-			String typeAlias = "InvoiceAttachment.type";
-			criteria.addEqualExpression(typeAlias, InvoiceAttachmentType.INVOICE);
-			return bean.getCount(criteria) > 0;
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error getting invoice pdf file " + getInvoice(), e );
-		}
-		return false;
-	}
 	
 	public List<SelectItem> getInvoiceAttachmentTypes() {
 		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
