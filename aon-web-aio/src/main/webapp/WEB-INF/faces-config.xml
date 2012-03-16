@@ -238,6 +238,8 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.company -->
 			<value>#{companyCertificateChildListener}</value>
+			<value>#{enterpriseActivityChildListener}</value>
+			<value>#{payrollWorkPlaceChildListener}</value>			
 		</list-entries>
 	</managed-bean>
 
@@ -303,6 +305,12 @@
 			<value>#{enterpriseAlfrescoListener}</value>
 			<!--  aon.ui.project -->
 			<value>#{enterpriseProjectChildListener}</value>
+			<!--  aon.ui.company -->
+			<value>#{enterpriseTreeControllerListener}</value>
+			<value>#{enterpriseActivityChildListener}</value>
+			<value>#{payrollWorkPlaceChildListener}</value>
+			<!--  aon.ui.payroll -->
+			<value>#{enterpriseSearchEx}</value>			
 		</list-entries>
 	</managed-bean>
 
