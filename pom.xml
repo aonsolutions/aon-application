@@ -354,8 +354,8 @@
 				<enabled>false</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
--->		</repository>
-
+		</repository>
+-->
 	</repositories>
 
 	<pluginRepositories>
