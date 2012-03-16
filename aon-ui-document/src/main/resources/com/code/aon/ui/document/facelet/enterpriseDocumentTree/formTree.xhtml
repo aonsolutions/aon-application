@@ -13,16 +13,16 @@
 			<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 			<ui:param name="toolbarDescription" value="&#160;" />
 			<ui:define name="toolbarContent">
+				<aon:commandButton id="edit"
+					value="#{bundle.aon_edit}"
+					action="enterprise_form"
+					styleClass="aon-finding-toolbar-item aon-icon-accept" >
+					<f:setPropertyActionListener
+						target="#{enterprise.backAction}" value="enterprise_formDocumentTree" />						
+					<f:setPropertyActionListener
+						target="#{enterprise.backActionListener}" value="enterpriseDocumentTree.onBack" />
+				</aon:commandButton>
 				<c:if test="#{manager.alfrescoManagementEnabled}" >
-					<aon:commandButton id="edit"
-						value="#{bundle.aon_edit}"
-						action="enterprise_form"
-						styleClass="aon-finding-toolbar-item aon-icon-accept" >
-						<f:setPropertyActionListener
-							target="#{enterprise.backAction}" value="enterprise_formDocumentTree" />						
-						<f:setPropertyActionListener
-							target="#{enterprise.backActionListener}" value="enterpriseDocumentTree.onBack" />
-					</aon:commandButton>
 					<aon:commandButton id="users"
 						value="#{documentBundle.document_users}" immediate="true"
 						action="enterpriseUsers" actionListener="#{enterpriseUser.onInit}"

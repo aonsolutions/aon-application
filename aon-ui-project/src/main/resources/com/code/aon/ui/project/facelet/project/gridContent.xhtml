@@ -86,30 +86,6 @@
 						value="#{controller.to.active}" rendered="#{formNew}" required="true" />
 				</f:facet>
 			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}" />
-				</f:facet>
-				<aon:outputText value="#{to.registry.fullName}" rendered="#{formList}" />
-				<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-					<ui:param name="lookupTo" value="#{controller.to.registry}" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupInputSuggestSize" value="30"/>
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="idRequired" value="#{true}" />
-				</ui:include>
-				<f:facet name="footer">
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-						<ui:param name="lookupTo" value="#{controller.to.registry}" />
-						<ui:param name="lookupSuffix" value="-New" />
-						<ui:param name="lookupRendered" value="#{formNew}" />
-						<ui:param name="lookupInputSuggestSize" value="30"/>
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
-					</ui:include>
-				</f:facet>
-			</aon:column>
 
 			<aon:column alias="Project.projectType.description"
 				styleClass="aon-editDataTable-textColumn aon-width-150">
