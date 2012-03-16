@@ -10,31 +10,20 @@
 	<artifactId>aon.ui.calendar</artifactId>
 	<description>AON UI CALENDAR</description>
 	<name>AON UI CALENDAR</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled> 
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${jasperreportsMavenPluginVersion}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/esferalia/aon/ui/calendar/report</outputDirectory>
 					<xmlValidation>true</xmlValidation>
+					<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 				</configuration>
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>compile-reports</goal>
 						</goals>
@@ -50,6 +39,11 @@
 						<groupId>org.slf4j</groupId>
 						<artifactId>slf4j-jcl</artifactId>
 						<version>1.5.11</version>
+					</dependency>
+					<dependency>
+						<groupId>com.esferalia.aon</groupId>
+						<artifactId>aon.ui.calendar</artifactId>
+						<version>${project.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>

@@ -11,8 +11,8 @@
 	</parent>
 	<artifactId>aon-aio</artifactId>
 	<packaging>war</packaging>
-	<name>aon-aio</name>
-	<url>http://maven.apache.org</url>
+	<name>AON WEB AIO</name>
+	<description>AON WEB AIO</description>
 	<build>
 		<finalName>aon-aio</finalName>
 		<plugins>

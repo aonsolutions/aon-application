@@ -9,31 +9,20 @@
 	<artifactId>aon.ui.groupware</artifactId>
 	<description>AON UI GROUPWARE</description>
 	<name>AON UI GROUPWARE</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled> 
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${jasperreportsMavenPluginVersion}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/groupware/report</outputDirectory>
 					<xmlValidation>true</xmlValidation>
+					<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 				</configuration>
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>compile-reports</goal>
 						</goals>
@@ -46,10 +35,10 @@
 						<version>${jasperReportsVersion}</version>
 					</dependency>
 					<dependency>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-jcl</artifactId>
-						<version>1.5.11</version>
-					</dependency>
+                                                <groupId>com.code.aon</groupId>
+                                                <artifactId>aon.groupware</artifactId>
+                                                <version>${project.version}</version>
+                                        </dependency>
 				</dependencies>
 			</plugin>
 		</plugins>

@@ -10,24 +10,12 @@
 	<artifactId>tgc.ui.payroll</artifactId>
 	<description>TGC UI PAYROLL</description>
 	<name>TGC UI PAYROLL</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled> 
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${jasperreportsMavenPluginVersion}</version>
 				<executions>
 					<execution>
 						<id>CONTRACT</id>
@@ -39,6 +27,7 @@
 							<sourceDirectory>src/main/jasperreports/contract</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/contract</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -51,6 +40,7 @@
 							<sourceDirectory>src/main/jasperreports/enterprise</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/enterprise</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -63,6 +53,7 @@
 							<sourceDirectory>src/main/jasperreports/person</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/person</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 				</executions>
@@ -72,7 +63,12 @@
 						<artifactId>jasperreports</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
-				</dependencies>
+                                        <dependency>
+                                                <groupId>com.esferalia.aon</groupId>
+                                                <artifactId>aon.ui.payroll</artifactId>
+                                                <version>${project.version}</version>
+                                        </dependency>
+ 				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

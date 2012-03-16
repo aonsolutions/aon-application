@@ -23,25 +23,12 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
 	</scm>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>Codehaus Public</id>
-			<url>https://nexus.codehaus.org/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled> 
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
-	
   	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jasperreports-maven-plugin</artifactId>
-				<version>1.0-beta-2</version>
+				<version>${jasperreportsMavenPluginVersion}</version>
 				<executions>
 					<execution>
 						<id>SALE INVOICE</id>
@@ -53,6 +40,7 @@
 							<sourceDirectory>jasperreports/saleInvoiceTemplate2</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/saleInvoiceTemplate2</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -65,6 +53,7 @@
 							<sourceDirectory>jasperreports/offerExtended</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/offerExtended</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -77,6 +66,7 @@
 							<sourceDirectory>jasperreports/electromedical</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/electromedical</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -89,6 +79,7 @@
 							<sourceDirectory>jasperreports/mediser</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/mediser</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -101,6 +92,7 @@
 							<sourceDirectory>jasperreports/saleInvoiceGtEus</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/saleInvoiceGtEus</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 					<execution>
@@ -113,6 +105,7 @@
 							<sourceDirectory>jasperreports/amilibia</sourceDirectory>
 							<outputDirectory>${project.build.directory}/templates/amilibia</outputDirectory>
 							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 				</executions>
