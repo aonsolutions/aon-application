@@ -140,15 +140,14 @@
 						</aon:panelTab>
 						<c:if test="#{!posShift.to.pos.invoiceable}">
 							<aon:panelTab id="invoiceCount" label="#{pmsBundle.pms_invoice_count}">
-								<!--  
-								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" />
-								<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml" />
-								-->
+								<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice_count_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
 						<c:if test="#{!posShift.to.pos.invoiceable}">
 							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
-								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" />
+								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" >
+									<ui:param name="skipButtonsColumn" value="true" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 					</aon:panelTabSet>

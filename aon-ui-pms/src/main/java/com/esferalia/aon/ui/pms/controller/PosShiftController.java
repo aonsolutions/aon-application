@@ -21,6 +21,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
@@ -46,10 +47,11 @@ public class PosShiftController extends BasicController {
 	private boolean cashCalculator;
 	
 	private DataModel invoiceModel;
+	private DataModel InvoiceFinancesModel;
 	
 	public DataModel getInvoiceModel() {
 		if (invoiceModel == null) {
-			invoiceModel = new ListDataModel(getPosShiftInvoiceList((PosShift)getTo()));
+			invoiceModel = new ListDataModel(getInvoiceList((PosShift)getTo()));
 		}
 		return invoiceModel;
 	}
@@ -58,6 +60,17 @@ public class PosShiftController extends BasicController {
 		this.invoiceModel = invoiceModel;
 	}
 	
+	public DataModel getInvoiceFinancesModel() {
+		if (InvoiceFinancesModel == null) {
+			InvoiceFinancesModel = new ListDataModel(getInvoiceFinancesGroupedList((PosShift)getTo()));
+		}
+		return InvoiceFinancesModel;
+	}
+
+	public void setInvoiceFinancesModel(DataModel InvoiceFinancesModel) {
+		this.InvoiceFinancesModel = InvoiceFinancesModel;
+	}
+
 	public CashCalculatorController getCalculator() {
 		return calculator;
 	}
@@ -83,7 +96,7 @@ public class PosShiftController extends BasicController {
 		this.hotel = hotel;
 	}
 	
-	private List<ITransferObject> getPosShiftInvoiceList(PosShift posShift) {
+	private List<ITransferObject> getInvoiceList(PosShift posShift) {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
@@ -91,6 +104,25 @@ public class PosShiftController extends BasicController {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_USER), posShift.getUser().getLogin());
 			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
 			return invoiceBean.getList(criteria);
+		} catch (ManagerBeanException ex) {
+			String msg = "Error al cargar los datos de Facturas.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, ex);
+		}
+	}
+	
+	private List<ITransferObject> getInvoiceFinancesGroupedList(PosShift posShift) {
+		List<Integer> invoiceIds = new LinkedList<Integer>();  
+		for(ITransferObject to: getInvoiceList(posShift)){
+			Invoice i = (Invoice) to;
+			invoiceIds.add(i.getId());
+		}
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Finance.class);
+			Criteria criteria = new Criteria();
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoiceIds);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE));
+			return bean.getList(criteria);
 		} catch (ManagerBeanException ex) {
 			String msg = "Error al cargar los datos de Facturas.";
 			AonUtil.addErrorMessage(msg);

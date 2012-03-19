@@ -29,6 +29,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 		PosShiftController controller = (PosShiftController) this.getController();
 		controller.setPosShift((PosShift) controller.getTo());
 		controller.setInvoiceModel(null);
+		controller.setInvoiceFinancesModel(null);
 		try {
 			if( getPosShiftCount()!=null ){
 				controller.getCalculator().setCashAmount(getPosShiftCount().getAmount());

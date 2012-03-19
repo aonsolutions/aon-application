@@ -73,26 +73,28 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column
-		styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
-		<f:facet name="header">
-			<aon:outputText value="&#160;" />
-		</f:facet>
-		<aon:commandButton id="reservationInvoice-rectify"
-			value="&#160;" title="#{pmsBundle.pms_to_return}"
-			rendered="#{!to.rectified and !to.rectifier}"
-			actionListener="#{controller.onRectifyInvoiceShow}"
-			reRender="showRectificationWindow"
-			styleClass="aon-finding-toolbar-item aon-icon-removed">
-			<f:setPropertyActionListener target="#{controller.showRectificationWindow}"
-				value="#{true}" />
-		</aon:commandButton>
-		<aon:htmlCommandLink id="reservationInvoice-report"
-			value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
-			action="#{report.onExecute}" target="_blank"
-			actionListener="#{controller.onPrintInvoice}" styleClass="aon-icon-pdf">
-			<f:param name="reportKey" value="saleInvoice" />
-		</aon:htmlCommandLink>
-	</aon:column>
+	<c:if test="#{!skipButtonsColumn}">
+		<aon:column
+			styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:commandButton id="reservationInvoice-rectify"
+				value="&#160;" title="#{pmsBundle.pms_to_return}"
+				rendered="#{!to.rectified and !to.rectifier}"
+				actionListener="#{controller.onRectifyInvoiceShow}"
+				reRender="showRectificationWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-removed">
+				<f:setPropertyActionListener target="#{controller.showRectificationWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+			<aon:htmlCommandLink id="reservationInvoice-report"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
+				action="#{report.onExecute}" target="_blank"
+				actionListener="#{controller.onPrintInvoice}" styleClass="aon-icon-pdf">
+				<f:param name="reportKey" value="saleInvoice" />
+			</aon:htmlCommandLink>
+		</aon:column>
+	</c:if>
 
 </ui:composition>

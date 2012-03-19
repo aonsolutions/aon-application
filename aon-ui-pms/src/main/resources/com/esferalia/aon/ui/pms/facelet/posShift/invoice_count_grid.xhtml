@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<aon:dataTable id="posShiftInvoiceCountDataList" value="#{posShift.invoiceFinancesModel}" 
+		rows="20" var="to">
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-50 aon-nowrap">
+			<f:facet name="header">
+				<aon:outputLabel value="#{configBundle.config_pay_method}" />
+			</f:facet>
+			<aon:outputText value="#{to.payMethod.name}" />
+		</aon:column>
+			
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputLabel value="#{bundle.aon_amount}" />
+			</f:facet>
+			<aon:outputText value="#{to.amount}" >
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+		</aon:column>
+	
+	</aon:dataTable>
+	<aon:dataScroller2 for="posShiftInvoiceCountDataList" showNote="true" />
+
+</ui:composition>
