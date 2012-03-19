@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -54,6 +55,24 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	public String template;
 	
 	public Integer homepage;
+	
+	private Map<String, ApplicationParameter> parameters;
+	
+	private void loadParameters() throws ManagerBeanException{
+		parameters = new TreeMap<String, ApplicationParameter>();
+		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		List<ITransferObject> list = managerBean.getList(null);
+		Iterator<ITransferObject> iter = list.iterator();
+		while (iter.hasNext()) {
+			ApplicationParameter appParam = (ApplicationParameter) iter.next();
+			parameters.put(appParam.getName(), appParam);
+		}
+	}
+	
+	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
+		loadParameters();	
+		return parameters.get(key); 		
+	}
 	
 	@Override
 	public void onSelect(ActionEvent event){
@@ -200,7 +219,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     	//Guardar el template en constantes
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
+			ApplicationParameter ap = getParameter(TEMPLATE_NAME_PARAM);
 			if ( ap == null ) {
 				ap = new ApplicationParameter();	
 			}
@@ -218,7 +237,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
     	//Guardar la homepage en constantes
 		try {
 			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
+			ApplicationParameter ap = getParameter(HOMEPAGE_NAME_PARAM);
 			if ( ap == null ) {
 				ap = new ApplicationParameter();	
 			}
@@ -233,8 +252,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	public String getTemplate() {
 		if (template == null) {
 			try {
-				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
+				ApplicationParameter ap = getParameter(TEMPLATE_NAME_PARAM);
 				if ( ap != null ) {
 					template = ap.getValue();				
 					chargeValues();
@@ -251,8 +269,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		if (homepage == null) {
 			try {
 				homepage = 0;
-				IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-				ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
+				ApplicationParameter ap = getParameter(HOMEPAGE_NAME_PARAM);
 				if ( ap != null ) {
 					homepage = Integer.parseInt(ap.getValue());				
 				}
@@ -262,7 +279,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		}
 		return homepage;
 	}
-
+	
 	public String getToVariableName() {
 		WebInfoStyle style = (WebInfoStyle)getTo();
 		return getVariableName(style.getVariable());

@@ -3,19 +3,19 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.26</version>
+		<version>6.26.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-dbutils</artifactId>
-	<version>6.26</version>
+	<version>6.26.1</version>
 	<description>AON DBUTILS</description>
 	<name>AON DB DBUTILS</name>
 
     <scm>
-            <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.x/aon-dbutils</url>
-            <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.x/aon-dbutils</connection>
-            <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.x/aon-dbutils</developerConnection>
+            <url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.1.x/aon-dbutils</url>
+            <connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.1.x/aon-dbutils</connection>
+            <developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.26.1.x/aon-dbutils</developerConnection>
     </scm>
 
 	<dependencies>
