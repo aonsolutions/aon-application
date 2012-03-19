@@ -374,7 +374,7 @@ public class ReservationUtils implements IReservationConstants {
 	public double obtainAgencyCommissionPercent(ProfileInfo agencyInfo) throws ManagerBeanException {
 		double percent = 0;
 		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
-			percent = agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getAmount().doubleValue();
+			percent = Double.parseDouble(agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getStringValue());
 		}
 		return percent;
 	}
