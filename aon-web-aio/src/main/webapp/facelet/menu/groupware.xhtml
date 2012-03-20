@@ -94,7 +94,10 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-						
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+
 						<aon:panelGrid id="group_general_processes"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-tree-root">
@@ -144,63 +147,6 @@
 										action="campaign_type"
 										actionListener="#{campaignType.onSearch}"
 										value="#{groupwareBundle.groupware_campaign_types}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-
-					<aon:panelGroup>
-					
-						<aon:panelGrid id="group_general_notices"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-call">
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.aon_notice}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_notice"
-										action="notice_list"
-										actionListener="#{notice.onEditSearch}"
-										value="#{groupwareBundle.aon_notice}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_general_notes"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-notes">
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.aon_notes}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_note"
-										action="note_search"
-										actionListener="#{note.onEditSearch}"
-										value="#{groupwareBundle.aon_notes}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_general_favorites"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-favorite">
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.aon_favorites}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_favorite"
-										action="favorite_search"
-										actionListener="#{favorite.onSearch}"
-										value="#{groupwareBundle.aon_favorites}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="groupware_favorite_category"
-										action="favorite_category"
-										actionListener="#{favoriteCategory.onSearch}"
-										value="#{groupwareBundle.aon_favorite_category}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

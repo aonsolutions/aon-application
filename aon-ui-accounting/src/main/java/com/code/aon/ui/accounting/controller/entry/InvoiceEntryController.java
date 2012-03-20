@@ -1484,7 +1484,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_CODE), seriesId);
 		Iterator<?> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			Series series = (Series) iter.next();

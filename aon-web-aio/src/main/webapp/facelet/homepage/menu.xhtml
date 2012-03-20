@@ -77,24 +77,17 @@
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
-<!-- 		
-		<aon:commandLink id="asset"
-			value="#{assetBundle.asset_asset_main}"
-			action="menu_asset" immediate="true"
-			styleClass="aon-top-menu-item" />
- -->
+
 		<aon:commandLink id="document"
 			value="#{appBundle.menu_document}"
 			action="menu_document" immediate="true"
 			styleClass="aon-top-menu-item" />
 
-		<c:if test="#{aonRole.config}">
-			<aon:commandLink id="config"
-				value="#{bundle.aon_configuration}"
-				action="menu_config" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		
+		<aon:commandLink id="utilities"
+			value="#{appBundle.menu_utilities}"
+			action="menu_utilities" immediate="true"
+			styleClass="aon-top-menu-item" />
+
 		<rich:jQuery timing="onload"
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
 	</ui:define>

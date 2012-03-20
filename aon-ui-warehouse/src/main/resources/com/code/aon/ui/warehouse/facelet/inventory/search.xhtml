@@ -9,6 +9,9 @@
 
 		<aon:form id="inventorySearch">
 
+			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
+			<aon:methodParam name="resetAction" value="inventory_close"/>
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />

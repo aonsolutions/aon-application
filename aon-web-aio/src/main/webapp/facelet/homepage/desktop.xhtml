@@ -64,11 +64,13 @@
 						<c:if test="#{desktop.taskHolderAvailable}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
-									<aon:outputLink value="/aon-project?aonDesktop=true" target="aonTask">
-										<aon:outputText value="#{bundle.aon_tasks}"
+									<aon:commandLink id="desktop_groupware_taskInbox"
+										action="task_list"
+										actionListener="#{task.onLaunch}">
+										<aon:outputText value="#{bundle.aon_tasks}" 
 											style="cursor: default;" 
 											styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
-									</aon:outputLink>
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-portlet-body">
 									<aon:dataTable id="taskSummaryList"

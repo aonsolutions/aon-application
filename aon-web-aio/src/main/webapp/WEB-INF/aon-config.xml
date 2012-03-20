@@ -51,8 +51,8 @@
 			showAddInfo="true"
 			showDirStaff="false"
 			standalone="false"
-			showEnterpriseParams="false"
-			showPayrollData="false"
+			showEnterpriseParams="true"
+			showPayrollData="true"
 			showPersonInSearch="false"
 			showProject="true"
 		/>				

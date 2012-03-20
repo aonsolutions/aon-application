@@ -18,21 +18,23 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_config_company"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-company aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{companyBundle.company_menu_group}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="company" 
-										action="company" actionListener="#{company.onLoad}"
-										value="#{companyBundle.company_data_module}">
-									</aon:commandLink>
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_config_company"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-company aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{companyBundle.company_menu_group}"/>
+								</f:facet>					
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="company" 
+											action="company" actionListener="#{company.onLoad}"
+											value="#{companyBundle.company_data_module}">
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 						
 						<c:if test="#{aonRole.admin}">
 							<aon:panelGrid id="group_config_security"
@@ -70,16 +72,26 @@
 									action="tax_list" 
 									value="#{configBundle.config_tax_module}" />
 							</aon:div>	
-							<c:if test="#{aonRole.accountingOperator}">							
+							<c:if test="#{aonRole.config}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accPeriod" action="accPeriod"
 										actionListener="#{accPeriod.onSearch}"
 										value="#{accountingBundle.accounting_period_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="defaultParams" action="defaultParams"
+									<aon:commandLink id="defaultParams" action="accountingDefaultParams"
 										actionListener="#{accAppParams.onLoad}"
 										value="#{accountingBundle.accounting_default_params_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fiscalParams" action="fiscalParams"
+										actionListener="#{fiscalParams.onLoad}"
+										value="#{fiscalBundle.fiscal_parameters_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="payrollParams" action="defaultParams"
+										actionListener="#{payrollAppParams.onLoad}"
+										value="#{appBundle.payroll_default_params_module}" />
 								</aon:div>
 							</c:if>
 						</aon:div>

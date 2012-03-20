@@ -1873,7 +1873,7 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ " where " +DomainManager.getSQLWhereClause("CommercialTracking.domain")
-				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.project.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -1892,7 +1892,7 @@ public class CommercialStatEngineController {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
 				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain")
-				+ " AND  CommercialTracking.status = 0 AND  CommercialTracking.target.id = "
+				+ " AND  CommercialTracking.status = 0 AND  CommercialTracking.project.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
