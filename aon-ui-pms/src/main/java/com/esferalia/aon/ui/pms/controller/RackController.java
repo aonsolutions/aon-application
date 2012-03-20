@@ -132,8 +132,10 @@ public class RackController extends BasicController implements IPmsConstants {
 	private void modifyViewerStartDate(int units) {
 		Date viewerStartDate = getFilterParams().getViewerStartDate();
 		switch (getFilterParams().getStartDateIncrease()) {
-			case 2: viewerStartDate = DateUtils.addMonths(viewerStartDate, units);
+			case 3: viewerStartDate = DateUtils.addMonths(viewerStartDate, units);
 					break;
+			case 2: viewerStartDate = DateUtils.addDays(viewerStartDate, units*15);
+				break;
 			case 1: viewerStartDate = DateUtils.addWeeks(viewerStartDate, units);
 					break;
 			default: viewerStartDate = DateUtils.addDays(viewerStartDate, units);
@@ -174,7 +176,7 @@ public class RackController extends BasicController implements IPmsConstants {
 			this.viewerStartDate = viewerStartDate;
 		}
 		public Date getViewerEndDate() {
-			return DateUtils.addMonths(viewerStartDate, 1);
+			return DateUtils.addDays(viewerStartDate, 15);
 		}
 		public int getViewerDays() {
 			return (int)CommonUtil.getDaysBetweenDates(getFilterParams().getViewerStartDate(), getFilterParams().getViewerEndDate()) + 1;
