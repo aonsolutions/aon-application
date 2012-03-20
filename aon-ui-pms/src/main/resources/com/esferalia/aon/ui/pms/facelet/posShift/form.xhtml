@@ -40,91 +40,106 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area" id="posShiftPanel">
+			
+				<aon:panelGrid columns="2" styleClass="aon-width-auto"
+					columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder , 
+						aon-panelGrid-even aon-vertical-align-top aon-noborder">
 
-				<aon:panelGrid columns="2" styleClass="aon-width-400">
-				
-					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
-					<aon:div>
-						<aon:outputText rendered="#{!posShift.new}" 
-							value="#{posShift.to.pos.workPlace.description}" />
-						<aon:selectOneMenu rendered="#{posShift.new}"
-							value="#{posShift.hotel}" >
-							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" />
-							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" />
+					<aon:panelGrid columns="2" styleClass="aon-width-400">
+					
+						<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+						<aon:div>
+							<aon:outputText rendered="#{!posShift.new}" 
+								value="#{posShift.to.pos.workPlace.description}" />
+							<aon:selectOneMenu rendered="#{posShift.new}"
+								value="#{posShift.hotel}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+								<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" />
+								<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" />
+							</aon:selectOneMenu>
+						</aon:div>
+					
+						<aon:outputLabel for="PosShift_pos" value="#{pmsBundle.pms_pos}" />
+						<aon:div>
+							<aon:outputText rendered="#{!posShift.new}" 
+								value="#{posShift.to.pos.name}" />
+							<aon:selectOneMenu id="PosShift_pos"
+								rendered="#{posShift.new}" 
+								value="#{posShift.to.pos}" >
+								<f:selectItems value="#{posShift.posList}" />
+							</aon:selectOneMenu>
+						</aon:div>
+						
+						<aon:outputLabel value="#{pmsBundle.pms_shift}" />
+						<aon:selectOneMenu 
+							value="#{posShift.to.shift}" >
+							<f:selectItems value="#{pmsCollections.shifts}" />
 						</aon:selectOneMenu>
-					</aon:div>
+					
+						<aon:outputLabel 
+							value="#{pmsBundle.pms_opening}" />
+						<aon:selectInputDate  
+							value="#{posShift.to.startTime}" size="20"
+							inputSize="16" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+						</aon:selectInputDate>
+						
+						<aon:outputLabel 
+							value="#{pmsBundle.pms_closing}" />
+						<aon:selectInputDate  
+							value="#{posShift.to.endTime}" size="20"
+							inputSize="16" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+						</aon:selectInputDate>
+						
+						<aon:outputLabel for="PosShift_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:inputTextarea id="PosShift_remarks" cols="80" rows="3"
+							value="#{posShift.to.remarks}" />
+						
+						<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
+						<aon:div>
+							<aon:inputText value="#{posShift.to.initialAmount}" >
+								<f:validateDoubleRange minimum="0.0" />
+								<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
+								<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
+							</aon:inputText>
+							<aon:commandButton 
+								reRender="showCalculatorWindow"
+								styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
+								actionListener="#{posShift.onShowCalculatorWindow}" >
+								<f:setPropertyActionListener target="#{posShift.calculator.showCalculatorWindow}"
+									value="#{true}" />								
+							</aon:commandButton>
+						</aon:div>
+	
+						<aon:outputText rendered="#{posShift.totalCashAmount>0}"
+							value="#{pmsBundle.pms_cash_payMethod_name}" />
+						<aon:outputText rendered="#{posShift.totalCashAmount>0}"
+							value="#{posShift.totalCashAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						
+						<aon:outputLabel rendered="#{posShift.totalCashAmount > 0}"	
+							value="#{pmsBundle.pms_bank_income}" />
+						<aon:outputText rendered="#{posShift.totalCashAmount > 0}"
+							value="#{posShift.totalCashAmount - posShift.to.initialAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+						</aon:outputText>
+						
+					</aon:panelGrid>
 				
-					<aon:outputLabel for="PosShift_pos" value="#{pmsBundle.pms_pos}" />
-					<aon:div>
-						<aon:outputText rendered="#{!posShift.new}" 
-							value="#{posShift.to.pos.name}" />
-						<aon:selectOneMenu id="PosShift_pos"
-							rendered="#{posShift.new}" 
-							value="#{posShift.to.pos}" >
-							<f:selectItems value="#{posShift.posList}" />
-						</aon:selectOneMenu>
-					</aon:div>
-					
-					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
-					<aon:selectOneMenu 
-						value="#{posShift.to.shift}" >
-						<f:selectItems value="#{pmsCollections.shifts}" />
-					</aon:selectOneMenu>
-				
-					<aon:outputLabel 
-						value="#{pmsBundle.pms_opening}" />
-					<aon:selectInputDate  
-						value="#{posShift.to.startTime}" size="20"
-						inputSize="16" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
-					</aon:selectInputDate>
-					
-					<aon:outputLabel 
-						value="#{pmsBundle.pms_closing}" />
-					<aon:selectInputDate  
-						value="#{posShift.to.endTime}" size="20"
-						inputSize="16" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
-					</aon:selectInputDate>
-					
-					<aon:outputLabel for="PosShift_remarks"
-						value="#{bundle.aon_remark}" />
-					<aon:inputTextarea id="PosShift_remarks" cols="80" rows="3"
-						value="#{posShift.to.remarks}" />
-					
-					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
-					<aon:div>
-						<aon:inputText value="#{posShift.to.initialAmount}" >
-							<f:validateDoubleRange minimum="0.0" />
-							<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
-							<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
-						</aon:inputText>
-						<aon:commandButton 
-							reRender="showCalculatorWindow"
-							styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
-							actionListener="#{posShift.onShowCalculatorWindow}" >
-							<f:setPropertyActionListener target="#{posShift.calculator.showCalculatorWindow}"
-								value="#{true}" />								
-						</aon:commandButton>
-					</aon:div>
-
-					<aon:outputText rendered="#{posShift.totalCashAmount>0}"
-						value="#{pmsBundle.pms_cash_payMethod_name}" />
-					<aon:outputText rendered="#{posShift.totalCashAmount>0}"
-						value="#{posShift.totalCashAmount}" >
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
-					
-					<aon:outputLabel rendered="#{posShift.totalCashAmount > 0}"	
-						value="#{pmsBundle.pms_bank_income}" />
-					<aon:outputText rendered="#{posShift.totalCashAmount > 0}"
-						value="#{posShift.totalCashAmount - posShift.to.initialAmount}" >
-						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-					</aon:outputText>
+					<c:if test="#{!posShift.to.pos.invoiceable}">
+						<aon:panel>
+							<f:facet name="header">
+								<aon:outputLabel value="#{pmsBundle.pms_grouped_count}" />
+							</f:facet>
+							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice_count_grid.xhtml" />
+						</aon:panel>
+					</c:if>
 					
 				</aon:panelGrid>
 				
@@ -139,14 +154,9 @@
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{!posShift.to.pos.invoiceable}">
-							<aon:panelTab id="invoiceCount" label="#{pmsBundle.pms_invoice_count}">
-								<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice_count_grid.xhtml" />
-							</aon:panelTab>
-						</c:if>
-						<c:if test="#{!posShift.to.pos.invoiceable}">
 							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
 								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" >
-									<ui:param name="skipButtonsColumn" value="true" />
+									<ui:param name="skipRectifyButton" value="true" />
 								</ui:include>
 							</aon:panelTab>
 						</c:if>

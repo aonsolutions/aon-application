@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:dataTable id="posShiftInvoiceDataList" value="#{posShift.invoiceModel}" 
+		rendered="#{posShift.invoiceModel.rowCount > 0}"
 		rows="20" var="to">
 
 		<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/tab_gridContent.xhtml">
