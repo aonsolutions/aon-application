@@ -65,7 +65,7 @@
 										</aon:commandLink>
 									</aon:div>									
 								</c:if>								
-								<c:if test="#{aonRole.warehouseOperator}">
+								<c:if test="#{aonRole.warehouseOperator or aonRole.purchaseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseOrder" action="purchaseOrder_grid"
 											actionListener="#{purchaseOrder.onInit}"
@@ -80,7 +80,7 @@
 											value="#{purchaseBundle.purchase_module}" />
 									</aon:div>
 								</c:if>								
-								<c:if test="#{aonRole.purchaseOperator}">
+								<c:if test="#{aonRole.warehouseOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchasePrint" 
 											action="purchasePrint_search" actionListener="#{purchasePrint.onEditSearch}"
