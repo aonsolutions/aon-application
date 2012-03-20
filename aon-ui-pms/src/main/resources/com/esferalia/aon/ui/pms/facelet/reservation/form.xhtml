@@ -26,11 +26,15 @@
 							value="#{true}" />
 					</aon:commandButton>
 					<c:if test="#{aonRole.admin}">
-						<aon:commandButton id="reservation-Cancel"
+						<aon:confirmButton id="reservation-Cancel"
 							value="#{pmsBundle.pms_to_cancel_reservation}"
-							immediate="#{true}" rendered="#{!reservation.cancelled and reservation.cancellable}"
-							styleClass="aon-finding-toolbar-item aon-icon-removed"
-							actionListener="#{reservation.onCancelReservation}" />
+							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+							rendered="#{!reservation.cancelled and reservation.cancellable}"
+							immediate="true"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
+							confirmActionListener="#{reservation.onCancelReservation}"
+							styleClass="aon-finding-toolbar-item aon-icon-removed" />
 					</c:if>
 				</ui:define>
 			</ui:decorate>
