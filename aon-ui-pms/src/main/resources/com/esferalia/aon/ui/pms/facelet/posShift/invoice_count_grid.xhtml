@@ -36,6 +36,15 @@
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
 		</aon:column>
+			
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputLabel value="#{pmsBundle.pms_amount_difference}" />
+			</f:facet>
+			<aon:outputText value="#{to.invoiceAmount - to.posAmount}" >
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+		</aon:column>
 	
 	</aon:dataTable>
 	<aon:dataScroller2 for="posShiftInvoiceCountDataList" showNote="true" />
