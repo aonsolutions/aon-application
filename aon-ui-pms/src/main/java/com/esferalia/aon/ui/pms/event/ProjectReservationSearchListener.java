@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.event;
 
+import java.util.Date;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -21,6 +23,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	private ReservationStatus[] reservationStatuses;
 	private String guestName;
 	private String guestSurname;
+	private Date insideDate;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -61,6 +64,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	public void setGuestSurname(String guestSurname) {
 		this.guestSurname = guestSurname;
 	}
+	
+	public Date getInsideDate() {
+		return insideDate;
+	}
+
+	public void setInsideDate(Date insideDate) {
+		this.insideDate = insideDate;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -70,6 +81,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		setReservationStatuses(defaultReservationStatus);
 		setGuestName(null);
 		setGuestSurname(null);
+		setInsideDate(null);
 	}
 	
 	@Override
@@ -90,6 +102,11 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		if (StringUtils.isNotEmpty(getGuestSurname())) {
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.surname"), "%"+getGuestSurname()+"%"));
 		}
+		if (getInsideDate() != null) {
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), getInsideDate());			
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDate());			
+		}
+		
 	}
 
 }

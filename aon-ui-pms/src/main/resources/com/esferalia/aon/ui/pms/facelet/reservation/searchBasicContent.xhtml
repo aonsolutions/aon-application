@@ -75,6 +75,13 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
+	<aon:outputLabel for="ProjectReservation_insideDate" 
+		value="#{pmsBundle.pms_reservation_insideDate}" />
+	<aon:selectInputDate id="ProjectReservation_insideDate"
+		value="#{searchController.insideDate}"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
 	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 		<ui:param name="lookupTo" value="#{searchController.agency}" />
 		<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
