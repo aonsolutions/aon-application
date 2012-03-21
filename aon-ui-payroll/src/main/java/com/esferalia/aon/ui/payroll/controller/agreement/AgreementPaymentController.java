@@ -350,6 +350,7 @@ public class AgreementPaymentController extends LinesController implements IVari
 		super.onReset(event);
 		reset(true);
 		setAgreementExtra(null);
+		getHandler().setVariablesModel(null);
 	}
 	
 	public void reset(boolean panelVisible) {
