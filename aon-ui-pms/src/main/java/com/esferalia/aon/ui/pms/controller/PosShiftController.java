@@ -64,7 +64,7 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public DataModel getComparedCashModel() {
-		comparedCashModel = new ListDataModel(getPaymethodCashComparedList((PosShift)getTo()));
+		comparedCashModel = new ListDataModel(getComparedPaymethodCashList((PosShift)getTo()));
 		return comparedCashModel;
 	}
 
@@ -112,14 +112,14 @@ public class PosShiftController extends BasicController {
 		}
 	}
 	
-	private List<PaymethodCount> getPaymethodCashComparedList(PosShift posShift) {
+	private List<PaymethodCount> getComparedPaymethodCashList(PosShift posShift) {
 		List<Integer> invoiceIds = new LinkedList<Integer>();  
 		for(ITransferObject to: getInvoiceList(posShift)){
 			Invoice i = (Invoice) to;
 			invoiceIds.add(i.getId());
 		}
 		try {
-			Map<Integer, PaymethodCount> map = new HashMap<Integer, PosShiftController.PaymethodCount>();
+			Map<String, PaymethodCount> map = new HashMap<String, PosShiftController.PaymethodCount>();
 			if(!invoiceIds.isEmpty()){
 				IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 				Criteria financeCriteria = new Criteria();
@@ -127,13 +127,22 @@ public class PosShiftController extends BasicController {
 				financeCriteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID));
 				for(ITransferObject to: financeBean.getList(financeCriteria)){
 					Finance finance = (Finance) to;
-					if(map.containsKey(finance.getPayMethod().getId())){
+					if(finance.getPayMethod().getType()==PayMethodType.CASH_BASIS){
+						if(map.containsKey(PayMethodType.CASH_BASIS.name())){
+							map.get(PayMethodType.CASH_BASIS.name()).setInvoiceAmount(map.get(PayMethodType.CASH_BASIS.name()).getInvoiceAmount()+finance.getAmount());
+						} else {
+							PaymethodCount pc = new PaymethodCount();
+							pc.setPayMethod(finance.getPayMethod());
+							pc.setInvoiceAmount(finance.getAmount());
+							map.put(PayMethodType.CASH_BASIS.name(), pc);
+						}
+					} else if(map.containsKey(finance.getPayMethod().getId())){
 						map.get(finance.getPayMethod().getId()).setInvoiceAmount(map.get(finance.getPayMethod().getId()).getInvoiceAmount()+finance.getAmount());
 					} else {
 						PaymethodCount pc = new PaymethodCount();
 						pc.setPayMethod(finance.getPayMethod());
 						pc.setInvoiceAmount(finance.getAmount());
-						map.put(finance.getPayMethod().getId(), pc);
+						map.put(finance.getPayMethod().getName(), pc);
 					}
 				}
 			}
@@ -143,15 +152,27 @@ public class PosShiftController extends BasicController {
 			countCriteria.addOrder(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_ID));
 			for(ITransferObject to: countBean.getList(countCriteria)){
 				PosShiftCount psc = (PosShiftCount) to;
-				if(map.containsKey(psc.getPayMethod().getId())){
+				if(psc.getPayMethod().getType()==PayMethodType.CASH_BASIS){
+					if(map.containsKey(PayMethodType.CASH_BASIS.name())){
+						map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()+psc.getAmount());
+					} else {
+						PaymethodCount pc = new PaymethodCount();
+						pc.setPayMethod(psc.getPayMethod());
+						pc.setPosAmount(psc.getAmount());
+						map.put(PayMethodType.CASH_BASIS.name(), pc);
+					}
+				} else if(map.containsKey(psc.getPayMethod().getId())){
 					map.get(psc.getPayMethod().getId()).setPosAmount(map.get(psc.getPayMethod().getId()).getPosAmount()+psc.getAmount());
 				} else {
 					PaymethodCount pc = new PaymethodCount();
 					pc.setPayMethod(psc.getPayMethod());
 					pc.setPosAmount(psc.getAmount());
-					map.put(psc.getPayMethod().getId(), pc);
+					map.put(psc.getPayMethod().getName(), pc);
 				}
-				
+			}
+			if(map.containsKey(PayMethodType.CASH_BASIS.name())){
+				// se resta al metalico el importe inicial de la caja
+				map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()-getPosShift().getInitialAmount());
 			}
 			return new ArrayList<PaymethodCount>(map.values());
 		} catch (ManagerBeanException ex) {
