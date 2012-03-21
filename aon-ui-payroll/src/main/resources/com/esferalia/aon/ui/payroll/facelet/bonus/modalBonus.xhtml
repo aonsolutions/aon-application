@@ -17,7 +17,7 @@
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/formContent.xhtml">
 					<ui:param name="controller" value="#{controller}" />
 					<ui:param name="containerID" value="bonusMenuGrid" />
-					<ui:param name="skipResult" value="#{controller.new}" />
+					<aon:valueParam name="skipResult" default="#{controller.new}" />
 				</ui:include>
 			</aon:panelGrid>
 		</ui:define>

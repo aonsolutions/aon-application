@@ -18,7 +18,7 @@
 					<ui:param name="controller" value="#{controller}" />
 					<ui:param name="containerID" value="#{controller.beanName}MenuGrid" />
 					<ui:param name="skipCurrentMonth" value="#{true}" />
-					<ui:param name="skipResult" value="#{controller.new}" />
+					<aon:valueParam name="skipResult" default="#{controller.new}" />
 				</ui:include>
 			</aon:panelGrid>
 		</ui:define>
