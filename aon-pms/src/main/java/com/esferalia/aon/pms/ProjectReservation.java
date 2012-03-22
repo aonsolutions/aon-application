@@ -219,5 +219,11 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		}
 		return null;
 	}
+
+	@Transient
+	public void setAdvanceInvoiced(Boolean adding) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
