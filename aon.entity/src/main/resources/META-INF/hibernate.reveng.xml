@@ -1101,6 +1101,29 @@
 		<column name="type" type="com.code.aon.registry.enumeration.RegistryType"/>
 	</table>
 	
+	<table name="reservation_request">
+		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
+		<column name="request_counter" type="int"/>
+		<foreign-key constraint-name="FK_RESERVATION_REQUEST_AGENCY">
+			<many-to-one property="agency" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_RESERVATION_REQUEST_COMPANY">
+			<many-to-one property="company" />
+		</foreign-key>
+	</table>
+	
+	<table name="reservation_request_guest">
+		<column name="guest_index" type="int"/>
+	</table>
+	
+	<table name="reservation_request_room">
+		<column name="room_index" type="int"/>
+		<column name="units" type="int"/>
+		<column name="adults" type="int"/>
+		<column name="children" type="int"/>
+		<column name="babies" type="int"/>
+	</table>
+	
 	<table name="rmedia" class="com.esferalia.aon.entity.master.RegistryMedia">
 		<column name="media" property="mediaType" type="com.code.aon.registry.enumeration.MediaType"/>
 		<foreign-key constraint-name="FK_RMEDIA_RADDRESS">
