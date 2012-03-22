@@ -183,6 +183,9 @@ public class RackController extends BasicController implements IPmsConstants {
 		}
 
 		public Integer getStartDateIncrease() {
+			if(startDateIncrease == null){
+				startDateIncrease = 2;
+			}
 			return startDateIncrease;
 		}
 		public void setStartDateIncrease(Integer startDateIncrease) {
