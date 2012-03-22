@@ -39,7 +39,11 @@ public enum InvoiceSource implements IResourceable {
     DIRECT_INVOICE,
 
     /** OFFER. Facturacion de un presupuesto */
-    OFFER;
+    OFFER,
+
+    /** ADVANCE. Facturacion negativa de una factura de anticipo */
+    ADVANCE;
+
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";

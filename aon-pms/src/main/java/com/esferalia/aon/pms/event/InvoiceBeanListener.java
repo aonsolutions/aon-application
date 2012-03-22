@@ -18,8 +18,8 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     @Override
     public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
-        if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice);
+        if (invoice.isAdvance() && invoice.getProject() != null && invoice.getProject().getId() != null) {
+        	modifyReservationStatus(invoice,Boolean.TRUE);
         }
     }
 
@@ -27,7 +27,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
         if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice);
+        	modifyReservationStatus(invoice,null);
         }
     }
 
@@ -35,23 +35,28 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
         if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice);
+        	modifyReservationStatus(invoice,Boolean.FALSE);
         }
     }
 
-    private void modifyReservationStatus(Invoice invoice) throws ManagerBeanException {
+    private void modifyReservationStatus(Invoice invoice,Boolean adding) throws ManagerBeanException {
     	ProjectReservation reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).get(invoice.getProject().getId());
     	if (reservation != null) {
         	IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), invoice.getProject().getId());
     		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
+    		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), false);
     		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
     		Object result = invoiceBean.getUniqueResult(projection, criteria);
     		double totalInvoiced = (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
 
     		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
     		reservation.setStatus((totalInvoiced == 0) ? ReservationStatus.ACTIVE : ReservationStatus.INVOICED);
+    		if (adding != null && invoice.isAdvance()) {
+    			adding = invoice.isRectifier()?!adding:adding;
+    			reservation.setAdvanceInvoiced(adding);
+    		}
     		reservationBean.update(reservation);
     	}
     }

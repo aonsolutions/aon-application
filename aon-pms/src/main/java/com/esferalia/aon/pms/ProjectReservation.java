@@ -40,6 +40,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectReservation.class.getName());
 	private Set<ProjectReservationGuest> guests = new HashSet<ProjectReservationGuest>();
+	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 
 	public ProjectReservation() {
 		setStatus(ReservationStatus.ACTIVE);
@@ -52,6 +53,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setGuests(Set<ProjectReservationGuest> guests) {
 		this.guests = guests;
+	}
+
+	@OneToMany(mappedBy = "projectReservation", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<ProjectReservationRoom> getRooms() {
+		return this.rooms;
+	}
+	public void setRooms(Set<ProjectReservationRoom> rooms) {
+		this.rooms = rooms;
 	}
 
 	@Transient
@@ -209,5 +219,5 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		}
 		return null;
 	}
-
+	
 }

@@ -139,8 +139,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate" />
-		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate" />
+		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,advance" />
+		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,advance" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
@@ -286,8 +286,8 @@
 		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservation" sqlName="project_reservation">
-		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,tariff_id,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status"/>
-		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,startTime,endDate,endTime,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,tariff.id,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status"/>
+		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status,advance,advanceInvoiced"/>
+		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,startTime,endDate,endTime,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,status,advance,advanceInvoiced"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationGuest" sqlName="project_reservation_guest">
 		<alias names="address,city,country,document,documentCountry,documentType,domain,email,guestIndex,id,name,phone,projectReservation_hotel_id,projectReservation_id,projectReservation_startDate,projectReservation_endDate,province,surname,treatment,zip" />

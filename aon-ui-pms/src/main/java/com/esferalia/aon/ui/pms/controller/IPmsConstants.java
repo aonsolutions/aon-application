@@ -4,6 +4,10 @@ public interface IPmsConstants {
 
 	String COLLECTIONS_CONTROLLER_NAME = "pmsCollections";
 	String RESERVATION_CONTROLLER_NAME = "reservation";
+	String ADVANCE_INVOICE_CONTROLLER_NAME = "advanceInvoice";
+	String ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER = "advanceInvoiceSearch";
+	String ADVANCE_INVOICE_CONTROLLER_LIST = "advanceInvoice_list";
+	String ADVANCE_INVOICE_CONTROLLER_SEARCH = "advanceInvoice_search";
 	String RESERVATION_SEARCH_LISTENER_NAME = "reservationSearch";
 	String RESERVATION_ROOM_CONTROLLER_NAME = "reservationRoom";
 	String RESERVATION_SERVICE_CONTROLLER_NAME = "reservationService";
