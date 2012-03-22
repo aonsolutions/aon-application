@@ -26,15 +26,15 @@
 		value="#{searchController.workPlace}">
 		<f:selectItem itemLabel=" - " itemValue="null" />
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-		<a4j:support event="onchange" reRender="Proposal_workplaceDepartment" ignoreDupResponses="true" />
-		<a4j:support event="oninputchanged" reRender="Proposal_workplaceDepartment" ignoreDupResponses="true" />
+		<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" />
+		<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel value="#{companyBundle.company_department}" />
-	<aon:selectOneMenu id="Proposal_workplaceDepartment" 
-		value="#{searchController.workplaceDepartment}">
+	<aon:selectOneMenu id="Proposal_department" 
+		value="#{searchController.department}">
 		<f:selectItem itemLabel=" - " itemValue="null" />
-		<f:selectItems value="#{searchController.workplaceDepartments}" />
+		<f:selectItems value="#{searchController.departments}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel value="#{bundle.aon_status}" />
