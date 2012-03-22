@@ -206,18 +206,19 @@ public class PurchaseOrderController {
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_ID));
 		int groupIndex = -1;
 		Supplier supplier = null;
-		WorkplaceDepartment wpDep = null;
+		Department dep = null;
 		PurchaseGroup purchaseGroup = null;
 		purchaseGroupList = new LinkedList<PurchaseOrderController.PurchaseGroup>();
 		for(ITransferObject to: bean.getList(criteria)){
 			ProposalDetail pd = (ProposalDetail) to;
-			if(groupIndex==-1 || !wpDep.equals(pd.getProposal().getWorkplaceDepartment()) || !supplier.equals(pd.getSupplier()) ){
+			if(groupIndex==-1 || !dep.equals(pd.getProposal().getDepartment()) || !supplier.equals(pd.getSupplier()) ){
 				supplier = pd.getSupplier();
-				wpDep = pd.getProposal().getWorkplaceDepartment();
+				dep = pd.getProposal().getDepartment();
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
 				purchaseGroup.setSupplier(supplier);
-				purchaseGroup.setWorkplaceDepartment(wpDep);
+				purchaseGroup.setWorkplace(getParams().getWorkPlace());
+				purchaseGroup.setDepartment(dep);
 				purchaseGroup.setGroupIndex(groupIndex);
 				purchaseGroup.setDetailList(new LinkedList<PurchaseOrderController.GroupDetail>());
 				purchaseGroup.setTotalAmount(0.0);
@@ -246,7 +247,7 @@ public class PurchaseOrderController {
 				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkplaceDepartment().getWorkPlace());
+						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkplace());
 						addToPurchaseCriteria(purchase);
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
@@ -427,7 +428,8 @@ public class PurchaseOrderController {
 	
 	public class PurchaseGroup{
 		private Supplier supplier;
-		private WorkplaceDepartment workplaceDepartment;
+		private WorkPlace workplace;
+		private Department department;
 		private int groupIndex;
 		private List<GroupDetail> detailList;
 		private Double totalAmount;
@@ -438,11 +440,17 @@ public class PurchaseOrderController {
 		public void setSupplier(Supplier supplier) {
 			this.supplier = supplier;
 		}
-		public WorkplaceDepartment getWorkplaceDepartment() {
-			return workplaceDepartment;
+		public WorkPlace getWorkplace() {
+			return workplace;
 		}
-		public void setWorkplaceDepartment(WorkplaceDepartment workplaceDepartment) {
-			this.workplaceDepartment = workplaceDepartment;
+		public void setWorkplace(WorkPlace workplace) {
+			this.workplace = workplace;
+		}
+		public Department getDepartment() {
+			return department;
+		}
+		public void setDepartment(Department department) {
+			this.department = department;
 		}
 		public int getGroupIndex() {
 			return groupIndex;
