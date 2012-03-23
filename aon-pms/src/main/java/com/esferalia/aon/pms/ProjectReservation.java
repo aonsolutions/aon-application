@@ -22,6 +22,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -62,6 +63,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	}
 	public void setRooms(Set<ProjectReservationRoom> rooms) {
 		this.rooms = rooms;
+	}
+
+	@Transient
+	public int getNights() {
+		if (getStartDate() != null && getEndDate() != null) {
+			return (int)CommonUtil.getDaysBetweenDates(getStartDate(), getEndDate());
+		}
+		return 0;
 	}
 
 	@Transient
@@ -220,10 +229,4 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		return null;
 	}
 
-	@Transient
-	public void setAdvanceInvoiced(Boolean adding) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }
