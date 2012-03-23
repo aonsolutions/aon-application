@@ -139,8 +139,8 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationDate,advance" />
-		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationDate,advance" />
+		<alias names="id,series,number,referenceCode,project,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationDate" />
+		<hibernate names="id,series,number,referenceCode,project,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,remarks,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,advance,taxableBase,vatQuota,retentionQuota,total,creationUser,creationDate,modificationDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
@@ -310,8 +310,8 @@
 		<hibernate names="id,domain,pos.id,pos.workPlace.id,shift,user,startTime,endTime,initialAmount,remarks,invoice.id"/>
 	</bean> 
 	<bean class="com.esferalia.aon.pms.PosShiftCount" sqlName="pos_shift_count">
-		<alias names="amount,domain,id,posShift_id,payMethod_id,payMethod_name"/>
-		<hibernate names="amount,domain,id,posShift.id,payMethod.id,payMethod.name"/>
+		<alias names="id,domain,posShift_id,payMethod_id,payMethod_name,amount"/>
+		<hibernate names="id,domain,posShift.id,payMethod.id,payMethod.name,amount"/>
 	</bean> 
 	<bean class="com.esferalia.aon.pms.ReservationRequest" sqlName="reservation_request">
 		<alias names="id,domain,hotel_id,hotel_scope_id,code,startDate,nights,agency_id,company_id,bookingHolder,active"/>
