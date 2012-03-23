@@ -53,9 +53,6 @@ public class PosShiftController extends BasicController {
 	private DataModel comparedCashModel;
 	
 	public DataModel getInvoiceModel() {
-		if (invoiceModel == null) {
-			invoiceModel = new ListDataModel(getInvoiceList((PosShift)getTo()));
-		}
 		return invoiceModel;
 	}
 
@@ -64,7 +61,6 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public DataModel getComparedCashModel() {
-		comparedCashModel = new ListDataModel(getComparedPaymethodCashList((PosShift)getTo()));
 		return comparedCashModel;
 	}
 
@@ -101,7 +97,7 @@ public class PosShiftController extends BasicController {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_DATE),posShift.getStartTime(), posShift.getEndTime()!=null?posShift.getEndTime():new Date());
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_MODIFICATION_DATE),posShift.getStartTime(), posShift.getEndTime()!=null?posShift.getEndTime():new Date());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_USER), posShift.getUser().getLogin());
 			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
 			return invoiceBean.getList(criteria);
@@ -124,7 +120,7 @@ public class PosShiftController extends BasicController {
 				IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 				Criteria financeCriteria = new Criteria();
 				financeCriteria.addInExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoiceIds);
-				financeCriteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID));
+				financeCriteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
 				for(ITransferObject to: financeBean.getList(financeCriteria)){
 					Finance finance = (Finance) to;
 					if(finance.getPayMethod().getType()==PayMethodType.CASH_BASIS){
@@ -149,7 +145,7 @@ public class PosShiftController extends BasicController {
 			IManagerBean countBean = BeanManager.getManagerBean(PosShiftCount.class);
 			Criteria countCriteria = new Criteria();
 			countCriteria.addEqualExpression(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_POS_SHIFT_ID), posShift.getId());
-			countCriteria.addOrder(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_ID));
+			countCriteria.addOrder(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_NAME));
 			for(ITransferObject to: countBean.getList(countCriteria)){
 				PosShiftCount psc = (PosShiftCount) to;
 				if(psc.getPayMethod().getType()==PayMethodType.CASH_BASIS){
@@ -242,6 +238,10 @@ public class PosShiftController extends BasicController {
 		setHotel(null);
 		setPosShift(new PosShift());
 		getPosShift().setStartTime(new Date());
+	}
+	public void initInvoiceData( ){
+		setInvoiceModel(new ListDataModel(getInvoiceList((PosShift)getTo())));
+		setComparedCashModel(new ListDataModel(getComparedPaymethodCashList((PosShift)getTo())));
 	}
 	
 	public void onShowCalculatorWindow( ActionEvent event ){
