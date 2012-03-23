@@ -16,7 +16,7 @@ ALTER TABLE `invoice` ADD `advance` tinyint(1) default '0' COMMENT 'Indica si la
 ALTER TABLE `proposal` DROP FOREIGN KEY `FK_PROPOSAL_WORKPLACE_DEPARTMENT`;
 ALTER TABLE `proposal` DROP INDEX `IDX_PROPOSAL_WORKPLACE_DEPARTMENT`;
 ALTER TABLE `proposal` CHANGE `workplace_department` `department` int(4) default NULL COMMENT 'Identificador del Departamento';
-UPDATE `proposal` SET `department` = (SELECT `department` FROM `workplace_department` WHERE `id` = `proposal`.`workplace_deparment`);
+UPDATE `proposal` SET `department` = (SELECT `department` FROM `workplace_department` WHERE `id` = `proposal`.`deparment`);
 ALTER TABLE `proposal` ADD KEY `IDX_PROPOSAL_DEPARTMENT` (`department`);
 ALTER TABLE `proposal` ADD CONSTRAINT `FK_PROPOSAL_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`);
 
