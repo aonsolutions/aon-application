@@ -86,7 +86,7 @@
 					<aon:commandButton id="crsBlock" value="&#160;"
 						actionListener="#{reservation.onCrsBlock}"
 						title="#{pmsBundle.pms_to_block}"
-						immediate="true" rendered="#{!reservation.to.crs}"
+						immediate="true" rendered="#{!reservation.to.crs and reservation.active}"
 						styleClass="aon-icon-commandButton aon-icon-lock aon-margin-left">
 					</aon:commandButton>
 					<aon:commandButton id="crsUnblock" value="&#160;"
