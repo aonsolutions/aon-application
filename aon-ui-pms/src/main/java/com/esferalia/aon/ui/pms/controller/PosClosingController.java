@@ -166,6 +166,11 @@ public class PosClosingController {
 		}
 	}	
 	
+	public void onCancel( ActionEvent event ){
+		setPosShift(null);
+		setHotel(null);
+	}	
+	
 	public void onShowCalculatorWindow( ActionEvent event ){
 		getCalculator().setAmounts( new int[15] );
 		getCalculator().setInitialAmount(false);

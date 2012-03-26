@@ -15,9 +15,17 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posCashCount_module}" />
 				<ui:define name="toolbarContent">
+					<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						rendered="#{posClosing.posShift!=null}"
+						reRender="posClosingForm"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{posClosing.onCancel}"
+						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton id="save" value="#{pmsBundle.pms_close_pos}"
+						title="#{bundle.aon_key_accept_accelerator}"
 						disabled="#{posClosing.posShift==null or !(posShiftCount.model.rowCount>0)}"
-						rendered="#{posClosing.posShift.endTime==null}"
+						rendered="#{posClosing.posShift!=null and posClosing.posShift.endTime==null}"
 						reRender="aonContent"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{posClosing.onAccept}"
@@ -99,8 +107,8 @@
 						
 					</aon:panelGrid>
 					
-					<aon:panelGrid columns="2" styleClass="aon-width-600" >
-						<aon:outputLabel for="PosClosig_remarks"
+					<aon:panelGrid columns="2" styleClass="aon-width-600" rendered="#{posClosing.posShift!=null}">
+						<aon:outputLabel for="PosClosing_remarks"
 							value="#{bundle.aon_remark}" />
 						<aon:inputTextarea id="PosClosing_remarks" cols="80" rows="6"
 							disabled="#{posClosing.posShift.endTime!=null}"
