@@ -464,6 +464,18 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setStatus(ReservationStatus.ACTIVE);
 		accept(event);
 	}
+	
+	public void onCrsBlock(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setCrs(true);
+		accept(event);
+	}
+	
+	public void onCrsUnblock(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setCrs(false);
+		accept(event);
+	}
 
 	public boolean isCancellable() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();

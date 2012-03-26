@@ -78,9 +78,25 @@
 			styleClass="aon-bold" />
 		<aon:div>
 			<aon:outputLabel for="ProjectReservation_crsCode" value="#{pmsBundle.pms_crs}:"
-				styleClass="aon-margin-right aon-italic" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
-			<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}" 
-				styleClass="aon-bold" rendered="#{reservation.to.crs and !empty reservation.to.crsCode}" />
+				styleClass="aon-margin-right aon-italic" rendered="#{!empty reservation.to.crsCode}" />
+			<aon:div rendered="#{!empty reservation.to.crsCode}" style="display:inline;">
+				<aon:outputText value="#{reservation.to.crsCode}"  
+					styleClass="aon-bold" />
+				<c:if test="#{aonRole.admin}">
+					<aon:commandButton id="crsBlock" value="&#160;"
+						actionListener="#{reservation.onCrsBlock}"
+						title="#{pmsBundle.pms_to_block}"
+						immediate="true" rendered="#{!reservation.to.crs}"
+						styleClass="aon-icon-commandButton aon-icon-lock aon-margin-left">
+					</aon:commandButton>
+					<aon:commandButton id="crsUnblock" value="&#160;"
+						actionListener="#{reservation.onCrsUnblock}"
+						title="#{pmsBundle.pms_to_unblock}"
+						immediate="true" rendered="#{reservation.to.crs}"
+						styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
+					</aon:commandButton>
+				</c:if>
+			</aon:div>
 		</aon:div>
 	</aon:panelGrid>
 
