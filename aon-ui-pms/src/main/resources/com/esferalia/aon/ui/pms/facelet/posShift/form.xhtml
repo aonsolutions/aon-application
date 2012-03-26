@@ -28,6 +28,7 @@
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="posShiftInvoice-report"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						disabled="#{posShift.to.invoice.id==null}"
 						rendered="#{controller.to.pos.invoiceable}"
 						value="#{financeBundle.finance_invoice}"  
 						title="#{bundle.aon_report}"
