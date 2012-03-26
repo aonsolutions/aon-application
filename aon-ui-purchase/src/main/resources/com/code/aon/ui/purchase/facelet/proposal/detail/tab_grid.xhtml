@@ -48,13 +48,13 @@
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
 				<aon:selectOneMenu id="ProposalDetail_item" rendered="#{formEdit}" 
-					value="#{to.item}">
+					value="#{to.item}" required="true">
 					<f:selectItem itemLabel=" - " itemValue="null" />
 					<f:selectItems value="#{proposal.departmentsItems}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="ProposalDetail_item-New" rendered="#{formNew}" 
-						value="#{proposalDetail.to.item}">
+						value="#{proposalDetail.to.item}" required="true">
 						<f:selectItem itemLabel=" - " itemValue="null" />
 						<f:selectItems value="#{proposal.departmentsItems}" />
 					</aon:selectOneMenu>
@@ -69,12 +69,12 @@
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
-					value="#{to.quantity}" >
+					value="#{to.quantity}" required="true">
 					<f:validateDoubleRange minimum="0.0" />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
-						value="#{controller.to.quantity}" >
+						value="#{controller.to.quantity}" required="true">
 						<f:validateDoubleRange minimum="0.0" />
 					</aon:inputText>
 				</f:facet>

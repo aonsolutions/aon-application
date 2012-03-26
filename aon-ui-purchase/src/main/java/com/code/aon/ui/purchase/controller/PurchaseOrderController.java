@@ -181,10 +181,10 @@ public class PurchaseOrderController {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_ITEM_ID), ((ItemGroup)getModel().getRowData()).getItem().getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_STATUS), ProposalDetailStatus.PENDING);
 			if((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getParams().getWorkPlace().getId());
 			}
 			if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_DEPARTMENT_ID), getParams().getDepartment().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
 			}
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID));
 			list = bean.getList(criteria);
@@ -198,12 +198,12 @@ public class PurchaseOrderController {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_STATUS), ProposalDetailStatus.PENDING);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_SUPPLIER_ID));
 		if((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getParams().getWorkPlace().getId());
 		}
 		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_DEPARTMENT_ID), getParams().getDepartment().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
 		}
-		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORKPLACE_DEPARTMENT_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID));
 		int groupIndex = -1;
 		Supplier supplier = null;
 		Department dep = null;
@@ -217,7 +217,7 @@ public class PurchaseOrderController {
 				groupIndex++;
 				purchaseGroup = new PurchaseGroup();
 				purchaseGroup.setSupplier(supplier);
-				purchaseGroup.setWorkplace(getParams().getWorkPlace());
+				purchaseGroup.setWorkPlace(pd.getProposal().getWorkPlace());
 				purchaseGroup.setDepartment(dep);
 				purchaseGroup.setGroupIndex(groupIndex);
 				purchaseGroup.setDetailList(new LinkedList<PurchaseOrderController.GroupDetail>());
@@ -247,7 +247,7 @@ public class PurchaseOrderController {
 				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkplace());
+						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkPlace());
 						addToPurchaseCriteria(purchase);
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
@@ -428,7 +428,7 @@ public class PurchaseOrderController {
 	
 	public class PurchaseGroup{
 		private Supplier supplier;
-		private WorkPlace workplace;
+		private WorkPlace workPlace;
 		private Department department;
 		private int groupIndex;
 		private List<GroupDetail> detailList;
@@ -440,11 +440,11 @@ public class PurchaseOrderController {
 		public void setSupplier(Supplier supplier) {
 			this.supplier = supplier;
 		}
-		public WorkPlace getWorkplace() {
-			return workplace;
+		public WorkPlace getWorkPlace() {
+			return workPlace;
 		}
-		public void setWorkplace(WorkPlace workplace) {
-			this.workplace = workplace;
+		public void setWorkPlace(WorkPlace workPlace) {
+			this.workPlace = workPlace;
 		}
 		public Department getDepartment() {
 			return department;

@@ -17,8 +17,6 @@ import com.code.aon.product.ItemSupplier;
 import com.code.aon.purchase.Proposal;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -81,15 +79,14 @@ public class ProposalController extends BasicController {
 			}
 			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria itemSupCriteria = new Criteria();
-			Expression expr1 = ExpressionUtilities.getEqualExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_WORK_PLACE_ID), proposal.getWorkPlace().getId());
-			Expression expr2 = ExpressionUtilities.getNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_WORK_PLACE_ID));
-			itemSupCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			itemSupCriteria.addNotNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID));
 			itemSupCriteria.addInExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), itemIds);
+			itemSupCriteria.addNotNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID));
 			for (ITransferObject ito : itemSupplierBean.getList(itemSupCriteria)) {
 				ItemSupplier is = (ItemSupplier) ito;
-				SelectItem item = new SelectItem(is.getItem(), is.getItem().getProduct().getCode() + " - " + is.getItem().getProduct().getName());
-				list.add(item);
+				if( is.getWorkPlace() == null || is.getWorkPlace().getId() == null || is.getWorkPlace().getId().equals(proposal.getWorkPlace().getId()) ){
+					SelectItem item = new SelectItem(is.getItem(), is.getItem().getProduct().getCode() + " - " + is.getItem().getProduct().getName() + " ("+is.getSupplier().getRegistry().getFullName()+")");
+					list.add(item);
+				}
 			}
 		}
 		return list;
