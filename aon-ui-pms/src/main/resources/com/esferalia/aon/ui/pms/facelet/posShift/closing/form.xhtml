@@ -16,7 +16,7 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posCashCount_module}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{pmsBundle.pms_close_pos}"
-						disabled="#{posClosing.posShift==null or (posShiftCount.model!=null and posShiftCount.model.rowCount==0)}"
+						disabled="#{posClosing.posShift==null or !(posShiftCount.model.rowCount>0)}"
 						rendered="#{posClosing.posShift.endTime==null}"
 						reRender="aonContent"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -49,7 +49,7 @@
 								value="#{posClosing.posShift}" >
 								<f:selectItem itemLabel=" - " itemValue="#{null}" />
 								<f:selectItems value="#{posClosing.openedPosList}" />
-								<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true" 
+								<a4j:support event="onchange" reRender="posClosingForm" ignoreDupResponses="true" ajaxSingle="true" 
 									actionListener="#{posClosing.onPosChange}" />
 							</aon:selectOneMenu>
 							

@@ -94,7 +94,8 @@ public class PosInvoicing implements IReservationConstants {
 	
 			HibernateUtil.beginTransaction(sessionName);
 			
-			Invoice invoice = posShift.getInvoice();
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			Invoice invoice = (Invoice) invoiceBean.get(posShift.getInvoice().getId());
 			if (invoice != null) {
 				if (StringUtils.isNotEmpty(posShift.getRemarks())) {
 					completeInvoice(invoice, posShift.getRemarks());
