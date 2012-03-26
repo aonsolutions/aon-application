@@ -80,7 +80,7 @@
 			<aon:outputLabel for="ProjectReservation_crsCode" value="#{pmsBundle.pms_crs}:"
 				styleClass="aon-margin-right aon-italic" rendered="#{!empty reservation.to.crsCode}" />
 			<aon:div rendered="#{!empty reservation.to.crsCode}" style="display:inline;">
-				<aon:outputText value="#{reservation.to.crsCode}"  
+				<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}"  
 					styleClass="aon-bold" />
 				<c:if test="#{aonRole.admin}">
 					<aon:commandButton id="crsBlock" value="&#160;"
