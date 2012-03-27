@@ -54,7 +54,7 @@ public class PosInvoicing implements IReservationConstants {
 
 				HibernateUtil.beginTransaction(sessionName);
 
-				Invoice invoice = createInvoice(hotel, posShift.getStartTime(), comments);
+				Invoice invoice = createInvoice(hotel, posShift.getStartTime(), posShift.getPos().getName(), comments);
 				createInvoiceDetail(invoice, hotel, posShift.getPos().getItem());
 				savePosInvoice(invoice, posShift);
 
@@ -123,7 +123,7 @@ public class PosInvoicing implements IReservationConstants {
 		}
 	}
 
-	private Invoice createInvoice(Hotel hotel, Date issueDate, String comments) throws ManagerBeanException {
+	private Invoice createInvoice(Hotel hotel, Date issueDate, String posName, String comments) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(null);
 		invoice.setSeries(obtainHotelInvoiceSeries(hotel));
@@ -132,7 +132,9 @@ public class PosInvoicing implements IReservationConstants {
 		invoice.setRegistryDocument(hotel.getCustomer().getRegistry().getDocument());
 		invoice.setRegistryDocumentType(hotel.getCustomer().getRegistry().getDocumentType());
 		invoice.setRegistryDocumentCountry(hotel.getCustomer().getRegistry().getDocumentCountry());
-		invoice.setRegistryName(hotel.getCustomer().getRegistry().getName());
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	String date = StringUtils.rightPad(formatter.format(issueDate), 11);
+		invoice.setRegistryName(hotel.getWorkPlace().getDescription().concat(" - ").concat(posName).concat(" - ").concat(date).concat(" - ").concat(comments));
 		invoice.setRegistryAddress(null);
 		invoice.setIssueDate(issueDate);
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);

@@ -116,7 +116,8 @@ public class PosOpeningController {
 				posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Error al grabar la apertura de caja";
+			String msg = "Error al grabar la apertura de caja. ";
+			AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
 			throw new AbortProcessingException(msg, e);
 		}
 	}

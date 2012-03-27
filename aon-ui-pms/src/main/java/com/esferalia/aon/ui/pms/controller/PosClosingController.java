@@ -162,6 +162,7 @@ public class PosClosingController {
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
+			AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
 			throw new AbortProcessingException(msg, e);
 		}
 	}	
