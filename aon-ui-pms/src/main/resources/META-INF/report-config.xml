@@ -102,6 +102,7 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="hotel" value="#{bookingList.getHotel}" />
+			<param id="agency" value="#{bookingList.getAgency}" />
 			<param id="fromDate" value="#{bookingList.getFromDate}" />
 			<param id="toDate" value="#{bookingList.getToDate}" />
 		</params>

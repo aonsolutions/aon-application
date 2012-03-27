@@ -12,6 +12,7 @@
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="hotel" class="com.esferalia.aon.pms.Hotel" isForPrompting="false"/>
+	<parameter name="agency" class="com.code.aon.customer.Customer" isForPrompting="false"/>
 	<parameter name="fromDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="toDate" class="java.util.Date" isForPrompting="false"/>
 	<field name="hotel" class="java.lang.String"/>
@@ -32,7 +33,7 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="59" splitType="Stretch">
+		<band height="69" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-1" x="0" y="1" width="390" height="17"/>
@@ -126,11 +127,41 @@
 				<textFieldExpression><![CDATA[$P{fromDate}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="47" width="535" height="1"/>
+				<reportElement x="0" y="61" width="535" height="1"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-1" x="0" y="38" width="50" height="17">
+					<printWhenExpression><![CDATA[$P{agency}.getId()!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report_agency}+": "]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-1" x="50" y="38" width="340" height="17">
+					<printWhenExpression><![CDATA[$P{agency}.getId()!=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{agency}.getRegistry().getFullName()]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
