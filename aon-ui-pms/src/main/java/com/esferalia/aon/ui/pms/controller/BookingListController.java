@@ -19,7 +19,9 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -31,18 +33,24 @@ public class BookingListController implements ICollectionProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookingListController.class.getName());
 	
 	private Hotel hotel;
+	private Customer agency;
 	private Date fromDate;
 	private Date toDate;
 	
 	private List<Booking> bookingList;
 	private DataModel model;
 	
-	
 	public Hotel getHotel() {
 		return hotel;
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+	public Customer getAgency() {
+		return agency;
+	}
+	public void setAgency(Customer agency) {
+		this.agency = agency;
 	}
 	public Date getFromDate() {
 		return fromDate;
@@ -69,60 +77,102 @@ public class BookingListController implements ICollectionProvider {
 		this.model = model;
 	}
 	
+	private List<ITransferObject> getSelectedHotels() throws ManagerBeanException{
+		if(getHotel()!=null && getHotel().getId()!=null){
+			List<ITransferObject> list = new LinkedList<ITransferObject>();
+			list.add(getHotel());
+			return list;
+		} else {
+			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+			Criteria hotelCriteria = new Criteria();
+			hotelCriteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+			UserUtils.getInstance().addScopeFilterToCriteria(hotelCriteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+			hotelCriteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
+			return hotelBean.getList(hotelCriteria);
+		}
+	}
 	
 	private void buildBookingList() throws ManagerBeanException {
 		
 		setBookingList(new LinkedList<BookingListController.Booking>());
-
-		Calendar fromCal = Calendar.getInstance();
-		Calendar toCal = Calendar.getInstance();
-		fromCal.setTime(getFromDate());
-		toCal.setTime(getToDate());
 		
-		Booking booking = null;
-		while(fromCal.before(toCal)){
+//		PmsCollectionsController collections = (PmsCollectionsController) FormUtil.getController(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+//
+//		for(Hotel hotel: collections.getCurrentUserHotels()){
+//			
+//		}
+		
+		for(ITransferObject hto: getSelectedHotels()){
+			Hotel hotel = (Hotel) hto;
 			
-			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-			Criteria criteria = new Criteria();
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE), fromCal.getTime());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE), fromCal.getTime());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());
-			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+			Calendar fromCal = Calendar.getInstance();
+			Calendar toCal = Calendar.getInstance();
+			fromCal.setTime(getFromDate());
+			toCal.setTime(getToDate());
 			
-			booking = new Booking();
-			booking.setDate(fromCal.getTime());
-			List<ITransferObject> roomList = bean.getList(criteria);
-			
-			for(ITransferObject to: roomList){
-				ProjectReservationRoom room = (ProjectReservationRoom) to;
-				if(room.getProjectReservation().getStartDate().equals(fromCal.getTime())){
-					booking.setRoomCheckin(booking.getRoomCheckin()+1);
-					booking.setRoomBusy(booking.getRoomBusy()+1);
-					booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
-					booking.setGuestCheckin(booking.getGuestCheckin()+room.getAdults()+room.getChildren());
-				} else if(room.getProjectReservation().getEndDate().equals(fromCal.getTime())){
-					booking.setRoomCheckout(booking.getRoomCheckout()+1);
-					booking.setGuestCheckout(booking.getGuestCheckout()+room.getAdults()+room.getChildren());
-				} else {
-					booking.setRoomBusy(booking.getRoomBusy()+1);
-					booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+			Booking booking = null;
+			while(fromCal.before(toCal) || fromCal.equals(toCal)){
+				
+				IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+				Criteria criteria = new Criteria();
+//				if(getHotel()!=null && getHotel().getId()!=null){
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), hotel.getId());
+//				}
+				if(getAgency()!=null && getAgency().getId()!=null){
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());
+				}
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE), fromCal.getTime());
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE), fromCal.getTime());
+				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID));
+				
+				booking = new Booking();
+				booking.setDate(fromCal.getTime());
+				List<ITransferObject> roomList = bean.getList(criteria);
+				booking.setHotel(hotel.getWorkPlace().getDescription());
+				
+				for(ITransferObject to: roomList){
+					ProjectReservationRoom room = (ProjectReservationRoom) to;
+					if(room.getProjectReservation().getStartDate().equals(fromCal.getTime())){
+						booking.setRoomCheckin(booking.getRoomCheckin()+1);
+						booking.setRoomBusy(booking.getRoomBusy()+1);
+						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+						booking.setGuestCheckin(booking.getGuestCheckin()+room.getAdults()+room.getChildren());
+					} else if(room.getProjectReservation().getEndDate().equals(fromCal.getTime())){
+						booking.setRoomCheckout(booking.getRoomCheckout()+1);
+						booking.setGuestCheckout(booking.getGuestCheckout()+room.getAdults()+room.getChildren());
+					} else {
+						booking.setRoomBusy(booking.getRoomBusy()+1);
+						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+					}
+					
 				}
 				
+//				if(getHotel()!=null && getHotel().getId()!=null){
+					bean = BeanManager.getManagerBean(Room.class);
+					criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
+					booking.setRoomTotal(bean.getCount(criteria));
+//				}
+				
+				getBookingList().add(booking);
+				fromCal.add(Calendar.DAY_OF_MONTH, 1);
 			}
-
-			bean = BeanManager.getManagerBean(Room.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());
-			booking.setRoomTotal(bean.getCount(criteria));
-			
-			getBookingList().add(booking);
-			fromCal.add(Calendar.DAY_OF_MONTH, 1);
 		}
+		
 	}
 
 	public void onInit(ActionEvent event) {
-		setFromDate(new Date());
-		setToDate(new Date());
+		try {
+			setFromDate(new Date());
+			setToDate(new Date());
+			IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+			setAgency((Customer) bean.createNewTo());
+		} catch (ManagerBeanException e) {
+			String msg = "Error de inicio";
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -152,6 +202,7 @@ public class BookingListController implements ICollectionProvider {
 	/**************************************************/
 	
 	public class Booking {
+		private String hotel;
 		private Date date;
 		private Integer roomCheckin;
 		private Integer roomCheckout;
@@ -173,6 +224,12 @@ public class BookingListController implements ICollectionProvider {
 			guestCheckin=0;
 			guestCheckout=0;
 			guestTotal=0;
+		}
+		public String getHotel() {
+			return hotel;
+		}
+		public void setHotel(String hotel) {
+			this.hotel = hotel;
 		}
 		public Date getDate() {
 			return date;

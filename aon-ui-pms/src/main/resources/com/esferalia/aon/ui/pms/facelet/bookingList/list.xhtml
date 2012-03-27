@@ -48,6 +48,9 @@
 								<rich:column>
 									<aon:outputText value="&#160;" />
 								</rich:column>
+								<rich:column>
+									<aon:outputText value="&#160;" />
+								</rich:column>
 								
 								<rich:column colspan="5" >
 									<aon:outputText value="#{pmsBundle.pms_rooms}" />
@@ -58,6 +61,13 @@
 								</rich:column>
 							</rich:columnGroup>
 						</f:facet>
+						
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-300">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_hotel}" />
+							</f:facet>
+							<aon:outputText value="#{to.hotel}" />
+						</aon:column>	
 						
 						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
