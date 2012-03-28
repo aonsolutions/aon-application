@@ -129,19 +129,22 @@ public class BookingListController implements ICollectionProvider {
 			
 			for(ITransferObject to: roomList){
 				ProjectReservationRoom room = (ProjectReservationRoom) to;
-				if(room.getProjectReservation().getStartDate().equals(fromCal.getTime())){
-					booking.setRoomCheckin(booking.getRoomCheckin()+1);
-					booking.setRoomBusy(booking.getRoomBusy()+1);
-					booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
-					booking.setGuestCheckin(booking.getGuestCheckin()+room.getAdults()+room.getChildren());
-				} else if(room.getProjectReservation().getEndDate().equals(fromCal.getTime())){
-					booking.setRoomCheckout(booking.getRoomCheckout()+1);
-					booking.setGuestCheckout(booking.getGuestCheckout()+room.getAdults()+room.getChildren());
-				} else {
-					booking.setRoomBusy(booking.getRoomBusy()+1);
-					booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+				// para el listado de booking no se tienen en cuenta los desvios a hoteles externos  
+				// ( desvio externo = reserva facturada sin habitacion asignada )
+				if( !(room.getProjectReservation().getStatus()==ReservationStatus.INVOICED && room.getRoomNumber()==null)){
+					if(room.getProjectReservation().getStartDate().equals(fromCal.getTime())){
+						booking.setRoomCheckin(booking.getRoomCheckin()+1);
+						booking.setRoomBusy(booking.getRoomBusy()+1);
+						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+						booking.setGuestCheckin(booking.getGuestCheckin()+room.getAdults()+room.getChildren());
+					} else if(room.getProjectReservation().getEndDate().equals(fromCal.getTime())){
+						booking.setRoomCheckout(booking.getRoomCheckout()+1);
+						booking.setGuestCheckout(booking.getGuestCheckout()+room.getAdults()+room.getChildren());
+					} else {
+						booking.setRoomBusy(booking.getRoomBusy()+1);
+						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
+					}
 				}
-				
 			}
 			
 			bean = BeanManager.getManagerBean(Room.class);
