@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -139,8 +140,59 @@ public class BoardListController implements ICollectionProvider {
 	}
 	
 	private void buildBoardList() {
-		List<RoomBoard> reportList = null;
-		List<RoomBoard> compositeList = null;
+		List<RoomBoard> roomBoardList = new LinkedList<RoomBoard>();
+		List<RoomBoard> compositeList = new LinkedList<RoomBoard>();
+		RoomBoard roomBoard = null;
+		for(ITransferObject to: getServiceDetailList()){
+			ProjectReservationServiceDetail serviceDetail = (ProjectReservationServiceDetail) to;
+			for(ITransferObject to2: getBoardItems()){
+				Item item = (Item) to2;
+				if(serviceDetail.getItem().getProduct().isComposition()){
+					try {	
+						for( ItemComposition ic: serviceDetail.getItem().getItemCompositionList() ){
+							if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+								if( (isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), DateUtils.addDays(getParams().getDate(), -1)))
+										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate())) ){
+									roomBoard = new RoomBoard();
+									roomBoard.setItem(ic.getCompositionItem());
+									roomBoard.setQuantity(ic.getQuantity()*serviceDetail.getQuantity());
+									roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
+									compositeList.add(roomBoard);
+								}
+							}
+						}
+					} catch (ManagerBeanException e) {
+						String msg =  "******** Error obtaining item composition list. ";
+						LOGGER.error(msg, e);
+						AonUtil.addErrorMessage(msg + e.getMessage());
+					}
+				} else {
+					if(serviceDetail.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
+						if( DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate()) ){
+							roomBoard = new RoomBoard();
+							roomBoard.setItem(serviceDetail.getItem());
+							roomBoard.setQuantity(serviceDetail.getQuantity());
+							roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
+							roomBoardList.add(roomBoard);
+						}
+					}
+				}
+			}
+		}
+		
+		for(RoomBoard board: compositeList){
+			for(ITransferObject to2: getBoardItems()){
+				Item item = (Item) to2;
+				if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
+					addCompositeItem(roomBoardList, board);
+				}
+			}
+		}
+		
+		setBoardList(roomBoardList);
+	}
+	
+	private List<ITransferObject> getServiceDetailList() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 			Criteria criteria = new Criteria();
@@ -158,84 +210,52 @@ public class BoardListController implements ICollectionProvider {
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ITEM_PRODUCT_CODE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
-			
-			reportList = new LinkedList<RoomBoard>();
-			compositeList = new LinkedList<RoomBoard>();
-			
-			RoomBoard roomBoard = null;
-			for(ITransferObject to: bean.getList(criteria)){
-				ProjectReservationServiceDetail serviceDetail = (ProjectReservationServiceDetail) to;
-				for(ITransferObject to2: getBoardItems()){
-					Item item = (Item) to2;
-					if(serviceDetail.getItem().getProduct().isComposition()){
-						for( ItemComposition ic: serviceDetail.getItem().getItemCompositionList() ){
-							if(ic.getCompositionItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-								if( (isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), DateUtils.addDays(getParams().getDate(), -1)))
-										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate())) ){
-									roomBoard = new RoomBoard();
-									roomBoard.setItem(ic.getCompositionItem());
-									roomBoard.setQuantity(ic.getQuantity()*serviceDetail.getQuantity());
-									roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
-									compositeList.add(roomBoard);
-								}
-							}
-						}
-					} else {
-						if(serviceDetail.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-							if( DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate()) ){
-								roomBoard = new RoomBoard();
-								roomBoard.setItem(serviceDetail.getItem());
-								roomBoard.setQuantity(serviceDetail.getQuantity());
-								roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
-								reportList.add(roomBoard);
-							}
-						}
-					}
-				}
-			}
-			
-			for(RoomBoard board: compositeList){
-				for(ITransferObject to2: getBoardItems()){
-					Item item = (Item) to2;
-					if(board.getItem().getProduct().getCode().equals(item.getProduct().getCode())) {
-						addCompositeItem(reportList, board);
-					}
-				}
-			}
+			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			String msg =  "******** Error searching service detail. ";
 			LOGGER.error(msg, e);
 			AonUtil.addErrorMessage(msg + e.getMessage());
+			throw new AbortProcessingException(msg, e);
 		}
-		setBoardList(reportList);
 	}
-	
-	private void addCompositeItem(List<RoomBoard> reportList, RoomBoard board) throws ManagerBeanException {
-		if(reportList.isEmpty()){
-			reportList.add(board);
+
+	private void addCompositeItem(List<RoomBoard> roomBoardList, RoomBoard board) {
+		if(roomBoardList.isEmpty()){
+			roomBoardList.add(board);
 		} else {
 			int idx = 0;
-			for(RoomBoard rb: reportList){
-				if( rb.isSameBoard(board) ){
-					if( rb.isSameRoom(board) ){
-						rb.setQuantity(rb.getQuantity()+board.getQuantity());
-						break;
-					} else {
-						if( reportList.size()-1==idx
-								|| (board.getProjectReservationService().getRoomNumber().compareToIgnoreCase(rb.getProjectReservationService().getRoomNumber()) > 0 
-								&& !reportList.get(idx+1).isSameBoard(board)) ){
-							reportList.add(idx+1, board);
+			for(RoomBoard rb: roomBoardList){
+				try {
+					if( rb.isSameBoard(board) ){
+						if( rb.isSameRoom(board) ){
+							rb.setQuantity( rb.getQuantity() + board.getQuantity() );
 							break;
-						} 
+						} else {
+							if (board.getProjectReservationService().getRoomNumber().compareToIgnoreCase(rb.getProjectReservationService().getRoomNumber()) < 0 ){
+								roomBoardList.add(idx, board);
+								break;
+							} else if( roomBoardList.size()-1 == idx ){
+								roomBoardList.add(board);
+								break;
+							} else if (board.getProjectReservationService().getRoomNumber().compareToIgnoreCase(rb.getProjectReservationService().getRoomNumber()) > 0 
+											&& !roomBoardList.get(idx+1).isSameBoard(board) ){
+								roomBoardList.add(idx+1, board);
+								break;
+							}
+						}
+					} else {
+						if( board.getItem().getProduct().getCode().compareToIgnoreCase(rb.getItem().getProduct().getCode()) < 0 ) {
+							roomBoardList.add(idx, board);
+							break;
+						} else if( roomBoardList.size()-1 == idx ) {
+							roomBoardList.add(board);
+							break;
+						}
 					}
-				} else {
-					if( board.getItem().getProduct().getCode().compareToIgnoreCase(rb.getItem().getProduct().getCode()) < 0 ) {
-						reportList.add(idx, board);
-						break;
-					} else if( reportList.size()-1 == idx ) {
-						reportList.add(board);
-						break;
-					}
+				} catch (ManagerBeanException e) {
+					String msg =  "******** Error adding board to list. ";
+					LOGGER.error(msg, e);
+					AonUtil.addErrorMessage(msg + e.getMessage());
 				}
 				idx++;
 			}
