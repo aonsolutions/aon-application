@@ -5,7 +5,6 @@ import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CON
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.User;
 import com.code.aon.document.dao.AlfrescoCategoryDAO;
 import com.code.aon.document.dao.AlfrescoDAO;
 import com.code.aon.ui.form.BasicController;

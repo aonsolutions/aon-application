@@ -85,14 +85,11 @@ public class ManagerController implements IEnterpriseController {
 		}
 		try {
 			this.userManager = new AlfrescoUserManager(getAlfrescoUser(), getAlfrescoPassword());
+			this.administrator = this.userManager.isAlfrescoAdministrator(getAlfrescoUser());			
 			loadUserScopes();
 		} catch (DAOException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-		this.administrator = this.userManager.isAlfrescoAdministrator(getAlfrescoUser());
-		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
-		ec.setSkipResetButton(!this.administrator);
-		ec.setSkipRemoveButton(!this.administrator);
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());
 		if ( AonUtil.isSkipLdap() ) {
 			LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
@@ -100,6 +97,10 @@ public class ManagerController implements IEnterpriseController {
 			DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 			dm.setShow(false);
 		}
+	}
+	
+	public boolean isAlfrescoReady() {
+		return this.userManager != null;
 	}
 
 	public boolean isAlfrescoManagementEnabled() {

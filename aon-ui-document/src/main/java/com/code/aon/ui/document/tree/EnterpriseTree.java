@@ -2,6 +2,7 @@ package com.code.aon.ui.document.tree;
 
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
+import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.document.event.EnterpriseDocumentSearchListener;
 import com.code.aon.ui.project.controller.ProjectController;
 import com.code.aon.ui.util.AonUtil;
@@ -57,6 +59,13 @@ public class EnterpriseTree implements ICompanyConstants {
 	private EnterpriseDocument document;
 
 	private String splitterPosition = "250";
+	
+	public EnterpriseTree() {
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		ec.setSkipResetButton(! mc.isAdministrator());
+		ec.setSkipRemoveButton(! mc.isAdministrator());
+	}
 
 	public EnterpriseDocument getDocument() {
 		return document;

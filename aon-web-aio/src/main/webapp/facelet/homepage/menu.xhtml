@@ -77,12 +77,12 @@
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
-
-		<aon:commandLink id="document"
-			value="#{appBundle.menu_document}"
-			action="menu_document" immediate="true"
-			styleClass="aon-top-menu-item" />
-
+		<c:if test="#{manager.alfrescoReady}">
+			<aon:commandLink id="document"
+				value="#{appBundle.menu_document}"
+				action="menu_document" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
 		<aon:commandLink id="utilities"
 			value="#{appBundle.menu_utilities}"
 			action="menu_utilities" immediate="true"
