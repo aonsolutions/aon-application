@@ -50,7 +50,7 @@
 							<aon:div styleClass="aon-portlet-body">
 								<aon:commandLink action="corporate_identity_fax"
 									actionListener="#{corporateIdentity.onInit}">
-									<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-fax.png']}" />
+									<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-fax.png']}" />
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>
@@ -62,7 +62,7 @@
 							<aon:div styleClass="aon-portlet-body">
 								<aon:commandLink action="corporate_identity_letter"
 									actionListener="#{corporateIdentity.onInit}">
-									<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-carta.png']}" />
+									<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-letter.png']}" />
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>
@@ -74,7 +74,7 @@
 							<aon:div styleClass="aon-portlet-body">
 								<aon:commandLink action="corporate_identity_label"
 									actionListener="#{corporateIdentity.onInit}">
-									<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-etiquetas.png']}" />
+									<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-label.png']}" />
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>
@@ -86,7 +86,7 @@
 							<aon:div styleClass="aon-portlet-body">
 								<aon:commandLink action="corporate_identity_recibi"
 									actionListener="#{corporateIdentity.onInit}">
-									<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-recibi.png']}" />
+									<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-receipt.png']}" />
 								</aon:commandLink>
 							</aon:div>
 						</aon:div>
@@ -103,6 +103,7 @@
 					
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+						<ui:param name="rows" value="10" />
 						<ui:param name="sortColumns" value="#{true}" />
 						<ui:param name="skipLineEdition" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
 						<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
