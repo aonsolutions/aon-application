@@ -34,17 +34,16 @@
 	<!--  *********  Reservation Input Output  ********* -->
 	<report id="reservationIO" description="Reservation input-output Report">
 		<template path="/com/esferalia/aon/ui/pms/report/reservationInputOuput.jasper" />
-		<bean key="com.esferalia.aon.pms.ProjectReservationRoom" />
-		<criteria provider="#{reservationIO}"/>
+		<collection provider="#{reservationIO}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="hotel" value="#{reservationIOSearch.getHotel}" />
-			<param id="checkin" value="#{reservationIOSearch.isCheckin}" />
-			<param id="fromDate" value="#{reservationIOSearch.getFromDate}" />
-			<param id="toDate" value="#{reservationIOSearch.getToDate}" />
+			<param id="hotel" value="#{reservationIO.getHotel}" />
+			<param id="checkin" value="#{reservationIO.isCheckin}" />
+			<param id="fromDate" value="#{reservationIO.getFromDate}" />
+			<param id="toDate" value="#{reservationIO.getToDate}" />
 		</params>
 	</report>
 

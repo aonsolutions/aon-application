@@ -2,8 +2,10 @@ package com.esferalia.aon.ui.pms.controller;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -14,15 +16,13 @@ import org.hibernate.Session;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.config.User;
-import com.code.aon.config.UserScope;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.product.Item;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationInOutController implements ICollectionProvider {
@@ -31,131 +31,124 @@ public class ReservationInOutController implements ICollectionProvider {
 	private boolean checkin;
 	private Date fromDate;
 	private Date toDate;
-	
 	private Integer shortOption;
 	
 	private DataModel model;
-	private List<ITransferObject> list;
+	private List<ListRow> list;
 	
-	public List<ITransferObject> getList() {
+	public List<ListRow> getList() {
 		return list;
 	}
-
-	public void setList(List<ITransferObject> list) {
+	public void setList(List<ListRow> list) {
 		this.list = list;
 	}
-
 	public DataModel getModel() {
 		return model;
 	}
-
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
-	
 	public Integer getShortOption() {
 		return shortOption;
 	}
-
 	public void setShortOption(Integer shortOption) {
 		this.shortOption = shortOption;
 	}
-
 	public Hotel getHotel() {
 		return hotel;
 	}
-
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
 	}
-		
 	public boolean isCheckin() {
 		return checkin;
 	}
-
 	public void setCheckin(boolean checkin) {
 		this.checkin = checkin;
 	}
-
 	public Date getFromDate() {
 		return fromDate;
 	}
-
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
-
 	public Date getToDate() {
 		return toDate;
 	}
-
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+	public void onEditSearch(ActionEvent event) {
+		onInit(event);
+	}
+
+	public void onSelect(ActionEvent event) {
+		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+		controller.setBackAction(IPmsConstants.RESERVATION_IO_LIST_NAME);
+		ListRow row = (ListRow) getModel().getRowData();
+		try {
+			controller.select(event, row.getProjectReservation());
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido seleccionar la reserva.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
 	
-	public void onInit(ActionEvent event) throws ManagerBeanException{
-		setShortOption(0);
+	public void onInit(ActionEvent event) {
+		setShortOption(SortType.RESERVATION.ordinal());
+		setCheckin(true);
 		setFromDate(new Date());
 		setToDate(new Date());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		String select = "SELECT pReservationRoom" 
-				+ " FROM ProjectReservationRoomDetail pReservationRoomDetail" 
-				+ " LEFT JOIN pReservationRoomDetail.projectReservationRoom as pReservationRoom"
-				+ " WHERE pReservationRoomDetail.projectReservationRoom.projectReservation.status <> " + ReservationStatus.CANCELLED.ordinal()
-				+ ( getHotel() != null ? " AND pReservationRoomDetail.projectReservationRoom.projectReservation.hotel = " + getHotel().getId():"" )
-				+ ( isCheckin() ? " AND pReservationRoomDetail.projectReservationRoom.projectReservation.startDate BETWEEN :start AND :end":" AND pReservationRoomDetail.projectReservationRoom.projectReservation.endDate BETWEEN :start AND :end")
-				+ getScopeClause()
-				+ getOrder()
-				;
+		String select = "SELECT pr.project, prr.id, iF(isnull(a.name),'---',a.name), prr.item, prg.name"
+			+ " FROM project_reservation as pr"
+			+ " LEFT JOIN project_reservation_room AS prr ON prr.project_reservation=pr.project"
+			+ " LEFT JOIN project_reservation_guest AS prg ON prg.project_reservation=pr.project"
+			+ " LEFT JOIN project_reservation_room_detail AS prrd ON prrd.project_reservation_room=prr.id"
+			+ " LEFT JOIN asset_activity AS aa ON aa.id=prrd.asset_activity" 
+			+ " LEFT JOIN asset AS a ON a.id=aa.asset"
+			+ " LEFT JOIN registry as ar on ar.id = pr.agency"
+			+ " WHERE pr.status <> " + ReservationStatus.CANCELLED.ordinal()
+			+ ( getHotel() != null ? " AND pr.hotel = " + getHotel().getId():"" )
+			+ " AND pr.start_date BETWEEN :start AND :end"
+			+ " GROUP BY pr.project, prr.id"
+			+ getOrder()
+			;
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createQuery(select);
+		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
-		setList(query.list());
+		List<ListRow> list = new LinkedList<ReservationInOutController.ListRow>();
+		for(Object o: query.list()){
+			ListRow r = new ListRow();
+			r.setReservationId((Integer) (((Object[])o)[0]));
+			r.setReservationRoomId((Integer) (((Object[])o)[1]));
+			r.setRoomNumber((String) (((Object[])o)[2]));
+			r.setItemId((Integer) (((Object[])o)[3]));
+			r.setGuestName((String) (((Object[])o)[4]));
+			list.add(r);
+		}
+		setList(list);
 		setModel(new ListDataModel(getList()));
-	}
-
-	private static List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
-		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
-		return userScopeBean.getList(criteria);
 	}
 	
 	public String getOrder( ) {
 		String order = " ORDER BY";
-		if(shortOption.equals(SortTypes.RESERVATION.ordinal())){
-			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.id";
-		} else if(shortOption.equals(SortTypes.AGENCY.ordinal())){
-			order += " pReservationRoomDetail.projectReservationRoom.projectReservation.agency.id";
-		} else if(shortOption.equals(SortTypes.ROOM_NUMBER.ordinal())){
-			order += " pReservationRoomDetail.assetActivity.asset.name";
+		if(shortOption.equals(SortType.RESERVATION.ordinal())){
+			order += " pr.project";
+		} else if(shortOption.equals(SortType.GUEST.ordinal())){
+			order += " prg.name";
+		} else if(shortOption.equals(SortType.AGENCY_AND_GUEST.ordinal())){
+			order += " ar.name, prg.name";
+		} else if(shortOption.equals(SortType.AGENCY.ordinal())){
+			order += " ar.name";
+		} else if(shortOption.equals(SortType.ROOM_NUMBER.ordinal())){
+			order += " iF(isnull(a.name),'ZZZZZZZZ',a.name)";
 		}
 		return order;
-	}
-	
-	public String getScopeClause( ) throws ManagerBeanException {
-		String alias = "pReservationRoom.projectReservation.hotel.scope.id";
-		String exp = null;
-		User user = UserUtils.getInstance().getLoggedUser();
-		if (user != null) {
-			List<ITransferObject> list = obtainUserScopeList(user);
-			if (! list.isEmpty() ) {
-				for( ITransferObject to : list ) {
-					UserScope userScope = (UserScope) to;
-					if(exp==null){
-						exp = " AND ( "+alias+" = "+userScope.getScope().getId();
-					} else {
-						exp += " OR "+alias+" = "+userScope.getScope().getId();
-					}
-					exp += " ) ";
-				}
-			}
-		}
-		return exp;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -174,13 +167,74 @@ public class ReservationInOutController implements ICollectionProvider {
 	/////////////////////////////////////
 	/////////////////////////////////////
 	
-	enum SortTypes {
+	enum SortType {
 		RESERVATION,
 		GUEST,
 		AGENCY_AND_GUEST,
 		AGENCY,
 		ROOM_NUMBER
 		;
+	}
+	
+	public class ListRow {
+		private String roomNumber;
+		private Integer itemId;
+		private String guestName;
+		private Integer reservationId;
+		private Integer reservationRoomId;
+		
+		public String getRoomNumber() {
+			return roomNumber;
+		}
+		public void setRoomNumber(String roomNumber) {
+			this.roomNumber = roomNumber;
+		}
+		public Integer getItemId() {
+			return itemId;
+		}
+		public void setItemId(Integer itemId) {
+			this.itemId = itemId;
+		}
+		public String getGuestName() {
+			return guestName;
+		}
+		public void setGuestName(String guestName) {
+			this.guestName = guestName;
+		}
+		public Integer getReservationId() {
+			return reservationId;
+		}
+		public void setReservationId(Integer reservationId) {
+			this.reservationId = reservationId;
+		}
+		public Integer getReservationRoomId() {
+			return reservationRoomId;
+		}
+		public void setReservationRoomId(Integer reservationRoomId) {
+			this.reservationRoomId = reservationRoomId;
+		}
+		public Item getItem() throws ManagerBeanException{
+			if(getItemId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(Item.class);
+				return (Item) bean.get(getItemId());
+			}
+			return null;
+		}
+		public ProjectReservation getProjectReservation() throws ManagerBeanException{
+			if(getReservationId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+				return (ProjectReservation) bean.get(getReservationId());
+			}
+			return null;
+		}
+		public ProjectReservationRoom getProjectReservationRoom() throws ManagerBeanException{
+			if(getReservationRoomId()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+				return (ProjectReservationRoom) bean.get(getReservationRoomId());
+			}
+			return null;
+		}
+		
 	}
 	
 }
