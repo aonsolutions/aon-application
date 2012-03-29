@@ -26,67 +26,36 @@
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="documentTree" 
-										action="#{enterprise.initialAction}" immediate="true" 
-										value="#{documentBundle.document_documents}">
-										<aon:actionListener method="#{enterpriseDocumentTree.onTreeViewSelect}" />
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
+									<aon:commandLink id="predefinedDocuments" 
+										action="corporateIdentity_predefined" immediate="true"
+										value="#{registryBundle.registry_predefined_documents}">
+									</aon:commandLink>
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="corporateDocuments" 
+										action="corporateIdentityAttach_list" immediate="true"
+										actionListener="#{category.onSearch}"
+										value="#{registryBundle.registry_corporate_documents}">
+									</aon:commandLink>
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="search" 
+										action="corporateIdentityAttach_search" immediate="true"
+										actionListener="#{corporateIdentityAttach.onEditSearch}"
+										value="#{bundle.aon_search}">
+									</aon:commandLink>
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="category" 
+										action="category_form" immediate="true" 
+										actionListener="#{company.onLoad}"
+										value="#{registryBundle.registry_category_module}">
 									</aon:commandLink>		
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="advanced_search" 
-										action="enterpriseDocument_search" immediate="true"
-										actionListener="#{enterpriseDocument.onEditSearch}"
-										value="#{documentBundle.document_advanced_search}">
-										<f:setPropertyActionListener value="#{false}"
-											target="#{enterpriseDocumentSearch.showList}"  />
-										<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="document_massive_upload" 
-										action="enterpriseDocument_form" immediate="true"
-										actionListener="#{enterpriseDocument.onReset}"
-										value="#{documentBundle.document_upload}">
-										<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="batchDocument" 
-										rendered="#{manager.mainEnterprise}"
-										action="batchDocument_form" immediate="true" 
-										value="#{documentBundle.document_batch_document}">
-									</aon:commandLink>
-								</aon:div>								
 							</aon:div>
 						</aon:panelGrid>
 					
 					</aon:panelGroup>
-
-					<c:if test="#{manager.administrator}">
-						<aon:panelGrid id="group_documental_general"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-general">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_general}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alfrescoCategoryGroup" 
-										action="alfrescoCategoryGroup_list" 
-										actionListener="#{alfrescoCategoryGroup.onSearch}" 
-										value="#{registryBundle.registry_category}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="alfrescoGroup" 
-										action="alfrescoGroup" 
-										actionListener="#{alfrescoGroup.onSearch}" 
-										value="#{configBundle.config_scopes}" />
-								</aon:div>						
-							</aon:div>
-						</aon:panelGrid>
-					</c:if>							
 
 				</h:panelGrid>
 			</aon:div>

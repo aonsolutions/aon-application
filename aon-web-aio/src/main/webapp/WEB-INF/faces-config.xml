@@ -243,7 +243,9 @@
 			<!--  aon.ui.company -->
 			<value>#{companyCertificateChildListener}</value>
 			<value>#{enterpriseActivityChildListener}</value>
-			<value>#{payrollWorkPlaceChildListener}</value>			
+			<value>#{payrollWorkPlaceChildListener}</value>
+			<!--  aon.ui.registry -->
+			<value>#{corporateIdentityChildListener}</value>			
 		</list-entries>
 	</managed-bean>
 
@@ -305,9 +307,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<!--  aon.ui.document -->
-			<value>#{enterpriseDocumentTreeControllerListener}</value>
-			<value>#{enterpriseAlfrescoListener}</value>
 			<!--  aon.ui.project -->
 			<value>#{enterpriseProjectChildListener}</value>
 			<!--  aon.ui.company -->
@@ -316,18 +315,6 @@
 			<value>#{payrollWorkPlaceChildListener}</value>
 			<!--  aon.ui.payroll -->
 			<value>#{enterpriseSearchEx}</value>			
-		</list-entries>
-	</managed-bean>
-
-	<!-- ************ PROJECT LISTENERS ******************* -->
-	<managed-bean>
-		<managed-bean-name>projectOptionalListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries>
-			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<!--  aon.ui.document -->
-			<value>#{manager.projectListener}</value>
 		</list-entries>
 	</managed-bean>
 

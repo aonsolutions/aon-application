@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="predefinedDocuments">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{registryBundle.registry_predefined_documents}" />
+				<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid columns="4" styleClass="aon-panelGrid-formatting"
+					columnClasses="aon-portlets-column1,aon-portlets-column1,aon-portlets-column1">
+	
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{bundle.aon_fax}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporateIdentity_fax"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-fax.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{registryBundle.registry_corporateIdentity_letter}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporateIdentity_letter"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-letter.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+					
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{registryBundle.registry_corporateIdentity_label}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporateIdentity_label"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-label.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+					<aon:div styleClass="aon-portlet aon-width-150">
+						<aon:div styleClass="aon-portlet-title">
+							<aon:outputText value="#{registryBundle.registry_corporateIdentity_receipt}" styleClass="aon-portlet-title-text"/>
+						</aon:div>
+						<aon:div styleClass="aon-portlet-body">
+							<aon:commandLink action="corporateIdentity_receipt"
+								actionListener="#{corporateIdentity.onInit}">
+								<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-receipt.png']}" />
+							</aon:commandLink>
+						</aon:div>
+					</aon:div>
+		
+				</aon:panelGrid>
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
