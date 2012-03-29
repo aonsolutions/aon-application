@@ -1,9 +1,17 @@
 package com.code.aon.jaas.auth.spi.db;
 
+import static com.code.aon.jaas.client.ast.IDataSourceMetaData.DRIVER_CLASS;
+import static com.code.aon.jaas.client.ast.IDataSourceMetaData.PASSWORD;
+import static com.code.aon.jaas.client.ast.IDataSourceMetaData.URL;
+import static com.code.aon.jaas.client.ast.IDataSourceMetaData.USER;
+
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -21,12 +29,50 @@ public class Util {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	
+	private Properties properties;
+	
 	private Connection connection;
 
-	public Util(Connection connection) {
-		this.connection = connection;
+	public Util(Properties properties) {
+		this.properties = properties;
+	}
+	
+	private String getConnectionURL( String name ) {
+		return properties.getProperty(URL) + "/" + StringUtils.defaultIfEmpty(name, "mysql");
+	}
+	
+	public Connection createConnection(String name) throws SQLException, ClassNotFoundException {
+		Class.forName(properties.getProperty(DRIVER_CLASS));
+		String url = getConnectionURL(name);
+		String user = properties.getProperty(USER);
+		String password = properties.getProperty(PASSWORD);
+		Connection connection = DriverManager.getConnection(url, user, password);
+		setConnection(connection);
+		return connection;
 	}
 
+	public Properties getConnectionProperties( String domainName ) {
+		Properties cp = new Properties();
+		cp.putAll(this.properties);
+		String name = domainName;
+		
+		Connection connection = null;
+		try {
+			connection = createConnection(null);
+			Domain domain = getDomain(domainName);
+			if ( domain != null ) {
+				name = domain.getDataBaseName();
+			}
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		} finally {
+			DbUtils.closeQuietly(connection);
+		}
+				
+		cp.put(URL, getConnectionURL(name));
+		return cp;
+	}
+	
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
@@ -105,7 +151,7 @@ public class Util {
 		} while ( (domain == null) && StringUtils.contains(name, '.') );
 		return domain;
 	}
-
+	
 	public User getUser( Integer domainId, String userName ) {
 		QueryRunner run = new QueryRunner();
 		try {

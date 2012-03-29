@@ -3,11 +3,11 @@ package com.code.aon.jaas.auth.spi.db;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -28,7 +28,7 @@ import org.jboss.tm.TransactionDemarcationSupport;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
-import com.code.aon.jaas.client.ast.IDataSourceMetaData;
+import com.code.aon.jaas.vendor.jboss.JBossMainDeployerMBean;
 import com.code.aon.jaas.vendor.jboss.JBossSessionManagerMBean;
 
 public class LoginModule extends UsernamePasswordLoginModule {
@@ -37,10 +37,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 	private boolean suspendResume = true;
 	/** Tells the MBean SessionManager ObjectName . */
 	private String sessionManagerObjectName = JBossSessionManagerMBean.OBJECT_NAME;	
-	private String driverClass;
-	private String userName;
-	private String password;
-	private String url;
+	private Util dbUtil;
 	
 	private String dataBaseName;
 	private BasicInfo appplicationUser;
@@ -66,11 +63,9 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		Object tmp = options.get("suspendResume");
 		if( tmp != null )
 			suspendResume = Boolean.valueOf(tmp.toString()).booleanValue();
-		initConnection( options );
+		initConnection();
 		if (log.isTraceEnabled()) {
 			log.trace("DatabaseServerLoginModule, suspendResume="+suspendResume);
-			log.trace("driver_class=" + driverClass);
-			log.trace("url=" + url);
 		}
 	}
 
@@ -94,8 +89,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		}
 
 		try {
-			mainConnection = getConnection(null);
-			Util dbUtil = new Util(mainConnection);
+			mainConnection = dbUtil.createConnection(null);
 			String domainName = principal.getDomain();
 			Domain domain = dbUtil.getDomain(domainName);
 			if ( domain == null ) {
@@ -105,7 +99,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				throw new AuthenticationLoginException( "aon_login_domain_inactive", domain.getName() );	
 			}
 			this.dataBaseName = domain.getDataBaseName();
-			connection = getConnection(this.dataBaseName);
+			connection = dbUtil.createConnection(this.dataBaseName);
 			dbUtil.setConnection(connection);
 			String applicationName = StringUtils.substringAfter( principal.getContext(), "/" );
 			Integer applicationId = dbUtil.getApplicationId(applicationName);
@@ -128,10 +122,10 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			}
 			this.appplicationUser = dbUtil.getApplicationUser(user.getId(), da.getId());
 			if ( appplicationUser == null ) {
-				throw new AuthenticationLoginException( "aon_login_application_user_not_registered", new Object[]{userName, applicationName} );
+				throw new AuthenticationLoginException( "aon_login_application_user_not_registered", new Object[]{principal.getShortName(), applicationName} );
 			}
 			if (! appplicationUser.isActive() ) {
-				throw new AuthenticationLoginException( "aon_login_application_user_inactive", new Object[]{userName, applicationName} );
+				throw new AuthenticationLoginException( "aon_login_application_user_inactive", new Object[]{principal.getShortName(), applicationName} );
 			}
 			return user.getPassword();
 		} catch (SQLException ex) {
@@ -172,8 +166,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		}
 
 		try {
-			connection = getConnection(this.dataBaseName);
-			Util dbUtil = new Util(connection);
+			connection = dbUtil.createConnection(this.dataBaseName);
 			List<Integer> profiles = dbUtil.getProfiles(this.appplicationUser.getId());
 			if ( (profiles != null) && (!profiles.isEmpty()) ) {
 				Set<String> roles = new HashSet<String>();
@@ -221,6 +214,10 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		} catch ( AuthenticationLoginException e ) {
 			settingFailedLoginException( e );
 			throw e;
+		} catch ( FailedLoginException e ) {
+			AuthPrincipal principal = (AuthPrincipal) getIdentity();
+			settingFailedLoginException( new AuthenticationLoginException("aon_login_err_0", principal.getShortName()) );
+			throw e;
 		}
 	}
 
@@ -228,25 +225,14 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		return MBeanServerLocator.locateJBoss();
 	}	
 	
-	private void initConnection( Map<?,?> options ) {
-		if ( options.containsKey(IDataSourceMetaData.USER) ) {
-			this.userName = (String) options.get(IDataSourceMetaData.USER);
+	private void initConnection() {
+		try {
+			ObjectName oname = new ObjectName(JBossMainDeployerMBean.OBJECT_NAME);
+			Properties properties = (Properties) getMBeanServer().invoke(oname, "getConnectionProperties", null, null);
+			this.dbUtil = new Util(properties);
+		} catch (Exception e) {
+			log.error( "Error on initConnection", e );
 		}
-		if ( options.containsKey(IDataSourceMetaData.PASSWORD) ) {
-			this.password = (String) options.get(IDataSourceMetaData.PASSWORD);
-		}
-		if ( options.containsKey(IDataSourceMetaData.URL) ) {
-			this.url = (String) options.get(IDataSourceMetaData.URL);
-		}
-		if ( options.containsKey(IDataSourceMetaData.DRIVER_CLASS) ) {
-			this.driverClass = (String) options.get(IDataSourceMetaData.DRIVER_CLASS);
-		}			
-	}
-
-	private Connection getConnection(String name) throws SQLException, ClassNotFoundException {
-		Class.forName(driverClass);
-		String _url = url + "/" + StringUtils.defaultIfEmpty(name, "mysql");
-		return DriverManager.getConnection(_url, userName, password);
 	}
 		
     /**

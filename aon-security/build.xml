@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="2.1.0" />
+	<property name="version" value="2.1.1" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.auth.IConstants;
+import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IOption;
 import com.code.aon.jaas.client.ast.core.AstLoader;
@@ -264,9 +265,9 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 			as = (ApplicationsStorage) AstLoader.getInstance().parse( 0, in );
 			in.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error( "Error getting configuration file", e );
 		} catch (AstException e) {
-			e.printStackTrace();
+			LOGGER.error( "Error getting configuration file", e );
 		}
 		if ( as != null )  {
 			Map<String, IOption> options = as.options();
@@ -291,7 +292,8 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	
 	public Properties getConnectionProperties(String domainName, String application) {
 		if (! this.connectionProperties.isEmpty() ) {
-			return this.connectionProperties;
+			Util util = new Util(connectionProperties);
+			return util.getConnectionProperties(domainName);
 		} else {
 			try {
 				ObjectName oname = new ObjectName(JBossLdapMBean.OBJECT_NAME);
@@ -304,6 +306,10 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 		}
 		return null;
 	}	
+	
+	public Properties getConnectionProperties() {
+		return this.connectionProperties;
+	}
 
 	static {
 		VendorFactoryManager.register(new JBossFactory());
