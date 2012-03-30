@@ -113,7 +113,7 @@ public class ReservationInOutController implements ICollectionProvider {
 			+ " LEFT JOIN registry as ar on ar.id = pr.agency"
 			+ " WHERE pr.status <> " + ReservationStatus.CANCELLED.ordinal()
 			+ ( getHotel() != null ? " AND pr.hotel = " + getHotel().getId():"" )
-			+ " AND pr.start_date BETWEEN :start AND :end"
+			+ " AND pr."+(isCheckin() ?"start_date":"end_date")+" BETWEEN :start AND :end"
 			+ " GROUP BY pr.project, prr.id"
 			+ getOrder()
 			;
