@@ -155,7 +155,8 @@ public class BoardListController implements ICollectionProvider {
 										|| (!isBreakfastBoard(ic.getCompositionItem()) && DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate())) ){
 									roomBoard = new RoomBoard();
 									roomBoard.setItem(ic.getCompositionItem());
-									roomBoard.setQuantity(ic.getQuantity()*serviceDetail.getQuantity());
+									int roomTotalGuests = serviceDetail.getProjectReservationService().getProjectReservationRoom().getAdults()+serviceDetail.getProjectReservationService().getProjectReservationRoom().getChildren();
+									roomBoard.setQuantity(ic.getQuantity()*roomTotalGuests);
 									roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
 									compositeList.add(roomBoard);
 								}
@@ -168,12 +169,19 @@ public class BoardListController implements ICollectionProvider {
 					}
 				} else {
 					if(serviceDetail.getItem().getProduct().getCode().equals(item.getProduct().getCode())){
-						if( DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate()) ){
-							roomBoard = new RoomBoard();
-							roomBoard.setItem(serviceDetail.getItem());
-							roomBoard.setQuantity(serviceDetail.getQuantity());
-							roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
-							roomBoardList.add(roomBoard);
+						try {
+							if( DateUtils.isSameDay(serviceDetail.getEffectiveDate(), getParams().getDate()) ){
+								roomBoard = new RoomBoard();
+								roomBoard.setItem(serviceDetail.getItem());
+								int roomTotalGuests = serviceDetail.getProjectReservationService().getProjectReservationRoom().getAdults()+serviceDetail.getProjectReservationService().getProjectReservationRoom().getChildren();
+								roomBoard.setQuantity(new Double(roomTotalGuests));
+								roomBoard.setProjectReservationService(serviceDetail.getProjectReservationService());
+								roomBoardList.add(roomBoard);
+							}
+						} catch (ManagerBeanException e) {
+							String msg =  "******** Error addding board to list. ";
+							LOGGER.error(msg, e);
+							AonUtil.addErrorMessage(msg + e.getMessage());
 						}
 					}
 				}
