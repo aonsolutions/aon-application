@@ -634,7 +634,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ProjectReservation_startDate desc,ProjectReservation_project_id</value>
+			<value>ProjectReservation_startDate desc</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>

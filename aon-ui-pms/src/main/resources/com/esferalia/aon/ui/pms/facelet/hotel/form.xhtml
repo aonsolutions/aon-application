@@ -138,6 +138,22 @@
 						<f:selectItems value="#{productCollections.catalogues}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Item_id_advance" 
+						value="#{pmsBundle.pms_advance_item}" />
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{hotel.to.itemAdvance}" />
+						<ui:param name="lookupSuffix" value="_advance" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
+					<aon:outputLabel for="Item_id_noshow" 
+						value="#{pmsBundle.pms_no_show_item}" />
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupSuffix" value="_noshow" />
+						<ui:param name="lookupTo" value="#{hotel.to.itemNoshow}" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
 					<aon:selectOneRadio id="Hotel_active"
@@ -161,6 +177,7 @@
 			</aon:div>
 				
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 	</ui:define>
 </ui:composition>

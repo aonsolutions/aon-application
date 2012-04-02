@@ -2,20 +2,27 @@ package com.esferalia.aon.ui.pms.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
-import com.code.aon.product.Item;
+import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicingManager;
@@ -26,24 +33,18 @@ import com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener;
 public class AdvanceInvoiceController extends BasicController{
 
 	private double percent;
-	private Item item;
 	private int daysToPayment;
 	private PayMethod payMethod;
+	private RegistryBank rbank;
 	private Date inavoiceDate;
 	private List<Integer> checked;
+	private List<SelectItem> payMethods;
 
 	public double getPercent() {
 		return percent;
 	}
 	public void setPercent(double percent) {
 		this.percent = percent;
-	}
-	
-	public Item getItem() {
-		return item;
-	}
-	public void setItem(Item item) {
-		this.item = item;
 	}
 	
 	public int getDaysToPayment() {
@@ -57,6 +58,12 @@ public class AdvanceInvoiceController extends BasicController{
 	}
 	public void setPayMethod(PayMethod payMethod) {
 		this.payMethod = payMethod;
+	}
+	public RegistryBank getRbank() {
+		return rbank;
+	}
+	public void setRbank(RegistryBank rbank) {
+		this.rbank = rbank;
 	}
 	public Date getInvoiceDate() {
 		return inavoiceDate;
@@ -130,28 +137,29 @@ public class AdvanceInvoiceController extends BasicController{
 	}
 	public void initialize() throws ManagerBeanException {
 		setChecked(null);
-		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setPercent(0);
 		setDaysToPayment(0);
 		setInvoiceDate(new Date());
 		setPayMethod(null);
+		setRbank(null);
+		payMethods = null;
 	}
-	
 	
 	public void onInvoice(ActionEvent event) {
 		try {
 			AdvanceInvoiceTo advanceInvoiceTo = new AdvanceInvoiceTo();
 			advanceInvoiceTo.setIssueDate(getInvoiceDate());
 			advanceInvoiceTo.setFinanceDate(getPaymentDate());
-			advanceInvoiceTo.setItem(getItem());
 			advanceInvoiceTo.setPercent(getPercent());
 			advanceInvoiceTo.setPayMethod(getPayMethod());
+			advanceInvoiceTo.setRbank(getRbank());
 			AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER);
 			advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 			validate(advanceInvoiceTo);
 			AdvanceInvoicingManager manager = new AdvanceInvoicingManager();
 			int count = manager.invoice(advanceInvoiceTo,getChecked());
 			onSearch(event);
+			setChecked(null);
 			String msg = count == 1 ? "Se generó 1 factura." : "Se generaron " + count + " facturas."; 
 			AonUtil.addInfoMessage( msg );
 		} catch (ManagerBeanException e) {
@@ -177,6 +185,33 @@ public class AdvanceInvoiceController extends BasicController{
 			AonUtil.addErrorMessage( msg );
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public List<SelectItem> getAgencyPayMethods() throws ManagerBeanException{
+		if (payMethods == null) {
+			List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
+			directPayMethods.add(PayMethodType.CASH_BASIS);
+			directPayMethods.add(PayMethodType.DEBIT_CARD);
+			directPayMethods.add(PayMethodType.CREDIT_CARD);
+			directPayMethods.add(PayMethodType.BANK_TRANSFER);
+			directPayMethods.add(PayMethodType.CHEQUE);
+			payMethods = new LinkedList<SelectItem>();
+
+			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+			Criteria criteria = new Criteria();
+			criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
+			criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+			for (ITransferObject ito : payMethodBean.getList(criteria)) {
+				PayMethod pMethod = (PayMethod)ito;
+				SelectItem item = new SelectItem(pMethod, pMethod.getName());
+				payMethods.add(item);
+			}
+		}
+		return payMethods;
+	}
+	
+	public boolean isBankRequired() {
+		return (payMethod != null && (payMethod.getType() == PayMethodType.BANK_TRANSFER || payMethod.getType() == PayMethodType.CHEQUE)); 		 
 	}
 	
 }

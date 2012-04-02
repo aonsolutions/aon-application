@@ -34,77 +34,88 @@
 							rendered="#{!advanceInvoiceSearch.guestReservationSearch}"/>
 					</aon:div>
 				</aon:div>
-
-				<aon:panelGrid columns="5" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-even aon-width-120
-								,aon-panelGrid-odd aon-width-120
-								,aon-panelGrid-even aon-width-120
-								,aon-panelGrid-odd aon-width-120
-								,aon-panelGrid-even aon-width-auto">
-					<aon:panelGroup>
-						<aon:outputText style="margin-right:5px;" value="#{pmsBundle.pms_selected}:" />
-						<aon:outputText id="checkCounter" value="#{advanceInvoice.checkCounter}" />
-					</aon:panelGroup>
-					
-					<aon:outputLabel for="advanceInvoice_date" value="#{financeBundle.finance_invoice_date}" />
-					<aon:selectInputDate id="advanceInvoice_date" required="true"
-							value="#{advanceInvoice.invoiceDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-						<a4j:support event="oninputchange" reRender="paymentDate" ajaxSingle="true" />
-						<a4j:support event="onchanged" reRender="paymentDate" ajaxSingle="true" />
-					</aon:selectInputDate>
-
-					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{advanceInvoice.item}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="lookupLabel" value="#{productBundle.aon_product}" />
-					</ui:include>
-				</aon:panelGrid>
 				
-				<aon:panelGrid columns="7" styleClass="aon-width-all aon-margin-bottom"
-					columnClasses="aon-panelGrid-even aon-width-120
-								,aon-panelGrid-odd aon-width-120
-								,aon-panelGrid-even aon-width-120
-								,aon-panelGrid-odd aon-width-120
-								,aon-panelGrid-even aon-width-150
-								,aon-panelGrid-odd aon-width-120
-								,aon-panelGrid-even aon-width-auto
-								">
-					<aon:outputText value="&#160;" />
+				<aon:div id="advanceInvoiceParameters" styleClass="aon-margin-bottom">
+					<aon:panelGrid columns="7" styleClass="aon-width-all"
+						columnClasses="aon-panelGrid-even aon-width-120
+									,aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-120
+									,aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-150
+									,aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-auto
+									">
+						<aon:panelGroup>
+							<aon:outputText style="margin-right:5px;" value="#{pmsBundle.pms_selected}:" />
+							<aon:outputText id="checkCounter" value="#{advanceInvoice.checkCounter}" />
+						</aon:panelGroup>
+						
+						<aon:outputLabel for="advanceInvoice_date" value="#{financeBundle.finance_invoice_date}" />
+						<aon:selectInputDate id="advanceInvoice_date" required="true"
+								value="#{advanceInvoice.invoiceDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="paymentDate" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="paymentDate" ajaxSingle="true" />
+						</aon:selectInputDate>
+		
+						<aon:outputLabel for="advanceInvoice_financePayMethod"
+							value="#{configBundle.config_pay_method}" />
+						<aon:selectOneMenu id="advanceInvoice_financePayMethod-guest"
+						 	rendered="#{advanceInvoiceSearch.guestReservationSearch}"
+							value="#{advanceInvoice.payMethod}" required="true">
+							<f:selectItems value="#{configCollections.directPayMethods}"/>
+						</aon:selectOneMenu>
+						<aon:selectOneMenu id="advanceInvoice_financePayMethod-agency"
+							rendered="#{!advanceInvoiceSearch.guestReservationSearch}"
+							value="#{advanceInvoice.payMethod}" required="true">
+							<f:selectItems value="#{advanceInvoice.agencyPayMethods}"/>
+							<a4j:support event="onchange" ajaxSingle="true"
+								reRender="advanceInvoiceParameters"/>
+						</aon:selectOneMenu>
+						
+						<aon:outputLabel for="advanceInvoice_daysToPayment"
+							value="#{registryBundle.registry_days_to_first_payment}" />
+						<aon:panelGroup>
+							<aon:inputText id="advanceInvoice_daysToPayment" size="3"
+								reRender="paymentDate" ajaxSingle="true" 
+								value="#{advanceInvoice.daysToPayment}" required="true" />
+							<aon:outputText value="#{financeBundle.finance_finance_date}" styleClass="aon-italic aon-margin-left"/>
+							<aon:outputText id="paymentDate" value="#{advanceInvoice.paymentDate}" styleClass="aon-italic aon-bold aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:panelGroup>
+					</aon:panelGrid>
 					
-					<aon:outputLabel for="advanceInvoice_percent"
-						rendered="#{!advanceInvoiceSearch.guestReservationSearch}" 
-						value="#{pmsBundle.pms_invoice_percent}" />
-					<aon:inputText id="advanceInvoice_percent" size="6"
-						rendered="#{!advanceInvoiceSearch.guestReservationSearch}" 
-						value="#{advanceInvoice.percent}" required="true" />
-
-					<aon:outputText value="&#160;" rendered="#{advanceInvoiceSearch.guestReservationSearch}"/>
-					<aon:outputText value="&#160;" rendered="#{advanceInvoiceSearch.guestReservationSearch}"/>
-
-					<aon:outputLabel for="advanceInvoice_financePayMethod"
-						value="#{configBundle.config_pay_method}" />
-					<aon:selectOneMenu id="advanceInvoice_financePayMethod"
-						value="#{advanceInvoice.payMethod}" required="true">
-						<f:selectItems value="#{configCollections.directPayMethods}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="advanceInvoice_daysToPayment"
-						value="#{registryBundle.registry_days_to_first_payment}" />
-					<aon:panelGroup>
-						<aon:inputText id="advanceInvoice_daysToPayment" size="3"
-							reRender="paymentDate" ajaxSingle="true" 
-							value="#{advanceInvoice.daysToPayment}" required="true" />
-						<aon:outputText value="#{financeBundle.finance_finance_date}" styleClass="aon-italic aon-margin-left"/>
-						<aon:outputText id="paymentDate" value="#{advanceInvoice.paymentDate}" styleClass="aon-italic aon-bold aon-margin-left">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:panelGroup>
-				</aon:panelGrid>
+					<aon:panelGrid columns="5" styleClass="aon-width-all"
+						rendered="#{!advanceInvoiceSearch.guestReservationSearch}"
+						columnClasses="aon-panelGrid-even aon-width-120
+									,aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-120
+									,aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-auto">
+						<aon:outputText value="&#160;" />
+						
+						<aon:outputLabel for="advanceInvoice_percent"
+							value="#{pmsBundle.pms_invoice_percent}" />
+						<aon:inputText id="advanceInvoice_percent" size="6"
+							value="#{advanceInvoice.percent}" required="true" />
+		
+						<aon:outputLabel for="advanceInvoice_rbank"
+							rendered="#{advanceInvoice.bankRequired}"
+							value="#{configBundle.config_bank}" />
+						<aon:selectOneMenu id="advanceInvoice_rbank"
+							rendered="#{advanceInvoice.bankRequired}"
+							value="#{advanceInvoice.rbank}" required="true">
+							<f:selectItems value="#{companyCollections.activeCompanyBanks}"/>
+						</aon:selectOneMenu>
+		
+						<aon:outputText value="&#160;" rendered="#{!advanceInvoice.bankRequired}"/>
+						<aon:outputText value="&#160;" rendered="#{!advanceInvoice.bankRequired}"/>
+					</aon:panelGrid>
+				</aon:div>
 				
-
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{advanceInvoice}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
@@ -143,15 +154,7 @@
 							</f:facet>
 							<h:outputText value="#{to.hotel.workPlace.description}" />
 						</aon:column>
-<!-- 
-						<aon:column alias="ProjectReservation.project.id"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
-							</f:facet>
-							<h:outputText value="#{to.id}" />
-						</aon:column>
- -->
+
 						<aon:column alias="ProjectReservation.code"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
@@ -221,7 +224,6 @@
 				</ui:decorate>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>
