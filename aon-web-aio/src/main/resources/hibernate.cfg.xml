@@ -65,7 +65,6 @@
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>		
 
 		<!-- AON-COMMERCIAL Mapping files -->	
@@ -103,6 +102,7 @@
 		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
