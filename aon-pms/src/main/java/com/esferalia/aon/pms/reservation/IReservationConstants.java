@@ -25,15 +25,18 @@ public interface IReservationConstants {
 	String COMPANY_TYPE = "4";
 	String IATA = "IATA";
 	String SOLRES = "Solres";
-	String COMPANY = "COMPANY";
 	String CRO = "CRO";
 	String AGENCY_REBATE = "S";
+	String RATE_PLAN = "RATEPLAN";
+	String EUR = "EUR";
 
 	String GUEST_HOLDER = "C";
 	String AGENCY_HOLDER = "A";
 	String COMPANY_HOLDER = "E";
 
 	String CHILDREN_COUNT = "8";
+	String ADT = "ADT";
+	String CHD = "CHD";
 
 	String SERVICE_TYPE = "ServiceType";
 	String SERVICE_TYPE_ROOM = "H";
@@ -41,4 +44,10 @@ public interface IReservationConstants {
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";
 	String EXT = "EXT";
+	String GP = "GP";
+	String ES = "ES";
+	String TR = "TR";
+
+	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
+	String SOAP_SERVER_URL = "http://xmlgatewaytest.tradyso.com/xmlgateway/soapserver";
 }

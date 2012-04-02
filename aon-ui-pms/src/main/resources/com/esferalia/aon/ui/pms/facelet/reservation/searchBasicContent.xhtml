@@ -104,8 +104,18 @@
 	</aon:div>
 
 	<aon:outputText value="#{bundle.aon_status}"/>
-	<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
-		<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
-	</aon:selectManyCheckbox>							
+	<aon:panelGrid columns="2" columnClasses="aon-width-350, aon-width-auto">
+		<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
+			<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
+		</aon:selectManyCheckbox>
+		<aon:div>
+			<aon:selectBooleanCheckbox id="ProjectReservation_noShow"
+				valueChangeListener="#{controller.addExpression}">
+				<f:selectItem itemValue="1" />
+			</aon:selectBooleanCheckbox>
+			<aon:outputLabel for="ProjectReservation_noShow" 
+				value="#{pmsBundle.pms_no_show}"/>
+		</aon:div>
+	</aon:panelGrid>
 
 </ui:composition>

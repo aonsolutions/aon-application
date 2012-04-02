@@ -206,6 +206,202 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* RESERVATION REQUEST ***************** -->
+	<managed-bean>
+		<managed-bean-name>reservationRequest</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ReservationRequest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>reservationRequest</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ReservationRequest_startDate desc,ReservationRequest_id</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{reservationRequestSearch}</value>
+				<value>#{reservationRequestScopeListener}</value>
+				<value>#{reservationRequestControllerListener}</value>
+				<value>#{reservationRequestGuestListener}</value>
+				<value>#{reservationRequestRoomListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.ReservationRequestSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>ReservationRequest_hotel_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.ReservationRequestControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestGuestListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>reservationRequestGuest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ReservationRequestGuest_reservationRequest_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>reservationRequestRoomListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>reservationRequestRoom</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ReservationRequestRoom_reservationRequest_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* RESERVATION REQUEST GUEST ***************** -->
+	<managed-bean>
+		<managed-bean-name>reservationRequestGuest</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestGuestController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ReservationRequestGuest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>reservationRequestGuest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>reservationRequest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ReservationRequestGuest_guestIndex</value>
+		</managed-property>	
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>reservationRequest.id</value>
+				</map-entry>
+				<map-entry>
+					<key>startDate</key>
+					<value>reservationRequest.startDate</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{reservationRequestGuestControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestGuestControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.ReservationRequestGuestControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* RESERVATION REQUEST ROOM ***************** -->
+	<managed-bean>
+		<managed-bean-name>reservationRequestRoom</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ReservationRequestRoomController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ReservationRequestRoom</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>reservationRequestRoom</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>reservationRequest</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ReservationRequestRoom_roomIndex</value>
+		</managed-property>	
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>reservationRequest.id</value>
+				</map-entry>
+				<map-entry>
+					<key>startDate</key>
+					<value>reservationRequest.startDate</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{reservationRequestRoomControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>reservationRequestRoomControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.ReservationRequestRoomControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************* RESERVATION ***************** -->
 	<managed-bean>
 		<managed-bean-name>reservation</managed-bean-name>
@@ -946,6 +1142,22 @@
 		</navigation-case>
 	</navigation-rule>  
 
+  	<!-- =================== Reservation Request ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>reservationRequest_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationRequest/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reservationRequest_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationRequest/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reservationRequest_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/reservationRequest/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+
   	<!-- =================== Reservation ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -974,7 +1186,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== Service Invoice ================= -->
+  	<!-- =================== Advance Invoice ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>advanceInvoice_list</from-outcome>

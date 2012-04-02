@@ -36,6 +36,7 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
@@ -341,9 +342,43 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Customer obtainAgency(ProfileInfo agencyInfo) throws ManagerBeanException {
+		Customer agency = null;
 		if (agencyInfo != null) {
-			String code = agencyInfo.getUniqueID().getID();
-			String context = agencyInfo.getUniqueID().getIDContext();
+			agency = obtainCustomer(agencyInfo);
+			setAgencyUnknown(agency == null);
+		}
+		return agency;
+	}
+
+	public double obtainAgencyCommissionPercent(ProfileInfo agencyInfo) throws ManagerBeanException {
+		double percent = 0;
+		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
+			percent = Double.parseDouble(agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getStringValue());
+		}
+		return percent;
+	}
+
+	public double obtainAgencyCommissionAmount(ProfileInfo agencyInfo) throws ManagerBeanException {
+		double percent = 0;
+		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
+			percent = agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getAmount().doubleValue();
+		}
+		return percent;
+	}
+
+	public Customer obtainCompany(ProfileInfo companyInfo) throws ManagerBeanException {
+		Customer company = null;
+		if (companyInfo != null) {
+			company = obtainCustomer(companyInfo);
+			setCompanyUnknown(company == null);
+		}
+		return company;
+	}
+
+	private Customer obtainCustomer(ProfileInfo profileInfo) throws ManagerBeanException {
+		if (profileInfo != null) {
+			String code = profileInfo.getUniqueID().getID();
+			String context = profileInfo.getUniqueID().getIDContext();
 			if (StringUtils.isNotEmpty(code) && StringUtils.isNotEmpty(context)) {
 				IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
 				Criteria criteria = new Criteria();
@@ -365,54 +400,20 @@ public class ReservationUtils implements IReservationConstants {
 						return (Customer)ito;
 					}
 				}
-				setAgencyUnknown(true);
 			}
 		}
 		return null;
 	}
 
-	public double obtainAgencyCommissionPercent(ProfileInfo agencyInfo) throws ManagerBeanException {
-		double percent = 0;
-		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
-			percent = Double.parseDouble(agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getStringValue());
-		}
-		return percent;
-	}
-
-	public double obtainAgencyCommissionAmount(ProfileInfo agencyInfo) throws ManagerBeanException {
-		double percent = 0;
-		if (agencyInfo != null && agencyInfo.getProfile().getAgreements().sizeOfCommissionInfoArray() > 0) {
-			percent = agencyInfo.getProfile().getAgreements().getCommissionInfoArray(0).getAmount().doubleValue();
-		}
-		return percent;
-	}
-
-	public Customer obtainCompany(ProfileInfo companyInfo) throws ManagerBeanException {
-		if (companyInfo != null) {
-			String code = companyInfo.getUniqueID().getID();
-			if (StringUtils.isNotEmpty(code)) {
-				IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), COMPANY);
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_VALUE), code);
-				criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
-				RegistryAddInfo rAddInfo = null;
-				for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-					rAddInfo = (RegistryAddInfo)ito;
-					break;
-				}
-
-				if (rAddInfo != null) {
-					IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-					criteria = new Criteria();
-					criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), rAddInfo.getRegistry().getId());
-					criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_DOMAIN), domain);
-					for (ITransferObject ito : customerBean.getList(criteria)) {
-						return (Customer)ito;
-					}
-				}
-				setCompanyUnknown(true);
-			}
+	public String obtainCustomerCode(Customer customer, String context) throws ManagerBeanException {
+		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context);
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
+		for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
+			RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
+			return rAddInfo.getValue();
 		}
 		return null;
 	}
@@ -499,6 +500,11 @@ public class ReservationUtils implements IReservationConstants {
 		}
 
 		throw new ReservationException("Invalid Rate Code: " + tariffCode, 249);
+	}
+
+	public String getRequestMessageId(ReservationRequest request) {
+		String messageId = PLS + StringUtils.leftPad(""+request.getId(), 8, "0") + StringUtils.leftPad(""+(request.getRequestCounter()+1), 3, "0");
+		return messageId;
 	}
 
 }

@@ -254,8 +254,10 @@
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>
-		
 
 	</session-factory>
 

@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://www.solmelia.com/namespaces/solres" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.solmelia.com/namespaces/solres" elementFormDefault="qualified">
+	<!-- **************************** AvailabilityQueryRequest ************************************** -->
 	<xs:element name="HITISOperation" type="HITISOperationType" substitutionGroup="HITISOperationAbstract"/>
 	<xs:complexType name="HITISOperationType">
 		<xs:complexContent>
 			<xs:extension base="HITISOperationAbstractType">
 				<xs:sequence>
+					<xs:element ref="Errors" minOccurs="0"/>
 					<xs:element ref="AvailabilityQuery"/>
 					<xs:element name="RequestQueryDetail" type="xs:string" minOccurs="0"/>
+					<xs:element ref="AvailabilitySummaryResponses" minOccurs="0"/>
+					<xs:element ref="AvailabilityDetailResponses" minOccurs="0" maxOccurs="unbounded"/>
 					<xs:element ref="AvailabilityOriginatorCode"/>
 					<xs:element ref="Distributor" minOccurs="0"/>
 				</xs:sequence>
+				<xs:attribute name="HITISCode" type="xs:string"/>
 				<xs:attribute name="OperationName" type="xs:string" use="required"/>
 				<xs:attribute name="OperationType" use="required">
 					<xs:simpleType>
@@ -83,6 +88,59 @@
 			<xs:attribute name="FilterPackagesBySubType4" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="AvailabilitySummaryResponses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="AvailabilitySummaryResponse"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AvailabilitySummaryResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="HotelReference"/>
+				<xs:element ref="AvailabilitySummaryRecords"/>
+				<xs:element ref="Taxes" minOccurs="0"/>
+				<xs:element ref="ProfileReferences" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="PagingKey" minOccurs="0"/>
+				<xs:element ref="RequestedCurrencyCode"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AvailabilityDetailResponses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="AvailabilityDetailResponse" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AvailabilityDetailResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AvailabilityDetailResponseRPH" type="xs:positiveInteger"/>
+				<xs:element name="DetailDescription" type="xs:string"/>
+			</xs:sequence>
+			<xs:attribute name="AvailabilityDetailType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="RateDescription"/>
+						<xs:enumeration value="RoomInformation"/>
+						<xs:enumeration value="GuaranteeInformation"/>
+						<xs:enumeration value="DepositInformation"/>
+						<xs:enumeration value="CancellationInformation"/>
+						<xs:enumeration value="CheckInCheckOutInformation"/>
+						<xs:enumeration value="ExtraChargeInformation"/>
+						<xs:enumeration value="PackageInformation"/>
+						<xs:enumeration value="PropertyDescription"/>
+						<xs:enumeration value="PropertyLocation"/>
+						<xs:enumeration value="MiscellaneousInformation"/>
+						<xs:enumeration value="PromotionalInformation"/>
+						<xs:enumeration value="RoomRateInformation"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
 	<xs:complexType name="RateCurrencyType">
 		<xs:sequence>
 			<xs:element ref="Currency"/>
@@ -113,6 +171,19 @@
 							<xs:element ref="RoomInventoryCode" minOccurs="0"/>
 							<xs:element ref="GuestCounts"/>
 							<xs:element ref="RatePlans" minOccurs="0"/>
+							<xs:element name="Amount" minOccurs="0"/>
+							<xs:element name="RoomCodes" minOccurs="0">
+								<xs:complexType>
+									<xs:attribute name="Category" type="xs:string" use="required"/>
+									<xs:attribute name="MealPlan" type="xs:string" use="required"/>
+									<xs:attribute name="BaseRoomCode" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element ref="Services" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element ref="RateQuotes"/>
+							<xs:element ref="RoomInformations" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element ref="LimitDates" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element ref="BookingRules" minOccurs="0"/>
 							<!--						<xs:element ref="RoomID" minOccurs="0"/>-->
 							<!--						<xs:element name="TimeSpan" type="TimeSpanType" minOccurs="0"/>-->
 							<!--						<xs:element name="AnticipatedSettlementRPHs" type="AnticipatedSettlementRPHsType" minOccurs="0" maxOccurs="unbounded"/>-->
@@ -245,6 +316,348 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RateQuotes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RateQuote">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="DateRange" minOccurs="0"/>
+							<xs:element ref="QuotedRateAmount"/>
+							<xs:element name="QuotedLoyaltyRateAmount" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:all minOccurs="0">
+										<xs:element ref="Currency"/>
+									</xs:all>
+									<xs:attribute name="CurrencyCode" type="xs:string" use="optional"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="QuotedOfferRateAmount" minOccurs="0">
+								<xs:complexType mixed="true">
+									<xs:all minOccurs="0">
+										<xs:element ref="Currency"/>
+									</xs:all>
+									<xs:attribute name="CurrencyCode" type="xs:string" use="optional"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element ref="RateBasisTimeUnitType"/>
+							<xs:element name="RateBasisUnits" type="xs:positiveInteger" minOccurs="0"/>
+							<xs:element name="IsChange" type="StringLength1YorN" minOccurs="0"/>
+							<xs:element name="RateFlags" type="xs:string" minOccurs="0"/>
+							<xs:element name="TotalTaxes" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalLoyaltyTaxes" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalOfferTaxes" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalAmountWithoutTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalLoyaltyAmountWithoutTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalOfferAmountWithoutTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalAmountWithTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalLoyaltyAmountWithTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalLoyaltyPoints" minOccurs="0"/>
+							<xs:element name="TotalOfferAmountWithTax" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="CurrencyCode" type="AlphaLength3to3" use="required"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DateRange">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DateTimeSpan"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RoomInformations">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RoomInformation" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RoomInformationRPH" type="xs:positiveInteger"/>
+							<xs:element name="DetailDescription" type="xs:string"/>
+						</xs:sequence>
+						<xs:attribute name="RoomInformationType" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:NMTOKEN">
+									<xs:enumeration value="RoomInformation"/>
+									<xs:enumeration value="RoomRateInformation"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LimitDates">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Cancelation" type="xs:string" minOccurs="0"/>
+				<xs:element name="HotelArrival" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Taxes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Tax" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tax">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TaxDescription" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="Percent" type="xs:string"/>
+			<xs:attribute name="Type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="Inclusive"/>
+						<xs:enumeration value="Exclusive"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="Code" type="xs:string" use="required"/>
+			<xs:attribute name="ChargeUnit" type="xs:string" use="required"/>
+			<xs:attribute name="Amount" type="xs:string"/>
+			<xs:attribute name="CurrencyCode" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TaxDescription">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Text"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Text">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="Language" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProfileReferences">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Profiles">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Profile"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AvailabilitySummaryRecords">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="AvailabilitySummaryRecord" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AvailabilitySummaryRecord">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="AvailabilitySummaryRecordRPH" type="xs:positiveInteger"/>
+				<xs:element name="IsRoom" type="xs:boolean" minOccurs="0"/>
+				<xs:element name="IsConverted" type="xs:boolean" minOccurs="0"/>
+				<xs:element name="IsAlternate" type="xs:boolean" minOccurs="0"/>
+				<xs:element ref="RatePlanCode"/>
+				<xs:element name="RatePlanCategory" type="xs:string" minOccurs="0"/>
+				<xs:element name="RatePlanType" type="xs:string" minOccurs="0"/>
+				<xs:element name="TaxesText" type="xs:string" minOccurs="0"/>
+				<xs:element name="MarketingText" type="xs:string" minOccurs="0"/>
+				<xs:element ref="RateDescriptions" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="TACommission" minOccurs="0"/>
+				<xs:element ref="RoomStays"/>
+				<xs:element name="ExtraPackage" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ExtraPackageCode"/>
+							<xs:element name="ExtraPackageName" minOccurs="0"/>
+							<xs:element name="ExtraPackageType" minOccurs="0"/>
+							<xs:element name="ExtraPackageSubType1" minOccurs="0"/>
+							<xs:element name="ExtraPackageSubType2" minOccurs="0"/>
+							<xs:element name="ExtraPackageSubType3" minOccurs="0"/>
+							<xs:element name="ExtraPackageSubType4" minOccurs="0"/>
+							<xs:element name="ExtraPackageServices" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ExtraPackageService" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ServiceNumber"/>
+													<xs:element name="ServiceCode"/>
+													<xs:element name="ServiceDescription" minOccurs="0"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CancelPenalty" type="CancelPenaltyType" minOccurs="0"/>
+				<xs:element name="Offers" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Offer" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="OfferRPH"/>
+										<xs:element name="ServiceCode"/>
+										<xs:element name="OfferCode"/>
+										<xs:element name="OfferDescription"/>
+										<xs:element name="Amount" minOccurs="0">
+											<xs:complexType/>
+										</xs:element>
+										<xs:element name="Percent" minOccurs="0"/>
+										<xs:element name="CurrencyCode" minOccurs="0"/>
+										<xs:element name="NumberOfNights" minOccurs="0"/>
+										<xs:element name="NumberOfPaidNights" minOccurs="0"/>
+										<xs:element name="NumberOfFreeNights" minOccurs="0"/>
+										<xs:element name="ExtraType" minOccurs="0"/>
+										<xs:element name="PAXType" minOccurs="0"/>
+										<xs:element name="Order" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="BookingRules" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="RequiredGuaranteeType">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="None"/>
+						<xs:enumeration value="GuaranteeRequired"/>
+						<xs:enumeration value="DepositRequired"/>
+						<xs:enumeration value="ImmediatePaymentRequired"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RateDescriptions">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RateDescription" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RateDescriptionRPH" type="xs:string"/>
+							<xs:element name="DetailDescription" type="xs:string"/>
+						</xs:sequence>
+						<xs:attribute name="AvailabilityDetailType" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:NMTOKEN">
+									<xs:enumeration value="RateText"/>
+									<xs:enumeration value="DetailRateDescription"/>
+									<xs:enumeration value="TaxesText"/>
+									<xs:enumeration value="TaxesDescription"/>
+									<xs:enumeration value="SpecialRequired"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TACommission">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="type" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:NMTOKEN">
+								<xs:enumeration value="Percentage"/>
+								<xs:enumeration value="Absolute"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:extension>
+			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
 

@@ -40,6 +40,7 @@ public class Registry extends RegistryDB implements IRegistry{
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
 	private Set<RegistrySegment> segments = new HashSet<RegistrySegment>();
+	private Set<RegistryAddInfo> addInfos = new HashSet<RegistryAddInfo>();
 	private RegistryDocument registryDocument;
 	
 	public Registry() {
@@ -98,6 +99,14 @@ public class Registry extends RegistryDB implements IRegistry{
 	}
 	public void setSegments(Set<RegistrySegment> segments) {
 		this.segments = segments;
+	}
+
+	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
+	public Set<RegistryAddInfo> getAddInfos() {
+		return this.addInfos;
+	}
+	public void setAddInfos(Set<RegistryAddInfo> addInfos) {
+		this.addInfos = addInfos;
 	}
 
 	@Transient

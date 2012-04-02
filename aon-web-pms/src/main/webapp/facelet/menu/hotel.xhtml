@@ -25,6 +25,14 @@
 								<aon:outputText value="#{pmsBundle.pms_reservation_module}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
+<!--
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservation_request" 
+										action="reservationRequest_search" actionListener="#{reservationRequest.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_request_module}">
+									</aon:commandLink>
+								</aon:div>
+-->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservation" 
 										action="reservation_list" actionListener="#{reservation.onLoad}"
@@ -52,9 +60,8 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rack"
-										value="#{pmsBundle.pms_rack_module}"
-										action="rack_search" >
-										<aon:actionListener method="#{rack.onEditSearch}" />
+										action="rack_search" actionListener="#{rack.onEditSearch}"
+										value="#{pmsBundle.pms_rack_module}">
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -70,9 +77,8 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="room"
-											value="#{pmsBundle.pms_room_module}"
-											action="room_search" >
-											<aon:actionListener method="#{room.onEditSearch}" />
+											action="room_search" actionListener="#{room.onEditSearch}"
+											value="#{pmsBundle.pms_room_module}">
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -139,9 +145,7 @@
 										value="#{pmsBundle.pms_workPlanning_module}">
 									</aon:commandLink>
 								</aon:div>
-								
 							</aon:div>
-							
 						</aon:panelGrid>
 
 						<aon:panelGrid id="group_hotel_boards"
@@ -157,9 +161,7 @@
 										value="#{pmsBundle.pms_boardList_module}">
 									</aon:commandLink>
 								</aon:div>
-								
 							</aon:div>
-							
 						</aon:panelGrid>
 
 						<aon:panelGrid id="group_hotel_booking"
@@ -175,11 +177,8 @@
 										value="#{pmsBundle.pms_bookingList_module}">
 									</aon:commandLink>
 								</aon:div>
-								
 							</aon:div>
-							
 						</aon:panelGrid>
-
 					</aon:panelGroup>
 						
 				</h:panelGrid>

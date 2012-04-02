@@ -40,11 +40,11 @@
 						<artifactId>slf4j-jcl</artifactId>
 						<version>1.5.11</version>
 					</dependency>
-                                        <dependency>
-                                                <groupId>com.esferalia.aon</groupId>
-                                                <artifactId>aon.pms</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
+					<dependency>
+						<groupId>com.esferalia.aon</groupId>
+						<artifactId>aon.pms</artifactId>
+						<version>${project.version}</version>
+					</dependency>
  				</dependencies>
 			</plugin>
 		</plugins>

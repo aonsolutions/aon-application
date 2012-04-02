@@ -199,6 +199,7 @@ public class ReservationManager implements IReservationConstants {
 			getReservationUtils().setDomain(hotel.getDomain());
 
 			reservation.setHotel(hotel);
+			reservation.setHotelReservation(hotel);
 			reservation.setCode(reservationCode);
 			reservation.setStartDate(checkIn);
 			reservation.setEndDate(checkOut);

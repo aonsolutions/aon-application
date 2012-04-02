@@ -9,17 +9,16 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!reservation.active and !reservation.invoiced}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.active and !reservation.invoiced}" />
-		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
+		<ui:param name="skipResetButton" value="#{!reservationRequest.to.active or controller.model.rowCount > 0}" />
+		<ui:param name="skipLineEdition" value="#{!reservationRequest.to.active}" />
 
 		<ui:define name="columns">
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-20">
 				<f:facet name="header">
-					<aon:outputLabel for="ProjectReservationGuest_guestIndex" value="#{bundle.aon_order}" />
+					<aon:outputLabel for="ReservationRequestGuest_guestIndex" value="#{bundle.aon_order}" />
 				</f:facet>
-				<aon:outputText id="ProjectReservationGuest_guestIndex" value="#{to.guestIndex}" 
+				<aon:outputText id="ReservationRequestGuest_guestIndex" value="#{to.guestIndex}" 
 					rendered="#{formList or formEdit}" />
 			</aon:column>
 
@@ -42,27 +41,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_document}" />
-				</f:facet>
-				<aon:outputText styleClass="aon-margin-right" value="#{to.documentCountry.value}" rendered="#{formList and !empty to.document}" />
-				<aon:outputText value="#{to.document}" rendered="#{formList}" />
-				<aon:div rendered="#{formEdit}">
-					<ui:include src="tab_grid_document.xhtml">
-						<ui:param name="suffix" value="" />
-					</ui:include>
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div rendered="#{formNew}">
-						<ui:include src="tab_grid_document.xhtml">
-							<ui:param name="suffix" value="-New" />
-						</ui:include>
-					</aon:div>
-				</f:facet>
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-200 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-250 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_contact_data}" />
 				</f:facet>
@@ -70,7 +49,7 @@
 				<aon:outputText styleClass="aon-margin-right" value="#{to.phone}" rendered="#{formList and !empty to.phone}" />
 				<aon:outputText value="e:" rendered="#{formList and !empty to.email}" />
 				<aon:outputText value="#{to.email}" rendered="#{formList}">
-					<aon:abbreviateConverter maxWidth="15" />
+					<aon:abbreviateConverter maxWidth="25" />
 				</aon:outputText>
 				<rich:toolTip rendered="#{formList and !empty to.email}">
 					<aon:outputText value="#{to.email}" />
@@ -89,7 +68,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-300 aon-nowrap">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-350 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.aon_address}" />
 				</f:facet>

@@ -586,7 +586,7 @@
 			<many-to-one property="itemAdvance" />
 		</foreign-key>
 		<foreign-key constraint-name="FK_HOTEL_ITEM_NO_SHOW">
-			<many-to-one property="itemNoshow" />
+			<many-to-one property="itemNoShow" />
 		</foreign-key>
 	</table>
 
@@ -1005,6 +1005,12 @@
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_HOTEL">
+			<many-to-one property="hotel" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_HOTEL_RESERVATION">
+			<many-to-one property="hotelReservation" />
+		</foreign-key>
 		<foreign-key constraint-name="FK_PROJECT_RESERVATION_AGENCY">
 			<many-to-one property="agency" />
 		</foreign-key>

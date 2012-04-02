@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipResetButton" value="#{!reservationRequest.to.active}" />
+		<ui:param name="skipLineEdition" value="true" />
+
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="requestRoom-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{!reservationRequest.to.active}"
+				actionListener="#{controller.onSelect}"
+				reRender="aonContent"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
+
+		<ui:define name="columns">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_roomIndex" value="#{bundle.aon_order}" />
+				</f:facet>
+				<aon:outputText id="ReservationRequestRoom_roomIndex" value="#{to.roomIndex}" 
+					rendered="#{formList or formEdit}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_units" value="#{pmsBundle.pms_room_count}" />
+				</f:facet>
+				<aon:outputText value="#{to.units}" rendered="#{formList}" />
+				<aon:inputText id="ReservationRequestRoom_units" 
+					value="#{controller.to.units}" rendered="#{formEdit}"
+					required="true" size="2" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ReservationRequestRoom_units-New" 
+						value="#{controller.to.units}" rendered="#{formNew}"
+						required="true" size="2" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_item" value="#{pmsBundle.pms_room_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" 
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="ReservationRequestRoom_item" 
+					value="#{controller.to.item}" required="true"
+					rendered="#{formEdit}">
+					<f:selectItems value="#{controller.hotelRoomItems}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="ReservationRequestRoom_item-New" 
+						value="#{controller.to.item}" required="true"
+						rendered="#{formNew}">
+						<f:selectItems value="#{controller.hotelRoomItems}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_adults" value="#{pmsBundle.pms_adults}" />
+				</f:facet>
+				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
+				<aon:inputText id="ReservationRequestRoom_adults" 
+					value="#{controller.to.adults}" rendered="#{formEdit}"
+					required="true" size="2" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ReservationRequestRoom_adults-New" 
+						value="#{controller.to.adults}" rendered="#{formNew}"
+						required="true" size="2" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_babies" value="#{pmsBundle.pms_children} 0-6 #{bundle.aon_years}" />
+				</f:facet>
+				<aon:outputText value="#{to.babies}" rendered="#{formList}" />
+				<aon:inputText id="ReservationRequestRoom_babies" 
+					value="#{controller.to.babies}" rendered="#{formEdit}"
+					required="true" size="2" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ReservationRequestRoom_babies-New" 
+						value="#{controller.to.babies}" rendered="#{formNew}"
+						required="true" size="2" maxlength="3" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ReservationRequestRoom_children" value="#{pmsBundle.pms_children} 6-12 #{bundle.aon_years}" />
+				</f:facet>
+				<aon:outputText value="#{to.children}" rendered="#{formList}" />
+				<aon:inputText id="ReservationRequestRoom_children" 
+					value="#{controller.to.children}" rendered="#{formEdit}"
+					required="true" size="2" maxlength="3" />
+				<f:facet name="footer">
+					<aon:inputText id="ReservationRequestRoom_children-New" 
+						value="#{controller.to.children}" rendered="#{formNew}"
+						required="true" size="2" maxlength="3" />
+				</f:facet>
+			</aon:column>
+		</ui:define>
+
+		<ui:define name="endFormListContent">
+			<aon:div>
+				<aon:commandButton id="requestRoom-AvailabilityQuery"
+					value="&#160;" styleClass="aon-icon-info aon-noborder"
+					title="#{pmsBundle.pms_availability}"
+					rendered="#{reservationRequest.to.active}"
+					actionListener="#{controller.sendAvailabilityQuery}"
+					reRender="#{dataTableId}" />
+			</aon:div>
+			<rich:subTable id="availableRoomStayTable"
+				rendered="#{controller.idInAvailableRoomStayMap}"
+				value="#{controller.availableRoomStayList}" var="availableRoomStay">
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:outputText value="#{controller.roomRequestedId}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:outputText value="#{to.id}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:outputText value="#{availableRoomStay.availability}" />
+				</aon:column>
+
+<!-- 
+				<aon:column colspan="6"
+					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:panelGrid columns="4" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-130, 
+																aon-noborder aon-width-400, aon-noborder aon-width-auto">
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
+							<aon:outputText value="#{roomDetail.assetActivity.date}" styleClass="aon-italic">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						<aon:div>
+							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
+						</aon:div>
+						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">
+							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic" />
+							<aon:outputText value="&#160;" />
+						</aon:div>
+						<aon:div rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}">
+							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right" />
+							<aon:outputText value="#{roomDetail.room.hotel.workPlace.description}" styleClass="aon-italic" />
+							<aon:outputText value="&#160;" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:column>
+ -->
+			</rich:subTable>
+		</ui:define>
+
+	</ui:decorate>
+
+</ui:composition>

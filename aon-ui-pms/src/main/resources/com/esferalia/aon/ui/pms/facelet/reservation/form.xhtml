@@ -28,14 +28,21 @@
 					<c:if test="#{aonRole.admin}">
 						<aon:confirmButton id="reservation-Cancel"
 							value="#{pmsBundle.pms_to_cancel_reservation}"
-							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-							rendered="#{!reservation.cancelled and reservation.cancellable}"
-							immediate="true"
+							title="#{pmsBundle.pms_to_cancel_reservation}"
+							immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable}"
+							styleClass="aon-finding-toolbar-item aon-icon-removed"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
-							confirmActionListener="#{reservation.onCancelReservation}"
-							styleClass="aon-finding-toolbar-item aon-icon-removed" />
+							confirmActionListener="#{reservation.onCancelReservation}" />
 					</c:if>
+					<aon:confirmButton id="reservation-NoShow"
+						value="#{pmsBundle.pms_no_show}"
+						title="#{pmsBundle.pms_no_show}"
+						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable}"
+						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
+						confirmTitle="#{bundle.aon_confirm_title}"
+						confirmMessage="#{pmsBundle.pms_no_show_confirm}"
+						confirmActionListener="#{reservation.onNoShow}" />
 				</ui:define>
 			</ui:decorate>
 

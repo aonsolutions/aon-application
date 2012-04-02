@@ -22,7 +22,9 @@
 		rendered="#{!reservation.new}" />
 	<aon:div rendered="#{!reservation.new}">
 		<aon:outputText id="ProjectReservation_status" value="#{reservation.to.status}" 
-			styleClass="aon-bold" rendered="#{!reservation.new}"  />
+			styleClass="aon-bold" rendered="#{!reservation.new}" />
+		<aon:outputText value="#{pmsBundle.pms_no_show}" 
+			styleClass="aon-bold aon-label-error aon-margin-left" rendered="#{!reservation.new and reservation.to.noShow}" />
 		<aon:commandButton id="block" value="&#160;"
 			actionListener="#{reservation.onBlock}"
 			title="#{pmsBundle.pms_to_block}"

@@ -19,11 +19,11 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	private Hotel hotel;
+	private Date insideDate;
 	private Customer agency;
 	private ReservationStatus[] reservationStatuses;
 	private String guestName;
 	private String guestSurname;
-	private Date insideDate;
 
 	public Hotel getHotel() {
 		return hotel;
@@ -31,6 +31,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+
+	public Date getInsideDate() {
+		return insideDate;
+	}
+
+	public void setInsideDate(Date insideDate) {
+		this.insideDate = insideDate;
 	}
 
 	public Customer getAgency() {
@@ -65,29 +73,25 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		this.guestSurname = guestSurname;
 	}
 	
-	public Date getInsideDate() {
-		return insideDate;
-	}
-
-	public void setInsideDate(Date insideDate) {
-		this.insideDate = insideDate;
-	}
-
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setInsideDate(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE, ReservationStatus.INVOICED};
 		setReservationStatuses(defaultReservationStatus);
 		setGuestName(null);
 		setGuestSurname(null);
-		setInsideDate(null);
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
+		}
+		if (getInsideDate() != null) {
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), getInsideDate());			
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDate());			
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
@@ -102,11 +106,6 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		if (StringUtils.isNotEmpty(getGuestSurname())) {
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(getController().resolveAlias("ProjectReservation.guests.surname"), "%"+getGuestSurname()+"%"));
 		}
-		if (getInsideDate() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), getInsideDate());			
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), getInsideDate());			
-		}
-		
 	}
 
 }

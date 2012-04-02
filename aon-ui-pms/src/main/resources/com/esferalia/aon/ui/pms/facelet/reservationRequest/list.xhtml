@@ -10,49 +10,21 @@
 		<aon:form>
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
-				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
-				<ui:define name="additionalToolbarContent">
-					<aon:commandButton id="reservation-Refresh"
-						value="#{pmsBundle.pms_to_refresh}"	immediate="#{true}"
-						styleClass="aon-finding-toolbar-item aon-icon-refresh"
-						actionListener="#{reservation.onSearch}"
-						reRender="aonContent" />
-				</ui:define>							
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_request_module}" />
+				<ui:param name="controller" value="#{reservationRequest}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{reservation}" />
+					<ui:param name="controller" value="#{reservationRequest}" />
 					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
 
 						<aon:column styleClass="aon-editDataTable-iconColumn">
 							<aon:commandLink id="#{dataTableId}-selectButton" 
-								styleClass="#{(to.invoiced) ? 
-												((to.noShow) ? ('aon-icon-predetermine2') : ('aon-icon-predetermine')) :
-												((to.cancelled) ?
-													((to.noShow) ? ('aon-icon-question') : ('aon-icon-wrong')) :
-													((to.blocked) ?
-														('aon-icon-lock') :
-														((reservation.pendingRoomAssignation) ?
-															('aon-icon-point-red') :
-															((reservation.pendingServiceAssignation) ?
-																('aon-icon-point-yellow') :
-																('aon-icon-point-green')))))}" 
+								styleClass="#{(to.active) ? ('aon-icon-point-red') : ('aon-icon-point-green')}" 
 								value="&#160;&#160;&#160;&#160;"
-								title="#{(to.invoiced) ? 
-											(pmsBundle.pms_invoiced) :
-											((to.cancelled) ?
-												((to.noShow) ? (pmsBundle.pms_no_show) : (pmsBundle.pms_cancelled)) :
-												((to.blocked) ?
-													(pmsBundle.pms_blocked) :
-													((reservation.pendingRoomAssignation) ?
-														(pmsBundle.pms_room_assignation_pending_msg) :
-														((reservation.pendingServiceAssignation) ?
-															(pmsBundle.pms_service_assignation_pending_msg) :
-															('OK')))))}" 
+								title="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_processed)}" 
 								immediate="true" ajaxSingle="true" requestDelay="100"
 								action="#{rowSelectorAction}"
 								actionListener="#{rowSelectorActionListener}"
@@ -69,7 +41,7 @@
 							</f:facet>
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.hotel.workPlace.description"
+						<aon:column alias="ReservationRequest.hotel.workPlace.description"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_hotel}" />
@@ -77,15 +49,15 @@
 							<h:outputText value="#{to.hotel.workPlace.description}" />
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.project.id"
+						<aon:column alias="ReservationRequest.id"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
+								<aon:outputText value="#{pmsBundle.pms_reservation_request_id}" />
 							</f:facet>
 							<h:outputText value="#{to.id}" />
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.code"
+						<aon:column alias="ReservationRequest.code"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_reservation_code}" />
@@ -93,7 +65,7 @@
 							<aon:outputText value="#{to.code}" />
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.startDate"
+						<aon:column alias="ReservationRequest.startDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
@@ -104,7 +76,7 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.endDate"
+						<aon:column alias="ReservationRequest.endDate"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
@@ -122,20 +94,20 @@
 							<aon:outputText value="#{to.guestFullName}" />
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.agency.name"
-							styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_agency}" />
+								<aon:outputText value="#{pmsBundle.pms_agency} / #{pmsBundle.pms_company}" />
 							</f:facet>
-							<aon:outputText value="#{to.agency.registry.fullName}" />
+							<aon:outputText value="#{(to.agencyHolder) ? (to.agency.registry.fullName) : (to.company.registry.fullName)}" />
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.status"
+						<aon:column alias="ReservationRequest.active"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{to.status}" />
+							<aon:outputText value="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_pending)}" />
+
 						</aon:column>
 
 					</ui:define>

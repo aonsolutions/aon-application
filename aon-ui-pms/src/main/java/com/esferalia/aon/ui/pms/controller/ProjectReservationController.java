@@ -120,9 +120,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public int getNights() {
 		if (nights == 0) {
 			ProjectReservation reservation = (ProjectReservation)getTo();
-			if (reservation.getStartDate() != null && reservation.getEndDate() != null) {
-				nights = (int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate());
-			}
+			nights = reservation.getNights();
 		}
 		return nights;
 	}
@@ -368,6 +366,19 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public void onHolderChanged(ValueChangeEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			reservation.setBookingHolder((BookingHolder)event.getNewValue());
+			if (reservation.isCompanyHolder()) {
+				reservation.setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+			} else {
+				reservation.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+			}
+			resetRoomTariff();
+		}
+	}
+
 	public void onAgencyChanged(LookupChangeEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
@@ -380,19 +391,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setCompany((Customer)event.getNewValue());
-			resetRoomTariff();
-		}
-	}
-
-	public void onHolderChanged(ValueChangeEvent event) throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			reservation.setBookingHolder((BookingHolder)event.getNewValue());
-			if (reservation.isCompanyHolder()) {
-				reservation.setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-			} else {
-				reservation.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-			}
 			resetRoomTariff();
 		}
 	}
@@ -419,38 +417,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		return reservation.isBlocked();
 	}
 
-	public boolean isModelBlocked() {
-		if (model.isRowAvailable()) {
-			ProjectReservation reservation = (ProjectReservation)model.getRowData();
-			return reservation.isBlocked();
-		}
-		return false;
-	}
-
 	public boolean isCancelled() {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		return reservation.isCancelled();
 	}
 
-	public boolean isModelCancelled() {
-		if (model.isRowAvailable()) {
-			ProjectReservation reservation = (ProjectReservation)model.getRowData();
-			return reservation.isCancelled();
-		}
-		return false;
-	}
-
 	public boolean isInvoiced() {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		return reservation.isInvoiced();
-	}
-
-	public boolean isModelInvoiced() {
-		if (model.isRowAvailable()) {
-			ProjectReservation reservation = (ProjectReservation)model.getRowData();
-			return reservation.isInvoiced();
-		}
-		return false;
 	}
 
 	public void onBlock(ActionEvent event) {
@@ -489,6 +463,14 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public void onCancelReservation(ActionEvent event) throws ManagerBeanException {
+		cancelReservation(event, false);
+	}
+	
+	public void onNoShow(ActionEvent event) throws ManagerBeanException {
+		cancelReservation(event, true);
+	}
+
+	private void cancelReservation(ActionEvent event, boolean noShow) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 
 		ReservationUtils reservationUtils = new ReservationUtils();
@@ -501,6 +483,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 
 		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setNoShow(noShow);
 		accept(event);
 
     	IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
@@ -508,7 +491,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
 	}
-	
+
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
