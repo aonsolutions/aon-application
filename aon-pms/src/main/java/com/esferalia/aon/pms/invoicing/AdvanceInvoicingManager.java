@@ -1,7 +1,11 @@
 package com.esferalia.aon.pms.invoicing;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +27,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -78,6 +83,9 @@ public class AdvanceInvoicingManager {
 		Invoice invoice = new Invoice();
 		invoice.setProject(reservation.getProject());
 		Series series = getHotelSeries(reservation);
+		if (series == null || series.getId() == null) {
+			throw new ManagerBeanException("El hotel +'"+ reservation.getHotel().getWorkPlace().getDescription() +"' no tiene serie de facturación definida.");
+		}
 		invoice.setSeries( series.getCode() );
 		invoice.setNumber(obtainSeriesMaxNumber(series.getCode()));
 		Registry registry;
@@ -125,7 +133,7 @@ public class AdvanceInvoicingManager {
 		}
 		return null;
 	}
-	
+
 	private int obtainSeriesMaxNumber(String seriesId) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
@@ -140,7 +148,11 @@ public class AdvanceInvoicingManager {
 		} else {
 			total = CommonUtil.round(reservation.getTotal() * advanceInvoiceTo.getPercent() / 100);	
 		}
-		double vatPercent = advanceInvoiceTo.getItem().getVat().getPercentage();
+		Item item = reservation.getHotel().getItemAdvance();
+		if (item == null || item.getId() == null) {
+			throw new ManagerBeanException("El hotel +'"+ reservation.getHotel().getWorkPlace().getDescription() +"' no tiene artículo de anticipos definido.");
+		}
+		double vatPercent = item.getVat().getPercentage();
 		double taxableBase = CommonUtil.round( (total * 100 ) / (vatPercent + 100));
 		double vatQuota = CommonUtil.round(total - taxableBase);
 		
@@ -148,8 +160,8 @@ public class AdvanceInvoicingManager {
 		invoiceDetail.setInvoice(invoice);
 		invoiceDetail.setProject(reservation.getProject());
 		invoiceDetail.setLine(1);
-		invoiceDetail.setItem(advanceInvoiceTo.getItem());
-		invoiceDetail.setDescription(advanceInvoiceTo.getItem().getProduct().getName());
+		invoiceDetail.setItem(item);
+		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(),null,item.getProduct().getName()));
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(taxableBase);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
@@ -157,11 +169,20 @@ public class AdvanceInvoicingManager {
 		invoiceDetail.setSourceId( null );
 		invoiceDetail.setTaxableBase(taxableBase);
 		invoiceDetail.setWorkPlace(reservation.getHotel().getWorkPlace());
+		
 		invoiceDetail.setTaxDataInDetail(true);
 		invoiceDetail.setVatPercent(vatPercent);
 		invoiceDetail.setVatQuota(vatQuota);
+		
 		invoiceDetailBean.insert(invoiceDetail);
 		return total;
+	}
+
+	private String obtainDetailDescription(Date effectiveDate, String room, String description) {
+    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    	String date = StringUtils.rightPad(formatter.format(effectiveDate), 11);
+    	room = (room == null) ? StringUtils.rightPad(StringUtils.repeat("-", 5), 6) : StringUtils.rightPad(room, 6);
+    	return (date + room + description);
 	}
 	
 	private void createAdvanceInvoiceFinances(Invoice invoice, AdvanceInvoiceTo advanceInvoiceTo, double total) throws ManagerBeanException {
@@ -176,6 +197,10 @@ public class AdvanceInvoicingManager {
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		finance.setScope(invoice.getScope());
 		finance.setPayMethod( advanceInvoiceTo.getPayMethod() );
+		if (advanceInvoiceTo.getRbank() != null) {
+			finance.setBank(advanceInvoiceTo.getRbank().getBank());
+			finance.setBankAccount(advanceInvoiceTo.getRbank().getBankAccount());
+		}
 		finance.setPayment(false);
 		finance.setDueDate(advanceInvoiceTo.getFinanceDate());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
