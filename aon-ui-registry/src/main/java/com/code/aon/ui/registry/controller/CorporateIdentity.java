@@ -5,9 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,25 +13,18 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.velocity.TemplateHelper;
-import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.company.Company;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
@@ -47,7 +37,6 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.registry.report.IdentityReport;
 import com.code.aon.ui.registry.report.Number2Text;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 /**
@@ -267,7 +256,7 @@ public class CorporateIdentity implements ICollectionProvider{
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
@@ -278,51 +267,6 @@ public class CorporateIdentity implements ICollectionProvider{
 		}
 		return null;
 	}
-	
-	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/desktop/report/";
-
-	private static final String PRINT_TEMPLATE = "print_fax.html.vm";
-
-    public void onPrintFax(ActionEvent event) throws ManagerBeanException{
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		try {
-			response.setContentType(MimeType.MIME_HTML.getName());
-			Writer out = new OutputStreamWriter( response.getOutputStream() );
-			VelocityHelper velocityHelper = new VelocityHelper();
-			try {
-				velocityHelper.init( VM_PATH_DEFAULT );
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			TemplateHelper th = velocityHelper.getTemplateHelper();
-			Locale locale = AonUtil.getCurrentLocale();
-			ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.desktop.i18n.messages", locale);	
-			th.putInContext("toLiteral", bundle.getString("aon_corporate_identity_to"));
-			th.putInContext("fromLiteral", bundle.getString("aon_corporate_identity_from"));
-			th.putInContext("subjectLiteral", bundle.getString("aon_corporate_identity_subject"));
-			th.putInContext("contextPath", context.getExternalContext().getRequestContextPath());
-			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
-			th.putInContext("nowDate", df.format(new Date()));
-			th.putInContext("addressStr", identityReport.getAddressStr());
-			th.putInContext("phone", identityReport.getPhone());
-			th.putInContext("fax", identityReport.getFax());
-			th.putInContext("email", identityReport.getEmail());
-			th.putInContext("web", identityReport.getWeb());
-			th.putInContext("fax_to", identityReport.getFax_to());
-			th.putInContext("fax_from", identityReport.getFax_from());
-			th.putInContext("fax_subject", identityReport.getFax_subject());
-			th.putInContext("fax_content", identityReport.getFax_content());
-			th.processTemplate(PRINT_TEMPLATE, out);
-			response.flushBuffer();
-			out.close();
-		} catch (IOException e) {
-        	LOGGER.error(e.getMessage(), e);
-		} catch (AonException e) {
-        	LOGGER.error(e.getMessage(), e);
-		} 	
-		context.responseComplete();
-    }
 	
     public void onN2T(ActionEvent event){
     	try{
