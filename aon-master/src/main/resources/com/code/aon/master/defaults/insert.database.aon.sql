@@ -6,7 +6,7 @@ SET FOREIGN_KEY_CHECKS=0;
 SET @Domain = 1;
 
 INSERT INTO `domain` VALUES 
-	(@Domain, 'DOMINIO PRINCIPAL', NULL, 1);
+	(@Domain, 'localhost', 'DOMINIO PRINCIPAL', NULL, 0, NULL, 0, 0, 0, NULL, NULL, NULL, 1);
 
 INSERT INTO `account` VALUES 
 	(1,@Domain,'1','FINANCIACIÓN BÁSICA',NULL,0,1),
