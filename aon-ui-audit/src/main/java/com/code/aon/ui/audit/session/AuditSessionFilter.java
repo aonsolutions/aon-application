@@ -16,9 +16,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.Application;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
@@ -51,7 +51,8 @@ public class AuditSessionFilter implements Filter {
 			LOGGER.info( "Application {}", application );
 			User user = AuditManager.getUser( principal.getShortName() );
 			LOGGER.info( "User {}", user );
-			if ( application.getAuditLevel() != AuditLevel.NONE ) {
+			AuditLevel level = AuditManager.getAuditLevel(application, user.getDomain() );
+			if ( level != AuditLevel.NONE ) {
 				Session session = new Session();
 				session.setApplication( application );
 				session.setUser( user );
@@ -59,7 +60,7 @@ public class AuditSessionFilter implements Filter {
 				session.setStartDate( new Date(httpSession.getCreationTime()) );
 				session.setRemoteAddress( request.getRemoteAddr() );
 				session.setRemoteHost( request.getRemoteHost() );
-				AuditManager.insertSession( httpSession, session );				
+				AuditManager.insertSession( httpSession, session, level );				
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error login audit", th );

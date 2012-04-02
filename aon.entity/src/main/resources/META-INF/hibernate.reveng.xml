@@ -172,10 +172,21 @@
 	</table>
 
 	<table name="app_param" class="com.esferalia.aon.entity.master.ApplicationParameter" />
+	
+	<table name="application_user" >
+		<foreign-key constraint-name="FK_APPLICATION_USER_USER">
+			<many-to-one property="user"/>
+		</foreign-key>
+		<foreign-key constraint-name="FK_APPLICATION_USER_DOMAIN_APPLICATION">
+			<many-to-one property="domainApplication"/>
+		</foreign-key>
+  </table>  
 
-	<table name="application">
-		<column name="audit_level" type="com.code.aon.audit.enumeration.AuditLevel"/>	
-	</table>
+	<table name="application_user_profile" >
+		<foreign-key constraint-name="FK_APPLICATION_USER_PROFILE_APPLICATION_USER">
+			<many-to-one property="applicationUser"/>
+		</foreign-key>
+  </table>  
 
 	<table name="asset_activity">
 		<column name="status" type="com.code.aon.asset.enumeration.ActivityStatus"/>
@@ -314,6 +325,19 @@
 		</primary-key>
 	</table>
 
+	<table name="contact">
+		<column name="note" type="text"/>
+		<foreign-key constraint-name="FK_CONTACT_USER">
+			<many-to-one property="user"/>
+		</foreign-key>    
+	</table>
+
+ 	<table name="contact_group">
+		<foreign-key constraint-name="FK_CONTACT_GROUP_USER">
+			<many-to-one property="user"/>
+		</foreign-key>    
+	</table>
+
 	<table name="contract">
 		<column name="status" type="com.esferalia.aon.payroll.enumeration.ContractStatus"/>
 		<column name="ss_regime" property="regimeType" type="com.esferalia.aon.payroll.enumeration.SSRegimeType"/>
@@ -423,9 +447,14 @@
 		<meta attribute="extra-import">com.code.aon.common.domain.IDomainPojo</meta>
 		<meta attribute="implements">IDomainPojo&lt;Domain&gt;</meta>
 		<meta attribute="aon-constructor">this.active = true;</meta>
+		<column name="type" type="com.code.aon.config.enumeration.DomainType" />
 		<foreign-key constraint-name="FK_DOMAIN_PARENT">
 			<many-to-one property="parent" />
-		</foreign-key>
+		</foreign-key>		
+	</table>
+
+	<table name="domain_application" >
+		<column name="audit_level" type="com.code.aon.audit.enumeration.AuditLevel"/>	
 	</table>
 
 	<table name="enterprise">
@@ -983,6 +1012,12 @@
 	<table name="product_account">
 		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
 	</table>
+
+	<table name="profile_role" >
+		<foreign-key constraint-name="FK_PROFILE_ROLE_APPLICATION_ROLE">
+			<many-to-one property="applicationRole"/>
+		</foreign-key>
+  </table>    
 	
 	<table name="project_attach" class="com.esferalia.aon.entity.master.ProjectAttachment">
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />

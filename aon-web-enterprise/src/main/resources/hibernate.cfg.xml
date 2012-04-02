@@ -91,6 +91,7 @@
 		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
@@ -98,6 +99,7 @@
 		<mapping class="com.code.aon.config.CNAE2009Rate"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
@@ -230,7 +232,6 @@
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>		
 
 	</session-factory>

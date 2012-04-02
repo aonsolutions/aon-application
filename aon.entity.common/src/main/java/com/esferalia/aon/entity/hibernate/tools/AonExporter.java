@@ -56,6 +56,9 @@ public class AonExporter extends GenericExporter{
 				isDomainContainer = true;
 			}
 		}
+		if ( "ProfileDB".equals(pojo.getDeclarationName()) ) {
+			isDomainContainer = false;
+		}
 		additionalContext.put("hasProjectPrimaryKeyJoinColumn", hasProjectPrimaryKeyJoinColumn(pojo) );	
 		additionalContext.put("hasRegistryPrimaryKeyJoinColumn", hasRegistryPrimaryKeyJoinColumn(pojo));	
 		additionalContext.put("hasAssetPrimaryKeyJoinColumn", hasAssetPrimaryKeyJoinColumn(pojo));
@@ -199,7 +202,6 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionDenied","com.code.aon.audit.ActionDenied");
 		map.put("ActionEntry","com.code.aon.audit.ActionEntry");
 		map.put("ActionFavorite","com.code.aon.audit.ActionFavorite");
-		map.put("Application","com.code.aon.audit.Application");
 		map.put("Session","com.code.aon.audit.Session");
 
 		//AON CALENDAR 
@@ -238,13 +240,15 @@ public class AonExporter extends GenericExporter{
 		map.put("WorkplaceDepartment","com.code.aon.company.WorkplaceDepartment");
 
 		//AON CONFIG 
-		map.put("Domain","com.code.aon.config.Domain");
+		map.put("Application","com.code.aon.config.Application");
 		map.put("ApplicationParameter","com.code.aon.config.ApplicationParameter");
 		map.put("Bank","com.code.aon.config.Bank");
 		map.put("CNAE","com.code.aon.config.CNAE");
 		map.put("CNAE2009","com.code.aon.config.CNAE2009");
 		map.put("CNAE2009Rate","com.code.aon.config.CNAE2009Rate");
 		map.put("CommissionType","com.code.aon.config.CommissionType");
+		map.put("Domain","com.code.aon.config.Domain");    
+		map.put("DomainApplication","com.code.aon.config.DomainApplication");    
 		map.put("PayMethodTypeDetail","com.code.aon.config.PayMethodTypeDetail");
 		map.put("PayMethod","com.code.aon.config.PayMethod");
 		map.put("Series","com.code.aon.config.Series");
@@ -321,6 +325,14 @@ public class AonExporter extends GenericExporter{
 		map.put("WebInfoPageResource","com.code.aon.infoweb.WebInfoPageResource");
 		map.put("WebInfoStyle","com.code.aon.infoweb.WebInfoStyle");
 
+		//AON-MANAGER   
+		map.put("ApplicationRole","com.code.aon.manager.ApplicationRole");		
+		map.put("ApplicationUser","com.code.aon.manager.ApplicationUser");
+		map.put("ApplicationUserProfile","com.code.aon.manager.ApplicationUserProfile");
+		map.put("Profile","com.code.aon.manager.Profile");
+		map.put("ProfileRole","com.code.aon.manager.ProfileRole");
+		map.put("Role","com.code.aon.manager.Role");
+		
 		//AON-MARKETING  
 		map.put("ActionTarget","com.code.aon.marketing.ActionTarget");
 		map.put("MarketingCampaign","com.code.aon.marketing.MarketingCampaign");
@@ -478,6 +490,9 @@ public class AonExporter extends GenericExporter{
 		map.put("TasItem","com.code.aon.tas.TasItem");
 
 		//AON-WEBMAIL 
+		map.put("Contact","com.code.aon.webmail.db.Contact");
+		map.put("ContactGroup","com.code.aon.webmail.db.ContactGroup");
+		map.put("ContactGroupDetail","com.code.aon.webmail.db.ContactGroupDetail");
 		map.put("MailAccount","com.code.aon.webmail.db.MailAccount");
 		map.put("Signature","com.code.aon.webmail.db.Signature");
 

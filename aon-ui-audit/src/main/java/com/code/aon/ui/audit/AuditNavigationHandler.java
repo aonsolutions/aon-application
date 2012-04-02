@@ -26,7 +26,7 @@ public class AuditNavigationHandler extends AonNavigationHandler {
 		if ( session != null ) {		
 			try {
 				Action action = AuditManager.getAction( name, session.getApplication() );
-				if ( isActionExecutionAuditEnabled(session) ) {
+				if ( isActionExecutionAuditEnabled(httpSession) ) {
 					AuditManager.createActionEntry(session, action);
 				}
 			} catch ( Throwable th ) {
@@ -37,8 +37,9 @@ public class AuditNavigationHandler extends AonNavigationHandler {
 		}
 	}	
 	
-	private boolean isActionExecutionAuditEnabled( Session session ) {
-		return session.getApplication().getAuditLevel() == AuditLevel.MODULE;
+	private boolean isActionExecutionAuditEnabled( HttpSession httpSession ) {
+		AuditLevel level = (AuditLevel) httpSession.getAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
+		return level == AuditLevel.MODULE;
 	}
 
 	@Override

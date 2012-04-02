@@ -59,9 +59,11 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 	public boolean excludeForeignKeyAsManytoOne(String keyname,
 			TableIdentifier fromTable, List fromColumns,
 			TableIdentifier referencedTable, List referencedColumns) {
-		Column column = (Column) fromColumns.get(0);
-		if ("domain".equals(column.getName()) && "domain".equals(referencedTable.getName()) ) {
-			return true;
+		if (!"profile".equals(fromTable.getName()) ) {
+			Column column = (Column) fromColumns.get(0);
+			if ("domain".equals(column.getName()) && "domain".equals(referencedTable.getName()) ) {
+				return true;
+			}			
 		}
 		return super.excludeForeignKeyAsManytoOne(keyname, fromTable, fromColumns,
 				referencedTable, referencedColumns);

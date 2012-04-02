@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
-import com.code.aon.audit.Application;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;

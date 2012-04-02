@@ -10,13 +10,14 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionEntry;
-import com.code.aon.audit.Application;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Application;
+import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -30,6 +31,8 @@ public class AuditManager implements IAuditConstants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditManager.class);
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
+	
+	public static final String AUDIT_LEVEL_PROPERTY = "com.code.aon.audit.level";
 	
 	public static final String AUDIT_SESSION_MANAGER_BEAN = "com.code.aon.audit.session.managerBean";
 	
@@ -46,22 +49,16 @@ public class AuditManager implements IAuditConstants {
 	}		
 
 	public static Application getApplication( String context ) throws ManagerBeanException {
-		Application application = null;
 		String name = getApplicationName( context );
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
 		String field = applicationBean.getFieldName(IEntityAlias.APPLICATION_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( field, name );
 		List<ITransferObject> list = applicationBean.getList(criteria);
-		if ( list.isEmpty() ) {
-			application = new Application();
-			application.setName( name );
-			application.setAuditLevel(AuditLevel.MODULE);
-			applicationBean.insert( application );
-		} else {
-			application = (Application) list.get(0);
+		if (! list.isEmpty() ) {
+			return (Application) list.get(0);
 		}
-		return application;
+		return null;
 	}
 	
 	public static User getUser( String shortName ) {
@@ -80,10 +77,11 @@ public class AuditManager implements IAuditConstants {
 	}
 	
 	
-	public static void insertSession( HttpSession httpSession, Session session ) throws ManagerBeanException {
+	public static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
 		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
 		sessionBean.insert( session );
 		LOGGER.info( "Session inserted {}", session );
+		httpSession.setAttribute( AuditManager.AUDIT_LEVEL_PROPERTY, level );
 		httpSession.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, session );
 		httpSession.setAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN, sessionBean );
 	}
@@ -95,6 +93,7 @@ public class AuditManager implements IAuditConstants {
 			session.setEndDate( new Date() );
 			sessionBean.update( session );
 			LOGGER.info( "Session finished {}", session.getId() );
+			httpSession.removeAttribute( AuditManager.AUDIT_LEVEL_PROPERTY );
 			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
 			httpSession.removeAttribute( AuditManager.AUDIT_SESSION_MANAGER_BEAN );
 		}
@@ -136,4 +135,17 @@ public class AuditManager implements IAuditConstants {
 		LOGGER.debug( "ActionEntry inserted {}", ae );
 	}
 
+	public static AuditLevel getAuditLevel( Application application, int domain ) throws ManagerBeanException {
+		AuditLevel level = AuditLevel.NONE;
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId() );
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			level = ((DomainApplication) list.get(0)).getAuditLevel();
+		}
+		return level;
+	}	
+	
 }
