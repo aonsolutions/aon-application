@@ -2510,6 +2510,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-logo{
 	background:transparent url(images/aon-icon/aon-icon-logo.png) no-repeat scroll center left;
 }
+.aon-icon-changePassword{
+	background:transparent url(images/aon-main-menu/aon-icon-changePassword.png) no-repeat scroll center left;
+}
 .aon-subTable-green-header{
 	padding-left: 10px; 
 	border: none; 
