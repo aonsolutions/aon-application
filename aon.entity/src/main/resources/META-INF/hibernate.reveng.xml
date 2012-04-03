@@ -1054,6 +1054,16 @@
 		</foreign-key>
 	</table>
 	
+	<table name="project_reservation_divert">
+		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationDivertStatus"/>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_DIVERT_REQUEST_HOTEL">
+			<many-to-one property="requestHotel" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_DIVERT_DIVERT_HOTEL">
+			<many-to-one property="divertHotel" />
+		</foreign-key>
+	</table>
+	
 	<table name="project_reservation_guest">
 		<column name="guest_index" type="int"/>
 		<column name="document_type" type="com.code.aon.registry.enumeration.DocumentType" property="documentType"/>

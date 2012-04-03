@@ -1085,6 +1085,93 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
+	<!-- ************* DIVERT ***************** -->
+	<managed-bean>
+		<managed-bean-name>divert</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservationDivert</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divert</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Divert_divertDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{divertSearch}</value>
+				<value>#{divertControllerListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>divertControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.DivertControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>divertSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.DivertSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ************* DIVERT RECEPTION ***************** -->
+	<managed-bean>
+		<managed-bean-name>divertReception</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertReceptionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservationDivert</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divertReception</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Divert_divertDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{divertReceptionSearch}</value>
+				<value>#{divertReceptionControllerListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>divertReceptionSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.DivertReceptionSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>divertReceptionControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.DivertReceptionControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	
 	<!-- **************************************** -->
 	<!-- ********** OPTIONAL LISTENERS ********** -->
 	<!-- **************************************** -->
@@ -1109,6 +1196,45 @@
 			<value>purchase</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ******************************** -->
+	<!-- ********** LOOKUP ************** -->
+	<!-- ******************************** -->
+	
+	<!-- ************ RESERVATION LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>reservationLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>reservationLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectReservation_id</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/pms/facelet/lookup/reservation/list.xhtml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/pms/facelet/lookup/reservation/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{reservationSearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
 	
 	<!-- ******************************** -->
 	<!-- ********** NAVIGATION ********** -->
@@ -1307,6 +1433,42 @@
 		<navigation-case>
 			<from-outcome>bookingList_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/bookingList/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Divert ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>divert_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divert_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divert_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divert_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Divert Reception ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>divertReception_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/reception/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divertReception_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/reception/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divertReception_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/reception/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

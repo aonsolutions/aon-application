@@ -250,6 +250,7 @@
 		<mapping class="com.esferalia.aon.pms.PosShift"/>
 		<mapping class="com.esferalia.aon.pms.PosShiftCount"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>

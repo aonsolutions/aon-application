@@ -47,6 +47,22 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divert" 
+										value="#{pmsBundle.pms_divert_module}"
+										action="divert_grid" >
+										<aon:actionListener method="#{divert.onEditSearch}" />
+										<aon:actionListener method="#{divert.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divertReception" 
+										value="#{pmsBundle.pms_divertReception_module}"
+										action="divertReception_list" >
+										<aon:actionListener method="#{divertReception.onEditSearch}" />
+										<aon:actionListener method="#{divertReception.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="serviceInvoice" 
 										action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
 										value="#{pmsBundle.pms_service_invoice_module}">

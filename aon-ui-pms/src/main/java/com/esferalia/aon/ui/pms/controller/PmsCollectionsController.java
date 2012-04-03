@@ -18,11 +18,13 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.enumeration.Shift;
 
 public class PmsCollectionsController {
 
+	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> reservationStatuses;
 	private List<SelectItem> bookingHolders;
 	private List<SelectItem> shifts;
@@ -120,6 +122,19 @@ public class PmsCollectionsController {
 			}
 		}
 		return shifts;
+	}
+	
+	public List<SelectItem> getReservationDivertStatuses() {
+		if (reservationDivertStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			reservationDivertStatuses = new LinkedList<SelectItem>();
+			for (ReservationDivertStatus status : ReservationDivertStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				reservationDivertStatuses.add(item);
+			}
+		}
+		return reservationDivertStatuses;
 	}
 
 }

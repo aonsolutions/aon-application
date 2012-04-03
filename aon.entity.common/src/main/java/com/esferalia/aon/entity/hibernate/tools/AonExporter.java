@@ -439,6 +439,7 @@ public class AonExporter extends GenericExporter{
         map.put("PosShift","com.esferalia.aon.pms.PosShift");
         map.put("PosShiftCount","com.esferalia.aon.pms.PosShiftCount");
         map.put("ProjectReservation","com.esferalia.aon.pms.ProjectReservation");
+        map.put("ProjectReservationDivert","com.esferalia.aon.pms.ProjectReservationDivert");
         map.put("ProjectReservationGuest","com.esferalia.aon.pms.ProjectReservationGuest");
         map.put("ProjectReservationRoom","com.esferalia.aon.pms.ProjectReservationRoom");
         map.put("ProjectReservationRoomDetail","com.esferalia.aon.pms.ProjectReservationRoomDetail");
