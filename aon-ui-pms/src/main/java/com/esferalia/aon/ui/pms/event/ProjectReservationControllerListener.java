@@ -61,6 +61,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservation.setCreationDate(new Date());
 		reservation.setStartTime(obtainDateTime(reservation.getStartDate(), controller.getStartTime()));
 		reservation.setEndTime(obtainDateTime(reservation.getEndDate(), controller.getEndTime()));
+		reservation.setHotelReservation(reservation.getHotel());
 	}
 
 	@Override
