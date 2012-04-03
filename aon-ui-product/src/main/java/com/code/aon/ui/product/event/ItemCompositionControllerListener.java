@@ -22,6 +22,7 @@ public class ItemCompositionControllerListener extends ControllerAdapter {
 
 		try {
 			itemComposition.setSequence(calculateNextSequence((Item)controller.getMasterController().getTo()));
+			itemComposition.setQuantity(1.0);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
