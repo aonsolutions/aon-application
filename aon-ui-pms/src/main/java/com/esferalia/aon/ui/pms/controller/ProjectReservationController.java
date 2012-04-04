@@ -526,7 +526,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 
-		getReservationInvoiceTo().setDirectCustomer(reservation.getProject().getRegistry().getId() == reservation.getHotel().getCustomer().getRegistry().getId());
+		getReservationInvoiceTo().setDirectCustomer(reservation.getProject().getRegistry().getId() == reservation.getHotelReservation().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRegistry(reservation.getProject().getRegistry());
 		if (getReservationInvoiceTo().isDirectCustomer()) {
 			getReservationInvoiceTo().setAddress(new InvoiceAddress());
@@ -569,7 +569,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		List<SelectItem> seriesList = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), ((ProjectReservation)this.getTo()).getHotel().getScope().getId());
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), ((ProjectReservation)this.getTo()).getHotelReservation().getScope().getId());
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		if (rectification) {
