@@ -12,6 +12,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,6 +28,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationService;
+import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
@@ -93,8 +97,9 @@ public class DivertReceptionController extends BasicController {
 			}
 			roomAvailabilityController.onFilter(event);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido actualizar la reserva.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	
@@ -103,25 +108,19 @@ public class DivertReceptionController extends BasicController {
 		ProjectReservationController reservationController = (ProjectReservationController) FormUtil.getController(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		reservationController.select(event, divert.getProjectReservation());
 		ProjectReservationRoomController roomController = (ProjectReservationRoomController) FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-//		roomController.onSelectFirst(event);
 		
 		setReallocationList(new LinkedList<ProjectReservationRoom>());
 		for(ITransferObject to: roomController.getWrappedList()){
-//			RoomReallocation rr = new RoomReallocation();
-//			rr.setReservationRoom((ProjectReservationRoom) to);
 			getReallocationList().add((ProjectReservationRoom) to);
 		}
-		
 	}
 	
 	public List<SelectItem> getPendingRooms() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>(); 
 		for(ProjectReservationRoom r: getReallocationList()){
-//			if(rr.getRoom()==null){
-				String label = r.getRoomIndex()+" - "+r.getItem().getProduct().getCode()+" - "+r.getItem().getProduct().getName();
-				SelectItem item = new SelectItem(r, label);
-				list.add(item);
-//			}
+			String label = r.getRoomIndex()+" - "+r.getItem().getProduct().getCode()+" - "+r.getItem().getProduct().getName();
+			SelectItem item = new SelectItem(r, label);
+			list.add(item);
 		}
 		return list;
 	}
@@ -130,50 +129,44 @@ public class DivertReceptionController extends BasicController {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			Map<String, String> params = ec.getRequestParameterMap();
-
-//			setAvailableRoom((Room)BeanManager.getManagerBean(Room.class).get(new Integer(params.get(IPmsConstants.AVAILABLE_ROOM))));
-			
 			RoomReallocation rr = new RoomReallocation();
 			rr.setReservationRoom(getPendingRoom());
 			rr.setRoom((Room)BeanManager.getManagerBean(Room.class).get(new Integer(params.get(IPmsConstants.AVAILABLE_ROOM))));
-			
 			getAsignedList().add(rr);
 			getReallocationList().remove(getPendingRoom());
 			setPendingRoom(null);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido asignar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido asignar.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	
 	public void onAcceptDivert(ActionEvent event){
 		try {
-//			ProjectReservationRoomController roomController = (ProjectReservationRoomController) FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-//			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)roomController.getTo();
-			
-			ReservationUtils reservationUtils = new ReservationUtils();
-
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			Date startDate = roomAvailability.getFilterParams().getViewerStartDate();
 			Date endDate = roomAvailability.getFilterParams().getViewerEndDate();
-			
-//			reservationUtils.updateProjectReservationRoomDetails(reservationRoom, startDate, endDate, getAvailableRoom());
-			
+			ReservationUtils reservationUtils = new ReservationUtils();
 			for(RoomReallocation rr: getAsignedList()){
-				if(rr.getReservationRoom().getRoomNumber()!=null){
-					
+				if(rr.getReservationRoom().getRoomNumber()==null){
+					reservationUtils.insertProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom(),getAvailableServicesList(rr.getReservationRoom()));
+				} else {
 					reservationUtils.updateProjectReservationRoomDetails(rr.getReservationRoom(), startDate, endDate, rr.getRoom());
 				}
 			}
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido actualizar la reserva.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "No se ha podido actualizar la reserva.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 		changeReservationHotel();
 		updateStatus(ReservationDivertStatus.ACCEPTED);
@@ -184,17 +177,31 @@ public class DivertReceptionController extends BasicController {
 	}
 
 	public void onPendingRoomChanged(ValueChangeEvent event){
-//		ProjectReservationRoomController roomController = (ProjectReservationRoomController) FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-//		try {
-//			if(getPendingRoom()!=null){
-//				roomController.select(null, getPendingRoom());
-//			} else {
-//				roomController.onCancel(null);
-//			}
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		
+	}
+	
+	private Integer[] getAvailableServicesList(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+		List<ProjectReservationService> servicesList = new LinkedList<ProjectReservationService>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+		criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
+		criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
+		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID));
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationService reservationService = ((ProjectReservationServiceDetail)ito).getProjectReservationService();
+			if (!servicesList.contains(reservationService)) {
+				servicesList.add(reservationService);
+			}
+		}
+		Integer[] services = new Integer[servicesList.size()];
+		for (ProjectReservationService reservationService : servicesList) {
+			int roomCount = reservationService.getProjectReservation().getRoomCount();
+			if ((isNew() && roomCount == 0) || (!isNew() && roomCount == 1)) {
+				services[servicesList.indexOf(reservationService)] = reservationService.getId();
+			}
+		}
+		return services;
 	}
 
 	private void changeReservationHotel() {
@@ -258,6 +265,9 @@ public class DivertReceptionController extends BasicController {
 	}
 	
 	public List<Room> getAvailableRoomList() throws ManagerBeanException {
+		if(getPendingRoom()==null){
+			return null;
+		}
 		RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 		List<Room> list = roomAvailability.getAvailableRoomList();
 		for(RoomReallocation rr: getAsignedList()){
@@ -269,6 +279,16 @@ public class DivertReceptionController extends BasicController {
 			}
 		}
 		return list;
+	}
+	
+	public boolean isAcceptable(){
+		try {
+			ProjectReservationDivert divert = (ProjectReservationDivert)getModel().getRowData();
+			return divert.isPending() && ( DateUtils.isSameDay(divert.getDivertDate(), new Date()) || divert.getDivertDate().after(new Date()) );
+		} catch (ManagerBeanException e) {
+			// NADA
+		} 
+		return false;
 	}
 	
 	public class RoomReallocation {

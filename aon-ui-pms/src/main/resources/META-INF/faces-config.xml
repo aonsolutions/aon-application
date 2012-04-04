@@ -1088,7 +1088,7 @@
 	<!-- ************* DIVERT ***************** -->
 	<managed-bean>
 		<managed-bean-name>divert</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1218,6 +1218,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>ProjectReservation_id</value>
 		</managed-property>		
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>ProjectReservation_code</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/pms/facelet/lookup/reservation/list.xhtml</value>
