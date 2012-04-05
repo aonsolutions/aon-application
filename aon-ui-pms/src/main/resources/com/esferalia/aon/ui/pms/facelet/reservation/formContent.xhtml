@@ -9,9 +9,8 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:outputLabel for="ProjectReservation_hotel_id" value="#{pmsBundle.pms_hotel}" />
-	<aon:div>
-		<aon:outputText	value="#{reservation.to.hotel.workPlace.description}" styleClass="aon-bold"
-			rendered="#{!reservation.new}" />
+	<aon:div rendered="#{!reservation.new}">
+		<aon:outputText	value="#{reservation.to.hotel.workPlace.description}" styleClass="aon-bold" />
 		<aon:div style="display: inline;"
 			rendered="#{reservation.to.hotel.id != reservation.to.hotelReservation.id}" >
 			<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
@@ -23,7 +22,6 @@
 			</rich:toolTip>
 		</aon:div>
 	</aon:div>
-
 	<aon:selectOneMenu id="ProjectReservation_hotel_id" value="#{reservation.to.hotel}" 
 		rendered="#{reservation.new}" required="true"
 		valueChangeListener="#{reservation.onHotelChanged}"

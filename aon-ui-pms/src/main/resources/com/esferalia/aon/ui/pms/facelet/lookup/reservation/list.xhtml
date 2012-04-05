@@ -9,9 +9,12 @@
 <ui:composition>
 
 	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/listContent.xhtml" >
-		<ui:param name="controller" value="#{lookup}" />
+		<ui:param name="skipActivityButton" value="true"/>
+		<ui:param name="skipStatus" value="true"/>
+		<ui:param name="skipGuest" value="true"/>
+		<ui:param name="skipAgency" value="true"/>
 	</ui:include>
-
+	
 </ui:composition>
 
 </body>

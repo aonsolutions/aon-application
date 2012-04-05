@@ -18,22 +18,8 @@
 	
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-				
 					<ui:param name="controller" value="#{divertReception}" />
-					<ui:param name="columnClasses" value="
-						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
-						aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
-			<!--  
-					<ui:param name="skipResetButton" value="#{true}" />
-					<ui:param name="skipLineEdition" value="#{true}" />
-					<ui:param name="skipNewSaveButton" value="#{true}" />
-					<ui:param name="skipNewCancelButton" value="#{true}" />
-					<ui:param name="skipSaveButton" value="#{true}" />
-					<ui:param name="skipCancelButton" value="#{true}" />
-					<ui:param name="skipRemoveButton" value="#{true}" />
-			-->
-			
+				
 					<ui:define name="columns">
 			
 						<aon:column alias="ProjectReservationDivert.projectReservation.id"
@@ -138,23 +124,6 @@
 									value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
-							<!--  
-							<aon:outputText value="#{to.status}" rendered="#{formList}" />
-							<aon:selectOneMenu id="Divert_status" rendered="#{formEdit}"
-								value="#{divert.to.status}">
-								<f:selectItem itemLabel="-" value="#{null}" />		
-								<f:selectItems value="#{pmsCollections.reservationDivertStatuses}" />
-							</aon:selectOneMenu>
-							-->
-							<f:facet name="footer">
-								<!--  
-								<aon:selectOneMenu id="Divert_status-New" rendered="#{formNew}"
-									value="#{divert.to.status}">
-									<f:selectItem itemLabel="-" value="#{null}" />		
-									<f:selectItems value="#{pmsCollections.reservationDivertStatuses}" />
-								</aon:selectOneMenu>
-								-->
-							</f:facet>
 						</aon:column>
 						
 					</ui:define>

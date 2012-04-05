@@ -55,6 +55,7 @@
 								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="lookupRendered" value="#{formEdit}" />
+								<ui:param name="lookupControllerListener" value="#{divert.divertFilter}" />
 							</ui:include>
 								
 							<f:facet name="footer">
@@ -66,6 +67,7 @@
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupSuffix" value="-New" />
 									<ui:param name="lookupRendered" value="#{formNew}" />
+									<ui:param name="lookupControllerListener" value="#{divert.divertedReservationFilter}" />
 								</ui:include>
 							</f:facet>
 						</aon:column>
@@ -142,6 +144,7 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{reservationLookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		
 	</ui:define>
 

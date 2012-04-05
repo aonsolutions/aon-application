@@ -16,41 +16,12 @@
 			</ui:decorate>
  
 			<aon:div styleClass="aon-scroll-area">
+				
 				<aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 					
-						<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
-							<aon:outputLabel for="Divert_hotel_id"
-								value="#{pmsBundle.pms_hotel}" />
-							<aon:selectOneMenu id="Divert_hotel_id"
-								value="#{divert.to.hotel}">
-								<f:selectItem itemLabel="-" value="#{null}" />		
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							</aon:selectOneMenu>
-						</c:if>
-
-						<aon:outputLabel for="Divert_projectReservation"
-							value="#{pmsBundle.pms_reservation}" />
-						<aon:inputText id="Divert_projectReservation"
-							value="#{divert.to.projectReservation}" />
-
-						<aon:outputLabel for="Divert_status"
-							value="#{bundle.aon_status}" />
-						<aon:selectOneMenu id="Divert_status"
-							value="#{divert.to.status}">
-							<f:selectItem itemLabel="-" value="#{null}" />		
-							<f:selectItems value="#{pmsCollections.reservationDivertStatuses}" />
-						</aon:selectOneMenu>
-
-						<aon:outputLabel for="Divert_date"
-							value="#{bundle.aon_date}" />
-						<aon:selectInputDate id="Divert_date"  
-							value="#{divert.to.divertDate}" size="20"
-							inputSize="16" renderAsPopup="true" enableManualInput="true"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_timestamp_pattern}">
-						</aon:selectInputDate>
-
+					<ui:include src="/com/esferalia/aon/ui/pms/facelet/divert/form_content.xhtml" />
+						
 				</aon:panelGrid>
 				
 			</aon:div>

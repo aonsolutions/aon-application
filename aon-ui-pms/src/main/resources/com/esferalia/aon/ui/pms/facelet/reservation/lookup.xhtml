@@ -4,28 +4,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-<!--  
-	<c:if test="#{lookupForProduct}">
-		<ui:param name="lookupProperty" value="product"/>
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.name}"/>
-		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.name} (#{lto.code})"/>
-	</c:if>
-
-	<c:if test="#{!lookupForProduct}">
-		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}"/>
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.product.name}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.product.code})"/>
-	</c:if>
--->
-
-		<ui:param name="lookupInputValue" value="#{lookupTo.id}"/>
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.code}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.code} (#{lto.hotel})"/>
+	<ui:param name="lookupInputValue" value="#{lookupTo.id}"/>
+	<ui:param name="lookupInputSuggestValue" value="#{lookupTo.code}"/>
+	<ui:param name="lookupInputSuggestExpression" value="#{lto.code}  (#{lto.hotel.workPlace.description})"/>
 		
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{reservationLookup}" />
 		<ui:param name="controller" value="#{reservation}" />
+		<ui:param name="lookupInputSuggestWidth" value="700"/>
 		<ui:param name="lookupInputSize" value="10"/>
 		<ui:param name="lookupInputMaxLength" value="15"/>
 		<ui:param name="lookupInputOnSubmit" value="toUpperCase(this);"/>		

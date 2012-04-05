@@ -81,17 +81,9 @@
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<!--  
-						<aon:commandButton id="accept-divert"
-							value="&#160;" title="#{bundle.aon_accept}"
-							rendered="#{to.pending}"
-							actionListener="#{divertReception.onAcceptDivert}"
-							styleClass="aon-editDataTable-button aon-icon-accept">
-						</aon:commandButton>
-						-->
 						<aon:commandLink id="accept-divert"
 							value="&#160;" title="#{bundle.aon_accept}"
-							rendered="#{to.pending}"
+							rendered="#{divertReception.acceptable}"
 							reRender="showRoomDetailWindow"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							>
@@ -100,24 +92,6 @@
 							<f:setPropertyActionListener target="#{divertReception.showRoomDetailWindow}"
 								value="#{true}" />
 						</aon:commandLink>
-						
-						
-						
-						
-					<!--  
-						<aon:commandButton
-							id="Divert-acceptButton" title="#{bundle.aon_accept}"
-							styleClass="aon-editDataTable-button aon-icon-accept"
-							rendered="#{to.pending}"
-							actionListener="#{divertReception.onAcceptDivert}"
-							reRender="showRoomDetailWindow"
-							focus="#{(focusOnAdd != null)?(focusOnAdd):''}">
-							<f:setPropertyActionListener target="#{divertReception.showRoomDetailWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						
-						
-					-->
 						<aon:commandButton id="cancel-divert"
 							value="&#160;" title="#{bundle.aon_cancel}"
 							rendered="#{to.pending}"
