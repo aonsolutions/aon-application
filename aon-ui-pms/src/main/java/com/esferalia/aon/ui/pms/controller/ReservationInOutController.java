@@ -126,9 +126,7 @@ public class ReservationInOutController implements ICollectionProvider {
 			ListItem r = new ListItem();
 			r.setReservationId((Integer) (((Object[])o)[0]));
 			r.setReservationRoomId((Integer) (((Object[])o)[1]));
-//			r.setRoomNumber((String) (((Object[])o)[2]));
 			r.setItemId((Integer) (((Object[])o)[3]));
-//			r.setGuestName((String) (((Object[])o)[4]));
 			list.add(r);
 		}
 		setList(list);
@@ -177,39 +175,16 @@ public class ReservationInOutController implements ICollectionProvider {
 	}
 	
 	public class ListItem {
-//		private String roomNumber;
 		private Integer itemId;
-//		private String guestName;
 		private Integer reservationId;
 		private Integer reservationRoomId;
 		
-//		public String getRoomNumber() {
-////			return roomNumber;
-//			
-//			
-//			try {
-//				return getProjectReservationRoom().getRoomNumber();
-//			} catch (ManagerBeanException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			return null;
-//		}
-//		public void setRoomNumber(String roomNumber) {
-//			this.roomNumber = roomNumber;
-//		}
 		public Integer getItemId() {
 			return itemId;
 		}
 		public void setItemId(Integer itemId) {
 			this.itemId = itemId;
 		}
-//		public String getGuestName() {
-//			return guestName;
-//		}
-//		public void setGuestName(String guestName) {
-//			this.guestName = guestName;
-//		}
 		public Integer getReservationId() {
 			return reservationId;
 		}
