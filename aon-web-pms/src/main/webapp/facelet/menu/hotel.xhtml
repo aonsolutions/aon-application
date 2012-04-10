@@ -47,22 +47,6 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="divert" 
-										value="#{pmsBundle.pms_divert_module}"
-										action="divert_grid" >
-										<aon:actionListener method="#{divert.onEditSearch}" />
-										<aon:actionListener method="#{divert.onSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="divertReception" 
-										value="#{pmsBundle.pms_divertReception_module}"
-										action="divertReception_list" >
-										<aon:actionListener method="#{divertReception.onEditSearch}" />
-										<aon:actionListener method="#{divertReception.onSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="serviceInvoice" 
 										action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
 										value="#{pmsBundle.pms_service_invoice_module}">
@@ -83,6 +67,32 @@
 							</aon:div>
 						</aon:panelGrid>
 
+						<aon:panelGrid id="group_hotel_divert"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-transfer">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_divert_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divert" 
+										value="#{pmsBundle.pms_divert_module}"
+										action="divert_grid" >
+										<aon:actionListener method="#{divert.onEditSearch}" />
+										<aon:actionListener method="#{divert.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="divertReception" 
+										value="#{pmsBundle.pms_divertReception_module}"
+										action="divertReception_list" >
+										<aon:actionListener method="#{divertReception.onEditSearch}" />
+										<aon:actionListener method="#{divertReception.onSearch}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
 						<c:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_hotel_room"
 								styleClass="aon-width-all" columnClasses="aon-padding"
