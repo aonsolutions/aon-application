@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.aio.DesktopNoticeSummary;
 import com.code.aon.aio.TaskInfo;
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -230,11 +229,13 @@ public class DesktopController {
 
 	private void initWebmail() {
 		try {
-			AuthPrincipal user = Utils.getAuthPrincipal();
+			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-			server = new AonServer(mailAccount);
-			server.connect();
-			updateMailSummaryModel();
+			if ( mailAccount != null ) {
+				server = new AonServer(mailAccount);
+				server.connect();
+				updateMailSummaryModel();				
+			}
 		} catch (Throwable th) {
 			LOGGER.error("Error on Webmail init", th);
 			if ( server != null ) {
@@ -266,7 +267,7 @@ public class DesktopController {
     }
 
     public boolean isMailActive() {
-		return (mailSummaryModel != null);
+		return (server != null) && server.isConnected();
     }
 
 	private void initTask() {
