@@ -98,11 +98,10 @@ public class Util {
 		try {
 			ResultSetHandler<Domain> h = new BeanHandler<Domain>(Domain.class);
 			Domain domain = run.query( connection,
-				    "SELECT id, active FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
+				    "SELECT id, name, parent, active FROM " + DB_SEP + dbName + DB_SEP + ".domain WHERE name =?", h, domainName); 
 			LOGGER.debug( "Get domain {} id from {}", domainName, dbName );
 			if ( domain != null ) {
 				domain.setDataBaseName(dbName);
-				domain.setName(domainName);
 				return domain;
 			}
 		} catch (Throwable e) {
@@ -151,19 +150,27 @@ public class Util {
 		} while ( (domain == null) && StringUtils.contains(name, '.') );
 		return domain;
 	}
-	
-	public User getUser( Integer domainId, String userName ) {
+
+	private User getUser( Integer domainId, String userName ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			LOGGER.debug( "Get user {} in domain {}", userName, domainId );
 			ResultSetHandler<User> h = new BeanHandler<User>(User.class);
 			User user = run.query( connection,
-				    "SELECT id, login, password, active FROM user WHERE domain =? AND login =?", h, domainId, userName); 
+				    "SELECT id, login, password, domain, active FROM user WHERE domain =? AND login =?", h, domainId, userName); 
 			return user;
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;
+	}
+	
+	public User getUser( Domain domain, String userName ) {
+		User user = getUser(domain.getId(), userName );
+		if ( (user == null) && (domain.getParent() != null) ) {
+			user = getUser(domain.getParent(), userName );
+		}
+		return user;
 	}
 
 	public Integer getApplicationId( String applicationName ) {

@@ -39,6 +39,8 @@ public class AuthPrincipal implements Principal, Serializable {
     private String domain;
     /** Principal context */
     private String context;
+    private Integer domainId;
+    private Integer userId;
 
     /**
      * Constructs an <code>AuthPrincipal</code>
@@ -185,4 +187,21 @@ public class AuthPrincipal implements Principal, Serializable {
     private String context(String value) {
     	return value.substring( value.indexOf(IConstants.CONTEXT_SEPARATOR) );
     }
+
+	public Integer getDomainId() {
+		return domainId;
+	}
+
+	public void setDomainId(Integer domainId) {
+		this.domainId = domainId;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+    
 }

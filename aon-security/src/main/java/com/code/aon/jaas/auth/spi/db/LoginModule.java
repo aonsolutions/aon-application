@@ -98,6 +98,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if (! domain.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_domain_inactive", domain.getName() );	
 			}
+			principal.setDomainId(domain.getId());
 			this.dataBaseName = domain.getDataBaseName();
 			connection = dbUtil.createConnection(this.dataBaseName);
 			dbUtil.setConnection(connection);
@@ -106,25 +107,26 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if ( applicationId == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_found", applicationName );
 			}
-			DomainApplication da = dbUtil.getDomainApplication(domain.getId(), applicationId );
-			if ( da == null ) {
-				throw new AuthenticationLoginException( "aon_login_application_not_registered", applicationName );
-			}
-			if (! da.isActive() ) {
-				throw new AuthenticationLoginException( "aon_login_application_inactive", applicationName );	
-			}
-			User user = dbUtil.getUser(domain.getId(), principal.getShortName() );
+			User user = dbUtil.getUser(domain, principal.getShortName() );
 			if ( user == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_1", principal.getShortName() );
 			}
 			if (! user.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_user_inactive", principal.getShortName() );	
 			}
+			principal.setUserId(user.getId());
+			DomainApplication da = dbUtil.getDomainApplication(user.getDomain(), applicationId );
+			if ( da == null ) {
+				throw new AuthenticationLoginException( "aon_login_application_not_registered", applicationName );
+			}
+			if (! da.isActive() ) {
+				throw new AuthenticationLoginException( "aon_login_application_inactive", applicationName );	
+			}
 			this.appplicationUser = dbUtil.getApplicationUser(user.getId(), da.getId());
-			if ( appplicationUser == null ) {
+			if ( this.appplicationUser == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_user_not_registered", new Object[]{principal.getShortName(), applicationName} );
 			}
-			if (! appplicationUser.isActive() ) {
+			if (! this.appplicationUser.isActive() ) {
 				throw new AuthenticationLoginException( "aon_login_application_user_inactive", new Object[]{principal.getShortName(), applicationName} );
 			}
 			return user.getPassword();

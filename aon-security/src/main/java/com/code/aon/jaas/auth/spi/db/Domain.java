@@ -5,6 +5,8 @@ public class Domain extends BasicInfo {
 	private String dataBaseName;
 	
 	private String name;
+	
+	private Integer parent;
 
 	public String getDataBaseName() {
 		return dataBaseName;
@@ -20,6 +22,14 @@ public class Domain extends BasicInfo {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getParent() {
+		return parent;
+	}
+
+	public void setParent(Integer parent) {
+		this.parent = parent;
 	}
 	
 }

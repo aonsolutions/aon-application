@@ -13,6 +13,8 @@ import java.util.Properties;
 import javax.management.ObjectName;
 import javax.security.auth.login.AppConfigurationEntry;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.system.ServiceMBeanSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,13 +50,23 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
     /** JBossMainDeployer proper Logger. */
     private final static Logger LOGGER = LoggerFactory.getLogger(JBossMainDeployer.class);
 
-    /** XMLLoginConfig ObjectName. */
-	public static final ObjectName LOGIN_OBJECT_NAME = org.jboss.mx.util.ObjectNameFactory.create("jboss.security:service=XMLLoginConfig");
+    private static final String DEFAULT_STRATEGY = "aon.connection.defaultStrategy";
+    
+    private static final String DB_STRATEGY = "db";
+    
+	private static final String SKIP_APPLICATIONS = "aon.connection.skipApplications";
 
+    /** XMLLoginConfig ObjectName. */
+	private static final ObjectName LOGIN_OBJECT_NAME = org.jboss.mx.util.ObjectNameFactory.create("jboss.security:service=XMLLoginConfig");
+	
 	/** Application Main deployer. */
-	MainDeployer support = new MainDeployer();
+	private MainDeployer support = new MainDeployer();
 	
 	private Properties connectionProperties;
+	
+	private boolean dbStrategy;
+	
+	private String[] skipApplications;
 
 	/**
 	 * Constructor.
@@ -194,7 +206,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 */
 	protected void startService() throws Exception {
 		generateXMLFile();
-		initDSMDProperties();
+		init();
 		super.startService();
 	}
 
@@ -257,7 +269,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 		return entries;
 	}
 	
-	private void initDSMDProperties() {
+	private void init() {
 		this.connectionProperties = new Properties();
 		ApplicationsStorage as = null;
 		try {
@@ -287,14 +299,29 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 				IOption op = options.get(IDataSourceMetaData.DRIVER_CLASS);
 				this.connectionProperties.put(op.getName(), op.getValue());
 			}			
+			if ( options.containsKey(DEFAULT_STRATEGY) ) {
+				IOption op = options.get(DEFAULT_STRATEGY);
+				this.dbStrategy = StringUtils.equals( DB_STRATEGY, op.getValue() );
+			}
+			if ( options.containsKey(SKIP_APPLICATIONS) ) {
+				IOption op = options.get(SKIP_APPLICATIONS);				
+				this.skipApplications = StringUtils.split(op.getValue());
+			}
 		}
 	}
 	
+	private boolean isLdapStrategy( String application ) {
+		if ( this.connectionProperties.isEmpty() ) {
+			return true;
+		}
+		if ( ArrayUtils.contains(this.skipApplications, application) ) {
+			return this.dbStrategy;
+		}
+		return ! this.dbStrategy;
+	}
+	
 	public Properties getConnectionProperties(String domainName, String application) {
-		if (! this.connectionProperties.isEmpty() ) {
-			Util util = new Util(connectionProperties);
-			return util.getConnectionProperties(domainName);
-		} else {
+		if ( isLdapStrategy(application) ) {
 			try {
 				ObjectName oname = new ObjectName(JBossLdapMBean.OBJECT_NAME);
 				Object[] params = { domainName, application };
@@ -303,6 +330,9 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			Util util = new Util(connectionProperties);
+			return util.getConnectionProperties(domainName);
 		}
 		return null;
 	}	
