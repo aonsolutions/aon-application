@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -30,6 +29,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.common.controller.LoggedUser;
@@ -264,7 +264,7 @@ public class ActivityDialogController extends EmailParentController{
 	}
 	
 	public String getLogin(){
-		AuthPrincipal user = Utils.getAuthPrincipal();
+		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
 		return user.getShortName();
 	}
 	
@@ -343,7 +343,7 @@ public class ActivityDialogController extends EmailParentController{
 		setNew(false);
 		
 //		from field
-		AuthPrincipal user = Utils.getAuthPrincipal();
+		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
 		String domain = user.getDomain();
 		String login = user.getShortName();
 		IMailAccount mailAccount;

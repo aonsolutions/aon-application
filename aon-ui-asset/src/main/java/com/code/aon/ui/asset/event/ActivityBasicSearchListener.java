@@ -6,8 +6,8 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.enumeration.ActivityStatus;
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -74,7 +74,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	@Override
 	protected void init() throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
-		AuthPrincipal user = Utils.getAuthPrincipal();
+		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
 		String name = user.getShortName();
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
