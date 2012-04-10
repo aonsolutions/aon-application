@@ -10,6 +10,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -33,6 +37,7 @@ public class BookingListController implements ICollectionProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookingListController.class.getName());
 	
 	private Hotel hotel;
+	private Item item;
 	private Customer agency;
 	private Date fromDate;
 	private Date toDate;
@@ -45,6 +50,12 @@ public class BookingListController implements ICollectionProvider {
 	}
 	public void setHotel(Hotel hotel) {
 		this.hotel = hotel;
+	}
+	public Item getItem() {
+		return item;
+	}
+	public void setItem(Item item) {
+		this.item = item;
 	}
 	public Customer getAgency() {
 		return agency;
@@ -98,11 +109,11 @@ public class BookingListController implements ICollectionProvider {
 			
 		for(ITransferObject hto: getSelectedHotels()){
 			Hotel hotel = (Hotel) hto;
-			addBookink(hotel);
+			addBooking(hotel);
 		}
 	}
 	
-	private void addBookink(Hotel hotel) throws ManagerBeanException {
+	private void addBooking(Hotel hotel) throws ManagerBeanException {
 		Calendar fromCal = Calendar.getInstance();
 		Calendar toCal = Calendar.getInstance();
 		fromCal.setTime(getFromDate());
@@ -116,6 +127,9 @@ public class BookingListController implements ICollectionProvider {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), hotel.getId());
 			if(getAgency()!=null && getAgency().getId()!=null){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());
+			}
+			if(getItem()!=null && getItem().getId()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ITEM_ID), getItem().getId());
 			}
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE), fromCal.getTime());
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE), fromCal.getTime());
@@ -159,10 +173,10 @@ public class BookingListController implements ICollectionProvider {
 
 	public void onInit(ActionEvent event) {
 		try {
+			setItem(null);
+			setAgency((Customer) BeanManager.getManagerBean(Customer.class).createNewTo());
 			setFromDate(new Date());
 			setToDate(new Date());
-			IManagerBean bean = BeanManager.getManagerBean(Customer.class);
-			setAgency((Customer) bean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error de inicio";
 			LOGGER.error(msg);
@@ -179,6 +193,41 @@ public class BookingListController implements ICollectionProvider {
 			throw new AbortProcessingException(msg, e);
 		}
 		setModel(new ListDataModel(getBookingList()));
+	}
+	
+	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
+		if (getHotel() != null && getHotel().getId() != null) {
+			return getHotelRoomItems(getHotel());
+		}
+		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		return collectionsController.getRoomItems(); 
+	}
+
+	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
+		List<Integer> items = new LinkedList<Integer>();
+		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
+		for (ITransferObject ito : roomBean.getList(criteria)) {
+			Room room = (Room)ito;
+			if (!items.contains(room.getItem().getId())) {
+				items.add(room.getItem().getId());
+			}
+		}
+
+		List<SelectItem> roomItems = new LinkedList<SelectItem>();
+		if (items.size() > 0) {
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			criteria = new Criteria();
+			criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
+			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
+			for (ITransferObject ito : itemBean.getList(criteria)) {
+				Item item = (Item)ito;
+				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
+				roomItems.add(roomItem);
+			}
+		}
+		return roomItems;
 	}
 	
 	@SuppressWarnings("rawtypes")

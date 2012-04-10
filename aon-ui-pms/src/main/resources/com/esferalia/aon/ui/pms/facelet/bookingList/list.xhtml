@@ -48,6 +48,16 @@
 					<aon:outputText value="#{pmsBundle.pms_agency}:" styleClass="aon-bold aon-margin-left"/>
 					<aon:outputText styleClass="aon-margin-left"
 						value="#{(bookingList.agency!=null and bookingList.agency.id!=null)?(bookingList.agency.registry.fullName):('-')}"/>
+
+					<aon:outputText value="#{pmsBundle.pms_room_type}:" styleClass="aon-bold aon-margin-left"/>
+					<aon:div style="display: inline;">
+						<aon:outputText styleClass="aon-margin-left"
+							rendered="#{(bookingList.item!=null and bookingList.item.id!=null)}"
+							value="#{bookingList.item.product.code} - #{bookingList.item.product.name}"/>
+						<aon:outputText styleClass="aon-margin-left"
+							rendered="#{bookingList.item==null or bookingList.item.id==null}"
+							value=" - "/>
+					</aon:div>
 				</aon:panel>
 			
 				<aon:dataTable id="bookingListData" value="#{bookingList.model}" 
