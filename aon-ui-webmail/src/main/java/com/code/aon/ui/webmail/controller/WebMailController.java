@@ -19,11 +19,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -64,7 +64,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void startWebmail() {
 		try {
-			AuthPrincipal mailUser = Utils.getAuthPrincipal();
+			AuthPrincipal mailUser = BasicPrincipal.getAuthPrincipal();
 			if (mailUser != null) {
 	    		initDefault(mailUser);
 	    		initConfig(mailUser);
@@ -140,7 +140,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
     	if ( mailAccount.getISignature() == null ) {
     		try {
     			Signature signature = null;
-    			String name = Utils.getAuthPrincipal().getDomain();
+    			String name = BasicPrincipal.getAuthPrincipal().getDomain();
 				IManagerBean signatureBean = FormUtil.getController(BEAN_SIGNATURE).getManagerBean();
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_NAME), name);
