@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.9.0</version>
+			<version>2.1.2</version>
 			<scope>provided</scope>
 		</dependency>					
 		<dependency>

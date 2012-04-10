@@ -1,10 +1,7 @@
 package com.code.aon.ui.config.util;
 
-import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.faces.context.FacesContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -34,7 +32,7 @@ public class UserUtils {
 	private User loggedUser;
 	
 	public UserUtils() {
-		this.principal = resolvePrincipal();
+		this.principal = BasicPrincipal.getAuthPrincipal();
 		this.loggedUser = resolveUser();
 	}
 	
@@ -44,17 +42,6 @@ public class UserUtils {
 
 	public User getLoggedUser() {
 		return loggedUser;
-	}
-
-	private AuthPrincipal resolvePrincipal() {
-		AuthPrincipal user = null;
-		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		return user;
 	}
 	
 	private User resolveUser() {

@@ -8,9 +8,8 @@ import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.bridge.plugin.Utils;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
@@ -42,8 +41,8 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	 * Instantiates a new logged user.
 	 */
 	public LoggedUser() {
-		this.principal = Utils.getAuthPrincipal();
-		if ( (principal != null) && (!IConstants.UNAUTHENTICATED_IDENTITY.equals(principal.getName())) ) {
+		this.principal = BasicPrincipal.getAuthPrincipal();
+		if ( principal != null ) {
 			this.logged = true;
 			initVariables(principal);
 		}
