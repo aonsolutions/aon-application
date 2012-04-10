@@ -101,7 +101,7 @@ public class ReservationUtils implements IReservationConstants {
     	} else if (reservation.getBookingHolder() == BookingHolder.COMPANY && reservation.getCompany() != null && reservation.getCompany().getId() != null) {
     		return reservation.getCompany().getRegistry();
     	}
-    	return reservation.getHotel().getCustomer().getRegistry();
+    	return reservation.getHotelReservation().getCustomer().getRegistry();
     }
 
     private String obtainProjectReservationName(ProjectReservation reservation) throws ManagerBeanException {
