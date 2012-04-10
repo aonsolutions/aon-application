@@ -43,7 +43,14 @@
 						<f:facet name="header">
 							<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
 						</f:facet>
-						<aon:outputText value="#{to.roomNumber}" />
+						<aon:div>
+							<aon:outputText
+								rendered="#{reservationIO.checkin}" 
+								value="#{to.projectReservationRoom.firstRoomNumber}" />
+							<aon:outputText 
+								rendered="#{!reservationIO.checkin}" 
+								value="#{to.projectReservationRoom.roomNumber}" />
+						</aon:div>
 					</aon:column>
 
 					<aon:column id="productCodeColumn" label="#{pmsBundle.pms_room_type}" 

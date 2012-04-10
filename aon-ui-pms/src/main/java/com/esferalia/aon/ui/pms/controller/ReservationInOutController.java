@@ -34,12 +34,12 @@ public class ReservationInOutController implements ICollectionProvider {
 	private Integer shortOption;
 	
 	private DataModel model;
-	private List<ListRow> list;
+	private List<ListItem> list;
 	
-	public List<ListRow> getList() {
+	public List<ListItem> getList() {
 		return list;
 	}
-	public void setList(List<ListRow> list) {
+	public void setList(List<ListItem> list) {
 		this.list = list;
 	}
 	public DataModel getModel() {
@@ -85,7 +85,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	public void onSelect(ActionEvent event) {
 		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		controller.setBackAction(IPmsConstants.RESERVATION_IO_LIST_NAME);
-		ListRow row = (ListRow) getModel().getRowData();
+		ListItem row = (ListItem) getModel().getRowData();
 		try {
 			controller.select(event, row.getProjectReservation());
 		} catch (ManagerBeanException e) {
@@ -121,14 +121,14 @@ public class ReservationInOutController implements ICollectionProvider {
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
-		List<ListRow> list = new LinkedList<ReservationInOutController.ListRow>();
+		List<ListItem> list = new LinkedList<ReservationInOutController.ListItem>();
 		for(Object o: query.list()){
-			ListRow r = new ListRow();
+			ListItem r = new ListItem();
 			r.setReservationId((Integer) (((Object[])o)[0]));
 			r.setReservationRoomId((Integer) (((Object[])o)[1]));
-			r.setRoomNumber((String) (((Object[])o)[2]));
+//			r.setRoomNumber((String) (((Object[])o)[2]));
 			r.setItemId((Integer) (((Object[])o)[3]));
-			r.setGuestName((String) (((Object[])o)[4]));
+//			r.setGuestName((String) (((Object[])o)[4]));
 			list.add(r);
 		}
 		setList(list);
@@ -176,31 +176,40 @@ public class ReservationInOutController implements ICollectionProvider {
 		;
 	}
 	
-	public class ListRow {
-		private String roomNumber;
+	public class ListItem {
+//		private String roomNumber;
 		private Integer itemId;
-		private String guestName;
+//		private String guestName;
 		private Integer reservationId;
 		private Integer reservationRoomId;
 		
-		public String getRoomNumber() {
-			return roomNumber;
-		}
-		public void setRoomNumber(String roomNumber) {
-			this.roomNumber = roomNumber;
-		}
+//		public String getRoomNumber() {
+////			return roomNumber;
+//			
+//			
+//			try {
+//				return getProjectReservationRoom().getRoomNumber();
+//			} catch (ManagerBeanException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			return null;
+//		}
+//		public void setRoomNumber(String roomNumber) {
+//			this.roomNumber = roomNumber;
+//		}
 		public Integer getItemId() {
 			return itemId;
 		}
 		public void setItemId(Integer itemId) {
 			this.itemId = itemId;
 		}
-		public String getGuestName() {
-			return guestName;
-		}
-		public void setGuestName(String guestName) {
-			this.guestName = guestName;
-		}
+//		public String getGuestName() {
+//			return guestName;
+//		}
+//		public void setGuestName(String guestName) {
+//			this.guestName = guestName;
+//		}
 		public Integer getReservationId() {
 			return reservationId;
 		}

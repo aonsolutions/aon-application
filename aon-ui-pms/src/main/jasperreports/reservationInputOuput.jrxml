@@ -18,7 +18,6 @@
 	<field name="projectReservation" class="com.esferalia.aon.pms.ProjectReservation"/>
 	<field name="projectReservationRoom" class="com.esferalia.aon.pms.ProjectReservationRoom"/>
 	<field name="item" class="com.code.aon.product.Item"/>
-	<field name="roomNumber" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
