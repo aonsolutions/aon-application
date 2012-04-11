@@ -35,10 +35,10 @@
 					<rich:tree id="folderTree"
 						nodeSelectListener="#{moveMessagesActionListener}"
 						ajaxSubmitSelection="true" switchType="ajax"
-						value="#{folderModel}" var="item" nodeFace="#{item.folderTypeName}">
+						value="#{folderModel}" var="folderTreeItem" nodeFace="#{folderTreeItem.folderTypeName}">
 						<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailTree/treeNodes.xhtml" >
 							<ui:define name="nodeContent">
-								<aon:commandLink value="#{item.name}" action="#{moveMessagesAction}">
+								<aon:commandLink value="#{folderTreeItem.name}" action="#{moveMessagesAction}">
 									<rich:componentControl for="folderModalPanel" operation="hide"
 										event="onclick" />
 									<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
