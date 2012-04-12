@@ -213,6 +213,25 @@
 							</aon:div>
 						</c:if>
 						<!--  soporte -->
+						<aon:div styleClass="aon-support" 
+							style="text-align:center; color:#888888; background-color:#eeeeee;">
+							<aon:div>
+								<aon:div style="font-size: 1.1em;">
+									<aon:outputText value="#{bundle.aon_support_title}" />
+								</aon:div>
+								<aon:div style="font-size: 1.3em; font-weight: bold;">
+									<aon:outputText value="#{bundle.aon_support_telephone_number}" />
+								</aon:div>
+							</aon:div>
+							<aon:div style="font-weight: bold;">
+								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html"
+									style="color:#888888; text-decoration:none;">
+									<aon:outputText value="#{bundle.aon_support_send_email}" />
+							    </aon:outputLink>
+							</aon:div>
+						</aon:div>
+						
+<!-- 						
 						<aon:div styleClass="aon-support">
 							<aon:div styleClass="aon-support-title">
 								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-esferalia-logo.png']}" />
@@ -233,6 +252,7 @@
 							    </aon:outputLink>
 							</aon:div>
 						</aon:div>
+ -->						
 						<!-- fin soporte -->
 					</aon:div>
 					

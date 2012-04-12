@@ -239,8 +239,10 @@ public class AonDomainMerger {
 					if (z != -1 ) {
 						String fkTable = t.getFkTables()[z];
 						if (!fkTable.equals(t.getName())) {
-							Integer newValue = null; 
-							if ( isNoDomainTable(fkTable) ) {
+							Integer newValue = null;
+							if ( isDirectId(fkTable) ) {
+								newValue = (Integer) value; 
+							} else if ( isNoDomainTable(fkTable) ) {
 								newValue = getNoDomainId(fkTable, (Integer) value );
 							} else {
 								Map<Integer,Integer> map = keys.get(fkTable);
@@ -281,7 +283,9 @@ public class AonDomainMerger {
 		}
 		return newId;
 	}
-
+	private boolean isDirectId(String fkTable) {
+		return fkTable.equals("application");
+	}
 	private boolean isNoDomainTable(String fkTable) {
 		return fkTable.equals("cno")
 			|| fkTable.equals("cnae")
@@ -450,8 +454,8 @@ public class AonDomainMerger {
 //		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-nabaroa-com","root",null);
 //		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-zapatitos-mac-asesores-es","root",null);
 		
-		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-esferalia-com","root",null);
-		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/payroll-esferalia-org","root",null);
+		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon_master","dbuser","serubd2000");
+		Connection source = DriverManager.getConnection("jdbc:mysql://volga/aon-aonsolutions-es","dbuser","serubd2000");
 		
 		AonDomainMerger merger = new AonDomainMerger(source, target);
 		merger.execute();

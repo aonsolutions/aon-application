@@ -1,10 +1,12 @@
 package com.code.aon.ui.audit;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
@@ -62,17 +65,22 @@ public class AuditManager implements IAuditConstants {
 	}
 	
 	public static User getUser( String shortName ) {
-		try {
-            IManagerBean bean = BeanManager.getManagerBean(User.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName(IEntityAlias.USER_LOGIN), shortName );
-            List<ITransferObject> list = bean.getList(criteria);
-            if ( (list!=null) && (list.size() == 1) ) {
-                return (User) list.get(0);
-            }
-        } catch (ManagerBeanException e) {
-        	LOGGER.error( "Error obtaining the USER related with the logged user: " + shortName, e);
-        }
+		return getUser(shortName, null);
+	}
+
+	public static User getUser( String shortName, Integer domain ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
+		String q = "SELECT u FROM User u  WHERE u.login = '" + shortName + "'";
+		if (domain != null) {
+			q = q + " AND u.domain = " + domain;
+		}
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+		List<?> queryList = query.list();
+		Iterator<?> iterator = queryList.iterator();
+		if (iterator.hasNext()) {
+			User user = (User) iterator.next();
+			return user;
+		}
         return null;		
 	}
 	
@@ -137,15 +145,28 @@ public class AuditManager implements IAuditConstants {
 
 	public static AuditLevel getAuditLevel( Application application, int domain ) throws ManagerBeanException {
 		AuditLevel level = AuditLevel.NONE;
-		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId() );
-		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			level = ((DomainApplication) list.get(0)).getAuditLevel();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
+		String q = "SELECT dp FROM DomainApplication dp  "
+			+ " WHERE dp.application = " + application.getId()
+			+ " AND dp.domain = " + domain;
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+		List<?> queryList = query.list();
+		Iterator<?> iterator = queryList.iterator();
+		if (iterator.hasNext()) {
+			DomainApplication dp = (DomainApplication) iterator.next();
+			level = dp.getAuditLevel();
 		}
 		return level;
+//		AuditLevel level = AuditLevel.NONE;
+//		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId() );
+//		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
+//		List<ITransferObject> list = bean.getList(criteria);
+//		if (! list.isEmpty() ) {
+//			level = ((DomainApplication) list.get(0)).getAuditLevel();
+//		}
+//		return level;
 	}	
 	
 }

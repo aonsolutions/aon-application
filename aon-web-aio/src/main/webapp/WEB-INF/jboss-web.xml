@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <jboss-web>
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-login</security-domain>
 	<context-root>/aon-aio</context-root>
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonAio</resource-env-ref-name>

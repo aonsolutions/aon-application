@@ -109,6 +109,7 @@
 		<mapping class="com.code.aon.config.CNAE2009"/>
 		<mapping class="com.code.aon.config.CNAE2009Rate"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
 		<mapping class="com.code.aon.config.DomainApplication"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>

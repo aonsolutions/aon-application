@@ -7,6 +7,13 @@
 <bean-config>
 
 	<bean description="">
+		<pojo>com.code.aon.company.Company</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.company.event.CompanyDomainBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.company.WorkPlace</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.company.event.WorkPlaceBeanVetoListener</vetoListener>

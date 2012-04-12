@@ -16,10 +16,14 @@ public class DomainEntityListener implements PreInsertEventListener {
 		Object entity = event.getEntity();
 		if (entity instanceof IDomain) {
 	        IDomain iDomain =  (IDomain) entity;
-	        Integer currentDomain = DomainManager.getCurrentDomain();
-	        System.out.println("DOMAIN ENTITY LISTENER ..:" + iDomain.getClass().getName());
 			if (iDomain.getDomain() == 0) {
+		        Integer currentDomain = DomainManager.getCurrentDomain();
+		        System.out.println(" ------------------ DOMAIN ENTITY LISTENER " );
+				System.out.println("Thread ..:" + Thread.currentThread().getId() );
+		        System.out.println(DomainManager.getDomainProvider());
+		        System.out.println("DOMAIN ENTITY LISTENER ..:" + iDomain.getClass().getName());
 				System.out.println("DOMAIN LISTENER ..(domain)..: "+ currentDomain);
+		        System.out.println(" -----------------------------------------" );
 				iDomain.setDomain(currentDomain);
 				String[] propertyNames = event.getPersister().getEntityMetamodel().getPropertyNames();
 				Object[] state = event.getState();

@@ -2,53 +2,58 @@ package com.code.aon.common.domain;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 
 
 public class DomainManager {
-
-	private static ThreadLocal<IDomainProvider> domainProvider;
 	
-	public static IDomainProvider getDomainProvider() {
-		if (DomainManager.domainProvider == null) {
-			initialize();
+	private static DomainManager domainManager;
+	
+	private List<IDomainProvider> domainProviders;
+	
+	private DomainManager() {
+		setDomainProviders(new LinkedList<IDomainProvider>());		
+	}
+	
+	private static DomainManager getDomainManager() {
+		if (domainManager == null) {
+			domainManager = new DomainManager();	
 		}
-		return DomainManager.domainProvider.get();
+		return domainManager; 
+	}
+	
+	private List<IDomainProvider> getDomainProviders() {
+		return domainProviders;
 	}
 
-	private static void initialize() {
-		DomainManager.domainProvider = new ThreadLocal<IDomainProvider>() {
-			//
-			// Se crea una implementación de la interfaz para poder
-			// devolver un "1" en el caso de que no se haga una inicialización
-			//
-			// ATENCION!
-			// 		¡¡Esta opción sólo debería ser válida en en la fase
-			// 		multidominio monoempresa!!
-			//
-			@Override
-			protected IDomainProvider initialValue() {
-				return new IDomainProvider() {
-					
-					@Override
-					public Integer getCurrentDomain() {
-						 return new Integer(1);
-					}
-				};
+	private void setDomainProviders(List<IDomainProvider> domainProviders) {
+		this.domainProviders = domainProviders;
+	}
+	
+	public static void addDomainProvider(IDomainProvider domainProvider) {
+		getDomainManager().getDomainProviders().add(domainProvider);
+	}
+	
+	public synchronized static IDomainProvider getDomainProvider() {
+		for (IDomainProvider domainProvider : getDomainManager().getDomainProviders()) {
+			if (domainProvider.accept()) {
+				return domainProvider;
 			}
-		};
-	}
-
-	public static void setDomainProvider(IDomainProvider domainProvider) {
-		if (DomainManager.domainProvider == null) {
-			initialize();	
 		}
-		DomainManager.domainProvider.set(domainProvider);
+		// TODO PELIGRO!!
+		if (getDomainManager().getDomainProviders().size() == 0) {
+			IDomainProvider domainProvider = new UniqueDomainProvider();
+			addDomainProvider( domainProvider );
+			return domainProvider;
+		}
+		throw new IllegalStateException("No hay un proveedor de dominios activo!");
 	}
 
-	public static Integer getCurrentDomain() {
+	public synchronized static Integer getCurrentDomain() {
 		if (getDomainProvider() == null) {
 			throw new IllegalStateException("No se ha definido un proveedor de Domain.");
 		}
