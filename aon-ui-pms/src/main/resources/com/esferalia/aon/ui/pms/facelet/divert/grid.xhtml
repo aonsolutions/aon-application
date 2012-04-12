@@ -90,13 +90,13 @@
 							<aon:selectOneMenu id="Divert_hotel_id" rendered="#{formEdit}"
 								value="#{divert.to.divertHotel}">
 								<f:selectItem itemLabel="-" value="#{null}" />		
-								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+								<f:selectItems value="#{divert.availableHotels}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu id="Divert_hotel_id-New" rendered="#{formNew}"
 									value="#{divert.to.divertHotel}">
 									<f:selectItem itemLabel="-" value="#{null}" />		
-									<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+									<f:selectItems value="#{divert.availableHotels}" />
 								</aon:selectOneMenu>
 							</f:facet>
 						</aon:column>
