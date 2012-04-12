@@ -283,8 +283,10 @@ public class DivertReceptionController extends BasicController {
 	
 	public boolean isAcceptable(){
 		try {
-			ProjectReservationDivert divert = (ProjectReservationDivert)getModel().getRowData();
-			return divert.isPending() && ( DateUtils.isSameDay(divert.getDivertDate(), new Date()) || divert.getDivertDate().after(new Date()) );
+			if(getModel().getRowIndex()>-1){
+				ProjectReservationDivert divert = (ProjectReservationDivert)getModel().getRowData();
+				return divert.isPending() && ( DateUtils.isSameDay(divert.getDivertDate(), new Date()) || divert.getDivertDate().after(new Date()) );
+			}
 		} catch (ManagerBeanException e) {
 			// NADA
 		} 
