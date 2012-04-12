@@ -80,6 +80,7 @@ public class DivertController extends BasicController {
 	}
 	
 	private Integer getScopeToExclude() {
+		// Id del ambito general
 		return 107;
 	}
 	
