@@ -32,9 +32,9 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
-public class BookingListController implements ICollectionProvider {
+public class RoomBookingController implements ICollectionProvider {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(BookingListController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(RoomBookingController.class.getName());
 	
 	private Hotel hotel;
 	private Item item;
@@ -105,7 +105,7 @@ public class BookingListController implements ICollectionProvider {
 	
 	private void buildBookingList() throws ManagerBeanException {
 		
-		setBookingList(new LinkedList<BookingListController.Booking>());
+		setBookingList(new LinkedList<RoomBookingController.Booking>());
 			
 		for(ITransferObject hto: getSelectedHotels()){
 			Hotel hotel = (Hotel) hto;

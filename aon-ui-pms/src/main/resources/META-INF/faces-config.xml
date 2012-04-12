@@ -1078,10 +1078,17 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
 	
-	<!-- ************* BOOKING LIST ***************** -->
+	<!-- ************* BOARD BOOKING ***************** -->
 	<managed-bean>
-		<managed-bean-name>bookingList</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BookingListController</managed-bean-class>
+		<managed-bean-name>boardBooking</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.BoardBookingController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
+	
+	<!-- ************* ROOM BOOKING ***************** -->
+	<managed-bean>
+		<managed-bean-name>roomBooking</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomBookingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
@@ -1428,15 +1435,27 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Booking List ================= -->
+	<!-- =================== Board Booking ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>bookingList_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/bookingList/search.xhtml</to-view-id>
+			<from-outcome>boardBooking_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/boardBooking/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>bookingList_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/bookingList/list.xhtml</to-view-id>
+			<from-outcome>boardBooking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/boardBooking/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Room Booking ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>roomBooking_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>roomBooking_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

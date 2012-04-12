@@ -107,6 +107,15 @@
 											value="#{pmsBundle.pms_room_module}">
 										</aon:commandLink>
 									</aon:div>
+									<!--
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="roomBlock"
+											disabled="true"
+											action="roomBlock_search" actionListener="#{roomBlock.onEditSearch}"
+											value="#{pmsBundle.pms_roomBlock_module}">
+										</aon:commandLink>
+									</aon:div>
+									-->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="feature" 
 											value="#{assetBundle.asset_feature_module}"
@@ -178,13 +187,19 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-board aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_boardList_module}"/>
+								<aon:outputText value="#{pmsBundle.pms_board_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="boardList" 
 										action="boardList_list" actionListener="#{boardList.onInit}"
 										value="#{pmsBundle.pms_boardList_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="boardBooking" 
+										action="boardBooking_search" actionListener="#{boardBooking.onInit}"
+										value="#{pmsBundle.pms_boardBooking_module}">
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -198,9 +213,9 @@
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bookingList" 
-										action="bookingList_search" actionListener="#{bookingList.onInit}"
-										value="#{pmsBundle.pms_bookingList_module}">
+									<aon:commandLink id="roomBooking" 
+										action="roomBooking_search" actionListener="#{roomBooking.onInit}"
+										value="#{pmsBundle.pms_roomBooking_module}">
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>

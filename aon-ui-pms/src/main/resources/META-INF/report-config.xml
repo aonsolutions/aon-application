@@ -91,19 +91,36 @@
 		</params>
 	</report>
 
-	<!--  ********* Booking list ********* -->
-	<report id="bookingList" description="Booking list Report">
-		<template path="/com/esferalia/aon/ui/pms/report/bookingList.jasper" />
-		<collection provider="#{bookingList}" />
+	<!--  ********* Board Booking ********* -->
+	<report id="boardBooking" description="Board Booking Report">
+		<template path="/com/esferalia/aon/ui/pms/report/boardBooking.jasper" />
+		<collection provider="#{boardBooking}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="hotel" value="#{bookingList.getHotel}" />
-			<param id="agency" value="#{bookingList.getAgency}" />
-			<param id="fromDate" value="#{bookingList.getFromDate}" />
-			<param id="toDate" value="#{bookingList.getToDate}" />
+			<param id="hotel" value="#{boardBooking.getHotel}" />
+			<param id="fromDate" value="#{boardBooking.getFromDate}" />
+			<param id="toDate" value="#{boardBooking.getToDate}" />
+			<param id="boardItems" value="#{boardBooking.getBoardItems}" />
+		</params>
+	</report>
+
+	<!--  ********* Room Booking ********* -->
+	<report id="roomBooking" description="Room Booking Report">
+		<template path="/com/esferalia/aon/ui/pms/report/roomBooking.jasper" />
+		<collection provider="#{roomBooking}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{roomBooking.getHotel}" />
+			<param id="agency" value="#{roomBooking.getAgency}" />
+			<param id="fromDate" value="#{roomBooking.getFromDate}" />
+			<param id="toDate" value="#{roomBooking.getToDate}" />
+			<param id="item" value="#{roomBooking.getItem}" />
 		</params>
 	</report>
 
