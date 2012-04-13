@@ -151,37 +151,38 @@ public class BoardBookingController implements ICollectionProvider {
 			Date date = (Date) (((Object[])o)[1]);
 			Double quantity = (Double) (((Object[])o)[2]);
 			String name = (String) (((Object[])o)[3]);
-			if(booking != null && booking.getHotel().equals(hotel) && booking.getDate().equals(date)){
-				booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
-			} else {
-				
-				if( booking==null || !booking.getHotel().equals(hotel)){
-					fromCal.setTime(getFromDate());
+			if(!date.before(getFromDate())){
+				if(booking != null && booking.getHotel().equals(hotel) && booking.getDate().equals(date)){
+					booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
 				} else {
-					fromCal.setTime(DateUtils.addDays(booking.getDate(),1));
-				}
-				
-				toCal.setTime(date);
-				while( fromCal.before(toCal) ){
+					
+					if( booking==null || !booking.getHotel().equals(hotel)){
+						fromCal.setTime(getFromDate());
+					} else {
+						fromCal.setTime(DateUtils.addDays(booking.getDate(),1));
+					}
+					
+					toCal.setTime(date);
+					while( fromCal.before(toCal) ){
+						booking = new Booking();
+						booking.setHotel(hotel);
+						booking.setDate(fromCal.getTime());
+						booking.setQuantityList(getEmptyList());
+						list.add(booking);
+						fromCal.add(Calendar.DAY_OF_MONTH, 1);
+					}
+					
 					booking = new Booking();
 					booking.setHotel(hotel);
-					booking.setDate(fromCal.getTime());
+					booking.setDate(date);
 					booking.setQuantityList(getEmptyList());
+					booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
+					booking.setBoardList(null);
 					list.add(booking);
-					fromCal.add(Calendar.DAY_OF_MONTH, 1);
+					fromCal.setTime(date);
 				}
-				
-				booking = new Booking();
-				booking.setHotel(hotel);
-				booking.setDate(date);
-				booking.setQuantityList(getEmptyList());
-				booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
-				booking.setBoardList(null);
-				list.add(booking);
-				fromCal.setTime(date);
 			}
 		}
-		list.remove(0);
 		setBookingList(list);
 		setModel(new ListDataModel(getBookingList()));
 		
