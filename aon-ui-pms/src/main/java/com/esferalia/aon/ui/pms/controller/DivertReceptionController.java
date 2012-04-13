@@ -146,7 +146,7 @@ public class DivertReceptionController extends BasicController {
 		}
 	}
 	
-	public void onAcceptDivert(ActionEvent event){
+	public void onAcceptDivert(ActionEvent event) throws ManagerBeanException{
 		try {
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			Date startDate = roomAvailability.getFilterParams().getViewerStartDate();
@@ -169,11 +169,11 @@ public class DivertReceptionController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 		changeReservationHotel();
-		updateStatus(ReservationDivertStatus.ACCEPTED);
+		updateStatus((ProjectReservationDivert) getTo(), ReservationDivertStatus.ACCEPTED);
 	}
 
-	public void onCancelDivert(ActionEvent event){
-		cancelDivert();
+	public void onCancelDivert(ActionEvent event) throws ManagerBeanException{
+		cancelDivert((ProjectReservationDivert) getModel().getRowData());
 	}
 
 	public void onPendingRoomChanged(ValueChangeEvent event){
@@ -218,13 +218,12 @@ public class DivertReceptionController extends BasicController {
 		}
 	}
 
-	private void cancelDivert() {
-		updateStatus(ReservationDivertStatus.REFUSED);
+	private void cancelDivert(ProjectReservationDivert divert) {
+		updateStatus(divert, ReservationDivertStatus.REFUSED);
 	}
 	
-	private void updateStatus(ReservationDivertStatus status){
+	private void updateStatus(ProjectReservationDivert divert, ReservationDivertStatus status){
 		try {
-			ProjectReservationDivert divert = (ProjectReservationDivert) getTo();
 			divert.setStatus(status);
 			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationDivert.class);
 			bean.update(divert);
