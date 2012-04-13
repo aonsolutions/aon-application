@@ -39,7 +39,7 @@ public class BoardBookingController implements ICollectionProvider {
 	private Date toDate;
 	
 	private List<Booking> bookingList;
-	private DataModel<Booking> model;
+	private DataModel model;
 	
 	private List<ITransferObject> boardItems;
 	
@@ -67,10 +67,10 @@ public class BoardBookingController implements ICollectionProvider {
 	public void setBookingList(List<Booking> bookingList) {
 		this.bookingList = bookingList;
 	}
-	public DataModel<Booking> getModel() {
+	public DataModel getModel() {
 		return model;
 	}
-	public void setModel(DataModel<Booking> model) {
+	public void setModel(DataModel model) {
 		this.model = model;
 	}
 	private Integer getBoardCategoryId() {
@@ -183,7 +183,7 @@ public class BoardBookingController implements ICollectionProvider {
 		}
 		list.remove(0);
 		setBookingList(list);
-		setModel(new ListDataModel<Booking>(getBookingList()));
+		setModel(new ListDataModel(getBookingList()));
 		
 	}
 	
