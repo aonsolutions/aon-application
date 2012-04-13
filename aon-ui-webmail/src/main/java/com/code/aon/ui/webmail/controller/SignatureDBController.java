@@ -87,5 +87,15 @@ public class SignatureDBController extends MailDBController implements ISignatur
 		signature.setSource(getSource());
 		signature.setSourceId(getSourceId());
 	}
+
+	@Override
+	protected String getSourceAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.SIGNATURE_SOURCE );
+	}
+
+	@Override
+	protected String getSourdIdAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.SIGNATURE_SOURCE_ID );
+	}	
 	
 }

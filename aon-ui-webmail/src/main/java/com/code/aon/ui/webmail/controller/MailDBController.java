@@ -19,7 +19,6 @@ import com.code.aon.ui.common.converter.MappedTransferObjectConverter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.enumeration.MailSource;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class MailDBController extends BasicController {
 
@@ -32,6 +31,10 @@ public abstract class MailDBController extends BasicController {
 	private Integer sourceId;
 	
 	protected abstract String getDuplicatedMessage( String name );
+	
+	protected abstract String getSourceAlias() throws ManagerBeanException;
+	
+	protected abstract String getSourdIdAlias() throws ManagerBeanException;
 	
 	public MailSource getSource() {
 		return source;
@@ -65,8 +68,8 @@ public abstract class MailDBController extends BasicController {
 	private void updateCriteria() throws ManagerBeanException {
 		clearCriteria();
 		Criteria criteria = getCriteria();
-		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE ), this.source);
-		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE_ID ), this.sourceId);		
+		criteria.addEqualExpression(getSourceAlias(), this.source);
+		criteria.addEqualExpression(getSourdIdAlias(), this.sourceId);		
 	}
 	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
@@ -83,8 +86,8 @@ public abstract class MailDBController extends BasicController {
 	
 	private boolean exists( String name ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE ), this.source);
-		criteria.addEqualExpression(getFieldName( IEntityAlias.MAIL_ACCOUNT_NAME ), name);		
+		criteria.addEqualExpression(getSourceAlias(), this.source);
+		criteria.addEqualExpression(getSourdIdAlias(), name);		
 		return getManagerBean().getCount(criteria) > 0;
 	}
 	

@@ -17,6 +17,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.db.MailAccount;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class MailAccountDBController extends MailDBController implements IMailAccountController {
 
@@ -54,6 +55,16 @@ public class MailAccountDBController extends MailDBController implements IMailAc
             LOGGER.error(">>>> getMailAccounts", e);
 		}		
 		return accounts;
+	}
+
+	@Override
+	protected String getSourceAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE );
+	}
+
+	@Override
+	protected String getSourdIdAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE_ID );
 	}	
 	
 }
