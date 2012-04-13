@@ -157,16 +157,6 @@ public class AuditManager implements IAuditConstants {
 			level = dp.getAuditLevel();
 		}
 		return level;
-//		AuditLevel level = AuditLevel.NONE;
-//		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId() );
-//		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
-//		List<ITransferObject> list = bean.getList(criteria);
-//		if (! list.isEmpty() ) {
-//			level = ((DomainApplication) list.get(0)).getAuditLevel();
-//		}
-//		return level;
 	}	
 	
 }

@@ -10,6 +10,8 @@ public interface IAuditConstants {
 	
 	String AUDIT_CONTROLLER_NAME = "audit";
 	
+	String ACTION_MORE_USED_CONTROLLER_NAME = "actionMoreUsed";
+	
 	/** Velocity Templates **/
 	String OPTIONS_TEMPLATE = "options.xhtml.vm";
 	

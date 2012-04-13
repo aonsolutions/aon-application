@@ -58,7 +58,7 @@ public class ActionMoreUsedController implements IAuditConstants {
 		return (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 	}	
 	
-	private List<ActionMoreUsed> getMoreUsed( int maxResults ) {
+	protected List<ActionMoreUsed> getMoreUsed( int maxResults ) {
 		List<ActionMoreUsed> list = new LinkedList<ActionMoreUsed>();
 		try {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();

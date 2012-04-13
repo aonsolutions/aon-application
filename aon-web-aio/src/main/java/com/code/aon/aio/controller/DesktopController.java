@@ -232,11 +232,14 @@ public class DesktopController {
 	private void initWebmail() {
 		try {
 			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-			if ( mailAccount != null ) {
-				server = new AonServer(mailAccount);
-				server.connect();
-				updateMailSummaryModel();				
+			// Mientras webmail no se loggee contra la base de datos, el mail se desactiva.
+			if (! AonUtil.isSkipLdap() ) {
+				IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
+				if ( mailAccount != null ) {
+					server = new AonServer(mailAccount);
+					server.connect();
+					updateMailSummaryModel();				
+				}
 			}
 		} catch (Throwable th) {
 			LOGGER.error("Error on Webmail init", th);

@@ -1,8 +1,10 @@
 package com.code.aon.ui.config.util;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
@@ -27,35 +30,32 @@ public class UserUtils {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
 	
-	private AuthPrincipal principal;
-	
 	private User loggedUser;
 	
-	public UserUtils() {
-		this.principal = BasicPrincipal.getAuthPrincipal();
-		this.loggedUser = resolveUser();
-	}
-	
 	public AuthPrincipal getPrincipal() {
-		return principal;
+		return BasicPrincipal.getAuthPrincipal();
 	}
 
 	public User getLoggedUser() {
+		if (this.loggedUser == null) {
+			this.loggedUser = resolveUser();
+		}
 		return loggedUser;
 	}
 	
 	private User resolveUser() {
-		try {
-            IManagerBean bean = BeanManager.getManagerBean(User.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName(IEntityAlias.USER_LOGIN), getPrincipal().getShortName() );
-            List<ITransferObject> list = bean.getList(criteria);
-            if ( (list!=null) && (list.size() == 1) ) {
-                return (User) list.get(0);
-            }
-        } catch (ManagerBeanException e) {
-        	LOGGER.error( "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
-        }
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
+		String q = "SELECT u FROM User u  WHERE u.login = '" + getPrincipal().getShortName() + "'";
+		if (getPrincipal().getDomainId() != null) {
+			q = q + " AND u.domain = " + getPrincipal().getDomainId();
+		}
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+		List<?> queryList = query.list();
+		Iterator<?> iterator = queryList.iterator();
+		if (iterator.hasNext()) {
+			User user = (User) iterator.next();
+			return user;
+		}
         return null;		
 	}
 

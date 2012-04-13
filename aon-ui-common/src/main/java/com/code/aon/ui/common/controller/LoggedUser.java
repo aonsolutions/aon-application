@@ -1,13 +1,17 @@
 package com.code.aon.ui.common.controller;
 
 import java.util.AbstractMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
@@ -61,7 +65,7 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 			if ( ldap.exists(dn, USER) ) {
 				return ldap.get(dn, USER, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, ORGANIZATION_NAME_ATTRIBUTE );	
 			}
-		}
+		} 
 		return null;
 	}		
 
@@ -99,15 +103,38 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
            	}    	
     	} else {
     		this.userName = principal.getShortName();
+    		
+    		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.config.User");
+    		String q = "SELECT name FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
+    		if (principal.getDomainId() != null) {
+    			q = q + " AND u.domain = " + principal.getDomainId();
+    		}
+    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+    		List<?> queryList = query.list();
+    		Iterator<?> iterator = queryList.iterator();
+    		if (iterator.hasNext()) {
+    			this.userName = (String) iterator.next();
+    		}
     	}
        	Entry domain = getAonDomain( principal );
        	if ( (domain != null) && domain.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
            	if (domain.containsKey(PARENT_DOMAIN_ATTRIBUTE) ) {
-           		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+           		this.companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
         	}    	        		
            	if ( StringUtils.isBlank(companyName) ) {
-           		companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
+           		this.companyName = domain.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
            	}
+       	} else {
+    		if (principal.getDomainId() != null) {
+	    		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.company.Company");
+	    		String q = "SELECT name FROM Company c  WHERE c.domain = "  + principal.getDomainId();
+	    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
+	    		List<?> queryList = query.list();
+	    		Iterator<?> iterator = queryList.iterator();
+	    		if (iterator.hasNext()) {
+	    			this.companyName = (String) iterator.next();
+	    		}
+    		}
        	}
     }
 
@@ -177,11 +204,10 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	/**
 	 * The Class FakeMap.
 	 */
-	@SuppressWarnings("unchecked")
 	private static class FakeMap extends AbstractMap<String,Boolean> {
 		
 		@Override
-		public Set entrySet() {
+		public Set<java.util.Map.Entry<String, Boolean>> entrySet() {
 			return null;
 		}
 		
@@ -199,6 +225,7 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 			}
 			return Boolean.FALSE;
 		}
+
 		
 	}
 	

@@ -1,6 +1,5 @@
 package com.code.aon.ui.audit.domain;
 
-import java.security.Principal;
 import java.util.Date;
 
 import javax.faces.context.ExternalContext;
@@ -76,9 +75,9 @@ public class AuditDomainChangeListener implements IDomainChangeListener {
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );
-			User user = AuditManager.getUser( principal.getShortName() , domain );
+			User user = AuditManager.getUser( principal.getShortName() , principal.getDomainId() );
 			LOGGER.info( "User {}", user );
-			AuditLevel level = AuditManager.getAuditLevel(application, user.getDomain() );
+			AuditLevel level = AuditManager.getAuditLevel(application, principal.getDomainId() );
 			if ( level != AuditLevel.NONE ) {
 				Session session = new Session();
 				session.setApplication( application );
@@ -94,14 +93,4 @@ public class AuditDomainChangeListener implements IDomainChangeListener {
 		}
 	}
 	
-	private AuthPrincipal getPrincipal( HttpServletRequest request ) {
-		AuthPrincipal user = null;
-		Principal principal = request.getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		return user;
-	}	
 }
