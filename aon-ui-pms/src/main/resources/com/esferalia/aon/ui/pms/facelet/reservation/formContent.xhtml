@@ -36,6 +36,11 @@
 			styleClass="aon-bold" rendered="#{!reservation.new}" />
 		<aon:outputText value="#{pmsBundle.pms_no_show}" 
 			styleClass="aon-bold aon-label-error aon-margin-left" rendered="#{!reservation.new and reservation.to.noShow}" />
+		<aon:commandButton id="reservation-NoShow-rollBack" value="&#160;"
+			actionListener="#{reservation.onNoShowRollBack}" 
+			title="#{pmsBundle.pms_no_show_cancel}"
+			immediate="true" rendered="#{!reservation.new and reservation.to.noShow}"
+			styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
 		<aon:commandButton id="block" value="&#160;"
 			actionListener="#{reservation.onBlock}"
 			title="#{pmsBundle.pms_to_block}"

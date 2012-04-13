@@ -1,5 +1,7 @@
 package com.esferalia.aon.pms;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -16,6 +18,14 @@ public class ProjectReservationDivert extends ProjectReservationDivertDB {
 	@Transient
 	public boolean isPending(){
 		return this.getStatus()==ReservationDivertStatus.PENDING;
+	}
+	
+	@Override
+	public void setProjectReservation(ProjectReservation projectReservation) {
+		super.setProjectReservation(projectReservation);
+		if(projectReservation.getStartDate()!=null && projectReservation.getStartDate().after(new Date())){
+			this.setDivertDate(projectReservation.getStartDate());
+		}
 	}
 
 }

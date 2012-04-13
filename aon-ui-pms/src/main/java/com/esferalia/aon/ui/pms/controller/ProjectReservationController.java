@@ -45,6 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
@@ -71,6 +72,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showInvoiceWindow;
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
+	private boolean showDivertWindow;
 	private Invoice invoiceToRectificate;
 	private DataModel invoiceModel;
 
@@ -194,6 +196,14 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.showRectificationWindow = showRectificationWindow;
 	}
 
+	public boolean isShowDivertWindow() {
+		return showDivertWindow;
+	}
+	
+	public void setShowDivertWindow(boolean showDivertWindow) {
+		this.showDivertWindow = showDivertWindow;
+	}
+	
 	public Invoice getInvoiceToRectificate() {
 		return invoiceToRectificate;
 	}
@@ -469,6 +479,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onNoShow(ActionEvent event) throws ManagerBeanException {
 		cancelReservation(event, true);
 	}
+	
+	public void onNoShowRollBack(ActionEvent event) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		reservation.setNoShow(false);
+		reservation.setStatus(ReservationStatus.ACTIVE);
+		accept(event);
+	}
 
 	private void cancelReservation(ActionEvent event, boolean noShow) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
@@ -507,6 +524,18 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+	
+	public void onDivertModalShow(ActionEvent event) throws ManagerBeanException {
+		DivertController controller = (DivertController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
+		controller.onReset(event);
+		ProjectReservationDivert divert = (ProjectReservationDivert) controller.getTo();
+		divert.setProjectReservation((ProjectReservation) this.getTo());
+	}
+	
+	public void onAcceptDivert(ActionEvent event) {
+		DivertController controller = (DivertController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
+		controller.onAccept(event);
 	}
 
 	public boolean isInvoiceable() throws ManagerBeanException  {

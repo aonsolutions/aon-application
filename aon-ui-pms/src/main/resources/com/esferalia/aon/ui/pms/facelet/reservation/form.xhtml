@@ -35,6 +35,7 @@
 							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
 							confirmActionListener="#{reservation.onCancelReservation}" />
 					</c:if>
+					
 					<aon:confirmButton id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}"
 						title="#{pmsBundle.pms_no_show}"
@@ -43,6 +44,16 @@
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{pmsBundle.pms_no_show_confirm}"
 						confirmActionListener="#{reservation.onNoShow}" />
+					
+					<aon:commandButton id="reservation-divert"
+						value="#{pmsBundle.pms_divert_reservation}"
+						immediate="true" rendered="#{!reservation.cancelled}"
+						styleClass="aon-finding-toolbar-item aon-icon-transfer"
+						actionListener="#{reservation.onDivertModalShow}"
+						reRender="showDivertWindow">
+						<f:setPropertyActionListener target="#{reservation.showDivertWindow}"
+							value="#{true}" />
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
 
@@ -110,6 +121,14 @@
 			<ui:param name="controller" value="#{reservation}" />
 			<ui:param name="service" value="#{false}" />
 		</ui:include>
-
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/divert/modalDivert.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+			<ui:param name="divert" value="#{divert}" />
+			<ui:param name="modalReRender" value="reservationForm" />
+			<ui:param name="skipReservation" value="true" />
+			<ui:param name="skipRequestHotel" value="true" />
+			<ui:param name="skipStatus" value="true" />
+		</ui:include>
+		
 	</ui:define>
 </ui:composition>

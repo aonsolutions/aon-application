@@ -33,7 +33,7 @@
 						<aon:column alias="ProjectReservationDivert.projectReservation.id"
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel for="Divert_projectReservation"
+								<aon:outputLabel 
 									value="#{pmsBundle.pms_reservation}" />
 							</f:facet>
 							<aon:div rendered="#{formList}" >
@@ -55,6 +55,7 @@
 								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="lookupRendered" value="#{formEdit}" />
+								<ui:param name="lookupReRender" value="divertForm" />
 								<ui:param name="lookupControllerListener" value="#{divert.divertFilter}" />
 							</ui:include>
 								
@@ -67,6 +68,7 @@
 									<ui:param name="skipLabel" value="#{true}" />
 									<ui:param name="lookupSuffix" value="-New" />
 									<ui:param name="lookupRendered" value="#{formNew}" />
+									<ui:param name="lookupReRender" value="divertForm" />
 									<ui:param name="lookupControllerListener" value="#{divert.divertedReservationFilter}" />
 								</ui:include>
 							</f:facet>

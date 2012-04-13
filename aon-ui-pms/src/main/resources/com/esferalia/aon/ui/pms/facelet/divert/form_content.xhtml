@@ -6,54 +6,60 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Divert_projectReservation"
-		value="#{pmsBundle.pms_reservation}" />
-	<aon:div
-		rendered="#{divert.to.projectReservation.id!=null}" >
-		<aon:outputText value="#{divert.to.projectReservation.id}" />
-		<aon:outputText value=" - " />
-		<aon:outputText value="#{divert.to.projectReservation.code} - #{divert.to.projectReservation.guestFullName}" />
-		<aon:outputText value=" - " />
-		<aon:outputText value="#{divert.to.projectReservation.startDate}" >
-			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-				timeZone="#{timeZoneController.timeZoneId}" />
-		</aon:outputText>
-		<aon:outputText value=" - " />
-		<aon:outputText value="#{divert.to.projectReservation.endDate}" >
-			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-				timeZone="#{timeZoneController.timeZoneId}" />
-		</aon:outputText>
-	</aon:div>
-	<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{divert.to.projectReservation}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="lookupRendered" value="#{divert.to.projectReservation.id==null}" />
-	</ui:include>
+	<c:if test="#{!skipReservation}">
+		<aon:outputLabel for="Divert_projectReservation"
+			value="#{pmsBundle.pms_reservation}" />
+		<aon:div
+			rendered="#{divert.to.projectReservation.id!=null}" >
+			<aon:outputText value="#{divert.to.projectReservation.id}" />
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{divert.to.projectReservation.code} - #{divert.to.projectReservation.guestFullName}" />
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{divert.to.projectReservation.startDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{divert.to.projectReservation.endDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:div>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{divert.to.projectReservation}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="lookupRendered" value="#{divert.to.projectReservation.id==null}" />
+		</ui:include>
+	</c:if>
 					
-	<aon:outputLabel for="Divert_hotelRequest_id"
-		value="#{pmsBundle.pms_divert_request}" />
-	<aon:outputText value="#{divert.to.requestHotel.workPlace.description}" />
+	<c:if test="#{!skipRequestHotel}">
+		<aon:outputLabel for="Divert_hotelRequest_id"
+			value="#{pmsBundle.pms_divert_request}" />
+		<aon:outputText value="#{divert.to.requestHotel.workPlace.description}" />
+	</c:if>
 					
 	<aon:outputLabel for="Divert_hotel_id"
 		value="#{pmsBundle.pms_divert_destination}" />
-	<aon:selectOneMenu id="Divert_hotel_id"
+	<aon:selectOneMenu id="Divert_hotel_id" 
 		value="#{divert.to.divertHotel}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+		<f:selectItems value="#{divert.availableHotels}" />
 	</aon:selectOneMenu>
-
+	
 	<aon:outputLabel for="Divert_date"
 		value="#{bundle.aon_date}" />
 	<aon:selectInputDate id="Divert_date"  
 		value="#{divert.to.divertDate}" size="20"
 		inputSize="16" renderAsPopup="true" enableManualInput="true"
 		timeZone="#{timeZoneController.timeZone}"
-		popupDateFormat="#{bundle.aon_timestamp_pattern}">
+		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 
-	<aon:outputLabel for="Divert_status"
-		value="#{bundle.aon_status}" />
-	<aon:outputText value="#{divert.to.status}" />
+	<c:if test="#{!skipStatus}">
+		<aon:outputLabel for="Divert_status"
+			value="#{bundle.aon_status}" />
+		<aon:outputText value="#{divert.to.status}" />
+	</c:if>
 	
 </ui:composition>

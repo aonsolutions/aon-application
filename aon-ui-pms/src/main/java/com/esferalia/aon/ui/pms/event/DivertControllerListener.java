@@ -50,13 +50,23 @@ public class DivertControllerListener extends ControllerAdapter {
 		ProjectReservationDivert divert = (ProjectReservationDivert) event.getController().getTo();
 		checkDate(divert);
 		checkRoomAssignation(divert);
+		divert.setStatus(ReservationDivertStatus.PENDING);
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		ProjectReservationDivert divert = (ProjectReservationDivert) this.getController().getTo();
+		if( divert.getStatus() == ReservationDivertStatus.ACCEPTED ){
+			getController().onCancel(null);
+		}
 	}
 
 	private void checkDate(ProjectReservationDivert divert)
 			throws ControllerListenerException {
 		if (divert.getDivertDate().before(divert.getProjectReservation().getStartDate())
 				|| divert.getDivertDate().after(DateUtils.addDays(divert.getProjectReservation().getEndDate(), -1)) ) {
-			String msg = "Fecha de desvio fuera de la reserva.";
+			String msg = "Error al desviar la reserva. Fecha de desvio fuera de la reserva.";
 			throw new ControllerListenerException(msg);
 		}
 	}
@@ -65,7 +75,7 @@ public class DivertControllerListener extends ControllerAdapter {
 		try {
 			if(!DateUtils.isSameDay(divert.getDivertDate(), divert.getProjectReservation().getStartDate()) 
 					&& getRoomDetailList(divert.getProjectReservation()).isEmpty()){
-				String msg = "Reserva iniciada sin habitaciones asignadas.";
+				String msg = "Error al desviar la reserva. Reserva iniciada sin habitaciones asignadas.";
 				throw new ControllerListenerException(msg);
 			}
 		} catch (ManagerBeanException e) {
