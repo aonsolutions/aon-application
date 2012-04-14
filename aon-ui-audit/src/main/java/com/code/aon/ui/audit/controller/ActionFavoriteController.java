@@ -153,9 +153,9 @@ public class ActionFavoriteController implements IAuditConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading favorites", e);
 		}
-		if (list.size() < 20) {
-			completeListWithMoreUsed(list);
-		}
+//		if (list.size() < 20) {
+//			completeListWithMoreUsed(list);
+//		}
 		return list;		
 	}
 
