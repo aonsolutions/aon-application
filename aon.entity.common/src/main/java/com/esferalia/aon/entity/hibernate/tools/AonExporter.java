@@ -325,13 +325,13 @@ public class AonExporter extends GenericExporter{
 		map.put("WebInfoPageResource","com.code.aon.infoweb.WebInfoPageResource");
 		map.put("WebInfoStyle","com.code.aon.infoweb.WebInfoStyle");
 
-		//AON-MANAGER   
-		map.put("ApplicationRole","com.code.aon.manager.ApplicationRole");		
-		map.put("ApplicationUser","com.code.aon.manager.ApplicationUser");
-		map.put("ApplicationUserProfile","com.code.aon.manager.ApplicationUserProfile");
-		map.put("Profile","com.code.aon.manager.Profile");
-		map.put("ProfileRole","com.code.aon.manager.ProfileRole");
-		map.put("Role","com.code.aon.manager.Role");
+		//AON-ADMIN   
+		map.put("ApplicationRole","com.code.aon.admin.ApplicationRole");		
+		map.put("ApplicationUser","com.code.aon.admin.ApplicationUser");
+		map.put("ApplicationUserProfile","com.code.aon.admin.ApplicationUserProfile");
+		map.put("Profile","com.code.aon.admin.Profile");
+		map.put("ProfileRole","com.code.aon.admin.ProfileRole");
+		map.put("Role","com.code.aon.admin.Role");
 		
 		//AON-MARKETING  
 		map.put("ActionTarget","com.code.aon.marketing.ActionTarget");
