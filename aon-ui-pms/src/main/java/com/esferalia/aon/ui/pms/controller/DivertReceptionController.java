@@ -28,6 +28,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
@@ -79,6 +80,19 @@ public class DivertReceptionController extends BasicController {
 	
 	public boolean isAllReallocated(){
 		return getReallocationList().size()==0;
+	}
+	
+	public boolean isNoRoomAssigned() throws ManagerBeanException{
+		for(ProjectReservationRoom r: getReallocationList()){
+			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+			Criteria criteria = new Criteria();
+			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+			criteria.addEqualExpression(alias, r.getProjectReservation().getId());
+			if(reservationRoomDetailBean.getCount(criteria)>0){
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public void onConfirmDivert(ActionEvent event){

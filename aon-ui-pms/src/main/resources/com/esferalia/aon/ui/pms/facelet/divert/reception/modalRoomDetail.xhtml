@@ -38,7 +38,7 @@
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
 									<aon:commandButton id="roomDetail-accept"
-										rendered="#{modalController.allReallocated}"
+										rendered="#{modalController.allReallocated or modalController.noRoomAssigned}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_save} #{pmsBundle.pms_stay}"
 										actionListener="#{modalController.onAcceptDivert}">
