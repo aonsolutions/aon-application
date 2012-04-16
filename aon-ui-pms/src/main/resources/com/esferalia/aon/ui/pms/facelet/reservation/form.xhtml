@@ -29,7 +29,7 @@
 						<aon:confirmButton id="reservation-Cancel"
 							value="#{pmsBundle.pms_to_cancel_reservation}"
 							title="#{pmsBundle.pms_to_cancel_reservation}"
-							immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable}"
+							immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-removed"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
@@ -39,7 +39,7 @@
 					<aon:confirmButton id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}"
 						title="#{pmsBundle.pms_no_show}"
-						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable}"
+						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{pmsBundle.pms_no_show_confirm}"
@@ -47,7 +47,7 @@
 					
 					<aon:commandButton id="reservation-divert"
 						value="#{pmsBundle.pms_divert_reservation}"
-						immediate="true" rendered="#{!reservation.cancelled}"
+						immediate="true" rendered="#{!reservation.cancelled and !reservation.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
 						reRender="showDivertWindow">
