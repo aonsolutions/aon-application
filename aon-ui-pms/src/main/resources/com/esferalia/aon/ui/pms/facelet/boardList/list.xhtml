@@ -23,12 +23,14 @@
 						actionListener="#{boardList.onSearch}"
 						accesskey="#{bundle.aon_key_search}" />
 					<aon:htmlCommandLink id="boardList-excel-report"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 						<f:param name="reportKey" value="boardList" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
 					<aon:htmlCommandLink id="boardList_report"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 						value="#{bundle.aon_listing}"
 						action="#{report.onExecute}"
