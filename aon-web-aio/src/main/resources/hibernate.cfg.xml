@@ -56,6 +56,14 @@
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
 		<mapping class="com.code.aon.account.bridge.TaxAccount"/>
 
+		<!-- AON-ADMIN Mapping files -->	
+		<mapping class="com.code.aon.admin.ApplicationRole"/>
+		<mapping class="com.code.aon.admin.ApplicationUser"/>
+		<mapping class="com.code.aon.admin.ApplicationUserProfile"/>
+		<mapping class="com.code.aon.admin.Profile"/>
+		<mapping class="com.code.aon.admin.ProfileRole"/>
+		<mapping class="com.code.aon.admin.Role"/>
+
 		<!-- AON-ASSET Mapping files --> 
 		<mapping class="com.code.aon.asset.Asset"/>
 		<mapping class="com.code.aon.asset.AssetActivity"/>
@@ -120,8 +128,9 @@
 		<mapping class="com.code.aon.config.TaxDetail"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
-
+		
 		<!-- AON-CUSTOMER Mapping files -->	
 		<mapping class="com.code.aon.customer.Customer"/>
 
@@ -319,6 +328,10 @@
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
+		
+		<!-- AON-WEBMAIL Mapping files -->	
+		<mapping class="com.code.aon.webmail.db.MailAccount"/>
+		<mapping class="com.code.aon.webmail.db.Signature"/>
 
 	</session-factory>
 

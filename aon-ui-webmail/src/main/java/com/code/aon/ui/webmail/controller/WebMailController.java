@@ -1,12 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
-
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -19,8 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.BasicPrincipal;
@@ -30,17 +24,12 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.controller.LoggedUser;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.bean.AonServer;
 import com.code.aon.webmail.bean.BundleConstants;
-import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class WebMailController implements IWebMailConstants, BundleConstants {
 
@@ -121,7 +110,6 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	
 	public void init(IMailAccount mailAccount) throws MessagingException {
 		initBasic(mailAccount);
-		createDefaultSignature(mailAccount);
 		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
 		spamController.updateSpamEnabled(mailAccount);
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
@@ -134,39 +122,6 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
     public String getContext(){
     	return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-    }
-    
-    private void createDefaultSignature(IMailAccount mailAccount){
-    	if ( mailAccount.getISignature() == null ) {
-    		try {
-    			Signature signature = null;
-    			String name = BasicPrincipal.getAuthPrincipal().getDomain();
-				IManagerBean signatureBean = FormUtil.getController(BEAN_SIGNATURE).getManagerBean();
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_NAME), name);
-				List<ITransferObject> list = signatureBean.getList(criteria);
-				if ( list.size() == 1) {
-					signature = (Signature) list.get(0);
-				} else {
-					LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);					
-		    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		            ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale); 
-		        	signature = new Signature();
-		        	signature.setName(name);
-		        	signature.setSignature("<br><br><br><hr>"+
-		        			"<b><font size='4'>"+ loggedUser.getLoggedUserName()+"</font></b><p>"+
-		        			"<b><font size='2'>"+ loggedUser.getCompanyName()+"</font></b><p>"+
-		        			"<br>"+
-		        			"<i>"+bundle.getString("webmail_signature_deftext")+"</i>");
-					signatureBean.insert(signature);					
-				}
-				IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
-				mailAccount.setISignature(signature);
-				mailAccountBean.update(mailAccount);
-    		} catch (ManagerBeanException e) {
-    			LOGGER.error( e.getMessage(), e );
-        	}    		
-    	}
     }
 
 	public FolderController getFolderController() {

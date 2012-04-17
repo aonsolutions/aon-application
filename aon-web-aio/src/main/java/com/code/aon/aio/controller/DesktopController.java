@@ -1,5 +1,6 @@
 package com.code.aon.aio.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
 
 import java.awt.image.BufferedImage;
@@ -24,7 +25,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.imageio.ImageIO;
-import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -55,13 +55,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.bean.AonFolder;
-import com.code.aon.webmail.bean.AonServer;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
@@ -76,8 +73,6 @@ public class DesktopController {
     private List<DesktopNoticeSummary> noticeSummaryList;
 
     private List<AonFolder> mailSummaryModel;
-
-    private AonServer server;
     
     private List<TaskInfo> taskSummaryModel;
     
@@ -231,28 +226,19 @@ public class DesktopController {
 
 	private void initWebmail() {
 		try {
-			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
-			// Mientras webmail no se loggee contra la base de datos, el mail se desactiva.
-			if (! AonUtil.isSkipLdap() ) {
-				IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-				if ( mailAccount != null ) {
-					server = new AonServer(mailAccount);
-					server.connect();
-					updateMailSummaryModel();				
-				}
+			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+			if ( wmc.isLogged() ) {
+				updateMailSummaryModel();				
 			}
 		} catch (Throwable th) {
 			LOGGER.error("Error on Webmail init", th);
-			if ( server != null ) {
-				server.disconnect();
-				server = null;
-			}
 		}
 	}
 
     private void updateMailSummaryModel() {
-    	if ( isMailActive() ) {
-    		AonFolder folder = server.getAonFolder( INBOX_FOLDER_NAME );
+		WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+    	if ( wmc.isLogged() ) {
+    		AonFolder folder = wmc.getServer().getAonFolder( INBOX_FOLDER_NAME );
     		if ( folder != null ) {
     			mailSummaryModel = new LinkedList<AonFolder>();
     			mailSummaryModel.add(folder);
@@ -262,17 +248,10 @@ public class DesktopController {
     
     public List<AonFolder> getMailSummaryModel() {
 		if ( mailSummaryModel != null ) {
-			try {
-				server.ensureConnection();
-			} catch (MessagingException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
+			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+			wmc.isReady();
 		}
 		return mailSummaryModel;
-    }
-
-    public boolean isMailActive() {
-		return (server != null) && server.isConnected();
     }
 
 	private void initTask() {

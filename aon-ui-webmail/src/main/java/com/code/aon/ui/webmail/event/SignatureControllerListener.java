@@ -16,9 +16,11 @@ public class SignatureControllerListener extends ControllerAdapter {
 		if ( WebMailController.isConnectable() ) {		
 			ISignature signature = (ISignature) event.getController().getTo(); 
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-			IMailAccount account = wmc.getServer().getAccount();
-			if ( signature.equals(account.getISignature()) ) {
-				account.setISignature(signature);
+			if ( wmc.getServer() != null ) {
+				IMailAccount account = wmc.getServer().getAccount();
+				if ( signature.equals(account.getISignature()) ) {
+					account.setISignature(signature);
+				}				
 			}
 		}
 	}

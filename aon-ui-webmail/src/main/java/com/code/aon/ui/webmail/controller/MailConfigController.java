@@ -1,7 +1,9 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 
@@ -56,6 +58,15 @@ public class MailConfigController {
 	private List<SelectItem> mailAccounts;
 	
 	private List<SelectItem> signatures;
+	
+	public MailConfigController() {
+		if ( AonUtil.isSkipLdap() ) {
+			SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+			setSignature(signature);
+			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+			setMailAccount(account);			
+		}
+	}
 	
 	public ISignatureController getSignature() {
 		if ( signature == null ) {
@@ -122,7 +133,9 @@ public class MailConfigController {
 		IMailAccount account = getSelectMailAccount();
 		if ( account != null ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			return ObjectUtils.equals(webmail.getServer().getAccount(), account);			
+			if ( webmail.getServer() != null ) {
+				return ObjectUtils.equals(webmail.getServer().getAccount(), account);	
+			}			
 		}
 		return false;
 	}

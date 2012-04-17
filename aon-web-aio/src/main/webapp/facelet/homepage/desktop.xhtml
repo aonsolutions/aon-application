@@ -23,7 +23,7 @@
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div id="desktopDiv1">
-						<c:if test="#{desktop.mailActive}">
+						<c:if test="#{webmail.logged}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
 									<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
@@ -50,7 +50,7 @@
 							</aon:div>
 						</c:if>
 
-						<c:if test="#{!desktop.mailActive}">
+						<c:if test="#{!webmail.logged}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
 									<aon:outputText value="#{webmailBundle.webmail_main}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
