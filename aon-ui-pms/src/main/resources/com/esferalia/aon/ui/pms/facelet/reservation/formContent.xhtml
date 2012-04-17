@@ -53,6 +53,8 @@
 			immediate="true" rendered="#{reservation.blocked and aonRole.saleOperator}"
 			styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 		</aon:commandButton>
+		<aon:outputText value="#{pmsBundle.pms_reservation_divert_requested}" 
+			styleClass="aon-bold aon-label-info aon-margin-left" rendered="#{!reservation.new and reservation.pendingDivert}" />
 	</aon:div>
 
 	<aon:outputLabel for="ProjectReservation_guest" value="#{pmsBundle.pms_guest}" />

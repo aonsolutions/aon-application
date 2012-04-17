@@ -53,6 +53,7 @@ import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
@@ -800,6 +801,20 @@ public class ProjectReservationController extends BasicController implements IPm
 			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME));
 			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
 		}
+	}
+	
+	public boolean isPendingDivert() throws ManagerBeanException {
+		if(this.getTo()!=null){
+			IManagerBean reservationDivertBean = BeanManager.getManagerBean(ProjectReservationDivert.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationDivertBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_PROJECT_RESERVATION_ID), ((ProjectReservation)this.getTo()).getId());
+			criteria.addEqualExpression(reservationDivertBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_STATUS), ReservationDivertStatus.PENDING);
+			criteria.addOrder(reservationDivertBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_DIVERT_DATE));
+			if(reservationDivertBean.getCount(criteria)>0){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

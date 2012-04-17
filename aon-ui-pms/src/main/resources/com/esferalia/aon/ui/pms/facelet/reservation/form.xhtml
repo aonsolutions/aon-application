@@ -47,7 +47,7 @@
 					
 					<aon:commandButton id="reservation-divert"
 						value="#{pmsBundle.pms_divert_reservation}"
-						immediate="true" rendered="#{!reservation.cancelled and !reservation.new}"
+						immediate="true" rendered="#{!reservation.cancelled and !reservation.pendingDivert and !reservation.new}"
 						styleClass="aon-finding-toolbar-item aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
 						reRender="showDivertWindow">
