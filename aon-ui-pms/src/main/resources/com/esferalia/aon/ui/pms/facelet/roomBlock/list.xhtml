@@ -7,20 +7,29 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="roomList">
+		<aon:form id="roomBlockList">
 
+			<aon:methodParam name="searchAction" value="roomBlock_search" />
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_roomBlock_module}" />
 				<ui:param name="controller" value="#{room}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
+				
+				<aon:methodParam name="rowSelectorAction" value="roomBlock_form" />
+				<aon:methodParam name="rowSelectorActionListener" value="#{roomBlock.onSelectRoom}" type="actionListener" />
+			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+
 					<ui:param name="controller" value="#{room}" />
+
 					<ui:define name="columns">
-						
+					
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/list_content.xhtml" />
-	
+					
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

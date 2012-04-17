@@ -133,6 +133,7 @@
 				<value>#{roomSearch}</value>
 				<value>#{roomControllerListener}</value>
 				<value>#{rommFeatureLinesListener}</value>
+				<value>#{roomBlockLinesListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -204,6 +205,76 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>roomBlockLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>roomBlock</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AssetActivity_asset_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ROOM BLOCK ***************** -->
+	<managed-bean>
+		<managed-bean-name>roomBlock</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomBlockController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.asset.AssetActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>roomBlock</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AssetActivity_date desc, AssetActivity_asset_name</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>room</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>asset.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{roomBlockControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>roomBlockControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.RoomBlockControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************* RESERVATION REQUEST ***************** -->
@@ -1492,6 +1563,22 @@
 		<navigation-case>
 			<from-outcome>divertReception_grid</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/reception/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Room block ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>roomBlock_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBlock/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>roomBlock_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBlock/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>roomBlock_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBlock/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

@@ -8,11 +8,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="roomSearch">
+		<aon:form id="roomBlockSearch">
 			
+			<aon:methodParam name="backAction" value="roomBlock_list" />
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_roomBlock_module}" />
 				<ui:param name="controller" value="#{room}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				
 			</ui:include>
 				
 			<ui:decorate
@@ -20,7 +23,9 @@
 				<ui:param name="controller" value="#{room}" />
 
 				<ui:define name="searchContent">
-					
+				
+					<aon:methodParam name="searchAction" value="roomBlock_list" />
+				
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/search_content.xhtml" />
 						
 				</ui:define>
