@@ -53,6 +53,13 @@ public class RoomBlockController extends LinesController {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+	
+	public void onShowMultipleBlockWindow(ActionEvent event) throws ManagerBeanException {
+		setFromDate(null);
+		setToDate(null);
+		setComments(null);
+	}
+	
 	public void onSelectRoom(ActionEvent event) throws ManagerBeanException {
 		IController controller = FormUtil.getController(IPmsConstants.ROOM_CONTROLLER_NAME);
 		controller.onSelect(event);
