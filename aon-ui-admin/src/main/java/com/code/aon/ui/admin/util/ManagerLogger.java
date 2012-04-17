@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEED_MAIL_ACCOUNT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_MAIL_ACCOUNT;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.util.Date;
 
@@ -23,9 +24,9 @@ import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonServer;
 
 public class ManagerLogger {
@@ -42,17 +43,9 @@ public class ManagerLogger {
 	
 	private IMailAccount getMailAccount() throws ManagerBeanException {
 		boolean accountTested = false;
-		IMailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), true);
-		if ( account != null ) {
-			accountTested = true;
-			if ( AonServer.test(account, false, true) ) {
-				return account;
-			} else {
-				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, account.getName());
-			}			
-		}
-		account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
-		if ( account != null ) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		IMailAccount account = mailConfig.getDefaultMailAccount();
+		if (account!=null) {
 			accountTested = true;
 			if ( AonServer.test(account, false, true) ) {
 				return account;

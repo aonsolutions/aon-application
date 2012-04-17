@@ -63,6 +63,8 @@
 		<module>aon-jsf-bridge</module>
 		<module>aon-manager</module>
 		<module>aon-ui-manager</module>
+		<module>aon-admin</module>
+		<module>aon-ui-admin</module>
 
 		<!-- ENTITY -->
 		<module>aon-company</module>
@@ -167,6 +169,7 @@
 		<module>aon-web-document</module>
 		<module>aon-web-pms</module>
 		<module>aon-web-aio</module>
+    <module>aon-web-admin</module>
 
 		<!-- GWT MODULES -->
 		<module>aon-gwt-employee</module>
