@@ -47,17 +47,24 @@
 					<aon:outputLabel for="ProposalDetail_item" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-				<aon:selectOneMenu id="ProposalDetail_item" rendered="#{formEdit}" 
-					value="#{to.item}" required="true">
-					<f:selectItem itemLabel=" - " itemValue="null" />
-					<f:selectItems value="#{proposal.departmentsItems}" />
-				</aon:selectOneMenu>
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+				</ui:include>		
 				<f:facet name="footer">
-					<aon:selectOneMenu id="ProposalDetail_item-New" rendered="#{formNew}" 
-						value="#{proposalDetail.to.item}" required="true">
-						<f:selectItem itemLabel=" - " itemValue="null" />
-						<f:selectItems value="#{proposal.departmentsItems}" />
-					</aon:selectOneMenu>
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupSuffix" value="-New" />
+						<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity-New" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+					</ui:include>		
 				</f:facet>
 			</aon:column>
 			
