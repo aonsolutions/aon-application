@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+		<ui:param name="controller" value="#{adminDomain}" />
+		<ui:define name="searchContent">
+
+			<aon:outputLabel for="Domain_name"
+				value="#{bundle.aon_name}" />
+			<aon:inputText id="Domain_name" size="80"
+				valueChangeListener="#{controller.addExpression}" />
+
+			<aon:outputLabel for="Domain_description"
+				value="#{bundle.aon_description}" />
+			<aon:inputText id="Domain_description" size="80"
+				valueChangeListener="#{controller.addExpression}" />
+				
+			<c:if test="#{adminMain.config.showDomainStatus}" >			
+				<aon:outputLabel for="Domain_active"
+					value="#{bundle.aon_active}" />
+				<aon:selectOneMenu id="Domain_active"
+					valueChangeListener="#{controller.addIdEqualExpression}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+					<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
+				</aon:selectOneMenu>
+			</c:if>				
+
+			<c:if test="#{adminMain.administrator}">
+				<aon:outputLabel for="Domain_parent"
+					value="#{adminBundle.admin_domain_parent}" />
+				<aon:selectOneMenu id="Domain_parent"
+					value="#{adminCollections.domain}"
+					valueChangeListener="#{controller.addDomainEqualExpression}" >
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{controller.allParentDomains}" />
+				</aon:selectOneMenu>
+			</c:if>
+			
+			<aon:outputLabel for="Domain_subDomainSuffix"
+				value="#{adminBundle.admin_domain_subDomainSuffix}" />
+			<aon:inputText id="Domain_subDomainSuffix" size="80"
+				valueChangeListener="#{controller.addExpression}" />				
+			
+			<aon:outputLabel for="Domain_maxDocumentSize"
+				value="#{adminBundle.admin_domain_maxDocumentSize}" />
+			<aon:inputText id="Domain_maxDocumentSize" size="80"
+				valueChangeListener="#{controller.addExpression}" />
+							
+			<aon:outputLabel for="Domain_maxTotalDocumentSize"
+				value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
+			<aon:inputText id="Domain_maxTotalDocumentSize" size="80"
+				valueChangeListener="#{controller.addExpression}" />
+			
+			<c:if test="#{adminMain.administrator}">
+				<aon:outputLabel for="Domain_type"
+					value="#{bundle.aon_type}" />
+				<aon:selectOneMenu id="Domain_type" 
+					converter="aon.EnumConverter"
+					valueChangeListener="#{controller.addEqualExpression}">
+					 <f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{adminCollections.domainTypes}" />
+				</aon:selectOneMenu>							
+			</c:if>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

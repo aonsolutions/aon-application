@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+				
+	<aon:valueParam name="serviceAcceptedReRender" default="#{controller.beanName}Toolbar" />				
+				
+	<c:if test="#{controller.new and (!adminMain.administrator)}" >
+		<aon:div styleClass="aon-margin-top">
+			<aon:selectBooleanCheckbox id="termsOfService"
+				reRender="#{serviceAcceptedReRender}" ajaxSingle="true"
+				value="#{adminMain.termsOfServiceAccepted}">
+			</aon:selectBooleanCheckbox>				
+			<aon:outputLabel for="termsOfService" styleClass="aon-italic"
+				value="#{adminBundle.admin_service_terms_text}" />
+			<aon:outputLink target="_blank"
+				styleClass="aon-margin-left" value="#{termsOfServiceURL}">
+				<aon:outputText value="#{adminBundle.admin_service_terms}" />
+			</aon:outputLink>	
+		</aon:div>
+	</c:if>
+
+</ui:composition>
