@@ -82,14 +82,16 @@ public class RoomBlockController extends LinesController {
 			HibernateUtil.beginTransaction(sessionName);
 			
 			while(fromCal.before(toCal) || fromCal.equals(toCal)){
-				AssetActivity aa = new AssetActivity();
+				this.onReset(event);
+				AssetActivity aa = (AssetActivity) this.getTo();
 				aa.setAsset(room.getAsset());
 				aa.setDate(fromCal.getTime());
 				aa.setComments(getComments());
 				aa.setStatus(ActivityStatus.BLOCKED);
 				aa.setFromTime(aa.getDate());
 				aa.setToTime(aa.getDate());
-				this.getManagerBean().insert(aa);
+				this.onAccept(event);
+				
 				fromCal.add(Calendar.DAY_OF_MONTH, 1);
 			}
 	
@@ -108,11 +110,12 @@ public class RoomBlockController extends LinesController {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			
+			this.onCancel(event);
+			searchRoomBlocks(event);
 		}
 		
-		searchRoomBlocks(event);
 	}
-	
 		
 }
 
