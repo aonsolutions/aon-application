@@ -30,7 +30,7 @@ import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
@@ -39,10 +39,8 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.admin.BeanManagerEx;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.admin.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
@@ -68,8 +66,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	private Domain currentDomain;
 	
-	private String homeTemplate;
-	
 	private List<SelectItem> workGroupStatuses;
 	
 	private Properties properties;
@@ -81,17 +77,14 @@ public class AdminMainController implements IAdminConstants {
 	private boolean termsOfServiceAccepted;
 	
 	public AdminMainController() {
-		BeanManager.setManager(BeanManagerEx.getInstance());
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
-		this.currentDomain = calculateCurrentDomain();
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
-		if ( this.logger.isConfigured() ) {
-			this.userType = calculateUserType();	
-		} else {
-			this.userType = UserType.NORMAL;
-		}
-		// this.userType = UserType.ESFERALIA;
-		init( this.userType );
+	}
+	
+	public void onInit( ActionEvent event ) {
+		this.currentDomain = calculateCurrentDomain();
+		this.userType = calculateUserType();
+		init( event );
 	}
 	
 	public Properties getProperties() {
@@ -143,9 +136,9 @@ public class AdminMainController implements IAdminConstants {
 	}
 	
 	public String getHomeTemplate() {
-		return homeTemplate;
+		return this.userType.getTemplate();
 	}
-
+	
 	public String getUser() {
 		return _user;
 	}
@@ -184,7 +177,7 @@ public class AdminMainController implements IAdminConstants {
 		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
 			setUserType(UserType.ESFERALIA);
-			init(userType);
+			init(event);
 		} else {
 			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", _user);
 			AonUtil.addErrorMessage(message);
@@ -231,10 +224,9 @@ public class AdminMainController implements IAdminConstants {
 	}	
 	
 	private Domain calculateCurrentDomain() {
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			return (Domain) bean.get(principal.getDomainId());
+			return (Domain) bean.get( DomainManager.getCurrentDomain() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
@@ -251,7 +243,7 @@ public class AdminMainController implements IAdminConstants {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void initEsferaliaUser() {
+	private void initEsferaliaUser( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			controller.setInitExpressions(Collections.EMPTY_LIST);			
@@ -264,27 +256,22 @@ public class AdminMainController implements IAdminConstants {
 		mailConfig.setSystemAccountEditable(true);
 	}
 
-	private void initNormalUser() {
+	private void initNormalUser( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
-			Criteria criteria = controller.getCriteria();
-			String alias = controller.getFieldName(IEntityAlias.DOMAIN_NAME);
-			criteria.addEqualExpression(alias, currentDomain.getName());
-			controller.initializeModel();
-			controller.getModel().setRowIndex(0);
-			controller.onSelect(null);					
+			controller.select(event, currentDomain.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
 	}
 
-	private void initParentUser() {
+	private void initParentUser( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			List<Expression> initExpressions = new LinkedList<Expression>();
 			String cn = controller.getFieldName(IEntityAlias.DOMAIN_ID);
 			Expression expr1 = ExpressionUtilities.getEqualExpression(cn, currentDomain.getId());
-			String parent = controller.getFieldName(IEntityAlias.DOMAIN_PARENT_ID);
+			String parent = "Domain<parent.id";
 			Expression expr2 = ExpressionUtilities.getEqualExpression(parent, currentDomain.getId());
 			initExpressions.add( ExpressionUtilities.getOrExpression(expr1, expr2) );
 			controller.setInitExpressions(initExpressions);
@@ -295,18 +282,17 @@ public class AdminMainController implements IAdminConstants {
 		}			
 	}
 	
-	private void init( UserType type ) {
-		this.homeTemplate = type.getTemplate();
-		this.config = PropertiesUtil.loadProperties(type.getResource());
-		switch ( type ) {
+	private void init( ActionEvent event ) {
+		this.config = PropertiesUtil.loadProperties(this.userType.getResource());
+		switch ( this.userType ) {
 			case ESFERALIA:
-				initEsferaliaUser();
+				initEsferaliaUser(event);
 				break;
 			case NORMAL:
-				initNormalUser();
+				initNormalUser(event);
 				break;
 			case PARENT:
-				initParentUser();
+				initParentUser(event);
 				break;
 		}
 	}	

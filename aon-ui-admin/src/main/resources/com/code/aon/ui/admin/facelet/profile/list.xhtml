@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<c:if test="#{!skipProfileEdit}">
+		<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
+			<ui:param name="skipSearchButton" value="#{true}" />
+		</ui:include>
+	</c:if>
+
+	<aon:div styleClass="aon-scroll-area">
+
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="showNote" value="#{false}" />
+			<ui:param name="skipSelectButton" value="#{skipProfileEdit}" />
+			<ui:param name="showDataScroller" value="#{!skipProfileEdit}" />
+			<ui:define name="columns">
+		
+				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+					alias="Profile.name">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:outputText value="#{to.name}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_roles}" />
+					</f:facet>
+					<aon:outputText value="#{controller.roleList}"/>
+				</aon:column>
+		
+			</ui:define>
+	
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>

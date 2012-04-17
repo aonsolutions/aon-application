@@ -35,7 +35,7 @@ public interface IAdminConstants {
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
 	
 	// Navigation
-	String DOMAIN_LIST = "adminDomain_list";
+	String DOMAIN_LIST = DOMAIN_CONTROLLER_NAME + "_list";
 	String DOMAIN_FORM_TEMPLATE = "/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml";
 	String DOMAIN_LIST_TEMPLATE = "/com/code/aon/ui/admin/facelet/adminDomain/list.xhtml";
 		

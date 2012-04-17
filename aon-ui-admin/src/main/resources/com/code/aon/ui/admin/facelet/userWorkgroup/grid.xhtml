@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+		<ui:param name="controller" value="#{userWorkGroupEx}" />
+		<ui:param name="showDataScroller" value="#{false}" />
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="UserWorkgroup_workgroup" value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.workGroup.description}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="UserWorkgroup_workgroup"
+					converter="#{appUser.workgroupConverter}" required="true"
+					rendered="#{formEdit}" value="#{controller.to.workGroup}">
+					<f:selectItems value="#{domainApplication.workgroups}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="UserWorkgroup_workgroup-New"
+						converter="#{appUser.workgroupConverter}" required="true"
+						rendered="#{formNew}" value="#{controller.to.workGroup}">
+						<f:selectItems value="#{domainApplication.workgroups}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>
