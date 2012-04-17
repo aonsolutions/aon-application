@@ -44,6 +44,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
+import com.code.aon.webmail.enumeration.MailSource;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ManagerController implements IEnterpriseController {
@@ -171,9 +172,9 @@ public class ManagerController implements IEnterpriseController {
 			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 			try {
-				signature.setEnterprise(getEnterprise().getId());
+				signature.updateSource(MailSource.ENTERPRISE, getEnterprise().getId());
 				mailConfig.setSignature(signature);
-				account.setEnterprise(getEnterprise().getId());
+				account.updateSource(MailSource.ENTERPRISE, getEnterprise().getId());
 				mailConfig.setMailAccount(account);
 			} catch (ManagerBeanException e) {
 				LOGGER.error(">>>> initWebmail exception ",e);

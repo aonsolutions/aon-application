@@ -34,7 +34,9 @@ public abstract class MailDBController extends BasicController {
 	
 	protected abstract String getSourceAlias() throws ManagerBeanException;
 	
-	protected abstract String getSourdIdAlias() throws ManagerBeanException;
+	protected abstract String getSourceIdAlias() throws ManagerBeanException;
+	
+	protected abstract String getSourceNameAlias() throws ManagerBeanException;
 	
 	public MailSource getSource() {
 		return source;
@@ -59,9 +61,9 @@ public abstract class MailDBController extends BasicController {
 		return converter;
 	}	
 
-	public void setEnterprise( Integer id ) throws ManagerBeanException {
-		this.source = MailSource.ENTERPRISE;
-		this.sourceId = id;
+	public void updateSource( MailSource source, Integer id ) throws ManagerBeanException {
+		setSource(source);
+		setSourceId(id);
 		updateCriteria();
 	}
 	
@@ -69,7 +71,7 @@ public abstract class MailDBController extends BasicController {
 		clearCriteria();
 		Criteria criteria = getCriteria();
 		criteria.addEqualExpression(getSourceAlias(), this.source);
-		criteria.addEqualExpression(getSourdIdAlias(), this.sourceId);		
+		criteria.addEqualExpression(getSourceIdAlias(), this.sourceId);		
 	}
 	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
@@ -87,7 +89,7 @@ public abstract class MailDBController extends BasicController {
 	private boolean exists( String name ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getSourceAlias(), this.source);
-		criteria.addEqualExpression(getSourdIdAlias(), name);		
+		criteria.addEqualExpression(getSourceNameAlias(), name);		
 		return getManagerBean().getCount(criteria) > 0;
 	}
 	

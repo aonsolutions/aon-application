@@ -258,7 +258,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>user</value>
+			<value>domainUser</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

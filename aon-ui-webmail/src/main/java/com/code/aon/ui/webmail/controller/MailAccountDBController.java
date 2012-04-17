@@ -63,8 +63,13 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	}
 
 	@Override
-	protected String getSourdIdAlias() throws ManagerBeanException {
+	protected String getSourceIdAlias() throws ManagerBeanException {
 		return getFieldName( IEntityAlias.MAIL_ACCOUNT_SOURCE_ID );
-	}	
+	}
+
+	@Override
+	protected String getSourceNameAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.MAIL_ACCOUNT_NAME );
+	}
 	
 }

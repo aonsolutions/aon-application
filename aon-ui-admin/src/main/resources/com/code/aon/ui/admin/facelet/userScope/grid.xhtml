@@ -9,22 +9,21 @@
 		<ui:param name="showDataScroller" value="#{false}" />
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn"
+				alias="UserScope.scope.description">
 				<f:facet name="header">
 					<aon:outputLabel for="UserScope_scope" value="#{bundle.aon_scope}" />
 				</f:facet>
 				<aon:outputText value="#{to.scope.description}"
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="UserScope_scope"
-					converter="#{appUser.scopeConverter}" required="true"
-					rendered="#{formEdit}" value="#{controller.to.scope}">
-					<f:selectItems value="#{domainApplication.scopes}" />
+					required="true" rendered="#{formEdit}" value="#{controller.to.scope}">
+					<f:selectItems value="#{configCollections.scopes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="UserScope_scope-New"
-						converter="#{appUser.scopeConverter}" required="true"
-						rendered="#{formNew}" value="#{controller.to.scope}">
-						<f:selectItems value="#{domainApplication.scopes}" />
+						required="true" rendered="#{formNew}" value="#{controller.to.scope}">
+						<f:selectItems value="#{configCollections.scopes}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

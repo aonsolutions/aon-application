@@ -1,10 +1,14 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -20,6 +24,10 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MailAccountDBController;
+import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.SignatureDBController;
+import com.code.aon.webmail.enumeration.MailSource;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
@@ -113,6 +121,28 @@ public class DomainController extends BasicController {
 			}
 		}
 		return list;
+	}
+
+	public void onBackToDomain( ActionEvent event ) {
+		try {
+			initWebmail( MailSource.ENTERPRISE, getDomain().getId() );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
+	
+	public void initWebmail( MailSource source, Integer id ) throws ManagerBeanException {
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		
+		signature.updateSource( source, id );
+		signature.initializeModel();
+		mailConfig.setSignature(signature);
+		
+		account.updateSource( source, id );
+		account.initializeModel();		
+		mailConfig.setMailAccount(account);
 	}
 	
 }

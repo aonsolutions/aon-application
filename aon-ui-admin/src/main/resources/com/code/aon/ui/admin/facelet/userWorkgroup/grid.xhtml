@@ -9,22 +9,21 @@
 		<ui:param name="showDataScroller" value="#{false}" />
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn"
+				alias="UserWorkGroup.workGroup.description">
 				<f:facet name="header">
 					<aon:outputLabel for="UserWorkgroup_workgroup" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.workGroup.description}"
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="UserWorkgroup_workgroup"
-					converter="#{appUser.workgroupConverter}" required="true"
-					rendered="#{formEdit}" value="#{controller.to.workGroup}">
-					<f:selectItems value="#{domainApplication.workgroups}" />
+					required="true" rendered="#{formEdit}" value="#{controller.to.workGroup}">
+					<f:selectItems value="#{configCollections.workgroups}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="UserWorkgroup_workgroup-New"
-						converter="#{appUser.workgroupConverter}" required="true"
-						rendered="#{formNew}" value="#{controller.to.workGroup}">
-						<f:selectItems value="#{domainApplication.workgroups}" />
+						required="true" rendered="#{formNew}" value="#{controller.to.workGroup}">
+						<f:selectItems value="#{configCollections.workgroups}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
