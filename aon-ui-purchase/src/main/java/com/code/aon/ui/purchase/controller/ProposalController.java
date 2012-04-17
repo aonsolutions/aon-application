@@ -33,6 +33,8 @@ public class ProposalController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProposalController.class);
 	
+	private IControllerListener departmentItemFilter;
+	
 	
 	public List<SelectItem> getDepartments() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
@@ -71,39 +73,6 @@ public class ProposalController extends BasicController {
 		return wdBean.getList(wdCriteria);
 	}
 	
-	public List<SelectItem> getDepartmentsItems() throws ManagerBeanException{
-		List<SelectItem> list = null;
-		Proposal proposal = ((Proposal)getTo()); 
-		if(proposal.getDepartment()!=null){
-			List<Integer> catalogueIds = new LinkedList<Integer>();
-			for(ITransferObject to: getWorkplaceDepartments(proposal)){
-				WorkplaceDepartment wd = (WorkplaceDepartment) to;
-				catalogueIds.add(wd.getCatalogue().getId());
-			}
-			IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
-			Criteria deptCriteria = new Criteria();
-			deptCriteria.addInExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueIds);
-			List<Integer> itemIds = new LinkedList<Integer>();
-			for (ITransferObject ito : catalogueItemBean.getList(deptCriteria)) {
-				itemIds.add(((CatalogueItem)ito).getItem().getId());
-			}
-			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
-			Criteria itemSupCriteria = new Criteria();
-			itemSupCriteria.addInExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), itemIds);
-			itemSupCriteria.addNotNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID));
-			
-			list = new LinkedList<SelectItem>();
-			for (ITransferObject ito : itemSupplierBean.getList(itemSupCriteria)) {
-				ItemSupplier is = (ItemSupplier) ito;
-				if( is.getWorkPlace() == null || is.getWorkPlace().getId() == null || is.getWorkPlace().getId().equals(proposal.getWorkPlace().getId()) ){
-					SelectItem item = new SelectItem(is.getItem(), is.getItem().getProduct().getCode() + " - " + is.getItem().getProduct().getName() + " ("+is.getSupplier().getRegistry().getFullName()+")");
-					list.add(item);
-				}
-			}
-		}
-		return list;
-	}
-	
 	public List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
 		List<Integer> list = null;
 		Proposal proposal = ((Proposal)getTo()); 
@@ -129,19 +98,12 @@ public class ProposalController extends BasicController {
 			for (ITransferObject ito : itemSupplierBean.getList(itemSupCriteria)) {
 				ItemSupplier is = (ItemSupplier) ito;
 				if( is.getWorkPlace() == null || is.getWorkPlace().getId() == null || is.getWorkPlace().getId().equals(proposal.getWorkPlace().getId()) ){
-//					SelectItem item = new SelectItem(is.getItem(), is.getItem().getProduct().getCode() + " - " + is.getItem().getProduct().getName() + " ("+is.getSupplier().getRegistry().getFullName()+")");
 					list.add(is.getItem().getId());
 				}
 			}
 		}
 		return list;
 	}
-	
-	
-	
-	
-	
-	private IControllerListener departmentItemFilter;
 	
 	public IControllerListener getDepartmentItemFilter() {
 		if ( this.departmentItemFilter == null ) {
@@ -152,34 +114,14 @@ public class ProposalController extends BasicController {
 					IController controller = event.getController();
 					try {					
 						controller.getCriteria().addInExpression(controller.getFieldName(IEntityAlias.ITEM_ID), getDepartmentsItemIds());
-						
-//						for(Integer i: getPendingReservationDiverts()){
-//							controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), i);
-//						}
-//						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
-//						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-//						controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
 					} catch (ManagerBeanException e) {
 						LOGGER.error("Error filtering items", e);
 					}
 				}
-//				private List<Integer> getPendingReservationDiverts() throws ManagerBeanException {
-//					List<Integer> list = new LinkedList<Integer>();
-//					IManagerBean bean = BeanManager.getManagerBean(ProjectReservationDivert.class);
-//					Criteria criteria = new Criteria();
-//					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_STATUS), ReservationDivertStatus.PENDING);
-//					for(ITransferObject to: bean.getList(criteria)){
-//						ProjectReservationDivert d = (ProjectReservationDivert) to;
-//						list.add(d.getProjectReservation().getId());
-//					}
-//					return list;
-//				}
 			};
 		}
 		return this.departmentItemFilter;
 	}
-	
-	
 	
 	private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
 		try {
