@@ -169,7 +169,6 @@
 		<module>aon-web-document</module>
 		<module>aon-web-pms</module>
 		<module>aon-web-aio</module>
-    <module>aon-web-admin</module>
 
 		<!-- GWT MODULES -->
 		<module>aon-gwt-employee</module>
