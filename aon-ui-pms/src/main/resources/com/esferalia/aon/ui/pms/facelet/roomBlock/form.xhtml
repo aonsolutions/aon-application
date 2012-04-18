@@ -27,6 +27,7 @@
 					
 					<aon:commandButton id="multiple_block" value="#{pmsBundle.pms_roomBlock_multiple_block}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						actionListener="#{roomBlock.onShowMultipleBlockWindow}"
 						reRender="showMultipleBlockWindow">	
 						<f:setPropertyActionListener target="#{roomBlock.showMultipleBlockWindow}"
 							value="#{true}" />
