@@ -87,27 +87,29 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.item.price}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<f:facet name="footer">
-				</f:facet>
-			</aon:column>
-			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_total}" />
-				</f:facet>
-				<aon:outputText value="#{to.quantity * to.item.price}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-				</aon:outputText>
-				<f:facet name="footer">
-				</f:facet>
-			</aon:column>
+			<c:if test="#{aonRole.purchaseOperator}">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.aon_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.item.price}" rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<f:facet name="footer">
+					</f:facet>
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.aon_total}" />
+					</f:facet>
+					<aon:outputText value="#{to.quantity * to.item.price}" rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<f:facet name="footer">
+					</f:facet>
+				</aon:column>
+			</c:if>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 				<f:facet name="header">
