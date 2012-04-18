@@ -16,22 +16,17 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" 	
-					columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-500">
-					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formContent.xhtml" />
-				</aon:panelGrid>
+				<c:if test="#{reservationRequest.new}">
+					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formNewContent.xhtml" />
+				</c:if>
 
 				<c:if test="#{!reservationRequest.new}">
+					<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/formContent.xhtml" />
+
 					<aon:panelTabSet id="reservationRequestTab" selectedTab="#{reservationRequest.selectedTab}">
 						<aon:panelTab id="room" label="#{pmsBundle.pms_rooms}">
 							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/room/tab_grid.xhtml">
 								<ui:param name="controller" value="#{reservationRequestRoom}" />
-							</ui:include>
-						</aon:panelTab>
-	
-						<aon:panelTab id="guest" label="#{pmsBundle.pms_guest}">
-							<ui:include	src="/com/esferalia/aon/ui/pms/facelet/reservationRequest/guest/tab_grid.xhtml">
-								<ui:param name="controller" value="#{reservationRequestGuest}" />
 							</ui:include>
 						</aon:panelTab>
 					</aon:panelTabSet>

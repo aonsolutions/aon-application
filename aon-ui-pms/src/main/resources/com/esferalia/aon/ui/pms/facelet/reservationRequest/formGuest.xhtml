@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:outputLabel for="ReservationRequestGuest_name" value="#{bundle.aon_name}"/>
+	<aon:inputText id="ReservationRequestGuest_name"
+		value="#{reservationRequest.requestGuest.name}" size="30" maxlength="64"
+		required="#{reservationRequestRoom.availabilityRequested}" 
+		onblur="toUpperCase(this);" />
+
+	<aon:outputLabel for="ReservationRequestGuest_surname" value="#{bundle.aon_surname}"/>
+	<aon:inputText id="ReservationRequestGuest_surname"
+		value="#{reservationRequest.requestGuest.surname}" size="50" maxlength="64"
+		required="#{reservationRequestRoom.availabilityRequested}" 
+		onblur="toUpperCase(this);" />
+
+	<aon:outputLabel for="ReservationRequestGuest_address" value="#{bundle.aon_address}"/>
+	<aon:inputText id="ReservationRequestGuest_address"
+		value="#{reservationRequest.requestGuest.address}" size="50" maxlength="256" />
+
+	<aon:outputLabel for="ReservationRequestGuest_city" value="#{bundle.aon_city}"/>
+	<aon:div>
+		<aon:inputText id="ReservationRequestGuest_city"
+			value="#{reservationRequest.requestGuest.city}" size="30" maxlength="64" />
+		<aon:outputLabel for="ReservationRequestGuest_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:inputText id="ReservationRequestGuest_zip"
+			value="#{reservationRequest.requestGuest.zip}" size="9" maxlength="16" />
+	</aon:div>
+
+	<aon:outputLabel for="ReservationRequestGuest_province" value="#{bundle.aon_state}"/>
+	<aon:div>
+		<aon:inputText id="ReservationRequestGuest_province"
+			value="#{reservationRequest.requestGuest.province}" size="30" maxlength="64" />
+		<aon:outputLabel for="ReservationRequestGuest_country" value="#{bundle.aon_country}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:inputText id="ReservationRequestGuest_country" 
+			value="#{reservationRequest.requestGuest.country}" size="3" maxlength="2" />
+	</aon:div>
+
+	<aon:outputLabel for="ReservationRequestGuest_phone" value="#{bundle.aon_phone}"/>
+	<aon:div>
+		<aon:inputText id="ReservationRequestGuest_phone"
+			value="#{reservationRequest.requestGuest.phone}" size="10" maxlength="32" />
+		<aon:outputLabel for="ReservationRequestGuest_email" value="Email" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:inputText id="ReservationRequestGuest_email"
+			value="#{reservationRequest.requestGuest.email}" size="38" maxlength="128"
+			onblur="toLowCase(this);" />
+	</aon:div>
+
+</ui:composition>

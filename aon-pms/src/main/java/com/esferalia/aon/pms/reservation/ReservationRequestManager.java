@@ -28,10 +28,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ReservationRequest;
+import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.solmelia.namespaces.solres.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
 import com.solmelia.namespaces.solres.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
 import com.solmelia.namespaces.solres.CancelPenaltyType;
+import com.solmelia.namespaces.solres.CustProfileDocument.CustProfile;
 import com.solmelia.namespaces.solres.GuestCountsDocument.GuestCounts;
 import com.solmelia.namespaces.solres.HITISMessageDocument;
 import com.solmelia.namespaces.solres.HITISMessageDocument.HITISMessage;
@@ -40,6 +42,10 @@ import com.solmelia.namespaces.solres.HITISOperationType.OperationType;
 import com.solmelia.namespaces.solres.ProfileDocument.Profile.ProfileType;
 import com.solmelia.namespaces.solres.RateDescriptionsDocument.RateDescriptions.RateDescription;
 import com.solmelia.namespaces.solres.RatePlansDocument.RatePlans;
+import com.solmelia.namespaces.solres.ResProfilesDocument.ResProfiles.ResProfile;
+import com.solmelia.namespaces.solres.ReservationRequestTypeDocument.ReservationRequestType.ReservationRequestType2;
+import com.solmelia.namespaces.solres.ReservationTransactionDocument.ReservationTransaction.ActionCode;
+import com.solmelia.namespaces.solres.ReservationTransactionDocument.ReservationTransaction.ReservationTransactionType;
 import com.solmelia.namespaces.solres.RoomInformationsDocument.RoomInformations;
 import com.solmelia.namespaces.solres.RoomInformationsDocument.RoomInformations.RoomInformation;
 import com.solmelia.namespaces.solres.RoomStaysDocument.RoomStays;
@@ -95,8 +101,8 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.setOperationType(OperationType.AVAILABILITY);
 		operation.setAvailabilityOriginatorCode(GP);
 		operation.addNewAvailabilityQuery();
-		operation.getAvailabilityQuery().addNewHotelReference();
-		operation.getAvailabilityQuery().getHotelReference().setHotelCode(request.getHotel().getCode());
+		operation.getAvailabilityQuery().setExternalWebCode(GP);
+		operation.getAvailabilityQuery().addNewHotelReference().setHotelCode(request.getHotel().getCode());
 		operation.getAvailabilityQuery().addNewStayDateRange().addNewDateTimeSpan();
 		operation.getAvailabilityQuery().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
 		operation.getAvailabilityQuery().getStayDateRange().getDateTimeSpan().setDuration(nights);
@@ -157,28 +163,19 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setLanguageID(ES);
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
+System.out.println(document.toString());
 		return document.toString();
 	}
 
 	private List<ITransferObject> getRequestRatePlans(ReservationRequest request) throws ManagerBeanException {
 		List<ITransferObject> rAddInfoList = new LinkedList<ITransferObject>();
 		Customer customer = (request.isGuestHolder()) ? request.getHotel().getCustomer() : (request.isAgencyHolder()) ? request.getAgency() : request.getCompany();
-		if (!request.isGuestHolder()) {
-			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), RATE_PLAN);
-			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), getReservationUtils().getDomain());
-			rAddInfoList = rAddInfoBean.getList(criteria);
-		} else {
-			if (customer.getTariff() != null && customer.getTariff().getId() != null) {
-				RegistryAddInfo rAddInfo = new RegistryAddInfo();
-				rAddInfo.setRegistry(customer.getRegistry());
-				rAddInfo.setAttribute(RATE_PLAN);
-				rAddInfo.setValue(customer.getTariff().getCode());
-				rAddInfoList.add(rAddInfo);
-			}
-		}
+		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), RATE_PLAN);
+		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), getReservationUtils().getDomain());
+		rAddInfoList = rAddInfoBean.getList(criteria);
 		return rAddInfoList;
 	}
 
@@ -193,6 +190,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 		HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+System.out.println(hitisDocument.getHITISMessage());
 		return obtainAvailableRoomStayList(hitisDocument.getHITISMessage());
 	}
 
@@ -207,28 +205,42 @@ public class ReservationRequestManager implements IReservationConstants {
 		List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
-			AvailabilitySummaryRecords records = operation.getAvailabilitySummaryResponses().getAvailabilitySummaryResponse().getAvailabilitySummaryRecords();
-			for (AvailabilitySummaryRecord record : records.getAvailabilitySummaryRecordArray()) {
-				String rateCode = record.getRatePlanCode();
-				RateDescription rateDescription = (record.sizeOfRateDescriptionsArray() > 0) ? record.getRateDescriptionsArray(0).getRateDescriptionArray(0) : null;
-				CancelPenaltyType cancelPenalty = record.getCancelPenalty();
-				for (RoomStay roomStay : record.getRoomStays().getRoomStayArray()) {
-					RoomInformation roomInfo = null;
-					for (RoomInformations roomInfos : roomStay.getRoomInformationsArray()) {
-						roomInfo = roomInfos.getRoomInformationArray(roomInfos.sizeOfRoomInformationArray()-1);
-					}
-
+			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
+				for (com.solmelia.namespaces.solres.ErrorsDocument.Errors.Error error : operation.getErrors().getErrorArray()) {
 					AvailableRoomStay availableRoomStay = new AvailableRoomStay();
-					availableRoomStay.setTariffCode(rateCode);
-					availableRoomStay.setTariffDescription(rateDescription.getDetailDescription());
-					availableRoomStay.setRoomCode(roomStay.getRoomCodes().getBaseRoomCode());
-					availableRoomStay.setRoomDescription((roomInfo != null) ? roomInfo.getDetailDescription() : null);
-					availableRoomStay.setMealPlan(roomStay.getRoomCodes().getMealPlan());
-					availableRoomStay.setDailyPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getQuotedRateAmount().getCurrency().getStringValue()));
-					availableRoomStay.setTotalPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getTotalAmountWithTax().getStringValue()));
-					availableRoomStay.setAvailability(roomStay.getAmount().getDomNode().getFirstChild().getNodeValue());
-					availableRoomStay.setCancelPenalty(obtainPenaltyConditions(cancelPenalty));
+					availableRoomStay.setError(true);
+					availableRoomStay.setErrorMessage(error.getStringValue());
+					if (StringUtils.isEmpty(availableRoomStay.getErrorMessage())) {
+						availableRoomStay.setErrorMessage(error.getHITISCode());
+					}
 					availableRoomStayList.add(availableRoomStay);
+				}
+			} else {
+				AvailabilitySummaryRecords records = operation.getAvailabilitySummaryResponses().getAvailabilitySummaryResponse().getAvailabilitySummaryRecords();
+				for (AvailabilitySummaryRecord record : records.getAvailabilitySummaryRecordArray()) {
+					String rateCode = record.getRatePlanCode();
+					RateDescription rateDescription = (record.sizeOfRateDescriptionsArray() > 0) ? record.getRateDescriptionsArray(0).getRateDescriptionArray(0) : null;
+					CancelPenaltyType cancelPenalty = record.getCancelPenalty();
+					for (RoomStay roomStay : record.getRoomStays().getRoomStayArray()) {
+						RoomInformation roomInfo = null;
+						for (RoomInformations roomInfos : roomStay.getRoomInformationsArray()) {
+							roomInfo = roomInfos.getRoomInformationArray(roomInfos.sizeOfRoomInformationArray()-1);
+						}
+
+						AvailableRoomStay availableRoomStay = new AvailableRoomStay();
+						availableRoomStay.setIndex(availableRoomStayList.size());
+						availableRoomStay.setTariffCode(rateCode);
+						availableRoomStay.setTariffDescription(rateDescription.getDetailDescription());
+						availableRoomStay.setRoomInventoryCode(roomStay.getInventoryCode());
+						availableRoomStay.setRoomCode(roomStay.getRoomCodes().getBaseRoomCode());
+						availableRoomStay.setRoomDescription((roomInfo != null) ? roomInfo.getDetailDescription() : null);
+						availableRoomStay.setMealPlan(roomStay.getRoomCodes().getMealPlan());
+						availableRoomStay.setDailyPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getQuotedRateAmount().getCurrency().getStringValue()));
+						availableRoomStay.setTotalPrice(parseDouble(roomStay.getRateQuotes().getRateQuote().getTotalAmountWithTax().getStringValue()));
+						availableRoomStay.setAvailability(roomStay.getAmount().getDomNode().getFirstChild().getNodeValue());
+						availableRoomStay.setCancelPenalty(obtainPenaltyConditions(cancelPenalty));
+						availableRoomStayList.add(availableRoomStay);
+					}
 				}
 			}
 		}
@@ -241,14 +253,175 @@ public class ReservationRequestManager implements IReservationConstants {
 	}
 
 	private String obtainPenaltyConditions(CancelPenaltyType penalty) {
-		String conditions = null;
+		String conditions = "Cancel Penalty:\n";
 		if (penalty != null) {
-			conditions = penalty.getDeadline().getOffsetUnitMultiplier().toString() + " " + penalty.getDeadline().getOffsetUnit().toString() + " ";
+			conditions += penalty.getDeadline().getOffsetUnitMultiplier().toString() + " " + penalty.getDeadline().getOffsetUnit().toString() + " ";
 			conditions += penalty.getDeadline().getOffsetDropTime().toString() + "\n";
 			conditions += penalty.getDuePayment().getQuantity() + " " + penalty.getDuePayment().getUnit().toString();
 		}
-		
 		return conditions;
+	}
+
+
+	public String processBookingRequest(ReservationRequestRoom requestRoom, ReservationRequestGuest requestGuest, AvailableRoomStay availableRoomStay) {
+		getReservationUtils().init();
+		getReservationUtils().setDomain(requestRoom.getReservationRequest().getHotel().getDomain());
+		try {
+			return sendBookingQuery(createBookingMessage(requestRoom, requestGuest, availableRoomStay));
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	private String createBookingMessage(ReservationRequestRoom requestRoom, ReservationRequestGuest requestGuest, AvailableRoomStay availableRoomStay) 
+			throws ManagerBeanException {
+		ReservationRequest request = requestRoom.getReservationRequest();
+
+		setMessageId(getReservationUtils().getRequestMessageId(request));
+		Calendar startInstant = Calendar.getInstance();
+		startInstant.setTime(request.getStartDate());
+		String nights = "+0000-00-" + StringUtils.leftPad(""+request.getNights(), 2, "0") + "T00:00:00";
+
+		HITISMessageDocument document = HITISMessageDocument.Factory.newInstance();
+		HITISMessage message = document.addNewHITISMessage();
+
+		message.addNewHeader();
+		message.getHeader().setMessageID(getMessageId());
+		message.getHeader().setOriginalMessageID(getMessageId());
+
+		message.addNewBody();
+		HITISOperationType operation = HITISOperationType.Factory.newInstance();
+		operation.setOperationName(RESERVATION_BOOKING_REQUEST);
+		operation.addNewReservationRequestType().setReservationRequestType(ReservationRequestType2.INITIATE);
+		operation.addNewReservationTransaction().setReservationTransactionType(ReservationTransactionType.NEW);
+		operation.getReservationTransaction().setActionCode(ActionCode.IS);
+		operation.getReservationTransaction().addNewReservation().setReservationOriginatorCode(GP);
+		operation.getReservationTransaction().getReservation().setExternalWebCode(GP);
+		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(request.getHotel().getCode());
+		operation.getReservationTransaction().getReservation().addNewStayDateRange().addNewDateTimeSpan();
+		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
+		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setDuration(nights);
+
+		RatePlans ratePlans = RatePlans.Factory.newInstance();
+		ratePlans.addNewRatePlan();
+		ratePlans.getRatePlanArray(ratePlans.sizeOfRatePlanArray()-1).setRatePlanRPH(new BigInteger("1"));
+		ratePlans.getRatePlanArray(ratePlans.sizeOfRatePlanArray()-1).setRatePlanCode(availableRoomStay.getTariffCode());
+
+		GuestCounts guestCounts = GuestCounts.Factory.newInstance();
+		if (requestRoom.getAdults() > 0) {
+			guestCounts.addNewGuestCount();
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(ADT);
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getAdults());
+		}
+		if (requestRoom.getChildren() > 0) {
+			guestCounts.addNewGuestCount();
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("12"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getChildren());
+		}
+		if (requestRoom.getBabies() > 0) {
+			guestCounts.addNewGuestCount();
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("6"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getBabies());
+		}
+
+		//PaymentInstructions paymentInstructions = PaymentInstructions.Factory.newInstance();
+		//paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.VOUCHER);
+
+		int roomRPH = 0;
+		RoomStays roomStays = RoomStays.Factory.newInstance();
+		for (int i=0; i<requestRoom.getUnits(); i++) {
+			roomStays.addNewRoomStay();
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRoomStayRPH(new BigInteger(Integer.toString(++roomRPH)));
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRoomInventoryCode(availableRoomStay.getRoomInventoryCode());
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRatePlans(ratePlans);
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setGuestCounts(guestCounts);
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).addNewPaymentInstructions();
+			//roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setPaymentInstructionsArray(0, paymentInstructions);
+		}
+		operation.getReservationTransaction().getReservation().addNewRoomStays();
+		operation.getReservationTransaction().getReservation().setRoomStaysArray(0, roomStays);
+
+		if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
+			String code = getReservationUtils().obtainCustomerCode(request.getAgency(), SOLRES);
+			if (code != null) {
+				operation.getReservationTransaction().getReservation().addNewAgencyCode().setStringValue(code);
+			}
+		}
+
+		if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
+			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), SOLRES);
+			if (code != null) {
+				operation.getReservationTransaction().getReservation().addNewResProfiles().addNewResProfile().addNewCustProfileCreateRQ().addNewCustProfile().
+					addNewAffiliations().addNewEmployer().addNewEmployerName().addNewCompanyName().setCompanyCode(code);
+			}
+		}
+
+		CustProfile custProfile = CustProfile.Factory.newInstance();
+		custProfile.addNewCustomer();
+		custProfile.getCustomer().addNewPersonName();
+		custProfile.getCustomer().getPersonNameArray(0).setSurname(requestGuest.getSurname());
+		custProfile.getCustomer().getPersonNameArray(0).setGivenName(requestGuest.getName());
+		if (StringUtils.isNotEmpty(requestGuest.getPhone())) {
+			custProfile.getCustomer().addNewCustTelephone().addNewTelephone().setPhoneNumber(requestGuest.getPhone());
+		}
+		if (StringUtils.isNotEmpty(requestGuest.getEmail())) {
+			custProfile.getCustomer().addNewCustEmail().setStringValue(requestGuest.getEmail());
+		}
+		if (StringUtils.isNotEmpty(requestGuest.getAddress())) {
+			custProfile.getCustomer().addNewCustAddress().addNewAddress();
+			custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewStreetNmbr().setStringValue(requestGuest.getAddress());
+			if (StringUtils.isNotEmpty(requestGuest.getCity())) {
+				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCityName().setStringValue(requestGuest.getCity());
+				if (StringUtils.isNotEmpty(requestGuest.getZip())) {
+					custProfile.getCustomer().getCustAddressArray(0).getAddress().getCityName().setPostalCode(requestGuest.getZip());
+				}
+			}
+			if (StringUtils.isNotEmpty(requestGuest.getProvince())) {
+				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewStateProv().setStringValue(requestGuest.getProvince());
+			}
+			if (StringUtils.isNotEmpty(requestGuest.getCountry())) {
+				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCountryName().setStringValue(requestGuest.getCountry());
+			}
+		}
+		ResProfile resProfile = ResProfile.Factory.newInstance();
+		resProfile.setResProfileRPH(new BigInteger("1"));
+		resProfile.addNewCustProfileCreateRQ();
+		resProfile.getCustProfileCreateRQ().addNewUniqueId().setType(CUST_PROFILE);
+		resProfile.getCustProfileCreateRQ().setCustProfile(custProfile);
+		ResProfile[] resProfiles = { resProfile };
+		operation.getReservationTransaction().getReservation().addNewResProfiles().setResProfileArray(resProfiles);
+
+		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
+		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
+		message.getBody().setHITISOperationAbstract(operation);
+System.out.println(document.toString());
+		return document.toString();
+	}
+
+	private String sendBookingQuery(String message) throws MalformedURLException, SOAPException, XmlException, IOException {
+		Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+		MessageFactory messageFactory = MessageFactory.newInstance();
+		SOAPMessage soapRequest = messageFactory.createMessage();
+		soapRequest.getSOAPBody().setValue(convertMessage(message));
+
+		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+		SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+		
+		HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+System.out.println( hitisDocument.getHITISMessage() );
+		return obtainReservationId(hitisDocument.getHITISMessage());
+	}
+
+	private String obtainReservationId(HITISMessage message) {
+		String reservationId = null;
+		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
+			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
+			reservationId = operation.getReservation().getConfirmationID();
+		}
+		return reservationId;
 	}
 
 }

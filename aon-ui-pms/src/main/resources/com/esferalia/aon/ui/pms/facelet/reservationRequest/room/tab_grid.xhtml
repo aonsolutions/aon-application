@@ -16,7 +16,7 @@
 			<aon:commandLink id="requestRoom-selectButton"
 				styleClass="aon-table-row-link" value="&#160;"
 				immediate="true" ajaxSingle="true" requestDelay="100"
-				rendered="#{!reservationRequest.to.active}"
+				rendered="#{reservationRequest.to.active}"
 				actionListener="#{controller.onSelect}"
 				reRender="aonContent"
 				onkeyup="#{dataTableId}KeyUp(this)"
@@ -119,57 +119,91 @@
 		<ui:define name="endFormListContent">
 			<aon:div>
 				<aon:commandButton id="requestRoom-AvailabilityQuery"
-					value="&#160;" styleClass="aon-icon-info aon-noborder"
-					title="#{pmsBundle.pms_availability}"
+					value="&#160;" styleClass="aon-icon-question aon-noborder"
+					title="#{pmsBundle.pms_availability}" immediate="true"
 					rendered="#{reservationRequest.to.active}"
 					actionListener="#{controller.sendAvailabilityQuery}"
-					reRender="#{dataTableId}" />
+					reRender="aonContent" />
 			</aon:div>
 			<rich:subTable id="availableRoomStayTable"
+				value="#{controller.availableRoomStayList}" var="availableRoomStay"
 				rendered="#{controller.idInAvailableRoomStayMap}"
-				value="#{controller.availableRoomStayList}" var="availableRoomStay">
+				headerClass="aon-editDataTable-textColumn aon-subTable-green-header aon-italic aon-bold">
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
-					<aon:outputText value="#{controller.roomRequestedId}" />
+					<aon:outputText value="&#160;" />
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
-					<aon:outputText value="#{to.id}" />
+					<f:facet name="header">
+						<aon:outputText value="#{productBundle.product_tariff}" rendered="#{!availableRoomStay.error}" />
+					</f:facet>
+					<aon:outputText value="#{availableRoomStay.tariffCode}" />
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto"
+						rendered="#{!availableRoomStay.error}">
+						<aon:outputText value="#{availableRoomStay.tariffDescription}" />
+					</rich:toolTip>
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<f:facet name="header">
+						<aon:outputText value="#{pmsBundle.pms_regime}" />
+					</f:facet>
+					<aon:outputText value="#{availableRoomStay.mealPlan}" rendered="#{!availableRoomStay.error}" />
+					<aon:outputText value="ERROR" rendered="#{availableRoomStay.error}" style="color: red;" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<f:facet name="header">
+						<aon:outputText value="#{pmsBundle.pms_room_type}" rendered="#{!availableRoomStay.error}" />
+					</f:facet>
+					<aon:outputText value="#{availableRoomStay.roomDescription}" rendered="#{!availableRoomStay.error}" />
+<!-- 
+					<aon:outputText value="&#160;" styleClass="aon-icon-info aon-noborder aon-margin-left aon-padding-left"
+						rendered="#{!availableRoomStay.error}" />
+					<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="auto"
+						rendered="#{!availableRoomStay.error}">
+						<aon:outputText value="#{availableRoomStay.cancelPenalty}" />
+					</rich:toolTip>
+ -->
+					<aon:outputText value="#{availableRoomStay.errorMessage}" rendered="#{availableRoomStay.error}" style="color: red;" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-green-column">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_price} #{bundle.aon_day}" rendered="#{!availableRoomStay.error}" />
+					</f:facet>
+					<aon:outputText value="#{availableRoomStay.dailyPrice}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-bold aon-subTable-green-column">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_price} #{bundle.aon_total}" rendered="#{!availableRoomStay.error}" />
+					</f:facet>
+					<aon:outputText value="#{availableRoomStay.totalPrice}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<f:facet name="header">
+						<aon:outputText value="#{pmsBundle.pms_availability}" rendered="#{!availableRoomStay.error}" />
+					</f:facet>
 					<aon:outputText value="#{availableRoomStay.availability}" />
 				</aon:column>
 
-<!-- 
-				<aon:column colspan="6"
-					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
-					<aon:panelGrid columns="4" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-130, 
-																aon-noborder aon-width-400, aon-noborder aon-width-auto">
-						<aon:div>
-							<aon:outputLabel value="#{bundle.aon_date}:" styleClass="aon-margin-right"/>
-							<aon:outputText value="#{roomDetail.assetActivity.date}" styleClass="aon-italic">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:div>
-						<aon:div>
-							<aon:outputLabel value="#{pmsBundle.pms_room}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{roomDetail.assetActivity.asset.name}" styleClass="aon-italic" />
-						</aon:div>
-						<aon:div rendered="#{roomDetail.room.item.id != roomDetail.projectReservationRoom.item.id}">
-							<aon:outputLabel value="#{bundle.aon_type}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{roomDetail.room.item.product.code} - #{roomDetail.room.item.product.name}" styleClass="aon-italic" />
-							<aon:outputText value="&#160;" />
-						</aon:div>
-						<aon:div rendered="#{roomDetail.room.hotel.id != reservation.to.hotel.id}">
-							<aon:outputLabel value="#{pmsBundle.pms_hotel}:" styleClass="aon-margin-right" />
-							<aon:outputText value="#{roomDetail.room.hotel.workPlace.description}" styleClass="aon-italic" />
-							<aon:outputText value="&#160;" />
-						</aon:div>
-					</aon:panelGrid>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					<aon:commandLink id="requestRoom-bookingButton"
+						value="Reservar" styleClass="aon-italic"
+						rendered="#{!availableRoomStay.error}"
+						actionListener="#{controller.sendBookingQuery}"
+						reRender="aonContent">
+						<f:param name="availableRoomStayIndex" value="#{availableRoomStay.index}"/>
+					</aon:commandLink>
 				</aon:column>
- -->
+
 			</rich:subTable>
 		</ui:define>
 

@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.pms.controller;
 public interface IPmsConstants {
 
 	String AVAILABLE_ROOM = "availableRoom";
-	
 	String RACK_RESERVATION = "rackReservation";
 	
 	// ************************************************************
@@ -23,6 +22,8 @@ public interface IPmsConstants {
 	String RESERVATION_SERVICE_CONTROLLER_NAME = "reservationService";
 	String ROOM_AVAILABILITY_CONTROLLER_NAME = "roomAvailability";
 	String ROOM_CONTROLLER_NAME = "room";
+	String RESERVATION_REQUEST_CONTROLLER_NAME = "reservationRequest";
+	String RESERVATION_REQUEST_ROOM_CONTROLLER_NAME = "reservationRequestRoom";
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	
 	// ************************************************************
@@ -30,8 +31,5 @@ public interface IPmsConstants {
 	// ************************************************************
 	String RACK_LIST_NAME = "rack_list";
 	String RESERVATION_IO_LIST_NAME = "reservationIO_list";
-
-	
-
 
 }

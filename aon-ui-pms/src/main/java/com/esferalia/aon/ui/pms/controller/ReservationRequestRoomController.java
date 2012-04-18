@@ -1,9 +1,12 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -28,10 +31,17 @@ public class ReservationRequestRoomController extends LinesController {
 	private Map<Integer,List<AvailableRoomStay>> availableRoomStayMap;
 
 	public Map<Integer,List<AvailableRoomStay>> getAvailableRoomStayMap() {
+		if (availableRoomStayMap == null) {
+			availableRoomStayMap = new HashMap<Integer,List<AvailableRoomStay>>();
+		}
 		return availableRoomStayMap;
 	}
 	public void setAvailableRoomStayMap(Map<Integer,List<AvailableRoomStay>> availableRoomStayMap) {
 		this.availableRoomStayMap = availableRoomStayMap;
+	}
+
+	public boolean isAvailabilityRequested() {
+		return (getAvailableRoomStayMap().size() > 0);
 	}
 
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
@@ -74,12 +84,23 @@ public class ReservationRequestRoomController extends LinesController {
 			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
 			ReservationRequest request = (ReservationRequest)requestController.getTo();
 			request.setRequestCounter(request.getRequestCounter() + 1);
+			requestController.setSkipResetAvailabilityMap(true);
 			requestController.accept(event);
+			requestController.setSkipResetAvailabilityMap(false);
 
 			ReservationRequestRoom requestRoom = (ReservationRequestRoom)getModel().getRowData();
+			requestRoom.setReservationRequest(request);
 			ReservationRequestManager manager = new ReservationRequestManager();
 			getAvailableRoomStayMap().put(requestRoom.getId(), manager.processAvailabilityQuery(requestRoom));
 		}
+	}
+
+	public List<AvailableRoomStay> getAvailableRoomStayList() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			ReservationRequestRoom requestRoom = (ReservationRequestRoom)getModel().getRowData();
+			return getAvailableRoomStayMap().get(requestRoom.getId());
+		}
+		return null;
 	}
 
 	public boolean isIdInAvailableRoomStayMap() throws ManagerBeanException {
@@ -90,12 +111,23 @@ public class ReservationRequestRoomController extends LinesController {
 		return false;
 	}
 
-	public List<AvailableRoomStay> getAvailableRoomStayList() throws ManagerBeanException {
+	public void sendBookingQuery(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
+			ReservationRequestController requestController = (ReservationRequestController)getMasterController();
+			ReservationRequest request = (ReservationRequest)requestController.getTo();
+			request.setRequestCounter(request.getRequestCounter() + 1);
+			requestController.setSkipResetAvailabilityMap(true);
+			requestController.accept(event);
+			requestController.setSkipResetAvailabilityMap(false);
+
 			ReservationRequestRoom requestRoom = (ReservationRequestRoom)getModel().getRowData();
-			return getAvailableRoomStayMap().get(requestRoom.getId());
+			requestRoom.setReservationRequest(request);
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			AvailableRoomStay availableRoomStay = getAvailableRoomStayList().get(Integer.parseInt(ec.getRequestParameterMap().get("availableRoomStayIndex")));
+			ReservationRequestManager manager = new ReservationRequestManager();
+			String reservationId = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
+System.out.println("RESERVATION ID = " + reservationId);
 		}
-		return null;
 	}
 
 }

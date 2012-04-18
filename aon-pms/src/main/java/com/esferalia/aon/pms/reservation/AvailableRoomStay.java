@@ -2,8 +2,10 @@ package com.esferalia.aon.pms.reservation;
 
 public class AvailableRoomStay implements IReservationConstants {
 
+	private int index;
 	private String tariffCode;
 	private String tariffDescription;
+	private String roomInventoryCode;
 	private String roomCode;
 	private String roomDescription;
 	private String mealPlan;
@@ -11,6 +13,16 @@ public class AvailableRoomStay implements IReservationConstants {
 	private double totalPrice;
 	private String availability;
 	private String cancelPenalty;
+	private boolean error;
+	private String errorMessage;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
 	public String getTariffCode() {
 		return tariffCode;
@@ -26,6 +38,14 @@ public class AvailableRoomStay implements IReservationConstants {
 
 	public void setTariffDescription(String tariffDescription) {
 		this.tariffDescription = tariffDescription;
+	}
+
+	public String getRoomInventoryCode() {
+		return roomInventoryCode;
+	}
+
+	public void setRoomInventoryCode(String roomInventoryCode) {
+		this.roomInventoryCode = roomInventoryCode;
 	}
 
 	public String getRoomCode() {
@@ -82,6 +102,22 @@ public class AvailableRoomStay implements IReservationConstants {
 
 	public void setCancelPenalty(String cancelPenalty) {
 		this.cancelPenalty = cancelPenalty;
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 }

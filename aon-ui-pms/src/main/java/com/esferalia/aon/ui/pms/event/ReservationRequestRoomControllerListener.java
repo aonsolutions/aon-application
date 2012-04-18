@@ -18,17 +18,8 @@ public class ReservationRequestRoomControllerListener extends ControllerAdapter 
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		ReservationRequestRoomController controller = (ReservationRequestRoomController)event.getController();
-		controller.setAvailableRoomStayMap(null);
-
-		ReservationRequestRoom to = (ReservationRequestRoom)controller.getTo();
+		ReservationRequestRoom to = (ReservationRequestRoom)event.getController().getTo();
 		to.setUnits(1);
-	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		ReservationRequestRoomController controller = (ReservationRequestRoomController)event.getController();
-		controller.setAvailableRoomStayMap(null);
 	}
 
 	@Override
@@ -40,6 +31,13 @@ public class ReservationRequestRoomControllerListener extends ControllerAdapter 
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ReservationRequestRoomController controller = (ReservationRequestRoomController)event.getController();
+		ReservationRequestRoom to = (ReservationRequestRoom)controller.getTo();
+		controller.getAvailableRoomStayMap().remove(to.getId());
 	}
 
 	@Override

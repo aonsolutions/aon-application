@@ -18,14 +18,18 @@ import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ReservationRequest;
+import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants {
 
 	private String selectedTab;
 	private int nights;
+	private ReservationRequestGuest requestGuest;
+	private boolean skipResetAvailabilityMap;
 
 	public String getSelectedTab() {
 		return selectedTab;
@@ -46,6 +50,27 @@ public class ReservationRequestController extends BasicController implements IPm
 	}
 	public void resetNights() {
 		setNights(0);
+	}
+
+	public ReservationRequestGuest getRequestGuest() {
+		return requestGuest;
+	}
+	public void setRequestGuest(ReservationRequestGuest requestGuest) {
+		this.requestGuest = requestGuest;
+	}
+
+	public void setSkipResetAvailabilityMap(boolean value) {
+		this.skipResetAvailabilityMap = value;
+	}
+
+	@Override
+	public void accept(ActionEvent event) {
+		super.accept(event);
+
+		if (!skipResetAvailabilityMap) {
+			ReservationRequestRoomController requestRoomController = (ReservationRequestRoomController)AonUtil.getRegisteredBean(RESERVATION_REQUEST_ROOM_CONTROLLER_NAME);
+			requestRoomController.setAvailableRoomStayMap(null);
+		}
 	}
 
 	public void onStartDateChanged(ActionEvent event) {
