@@ -38,11 +38,21 @@ public class TransferObjectConverter implements Converter {
         return id;
 	}
 	
+	private Class<?> getType( FacesContext context, UIComponent component ) {
+		ValueExpression vb = component.getValueExpression("value");
+		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
+		if ( toType != null ) {
+			if ( toType.isArray() ) {
+				return toType.getComponentType();
+			}
+		}
+		return toType;
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")	
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
-		ValueExpression vb = component.getValueExpression("value");
-		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
+		Class<?> toType = getType(context, component);
 		if (toType != null) {
 			if (value != null) {
 				try {
