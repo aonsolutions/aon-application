@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.admin.ApplicationUser;
+import com.code.aon.admin.Profile;
 import com.code.aon.ui.admin.controller.AdminMainController;
+import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -24,11 +26,32 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+		dauc.setUserProfiles(new Profile[0]);
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+		try {		
+			dauc.updateUserProfiles();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}
+
+	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		ApplicationUser user = (ApplicationUser) event.getController().getTo();
+		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+		ApplicationUser user = dauc.getApplicationUser();
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
 		try {		
+			dauc.insertUserProfiles(true);
 			duc.registerScope(user.getUser(), GENERAL_SCOPE);
 			duc.registerWorkGroup(user.getUser(), GENERAL_SCOPE);		
 		} catch (Throwable e) {
@@ -36,6 +59,30 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 		getAdmin().getLogger().domainApplicationUserAddded(user);
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+		try {		
+			dauc.insertUserProfiles(false);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}
+
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
+		try {		
+			dauc.removetUserProfiles();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
 	}
 
 	@Override

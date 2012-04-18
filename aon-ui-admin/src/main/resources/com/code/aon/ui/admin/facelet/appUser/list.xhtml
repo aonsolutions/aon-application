@@ -16,7 +16,7 @@
 			<ui:define name="columns">
 		
 				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
-					alias="cn" >
+					alias="ApplicationUser.user.login" >
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
@@ -30,6 +30,15 @@
 					<aon:outputText value="#{controller.profileList}"/>
 				</aon:column>
 		
+				<aon:column styleClass="aon-editDataTable-iconColumn"
+					alias="ApplicationUser.active" >
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_active}" />
+					</f:facet>
+					<aon:outputText value="&#160;"
+						styleClass="aon-icon #{(to.active)?'aon-icon-checked':'aon-icon-check'}" />							
+				</aon:column>		
+
 			</ui:define>
 	
 		</ui:decorate>

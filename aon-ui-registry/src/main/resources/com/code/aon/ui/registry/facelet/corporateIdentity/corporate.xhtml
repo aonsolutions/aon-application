@@ -20,6 +20,7 @@
 					<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporate_documents}" />
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
 					<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
+					<ui:param name="skipSearchButton" value="#{false}" />
 					<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="category" value="#{registryBundle.registry_category_module}"
 							renderedOnUserRole="CorporativeDocumentsManager"

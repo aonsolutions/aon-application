@@ -17,31 +17,34 @@
 				value="#{bundle.aon_name}" />
 			<aon:selectOneMenu id="DomainApplicationUser_name-New"
 				rendered="#{controller.new}" required="true" 
-				value="#{controller.to.name}">
+				value="#{controller.to.user}">
 				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{controller.availableUsers}" />
+				<f:selectItems value="#{domainApplication.availableUsers}" />
 			</aon:selectOneMenu>						
 			<aon:inputText id="DomainApplicationUser_name"
 				size="80" disabled="true" rendered="#{!controller.new}"
-				value="#{controller.to.name}" />
+				value="#{controller.to.user.login}" />
 					
 			<c:if test="#{adminMain.administrator}">
-				<aon:outputLabel for="DomainApplicationUser_status"
-					value="#{bundle.aon_status}" />
-				<aon:selectOneMenu id="DomainApplicationUser_status" required="true"
-					value="#{controller.to.status}">
-					<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
-					<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="13" />
-				</aon:selectOneMenu>													
+				<aon:outputLabel for="ApplicationUser_active"
+					value="#{bundle.aon_active}" />
+				<aon:selectBooleanCheckbox id="ApplicationUser_active"
+					value="#{controller.to.active}" />								
 			</c:if>
-										
+					
+			<aon:outputLabel for="ApplicationUser_active"
+				value="#{bundle.aon_active}" />
+			<aon:selectBooleanCheckbox id="ApplicationUser_active"
+				disabled="#{!adminMain.config.editDomainApplicationUserActive}"
+				value="#{controller.to.active}" />
+					
 			<aon:outputLabel for="DomainApplicationUser_profiles"
 				value="#{adminBundle.admin_profiles}" />
 			<aon:selectManyCheckbox id="DomainApplicationUser_profiles"
-				value="#{controller.to.profiles}" layout="pageDirection"
+				value="#{appUser.userProfiles}" layout="pageDirection"
 				required="true">
-				<f:selectItems value="#{domainApplication.availableProfiles}" />
-			</aon:selectManyCheckbox>			
+				<f:selectItems value="#{domainApplication.profiles}" />
+			</aon:selectManyCheckbox>
 
 		</aon:panelGrid>
 		

@@ -37,12 +37,18 @@
 						size="80" disabled="true" rendered="#{!domainApplication.new}"
 						value="#{domainApplication.to.application.name}" />
 
-					<c:if test="#{adminMain.config.showDomainApplicationStatus}">
-						<aon:outputLabel for="DomainApplication_active"
-							value="#{bundle.aon_active}" />
-						<aon:selectBooleanCheckbox id="DomainApplication_active"
-							value="#{domainApplication.to.active}" />
-					</c:if>
+					<aon:outputLabel for="DomainApplication_auditLevel"
+						value="#{auditBundle.audit_audit_level}" />
+					<aon:selectOneMenu id="DomainApplication_auditLevel" 
+						value="#{domainApplication.to.auditLevel}">
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>		
+
+					<aon:outputLabel for="DomainApplication_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="DomainApplication_active"
+						disabled="#{!adminMain.config.editDomainApplicationActive}"
+						value="#{domainApplication.to.active}" />
 					
 				</aon:panelGrid>
 
@@ -60,15 +66,15 @@
 							</ui:include>
 	                    </aon:panelTab>
 
-						<!--	
+						<!--
 						<aon:panelTab name="profiles"
 							label="#{adminBundle.admin_profiles}">
 
 							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
-								<ui:param name="controller" value="#{domainProfile}" />
+								<ui:param name="controller" value="#{applicationProfile}" />
 								<ui:param name="rows" value="10" />	
 							</ui:include>
-							
+								
 							<aon:div styleClass="aon-form-group" >
 								<aon:div styleClass="aon-form-group-title">
 									<aon:div styleClass="aon-form-group-title-internal">
@@ -79,10 +85,10 @@
 									<ui:param name="controller" value="#{profile}" />
 									<ui:param name="skipProfileEdit" value="#{true}" />
 								</ui:include>								
-							</aon:div>							
-								
+							</aon:div>															
 	                    </aon:panelTab>
-	                					-->
+						-->
+
 					</aon:panelTabSet>
 				</c:if>						
 				

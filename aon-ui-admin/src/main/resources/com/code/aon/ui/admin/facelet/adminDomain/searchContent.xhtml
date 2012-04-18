@@ -19,7 +19,7 @@
 			<aon:inputText id="Domain_description" size="80"
 				valueChangeListener="#{controller.addExpression}" />
 				
-			<c:if test="#{adminMain.config.showDomainStatus}" >			
+			<c:if test="#{adminMain.config.showDomainActive}" >			
 				<aon:outputLabel for="Domain_active"
 					value="#{bundle.aon_active}" />
 				<aon:selectOneMenu id="Domain_active"
