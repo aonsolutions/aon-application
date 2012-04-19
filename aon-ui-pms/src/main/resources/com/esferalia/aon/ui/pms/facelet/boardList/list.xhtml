@@ -17,7 +17,8 @@
 				<ui:define name="additionalToolbarContent">
 				
 					<aon:commandButton id="search" ignoreDupResponses="true"
-						styleClass="aon-finding-toolbar-item aon-icon-search" 
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						disabled="#{boardList.hotel==null}" 
 						value="#{bundle.aon_search}" 
 						action="boardList_list"
 						actionListener="#{boardList.onSearch}"
@@ -57,6 +58,7 @@
 							value="#{boardList.params.hotel}" >
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+							<a4j:support event="onchange" reRender="boardList" />
 						</aon:selectOneMenu>
 					
 						<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
