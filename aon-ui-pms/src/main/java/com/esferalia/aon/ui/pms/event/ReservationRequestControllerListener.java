@@ -16,6 +16,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
+import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.ReservationRequestController;
 import com.esferalia.aon.ui.pms.controller.ReservationRequestRoomController;
@@ -32,6 +33,7 @@ public class ReservationRequestControllerListener extends ControllerAdapter impl
 
 		request.setStartDate(new Date());
 		request.setEndDate(DateUtils.addDays(new Date(), 1));
+		request.setBookingHolder(BookingHolder.GUEST);
 		request.setRequestCounter(0);
 		request.setActive(true);
 

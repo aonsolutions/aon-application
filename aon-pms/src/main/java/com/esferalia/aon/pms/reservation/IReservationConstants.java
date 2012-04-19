@@ -25,6 +25,7 @@ public interface IReservationConstants {
 	String COMPANY_TYPE = "4";
 	String IATA = "IATA";
 	String SOLRES = "Solres";
+	String REQRES = "Reqres";
 	String CRO = "CRO";
 	String AGENCY_REBATE = "S";
 	String RATE_PLAN = "RATEPLAN";

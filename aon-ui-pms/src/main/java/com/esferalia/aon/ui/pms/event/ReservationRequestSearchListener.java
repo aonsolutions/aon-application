@@ -6,8 +6,10 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.enumeration.BookingHolder;
 
 public class ReservationRequestSearchListener extends ControllerSearchListener {
 
@@ -56,6 +58,9 @@ public class ReservationRequestSearchListener extends ControllerSearchListener {
 		}
 		if (getCompany() != null && getCompany().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_COMPANY_ID), getCompany().getId());			
+		}
+		if (!AonUtil.getRoleManager().isSaleOperator()) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.RESERVATION_REQUEST_BOOKING_HOLDER), BookingHolder.GUEST);			
 		}
 	}
 

@@ -2550,6 +2550,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background-color: #F2FDEC; 
 	font-size: 0.9em;
 }
+.aon-subTable-yellow-header{
+	padding-left: 10px; 
+	border: none; 
+	background-color: #F8DF7C; 
+	font-size: 0.9em;
+}
 .aon-subTable-yellow-column{
 	padding-left: 10px; 
 	border: none; 

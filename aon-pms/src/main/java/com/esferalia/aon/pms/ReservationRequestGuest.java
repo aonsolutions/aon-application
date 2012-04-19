@@ -6,11 +6,12 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.audit.IAuditable;
 import com.esferalia.aon.entity.master.ReservationRequestGuestDB;
 
 @Entity
 @Table(name="reservation_request_guest")
-public class ReservationRequestGuest extends ReservationRequestGuestDB {
+public class ReservationRequestGuest extends ReservationRequestGuestDB implements IAuditable {
 
 	private static final long serialVersionUID = 1L;
 

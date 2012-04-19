@@ -1,8 +1,6 @@
 package com.esferalia.aon.pms.reservation;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -13,11 +11,9 @@ import javax.xml.messaging.URLEndpoint;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.XmlException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,6 +28,7 @@ import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.solmelia.namespaces.solres.AvailabilitySummaryRecordDocument.AvailabilitySummaryRecord;
 import com.solmelia.namespaces.solres.AvailabilitySummaryRecordsDocument.AvailabilitySummaryRecords;
+import com.solmelia.namespaces.solres.BookingRulesDocument.BookingRules;
 import com.solmelia.namespaces.solres.CancelPenaltyType;
 import com.solmelia.namespaces.solres.CustProfileDocument.CustProfile;
 import com.solmelia.namespaces.solres.GuestCountsDocument.GuestCounts;
@@ -107,7 +104,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
 		operation.getAvailabilityQuery().getStayDateRange().getDateTimeSpan().setDuration(nights);
 		if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
-			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), SOLRES);
+			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
 			if (code != null) {
 				operation.getAvailabilityQuery().addNewProfiles().addNewProfile();
 				operation.getAvailabilityQuery().getProfiles().getProfile().setProfileType(ProfileType.REP_COMPANY);
@@ -155,7 +152,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setRoomStays(roomStays);
 
 		if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
-			String code = getReservationUtils().obtainCustomerCode(request.getAgency(), SOLRES);
+			String code = getReservationUtils().obtainCustomerCode(request.getAgency(), REQRES);
 			if (code != null) {
 				operation.getAvailabilityQuery().addNewAgencyCode().setStringValue(code);
 			}
@@ -163,7 +160,6 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setLanguageID(ES);
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -179,19 +175,27 @@ System.out.println(document.toString());
 		return rAddInfoList;
 	}
 
-	private List<AvailableRoomStay> sendAvailabilityQuery(String message) throws MalformedURLException, SOAPException, XmlException, IOException {
-		Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
-		MessageFactory messageFactory = MessageFactory.newInstance();
-		SOAPMessage soapRequest = messageFactory.createMessage();
-		soapRequest.getSOAPBody().setValue(convertMessage(message));
+	private List<AvailableRoomStay> sendAvailabilityQuery(String message) {
+		try {
+			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			MessageFactory messageFactory = MessageFactory.newInstance();
+			SOAPMessage soapRequest = messageFactory.createMessage();
+			soapRequest.getSOAPBody().setValue(convertMessage(message));
 
-		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-		SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
-		HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println(hitisDocument.getHITISMessage());
-		return obtainAvailableRoomStayList(hitisDocument.getHITISMessage());
+			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage());
+		} catch (Exception ex) {
+			List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
+			AvailableRoomStay availableRoomStay = new AvailableRoomStay();
+			availableRoomStay.setError(true);
+			availableRoomStay.setErrorMessage(ex.getMessage());
+			availableRoomStayList.add(availableRoomStay);
+			return availableRoomStayList;
+		}
 	}
 
 	private String convertMessage(String message) {
@@ -231,7 +235,7 @@ System.out.println(hitisDocument.getHITISMessage());
 						availableRoomStay.setIndex(availableRoomStayList.size());
 						availableRoomStay.setTariffCode(rateCode);
 						availableRoomStay.setTariffDescription(rateDescription.getDetailDescription());
-						availableRoomStay.setRoomInventoryCode(roomStay.getInventoryCode());
+						availableRoomStay.setInventoryCode(roomStay.getInventoryCode());
 						availableRoomStay.setRoomCode(roomStay.getRoomCodes().getBaseRoomCode());
 						availableRoomStay.setRoomDescription((roomInfo != null) ? roomInfo.getDetailDescription() : null);
 						availableRoomStay.setMealPlan(roomStay.getRoomCodes().getMealPlan());
@@ -253,21 +257,25 @@ System.out.println(hitisDocument.getHITISMessage());
 	}
 
 	private String obtainPenaltyConditions(CancelPenaltyType penalty) {
-		String conditions = "Cancel Penalty:\n";
+		String conditions = null;
 		if (penalty != null) {
-			conditions += penalty.getDeadline().getOffsetUnitMultiplier().toString() + " " + penalty.getDeadline().getOffsetUnit().toString() + " ";
-			conditions += penalty.getDeadline().getOffsetDropTime().toString() + "\n";
-			conditions += penalty.getDuePayment().getQuantity() + " " + penalty.getDuePayment().getUnit().toString();
+			if (StringUtils.isNotEmpty(penalty.getDescription())) {
+				conditions = penalty.getDescription();
+			} else {
+				conditions = penalty.getDeadline().getOffsetUnitMultiplier().toString() + " " + penalty.getDeadline().getOffsetUnit().toString() + " ";
+				conditions += penalty.getDeadline().getOffsetDropTime().toString() + "\n";
+				conditions += penalty.getDuePayment().getQuantity() + " " + penalty.getDuePayment().getUnit().toString();
+			}
 		}
 		return conditions;
 	}
 
 
-	public String processBookingRequest(ReservationRequestRoom requestRoom, ReservationRequestGuest requestGuest, AvailableRoomStay availableRoomStay) {
+	public AvailableRoomStay processBookingRequest(ReservationRequestRoom requestRoom, ReservationRequestGuest requestGuest, AvailableRoomStay availableRoomStay) {
 		getReservationUtils().init();
 		getReservationUtils().setDomain(requestRoom.getReservationRequest().getHotel().getDomain());
 		try {
-			return sendBookingQuery(createBookingMessage(requestRoom, requestGuest, availableRoomStay));
+			return sendBookingQuery(createBookingMessage(requestRoom, requestGuest, availableRoomStay), availableRoomStay);
 		} catch (Exception ex) {
 			return null;
 		}
@@ -334,7 +342,7 @@ System.out.println(hitisDocument.getHITISMessage());
 		for (int i=0; i<requestRoom.getUnits(); i++) {
 			roomStays.addNewRoomStay();
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRoomStayRPH(new BigInteger(Integer.toString(++roomRPH)));
-			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRoomInventoryCode(availableRoomStay.getRoomInventoryCode());
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRoomInventoryCode(availableRoomStay.getInventoryCode());
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRatePlans(ratePlans);
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setGuestCounts(guestCounts);
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).addNewPaymentInstructions();
@@ -344,14 +352,14 @@ System.out.println(hitisDocument.getHITISMessage());
 		operation.getReservationTransaction().getReservation().setRoomStaysArray(0, roomStays);
 
 		if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
-			String code = getReservationUtils().obtainCustomerCode(request.getAgency(), SOLRES);
+			String code = getReservationUtils().obtainCustomerCode(request.getAgency(), REQRES);
 			if (code != null) {
 				operation.getReservationTransaction().getReservation().addNewAgencyCode().setStringValue(code);
 			}
 		}
 
 		if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
-			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), SOLRES);
+			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
 			if (code != null) {
 				operation.getReservationTransaction().getReservation().addNewResProfiles().addNewResProfile().addNewCustProfileCreateRQ().addNewCustProfile().
 					addNewAffiliations().addNewEmployer().addNewEmployerName().addNewCompanyName().setCompanyCode(code);
@@ -400,28 +408,47 @@ System.out.println(document.toString());
 		return document.toString();
 	}
 
-	private String sendBookingQuery(String message) throws MalformedURLException, SOAPException, XmlException, IOException {
-		Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
-		MessageFactory messageFactory = MessageFactory.newInstance();
-		SOAPMessage soapRequest = messageFactory.createMessage();
-		soapRequest.getSOAPBody().setValue(convertMessage(message));
+	private AvailableRoomStay sendBookingQuery(String message, AvailableRoomStay availableRoomStay) {
+		try {
+			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			MessageFactory messageFactory = MessageFactory.newInstance();
+			SOAPMessage soapRequest = messageFactory.createMessage();
+			soapRequest.getSOAPBody().setValue(convertMessage(message));
 
-		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-		SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
-		HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println( hitisDocument.getHITISMessage() );
-		return obtainReservationId(hitisDocument.getHITISMessage());
+			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+System.out.println(hitisDocument.getHITISMessage());
+			return obtainReservationId(hitisDocument.getHITISMessage(), availableRoomStay);
+		} catch (Exception ex) {
+			availableRoomStay.setError(true);
+			availableRoomStay.setErrorMessage(ex.getMessage());
+			return availableRoomStay;
+		}
 	}
 
-	private String obtainReservationId(HITISMessage message) {
-		String reservationId = null;
+	private AvailableRoomStay obtainReservationId(HITISMessage message, AvailableRoomStay availableRoomStay) {
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
-			reservationId = operation.getReservation().getConfirmationID();
+			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
+				for (com.solmelia.namespaces.solres.ErrorsDocument.Errors.Error error : operation.getErrors().getErrorArray()) {
+					availableRoomStay.setError(true);
+					availableRoomStay.setErrorMessage(error.getStringValue());
+					if (StringUtils.isEmpty(availableRoomStay.getErrorMessage())) {
+						availableRoomStay.setErrorMessage(error.getHITISCode());
+					}
+				}
+			} else {
+				availableRoomStay.setReservationId(operation.getReservation().getConfirmationID());
+				BookingRules bookingRules = operation.getReservation().getBookingRules();
+				if (bookingRules.getCancelPenalties() != null && bookingRules.getCancelPenalties().sizeOfCancelPenaltyArray() > 0) {
+					availableRoomStay.setCancelPenalty(obtainPenaltyConditions(bookingRules.getCancelPenalties().getCancelPenaltyArray(0)));
+				}
+			}
 		}
-		return reservationId;
+		return availableRoomStay;
 	}
 
 }

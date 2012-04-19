@@ -125,8 +125,27 @@ public class ReservationRequestRoomController extends LinesController {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			AvailableRoomStay availableRoomStay = getAvailableRoomStayList().get(Integer.parseInt(ec.getRequestParameterMap().get("availableRoomStayIndex")));
 			ReservationRequestManager manager = new ReservationRequestManager();
-			String reservationId = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
-System.out.println("RESERVATION ID = " + reservationId);
+			availableRoomStay = manager.processBookingRequest(requestRoom, requestController.getRequestGuest(), availableRoomStay);
+			if (!availableRoomStay.isError()) {
+				requestRoom.setCrsCode(availableRoomStay.getReservationId());
+				requestRoom.setTariffCode(availableRoomStay.getTariffCode());
+				requestRoom.setTariffDescription(availableRoomStay.getTariffDescription());
+				requestRoom.setInventoryCode(availableRoomStay.getInventoryCode());
+				requestRoom.setRoomCode(availableRoomStay.getRoomCode());
+				requestRoom.setRoomDescription(availableRoomStay.getRoomDescription());
+				requestRoom.setMealPlan(availableRoomStay.getMealPlan());
+				requestRoom.setDailyPrice(availableRoomStay.getDailyPrice());
+				requestRoom.setTotalPrice(availableRoomStay.getTotalPrice());
+				requestRoom.setCancelPenalty(availableRoomStay.getCancelPenalty());
+				getManagerBean().update(requestRoom);
+
+				request.setActive(false);
+				requestController.setSkipResetAvailabilityMap(true);
+				requestController.accept(event);
+				requestController.setSkipResetAvailabilityMap(false);
+
+				getAvailableRoomStayMap().remove(requestRoom.getId());
+			}
 		}
 	}
 

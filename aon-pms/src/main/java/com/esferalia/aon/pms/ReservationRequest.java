@@ -8,6 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.audit.IAuditable;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -16,7 +17,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 
 @Entity
 @Table(name="reservation_request")
-public class ReservationRequest extends ReservationRequestDB {
+public class ReservationRequest extends ReservationRequestDB implements IAuditable {
 
 	private static final long serialVersionUID = 1L;
 

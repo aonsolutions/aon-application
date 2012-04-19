@@ -67,21 +67,23 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 	</aon:div>
 
-	<aon:outputLabel for="ReservationRequest_agency" 
-		value="#{pmsBundle.pms_agency}" />
-	<aon:selectOneMenu id="ReservationRequest_agency" 
-		value="#{searchController.agency}">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{reservationRequest.agencies}" />
-	</aon:selectOneMenu>
+	<c:if test="#{aonRole.saleOperator}">
+		<aon:outputLabel for="ReservationRequest_agency" 
+			value="#{pmsBundle.pms_agency}" />
+		<aon:selectOneMenu id="ReservationRequest_agency" 
+			value="#{searchController.agency}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{reservationRequest.agencies}" />
+		</aon:selectOneMenu>
 
-	<aon:outputLabel for="ReservationRequest_company" 
-		value="#{pmsBundle.pms_company}" />
-	<aon:selectOneMenu id="ReservationRequest_company" 
-		value="#{searchController.company}">
-		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{reservationRequest.companies}" />
-	</aon:selectOneMenu>
+		<aon:outputLabel for="ReservationRequest_company" 
+			value="#{pmsBundle.pms_company}" />
+		<aon:selectOneMenu id="ReservationRequest_company" 
+			value="#{searchController.company}">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{reservationRequest.companies}" />
+		</aon:selectOneMenu>
+	</c:if>
 
 	<aon:outputLabel for="ReservationRequest_active" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="ReservationRequest_active"

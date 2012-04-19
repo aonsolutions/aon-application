@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -94,19 +95,21 @@
 							<aon:outputText value="#{to.guestFullName}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_agency} / #{pmsBundle.pms_company}" />
-							</f:facet>
-							<aon:outputText value="#{(to.agencyHolder) ? (to.agency.registry.fullName) : (to.company.registry.fullName)}" />
-						</aon:column>
+						<c:if test="#{aonRole.saleOperator}">
+							<aon:column styleClass="aon-editDataTable-textColumn">
+								<f:facet name="header">
+									<aon:outputText value="#{pmsBundle.pms_agency} / #{pmsBundle.pms_company}" />
+								</f:facet>
+								<aon:outputText value="#{(to.agencyHolder) ? (to.agency.registry.fullName) : (to.company.registry.fullName)}" />
+							</aon:column>
+						</c:if>
 
 						<aon:column alias="ReservationRequest.active"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_pending)}" />
+							<aon:outputText value="#{(to.active) ? (pmsBundle.pms_reservation_request_pending) : (pmsBundle.pms_reservation_request_processed)}" />
 
 						</aon:column>
 

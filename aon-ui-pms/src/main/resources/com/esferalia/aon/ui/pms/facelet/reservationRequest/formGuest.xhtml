@@ -9,32 +9,55 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:outputLabel for="ReservationRequestGuest_name" value="#{bundle.aon_name}"/>
+	<aon:outputText	value="#{reservationRequest.requestGuest.name}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.to.active}" />
 	<aon:inputText id="ReservationRequestGuest_name"
 		value="#{reservationRequest.requestGuest.name}" size="30" maxlength="64"
 		required="#{reservationRequestRoom.availabilityRequested}" 
-		onblur="toUpperCase(this);" />
+		onblur="toUpperCase(this);"
+		rendered="#{reservationRequest.to.active}" />
 
 	<aon:outputLabel for="ReservationRequestGuest_surname" value="#{bundle.aon_surname}"/>
+	<aon:outputText	value="#{reservationRequest.requestGuest.surname}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.to.active}" />
 	<aon:inputText id="ReservationRequestGuest_surname"
 		value="#{reservationRequest.requestGuest.surname}" size="50" maxlength="64"
 		required="#{reservationRequestRoom.availabilityRequested}" 
-		onblur="toUpperCase(this);" />
+		onblur="toUpperCase(this);"
+		rendered="#{reservationRequest.to.active}" />
 
 	<aon:outputLabel for="ReservationRequestGuest_address" value="#{bundle.aon_address}"/>
+	<aon:outputText	value="#{reservationRequest.requestGuest.address}" styleClass="aon-bold"
+		rendered="#{!reservationRequest.to.active}" />
 	<aon:inputText id="ReservationRequestGuest_address"
-		value="#{reservationRequest.requestGuest.address}" size="50" maxlength="256" />
+		value="#{reservationRequest.requestGuest.address}" size="50" maxlength="256"
+		rendered="#{reservationRequest.to.active}" />
 
 	<aon:outputLabel for="ReservationRequestGuest_city" value="#{bundle.aon_city}"/>
-	<aon:div>
+	<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto" rendered="#{!reservationRequest.to.active}">
+		<aon:outputText	value="#{reservationRequest.requestGuest.city}" styleClass="aon-bold" />
+		<aon:div>
+			<aon:outputLabel for="ReservationRequestGuest_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+			<aon:outputText	value="#{reservationRequest.requestGuest.zip}" styleClass="aon-bold" />
+		</aon:div>
+	</aon:panelGrid>
+	<aon:div rendered="#{reservationRequest.to.active}">
 		<aon:inputText id="ReservationRequestGuest_city"
 			value="#{reservationRequest.requestGuest.city}" size="30" maxlength="64" />
-		<aon:outputLabel for="ReservationRequestGuest_zip" value="#{bundle.aon_postal_code}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+		<aon:outputLabel value="#{bundle.aon_postal_code}" styleClass="aon-italic aon-margin-left aon-margin-right" />
 		<aon:inputText id="ReservationRequestGuest_zip"
 			value="#{reservationRequest.requestGuest.zip}" size="9" maxlength="16" />
 	</aon:div>
 
 	<aon:outputLabel for="ReservationRequestGuest_province" value="#{bundle.aon_state}"/>
-	<aon:div>
+	<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto" rendered="#{!reservationRequest.to.active}">
+		<aon:outputText	value="#{reservationRequest.requestGuest.province}" styleClass="aon-bold" />
+		<aon:div>
+			<aon:outputLabel value="#{bundle.aon_country}" styleClass="aon-italic aon-margin-left aon-margin-right" />
+			<aon:outputText	value="#{reservationRequest.requestGuest.country}" styleClass="aon-bold" />
+		</aon:div>
+	</aon:panelGrid>
+	<aon:div rendered="#{reservationRequest.to.active}">
 		<aon:inputText id="ReservationRequestGuest_province"
 			value="#{reservationRequest.requestGuest.province}" size="30" maxlength="64" />
 		<aon:outputLabel for="ReservationRequestGuest_country" value="#{bundle.aon_country}" styleClass="aon-italic aon-margin-left aon-margin-right" />
@@ -43,12 +66,19 @@
 	</aon:div>
 
 	<aon:outputLabel for="ReservationRequestGuest_phone" value="#{bundle.aon_phone}"/>
-	<aon:div>
+	<aon:panelGrid columns="2" columnClasses="aon-width-100, aon-width-auto" rendered="#{!reservationRequest.to.active}">
+		<aon:outputText	value="#{reservationRequest.requestGuest.phone}" styleClass="aon-bold" />
+		<aon:div>
+			<aon:outputLabel value="Email" styleClass="aon-italic aon-margin-left aon-margin-right" />
+			<aon:outputText	value="#{reservationRequest.requestGuest.email}" styleClass="aon-bold" />
+		</aon:div>
+	</aon:panelGrid>
+	<aon:div rendered="#{reservationRequest.to.active}">
 		<aon:inputText id="ReservationRequestGuest_phone"
-			value="#{reservationRequest.requestGuest.phone}" size="10" maxlength="32" />
+			value="#{reservationRequest.requestGuest.phone}" size="12" maxlength="32" />
 		<aon:outputLabel for="ReservationRequestGuest_email" value="Email" styleClass="aon-italic aon-margin-left aon-margin-right" />
 		<aon:inputText id="ReservationRequestGuest_email"
-			value="#{reservationRequest.requestGuest.email}" size="38" maxlength="128"
+			value="#{reservationRequest.requestGuest.email}" size="36" maxlength="128"
 			onblur="toLowCase(this);" />
 	</aon:div>
 
