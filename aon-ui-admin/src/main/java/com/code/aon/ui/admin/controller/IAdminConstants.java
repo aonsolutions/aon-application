@@ -3,7 +3,7 @@ package com.code.aon.ui.admin.controller;
 public interface IAdminConstants {
 	
 	// Bundle
-	String BUNDLE_NAME = "managerBundle";
+	String BUNDLE_NAME = "adminBundle";
 
 	// Controllers
 	String ADMIN_CONTROLLER_NAME = "adminMain";
