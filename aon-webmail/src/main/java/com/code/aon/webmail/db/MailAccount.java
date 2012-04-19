@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
-import com.code.aon.webmail.enumeration.MailSource;
 import com.esferalia.aon.entity.master.MailAccountDB;
 
 @Entity
