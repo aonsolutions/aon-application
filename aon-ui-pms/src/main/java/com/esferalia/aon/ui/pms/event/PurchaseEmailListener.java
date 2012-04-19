@@ -33,6 +33,11 @@ public class PurchaseEmailListener implements IEmailControllerListener {
 	}
 
 	public void beforeEmailSend(ITransferObject to){
+		// TODO por peticion, no poner como cc al hotel en los envios de email de pedidos de compra
+//		addHotelToRecipients(to);
+	}
+	
+	private void addHotelToRecipients(ITransferObject to) {
 		LogPanelController logger = LogPanelController.getInstance();
 		try {
 			Purchase purchase = (Purchase) to;
