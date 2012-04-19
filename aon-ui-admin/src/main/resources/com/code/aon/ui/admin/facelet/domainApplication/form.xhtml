@@ -22,14 +22,13 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:panelGrid id="domainApplicationGrid" columns="2">
+				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="DomainApplication_name"
 						value="#{bundle.aon_name}" />
 					<aon:selectOneMenu id="DomainApplication_name"
-						reRender="domainApplicationGrid"
 						rendered="#{domainApplication.new}" required="true"
-						value="#{domainApplication.to.application.name}">
+						value="#{domainApplication.to.application}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{domainApplication.availableApplications}" />
 					</aon:selectOneMenu>						

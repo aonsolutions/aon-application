@@ -11,4 +11,8 @@ public class ApplicationUser extends ApplicationUserDB {
 	
 	private static final long serialVersionUID = 1L;
 
+	public ApplicationUser() {
+		setActive(true);
+	}
+
 }

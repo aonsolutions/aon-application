@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
@@ -91,5 +92,35 @@ public class DomainApplicationController extends BasicController {
 		}
 		return list;
 	}		
+	
+	private Set<Application> getRegisteredApplications() throws ManagerBeanException {
+		Set<Application> applications = new HashSet<Application>();
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+		for (ITransferObject to : bean.getList(null)) {
+			DomainApplication da = (DomainApplication) to;
+			applications.add(da.getApplication());
+		}
+		return applications;
+	}		
+	
+	public List<SelectItem> getAvailableApplications() throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Application.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_CONTRATABLE), Boolean.TRUE);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.APPLICATION_NAME));
+		List<ITransferObject> applications = bean.getList(criteria);
+		if (! applications.isEmpty() ) {
+			Set<Application> registeredApplications = getRegisteredApplications();
+			for (ITransferObject to : applications) {
+				Application application = (Application) to;
+				if (! registeredApplications.contains(application) ) {
+					SelectItem item = new SelectItem(application, application.getName() );
+					list.add(item);									
+				}
+			}			
+		}
+		return list;
+	}
 	
 }
