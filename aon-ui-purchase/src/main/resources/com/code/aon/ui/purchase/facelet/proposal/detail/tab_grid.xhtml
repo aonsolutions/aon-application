@@ -42,7 +42,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputLabel for="ProposalDetail_item" value="#{productBundle.product_item}" />
 				</f:facet>
@@ -68,7 +68,7 @@
 				</f:facet>
 			</aon:column>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="ProposalDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
@@ -88,7 +88,7 @@
 			</aon:column>
 			
 			<c:if test="#{aonRole.purchaseOperator}">
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.aon_price}" />
 					</f:facet>
@@ -99,7 +99,7 @@
 					</f:facet>
 				</aon:column>
 				
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 					<f:facet name="header">
 						<aon:outputLabel value="#{bundle.aon_total}" />
 					</f:facet>
@@ -111,7 +111,7 @@
 				</aon:column>
 			</c:if>
 			
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>

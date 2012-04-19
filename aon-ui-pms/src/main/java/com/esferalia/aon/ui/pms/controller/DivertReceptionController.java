@@ -21,6 +21,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -239,6 +240,7 @@ public class DivertReceptionController extends BasicController {
 	private void updateStatus(ProjectReservationDivert divert, ReservationDivertStatus status){
 		try {
 			divert.setStatus(status);
+			divert.setResponseUser(UserUtils.getInstance().getLoggedUser());
 			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationDivert.class);
 			bean.update(divert);
 		} catch (ManagerBeanException e) {
@@ -298,7 +300,9 @@ public class DivertReceptionController extends BasicController {
 		try {
 			if(getModel().getRowIndex()>-1){
 				ProjectReservationDivert divert = (ProjectReservationDivert)getModel().getRowData();
-				return divert.isPending() && ( DateUtils.isSameDay(divert.getDivertDate(), new Date()) || divert.getDivertDate().after(new Date()) );
+				return divert.isPending()
+						&& ( AonUtil.getRoleManager().isAdmin()
+						|| (DateUtils.isSameDay(divert.getDivertDate(),new Date()) || divert.getDivertDate().after(new Date())) );
 			}
 		} catch (ManagerBeanException e) {
 			// NADA

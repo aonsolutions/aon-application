@@ -1064,6 +1064,12 @@
 		<foreign-key constraint-name="FK_PROJECT_RESERVATION_DIVERT_DIVERT_HOTEL">
 			<many-to-one property="divertHotel" />
 		</foreign-key>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_DIVERT_REQUEST_USER">
+			<many-to-one property="requestUser" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_PROJECT_RESERVATION_DIVERT_RESPONSE_USER">
+			<many-to-one property="responseUser" />
+		</foreign-key>
 	</table>
 	
 	<table name="project_reservation_guest">

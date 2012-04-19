@@ -86,6 +86,7 @@ public class BoardListController implements ICollectionProvider {
 			IManagerBean bean = BeanManager.getManagerBean(Item.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getBoardCategoryId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), false);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 			List<ITransferObject> list = bean.getList(criteria);
 			return list.isEmpty()?null:list;

@@ -45,7 +45,7 @@
 					<aon:column alias="ProjectReservationDivert.requestHotel.workPlace.description"
 						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
-							<aon:outputText value="#{pmsBundle.pms_divert_request}" />
+							<aon:outputText value="#{pmsBundle.pms_source}" />
 						</f:facet>
 						<aon:outputText value="#{to.requestHotel.workPlace.description}" />
 					</aon:column>
@@ -75,6 +75,22 @@
 							<aon:outputText value="#{bundle.aon_status}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" />
+					</aon:column>
+		
+					<aon:column alias="ProjectReservationDivert.requestUser"
+						styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_divert_request}" />
+						</f:facet>
+						<aon:outputText value="#{to.requestUser.name}" />
+					</aon:column>
+
+					<aon:column alias="ProjectReservationDivert.responseUser"
+						styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_divert_response}" />
+						</f:facet>
+						<aon:outputText value="#{to.responseUser.name}" />
 					</aon:column>
 		
 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">

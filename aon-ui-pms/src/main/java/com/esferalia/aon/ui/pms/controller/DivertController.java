@@ -82,7 +82,7 @@ public class DivertController extends BasicController {
 	}
 	
 	private Integer getScopeToExclude() {
-		// Id del ambito general
+		// Id del ambito de hoteles externos
 		return 107;
 	}
 	

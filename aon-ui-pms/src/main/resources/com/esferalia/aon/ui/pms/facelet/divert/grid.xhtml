@@ -37,8 +37,13 @@
 									value="#{pmsBundle.pms_reservation}" />
 							</f:facet>
 							<aon:div rendered="#{formList}" >
-								<aon:outputText value="#{to.projectReservation.code} - #{to.projectReservation.guestFullName}" />
-								<aon:outputText value=" - " />
+								<aon:outputText value="#{pmsBundle.pms_reservation_id}:" styleClass="aon-italic" />
+								<aon:outputText value="#{to.projectReservation.id}"  />
+								<aon:outputText value="#{pmsBundle.pms_reservation_code}:" styleClass="aon-italic aon-margin-left" />
+								<aon:outputText value="#{to.projectReservation.code}" />
+								<aon:outputText value="#{pmsBundle.pms_guest}:" styleClass="aon-italic aon-margin-left" />
+								<aon:outputText value="#{to.projectReservation.guestFullName}" />
+								<aon:outputText value=" ( " />
 								<aon:outputText value="#{to.projectReservation.startDate}" >
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
@@ -48,6 +53,7 @@
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
+								<aon:outputText value=" ) " />
 							</aon:div>
 							
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/lookup.xhtml">
@@ -77,7 +83,7 @@
 						<aon:column alias="ProjectReservationDivert.requestHotel.workPlace.description"
 							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel value="#{pmsBundle.pms_divert_request}" />
+								<aon:outputLabel value="#{pmsBundle.pms_source}" />
 							</f:facet>
 							<aon:outputText value="#{to.requestHotel.workPlace.description}" />
 						</aon:column>
@@ -127,6 +133,14 @@
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
 							</f:facet>
+						</aon:column>
+						
+						<aon:column alias="ProjectReservationDivert.requestUser"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel value="#{pmsBundle.pms_divert_request}" />
+							</f:facet>
+							<aon:outputText value="#{to.requestUser.name}" />
 						</aon:column>
 			
 						<aon:column alias="ProjectReservationDivert.status"

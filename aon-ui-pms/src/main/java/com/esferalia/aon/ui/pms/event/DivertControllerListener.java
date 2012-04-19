@@ -10,6 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -42,6 +43,7 @@ public class DivertControllerListener extends ControllerAdapter {
 		checkRoomAssignation(divert);
 		divert.setRequestHotel(divert.getProjectReservation().getHotel());
 		divert.setStatus(ReservationDivertStatus.PENDING);
+		divert.setRequestUser(UserUtils.getInstance().getLoggedUser());
 	}
 
 	@Override
@@ -51,6 +53,7 @@ public class DivertControllerListener extends ControllerAdapter {
 		checkDate(divert);
 		checkRoomAssignation(divert);
 		divert.setStatus(ReservationDivertStatus.PENDING);
+		divert.setRequestUser(UserUtils.getInstance().getLoggedUser());
 	}
 	
 	@Override

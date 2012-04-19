@@ -37,6 +37,7 @@ public class BoardBookingController implements ICollectionProvider {
 	private Hotel hotel;
 	private Date fromDate;
 	private Date toDate;
+	private boolean searchNoRoomBoard;
 	
 	private List<Booking> bookingList;
 	private DataModel model;
@@ -61,6 +62,12 @@ public class BoardBookingController implements ICollectionProvider {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+	public boolean isSearchNoRoomBoard() {
+		return searchNoRoomBoard;
+	}
+	public void setSearchNoRoomBoard(boolean searchNoRoomBoard) {
+		this.searchNoRoomBoard = searchNoRoomBoard;
+	}
 	public List<Booking> getBookingList() {
 		return bookingList;
 	}
@@ -82,6 +89,7 @@ public class BoardBookingController implements ICollectionProvider {
 		setHotel(null);
 		setFromDate(new Date());
 		setToDate(new Date());
+		setSearchNoRoomBoard(true);
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -110,6 +118,7 @@ public class BoardBookingController implements ICollectionProvider {
 		+ " LEFT JOIN item_composition AS IC ON I.id=IC.item"
 		+ " LEFT JOIN product AS P ON IC.composition_item=P.id"
 		+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+		+ (isSearchNoRoomBoard() ? "" : " AND PRSD.project_reservation_room_detail is not null")
 		+ " AND PRS.item<>34 AND P.category=4 AND PR.status<>2"
 		+ ( getHotel() != null ? " AND PR.hotel = " + getHotel().getId():"" )
 		+ " GROUP BY PR.hotel,PRSD.effective_date,P.code"
@@ -128,6 +137,7 @@ public class BoardBookingController implements ICollectionProvider {
 		+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 		+ " LEFT JOIN product AS P ON I.product=P.id"
 		+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+		+ (isSearchNoRoomBoard() ? "" : " AND PRSD.project_reservation_room_detail is not null")
 		+ " AND PRS.item<>34 AND P.category=4 AND PR.status<>2"
 		+ " AND P.composition=0" 
 		+ ( getHotel() != null ? " AND PR.hotel = " + getHotel().getId():"" )

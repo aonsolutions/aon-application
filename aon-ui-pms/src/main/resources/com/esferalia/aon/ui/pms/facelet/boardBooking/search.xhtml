@@ -56,6 +56,15 @@
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
 							</aon:div>
 									
+							<aon:outputText 
+								value="&#160;" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="BoardBooking_searchNoRoomBoard"
+									value="#{boardBooking.searchNoRoomBoard}" />
+								<aon:outputLabel for="BoardBooking_searchNoRoomBoard"
+									value="#{pmsBundle.pms_board_searchNoRoomBoard}" />
+							</aon:div>
+									
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="search" ignoreDupResponses="true"
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
