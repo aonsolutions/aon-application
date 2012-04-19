@@ -52,14 +52,17 @@
 										<aon:outputText value=" (#{to.department.name})" />
 									</aon:div>
 									<aon:div >
-										<aon:outputText value="#{bundle.aon_quantity}: " />
+										<aon:outputText value="#{purchaseBundle.purchase_request_count} " />
 										<aon:outputText value="#{to.detailCount}" />
 									</aon:div>
+									
 									<aon:div >
-										<aon:outputText value="#{bundle.aon_total}: " />
-										<aon:outputText value="#{to.totalAmount}" >
-											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-										</aon:outputText>
+										<c:if test="#{aonRole.purchaseOperator}">
+											<aon:outputText value="#{bundle.aon_total}: " />
+											<aon:outputText value="#{to.totalAmount}" >
+												<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+											</aon:outputText>
+										</c:if>
 									</aon:div>
 								</h:panelGrid>
 							</aon:div>
@@ -92,6 +95,10 @@
 								<f:facet name="header">
 									<aon:outputText value="#{productBundle.product_item}" />
 								</f:facet>
+								<aon:outputText value=" #{detail.proposalDetail.item.product.code}"
+									rendered="#{to.groupIndex == detail.groupIndex}" />
+								<aon:outputText value=" - "
+									rendered="#{to.groupIndex == detail.groupIndex}" />
 								<aon:outputText value=" #{detail.proposalDetail.item.product.name}"
 									rendered="#{to.groupIndex == detail.groupIndex}" />
 							</aon:column>
@@ -106,25 +113,27 @@
 								</aon:outputText>
 							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
-								<f:facet name="header">
-									<aon:outputLabel value="#{bundle.aon_price}" />
-								</f:facet>
-								<aon:outputText value="#{detail.proposalDetail.item.price}" 
-									rendered="#{to.groupIndex == detail.groupIndex}" >
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
-								<f:facet name="header">
-									<aon:outputLabel value="#{bundle.aon_total}" />
-								</f:facet>
-								<aon:outputText value="#{detail.proposalDetail.quantity * detail.proposalDetail.item.price}" 
-									rendered="#{to.groupIndex == detail.groupIndex}" >
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-							</aon:column>
+							<c:if test="#{aonRole.purchaseOperator}">
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+									<f:facet name="header">
+										<aon:outputLabel value="#{bundle.aon_price}" />
+									</f:facet>
+									<aon:outputText value="#{detail.proposalDetail.item.price}" 
+										rendered="#{to.groupIndex == detail.groupIndex}" >
+										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+									</aon:outputText>
+								</aon:column>
+								
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+									<f:facet name="header">
+										<aon:outputLabel value="#{bundle.aon_total}" />
+									</f:facet>
+									<aon:outputText value="#{detail.proposalDetail.quantity * detail.proposalDetail.item.price}" 
+										rendered="#{to.groupIndex == detail.groupIndex}" >
+										<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+									</aon:outputText>
+								</aon:column>
+							</c:if>
 							
 						</aon:dataTable>
 						

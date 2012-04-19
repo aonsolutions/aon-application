@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:column alias="Purchase.series,Purchase.number"
@@ -50,13 +51,15 @@
 		<aon:outputText value="#{to.status}" />
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-numberColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_total}" />
-		</f:facet>
-		<aon:outputText value="#{controller.purchaseTotalPrice}">
-			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-		</aon:outputText>
-	</aon:column>
+	<c:if test="#{aonRole.purchaseOperator}">
+		<aon:column styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_total}" />
+			</f:facet>
+			<aon:outputText value="#{controller.purchaseTotalPrice}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+	</c:if>
 
 </ui:composition>

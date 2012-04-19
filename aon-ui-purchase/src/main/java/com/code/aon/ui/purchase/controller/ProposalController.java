@@ -74,7 +74,7 @@ public class ProposalController extends BasicController {
 	}
 	
 	public List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
-		List<Integer> list = null;
+		List<Integer> list = new LinkedList<Integer>();
 		Proposal proposal = ((Proposal)getTo()); 
 		if(proposal.getDepartment()!=null){
 			List<Integer> catalogueIds = new LinkedList<Integer>();
@@ -94,13 +94,15 @@ public class ProposalController extends BasicController {
 			itemSupCriteria.addInExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), itemIds);
 			itemSupCriteria.addNotNullExpression(itemSupplierBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_SUPPLIER_ID));
 
-			list = new LinkedList<Integer>();
 			for (ITransferObject ito : itemSupplierBean.getList(itemSupCriteria)) {
 				ItemSupplier is = (ItemSupplier) ito;
 				if( is.getWorkPlace() == null || is.getWorkPlace().getId() == null || is.getWorkPlace().getId().equals(proposal.getWorkPlace().getId()) ){
 					list.add(is.getItem().getId());
 				}
 			}
+		}
+		if(list.isEmpty()){
+			list.add(-1);
 		}
 		return list;
 	}
