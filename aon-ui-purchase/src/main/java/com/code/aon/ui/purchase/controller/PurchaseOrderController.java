@@ -42,6 +42,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -131,17 +132,18 @@ public class PurchaseOrderController {
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		String workPlaceClause = getWorkPlaceClause();
 		String select = "SELECT ProposalDetail, sum(ProposalDetail.quantity), count(ProposalDetail.id)" 
 				+ " FROM ProposalDetail as ProposalDetail" 
 				+ " WHERE " + DomainManager.getSQLWhereClause("ProposalDetail.domain")
 				+ " AND ProposalDetail.status = " + ProposalDetailStatus.PENDING.ordinal()
 				+ (getParams().getStartDate() != null ? " AND ProposalDetail.proposal.issueDate >= :startDate" : "")
 				+ (getParams().getEndDate() != null ? " AND ProposalDetail.proposal.issueDate <= :endDate" : "")
-				+ ((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ? " AND ProposalDetail.proposal.workplaceDepartment.workPlace = :workplaceId"  : "")
-				+ ((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ? " AND ProposalDetail.proposal.workplaceDepartment.department = :departmentId"  : "")
+				+ workPlaceClause
+				+ ((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ? " AND ProposalDetail.proposal.department = :departmentId"  : "")
 				+ " GROUP BY ProposalDetail.item"
 				+ " ORDER BY ProposalDetail.item.product.name";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		if(getParams().getStartDate() != null ){
 			query.setDate("startDate", new java.sql.Date(getParams().getStartDate().getTime()));
@@ -167,6 +169,29 @@ public class PurchaseOrderController {
 		setModel(new ListDataModel(itemGroupList));
 		setProductIndex(-1);
 	}
+	
+	private String getWorkPlaceClause() throws ManagerBeanException {
+		if(getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ){
+			return " AND ProposalDetail.proposal.workPlace = :workplaceId";
+		} else {
+			String clause = ""; 
+			for(ITransferObject to: getCurrentUserWorkPlaces()){
+				WorkPlace wp = (WorkPlace) to;
+				clause += (clause.isEmpty()?" AND (":" OR") + " ProposalDetail.proposal.workPlace = " + wp.getId();
+			}
+			clause += " ) ";
+			return clause;
+		}
+	}
+	
+	private List<ITransferObject> getCurrentUserWorkPlaces() throws ManagerBeanException {
+   		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+   		Criteria criteria = new Criteria();
+   		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
+   		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
+    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
+    	return workPlaceBean.getList(criteria);
+	}	
 	
 	private void buildGroupDetail() throws ManagerBeanException{
 		detailModel = new ListDataModel(obtainGroupDetail());
