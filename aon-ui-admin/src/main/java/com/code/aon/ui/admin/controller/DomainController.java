@@ -26,7 +26,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
-import com.code.aon.webmail.enumeration.MailSource;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
