@@ -823,8 +823,10 @@
 		<column name="replyto_mail" property="replyToMail" />
 		<column name="incoming_port" type="int"/>
 		<column name="outgoing_port" type="int"/>
-		<column name="source_id" type="java.lang.Integer"/>
 		<column name="password" property="passwordString"/>
+		<foreign-key constraint-name="FK_MAIL_ACCOUNT_USER">
+			<many-to-one property="user"/>
+		</foreign-key>        
 	</table>
 	
 	<table name="message_content">
@@ -1290,7 +1292,9 @@
 	<table name="signature">
 		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
 		<column name="signature" type="text"/>
-		<column name="source_id" type="java.lang.Integer"/>
+		<foreign-key constraint-name="FK_SIGNATURE_USER">
+			<many-to-one property="user"/>
+		</foreign-key>        
 	</table>
 
 	<table name="stock">

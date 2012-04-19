@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
+import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -123,19 +124,19 @@ public class DomainController extends BasicController {
 
 	public void onBackToDomain( ActionEvent event ) {
 		try {
-			initWebmail( MailSource.ENTERPRISE, getDomain().getId() );
+			initWebmail( null );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	
-	public void initWebmail( MailSource source, Integer id ) throws ManagerBeanException {
+	public void initWebmail( User user ) throws ManagerBeanException {
 		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
-		signature.updateSource( source, id );
+		signature.updateUser(user);
 		signature.initializeModel();
 
 		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
-		account.updateSource( source, id );
+		account.updateUser(user);
 		account.initializeModel();		
 	}
 	

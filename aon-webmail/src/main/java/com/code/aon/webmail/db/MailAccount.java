@@ -24,7 +24,6 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	    setOutgoingVerification(true);
 	    setOutgoingPort(25);
 	    setOutgoingSsl(false);
-		setSource(MailSource.USER);
 	}
 
 	@Override
@@ -47,6 +46,6 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	@Override
 	@Transient
 	public boolean isEnterpriseAccount() {
-		return (getSource() == MailSource.ENTERPRISE);
+		return (getUser() == null) || (getUser().getId() == null);
 	}
 }

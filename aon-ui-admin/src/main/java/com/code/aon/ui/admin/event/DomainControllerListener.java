@@ -7,7 +7,6 @@ import com.code.aon.ui.admin.controller.DomainController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.webmail.enumeration.MailSource;
 
 public class DomainControllerListener extends ControllerAdapter {
 
@@ -19,7 +18,7 @@ public class DomainControllerListener extends ControllerAdapter {
 		DomainController dc = (DomainController) event.getController();
 		try {		
 			dc.updateParentDomains();
-			dc.initWebmail( MailSource.ENTERPRISE, dc.getDomain().getId() );
+			dc.initWebmail( null );
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

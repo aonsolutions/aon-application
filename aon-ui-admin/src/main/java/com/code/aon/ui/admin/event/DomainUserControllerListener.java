@@ -15,7 +15,6 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.enumeration.MailSource;
 
 public class DomainUserControllerListener extends ControllerAdapter {
 
@@ -66,7 +65,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	private void updateWebmail( User user ) throws ControllerListenerException {
 		try {
 			DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-			dc.initWebmail(MailSource.USER, user.getId());
+			dc.initWebmail(user);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_DUPLICATED;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_USED;
@@ -14,14 +15,11 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.ISignature;
-import com.code.aon.webmail.db.MailAccount;
 import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -57,11 +55,10 @@ public class SignatureDBController extends MailDBController implements ISignatur
 	
 	private boolean checkRemovable( Signature signature ) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(MailAccount.class);
+			MailAccountDBController controller = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_SOURCE), getSource());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MAIL_ACCOUNT_SIGNATURE_ID), signature.getId());
-			if ( bean.getCount(criteria) > 0 ) {
+			controller.completeCriteria(criteria);
+			if ( controller.getManagerBean().getCount(criteria) > 0 ) {
 				AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, SIGNATURE_USED, signature.getName() );
 				return false;
 			}
@@ -84,22 +81,16 @@ public class SignatureDBController extends MailDBController implements ISignatur
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
 		Signature signature = (Signature) getTo();
-		signature.setSource(getSource());
-		signature.setSourceId(getSourceId());
+		signature.setUser(getUser());
 	}
 
 	@Override
-	protected String getSourceAlias() throws ManagerBeanException {
-		return getFieldName( IEntityAlias.SIGNATURE_SOURCE );
+	protected String getUserAlias() throws ManagerBeanException {
+		return getFieldName( IEntityAlias.SIGNATURE_USER_ID );
 	}
 
 	@Override
-	protected String getSourceIdAlias() throws ManagerBeanException {
-		return getFieldName( IEntityAlias.SIGNATURE_SOURCE_ID );
-	}	
-
-	@Override
-	protected String getSourceNameAlias() throws ManagerBeanException {
+	protected String getNameAlias() throws ManagerBeanException {
 		return getFieldName( IEntityAlias.SIGNATURE_NAME );
 	}
 	
