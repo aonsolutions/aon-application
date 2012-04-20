@@ -7,13 +7,13 @@ import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
-import com.code.aon.admin.ApplicationUser;
 import com.code.aon.admin.Profile;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
+import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
