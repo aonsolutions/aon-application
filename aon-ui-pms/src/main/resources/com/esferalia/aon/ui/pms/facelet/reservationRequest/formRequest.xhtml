@@ -84,7 +84,7 @@
 
 	<aon:outputLabel for="ReservationRequest_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
 	<aon:outputText value="#{reservationRequest.to.bookingHolder}" styleClass="aon-bold" 
-		rendered="#{!aonRole.saleOperator or !reservationRequest.to.active}"  />
+		rendered="#{!aonRole.saleOperator or !reservationRequest.to.active}" />
 	<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 
 		required="true" rendered="#{aonRole.saleOperator and reservationRequest.to.active}"
 		valueChangeListener="#{reservationRequest.onHolderChanged}"
@@ -92,7 +92,7 @@
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
 	</aon:selectOneMenu>
 
-	<c:if test="aonRole.saleOperator">
+	<c:if test="#{aonRole.saleOperator}">
 		<aon:div id="BookingHolderLabelDiv">
 			<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
 				 rendered="#{reservationRequest.to.agencyHolder}" />
