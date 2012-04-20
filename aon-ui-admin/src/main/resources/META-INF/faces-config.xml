@@ -350,7 +350,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.admin.ApplicationUser</value>
+			<value>com.code.aon.config.ApplicationUser</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

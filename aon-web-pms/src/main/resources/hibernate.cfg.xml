@@ -101,6 +101,7 @@
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.ApplicationUser"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CNAE2009"/>

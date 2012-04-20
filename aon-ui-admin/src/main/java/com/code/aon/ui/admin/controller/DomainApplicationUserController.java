@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.admin.ApplicationUser;
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationUser;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;

@@ -16,8 +16,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.admin.ApplicationUser;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;

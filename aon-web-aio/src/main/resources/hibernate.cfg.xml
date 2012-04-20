@@ -58,7 +58,6 @@
 
 		<!-- AON-ADMIN Mapping files -->	
 		<mapping class="com.code.aon.admin.ApplicationRole"/>
-		<mapping class="com.code.aon.admin.ApplicationUser"/>
 		<mapping class="com.code.aon.admin.ApplicationUserProfile"/>
 		<mapping class="com.code.aon.admin.Profile"/>
 		<mapping class="com.code.aon.admin.ProfileRole"/>
@@ -112,6 +111,7 @@
 		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.ApplicationUser"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CNAE2009"/>

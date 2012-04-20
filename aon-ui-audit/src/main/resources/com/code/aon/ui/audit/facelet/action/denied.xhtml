@@ -31,6 +31,7 @@
 					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{actionDenied.user}" />
 						<ui:param name="lookupReRender" value="optionList" />
+						<ui:param name="lookupControllerListener" value="#{actionDenied.listener}" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{actionDenied.userChanged}" type="lookupChangeListener" />
 					</ui:include>

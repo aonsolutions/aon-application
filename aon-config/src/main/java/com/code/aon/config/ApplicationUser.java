@@ -1,4 +1,4 @@
-package com.code.aon.admin;
+package com.code.aon.config;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

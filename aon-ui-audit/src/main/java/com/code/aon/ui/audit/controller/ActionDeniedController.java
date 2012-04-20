@@ -27,8 +27,10 @@ import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
+import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -49,11 +51,16 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	private List<ApplicationOption> selected;
 	
+	private IControllerListener listener;
+	
 	public ActionDeniedController() {
 		User user = UserUtils.getInstance().getLoggedUser();
 		this.deniedActionsMap = new HashMap<String, ApplicationOption>();
 		for( ApplicationOption option : getOptions(getDeniedActions(user)) ) {
 			this.deniedActionsMap.put(option.getAction(), option);
+		}
+		if ( AonUtil.isSkipLdap() ) {
+			this.listener = new UserLoookupListener();	
 		}
 	}
 
@@ -225,6 +232,10 @@ public class ActionDeniedController implements IAuditConstants {
 				component.setRendered(false);
 			}
 		}
+	}
+
+	public IControllerListener getListener() {
+		return listener;
 	}
 	
 }

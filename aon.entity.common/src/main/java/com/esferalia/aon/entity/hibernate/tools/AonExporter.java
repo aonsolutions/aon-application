@@ -242,6 +242,7 @@ public class AonExporter extends GenericExporter{
 		//AON CONFIG 
 		map.put("Application","com.code.aon.config.Application");
 		map.put("ApplicationParameter","com.code.aon.config.ApplicationParameter");
+		map.put("ApplicationUser","com.code.aon.config.ApplicationUser");		
 		map.put("Bank","com.code.aon.config.Bank");
 		map.put("CNAE","com.code.aon.config.CNAE");
 		map.put("CNAE2009","com.code.aon.config.CNAE2009");
@@ -327,7 +328,6 @@ public class AonExporter extends GenericExporter{
 
 		//AON-ADMIN   
 		map.put("ApplicationRole","com.code.aon.admin.ApplicationRole");		
-		map.put("ApplicationUser","com.code.aon.admin.ApplicationUser");
 		map.put("ApplicationUserProfile","com.code.aon.admin.ApplicationUserProfile");
 		map.put("Profile","com.code.aon.admin.Profile");
 		map.put("ProfileRole","com.code.aon.admin.ProfileRole");

@@ -32,9 +32,12 @@ public class UserLoookupListener extends ControllerAdapter {
 	private String application;
 	
 	public UserLoookupListener() {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
-    	this.domain = resolver.getDomain();			
-    	this.application = StringUtils.removeStart(UserUtils.getInstance().getPrincipal().getContext(), "/" );
+		setDisabled( AonUtil.isSkipLdap() );
+		if (! isDisabled() ) {
+	    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
+	    	this.domain = resolver.getDomain();			
+	    	this.application = StringUtils.removeStart(UserUtils.getInstance().getPrincipal().getContext(), "/" );			
+		}
 	}
 
 	private boolean isValid( BasicLdap ldap, String user ) {
