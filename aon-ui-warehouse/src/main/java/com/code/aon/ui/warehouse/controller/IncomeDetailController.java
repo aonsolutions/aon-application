@@ -67,6 +67,9 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	}
 
 	public void addIncomeDetailProject(ActionEvent event) throws ManagerBeanException {
+		if(incomeDetail.getProject()!=null && incomeDetail.getProject().getId()==null){
+			incomeDetail.setProject(null);
+		}
 		getManagerBean().update(incomeDetail);
 	}
 

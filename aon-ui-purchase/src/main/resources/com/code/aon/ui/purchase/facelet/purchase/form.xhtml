@@ -213,7 +213,7 @@
 
 				<aon:div id="PurchaseProject">
 					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{purchase.to.project.id != null or (purchase.pending and purchase.projectCount > 0)}"
+						rendered="#{purchase.to.project.id != null or (purchase.pending and purchase.to.supplier.id != null)}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
@@ -226,23 +226,12 @@
 								value="#{tasBundle.tas_projectTas}" />
 						</c:if>
 						<aon:div>
-							<aon:selectOneMenu id="Purchase_project"
-								rendered="#{purchase.pending and purchase.to.project.id == null and purchase.projectCount > 0}"
-								value="#{purchase.to.project}">
-								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{purchase.projects}" />
-							</aon:selectOneMenu>
-							<aon:outputText styleClass="aon-bold"
-								value="#{purchase.to.project.name}" 
-								rendered="#{purchase.to.project.id != null}" />
-							<aon:div layout="inline" styleClass="aon-margin-left">
-								<aon:commandButton id="removePurchaseProject" 
-									value="&#160;" title="#{bundle.aon_remove}" 
-									styleClass="aon-icon-commandButton aon-icon-delete"
-									rendered="#{purchase.pending and purchase.to.project.id != null}"
-									actionListener="#{purchase.removePurchaseProject}" 
-									reRender="purchaseForm" />
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{purchase.to.project}" />
+								<ui:param name="lookupRendered" value="#{purchase.pending}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+							</ui:include>
 						</aon:div>
 
 					</aon:panelGrid>
@@ -373,6 +362,7 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
@@ -381,6 +371,7 @@
 			<ui:param name="detailReRender" value="purchaseDetails" />
 			<aon:methodParam name="detailActionListener" value="#{purchaseDetail.addPurchaseDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseDetail.purchaseDetail.project}" />
+			<ui:param name="showProjectLookup" value="#{true}" />
 			<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
 				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
 			</c:if>

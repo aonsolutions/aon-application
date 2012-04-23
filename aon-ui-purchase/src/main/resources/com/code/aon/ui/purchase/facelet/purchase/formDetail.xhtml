@@ -246,9 +246,9 @@
 					reRender="showProjectWindow">
 					<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 					<f:setPropertyActionListener target="#{purchase.showProjectWindow}"
-						value="#{purchase.pending and purchase.projectCount > 0}" />								
+						value="#{purchase.pending}" />								
 					<f:setPropertyActionListener target="#{purchase.showDetailProjectWindow}"
-						value="#{purchase.pending and purchase.projectCount > 0}" />								
+						value="#{purchase.pending}" />								
 				</aon:commandButton>
 			</aon:column>
 		</ui:define>

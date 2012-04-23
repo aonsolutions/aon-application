@@ -67,7 +67,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class.getName());
 
 	private List<SelectItem> addresses;
-	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
@@ -119,14 +118,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
-	}
-	
-    public List<SelectItem> getProjects() {
-		return projects;
-	}
-	
-	public void setProjects(List<SelectItem> projects) {
-		this.projects = projects;
 	}
 	
 	public Boolean getDefaultPayMethod() {
@@ -307,11 +298,9 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			((Purchase)this.getTo()).setSupplier(supplier);
 			((Purchase)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
-			loadProjects(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
-			setProjects(null);
 		}
 	}
 
@@ -345,52 +334,32 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return 0;
 	}
 	
-	public void loadProjects(Integer id) throws ManagerBeanException {
-		this.projects = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
-			Iterator<?> iterator = projectBean.getList(criteria).iterator();
-			while(iterator.hasNext()) {
-				Project project = (Project)iterator.next();
-				SelectItem item = new SelectItem(project, project.getName());
-				projects.add(item);
-			}
-		}
-	}
-
-	public int getProjectCount() {
-		if (projects != null) {
-			return projects.size();
-		}
-		return 0;
-	}
-	
 	public void removePurchaseProject(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		Project project = to.getProject();
 		to.setProject(null);
 		getManagerBean().restoreNullSubPOJOs(to);
 		getManagerBean().update(to);
 		getManagerBean().initializePOJO(to);
 
+		removePurchaseDetailProject(); 
+	}
+	
+	public void removePurchaseDetailProject() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getManagerBean().get(((Purchase)this.getTo()).getId());
+		Project project = purchase.getProject();
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), to.getId());
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
 		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
 			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
 			purchaseDetail.setProject(null);
 			purchaseDetailBean.update(purchaseDetail);
 		}
-
 		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 		purchaseDetailController.onSearch(null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Purchase)this.getTo()).getPayMethod() != null && ((Purchase)this.getTo()).getPayMethod().getId() != null) {
@@ -402,7 +371,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}

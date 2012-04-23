@@ -234,9 +234,9 @@
 					reRender="showProjectWindow">
 					<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 					<f:setPropertyActionListener target="#{income.showProjectWindow}"
-						value="#{income.pending and income.projectCount > 0}" />								
+						value="#{income.pending}" />								
 					<f:setPropertyActionListener target="#{income.showDetailProjectWindow}"
-						value="#{income.pending and income.projectCount > 0}" />								
+						value="#{income.pending}" />								
 				</aon:commandButton>
 			</aon:column>
 		</ui:define>

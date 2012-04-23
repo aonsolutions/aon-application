@@ -199,36 +199,25 @@
 
 				<aon:div id="IncomeProject">
 					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{income.to.project.id != null or (income.pending and income.projectCount > 0)}"
+						rendered="#{income.to.project.id != null or (income.pending and income.to.supplier.id != null)}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
 						<c:if test="#{!aonConfiguration.bean.income.showTasData}">
-							<aon:outputLabel for="Income_project"
+							<aon:outputLabel for="Project_id"
 								value="#{projectBundle.project_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.income.showTasData}">
-							<aon:outputLabel for="Income_project"
+							<aon:outputLabel for="Project_id"
 								value="#{tasBundle.tas_projectTas}" />
 						</c:if>
 						<aon:div>
-							<aon:selectOneMenu id="Income_project"
-								rendered="#{income.pending and income.to.project.id == null and income.projectCount > 0}"
-								value="#{income.to.project}">
-								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{income.projects}" />
-							</aon:selectOneMenu>
-							<aon:outputText styleClass="aon-bold"
-								value="#{income.to.project.name}" 
-								rendered="#{income.to.project.id != null}" />
-							<aon:div layout="inline" styleClass="aon-margin-left">
-								<aon:commandButton id="removeIncomeProject" 
-									value="&#160;" title="#{bundle.aon_remove}" 
-									styleClass="aon-icon-commandButton aon-icon-delete"
-									rendered="#{income.pending and income.to.project.id != null}"
-									actionListener="#{income.removeIncomeProject}" 
-									reRender="incomeForm" />
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{income.to.project}" />
+								<ui:param name="lookupRendered" value="#{income.pending}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+							</ui:include>
 						</aon:div>
 
 					</aon:panelGrid>
@@ -358,6 +347,7 @@
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
@@ -365,6 +355,7 @@
 			<ui:param name="detailReRender" value="incomeDetails" />
 			<aon:methodParam name="detailActionListener" value="#{incomeDetail.addIncomeDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{incomeDetail.incomeDetail.project}" />
+			<ui:param name="showProjectLookup" value="#{true}" />
 			<c:if test="#{!aonConfiguration.bean.income.showTasData}">
 				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
 			</c:if>

@@ -76,6 +76,9 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	}
 
 	public void addPurchaseDetailProject(ActionEvent event) throws ManagerBeanException {
+		if(purchaseDetail.getProject()!=null && purchaseDetail.getProject().getId()==null){
+			purchaseDetail.setProject(null);
+		}
 		getManagerBean().update(purchaseDetail);
 	}
 

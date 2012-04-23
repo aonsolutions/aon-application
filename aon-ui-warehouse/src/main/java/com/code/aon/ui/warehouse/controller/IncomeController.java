@@ -50,7 +50,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class IncomeController extends BasicController implements IWarehouseConstants {
 
 	private List<SelectItem> addresses;
-	private List<SelectItem> projects;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
@@ -69,14 +68,6 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
-	}
-	
-    public List<SelectItem> getProjects() {
-		return projects;
-	}
-	
-	public void setProjects(List<SelectItem> projects) {
-		this.projects = projects;
 	}
 	
     public Warehouse getWarehouse() {
@@ -217,11 +208,9 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			((Income)this.getTo()).setSupplier(supplier);
 			((Income)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
-			loadProjects(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
-			setProjects(null);
 		}
 	}
 	
@@ -255,47 +244,28 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		return 0;
 	}
 	
-	public void loadProjects(Integer id) throws ManagerBeanException {
-		this.projects = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
-			Iterator<?> iterator = projectBean.getList(criteria).iterator();
-			while(iterator.hasNext()) {
-				Project project = (Project)iterator.next();
-				SelectItem item = new SelectItem(project, project.getName());
-				projects.add(item);
-			}
-		}
-	}
-
-	public int getProjectCount() {
-		if (projects != null) {
-			return projects.size();
-		}
-		return 0;
-	}
-	
 	public void removeIncomeProject(ActionEvent event) throws ManagerBeanException {
 		Income to = (Income)this.getTo();
-		Project project = to.getProject();
 		to.setProject(null);
 		getManagerBean().restoreNullSubPOJOs(to);
 		getManagerBean().update(to);
 		getManagerBean().initializePOJO(to);
 
+		removeIncomeDetailProject(); 
+	}
+	
+	public void removeIncomeDetailProject() throws ManagerBeanException {
+		Income income = (Income)this.getManagerBean().get(((Income)this.getTo()).getId());
+		Project project = income.getProject();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), to.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
 		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
 			IncomeDetail incomeDetail = (IncomeDetail)ito;
 			incomeDetail.setProject(null);
 			incomeDetailBean.update(incomeDetail);
 		}
-
 		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		incomeDetailController.onSearch(null);
 	}

@@ -301,7 +301,7 @@
 
 				<aon:div id="InvoiceProject">
 					<aon:panelGrid columns="2" style="width: 100%;"
-						rendered="#{purchaseInvoice.to.project.id != null or purchaseInvoice.projectCount > 0}"
+						rendered="#{purchaseInvoice.to.project.id != null or purchaseInvoice.to.registry.id != null}"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto">
 
@@ -314,43 +314,12 @@
 								value="#{tasBundle.tas_projectTas}" />
 						</c:if>
 						<aon:div>
-							<aon:selectOneMenu id="Invoice_project_id"
-								rendered="#{!purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}"
-								value="#{purchaseInvoice.to.project}">
-								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{purchaseInvoice.projects}" />
-							</aon:selectOneMenu>
-							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-								<aon:outputLabel styleClass="aon-italic"
-									value="#{projectBundle.project_no_project_linked}"
-									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
-							</c:if>
-							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-								<aon:outputLabel styleClass="aon-italic"
-									value="#{tasBundle.tas_no_projectTas_linked}"
-									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
-							</c:if>
-							<aon:outputText styleClass="aon-bold"
-								value="#{purchaseInvoice.to.project.name}" 
-								rendered="#{purchaseInvoice.to.project.id != null}" />
-							<aon:div layout="inline" styleClass="aon-margin-left">
-								<aon:commandButton id="newInvoiceProject"
-									value="&#160;" title="#{bundle.aon_reset}"
-									styleClass="aon-icon-commandButton aon-icon-reset"
-									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}"
-									reRender="showProjectWindow">
-									<f:setPropertyActionListener target="#{purchaseInvoice.showProjectWindow}"
-										value="#{true}" />								
-									<f:setPropertyActionListener target="#{purchaseInvoice.showDetailProjectWindow}"
-										value="#{false}" />								
-								</aon:commandButton>
-								<aon:commandButton id="removeInvoiceProject" 
-									value="&#160;" title="#{bundle.aon_remove}" 
-									styleClass="aon-icon-commandButton aon-icon-delete"
-									rendered="#{purchaseInvoice.to.project.id != null}"
-									actionListener="#{purchaseInvoice.removeInvoiceProject}" 
-									reRender="purchaseInvoiceForm" />
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{purchaseInvoice.to.project}" />
+								<ui:param name="lookupRendered" value="#{!purchaseInvoice.readOnly}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+							</ui:include>
 						</aon:div>
 
 					</aon:panelGrid>
@@ -423,6 +392,7 @@
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
@@ -436,6 +406,7 @@
 			<ui:param name="detailReRender" value="invoiceDetails" />
 			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
 			<ui:param name="detailValue" value="#{purchaseInvoiceDetail.invoiceDetail.project}" />
+			<ui:param name="showProjectLookup" value="#{true}" />
 			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
 				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
 			</c:if>
