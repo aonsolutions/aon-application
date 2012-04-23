@@ -31,6 +31,19 @@
 		</params>
 	</report>
 
+	<!--  *********  Reservation ********* -->
+	<report id="reservationList" description="Reservation list Report">
+		<template path="/com/esferalia/aon/ui/pms/report/reservationList.jasper" />
+		<bean key="com.esferalia.aon.pms.ProjectReservation" />
+		<criteria provider="#{reservation}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+
 	<!--  *********  Reservation Input Output  ********* -->
 	<report id="reservationIO" description="Reservation input-output Report">
 		<template path="/com/esferalia/aon/ui/pms/report/reservationInputOuput.jasper" />
