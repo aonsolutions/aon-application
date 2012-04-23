@@ -302,7 +302,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.setOperationName(RESERVATION_BOOKING_REQUEST);
 		operation.addNewReservationRequestType().setReservationRequestType(ReservationRequestType2.INITIATE);
 		operation.addNewReservationTransaction().setReservationTransactionType(ReservationTransactionType.NEW);
-		operation.getReservationTransaction().setActionCode(ActionCode.IS);
+		operation.getReservationTransaction().setActionCode(ActionCode.SS);
 		operation.getReservationTransaction().addNewReservation().setReservationOriginatorCode(GP);
 		operation.getReservationTransaction().getReservation().setExternalWebCode(GP);
 		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(request.getHotel().getCode());
@@ -404,7 +404,6 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
 		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -420,7 +419,6 @@ System.out.println(document.toString());
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println(hitisDocument.getHITISMessage());
 			return obtainReservationId(hitisDocument.getHITISMessage(), availableRoomStay);
 		} catch (Exception ex) {
 			availableRoomStay.setError(true);
