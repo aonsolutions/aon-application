@@ -174,7 +174,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{taxQuota}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-12" isPrintRepeatedValues="false" x="434" y="0" width="80" height="12" isPrintInFirstWholeBand="true"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -187,7 +187,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($P{purchase},$P{purchase}.getSupplier()))]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-13" x="34" y="0" width="107" height="12"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

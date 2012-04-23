@@ -22,14 +22,16 @@
 						actionListener="#{purchasePrint.onInitSendEmail}"
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
-					</aon:commandButton>											
-					<aon:htmlCommandLink id="purchasePrint-report"
-						value="#{purchaseBundle.purchase_module}" target="_blank"
-						action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf"
-						accesskey="#{bundle.aon_key_print}">
-						<f:param name="reportKey" value="purchasePrint" />
-					</aon:htmlCommandLink>
+					</aon:commandButton>	
+					<c:if test="#{aonRole.purchaseOperator}">										
+						<aon:htmlCommandLink id="purchasePrint-report"
+							value="#{purchaseBundle.purchase_module}" target="_blank"
+							action="#{report.onExecute}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf"
+							accesskey="#{bundle.aon_key_print}">
+							<f:param name="reportKey" value="purchasePrint" />
+						</aon:htmlCommandLink>
+					</c:if>
 				</ui:define>				
 				
 			</ui:decorate>
