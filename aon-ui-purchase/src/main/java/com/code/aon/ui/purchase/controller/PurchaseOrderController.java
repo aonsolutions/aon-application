@@ -325,7 +325,8 @@ public class PurchaseOrderController {
 		pur.setWorkPlace(workPlace);
 		pur.setIssueDate(new Date());
 		pur.setStatus(PurchaseStatus.PENDING);
-		pur.setRegistryAddress(workPlace.getAddress());
+		pur.setRegistryAddress(supplier.getRegistry().getDefaultAddress());
+		pur.setSecurityLevel(SecurityLevel.OFFICIAL);
 		String serie = obtainWorkPlaceSerie(workPlace);
 		pur.setSeries(serie);
 		pur.setNumber(obtainSeriesMaxNumber(serie));

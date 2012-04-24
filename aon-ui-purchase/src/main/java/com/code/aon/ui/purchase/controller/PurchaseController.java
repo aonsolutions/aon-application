@@ -347,14 +347,16 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void removePurchaseDetailProject() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getManagerBean().get(((Purchase)this.getTo()).getId());
 		Project project = purchase.getProject();
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
-		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
-			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
-			purchaseDetail.setProject(null);
-			purchaseDetailBean.update(purchaseDetail);
+		if(project!=null && project.getId()!=null ){
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
+			for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+				purchaseDetail.setProject(null);
+				purchaseDetailBean.update(purchaseDetail);
+			}
 		}
 		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 		purchaseDetailController.onSearch(null);

@@ -5,8 +5,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:param name="lookupInputValue" value="#{lookupTo.id}"/>
-	<ui:param name="lookupInputSuggestValue" value="#{lookupTo.code}"/>
-	<ui:param name="lookupInputSuggestExpression" value="#{lto.code}  (#{lto.hotel.workPlace.description})"/>
+	<ui:param name="lookupInputSuggestValue" value="#{lookupTo.code} #{lookupTo.startDate}  #{lookupTo.endDate} #{lookupTo.guestFullName} "/>
+	<ui:param name="lookupInputSuggestExpression" value="#{lto.code} (#{lto.hotel.workPlace.description}) (#{lto.startDate} - #{lto.endDate}) #{lto.guestFullName}"/>
 		
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{reservationLookup}" />

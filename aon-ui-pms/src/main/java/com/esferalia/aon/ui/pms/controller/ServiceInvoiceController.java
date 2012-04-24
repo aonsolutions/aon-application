@@ -12,6 +12,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,23 +34,42 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
-import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
+import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 
 public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
 	private ReservationInvoiceTo reservationInvoiceTo;
 	private boolean showRectificationWindow;
 	private Invoice invoiceToRectificate;
+	private ProjectReservation projectReservation;
+	
+	private IControllerListener activeReservationFilter;
+	
+	public ProjectReservation getProjectReservation() {
+		return projectReservation;
+	}
+
+	public void setProjectReservation(ProjectReservation projectReservation) {
+		this.projectReservation = projectReservation;
+	}
 
 	public ReservationInvoiceTo getReservationInvoiceTo() {
 		return reservationInvoiceTo;
@@ -73,7 +94,40 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	public void setInvoiceToRectificate(Invoice invoiceToRectificate) {
 		this.invoiceToRectificate = invoiceToRectificate;
 	}
+	
+	public IControllerListener getActiveReservationFilter() {
+		if ( this.activeReservationFilter == null ) {
+			this.activeReservationFilter = new ControllerAdapter() {
+				@Override
+				public void beforeModelSearched(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					try {					
+						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
+						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+						controller.getCriteria().addLessThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+						controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering reservation", e);
+					}
+				}
+			};
+		}
+		return this.activeReservationFilter;
+	}
 
+	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
+		setReservationInvoiceTo(new ReservationInvoiceTo());
+		fillInvoiceData();
+		ProjectReservation reservation = (ProjectReservation)event.getNewValue();
+		if( reservation != null && reservation.getId() != null ){
+			getReservationInvoiceTo().setHotel(reservation.getHotel());
+			fillHotelData();
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+			onNewService(null);
+		}
+	}
+	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
@@ -84,6 +138,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	public void onReset(ActionEvent event) {
 		setNew(true);
 		try {
+			setProjectReservation((ProjectReservation) BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
 			setReservationInvoiceTo(new ReservationInvoiceTo());
 			fillInvoiceData();
 		} catch (ManagerBeanException ex) {
@@ -158,10 +213,18 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		if (getReservationInvoiceTo().getHotel() != null) {
 			IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 			Criteria criteria = new Criteria();
-			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
-			criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getId());
-			alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
-			criteria.addEqualExpression(alias, getReservationInvoiceTo().getIssueDate());
+			String alias = null;
+			if (getProjectReservation() != null & getProjectReservation().getId() != null) {
+				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID);
+				criteria.addEqualExpression(alias, getProjectReservation().getId());
+				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
+				criteria.addEqualExpression(alias, DateUtils.addDays(getProjectReservation().getEndDate(),-1));
+			} else {
+				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID);
+				criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getId());
+				alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
+				criteria.addEqualExpression(alias, getReservationInvoiceTo().getIssueDate());
+			}
 			criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_ASSET_NAME));
 			for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
 				ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)ito;

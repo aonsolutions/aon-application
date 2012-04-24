@@ -257,14 +257,16 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	public void removeIncomeDetailProject() throws ManagerBeanException {
 		Income income = (Income)this.getManagerBean().get(((Income)this.getTo()).getId());
 		Project project = income.getProject();
-		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
-		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
-			IncomeDetail incomeDetail = (IncomeDetail)ito;
-			incomeDetail.setProject(null);
-			incomeDetailBean.update(incomeDetail);
+		if(project!=null && project.getId()!=null ){
+			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+			criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
+			for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
+				IncomeDetail incomeDetail = (IncomeDetail)ito;
+				incomeDetail.setProject(null);
+				incomeDetailBean.update(incomeDetail);
+			}
 		}
 		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		incomeDetailController.onSearch(null);
