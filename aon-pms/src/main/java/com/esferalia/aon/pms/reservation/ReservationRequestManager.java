@@ -98,7 +98,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.setOperationType(OperationType.AVAILABILITY);
 		operation.setAvailabilityOriginatorCode(GP);
 		operation.addNewAvailabilityQuery();
-		operation.getAvailabilityQuery().setExternalWebCode(GP);
+		operation.getAvailabilityQuery().setExternalWebCode(GPS);
 		operation.getAvailabilityQuery().addNewHotelReference().setHotelCode(request.getHotel().getCode());
 		operation.getAvailabilityQuery().addNewStayDateRange().addNewDateTimeSpan();
 		operation.getAvailabilityQuery().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
@@ -304,7 +304,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.addNewReservationTransaction().setReservationTransactionType(ReservationTransactionType.NEW);
 		operation.getReservationTransaction().setActionCode(ActionCode.SS);
 		operation.getReservationTransaction().addNewReservation().setReservationOriginatorCode(GP);
-		operation.getReservationTransaction().getReservation().setExternalWebCode(GP);
+		operation.getReservationTransaction().getReservation().setExternalWebCode(GPS);
 		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(request.getHotel().getCode());
 		operation.getReservationTransaction().getReservation().addNewStayDateRange().addNewDateTimeSpan();
 		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);

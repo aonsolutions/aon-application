@@ -45,6 +45,7 @@ public interface IReservationConstants {
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";
 	String EXT = "EXT";
+	String GPS = "GPS";
 	String GP = "GP";
 	String ES = "ES";
 	String TR = "TR";
