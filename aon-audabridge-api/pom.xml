@@ -21,7 +21,7 @@
 						</goals>
 						<configuration>
 							<wsdlUrls>
-								<wsdlUrl>http://preprod.audabridge.audatex.es/AudaBridge/services/AudaBridge?wsdl</wsdlUrl>
+								<wsdlUrl>http://audabridge.audatex.es/AudaBridge/services/AudaBridge?wsdl</wsdlUrl>
 							</wsdlUrls>
 							<packageName>com.code.aon.audabridge</packageName>
 						</configuration>
