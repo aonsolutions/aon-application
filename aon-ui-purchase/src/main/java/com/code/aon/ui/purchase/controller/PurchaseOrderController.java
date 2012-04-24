@@ -4,7 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -272,7 +275,7 @@ public class PurchaseOrderController {
 				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkPlace());
+						Purchase purchase = createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment());
 						addToPurchaseCriteria(purchase);
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
@@ -311,7 +314,7 @@ public class PurchaseOrderController {
 			purchasePrintcriteria.addOrExpression("purchase.id", purchase.getId().toString());
 		}
 	}
-	private Purchase createPurchase(Supplier supplier, WorkPlace workPlace) throws ManagerBeanException {
+	private Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		Purchase pur = new Purchase();
 		pur.setNumberOfPayments(1);
@@ -327,6 +330,9 @@ public class PurchaseOrderController {
 		pur.setSeries(serie);
 		pur.setNumber(obtainSeriesMaxNumber(serie));
 		pur.setScope(supplier.getScope());
+	    Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	    ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", locale); 
+		pur.setComments(bundle.getString("company_department") +": "+ department.getName());
 		return (Purchase) bean.insert(pur);
 	}
 	private void insertPurchaseDetail(Purchase pur, ProposalDetail proposalDetail) throws ManagerBeanException {

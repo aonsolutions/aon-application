@@ -39,6 +39,7 @@
 	<field name="securityLevel" class="com.code.aon.common.enumeration.SecurityLevel"/>
 	<field name="status" class="com.code.aon.warehouse.enumeration.DeliveryStatus"/>
 	<field name="referenceCode" class="java.lang.String"/>
+	<field name="comments" class="java.lang.String"/>
 	<variable name="currentPurchase" class="com.code.aon.purchase.Purchase">
 		<variableExpression><![CDATA[(com.code.aon.purchase.Purchase)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -522,6 +523,27 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{purchase_text_financial1}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-112" x="1" y="135" width="69" height="23"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_comments}+ ":"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-113" x="70" y="135" width="467" height="23"/>
+				<box leftPadding="3" bottomPadding="2">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
