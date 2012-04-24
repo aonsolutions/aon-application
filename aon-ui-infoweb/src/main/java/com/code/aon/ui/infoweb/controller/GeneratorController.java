@@ -18,8 +18,10 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import javax.faces.event.ActionEvent;
 
@@ -97,6 +99,24 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private Properties properties;
 	
+	private Map<String, ApplicationParameter> parameters;
+	
+	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
+		loadParameters();	
+		return parameters.get(key); 		
+	}
+	
+	private void loadParameters() throws ManagerBeanException{
+		parameters = new TreeMap<String, ApplicationParameter>();
+		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		List<ITransferObject> list = managerBean.getList(null);
+		Iterator<ITransferObject> iter = list.iterator();
+		while (iter.hasNext()) {
+			ApplicationParameter appParam = (ApplicationParameter) iter.next();
+			parameters.put(appParam.getName(), appParam);
+		}
+	}
+	
 	public GeneratorController() {
 		this.properties = FTPUtil.getProperties(PathUtil.getWebInfoProperties(), DEFAULT_FTP_PROPERTIES);
 		this.previewPage = "http://preview." + getDomain() + "/";
@@ -111,8 +131,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		String template = DEFAULT_TEMPLATE;
 		//Obtenemos el template seleccionado
 		try {
-			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(TEMPLATE_NAME_PARAM);
+			ApplicationParameter ap = getParameter(TEMPLATE_NAME_PARAM);
 			if ( ap != null ) {
 				template = ap.getValue();				
 			}
@@ -130,8 +149,9 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private int getHomepage() {
 		int homepage = 0;
 		try {
-			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
+//			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
+//			ApplicationParameter ap = (ApplicationParameter) apBean.get(HOMEPAGE_NAME_PARAM);
+			ApplicationParameter ap = getParameter(HOMEPAGE_NAME_PARAM);
 			if ( ap != null ) {
 				homepage = Integer.parseInt(ap.getValue());				
 			}
