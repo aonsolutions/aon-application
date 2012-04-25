@@ -19,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddInfo;
@@ -167,7 +168,6 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setLanguageID(ES);
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -185,7 +185,7 @@ System.out.println(document.toString());
 
 	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
 			MessageFactory messageFactory = MessageFactory.newInstance();
 			SOAPMessage soapRequest = messageFactory.createMessage();
 			soapRequest.getSOAPBody().setValue(convertMessage(message));
@@ -195,13 +195,22 @@ System.out.println(document.toString());
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println(hitisDocument.getHITISMessage());
 			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage(), availableRoomStayList);
 		} catch (Exception ex) {
 			AvailableRoomStay availableRoomStay = new AvailableRoomStay();
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			availableRoomStayList.add(availableRoomStay);
+		}
+		return null;
+	}
+
+	private String obtainSoapServerUrl() throws ManagerBeanException {
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), SOAP_SERVER_URL);
+		for (ITransferObject ito : appParamBean.getList(criteria)) {
+			return ((ApplicationParameter)ito).getValue();
 		}
 		return null;
 	}
@@ -411,13 +420,12 @@ System.out.println(hitisDocument.getHITISMessage());
 		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
 		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
 	private AvailableRoomStay sendBookingQuery(String message, AvailableRoomStay availableRoomStay) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
 			MessageFactory messageFactory = MessageFactory.newInstance();
 			SOAPMessage soapRequest = messageFactory.createMessage();
 			soapRequest.getSOAPBody().setValue(convertMessage(message));
@@ -427,7 +435,6 @@ System.out.println(document.toString());
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println(hitisDocument.getHITISMessage());
 			return obtainReservationId(hitisDocument.getHITISMessage(), availableRoomStay);
 		} catch (Exception ex) {
 			availableRoomStay.setError(true);
@@ -496,13 +503,12 @@ System.out.println(hitisDocument.getHITISMessage());
 		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setDuration(nights);
 		operation.getReservationTransaction().getReservation().setReservationID(reservation.getCrsCode());
 		message.getBody().setHITISOperationAbstract(operation);
-System.out.println(document.toString());
 		return document.toString();
 	}
 
 	private boolean sendBookingCancelQuery(String message) {
 		try {
-			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			Endpoint endpoint = new URLEndpoint(new URL(obtainSoapServerUrl()).toString());
 			MessageFactory messageFactory = MessageFactory.newInstance();
 			SOAPMessage soapRequest = messageFactory.createMessage();
 			soapRequest.getSOAPBody().setValue(convertMessage(message));
@@ -512,7 +518,6 @@ System.out.println(document.toString());
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-System.out.println(hitisDocument.getHITISMessage());
 			return obtainCancellationResult(hitisDocument.getHITISMessage());
 		} catch (Exception ex) {
 			return false;
