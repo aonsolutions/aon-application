@@ -367,14 +367,6 @@ System.out.println(hitisDocument.getHITISMessage());
 			}
 		}
 
-		if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
-			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
-			if (code != null) {
-				operation.getReservationTransaction().getReservation().addNewResProfiles().addNewResProfile().addNewCustProfileCreateRQ().addNewCustProfile().
-					addNewAffiliations().addNewEmployer().addNewEmployerName().addNewCompanyName().setCompanyCode(code);
-			}
-		}
-
 		CustProfile custProfile = CustProfile.Factory.newInstance();
 		custProfile.addNewCustomer();
 		custProfile.getCustomer().addNewPersonName();
@@ -400,6 +392,12 @@ System.out.println(hitisDocument.getHITISMessage());
 			}
 			if (StringUtils.isNotEmpty(requestGuest.getCountry())) {
 				custProfile.getCustomer().getCustAddressArray(0).getAddress().addNewCountryName().setStringValue(requestGuest.getCountry());
+			}
+		}
+		if (request.isCompanyHolder() && request.getCompany() != null && request.getCompany().getId() != null) {
+			String code = getReservationUtils().obtainCustomerCode(request.getCompany(), REQRES);
+			if (code != null) {
+				custProfile.addNewAffiliations().addNewEmployer().addNewEmployerName().addNewCompanyName().setCompanyCode(code);
 			}
 		}
 		ResProfile resProfile = ResProfile.Factory.newInstance();
