@@ -21,10 +21,13 @@ public abstract class BasicRoleManager {
 	/** The Constant USER_IN_ROLE. */
 	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
-	private boolean admin;
+	private boolean[] roles;
+	
+	private boolean admin;	
 	
 	public BasicRoleManager() {
-		this.admin = isUserInRole(IAonRole.ADMIN);
+		this.roles = new boolean[IAonRole.values().length];
+		init();	
 	}
 
 	/**
@@ -33,7 +36,24 @@ public abstract class BasicRoleManager {
 	 * @return TRUE if user has role, false otherwise.
 	 */
 	public abstract boolean isUserInRole(String role);
+	
+	public void init() {
+		int i = 0;
+		for( IAonRole role : IAonRole.values() ) {
+			roles[i++] = isUserInRole(role.getName());
+		}
+		this.admin = isUserInRole(IAonRole.ADMIN);
+	}
 
+	/**
+	 * @param role
+	 *            The Role
+	 * @return TRUE if user has role, false otherwise.
+	 */
+	public boolean isUserInRole(IAonRole role) {
+		return this.roles[role.ordinal()];
+	}
+	
 	/**
 	 * @return TRUE if user has IAonRole.USER role, false otherwise.
 	 */

@@ -11,11 +11,7 @@ import javax.faces.context.FacesContext;
  */
 public class RoleManager extends BasicRoleManager {
 	
-	/**
-	 * @param role
-	 *            The Role
-	 * @return TRUE if user has role, false otherwise.
-	 */
+	@Override
 	public boolean isUserInRole(String role) {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		return ec.isUserInRole(role);
