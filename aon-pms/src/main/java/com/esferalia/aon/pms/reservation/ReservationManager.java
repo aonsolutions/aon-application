@@ -149,7 +149,7 @@ public class ReservationManager implements IReservationConstants {
 				cancelReservation(reservation);
 				return reservation;
 			} else if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-				throw new ReservationException("Reservation already cancelled", reservation.getCrsCode(), 95);
+				return reservation;
 			} else {
 				throw new ReservationException("Reservation in use, can not be cancelled", reservation.getCrsCode(), 255);
 			}

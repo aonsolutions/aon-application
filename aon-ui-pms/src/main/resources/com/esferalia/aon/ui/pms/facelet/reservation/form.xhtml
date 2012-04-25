@@ -35,7 +35,6 @@
 							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
 							confirmActionListener="#{reservation.onCancelReservation}" />
 					</c:if>
-					
 					<aon:confirmButton id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}"
 						title="#{pmsBundle.pms_no_show}"
@@ -44,7 +43,6 @@
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{pmsBundle.pms_no_show_confirm}"
 						confirmActionListener="#{reservation.onNoShow}" />
-					
 					<aon:commandButton id="reservation-divert"
 						value="#{pmsBundle.pms_divert_reservation}"
 						immediate="true" rendered="#{!reservation.cancelled and !reservation.pendingDivert and !reservation.new}"

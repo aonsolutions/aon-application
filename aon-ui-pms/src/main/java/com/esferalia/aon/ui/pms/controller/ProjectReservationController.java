@@ -57,6 +57,7 @@ import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 
@@ -481,13 +482,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		cancelReservation(event, true);
 	}
 	
-	public void onNoShowRollBack(ActionEvent event) throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		reservation.setNoShow(false);
-		reservation.setStatus(ReservationStatus.ACTIVE);
-		accept(event);
-	}
-
 	private void cancelReservation(ActionEvent event, boolean noShow) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 
@@ -504,7 +498,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setNoShow(noShow);
 		accept(event);
 
-    	IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
+		ReservationRequestManager requestManager = new ReservationRequestManager();
+		requestManager.processBookingCancelRequest(reservation);
+
+		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
     	reservationRoomController.onSearch(event);
 		IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);

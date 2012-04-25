@@ -503,7 +503,16 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public String getRequestMessageId(ReservationRequest request) {
-		String messageId = PLS + StringUtils.leftPad(""+request.getId(), 8, "0") + StringUtils.leftPad(""+(request.getRequestCounter()+1), 3, "0");
+		return getRequestMessageId(request, 1);
+	}
+
+	public String getRequestMessageId(ReservationRequest request, int page) {
+		String messageId = PLS + page + StringUtils.leftPad(""+request.getId(), 8, "0") + StringUtils.leftPad(""+(request.getRequestCounter()+1), 2, "0");
+		return messageId;
+	}
+
+	public String getRequestMessageId(ProjectReservation reservation) {
+		String messageId = PLS + "0" + StringUtils.leftPad(""+reservation.getId(), 8, "0") + StringUtils.leftPad(""+(int)Math.floor(Math.random()*100), 2, "0");
 		return messageId;
 	}
 

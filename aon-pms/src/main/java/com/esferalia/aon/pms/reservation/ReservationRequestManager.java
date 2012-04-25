@@ -23,6 +23,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddInfo;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
@@ -71,16 +72,22 @@ public class ReservationRequestManager implements IReservationConstants {
 		getReservationUtils().init();
 		getReservationUtils().setDomain(requestRoom.getReservationRequest().getHotel().getDomain());
 		try {
-			return sendAvailabilityQuery(createAvailabilityMessage(requestRoom));
+			List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
+			String pagingKey = null;
+			int page = 0;
+			do {
+				pagingKey = sendAvailabilityQuery(createAvailabilityMessage(requestRoom, ++page), availableRoomStayList);
+			} while (StringUtils.isNotEmpty(pagingKey) && page<9);
+			return availableRoomStayList;
 		} catch (Exception ex) {
 			return null;
 		}
 	}
 
-	private String createAvailabilityMessage(ReservationRequestRoom requestRoom) throws ManagerBeanException {
+	private String createAvailabilityMessage(ReservationRequestRoom requestRoom, int page) throws ManagerBeanException {
 		ReservationRequest request = requestRoom.getReservationRequest();
 
-		setMessageId(getReservationUtils().getRequestMessageId(request));
+		setMessageId(getReservationUtils().getRequestMessageId(request, page));
 		Calendar startInstant = Calendar.getInstance();
 		startInstant.setTime(request.getStartDate());
 		String nights = "+0000-00-" + StringUtils.leftPad(""+request.getNights(), 2, "0") + "T00:00:00";
@@ -160,6 +167,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getAvailabilityQuery().setLanguageID(ES);
 		operation.addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
+System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -175,7 +183,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		return rAddInfoList;
 	}
 
-	private List<AvailableRoomStay> sendAvailabilityQuery(String message) {
+	private String sendAvailabilityQuery(String message, List<AvailableRoomStay> availableRoomStayList) {
 		try {
 			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
 			MessageFactory messageFactory = MessageFactory.newInstance();
@@ -185,17 +193,17 @@ public class ReservationRequestManager implements IReservationConstants {
 			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
-		
+
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
-			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage());
+System.out.println(hitisDocument.getHITISMessage());
+			return obtainAvailableRoomStayList(hitisDocument.getHITISMessage(), availableRoomStayList);
 		} catch (Exception ex) {
-			List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
 			AvailableRoomStay availableRoomStay = new AvailableRoomStay();
 			availableRoomStay.setError(true);
 			availableRoomStay.setErrorMessage(ex.getMessage());
 			availableRoomStayList.add(availableRoomStay);
-			return availableRoomStayList;
 		}
+		return null;
 	}
 
 	private String convertMessage(String message) {
@@ -205,8 +213,8 @@ public class ReservationRequestManager implements IReservationConstants {
 		return value;
 	}
 
-	private List<AvailableRoomStay> obtainAvailableRoomStayList(HITISMessage message) {
-		List<AvailableRoomStay> availableRoomStayList = new LinkedList<AvailableRoomStay>();
+	private String obtainAvailableRoomStayList(HITISMessage message, List<AvailableRoomStay> availableRoomStayList) {
+		String pagingKey = null;
 		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
 			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
 			if (operation.getErrors() != null && operation.getErrors().sizeOfErrorArray() > 0) {
@@ -246,9 +254,10 @@ public class ReservationRequestManager implements IReservationConstants {
 						availableRoomStayList.add(availableRoomStay);
 					}
 				}
+				pagingKey = operation.getAvailabilitySummaryResponses().getAvailabilitySummaryResponse().getPagingKey();
 			}
 		}
-		return availableRoomStayList;
+		return pagingKey;
 	}
 
 	private double parseDouble(String value) {
@@ -404,6 +413,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
 		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);
+System.out.println(document.toString());
 		return document.toString();
 	}
 
@@ -419,6 +429,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
 		
 			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+System.out.println(hitisDocument.getHITISMessage());
 			return obtainReservationId(hitisDocument.getHITISMessage(), availableRoomStay);
 		} catch (Exception ex) {
 			availableRoomStay.setError(true);
@@ -447,6 +458,75 @@ public class ReservationRequestManager implements IReservationConstants {
 			}
 		}
 		return availableRoomStay;
+	}
+
+
+	public boolean processBookingCancelRequest(ProjectReservation reservation) {
+		getReservationUtils().init();
+		getReservationUtils().setDomain(reservation.getHotel().getDomain());
+		try {
+			return sendBookingCancelQuery(createBookingCancelMessage(reservation));
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	private String createBookingCancelMessage(ProjectReservation reservation) throws ManagerBeanException {
+		setMessageId(getReservationUtils().getRequestMessageId(reservation));
+		Calendar startInstant = Calendar.getInstance();
+		startInstant.setTime(reservation.getStartDate());
+		String nights = "+0000-00-" + StringUtils.leftPad(""+reservation.getNights(), 2, "0") + "T00:00:00";
+
+		HITISMessageDocument document = HITISMessageDocument.Factory.newInstance();
+		HITISMessage message = document.addNewHITISMessage();
+
+		message.addNewHeader();
+		message.getHeader().setMessageID(getMessageId());
+		message.getHeader().setOriginalMessageID(getMessageId());
+
+		message.addNewBody();
+		HITISOperationType operation = HITISOperationType.Factory.newInstance();
+		operation.setOperationName(RESERVATION_BOOKING_REQUEST);
+		operation.addNewReservationRequestType().setReservationRequestType(ReservationRequestType2.INITIATE);
+		operation.addNewReservationTransaction().setReservationTransactionType(ReservationTransactionType.CANCEL);
+		operation.getReservationTransaction().setActionCode(ActionCode.SS);
+		operation.getReservationTransaction().addNewReservation().setReservationOriginatorCode(GP);
+		operation.getReservationTransaction().getReservation().setExternalWebCode(GPS);
+		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(reservation.getHotel().getCode());
+		operation.getReservationTransaction().getReservation().addNewStayDateRange().addNewDateTimeSpan();
+		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
+		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setDuration(nights);
+		operation.getReservationTransaction().getReservation().setReservationID(reservation.getCrsCode());
+		message.getBody().setHITISOperationAbstract(operation);
+System.out.println(document.toString());
+		return document.toString();
+	}
+
+	private boolean sendBookingCancelQuery(String message) {
+		try {
+			Endpoint endpoint = new URLEndpoint(new URL(SOAP_SERVER_URL).toString());
+			MessageFactory messageFactory = MessageFactory.newInstance();
+			SOAPMessage soapRequest = messageFactory.createMessage();
+			soapRequest.getSOAPBody().setValue(convertMessage(message));
+
+			SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+			SOAPConnection soapConnection = soapConnectionFactory.createConnection();
+			SOAPMessage soapResponse = soapConnection.call(soapRequest, endpoint);
+		
+			HITISMessageDocument hitisDocument = HITISMessageDocument.Factory.parse(soapResponse.getSOAPBody().extractContentAsDocument());
+System.out.println(hitisDocument.getHITISMessage());
+			return obtainCancellationResult(hitisDocument.getHITISMessage());
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	private boolean obtainCancellationResult(HITISMessage message) {
+		if (message.getHeader().getOriginalMessageID().equals(getMessageId())) {
+			HITISOperationType operation = (HITISOperationType)message.getBody().getHITISOperationAbstract();
+			return (operation.getErrors() == null || operation.getErrors().sizeOfErrorArray() == 0);
+		}
+		return false;
 	}
 
 }
