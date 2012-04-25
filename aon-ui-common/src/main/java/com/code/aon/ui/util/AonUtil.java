@@ -1,5 +1,6 @@
 package com.code.aon.ui.util;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
 
@@ -209,9 +210,8 @@ public class AonUtil {
 	 * @return the remote user
 	 */
 	public static boolean isUserInRole(String role) {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExternalContext ec = ctx.getExternalContext();
-		return ec.isUserInRole(role);
+		RoleManager rm = (RoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
+		return rm.isUserInRole(role);
 	}
 
 	/**

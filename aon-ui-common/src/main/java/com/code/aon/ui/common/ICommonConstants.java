@@ -64,6 +64,9 @@ public interface ICommonConstants {
 	
 	/** The domainResolver controller. */
 	String DOMAIN_RESOLVER_CONTROLLER_NAME = "domainResolver";
+
+	/** The aonRole controller. */
+	String AON_ROLE_CONTROLLER_NAME = "aonRole";
 	
 	// ************************************************************
 	// CONFIGURATION

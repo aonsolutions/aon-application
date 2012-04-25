@@ -1,11 +1,8 @@
 package com.code.aon.ui.common.controller;
 
-import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import javax.faces.context.FacesContext;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,9 +34,6 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	
 	/** The principal. */
 	private AuthPrincipal principal;
-	
-	/** The Constant USER_IN_ROLE. */
-	private static final FakeMap USER_IN_ROLE = new FakeMap();
 	
 	/**
 	 * Instantiates a new logged user.
@@ -184,49 +178,12 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	}
 
 	/**
-	 * Gets the user in role.
-	 *
-	 * @return the user in role
-	 */
-	public FakeMap getUserInRole() {
-		return USER_IN_ROLE;
-	}
-
-	/**
 	 * Gets the principal.
 	 *
 	 * @return the principal
 	 */
 	public AuthPrincipal getPrincipal() {
 		return principal;
-	}
-
-	/**
-	 * The Class FakeMap.
-	 */
-	private static class FakeMap extends AbstractMap<String,Boolean> {
-		
-		@Override
-		public Set<java.util.Map.Entry<String, Boolean>> entrySet() {
-			return null;
-		}
-		
-		@Override
-		public Boolean get(Object key) {
-			if ( key != null ) {
-				String value = key.toString();
-				String[] roles = StringUtils.split(value, ", " );
-				FacesContext ctx = FacesContext.getCurrentInstance();
-				for( String role : roles ) {
-					if ( ctx.getExternalContext().isUserInRole(role) ) {
-						return Boolean.TRUE;
-					}
-				}				
-			}
-			return Boolean.FALSE;
-		}
-
-		
 	}
 	
 }

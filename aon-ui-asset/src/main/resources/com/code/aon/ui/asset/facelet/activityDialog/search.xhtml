@@ -53,10 +53,10 @@
 						popupDateFormat="#{assetBundle.aon_date_pattern}" inputSize="8"
 						value="#{activityBasicSearchListener.toDate}" enableManualInput="true"/>
 				
-					<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+					<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{aonRole.userInRole['Administrador']}">
 						<aon:outputLabel for="AssetActivity_who" value="#{assetBundle.asset_activity_who}" />
 					</aon:div>
-						<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Administrador">
+						<aon:div styleClass="aon-sidebarIcons-icon" rendered="#{aonRole.userInRole['Administrador']}">
 							<aon:selectOneMenu id="AssetActivity_who"
 								value="#{activityBasic.who}">
 								<f:selectItem itemLabel="-" itemValue="none"  />

@@ -27,8 +27,6 @@ public class ComponentManager {
 
 	private static final String DISABLED_STYLE_CLASS = "disabledStyleClass";		
 	
-	private static final String RENDERED_ON_USER_ROLE = "renderedOnUserRole";
-	
 	private static final String SELECT_INPUT_DATE_STYLE_CLASS = "inputClass";
 	
     private final static Logger LOGGER = LoggerFactory.getLogger(ComponentManager.class);
@@ -93,7 +91,6 @@ public class ComponentManager {
 			}			
 		}
 		set.ignore(DISABLED_STYLE_CLASS);
-		set.ignore(RENDERED_ON_USER_ROLE);
 	}
 	
 	public static String getInputStyleClass( UIComponent c ) {
@@ -119,23 +116,6 @@ public class ComponentManager {
 		}
 	}		
 	
-	private void updateRendered(Tag tag, FaceletContext ctx, UIComponent c) {
-		if ( c.isRendered() ) {
-			TagAttribute rolesTag = FaceletUtil.getAttribute(tag, RENDERED_ON_USER_ROLE);
-			if ( rolesTag != null ) {
-				boolean rendered = false;
-				String[] roles = StringUtils.split(rolesTag.getValue(ctx), ", " );
-				for( String role : roles ) {
-					if ( ctx.getFacesContext().getExternalContext().isUserInRole(role) ) {
-						rendered = true;
-						break;
-					}
-				}
-				c.setRendered(rendered);
-			}
-		}
-	}
-	
 	private void updateComponent(FaceletContext ctx, UIComponent c, UIComponent parent) {
 		ComponentGroup componentGroup = ComponentGroup.getComponentGroup(ctx, c);
 		if ( componentGroup != null ) {
@@ -150,7 +130,6 @@ public class ComponentManager {
 				attribute.update( tag, ctx, component );
 			}
 		}
-		updateRendered(tag, ctx, component);
 		updateDisabledStyleClass(tag, ctx, component);
 	}
 	

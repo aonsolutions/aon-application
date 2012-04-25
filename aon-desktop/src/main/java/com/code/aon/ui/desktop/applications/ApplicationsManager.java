@@ -2,6 +2,7 @@ package com.code.aon.ui.desktop.applications;
 
 import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
 import static com.code.aon.ldap.ILdapConstants.DESCRIPTION_ATTRIBUTE;
+import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ui.common.role.RoleManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class ApplicationsManager implements IDesktopConstants {
@@ -57,7 +59,7 @@ public class ApplicationsManager implements IDesktopConstants {
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
 				String role = property.substring( property.indexOf( ';' ) + 1 , property.length() );
-				boolean isUserInRole = role.equals("") || ec.isUserInRole( role );
+				boolean isUserInRole = role.equals("") || AonUtil.isUserInRole( role );
 				application = new App( appId, appDescription, context, bar, isUserInRole );
 			} else {
 				application = new App( appId, appDescription, context, new char[] {'1','0','0'}, true );

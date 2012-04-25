@@ -160,7 +160,7 @@
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
 							
-								<c:if test="#{loggedUser.userInRole['Admin'] and desktop.updatesAvailable}">
+								<c:if test="#{aonRole.admin and desktop.updatesAvailable}">
 									<aon:panelCollapsible expanded="true" label="#{appBundle.desktop_update_title}">
 										<aon:div>
 											<aon:outputLink value="#{desktop.updateApplicationURL}" target="_blank">

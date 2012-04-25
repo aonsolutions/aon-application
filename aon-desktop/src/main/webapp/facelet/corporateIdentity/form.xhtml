@@ -20,11 +20,11 @@
 					<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
 					<ui:param name="toolbarDescription" value="#{corporateIdentity.identityReport.company.fullName}" />
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
-					<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
+					<ui:param name="skipResetButton" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
 					<ui:param name="skipSearchButton" value="false" />
 					<ui:define name="additionalToolbarContent">
 						<aon:commandButton id="category" value="#{registryBundle.registry_category_module}"
-							renderedOnUserRole="CorporativeDocumentsManager"
+							rendered="#{aonRole.userInRole['CorporativeDocumentsManager']}"
 							action="corporate_identity_category" actionListener="#{category.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-category" />
 					</ui:define>
@@ -33,7 +33,7 @@
 			
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:div styleClass="aon-form-group" rendered="#{loggedUser.userInRole['PredefinedDocumentsExecutable']}">
+				<aon:div styleClass="aon-form-group" rendered="#{aonRole.userInRole['PredefinedDocumentsExecutable']}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputLabel value="#{registryBundle.registry_predefined_documents}" />
@@ -55,8 +55,8 @@
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
 						<ui:param name="rows" value="10" />
 						<ui:param name="sortColumns" value="#{true}" />
-						<ui:param name="skipLineEdition" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
-						<ui:param name="skipResetButton" value="#{!loggedUser.userInRole['CorporativeDocumentsManager']}" />
+						<ui:param name="skipLineEdition" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
+						<ui:param name="skipResetButton" value="#{!aonRole.userInRole['CorporativeDocumentsManager']}" />
 					</ui:include>
 
 				</aon:div>

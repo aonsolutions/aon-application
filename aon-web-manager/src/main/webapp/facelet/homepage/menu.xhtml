@@ -3,6 +3,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
 
 	<ui:define name="afterMenuContent">
@@ -28,11 +29,12 @@
 			styleClass="aon-top-menu-item aon-icon-utilities" />
 	</ui:define>
 
-	<ui:define name="beforeHelpMenuContent">	
-		<aon:menuItem id="advancedMode" action="advancedMode"
-			renderedOnUserRole="Admin"
-			rendered="#{manager.config.showAdvancedMode}"
-			value="#{managerBundle.manager_advanced_mode}" />		
+	<ui:define name="beforeHelpMenuContent">
+		<c:if test="#{aonRole.admin}">	
+			<aon:menuItem id="advancedMode" action="advancedMode"
+				rendered="#{manager.config.showAdvancedMode}"
+				value="#{managerBundle.manager_advanced_mode}" />
+		</c:if>		
 	</ui:define>
 		
 </ui:composition>
