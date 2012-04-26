@@ -181,7 +181,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private boolean isRemovable(String className) {
 		return ((StringUtils.startsWith(className, "com.code.aon")  
 			&& !StringUtils.startsWith(className, "com.code.aon.audit.") 
-			&& !StringUtils.startsWith(className, "com.code.aon.ui.audit.")
+			&& !StringUtils.startsWith(className, "com.code.aon.ui.audit.controller.ApplicationOptionController")
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.resources.bean.ResourceResolver")
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.common.controller.LoggedUser")
 			&& !StringUtils.equals(className, this.getClass().getName()))

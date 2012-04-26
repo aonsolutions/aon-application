@@ -25,6 +25,7 @@ import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -39,20 +40,8 @@ public class AuditManager implements IAuditConstants {
 	
 	public static final String AUDIT_SESSION_MANAGER_BEAN = "com.code.aon.audit.session.managerBean";
 	
-	public static String getApplicationName( String context ) {
-		String application = context;
-		if ( application.startsWith("/") ) {
-			application = application.substring(1);
-		}
-		int pos = application.lastIndexOf(".");
-		if ( pos != -1 ) {
-			application = application.substring(0, pos);
-		}
-		return application;
-	}		
-
 	public static Application getApplication( String context ) throws ManagerBeanException {
-		String name = getApplicationName( context );
+		String name = DomainResolver.getApplication( context );
 		IManagerBean applicationBean = BeanManager.getManagerBean(Application.class);
 		String field = applicationBean.getFieldName(IEntityAlias.APPLICATION_NAME);
 		Criteria criteria = new Criteria();
@@ -60,6 +49,18 @@ public class AuditManager implements IAuditConstants {
 		List<ITransferObject> list = applicationBean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (Application) list.get(0);
+		}
+		return null;
+	}
+
+	public static DomainApplication getDoaminApplication( Integer domain, Integer application ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application );
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (DomainApplication) list.get(0);
 		}
 		return null;
 	}

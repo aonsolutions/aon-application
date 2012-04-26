@@ -13,18 +13,22 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
+import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.event.UserLoookupListener;
@@ -41,7 +45,13 @@ public class ActionDeniedController implements IAuditConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
+	private final static String UTILITIES_CATEGORY = "utilities";
+	
+	private final static String[] SKIP_CATEGORIES = new String[]{UTILITIES_CATEGORY};
+	
 	private Map<String,ApplicationOption> deniedActionsMap;
+	
+	private Map<String,ApplicationCategory> deniedModulesMap;
 	
 	private User user;
 	
@@ -54,6 +64,7 @@ public class ActionDeniedController implements IAuditConstants {
 	private IControllerListener listener;
 	
 	public ActionDeniedController() {
+		initDeniedModules();
 		User user = UserUtils.getInstance().getLoggedUser();
 		this.deniedActionsMap = new HashMap<String, ApplicationOption>();
 		for( ApplicationOption option : getOptions(getDeniedActions(user)) ) {
@@ -147,6 +158,21 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 		return null;		
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<DomainApplicationModule> getEnabledModules() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
+			Criteria criteria = new Criteria();
+			DomainApplication da = getAuditController().getDomainApplication();
+			String filed = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
+			criteria.addEqualExpression( filed, da.getId());
+			return (List) bean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error loading modules denied", e);
+		}
+		return null;		
+	}
 	
 	private List<ApplicationOption> getOptions( List<ActionDenied> deniedActions ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
@@ -234,8 +260,38 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 	}
 
+	public void renderedModule( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() ) {
+			String id = component.getId();
+			if ( this.deniedModulesMap.containsKey(id) ) {
+				component.setRendered(false);
+			}				
+		}
+	}
+	
 	public IControllerListener getListener() {
 		return listener;
+	}
+	
+	private void initDeniedModules() {
+		this.deniedModulesMap = new HashMap<String, ApplicationCategory>();
+		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, MODULES_ENABLED) ) {
+			List<DomainApplicationModule> modules = getEnabledModules();
+			for( ApplicationCategory category : getOptionController().getCategories() ) {
+				if (! ArrayUtils.contains(SKIP_CATEGORIES, category.getAlias()) ) {
+					boolean denied = true;
+					for( DomainApplicationModule dam : modules ) {
+						if ( dam.getModule().getName().equals(category.getAlias()) ) {
+							denied = false;
+							break;
+						}
+					}
+					if ( denied ) {
+						this.deniedModulesMap.put(category.getAlias(), category);	
+					}					
+				}
+			}
+		}
 	}
 	
 }
