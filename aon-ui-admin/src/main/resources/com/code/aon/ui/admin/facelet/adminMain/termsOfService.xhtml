@@ -7,7 +7,7 @@
 				
 	<aon:valueParam name="serviceAcceptedReRender" default="#{controller.beanName}Toolbar" />				
 				
-	<c:if test="#{controller.new and (!adminMain.administrator)}" >
+	<c:if test="#{controller.new and (!aonRole.sysAdmin)}" >
 		<aon:div styleClass="aon-margin-top">
 			<aon:selectBooleanCheckbox id="termsOfService"
 				reRender="#{serviceAcceptedReRender}" ajaxSingle="true"

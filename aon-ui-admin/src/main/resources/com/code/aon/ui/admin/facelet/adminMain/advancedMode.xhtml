@@ -18,18 +18,12 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="accept"
 						value="#{bundle.aon_accept}"
-						action="#{adminMain.loginAction}"
+						action="home"
 						actionListener="#{adminMain.onAccept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}">
 						<aon:actionHotKey key="return" />
 					</aon:commandButton>					
-					<aon:commandButton id="home"
-						value="#{bundle.aon_home}"
-						action="home" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_close}">
-					</aon:commandButton>				
 				</ui:define>
 			</ui:decorate>		
 					

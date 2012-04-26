@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedReader;
@@ -24,25 +25,21 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
-import com.code.aon.bridge.plugin.UserManager;
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.Domain;
-import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.admin.util.ManagerLogger;
+import com.code.aon.ui.common.role.BasicRoleManager;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
@@ -119,12 +116,13 @@ public class AdminMainController implements IAdminConstants {
 		this.currentDomain = currentDomain;
 	}
 
-	public boolean isAdministrator() {
-		return this.userType == UserType.ESFERALIA;
+	public boolean isSysAdmin() {		
+		BasicRoleManager rm = (BasicRoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
+		return rm.isSysAdmin();
 	}
 
 	public boolean isUserManagement() {
-		if ( isAdministrator() ) {
+		if ( isSysAdmin() ) {
 			return true;
 		}
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
@@ -132,7 +130,7 @@ public class AdminMainController implements IAdminConstants {
 	}
 
 	public boolean isDomainManagement() {
-		return isAdministrator() || getCurrentDomain().isDomainManagement();
+		return isSysAdmin() || getCurrentDomain().isDomainManagement();
 	}
 	
 	public String getHomeTemplate() {
@@ -155,10 +153,6 @@ public class AdminMainController implements IAdminConstants {
 		this._password = passwd;
 	}
 	
-	public String loginAction() {
-		return isAdministrator() ? DOMAIN_LIST : null;
-	}
-	
 	public boolean isTermsOfServiceAccepted() {
 		return termsOfServiceAccepted;
 	}
@@ -168,7 +162,7 @@ public class AdminMainController implements IAdminConstants {
 	}	
 
 	public void resetTermsOfServiceAccepted() {
-		termsOfServiceAccepted = isAdministrator();
+		termsOfServiceAccepted = isSysAdmin();
 	}
 	
 	public void onAccept(ActionEvent event) {
@@ -252,6 +246,8 @@ public class AdminMainController implements IAdminConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
+		BasicRoleManager rm = (BasicRoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
+		rm.setUserInRole(IAonRole.SYS_ADMIN, true);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
 	}
@@ -333,16 +329,6 @@ public class AdminMainController implements IAdminConstants {
 		if ( force || (! ObjectUtils.equals(oldDN, currentDN)) ) {
 			controller.onSearch(null);	
 		}				
-	}
-
-	public void flushAuthenticationCache( Domain domain, User user ) {
-		try {
-			IConsoleAdmin console = Utils.getSecurityConsole();
-			AuthPrincipal principal = new AuthPrincipal( user.getLogin() + "@" + domain.getName() );			
-			console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);
-		} catch (DeploymentException e) {
-			LOGGER.error( "Error flushing authenticaction cache for " + user, e );
-		}
 	}
 	
 }

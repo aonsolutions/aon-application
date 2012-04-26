@@ -30,7 +30,7 @@
 				</aon:selectOneMenu>
 			</c:if>				
 
-			<c:if test="#{adminMain.administrator}">
+			<c:if test="#{aonRole.sysAdmin}">
 				<aon:outputLabel for="Domain_parent"
 					value="#{adminBundle.admin_domain_parent}" />
 				<aon:selectOneMenu id="Domain_parent"
@@ -56,7 +56,7 @@
 			<aon:inputText id="Domain_maxTotalDocumentSize" size="80"
 				valueChangeListener="#{controller.addExpression}" />
 			
-			<c:if test="#{adminMain.administrator}">
+			<c:if test="#{aonRole.sysAdmin}">
 				<aon:outputLabel for="Domain_type"
 					value="#{bundle.aon_type}" />
 				<aon:selectOneMenu id="Domain_type" 

@@ -90,7 +90,11 @@
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
 	</ui:define>
 	
-	<ui:define name="beforeWebMapMenuContent">	
+	<ui:define name="beforeWebMapMenuContent">
+		<c:if test="#{!aonRole.sysAdmin}">
+			<aon:menuItem id="advancedMode" action="advancedMode"
+				value="#{adminBundle.admin_advanced_mode}" />
+		</c:if>
 		<aon:menuItem id="changePassword" action="changePassword_form"
 			iconClass="aon-icon-changePassword"
 			actionListener="#{changePassword.onInit}"

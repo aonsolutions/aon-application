@@ -76,13 +76,13 @@
 		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 	
-	<c:if test="#{!aonRole.sisAdmin}">
+	<c:if test="#{!aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:outputText id="ContractPayment_amount"  
 			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" />
 	</c:if>
 	
-	<c:if test="#{aonRole.sisAdmin}">
+	<c:if test="#{aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
 			value="#{controller.to.expression}" >

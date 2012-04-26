@@ -98,7 +98,7 @@
 							value="#{adminDomain.to.active}" />								
 					</c:if>				
 
-					<c:if test="#{adminMain.administrator}">
+					<c:if test="#{aonRole.sysAdmin}">
 						<aon:outputLabel for="Domain_type"
 							value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="Domain_type" 
@@ -114,17 +114,17 @@
 							required="true" value="#{adminDomain.to.subDomainSuffix}" />
 					</c:if>
 
-					<c:if test="#{adminMain.administrator or (adminDomain.to.parent.id != null)}" >
+					<c:if test="#{aonRole.sysAdmin or (adminDomain.to.parent.id != null)}" >
 						<aon:outputLabel for="Domain_parentDomain"
 							value="#{adminBundle.admin_domain_parent}" />
-						<c:if test="#{adminMain.administrator}" >								
+						<c:if test="#{aonRole.sysAdmin}" >								
 							<aon:selectOneMenu id="Domain_parentDomain"
 								value="#{adminDomain.to.parent}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{adminDomain.parentDomains}" />
 							</aon:selectOneMenu>
 						</c:if>								
-						<c:if test="#{!adminMain.administrator}" >	
+						<c:if test="#{!aonRole.sysAdmin}" >	
 							<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
 								value="#{adminDomain.to.parent.name}" />
 						</c:if>

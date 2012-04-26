@@ -50,13 +50,13 @@
 		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 		
-	<c:if test="#{!aonRole.sisAdmin}">
+	<c:if test="#{!aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractDeduction_amount" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:outputText id="ContractDeduction_amount" size="40" maxlength="64"
 			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.deductionConcept.expression)}" />
 	</c:if>
 	
-	<c:if test="#{aonRole.sisAdmin}">
+	<c:if test="#{aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractDeduction_expression" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
 			value="#{controller.to.expression}" >

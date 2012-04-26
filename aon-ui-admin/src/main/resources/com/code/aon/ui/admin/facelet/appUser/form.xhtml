@@ -25,13 +25,6 @@
 				size="80" disabled="true" rendered="#{!controller.new}"
 				value="#{controller.to.user.login}" />
 					
-			<c:if test="#{adminMain.administrator}">
-				<aon:outputLabel for="ApplicationUser_active"
-					value="#{bundle.aon_active}" />
-				<aon:selectBooleanCheckbox id="ApplicationUser_active"
-					value="#{controller.to.active}" />								
-			</c:if>
-					
 			<aon:outputLabel for="ApplicationUser_active"
 				value="#{bundle.aon_active}" />
 			<aon:selectBooleanCheckbox id="ApplicationUser_active"

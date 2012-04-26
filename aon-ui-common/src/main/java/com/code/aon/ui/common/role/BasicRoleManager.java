@@ -38,13 +38,16 @@ public abstract class BasicRoleManager {
 	public abstract boolean isUserInRole(String role);
 	
 	public void init() {
-		int i = 0;
 		for( IAonRole role : IAonRole.values() ) {
-			roles[i++] = isUserInRole(role.getName());
+			roles[role.ordinal()] = isUserInRole(role.getName());
 		}
 		this.admin = isUserInRole(IAonRole.ADMIN);
 	}
 
+	public void setUserInRole( IAonRole role, boolean value ) {
+		this.roles[role.ordinal()] = value;
+	}
+	
 	/**
 	 * @param role
 	 *            The Role
@@ -169,8 +172,8 @@ public abstract class BasicRoleManager {
 	/**
 	 * @return TRUE if user has IAonRole.SUPER_USER role, false otherwise.
 	 */
-	public boolean isSisAdmin() {
-		return isUserInRole(IAonRole.SIS_ADMIN);
+	public boolean isSysAdmin() {
+		return isUserInRole(IAonRole.SYS_ADMIN);
 	}
 	
 	/**

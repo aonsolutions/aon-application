@@ -111,7 +111,7 @@ public class DomainCapabilitiesController {
 	}
 	
 	public boolean isDeletable() {
-		if ( getAdmin().isAdministrator() ) {
+		if ( getAdmin().isSysAdmin() ) {
 			return true;
 		}
 		return getTo() != DomainCapability.MULTI_DOMAIN; 
@@ -147,7 +147,7 @@ public class DomainCapabilitiesController {
 		this.to = null;
 		setNew(true);
 		resetCapabilities();
-		getAdmin().setTermsOfServiceAccepted(getAdmin().isAdministrator());
+		getAdmin().resetTermsOfServiceAccepted();
 	}	
 
 	private void resetTo() {

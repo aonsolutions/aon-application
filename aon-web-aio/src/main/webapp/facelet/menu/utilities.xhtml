@@ -34,7 +34,7 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<c:if test="#{aonRole.admin}">
+						<c:if test="#{aonRole.admin || aonRole.sysAdmin}">
 							<aon:panelGrid id="group_config_security"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-security aon-direct-access-panel">
@@ -42,11 +42,13 @@
 									<aon:outputText value="#{bundle.aon_security}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="actionDenied" action="actionDenied"
-											actionListener="#{actionDenied.onInit}"
-											value="#{auditBundle.audit_option_denied_module}" />
-									</aon:div>
+									<c:if test="#{aonRole.admin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="actionDenied" action="actionDenied"
+												actionListener="#{actionDenied.onInit}"
+												value="#{auditBundle.audit_option_denied_module}" />
+										</aon:div>
+									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="adminDomain"
 											action="#{adminDomain.initialAction}"

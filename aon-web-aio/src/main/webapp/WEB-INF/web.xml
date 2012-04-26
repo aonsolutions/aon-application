@@ -109,6 +109,7 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
+	<!--
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -120,7 +121,7 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>0</param-value>
 	</context-param>
-
+	-->
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>

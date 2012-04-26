@@ -91,7 +91,7 @@ public enum IAonRole {
 	/**
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
-	SIS_ADMIN( "SisAdmin" ),
+	SYS_ADMIN( "SisAdmin" ),
 	
 	/**
 	 * Role de acceso a los informes de nominas.

@@ -90,14 +90,14 @@ public class DomainUserController extends BasicController {
 	}	
 	
 	public boolean isUserRemoveable() {
-		if ( getAdmin().isAdministrator() ) {
+		if ( getAdmin().isSysAdmin() ) {
 			return true;
 		}
 		return getAdmin().isUserManagement() && (!isAdmin(getDomainUser()));
 	}
 
 	public boolean isUserActivable() {
-		if ( getAdmin().isAdministrator() ) {
+		if ( getAdmin().isSysAdmin() ) {
 			return true;
 		}
 		return getAdmin().isUserManagement() && !isAdmin(getDomainUser());
@@ -173,7 +173,7 @@ public class DomainUserController extends BasicController {
 
 	private void flushPasswordCache() {
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		getAdmin().flushAuthenticationCache(dc.getDomain(), getDomainUser());
+		dc.flushAuthenticationCache(getDomainUser());
 	}
 	
 	public void registerScope( User user, String scopeName ) throws ManagerBeanException {
