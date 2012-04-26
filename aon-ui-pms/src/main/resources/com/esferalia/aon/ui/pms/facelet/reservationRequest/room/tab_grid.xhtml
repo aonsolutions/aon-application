@@ -122,7 +122,9 @@
 					title="#{pmsBundle.pms_availability}" immediate="true"
 					rendered="#{empty to.crsCode}"
 					actionListener="#{controller.sendAvailabilityQuery}"
-					reRender="aonContent" />
+					reRender="aonContent"
+					onclick="Richfaces.showModalPanel('waitProccess')"
+					oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 			</aon:div>
 			<rich:subTable id="availableRoomStayTable"
 				value="#{controller.availableRoomStayList}" var="availableRoomStay"
@@ -196,7 +198,9 @@
 						value="Reservar" styleClass="aon-italic"
 						rendered="#{!availableRoomStay.error}"
 						actionListener="#{controller.sendBookingQuery}"
-						reRender="aonContent">
+						reRender="aonContent"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')">
 						<f:param name="availableRoomStayIndex" value="#{availableRoomStay.index}"/>
 					</aon:commandLink>
 				</aon:column>
