@@ -12,11 +12,22 @@
 	<ui:define name="content">
 		<aon:form id="proposalForm">
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{purchaseBundle.purchase_proposal_module}" />
 				<ui:param name="controller" value="#{proposal}" />
-			</ui:include>
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:htmlCommandLink id="purchaseProposal-report" value="#{purchaseBundle.purchase_purchaseProposal}"
+						target="_new" rendered="#{!proposal.new and proposalDetail.model.rowCount > 0}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="purchaseProposal" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 

@@ -113,4 +113,23 @@
 		<nested-report report="purchaseVatBreakDown"/>
 	</report>
 	
+	<!--  *****  Impresion de la solicitud de compra ****** -->
+	<report id="purchaseProposal" description="Listado Detallado de purchase">
+		<template path="/com/code/aon/ui/purchase/report/purchaseProposal.jasper" />
+		<collection provider="#{proposal}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+		</params>
+	</report>
+	
 </report-config>
