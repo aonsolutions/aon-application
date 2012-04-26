@@ -305,6 +305,10 @@
 			<value>proposalDetail</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ProposalDetail_id</value>
 		</managed-property>			
