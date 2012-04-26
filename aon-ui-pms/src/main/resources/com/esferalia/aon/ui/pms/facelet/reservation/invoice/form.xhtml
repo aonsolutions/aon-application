@@ -29,7 +29,7 @@
 			<ui:param name="lookupTo" value="#{controller.projectReservation}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 			<ui:param name="lookupReRender" value="ProjectReservation_invoiceRoom,ProjectReservation_invoiceGuest,invoiceServicesDiv,invoiceFinancesDiv,invoiceHotelDiv,invoiceRoomDiv" />
-			<ui:param name="lookupControllerListener" value="#{controller.activeReservationFilter}" />
+			<ui:param name="lookupControllerListener" value="#{controller.currentReservationFilter}" />
 			<aon:methodParam name="lookupChangeListener" value="#{controller.onReservationChanged}" type="lookupChangeListener" />
 		</ui:include>
 	

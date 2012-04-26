@@ -61,7 +61,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	private Invoice invoiceToRectificate;
 	private ProjectReservation projectReservation;
 	
-	private IControllerListener activeReservationFilter;
+	private IControllerListener currentReservationFilter;
 	
 	public ProjectReservation getProjectReservation() {
 		return projectReservation;
@@ -95,9 +95,9 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		this.invoiceToRectificate = invoiceToRectificate;
 	}
 	
-	public IControllerListener getActiveReservationFilter() {
-		if ( this.activeReservationFilter == null ) {
-			this.activeReservationFilter = new ControllerAdapter() {
+	public IControllerListener getCurrentReservationFilter() {
+		if ( this.currentReservationFilter == null ) {
+			this.currentReservationFilter = new ControllerAdapter() {
 				@Override
 				public void beforeModelSearched(ControllerEvent event)
 						throws ControllerListenerException {
@@ -113,7 +113,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 				}
 			};
 		}
-		return this.activeReservationFilter;
+		return this.currentReservationFilter;
 	}
 
 	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
