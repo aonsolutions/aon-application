@@ -202,6 +202,8 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionDenied","com.code.aon.audit.ActionDenied");
 		map.put("ActionEntry","com.code.aon.audit.ActionEntry");
 		map.put("ActionFavorite","com.code.aon.audit.ActionFavorite");
+		map.put("DomainApplicationModule","com.code.aon.audit.DomainApplicationModule");		
+		map.put("ProfileModuleDenied","com.code.aon.audit.ProfileModuleDenied");		
 		map.put("Session","com.code.aon.audit.Session");
 
 		//AON CALENDAR 
