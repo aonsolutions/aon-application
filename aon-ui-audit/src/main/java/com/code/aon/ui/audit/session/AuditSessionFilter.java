@@ -38,12 +38,13 @@ public class AuditSessionFilter implements Filter {
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );
-			User user = AuditManager.getUser( principal.getShortName() );
+			User user = AuditManager.getUser( principal.getUserId() );
 			if ( user != null ) {
 				LOGGER.info( "User {}", user );
-				AuditLevel level = AuditManager.getAuditLevel(application, user.getDomain() );
+				AuditLevel level = AuditManager.getAuditLevel(application, principal.getDomainId() );
 				if ( level != AuditLevel.NONE ) {
 					Session session = new Session();
+					session.setDomain(principal.getDomainId());
 					session.setApplication( application );
 					session.setUser( user );
 					session.setSessionId( httpSession.getId() );

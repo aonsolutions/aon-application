@@ -9,12 +9,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditCollectionsController {
@@ -22,6 +24,8 @@ public class AuditCollectionsController {
 	private List<SelectItem> auditLevels;
 	
 	private List<SelectItem> applications;
+	
+	private List<SelectItem> modules;
 	
 	/**
 	 * Gets the audit levels.
@@ -39,6 +43,25 @@ public class AuditCollectionsController {
 			}
 		}
 		return auditLevels;
+	}	
+
+	/**
+	 * Gets the modules.
+	 * 
+	 * @return the modules
+	 */
+	public List<SelectItem> getModules() {
+		if ( modules == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			modules = new LinkedList<SelectItem>();
+			for (Module module : Module.values()) {
+				String name = module.getName(locale);
+				SelectItem item = new SelectItem(module, name);
+				modules.add(item);
+			}
+			AonUtil.sortSelectItems(modules);
+		}
+		return modules;
 	}	
 	
 	public List<SelectItem> getApplications() {

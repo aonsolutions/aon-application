@@ -72,6 +72,8 @@
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.DomainApplicationModule"/>
+		<mapping class="com.code.aon.audit.ProfileModuleDenied"/>
 		<mapping class="com.code.aon.audit.Session"/>		
 
 		<!-- AON-COMMERCIAL Mapping files -->	

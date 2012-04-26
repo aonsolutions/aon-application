@@ -75,11 +75,12 @@ public class AuditDomainChangeListener implements IDomainChangeListener {
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );
-			User user = AuditManager.getUser( principal.getShortName() , principal.getDomainId() );
+			User user = AuditManager.getUser( principal.getUserId() );
 			LOGGER.info( "User {}", user );
-			AuditLevel level = AuditManager.getAuditLevel(application, principal.getDomainId() );
+			AuditLevel level = AuditManager.getAuditLevel(application, domain );
 			if ( level != AuditLevel.NONE ) {
 				Session session = new Session();
+				session.setDomain( domain );
 				session.setApplication( application );
 				session.setUser( user );
 				session.setSessionId( httpSession.getId() );

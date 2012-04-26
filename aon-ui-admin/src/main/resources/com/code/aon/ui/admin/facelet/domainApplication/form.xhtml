@@ -64,7 +64,12 @@
 								<ui:param name="controller" value="#{appUser}" />
 							</ui:include>
 	                    </aon:panelTab>
-
+						<aon:panelTab name="modules"
+							label="#{adminBundle.admin_modules}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/domainApplicationModule/grid.xhtml" >
+								<ui:param name="controller" value="#{domainApplicationModule}" />
+							</ui:include>
+	                    </aon:panelTab>
 						<!--
 						<aon:panelTab name="profiles"
 							label="#{adminBundle.admin_profiles}">

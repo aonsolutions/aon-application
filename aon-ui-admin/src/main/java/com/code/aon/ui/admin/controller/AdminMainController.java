@@ -228,9 +228,12 @@ public class AdminMainController implements IAdminConstants {
 	}
 	
 	private UserType calculateUserType() {
+		if ( isSysAdmin() ) {
+			return UserType.ESFERALIA;
+		}
 		UserType type = UserType.NORMAL;
 		DomainType dt = currentDomain.getType();
-		if ( (dt != null) && ((dt == DomainType.CONSULTANCY) || (dt == DomainType.ENTERPRISE_MANAGER)) ) {
+		if ( (dt == DomainType.CONSULTANCY) || (dt == DomainType.ENTERPRISE_MANAGER) ) {
 			type = UserType.PARENT;
 		}
 		return type;

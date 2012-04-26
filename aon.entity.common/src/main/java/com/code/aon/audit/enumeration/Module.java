@@ -46,7 +46,7 @@ public enum Module implements IResourceable {
 	DOCUMENT( "document" );
 	
 	/** Message file base path. */
-    private static final String BASE_NAME = "com.code.aon.ui.common.i18n.messages";
+	private static final String BASE_NAME = "com.code.aon.audit.i18n.messages";
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_module_";

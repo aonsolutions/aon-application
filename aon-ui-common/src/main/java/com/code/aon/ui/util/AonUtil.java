@@ -5,6 +5,9 @@ import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_N
 import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
 
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -18,6 +21,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -635,5 +639,22 @@ public class AonUtil {
 		String value = fc.getExternalContext().getInitParameter(SKIP_LDAP);		
 		return BooleanUtils.toBoolean(value);
 	}
+ 
+    /**
+     * Sort the list of SelectItem
+     * 
+     * @param list
+     */
+    public static void sortSelectItems( List<SelectItem> list ) {
+    	Comparator<SelectItem> comparator = new Comparator<SelectItem>() {
+
+			@Override
+			public int compare(SelectItem o1, SelectItem o2) {
+				return o1.getLabel().compareTo(o2.getLabel());
+			}
+    		
+		};
+    	Collections.sort( list, comparator );
+    }
     
 }

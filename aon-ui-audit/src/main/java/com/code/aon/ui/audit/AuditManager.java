@@ -64,26 +64,10 @@ public class AuditManager implements IAuditConstants {
 		return null;
 	}
 	
-	public static User getUser( String shortName ) {
-		return getUser(shortName, null);
-	}
-
-	public static User getUser( String shortName, Integer domain ) {
+	public static User getUser( Integer userId ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		String q = "SELECT u FROM User u  WHERE u.login = '" + shortName + "'";
-		if (domain != null) {
-			q = q + " AND u.domain = " + domain;
-		}
-		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-		List<?> queryList = query.list();
-		Iterator<?> iterator = queryList.iterator();
-		if (iterator.hasNext()) {
-			User user = (User) iterator.next();
-			return user;
-		}
-        return null;		
+		return (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
 	}
-	
 	
 	public static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
 		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
