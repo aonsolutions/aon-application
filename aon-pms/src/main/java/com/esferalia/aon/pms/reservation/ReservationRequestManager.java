@@ -77,7 +77,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			String pagingKey = null;
 			int page = 0;
 			do {
-				pagingKey = sendAvailabilityQuery(createAvailabilityMessage(requestRoom, ++page), availableRoomStayList);
+				pagingKey = sendAvailabilityQuery(createAvailabilityMessage(requestRoom, pagingKey, ++page), availableRoomStayList);
 			} while (StringUtils.isNotEmpty(pagingKey) && page<9);
 			return availableRoomStayList;
 		} catch (Exception ex) {
@@ -85,7 +85,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		}
 	}
 
-	private String createAvailabilityMessage(ReservationRequestRoom requestRoom, int page) throws ManagerBeanException {
+	private String createAvailabilityMessage(ReservationRequestRoom requestRoom, String pagingKey, int page) throws ManagerBeanException {
 		ReservationRequest request = requestRoom.getReservationRequest();
 
 		setMessageId(getReservationUtils().getRequestMessageId(request, page));
@@ -118,6 +118,9 @@ public class ReservationRequestManager implements IReservationConstants {
 				operation.getAvailabilityQuery().getProfiles().getProfile().setProfileType(ProfileType.REP_COMPANY);
 				operation.getAvailabilityQuery().getProfiles().getProfile().setProfileID(code);
 			}
+		}
+		if (StringUtils.isNotEmpty(pagingKey)) {
+			operation.getAvailabilityQuery().setPagingKey(pagingKey);
 		}
 		operation.getAvailabilityQuery().setRequestedCurrencyCode(EUR);
 
