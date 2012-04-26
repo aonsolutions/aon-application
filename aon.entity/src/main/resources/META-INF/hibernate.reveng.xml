@@ -457,6 +457,10 @@
 		<column name="audit_level" type="com.code.aon.audit.enumeration.AuditLevel"/>	
 	</table>
 
+	<table name="domain_application_module" >
+		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
+	</table>
+
 	<table name="enterprise">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -1015,7 +1019,11 @@
 		<column name="type" type="com.code.aon.account.bridge.enumeration.ProductAccountType"/>
 	</table>
 
-	<table name="profile_role" >
+	<table name="profile_module_denied" >
+		<column name="module" type="com.code.aon.audit.enumeration.Module"/>	
+	</table>
+
+  <table name="profile_role" >
 		<foreign-key constraint-name="FK_PROFILE_ROLE_APPLICATION_ROLE">
 			<many-to-one property="applicationRole"/>
 		</foreign-key>
