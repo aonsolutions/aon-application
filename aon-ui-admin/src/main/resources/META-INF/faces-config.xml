@@ -558,8 +558,8 @@
 			<property-name>defaultExpressions</property-name>
 			<map-entries>
 				<map-entry>
-					<key>Project_domain_id</key>
-					<value>#{null}</value>
+					<key>Profile_domain</key>
+					<value>null</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>				
