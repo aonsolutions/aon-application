@@ -57,24 +57,6 @@ public class ApplicationOptionController {
 		return categories;
 	}
 	
-	public List<ApplicationOption> getOptions( boolean allOptions ) {
-		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
-		for( ApplicationCategory category : getCategories() ) {
-			if ( allOptions || category.isRendered() ) {
-				for( OptionGroup group : category.getGroups() ) {
-					if ( allOptions || group.isRendered() ) {
-						for( ApplicationOption option : group.getOptions() ) {
-							if ( allOptions || option.isRendered() ) {
-								list.add(option);	
-							}
-						}
-					}
-				}
-			}
-		}
-		return list;
-	}		
-	
 	private void init() {
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.groupMap = new HashMap<String, OptionGroup>();

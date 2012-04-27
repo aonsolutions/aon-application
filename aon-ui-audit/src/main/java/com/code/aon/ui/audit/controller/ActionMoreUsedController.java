@@ -84,20 +84,17 @@ public class ActionMoreUsedController implements IAuditConstants {
 	        List<?> actions = criteria.list();
 	        if (! actions.isEmpty() ) {
 	        	Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-	        	Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 		        for( Object o : actions ) {
 		        	Object[] array = (Object[]) o; 
 		        	String action = (String) array[1];
-					if ( denied.containsKey(action) ) {
-						LOGGER.warn( "Action {} is denied", action );
-					} else {
-						ApplicationOption option = options.get(action);
-						if ( option != null ) {
+					ApplicationOption option = options.get(action);
+					if ( option != null ) {
+						if (! getDeniedController().isDenied(option) ) {
 							ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
 							list.add( ams );
-						} else {
-							LOGGER.warn( "Action {} not found in the menu", action );
 						}
+					} else {
+						LOGGER.warn( "Action {} not found in the menu", action );
 					}
 		        }	        	
 	        }

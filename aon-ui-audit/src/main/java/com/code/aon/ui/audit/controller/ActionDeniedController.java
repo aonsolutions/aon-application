@@ -1,6 +1,7 @@
 package com.code.aon.ui.audit.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -83,10 +84,6 @@ public class ActionDeniedController implements IAuditConstants {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
 	
-	public Map<String, ApplicationOption> getDeniedActionsMap() {
-		return deniedActionsMap;
-	}
-
 	public void onInit( ActionEvent event ) {
 		reset();
 	}
@@ -174,6 +171,21 @@ public class ActionDeniedController implements IAuditConstants {
 		return null;		
 	}
 	
+	private boolean isDeniedOption( ApplicationOption option ) {
+		return this.deniedModulesMap.containsValue(option.getGroup().getCategory());
+	}
+	
+	public boolean isDenied( ApplicationOption option ) {
+		if ( isDeniedOption(option) ) {
+			return true;
+		}
+		return deniedActionsMap.containsKey(option.getAction());
+	}
+	
+	public Collection<ApplicationOption> getDeniedOptions() {
+		return this.deniedActionsMap.values();
+	}
+	
 	private List<ApplicationOption> getOptions( List<ActionDenied> deniedActions ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
 		if (! deniedActions.isEmpty() ) {
@@ -181,13 +193,13 @@ public class ActionDeniedController implements IAuditConstants {
 			for( ITransferObject to : deniedActions ) {
 				String action = ((ActionDenied) to).getAction().getName();
 				ApplicationOption option = options.get(action);
-				if ( option != null ) {
+				if ( (option != null) && (!isDeniedOption(option)) ) {
 					list.add(option);
 				} else {
 					try {
 						IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 						bean.remove(to);
-						LOGGER.warn( "ActionDenied removed, action {} not found", action );
+						LOGGER.warn( "ActionDenied removed, action {}", action );
 					} catch (ManagerBeanException e) {
 						LOGGER.error( "Error removing action denied " + to, e);
 					}
@@ -209,7 +221,7 @@ public class ActionDeniedController implements IAuditConstants {
 		} else {
 			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
 			List<ApplicationOption> deniedList = getOptions( this.deniedActions );
-			this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(true) );
+			this.options = new ArrayList<ApplicationOption>( getOptions(true) );
 			this.selected = new LinkedList<ApplicationOption>();
 			for( ApplicationOption option : this.options ) {
 				if ( deniedList.contains(option) ) {
@@ -293,5 +305,25 @@ public class ActionDeniedController implements IAuditConstants {
 			}
 		}
 	}
+	
+	public List<ApplicationOption> getOptions( boolean allOptions ) {
+		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			if (! this.deniedModulesMap.containsValue(category) ) {
+				if ( allOptions || category.isRendered() ) {
+					for( OptionGroup group : category.getGroups() ) {
+						if ( allOptions || group.isRendered() ) {
+							for( ApplicationOption option : group.getOptions() ) {
+								if ( allOptions || option.isRendered() ) {
+									list.add(option);	
+								}
+							}
+						}
+					}
+				}				
+			}
+		}
+		return list;
+	}		
 	
 }

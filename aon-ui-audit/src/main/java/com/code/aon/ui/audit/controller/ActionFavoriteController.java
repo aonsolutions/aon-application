@@ -21,7 +21,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
-import com.code.aon.ui.audit.controller.ActionMoreUsedController.ActionMoreUsed;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -81,9 +80,9 @@ public class ActionFavoriteController implements IAuditConstants {
 	}
 	
 	public void onInit( ActionEvent event ) {
-		this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(false) );
+		this.options = new ArrayList<ApplicationOption>( getDeniedController().getOptions(false) );
 		this.options.removeAll(this.favorites);
-		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedActionsMap().values();
+		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedOptions();
 		this.options.removeAll(deniedList);
 	}
 	
@@ -138,11 +137,10 @@ public class ActionFavoriteController implements IAuditConstants {
 			List<ITransferObject> actionFavorites = bean.getList(criteria);
 			if (! actionFavorites.isEmpty() ) {
 				Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-				Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 				for( ITransferObject to : actionFavorites ) {
 					String action = ((ActionFavorite) to).getAction().getName();
 					ApplicationOption option = options.get(action);
-					if ( (option != null) && (!denied.containsKey(action)) ) {
+					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
 						list.add(option);
 					} else {
 						bean.remove(to);
@@ -153,9 +151,6 @@ public class ActionFavoriteController implements IAuditConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading favorites", e);
 		}
-//		if (list.size() < 20) {
-//			completeListWithMoreUsed(list);
-//		}
 		return list;		
 	}
 
@@ -176,12 +171,5 @@ public class ActionFavoriteController implements IAuditConstants {
 		}
 		return this.menuTemplate;
 	}
-	
-	private void completeListWithMoreUsed(List<ApplicationOption> list) {
-		ActionMoreUsedController amuc =  (ActionMoreUsedController) AonUtil.getRegisteredBean(ACTION_MORE_USED_CONTROLLER_NAME);
-		List<ActionMoreUsed> actions = amuc.getMoreUsed( 20 - list.size() );
-		for (ActionMoreUsed amu : actions) {
-			list.add(amu.getOption());
-		}
-	}
+
 }
