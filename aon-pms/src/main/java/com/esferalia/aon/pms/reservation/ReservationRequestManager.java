@@ -500,7 +500,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		operation.getReservationTransaction().setActionCode(ActionCode.SS);
 		operation.getReservationTransaction().addNewReservation().setReservationOriginatorCode(GP);
 		operation.getReservationTransaction().getReservation().setExternalWebCode(GPS);
-		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(reservation.getHotel().getCode());
+		operation.getReservationTransaction().getReservation().addNewHotelReference().setHotelCode(reservation.getHotelReservation().getCode());
 		operation.getReservationTransaction().getReservation().addNewStayDateRange().addNewDateTimeSpan();
 		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setStartInstant(startInstant);
 		operation.getReservationTransaction().getReservation().getStayDateRange().getDateTimeSpan().setDuration(nights);
