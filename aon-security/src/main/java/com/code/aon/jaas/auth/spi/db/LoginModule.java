@@ -107,7 +107,8 @@ public class LoginModule extends UsernamePasswordLoginModule {
 			if ( applicationId == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_found", applicationName );
 			}
-			User user = dbUtil.getUser(domain, principal.getShortName() );
+			principal.setApplicationId(applicationId);
+			User user = dbUtil.getUser(domain.getId(), principal.getShortName());
 			if ( user == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_1", principal.getShortName() );
 			}

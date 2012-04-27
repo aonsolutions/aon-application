@@ -41,6 +41,7 @@ public class AuthPrincipal implements Principal, Serializable {
     private String context;
     private Integer domainId;
     private Integer userId;
+    private Integer applicationId;
 
     /**
      * Constructs an <code>AuthPrincipal</code>
@@ -203,5 +204,13 @@ public class AuthPrincipal implements Principal, Serializable {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
-    
+
+	public Integer getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(Integer applicationId) {
+		this.applicationId = applicationId;
+	}
+	
 }
