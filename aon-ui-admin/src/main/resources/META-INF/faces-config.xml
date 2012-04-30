@@ -326,6 +326,7 @@
 				<value>#{domainApplicationControllerListener}</value>
 				<value>#{domainApplicationUserControllerListener}</value>
 				<value>#{domainApplicationModuleControllerListener}</value>
+				<value>#{domainApplicationProfileListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
@@ -585,6 +586,201 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>		
+		
+	<!-- ************* DOMAIN APPLICATION PROFILE ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainApplicationProfile</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.ApplicationProfileController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.admin.Profile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainApplicationProfile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>domainApplication</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Profile_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>application.id</key>
+					<value>application.id</value>
+				</map-entry>
+				<map-entry>
+					<key>domain</key>
+					<value>domain.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{profileRoleListener}</value>
+				<value>#{profileModuleDeniedListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>domainApplicationProfileListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>domainApplicationProfile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Profile_application_id</key>
+                    <value>application.id</value>
+				</map-entry>
+				<map-entry>
+					<key>Profile_domain_id</key>
+                    <value>domain</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>		
+
+	<!-- ************* PROFILE ROLE ***************** -->
+	<managed-bean>
+		<managed-bean-name>profileRole</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.admin.ProfileRole</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>profileRole</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>domainApplicationProfile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProfileRole_applicationRole_role_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>profile.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>profileRoleListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>profileRole</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProfileRole_profile_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
+
+	<!-- ************* PROFILE DENIED MODULE ***************** -->
+	<managed-bean>
+		<managed-bean-name>profileModuleDenied</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.audit.ProfileModuleDenied</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>profileModuleDenied</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>domainApplicationProfile</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>profile.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>profileModuleDeniedListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>profileModuleDenied</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProfileModuleDenied_profile_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
 		
 	<!-- =================== Main ================= -->
 	<navigation-rule>

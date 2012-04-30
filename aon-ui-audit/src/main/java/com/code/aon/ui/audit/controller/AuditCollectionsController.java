@@ -16,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class AuditCollectionsController {
@@ -58,7 +59,7 @@ public class AuditCollectionsController {
 				SelectItem item = new SelectItem(module, name);
 				modules.add(item);
 			}
-			// AonUtil.sortSelectItems(modules);
+			AonUtil.sortSelectItems(modules);
 		}
 		return modules;
 	}	

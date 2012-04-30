@@ -18,18 +18,26 @@
 				value="#{bundle.aon_name}" />
 			<aon:inputText id="Profile_name"
 				size="80" required="true"
-				validator="#{controller.idCheck}"
 				value="#{controller.to.name}" />
 					
-			<aon:outputLabel for="Profile_roles"
-				value="#{adminBundle.admin_roles}" />
-			<aon:selectManyCheckbox id="Profile_roles"
-				value="#{controller.currentRoles}" layout="pageDirection"
-				required="true">
-				<f:selectItems value="#{controller.availableRoles}" />
-			</aon:selectManyCheckbox>				
-
 		</aon:panelGrid>
+
+		<c:if test="#{!controller.new}" >
+			<aon:panelTabSet>
+
+				<aon:panelTab name="roles" label="#{adminBundle.admin_roles}">
+					<ui:include src="/com/code/aon/ui/admin/facelet/profile/roleGrid.xhtml" />
+                   </aon:panelTab>
+                
+                <aon:panelTab name="modules" label="#{adminBundle.admin_modules_denied}">   
+					<ui:include src="/com/code/aon/ui/admin/facelet/domainApplicationModule/grid.xhtml" >
+						<ui:param name="controller" value="#{profileModuleDenied}" />
+					</ui:include>
+				</aon:panelTab>
+
+			</aon:panelTabSet>
+		</c:if>		
+
 	</aon:div>
 
 </ui:composition>
