@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:outputLabel for="CustomerFee_line" value="#{financeBundle.finance_invoice_detail_line}" />
+	<aon:inputText id="CustomerFee_line" 
+		value="#{controller.to.line}" 
+		required="true" size="1" maxlength="3" />
+
+	<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+	<aon:div styleClass="aon-nowrap">
+		<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+			<ui:param name="lookupTo" value="#{controller.to.item}" />
+			<ui:param name="idRequired" value="#{true}" />
+			<ui:param name="skipLabel" value="#{true}" />
+			<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+			<ui:param name="lookupInputSuggestSize" value="50" />
+			<ui:param name="lookupInputOnFocus" value="CustomerFee_description" />
+			<ui:param name="lookupReRender" value="customerFeeItemEdit,CustomerFee_price,CustomerFee_discount" />
+			<aon:methodParam name="lookupChangeListener"
+				value="#{controller.onItemChanged}" type="lookupChangeListener" />
+		</ui:include>
+		<aon:panelGroup id="customerFeeItemEdit" styleClass="aon-nowrap aon-vertical-align-top" >
+			<aon:inputTextarea id="CustomerFee_description"
+				value="#{controller.to.description}"
+				rendered="#{controller.to.item != null and controller.to.item.id != null}"
+				cols="50" rows="#{!controller.longDescription?1:5}"
+				style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+				<f:validateLength maximum="1024" />
+			</aon:inputTextarea>
+			<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+				actionListener="#{controller.onShortDescription}" reRender="CustomerFee_description"
+				rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
+			<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+				actionListener="#{controller.onLongDescription}" reRender="CustomerFee_description"
+				rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+		</aon:panelGroup>
+	</aon:div>
+
+	<aon:outputLabel for="CustomerFee_quantity" value="#{bundle.aon_quantity_abrv}" />
+	<aon:inputText id="CustomerFee_quantity" 
+		value="#{controller.to.quantity}" 
+		required="true" size="2" />
+
+	<aon:outputLabel for="CustomerFee_price" value="#{bundle.aon_price}" />
+	<aon:inputText id="CustomerFee_price"
+		value="#{controller.to.price}" 
+		required="true" size="4" />
+
+	<aon:outputLabel for="CustomerFee_discount" value="#{financeBundle.finance_fee_discount}" />
+	<aon:inputText id="CustomerFee_discount"
+		value="#{controller.to.discountExpression.discountExpr}"  
+		required="true" size="2" />
+
+	<aon:outputLabel for="CustomerFee_initialDate" value="#{bundle.aon_date_from}" />
+	<aon:selectInputDate id="CustomerFee_initialDate"
+		value="#{controller.to.initialDate}" 
+		required="true" inputSize="7"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="CustomerFee_finalDate" value="#{bundle.aon_date_to}" />
+	<aon:selectInputDate id="CustomerFee_finalDate"
+		value="#{controller.to.finalDate}" 
+		inputSize="7"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+	<aon:outputLabel for="CustomerFee_billingDateYear" value="#{financeBundle.finance_fee_billing_date_abrv}" />
+	<aon:div styleClass="aon-nowrap">
+		<aon:selectOneMenu value="#{controller.to.billingDateMonth}">
+			<f:selectItems value="#{commonCollections.months}" />
+		</aon:selectOneMenu>
+		<aon:inputText id="CustomerFee_billingDateYear" 
+			value="#{controller.to.billingDateYear}"
+			required="true" size="3" />
+	</aon:div>
+
+	<aon:outputLabel for="CustomerFee_period" value="#{bundle.aon_period}" />
+	<aon:selectOneMenu id="CustomerFee_period"
+		value="#{controller.to.period}" >
+		<f:selectItems value="#{financeCollections.billingPeriods}" />
+	</aon:selectOneMenu>
+
+	<c:if test="#{aonRole.confidentiality}">
+		<aon:outputText value="#{bundle.aon_confidential}" />
+		<aon:selectBooleanCheckbox id="CustomerFee_securityLevel"
+			value="#{controller.to.confidential}" />
+	</c:if>
+
+	<c:if test="#{companyCollections.currentUserWorkPlacesCount > 1}">
+		<aon:outputLabel for="CustomerFee_workPlace" value="#{companyBundle.company_workplace}" />
+		<aon:selectOneMenu id="CustomerFee_workPlace" 
+			value="#{controller.to.workPlace}" >
+			<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+		</aon:selectOneMenu>
+	</c:if>
+
+</ui:composition>

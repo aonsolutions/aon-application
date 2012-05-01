@@ -32,6 +32,24 @@ public class RegistryController extends BasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryController.class);
 	
 	private String selectedTab;
+	
+	private boolean showNewFeeWindow;
+	
+	private boolean showNewProjectWindow;
+
+	private boolean showNewNoteWindow;
+	
+	private boolean showNewRelationshipWindow;
+
+	private boolean showNewRecordDataWindow;
+	
+	private boolean showNewSegmentWindow;
+	
+	private boolean showNewAddInfoWindow;
+
+	private boolean showNewDirStaffWindow;
+	
+	private boolean showNewDocumentWindow;
 
 	public String getSelectedTab() {
 		return selectedTab;
@@ -39,6 +57,78 @@ public class RegistryController extends BasicController {
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
+	}
+	
+	public boolean isShowNewFeeWindow() {
+		return showNewFeeWindow;
+	}
+
+	public void setShowNewFeeWindow(boolean showNewFeeWindow) {
+		this.showNewFeeWindow = showNewFeeWindow;
+	}
+
+	public boolean isShowNewNoteWindow() {
+		return showNewNoteWindow;
+	}
+
+	public void setShowNewNoteWindow(boolean showNewNoteWindow) {
+		this.showNewNoteWindow = showNewNoteWindow;
+	}
+
+	public boolean isShowNewRecordDataWindow() {
+		return showNewRecordDataWindow;
+	}
+
+	public boolean isShowNewRelationshipWindow() {
+		return showNewRelationshipWindow;
+	}
+
+	public void setShowNewRelationshipWindow(boolean showNewRelationshipWindow) {
+		this.showNewRelationshipWindow = showNewRelationshipWindow;
+	}
+
+	public void setShowNewRecordDataWindow(boolean showNewRecordDataWindow) {
+		this.showNewRecordDataWindow = showNewRecordDataWindow;
+	}
+
+	public boolean isShowNewSegmentWindow() {
+		return showNewSegmentWindow;
+	}
+
+	public void setShowNewSegmentWindow(boolean showNewSegmentWindow) {
+		this.showNewSegmentWindow = showNewSegmentWindow;
+	}
+
+	public boolean isShowNewAddInfoWindow() {
+		return showNewAddInfoWindow;
+	}
+
+	public void setShowNewAddInfoWindow(boolean showNewAddInfoWindow) {
+		this.showNewAddInfoWindow = showNewAddInfoWindow;
+	}
+
+	public boolean isShowNewDirStaffWindow() {
+		return showNewDirStaffWindow;
+	}
+
+	public void setShowNewDirStaffWindow(boolean showNewDirStaffWindow) {
+		this.showNewDirStaffWindow = showNewDirStaffWindow;
+	}
+
+	public boolean isShowNewProjectWindow() {
+		return showNewProjectWindow;
+	}
+
+	public void setShowNewProjectWindow(boolean showNewProjectWindow) {
+		this.showNewProjectWindow = showNewProjectWindow;
+	}
+	
+	public boolean isShowNewDocumentWindow() {
+		return showNewDocumentWindow;
+	}
+
+	public void setShowNewDocumentWindow(boolean showNewDocumentWindow) {
+		this.showNewDocumentWindow = showNewDocumentWindow;
 	}
 
 	public boolean isNaturalType() {

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}">
+		<aon:menuItem id="fee-button"
+			value="#{financeBundle.finance_fees_module}"
+			reRender="showNewFeeWindow"
+			iconClass="aon-icon-fee"
+			actionListener="#{customerFee.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewFeeWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
+		<aon:menuItem id="project-button"
+			value="#{projectBundle.project_project}"
+			iconClass="aon-icon-statistics"
+			reRender="showNewProjectWindow"
+			actionListener="#{customerProject.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewProjectWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showNote}">
+		<aon:menuItem id="rnotes-button"
+			value="#{registryBundle.registry_note}"
+			reRender="showNewNoteWindow"
+			iconClass="aon-icon-notes"
+			actionListener="#{customerNote.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewNoteWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+		<aon:menuItem id="rrelationship-button"
+			value="#{registryBundle.registry_relationship}"
+			reRender="showNewRelationshipWindow"
+			iconClass="aon-icon-relationship"
+			actionListener="#{customerRelationship.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewRelationshipWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showRecordData}">
+		<aon:menuItem id="recordData-button"
+			value="#{registryBundle.registry_rd_module}"
+			reRender="showNewRecordDataWindow"
+			iconClass="aon-icon-data"
+			actionListener="#{customerRecordData.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewRecordDataWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showSegment}">
+		<aon:menuItem id="segment-button"
+			value="#{registryBundle.registry_segment_module}"
+			reRender="showNewSegmentWindow"
+			iconClass="aon-icon-segment"
+			actionListener="#{customerSegment.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewSegmentWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showAddInfo}">
+		<aon:menuItem id="addInfo-button"
+			value="#{registryBundle.registry_addInfo}"
+			reRender="showNewAddInfoWindow"
+			iconClass="aon-icon-data"
+			actionListener="#{customerAddInfo.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewAddInfoWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{aonConfiguration.bean.customer.showDirStaff}">
+		<aon:menuItem id="dirStaff-button"
+			value="#{registryBundle.registry_dir_staff}"
+			reRender="showNewDirStaffWindow"
+			iconClass="aon-icon-data"
+			actionListener="#{customerDirStaff.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewDirStaffWindow}"
+				value="#{true}" />							
+		</aon:menuItem>
+	</c:if>
+	<c:if test="#{documentManager.show}">
+		<aon:menuItem id="document-button"
+			value="#{bundle.aon_documents}"
+			iconClass="aon-icon-documents"
+			reRender="showNewDocumentWindow"
+			actionListener="#{customerRAttach.onReset}">
+			<f:setPropertyActionListener target="#{customer.showNewDocumentWindow}"
+				value="#{true}" />							
+		</aon:menuItem>		
+	</c:if>
+
+</ui:composition>

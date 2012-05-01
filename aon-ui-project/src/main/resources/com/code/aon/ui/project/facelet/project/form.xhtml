@@ -40,56 +40,10 @@
 			
 				<aon:panelGrid columns="2" dir="true" style="width: 100%;">
 				
-					<aon:outputLabel for="Project_id" rendered="#{!project.new}" 
-						value="#{bundle.aon_id}" />
-					<aon:div rendered="#{!project.new}">
-						<aon:inputText id="Project_id" required="true" disabled="true"
-							size="10" value="#{project.to.id}" />
-						<aon:selectBooleanCheckbox id="Project_active" styleClass="aon-margin-left" 
-							value="#{project.to.active}" />	
-						<aon:outputLabel for="Project_active" value="#{bundle.aon_active}" />	
-					</aon:div>
-
-					<aon:outputLabel for="Project_name" value="#{bundle.aon_name}" />
-					<aon:inputText id="Project_name" required="true"
-						size="64" maxlength="64" value="#{project.to.name}" />
-					
-					<aon:outputLabel for="Project_alias" value="#{bundle.aon_alias}" />
-					<aon:inputText id="Project_alias" 
-						size="32" maxlength="32" value="#{project.to.alias}" />
-
-					<aon:outputLabel for="Project_date" value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="Project_date"
-						value="#{project.to.date}" required="#{true}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
-					
-					<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-						<ui:param name="lookupTo" value="#{project.to.registry}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
+					<ui:include src="/com/code/aon/ui/project/facelet/project/form_content.xhtml" >
+						<ui:param name="controller" value="#{project}" />
 					</ui:include>
-					
-					<aon:outputLabel for="Project_projectType" value="#{projectBundle.project_project_type}"/>
-					<aon:selectOneMenu id="Project_projectType"
-						value="#{project.to.projectType}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{projectCollections.projectTypes}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox id="Project_commercial" disabled="true" 
-							styleClass="aon-margin-left" value="#{project.to.commercial}" />	
-						<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
-						<aon:selectBooleanCheckbox id="Project_tas" disabled="true" 
-							styleClass="aon-margin-left" value="#{project.to.tas}" />	
-						<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
-						<aon:selectBooleanCheckbox id="Project_dossier" disabled="true" 
-							styleClass="aon-margin-left" value="#{project.to.dossier}" />	
-						<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
-					</aon:div>
+				
 				</aon:panelGrid>
 
 				<c:if test="#{!project.new}">
