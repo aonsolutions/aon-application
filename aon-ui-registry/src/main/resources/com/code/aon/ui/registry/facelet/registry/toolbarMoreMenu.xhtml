@@ -7,94 +7,85 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 	
-	<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}">
+	<c:if test="#{showFeeButton}">
 		<aon:menuItem id="fee-button"
 			value="#{financeBundle.finance_fees_module}"
 			reRender="showNewFeeWindow"
 			iconClass="aon-icon-fee"
-			actionListener="#{customerFee.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewFeeWindow}"
-				value="#{true}" />							
+			actionListener="#{feeController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewFeeWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
+	<c:if test="#{showProjectButton}">
 		<aon:menuItem id="project-button"
 			value="#{projectBundle.project_project}"
 			iconClass="aon-icon-statistics"
 			reRender="showNewProjectWindow"
-			actionListener="#{customerProject.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewProjectWindow}"
-				value="#{true}" />							
+			actionListener="#{projectController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewProjectWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showNote}">
+	<c:if test="#{showNotesButton}">
 		<aon:menuItem id="rnotes-button"
 			value="#{registryBundle.registry_note}"
 			reRender="showNewNoteWindow"
 			iconClass="aon-icon-notes"
-			actionListener="#{customerNote.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewNoteWindow}"
-				value="#{true}" />							
+			actionListener="#{notesController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewNoteWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
+	<c:if test="#{showRelationshipButton}">
 		<aon:menuItem id="rrelationship-button"
 			value="#{registryBundle.registry_relationship}"
 			reRender="showNewRelationshipWindow"
 			iconClass="aon-icon-relationship"
-			actionListener="#{customerRelationship.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewRelationshipWindow}"
-				value="#{true}" />							
+			actionListener="#{relationshipController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRelationshipWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showRecordData}">
+	<c:if test="#{showRecordDataButton}">
 		<aon:menuItem id="recordData-button"
 			value="#{registryBundle.registry_rd_module}"
 			reRender="showNewRecordDataWindow"
 			iconClass="aon-icon-data"
-			actionListener="#{customerRecordData.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewRecordDataWindow}"
-				value="#{true}" />							
+			actionListener="#{recordDataController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewRecordDataWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showSegment}">
+	<c:if test="#{showSegmentButton}">
 		<aon:menuItem id="segment-button"
 			value="#{registryBundle.registry_segment_module}"
 			reRender="showNewSegmentWindow"
 			iconClass="aon-icon-segment"
-			actionListener="#{customerSegment.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewSegmentWindow}"
-				value="#{true}" />							
+			actionListener="#{segmentController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewSegmentWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showAddInfo}">
+	<c:if test="#{showAddInfoButton}">
 		<aon:menuItem id="addInfo-button"
 			value="#{registryBundle.registry_addInfo}"
 			reRender="showNewAddInfoWindow"
 			iconClass="aon-icon-data"
-			actionListener="#{customerAddInfo.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewAddInfoWindow}"
-				value="#{true}" />							
+			actionListener="#{addInfoController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewAddInfoWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{aonConfiguration.bean.customer.showDirStaff}">
+	<c:if test="#{showDirStaffButton}">
 		<aon:menuItem id="dirStaff-button"
 			value="#{registryBundle.registry_dir_staff}"
 			reRender="showNewDirStaffWindow"
 			iconClass="aon-icon-data"
-			actionListener="#{customerDirStaff.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewDirStaffWindow}"
-				value="#{true}" />							
+			actionListener="#{dirStaffController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewDirStaffWindow}" value="#{true}" />							
 		</aon:menuItem>
 	</c:if>
-	<c:if test="#{documentManager.show}">
+	<c:if test="#{showDocumentButton}">
 		<aon:menuItem id="document-button"
 			value="#{bundle.aon_documents}"
 			iconClass="aon-icon-documents"
 			reRender="showNewDocumentWindow"
-			actionListener="#{customerRAttach.onReset}">
-			<f:setPropertyActionListener target="#{customer.showNewDocumentWindow}"
-				value="#{true}" />							
+			actionListener="#{rAttachController.onReset}">
+			<f:setPropertyActionListener target="#{controller.showNewDocumentWindow}" value="#{true}" />							
 		</aon:menuItem>		
 	</c:if>
 

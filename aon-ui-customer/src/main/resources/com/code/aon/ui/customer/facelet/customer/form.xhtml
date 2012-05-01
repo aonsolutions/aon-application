@@ -28,6 +28,24 @@
 					</c:if>
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{customer}" />
+						<ui:param name="showFeeButton" value="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}" />
+						<ui:param name="showProjectButton" value="#{aonConfiguration.bean.customer.showProjectData}" />
+						<ui:param name="showNotesButton" value="#{aonConfiguration.bean.customer.showNote}" />
+						<ui:param name="showRelationshipButton" value="#{aonConfiguration.bean.customer.showRelationship}" />
+						<ui:param name="showRecordDataButton" value="#{aonConfiguration.bean.customer.showRecordData}" />
+						<ui:param name="showSegmentButton" value="#{aonConfiguration.bean.customer.showSegment}" />
+						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.customer.showAddInfo}" />
+						<ui:param name="showDirStaffButton" value="#{aonConfiguration.bean.customer.showDirStaff}" />
+						<ui:param name="showDocumentButton" value="#{documentManager.show}" />
+						<ui:param name="feeController" value="#{customerFee}" />
+						<ui:param name="projectController" value="#{customerProject}" />
+						<ui:param name="notesController" value="#{customerNote}" /> 
+						<ui:param name="relationshipController" value="#{customerRelationship}" /> 
+						<ui:param name="recordDataController" value="#{customerRecordData}" /> 
+						<ui:param name="segmentController" value="#{customerSegment}" /> 
+						<ui:param name="addInfoController" value="#{customerAddInfo}" /> 
+						<ui:param name="dirStaffController" value="#{customerDirStaff}" /> 
+						<ui:param name="rAttachController" value="#{customerRAttach}" />
 					</ui:include>
 				</ui:define>
 			</ui:decorate>
