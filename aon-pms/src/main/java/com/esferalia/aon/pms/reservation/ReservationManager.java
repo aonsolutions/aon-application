@@ -293,8 +293,12 @@ public class ReservationManager implements IReservationConstants {
 					reservationGuest.setAddress(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getAddressLineArray(0));
 					reservationGuest.setZip(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getPostalCode());
 					reservationGuest.setCity(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCityName());
-					reservationGuest.setProvince(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getStateProv().getStringValue());
-					reservationGuest.setCountry(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName().getCode());
+					if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getStateProv() != null) {
+						reservationGuest.setProvince(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getStateProv().getStringValue());
+					}
+					if (guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName() != null) {
+						reservationGuest.setCountry(guest.getProfiles().getProfileInfoArray(0).getProfile().getCustomer().getAddressArray(0).getCountryName().getCode());
+					}
 				}
 				reservationGuestBean.insert(reservationGuest);
 				if (reservationGuest.getGuestIndex() == 1) {
