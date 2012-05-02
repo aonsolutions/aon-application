@@ -20,6 +20,11 @@
 							actionListener="#{item.onEditSearch}"
 							value="#{productBundle.product_module}" />
 					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element">
+						<aon:commandLink id="catalogue-sales" 
+							action="catalogue_search-sales" actionListener="#{catalogue.onEditSearch}"
+							value="#{productBundle.product_catalogue_module}" />
+					</aon:div>
 				</c:if>		
 			</ui:define>
 		</ui:decorate>

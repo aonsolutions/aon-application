@@ -51,12 +51,6 @@
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="advanceInvoice" 
-										action="advanceInvoice_search" actionListener="#{advanceInvoice.onEditSearch}"
-										value="#{pmsBundle.pms_advance_invoice_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rack"
 										action="rack_search" actionListener="#{rack.onEditSearch}"
 										value="#{pmsBundle.pms_rack_module}">
@@ -125,6 +119,22 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
+					
+						<aon:panelGrid id="group_config_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_general}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccountChange"
+										action="mailAccount_list" actionListener="#{mailAccount.onSearch}"
+										value="#{webmailBundle.webmail_mailAccount}" />						
+								</aon:div>								
+							</aon:div>
+						</aon:panelGrid>
+						
 						<aon:panelGrid id="group_hotel_pos"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-pos aon-direct-access-panel">
@@ -161,7 +171,6 @@
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
-							
 						</aon:panelGrid>
 
 						<aon:panelGrid id="group_hotel_governess"
