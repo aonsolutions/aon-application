@@ -15,16 +15,20 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
@@ -156,19 +160,22 @@ public class ActionDeniedController implements IAuditConstants {
 		return null;		
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<DomainApplicationModule> getEnabledModules() {
+	private Map<String,Module> getEnabledModules() {
+		Map<String,Module> enabledModules = new HashMap<String, Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
 			DomainApplication da = getAuditController().getDomainApplication();
 			String filed = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
 			criteria.addEqualExpression( filed, da.getId());
-			return (List) bean.getList(criteria);
+			for( ITransferObject to : bean.getList(criteria) ) {
+				DomainApplicationModule dam = (DomainApplicationModule) to;
+				enabledModules.put( dam.getModule().getName(), dam.getModule() );
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading modules denied", e);
 		}
-		return null;		
+		return enabledModules;		
 	}
 	
 	private boolean isDeniedOption( ApplicationOption option ) {
@@ -285,18 +292,44 @@ public class ActionDeniedController implements IAuditConstants {
 		return listener;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<Module> getProfileDeniedModules( Integer profile ) {
+		Query query = AdminUtil.getQuery("SELECT pmd.module FROM ProfileModuleDenied pmd WHERE pmd.profile = ?");
+		query.setInteger(0, profile );
+		return query.list();
+	}
+	
+	private Map<String,Module> getDeniedModules() {
+		Map<String,Module> deniedModules = new HashMap<String, Module>();
+		try {			
+			Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain());
+			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
+			if ( (profiles != null) && (!profiles.isEmpty()) ) {
+				for( Integer profile : profiles ) {
+					List<Module> list = getProfileDeniedModules(profile);
+					if ( list != null ) {
+						for( Module module : list ) {
+							deniedModules.put(module.getName(), module);	
+						}
+					}
+				}
+			}			
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error getting profile denied modules", th );
+		}		
+		return deniedModules;
+	}
+	
 	private void initDeniedModules() {
 		this.deniedModulesMap = new HashMap<String, ApplicationCategory>();
 		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, MODULES_ENABLED) ) {
-			List<DomainApplicationModule> modules = getEnabledModules();
+			Map<String,Module> enabledModules = getEnabledModules();
+			Map<String,Module> deniedModules = getDeniedModules();
 			for( ApplicationCategory category : getOptionController().getCategories() ) {
 				if (! ArrayUtils.contains(SKIP_CATEGORIES, category.getAlias()) ) {
 					boolean denied = true;
-					for( DomainApplicationModule dam : modules ) {
-						if ( dam.getModule().getName().equals(category.getAlias()) ) {
-							denied = false;
-							break;
-						}
+					if (! deniedModules.containsKey(category.getAlias()) ) {
+						denied = ! enabledModules.containsKey(category.getAlias());
 					}
 					if ( denied ) {
 						this.deniedModulesMap.put(category.getAlias(), category);	
