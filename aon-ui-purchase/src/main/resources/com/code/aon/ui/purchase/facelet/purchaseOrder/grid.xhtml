@@ -108,13 +108,14 @@
 								value="#{purchaseOrder.params.workPlace}">
 								<f:selectItem itemLabel=" - " itemValue="null" />
 								<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+								<a4j:support event="onchange" ajaxSingle="true" reRender="Proposal_workplceDepartment_department"/>
 							</aon:selectOneMenu>
 							
 							<aon:outputLabel value="#{companyBundle.company_department}" />
 							<aon:selectOneMenu id="Proposal_workplceDepartment_department" 
 								value="#{purchaseOrder.params.department}">
 								<f:selectItem itemLabel=" - " itemValue="null" />
-								<f:selectItems value="#{companyCollections.departments}" />
+								<f:selectItems value="#{purchaseOrder.availableDepartments}" />
 							</aon:selectOneMenu>
 							
 							<aon:outputText value="&#160;" />

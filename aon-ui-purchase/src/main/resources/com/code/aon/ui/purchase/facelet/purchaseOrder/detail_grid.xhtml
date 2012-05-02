@@ -67,7 +67,7 @@
 				
 					<aon:div styleClass="aon-width-60  aon-noborder">
 						<aon:outputText value="&#160;" title="#{detail.proposal.remarks}" 
-							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and detail.proposal.remarks!=null}" 
+							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and !(empty detail.proposal.remarks)}" 
 							styleClass="aon-editDataTable-button aon-icon-info" />
 						<aon:commandButton
 							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
