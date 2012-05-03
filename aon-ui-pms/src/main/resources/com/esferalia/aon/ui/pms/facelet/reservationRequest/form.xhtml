@@ -13,6 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_request_module}" />
 				<ui:param name="controller" value="#{reservationRequest}" />
+				<ui:param name="skipRemoveButton" value="#{!reservationRequest.to.active}" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">

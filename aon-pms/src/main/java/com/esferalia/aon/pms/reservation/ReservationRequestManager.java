@@ -38,6 +38,8 @@ import com.solmelia.namespaces.solres.HITISMessageDocument;
 import com.solmelia.namespaces.solres.HITISMessageDocument.HITISMessage;
 import com.solmelia.namespaces.solres.HITISOperationType;
 import com.solmelia.namespaces.solres.HITISOperationType.OperationType;
+import com.solmelia.namespaces.solres.PaymentInstructionsDocument.PaymentInstructions;
+import com.solmelia.namespaces.solres.PaymentInstructionsDocument.PaymentInstructions.PaymentInstruction.PaymentMethodType;
 import com.solmelia.namespaces.solres.ProfileDocument.Profile.ProfileType;
 import com.solmelia.namespaces.solres.RateDescriptionsDocument.RateDescriptions.RateDescription;
 import com.solmelia.namespaces.solres.RatePlansDocument.RatePlans;
@@ -355,8 +357,12 @@ public class ReservationRequestManager implements IReservationConstants {
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getBabies());
 		}
 
-		//PaymentInstructions paymentInstructions = PaymentInstructions.Factory.newInstance();
-		//paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.VOUCHER);
+		PaymentInstructions paymentInstructions = PaymentInstructions.Factory.newInstance();
+		if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
+			paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.VOUCHER);
+		} else {
+			paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.POS);
+		}
 
 		int roomRPH = 0;
 		RoomStays roomStays = RoomStays.Factory.newInstance();
@@ -367,7 +373,7 @@ public class ReservationRequestManager implements IReservationConstants {
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setRatePlans(ratePlans);
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setGuestCounts(guestCounts);
 			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).addNewPaymentInstructions();
-			//roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setPaymentInstructionsArray(0, paymentInstructions);
+			roomStays.getRoomStayArray(roomStays.sizeOfRoomStayArray()-1).setPaymentInstructionsArray(0, paymentInstructions);
 		}
 		operation.getReservationTransaction().getReservation().addNewRoomStays();
 		operation.getReservationTransaction().getReservation().setRoomStaysArray(0, roomStays);
@@ -420,6 +426,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		ResProfile[] resProfiles = { resProfile };
 		operation.getReservationTransaction().getReservation().addNewResProfiles().setResProfileArray(resProfiles);
 
+		operation.getReservationTransaction().getReservation().addNewResComments().addNewResComment().setComment(request.getRemarks());
 		operation.getReservationTransaction().getReservation().setExternalReservationID(request.getCode());
 		operation.getReservationTransaction().getReservation().addNewDistributor().setCode(TR);
 		message.getBody().setHITISOperationAbstract(operation);

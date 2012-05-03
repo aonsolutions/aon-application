@@ -25,7 +25,7 @@
 	<aon:outputText	value="#{reservationRequest.to.code}" styleClass="aon-bold"
 		rendered="#{!reservationRequest.to.active}" />
 	<aon:inputText id="ReservationRequest_code" value="#{reservationRequest.to.code}"
-		size="30" maxlength="32" required="true"
+		size="30" maxlength="20" required="true"
 		rendered="#{reservationRequest.to.active}" />
 
 	<aon:outputLabel for="ReservationRequest_startDate" value="#{pmsBundle.pms_checkIn}" />
@@ -88,32 +88,34 @@
 	<aon:selectOneMenu id="ReservationRequest_bookingHolder" value="#{reservationRequest.to.bookingHolder}" 
 		required="true" rendered="#{aonRole.saleOperator and reservationRequest.to.active}"
 		valueChangeListener="#{reservationRequest.onHolderChanged}"
-		reRender="BookingHolderLabelDiv,BookingHolderValueDiv">
+		reRender="aonContent">
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
 	</aon:selectOneMenu>
 
 	<c:if test="#{aonRole.saleOperator}">
-		<aon:div id="BookingHolderLabelDiv">
-			<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
-				 rendered="#{reservationRequest.to.agencyHolder}" />
-			<aon:outputLabel for="ReservationRequest_company" value="#{pmsBundle.pms_company}"
-				rendered="#{reservationRequest.to.companyHolder}" />
-		</aon:div>
+		<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
+			 rendered="#{reservationRequest.to.agencyHolder}" />
+		<aon:outputLabel for="ReservationRequest_company" value="#{pmsBundle.pms_company}"
+			rendered="#{reservationRequest.to.companyHolder}" />
 
-		<aon:div id="BookingHolderValueDiv">
-			<aon:outputText value="#{reservationRequest.to.agency.registry.fullName}" styleClass="aon-bold" 
-				rendered="#{!reservationRequest.to.active and reservationRequest.to.agencyHolder}"  />
-			<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
-				required="true" rendered="#{reservationRequest.to.active and reservationRequest.to.agencyHolder}">
-				<f:selectItems value="#{reservationRequest.agencies}" />
-			</aon:selectOneMenu>
-			<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
-				rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
-			<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
-				required="true" rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
-				<f:selectItems value="#{reservationRequest.companies}" />
-			</aon:selectOneMenu>
-		</aon:div>
+		<aon:outputText value="#{reservationRequest.to.agency.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!reservationRequest.to.active and reservationRequest.to.agencyHolder}"  />
+		<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
+			required="true" styleClass="aon-width-350"
+			rendered="#{reservationRequest.to.active and reservationRequest.to.agencyHolder}">
+			<f:selectItems value="#{reservationRequest.agencies}" />
+		</aon:selectOneMenu>
+		<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
+			rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
+		<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
+			required="true" styleClass="aon-width-350"
+			rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
+			<f:selectItems value="#{reservationRequest.companies}" />
+		</aon:selectOneMenu>
 	</c:if>
+
+	<aon:outputLabel for="ReservationRequest_remarks" value="#{bundle.aon_remark}" />
+	<aon:inputText id="ReservationRequest_remarks" value="#{reservationRequest.to.remarks}"
+		size="64" maxlength="166" />
 
  </ui:composition>
