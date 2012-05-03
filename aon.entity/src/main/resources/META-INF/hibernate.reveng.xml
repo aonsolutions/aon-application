@@ -339,10 +339,10 @@
 	</table>
 
 	<table name="contact_detail">
-		<foreign-key constraint-name="FK_CONTACT_GROUP_DETAIL_CONTACT">
+		<foreign-key constraint-name="FK_CONTACT_DETAIL_CONTACT">
 			<many-to-one property="contact"/>
 		</foreign-key>    
-		<foreign-key constraint-name="FK_CONTACT_GROUP_DETAIL_CONTACT_GROUP">
+		<foreign-key constraint-name="FK_CONTACT_DETAIL_CONTACT_GROUP">
 			<many-to-one property="contactGroup"/>
 		</foreign-key>    
 	</table>
