@@ -19,7 +19,7 @@
 				value="#{bundle.aon_displayName}" />
 			<aon:inputText id="GroupContact_displayName"
 				maxlength="128" size="77" required="true"
-				value="#{contact.to.displayName}" />
+				value="#{controller.to.displayName}" />
 	
 			<aon:outputLabel for="GroupContact_contacts"
 				value="#{webmailBundle.webmail_email}" />
@@ -30,9 +30,9 @@
 				removeAllControlLabel ="#{webmailBundle.webmail_removeAll}"
 				styleClass="aon-margin-top"
 				sourceListWidth="250px" targetListWidth="250px"
-				converter="#{contact.converter}"
-				value="#{contact.to.contacts}" required="true">
-		        <f:selectItems value="#{contact.availableContacts}"/>
+				converter="#{controller.converter}"
+				value="#{controller.to.contacts}" required="true">
+		        <f:selectItems value="#{controller.availableContacts}"/>
 			</aon:pickList>
 
 		</aon:panelGrid>

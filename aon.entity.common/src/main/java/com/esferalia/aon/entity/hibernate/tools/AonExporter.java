@@ -494,8 +494,8 @@ public class AonExporter extends GenericExporter{
 
 		//AON-WEBMAIL 
 		map.put("Contact","com.code.aon.webmail.db.Contact");
-		map.put("ContactGroup","com.code.aon.webmail.db.ContactGroup");
-		map.put("ContactGroupDetail","com.code.aon.webmail.db.ContactGroupDetail");
+		map.put("ContactData","com.code.aon.webmail.db.ContactData");
+		map.put("ContactDetail","com.code.aon.webmail.db.ContactDetail");
 		map.put("MailAccount","com.code.aon.webmail.db.MailAccount");
 		map.put("Signature","com.code.aon.webmail.db.Signature");
 

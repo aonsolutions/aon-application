@@ -326,19 +326,24 @@
 	</table>
 
 	<table name="contact">
-    <column name="name" property="outlookName" />
-    <column name="city" property="outlookCity" />
-    <column name="contactState" property="state" />
-    <column name="title" property="category" />
-		<column name="note" type="text"/>
 		<foreign-key constraint-name="FK_CONTACT_USER">
 			<many-to-one property="user"/>
 		</foreign-key>    
 	</table>
 
- 	<table name="contact_group">
-		<foreign-key constraint-name="FK_CONTACT_GROUP_USER">
-			<many-to-one property="user"/>
+	<table name="contact_data">
+    <column name="name" property="outlookName" />
+    <column name="city" property="outlookCity" />
+    <column name="contactState" property="state" />
+		<column name="note" type="text"/>
+	</table>
+
+	<table name="contact_detail">
+		<foreign-key constraint-name="FK_CONTACT_GROUP_DETAIL_CONTACT">
+			<many-to-one property="contact"/>
+		</foreign-key>    
+		<foreign-key constraint-name="FK_CONTACT_GROUP_DETAIL_CONTACT_GROUP">
+			<many-to-one property="contactGroup"/>
 		</foreign-key>    
 	</table>
 

@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +25,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.ContactConverter;
 import com.code.aon.webmail.Contact;
+import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class ContactController extends LdapBasicController implements IWebMailConstants {
+public class ContactController extends LdapBasicController implements IWebMailConstants, IContactController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ContactController.class);
 	
@@ -100,5 +102,43 @@ public class ContactController extends LdapBasicController implements IWebMailCo
 		contact.setContactGroup( Boolean.TRUE );
 		updateAvailableContacts();
 	}
-	
+
+	@Override
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		Contact contact = (Contact) getTo();
+		if (! StringUtils.isEmpty(contact.getName()) ) {
+			contact.setOutlookName( contact.getName() );
+			contact.setName(null);
+		}
+		if (! StringUtils.isEmpty(contact.getCity()) ) {
+			contact.setOutlookCity( contact.getCity() );
+			contact.setCity(null);
+		}
+		if (! StringUtils.isEmpty(contact.getCategory()) ) {
+			contact.setTitle( contact.getCategory() );
+			contact.setCategory(null);
+		}
+	}
+
+	@Override
+	public String isUsed(IContact contact) {
+		try {
+			Criteria criteria = new Criteria();
+			String contacts = getFieldName(IWebMailAlias.CONTACT_CONTACTS);
+			criteria.addEqualExpression( contacts, ((Contact)contact).getId() );
+			List<ITransferObject> list = getManagerBean().getList(criteria);
+			if (! list.isEmpty() ) {
+				List<String> groups = new LinkedList<String>();
+				for( ITransferObject to : list ) {
+					groups.add( ((Contact)to).getDisplayName() );
+				}
+				return StringUtils.join( groups, ", " );
+			}
+    	} catch (ManagerBeanException e) {
+    		LOGGER.error( "Error getting suggestion emails", e );
+		}	
+    	return null;
+	}
+
 }

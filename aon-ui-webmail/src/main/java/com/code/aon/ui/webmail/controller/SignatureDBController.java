@@ -3,7 +3,6 @@ package com.code.aon.ui.webmail.controller;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_DUPLICATED;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_USED;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,29 +51,20 @@ public class SignatureDBController extends MailDBController implements ISignatur
 		}		
 		return signatures;
 	}
-	
-	private boolean checkRemovable( Signature signature ) {
+
+	@Override
+	public boolean isRemovable( ISignature signature ) {
 		try {
 			MailAccountDBController controller = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(controller.getFieldName(IEntityAlias.MAIL_ACCOUNT_SIGNATURE_ID), ((Signature)signature).getId());
 			controller.completeCriteria(criteria);
-			if ( controller.getManagerBean().getCount(criteria) > 0 ) {
-				AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, SIGNATURE_USED, signature.getName() );
-				return false;
-			}
+			return (controller.getManagerBean().getCount(criteria) == 0); 
 		} catch (ManagerBeanException e) {
 			LOGGER.error("checkRemovable for " + signature, e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		}
-		return true;		
-	}
-	
-	@Override
-	public void onRemove(ActionEvent event) {
-		if ( checkRemovable((Signature) getTo() ) ) {
-			super.onRemove(event);			
-		}
+		}	
 	}
 	
 	@Override

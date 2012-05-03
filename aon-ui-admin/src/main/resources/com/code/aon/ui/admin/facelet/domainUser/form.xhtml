@@ -84,14 +84,14 @@
 						<aon:panelTab name="scopes" label="#{adminBundle.admin_scopes}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/grid.xhtml" />
 	                    </aon:panelTab>
-						<!--
+
 						<aon:panelTab name="contacts"
 							label="#{webmailBundle.webmail_email}">						
 							<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
-								<ui:param name="controller" value="#{contact}" />
+								<ui:param name="controller" value="#{mailConfig.contact}" />
 							</ui:include>						
 	                    </aon:panelTab>
-						-->			
+			
 						<aon:panelTab name="mailAccount"
 							label="#{webmailBundle.webmail_mailAccount}">
 							<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >

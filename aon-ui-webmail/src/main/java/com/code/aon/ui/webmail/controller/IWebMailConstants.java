@@ -33,6 +33,7 @@ public interface IWebMailConstants {
 	String BEAN_SEARCH = "webmailSearch";
 	String BEAN_INPUTFILE = "inputFile";
 	String BEAN_CONTACT = "contact";
+	String BEAN_CONTACT_DB = "contactDB";
 	String BEAN_SIGNATURE = "signature";
 	String BEAN_SIGNATURE_DB = "signatureDB";
 	String BEAN_AUTOCOMPLETEEMAILDICC = "autoCompleteEmailDictionary";

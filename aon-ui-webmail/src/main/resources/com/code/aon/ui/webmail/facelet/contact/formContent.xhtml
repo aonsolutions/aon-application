@@ -11,10 +11,10 @@
 
 	<aon:div styleClass="aon-scroll-area">
 	
-		<c:if test="#{!contact.to.contactGroup}">
+		<c:if test="#{!controller.to.contactGroup}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/contact/formContact.xhtml" />
 		</c:if>
-		<c:if test="#{contact.to.contactGroup}">
+		<c:if test="#{controller.to.contactGroup}">
 			<ui:include src="/com/code/aon/ui/webmail/facelet/contact/formGroup.xhtml" />
 		</c:if>
 

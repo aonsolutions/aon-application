@@ -333,8 +333,8 @@
 		
 		<!-- AON-WEBMAIL Mapping files -->	
 		<mapping class="com.code.aon.webmail.db.Contact"/>
-		<mapping class="com.code.aon.webmail.db.ContactGroup"/>
-		<mapping class="com.code.aon.webmail.db.ContactGroupDetail"/>
+		<mapping class="com.code.aon.webmail.db.ContactData"/>
+		<mapping class="com.code.aon.webmail.db.ContactDetail"/>
 		<mapping class="com.code.aon.webmail.db.MailAccount"/>
 		<mapping class="com.code.aon.webmail.db.Signature"/>
 

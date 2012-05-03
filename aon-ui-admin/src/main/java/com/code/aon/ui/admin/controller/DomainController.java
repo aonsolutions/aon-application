@@ -1,6 +1,7 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
@@ -29,6 +30,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.ContactDBController;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -142,6 +145,10 @@ public class DomainController extends BasicController {
 		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
 		account.updateUser(user);
 		account.initializeModel();		
+
+		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+		contact.updateUser(user);
+		contact.initializeModel();		
 	}
 
 	public void flushAuthenticationCache( User user ) {
