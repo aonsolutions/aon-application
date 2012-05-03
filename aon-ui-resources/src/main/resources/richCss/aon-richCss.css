@@ -2554,29 +2554,30 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-changePassword{
 	background:transparent url(images/aon-main-menu/aon-icon-changePassword.png) no-repeat scroll center left;
 }
-.aon-subTable-green-header{
+.aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 
-	background-color: #D5FCC0; 
 	font-size: 0.9em;
 }
-.aon-subTable-green-column{
-	padding-left: 10px; 
-	border: none; 
+.aon-subTable-column-green{
 	background-color: #F2FDEC; 
-	font-size: 0.9em;
 }
-.aon-subTable-yellow-header{
-	padding-left: 10px; 
-	border: none; 
-	background-color: #F8DF7C; 
-	font-size: 0.9em;
+.aon-subTable-column-green-header{
+	background-color: #D5FCC0; 
 }
-.aon-subTable-yellow-column{
-	padding-left: 10px; 
-	border: none; 
+.aon-subTable-column-green-selected{
+	background-color: #D5FCC0 !important;
+	cursor: pointer;
+}
+.aon-subTable-column-yellow{
 	background-color: #FBEDB6; 
-	font-size: 0.9em;
+}
+.aon-subTable-column-yellow-header{
+	background-color: #F8DF7C; 
+}
+.aon-subTable-column-yellow-selected{
+	background-color: #F8DF7C !important; 
+	cursor: pointer;
 }
 
 

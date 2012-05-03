@@ -112,18 +112,19 @@
 			</aon:div>
 			<rich:subTable id="roomDetailTable" 
 				rendered="#{controller.showRoomDetail}"
-				value="#{controller.roomDetailList}" var="roomDetail">
+				value="#{controller.roomDetailList}" var="roomDetail"
+				rowClasses="aon-subTable-column-green">
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:outputText value="&#160;" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:outputText value="&#160;" />
 				</aon:column>
 
 				<aon:column colspan="6"
-					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-green-column">
+					styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">
 					<aon:panelGrid columns="4" columnClasses="aon-noborder aon-width-130, aon-noborder aon-width-130, 
 																aon-noborder aon-width-400, aon-noborder aon-width-auto">
 						<aon:div>
