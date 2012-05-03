@@ -19,7 +19,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
         if (invoice.isAdvance() && invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice,Boolean.TRUE);
+        	modifyReservationStatus(invoice, Boolean.TRUE);
         }
     }
 
@@ -27,7 +27,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
         if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice,null);
+        	modifyReservationStatus(invoice, null);
         }
     }
 
@@ -35,7 +35,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
         if (invoice.getProject() != null && invoice.getProject().getId() != null) {
-        	modifyReservationStatus(invoice,Boolean.FALSE);
+        	modifyReservationStatus(invoice, Boolean.FALSE);
         }
     }
 
@@ -50,9 +50,12 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
     		Object result = invoiceBean.getUniqueResult(projection, criteria);
     		double totalInvoiced = (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
+    		projection = Projection.countDistinct(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID));
+    		result = invoiceBean.getUniqueResult(projection, criteria);
+    		int countInvoices = (result != null) ? ((Integer)result).intValue() : 0;
 
     		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-    		reservation.setStatus((totalInvoiced == 0) ? ReservationStatus.ACTIVE : ReservationStatus.INVOICED);
+    		reservation.setStatus((totalInvoiced == 0 && countInvoices % 2 == 0) ? ReservationStatus.ACTIVE : ReservationStatus.INVOICED);
     		if (adding != null && invoice.isAdvance()) {
     			adding = invoice.isRectifier()?!adding:adding;
     			reservation.setAdvanceInvoiced(adding);
