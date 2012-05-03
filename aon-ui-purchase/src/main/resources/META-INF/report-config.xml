@@ -71,6 +71,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{purchaseDetail.getPriceStrategy}" />
 			<param id="defaultPayMethod" value="#{purchase.getDefaultPayMethod}" />
+			<param id="printValue" value="#{purchaseReport.isValued}" />
 		</params>
 		<nested-report report="purchaseFormDetail"/>
 		<nested-report report="purchaseVatBreakDown"/>
@@ -108,6 +109,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{purchaseDetail.getPriceStrategy}" />
 			<param id="defaultPayMethod" value="#{purchasePrint.getDefaultPayMethod}" />
+			<param id="printValue" value="#{purchaseReport.isValued}" />
 		</params>
 		<nested-report report="purchaseFormDetail"/>
 		<nested-report report="purchaseVatBreakDown"/>
@@ -129,6 +131,7 @@
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printValue" value="#{purchaseReport.isValued}" />
 		</params>
 	</report>
 	

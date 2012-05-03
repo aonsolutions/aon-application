@@ -4,12 +4,25 @@ public interface IPurchaseConstants {
 	
 	String COLLECTIONS_CONTROLLER_NAME = "purchaseCollections";
 	
-	String PURCHASE_FORM_NAME = "purchase_form";
+	
+	// ************************************************************
+	// BEAN
+	// ************************************************************
+	String INCOME_CONTROLLER_NAME = "income";
+	String PROPOSAL_CONTROLLER_NAME = "proposal";
+	String PROPOSAL_DETAIL_CONTROLLER_NAME = "proposalDetail";
 	String PURCHASE_CONTROLLER_NAME = "purchase";
 	String PURCHASE_DETAIL_CONTROLLER_NAME = "purchaseDetail";
+	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
+	
+	// ************************************************************
+	// LISTENER
+	// ************************************************************
 	String PURCHASE_SEARCH_LISTENER_NAME = "purchaseSearch";
 	
-	String INCOME_CONTROLLER_NAME = "income";
-	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
-
+	// ************************************************************
+	// NAVIGATION
+	// ************************************************************
+	String PURCHASE_FORM_NAME = "purchase_form";
+	
 }

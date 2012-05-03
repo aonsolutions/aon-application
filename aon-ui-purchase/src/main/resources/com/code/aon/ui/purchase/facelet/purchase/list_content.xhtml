@@ -24,6 +24,14 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 	</aon:column>
+	
+	<aon:column alias="Purchase.workPlace.name" 
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_workplace}" />
+		</f:facet>
+		<aon:outputText value="#{to.workPlace.description}" />
+	</aon:column>
 
 	<aon:column alias="Purchase.supplier.registry.name"
 		styleClass="aon-editDataTable-textColumn">

@@ -490,6 +490,8 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean("purchaseReport");
+		purchaseReportManager.setValued(true);
 		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 		if (webmailController.isLogged()) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);

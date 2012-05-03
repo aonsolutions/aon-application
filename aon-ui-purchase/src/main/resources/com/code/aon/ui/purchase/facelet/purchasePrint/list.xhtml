@@ -23,13 +23,24 @@
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 					</aon:commandButton>	
-					<c:if test="#{aonRole.purchaseOperator}">										
-						<aon:htmlCommandLink id="purchasePrint-report"
-							value="#{purchaseBundle.purchase_module}" target="_blank"
-							action="#{report.onExecute}"
-							styleClass="aon-finding-toolbar-item aon-icon-pdf"
-							accesskey="#{bundle.aon_key_print}">
+					<aon:htmlCommandLink id="purchasePrint-report"
+						value="#{purchaseBundle.purchase_module}" target="_blank"
+						action="#{purchaseReport.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+							<f:setPropertyActionListener target="#{purchaseReport.valued}" value="#{false}" />
+						<f:param name="reportKey" value="purchasePrint" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
+					<c:if test="#{aonRole.purchaseOperator}">
+						<aon:htmlCommandLink id="purchaseForm_valued-report" value="#{purchaseBundle.purchase_valued_reports}"
+							target="_new" rendered="#{!purchase.new and purchaseDetail.model.rowCount > 0}"
+							action="#{purchaseReport.onExecute}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							<f:setPropertyActionListener target="#{purchaseReport.valued}" value="#{true}" />
 							<f:param name="reportKey" value="purchasePrint" />
+							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 					</c:if>
 				</ui:define>				

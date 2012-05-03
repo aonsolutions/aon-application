@@ -118,6 +118,32 @@
 				<aon:outputText value="#{to.status}" />
 			</aon:column>
 			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+				<f:facet name="header">
+					<aon:outputLabel value="INFO" />
+				</f:facet>
+				<aon:commandLink id="proposalDetailPurchaseLink" immediate="true"
+					styleClass="#{aonRole.purchaseOperator ? 'aon-button-goto' : 'aon-icon-info'}"
+					style="padding-right: 20px;" 
+					value="&#160;"  
+					rendered="#{!to.pending and to.purchaseDetail!=null}" 
+					actionListener="#{controller.onLoadPurchase}"
+					disabled="#{!aonRole.purchaseOperator}"
+					action="purchase_form"
+					reRender="aonContent">
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+							<f:facet name="header">
+								<aon:outputText value="#{purchaseBundle.purchase_purchase}" />
+							</f:facet>
+							<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number} " />
+							<aon:outputText value="#{to.purchaseDetail.purchase.referenceCode}" />
+						</aon:panelGrid>
+					</rich:toolTip>
+				</aon:commandLink>
+				
+			</aon:column>
+			
 		</ui:define>
 
 	</ui:decorate>

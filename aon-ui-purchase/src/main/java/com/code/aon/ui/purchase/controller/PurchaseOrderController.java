@@ -247,6 +247,7 @@ public class PurchaseOrderController {
 				purchaseGroup.setSupplier(supplier);
 				purchaseGroup.setWorkPlace(pd.getProposal().getWorkPlace());
 				purchaseGroup.setDepartment(dep);
+				purchaseGroup.setComments(pd.getProposal().getRemarks());
 				purchaseGroup.setGroupIndex(groupIndex);
 				purchaseGroup.setDetailList(new LinkedList<PurchaseOrderController.GroupDetail>());
 				purchaseGroup.setTotalAmount(0.0);
@@ -276,7 +277,7 @@ public class PurchaseOrderController {
 				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment());
+						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), pg.getComments());
 						addToPurchaseCriteria(purchase);
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
@@ -315,12 +316,6 @@ public class PurchaseOrderController {
 			purchasePrintcriteria.addOrExpression("purchase.id", purchase.getId().toString());
 		}
 	}
-	
-	
-	
-
-	
-	
 	
 	public void onSelectDetail(ActionEvent event) throws ManagerBeanException{
 		setDetailIndex(getDetailModel().getRowIndex());
@@ -418,7 +413,14 @@ public class PurchaseOrderController {
 		private int groupIndex;
 		private List<GroupDetail> detailList;
 		private Double totalAmount;
+		private String comments;
 		
+		public String getComments() {
+			return comments;
+		}
+		public void setComments(String comments) {
+			this.comments = comments;
+		}
 		public Supplier getSupplier() {
 			return supplier;
 		}

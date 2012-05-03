@@ -176,8 +176,13 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	public void onBackPurchase(ActionEvent event) throws ManagerBeanException {
 		PurchaseController purchaseController = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
 		purchaseController.refresh(event);
-
 		onSearch(event);
+	}
+	
+	public void onLoadProposal(ActionEvent event) throws ManagerBeanException {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		BasicController proposalController = (BasicController)AonUtil.getRegisteredBean(IPurchaseConstants.PROPOSAL_CONTROLLER_NAME);
+		proposalController.onLoad(event, purchaseDetail.getProposalDetail().getProposal().getId(), "purchase_form", null);
 	}
 
 }

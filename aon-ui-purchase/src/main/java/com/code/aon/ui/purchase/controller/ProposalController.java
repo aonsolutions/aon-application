@@ -35,7 +35,6 @@ public class ProposalController extends BasicController {
 	
 	private IControllerListener departmentItemFilter;
 	
-	
 	public List<SelectItem> getDepartments() {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
@@ -153,5 +152,5 @@ public class ProposalController extends BasicController {
 		Proposal proposal = (Proposal) getTo();
 		return proposal.getStatus()==ProposalStatus.PROCESSED;
 	}
-
+	
 }

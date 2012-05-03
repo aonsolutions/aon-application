@@ -7,9 +7,6 @@ import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,10 +29,8 @@ import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseUtils {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseUtils.class.getName());
 
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department) throws ManagerBeanException {
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, String comments) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		Purchase pur = new Purchase();
 		pur.setNumberOfPayments(1);
@@ -54,7 +49,8 @@ public class PurchaseUtils {
 		pur.setScope(supplier.getScope());
 	    Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	    ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", locale); 
-		pur.setComments(bundle.getString("company_department") +": "+ department.getName());
+		pur.setComments(bundle.getString("company_department") +": "+ department.getName()+". ");
+		pur.setComments(pur.getComments() + comments);
 		return (Purchase) bean.insert(pur);
 	}
 	public void insertPurchaseDetail(Purchase pur, ProposalDetail proposalDetail) throws ManagerBeanException {

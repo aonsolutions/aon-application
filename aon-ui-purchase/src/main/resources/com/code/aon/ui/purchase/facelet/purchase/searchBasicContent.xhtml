@@ -42,8 +42,7 @@
 	<aon:outputLabel for="Purchase_workPlace_id"
 		value="#{companyBundle.company_workplace}" />
 	<aon:selectOneMenu id="Purchase_workPlace_id"
-		value="#{companyCollections.workPlace}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
+		value="#{searchController.workPlace}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 	</aon:selectOneMenu>			

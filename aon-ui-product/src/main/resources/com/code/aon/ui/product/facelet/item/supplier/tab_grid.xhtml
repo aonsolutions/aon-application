@@ -97,7 +97,7 @@
 					</f:facet>
 					<aon:outputText value="#{to.workPlace.description}" rendered="#{formList}" />
 					<aon:selectOneMenu id="ItemSupplier_workPlace" rendered="#{formEdit}" 
-						value="#{proposal.to.workPlace}">
+						value="#{itemSupplier.to.workPlace}">
 						<f:selectItem itemLabel=" - " itemValue="null" />
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
