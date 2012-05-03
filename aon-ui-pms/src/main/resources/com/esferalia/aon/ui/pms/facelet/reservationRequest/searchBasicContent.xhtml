@@ -88,8 +88,8 @@
 	<aon:outputLabel for="ReservationRequest_active" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="ReservationRequest_active"
 		valueChangeListener="#{controller.addExpression}">
-		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_pending}" itemValue="1" />
-		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_processed}" itemValue="0" />
+		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_pending}" itemValue="true" />
+		<f:selectItem itemLabel="#{pmsBundle.pms_reservation_request_processed}" itemValue="false" />
 	</aon:selectOneRadio>				
 
 </ui:composition>
