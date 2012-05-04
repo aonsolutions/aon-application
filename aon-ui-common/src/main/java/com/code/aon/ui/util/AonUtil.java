@@ -36,7 +36,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.common.role.BasicRoleManager;
-import com.code.aon.ui.common.role.RoleManager;
 
 /**
  * AonUtil includes some common methods.
@@ -159,8 +158,8 @@ public class AonUtil {
 	 * 
 	 * @return the Role Manager Controller
 	 */
-	public static RoleManager getRoleManager() {
-		return (RoleManager) AonUtil.getRegisteredBean("aonRole");
+	public static BasicRoleManager getRoleManager() {
+		return (BasicRoleManager) AonUtil.getRegisteredBean("aonRole");
 
 	}
 
