@@ -120,12 +120,11 @@ public class DivertReceptionController extends BasicController {
 	
 	private void buildReallocationRoomList(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationDivert divert = (ProjectReservationDivert) getTo();
-		ProjectReservationController reservationController = (ProjectReservationController) FormUtil.getController(IPmsConstants.RESERVATION_CONTROLLER_NAME);
-		reservationController.select(event, divert.getProjectReservation());
-		ProjectReservationRoomController roomController = (ProjectReservationRoomController) FormUtil.getController(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
-		
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), divert.getProjectReservation().getId());
 		setReallocationList(new LinkedList<ProjectReservationRoom>());
-		for(ITransferObject to: roomController.getWrappedList()){
+		for(ITransferObject to: bean.getList(criteria)){
 			getReallocationList().add((ProjectReservationRoom) to);
 		}
 	}
