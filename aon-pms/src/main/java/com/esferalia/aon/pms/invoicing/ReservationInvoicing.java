@@ -145,7 +145,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoice.setRegistryDocumentCountry(reservationInvoiceTo.getRegistry().getDocumentCountry());
 		invoice.setRegistryName(reservationInvoiceTo.getRegistry().getName());
 		invoice.setRegistryAddress(null);
-		invoice.setIssueDate((!service) ? reservation.getStartDate() : reservationInvoiceTo.getIssueDate());
+		invoice.setIssueDate(reservationInvoiceTo.getIssueDate());
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
