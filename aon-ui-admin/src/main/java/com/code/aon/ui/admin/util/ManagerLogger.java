@@ -42,19 +42,14 @@ public class ManagerLogger {
 	private boolean configured;
 	
 	private IMailAccount getMailAccount() throws ManagerBeanException {
-		boolean accountTested = false;
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		IMailAccount account = mailConfig.getDefaultMailAccount();
 		if (account!=null) {
-			accountTested = true;
 			if ( AonServer.test(account, false, true) ) {
 				return account;
 			} else {
 				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, account.getName());
 			}
-		}
-		if (! accountTested ) {
-			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());
 		}
 		return null;
 	}

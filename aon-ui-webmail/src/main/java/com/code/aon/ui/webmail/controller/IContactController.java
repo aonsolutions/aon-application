@@ -6,6 +6,7 @@ import javax.faces.convert.Converter;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.ui.form.IController;
 import com.code.aon.webmail.IContact;
 
@@ -16,6 +17,10 @@ public interface IContactController extends IController {
 	void onResetGroup(ActionEvent event);
 	
 	List<SelectItem> getAvailableContacts();
+	
+	List<IContact> getEmailContacts();
+	
+	List<IContact> suggestionEmails( String text );
 		
 	void updateAvailableContacts();
 	

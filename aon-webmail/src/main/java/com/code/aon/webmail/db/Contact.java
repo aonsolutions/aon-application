@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Formula;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +28,16 @@ public class Contact extends ContactDB implements IContact {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Boolean contactGroup = Boolean.FALSE;
+	private Boolean contactGroup;
+	
+	private List<Contact> contacts;
 
 	@Override
-	@Formula("(select COUNT(*) from contact_detail cd where id = cd.contact_group)")	
+	@Transient
 	public Boolean getContactGroup() {
+		if ( contactGroup == null ) {
+			contactGroup = (getContactData() == null) || (getContactData().getId() == null);
+		}
 		return contactGroup;
 	}
 
@@ -52,7 +56,7 @@ public class Contact extends ContactDB implements IContact {
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTACT_DETAIL_CONTACT_GROUP_ID), getId());
 				for ( ITransferObject to : bean.getList(criteria) ) {
 					ContactDetail cd = (ContactDetail) to;
-					list.add( cd.getContactGroup().getEmail() );
+					list.add( cd.getContact().getEmail() );
 				}
 			} catch (ManagerBeanException e) {
 				LOGGER.error( "Error getting emails from " + getOutlookName(), e );
@@ -63,6 +67,101 @@ public class Contact extends ContactDB implements IContact {
 		return getEmail();
 	}	
 
+	@Transient
+	public List<Contact> getContacts() {
+		if ( contacts == null ) {
+			contacts = new LinkedList<Contact>();
+			for ( ContactDetail cd : getContactDetails() ) {
+				contacts.add( cd.getContact() );
+			}
+		}
+		return contacts;
+	}
+	
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+	
+	@Transient
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<ContactDetail> getContactDetails() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContactDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTACT_DETAIL_CONTACT_GROUP_ID), getId());
+			return (List) bean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error getting emails from " + getOutlookName(), e );
+		}		
+		return null;
+	}
+
+	public void insertContacts( boolean _new) throws ManagerBeanException {
+		List<Contact> newContacts = new LinkedList<Contact>(this.contacts);
+		IManagerBean bean = BeanManager.getManagerBean(ContactDetail.class);
+		if (! _new ) {
+			List<ContactDetail> oldContacts = getContactDetails();
+			for( ContactDetail cd : oldContacts ) {
+				if ( newContacts.contains(cd.getContact()) ) {
+					newContacts.remove(cd.getContact());
+				} else {
+					bean.remove(cd);
+				}
+			}
+		}
+		for( Contact contact : newContacts ) {
+			ContactDetail cd = new ContactDetail();
+			cd.setContactGroup(this);
+			cd.setContact(contact);
+			bean.insert(cd);		
+		}
+	}
+	
+	public void deleteContacts() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContactDetail.class);
+		List<ContactDetail> contacts = getContactDetails();
+		for( ContactDetail cd : contacts ) {
+			bean.remove(cd);
+		}
+	} 
+	
+	private String getEmailLarge( String displayName, String email ) {
+		if ( email != null ) {
+			String name = displayName;
+			if (! StringUtils.isAsciiPrintable(name) ) {
+				name = "\"" + name + "\"";
+			}
+			return name + " <" + email + ">";			
+		}
+		return null;
+	}
+
+	@Override
+	@Transient
+	public String getEmailLarge() {
+		if ( getContactGroup() ) {
+			List<String> list = new LinkedList<String>();
+			if ( getContacts() != null ) {
+				for( Contact gc : getContacts() ) {
+					if ( ! StringUtils.isBlank(gc.getEmail()) ) {
+						String email = getEmailLarge( gc.getDisplayName(), gc.getEmail() );
+						list.add( email );						
+					}
+				}				
+			}
+			String emails = StringUtils.join( list, ", " );
+			return StringUtils.trimToNull( emails );			
+		}
+		return getEmailLarge( getDisplayName(), getEmail() );
+	}
+
+	@Override
+	@Transient
+	public String getEmailSummary() {
+		String emails = getEmails();
+		return StringUtils.abbreviate( emails, 80 );
+	}
+	
 	@Override
 	@Transient
 	public String getSurname() {
@@ -190,7 +289,7 @@ public class Contact extends ContactDB implements IContact {
 
 	@Override
 	public void setOutlookCity(String outlookCity) {
-		getContactData().setNote(outlookCity);
+		getContactData().setOutlookCity(outlookCity);
 	}
 
 	@Override

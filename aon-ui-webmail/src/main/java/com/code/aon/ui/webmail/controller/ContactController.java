@@ -22,6 +22,9 @@ import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.ContactConverter;
 import com.code.aon.webmail.Contact;
@@ -140,5 +143,45 @@ public class ContactController extends LdapBasicController implements IWebMailCo
 		}	
     	return null;
 	}
+	
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<IContact> getEmailContacts() {
+    	try {
+    		Criteria criteria = new Criteria();			
+    		String email = getFieldName(IWebMailAlias.CONTACT_EMAIL);
+    		String contacts = getFieldName(IWebMailAlias.CONTACT_CONTACTS);
+    		Expression exp1 = ExpressionUtilities.getNotNullExpression(email);
+    		Expression exp2 = ExpressionUtilities.getNotNullExpression(contacts);
+    		criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));				
+    		criteria.addOrder(getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME));
+    		return (List) getManagerBean().getList(criteria);
+    	} catch (ManagerBeanException e) {
+    		LOGGER.error( e.getMessage(), e );
+		}
+    	return null;
+    }
 
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<IContact> suggestionEmails(String text) {
+		try {
+			Criteria criteria = new Criteria();
+			String displayName = getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
+			String email = getFieldName(IWebMailAlias.CONTACT_EMAIL);
+			String contacts = getFieldName(IWebMailAlias.CONTACT_CONTACTS);
+			Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
+			Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			Expression exp3 = ExpressionUtilities.getNotNullExpression(email);
+			Expression exp4 = ExpressionUtilities.getNotNullExpression(contacts);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp3, exp4));
+			criteria.addOrder(displayName);
+			return (List) getManagerBean().getList(criteria);
+    	} catch (ManagerBeanException e) {
+    		LOGGER.error( "Error getting suggestion emails", e );
+		}				
+		return null;
+	}
+	
 }

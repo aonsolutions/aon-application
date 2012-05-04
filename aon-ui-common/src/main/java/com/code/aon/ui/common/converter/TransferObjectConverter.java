@@ -27,6 +27,16 @@ public class TransferObjectConverter implements Converter {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TransferObjectConverter.class);
 	
+	private Class<?> type;
+	
+	public Class<?> getType() {
+		return type;
+	}
+
+	public void setType(Class<?> type) {
+		this.type = type;
+	}
+
 	private Serializable getId( String value ) {
 		Serializable id = null;
 		try {
@@ -39,14 +49,17 @@ public class TransferObjectConverter implements Converter {
 	}
 	
 	private Class<?> getType( FacesContext context, UIComponent component ) {
-		ValueExpression vb = component.getValueExpression("value");
-		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
-		if ( toType != null ) {
-			if ( toType.isArray() ) {
-				return toType.getComponentType();
+		if ( type == null ) {
+			ValueExpression vb = component.getValueExpression("value");
+			Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
+			if ( toType != null ) {
+				if ( toType.isArray() ) {
+					return toType.getComponentType();
+				}
 			}
+			return toType;			
 		}
-		return toType;
+		return type;
 	}
 	
 	@Override

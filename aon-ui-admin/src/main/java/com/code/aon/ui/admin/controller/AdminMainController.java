@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedReader;
@@ -38,7 +37,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.admin.util.ManagerLogger;
-import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -117,8 +115,7 @@ public class AdminMainController implements IAdminConstants {
 	}
 
 	public boolean isSysAdmin() {		
-		BasicRoleManager rm = (BasicRoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
-		return rm.isSysAdmin();
+		return AonUtil.getRoleManager().isSysAdmin();
 	}
 
 	public boolean isUserManagement() {
@@ -249,8 +246,7 @@ public class AdminMainController implements IAdminConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
-		BasicRoleManager rm = (BasicRoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
-		rm.setUserInRole(IAonRole.SYS_ADMIN, true);
+		AonUtil.getRoleManager().setUserInRole(IAonRole.SYS_ADMIN, true);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
 	}

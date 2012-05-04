@@ -59,8 +59,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -68,6 +66,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
+import com.code.aon.webmail.IContact;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.SecurityInfo;
 import com.code.aon.webmail.WebmailException;
@@ -710,10 +709,10 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void onAcceptAllEmailItems(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
-		List<Contact> lst = bean.getSelectedRows();
+		List<IContact> lst = bean.getSelectedRows();
 		StringBuffer emails = new StringBuffer();
         for (int i = 0, max = lst.size(); i < max; i++) {
-        	Contact e = lst.get(i);
+        	IContact e = lst.get(i);
         	emails.append( e.getEmailLarge() );
         	if (i+1 < max) {
         		emails.append(AonMessageUtils.EMAIL_SEPARATOR).append(" ");
@@ -1091,28 +1090,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
         context.responseComplete();    	
     }
     
-	public List<ITransferObject> suggestionEmails( Object value ) {
+	public List<IContact> suggestionEmails( Object value ) {
 		if ( value != null ) {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				setErrorMessage(null);
-				try {
-					IManagerBean bean = FormUtil.getController(IWebMailConstants.BEAN_CONTACT).getManagerBean();
-					Criteria criteria = new Criteria();
-					String displayName = bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME);
-					String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
-					String contacts = bean.getFieldName(IWebMailAlias.CONTACT_CONTACTS);
-					Expression exp1 = ExpressionUtilities.getLikeExpression(displayName, text + "*");
-					Expression exp2 = ExpressionUtilities.getLikeExpression(email, text + "*");
-					criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-					Expression exp3 = ExpressionUtilities.getNotNullExpression(email);
-					Expression exp4 = ExpressionUtilities.getNotNullExpression(contacts);
-					criteria.addExpression(ExpressionUtilities.getOrExpression(exp3, exp4));
-					criteria.addOrder(displayName);
-					return bean.getList(criteria);
-		    	} catch (ManagerBeanException e) {
-		    		LOGGER.error( "Error getting suggestion emails", e );
-				}				
+	    		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+				return mailConfig.getContact().suggestionEmails(text);
 			}
 		}
     	return Collections.emptyList();

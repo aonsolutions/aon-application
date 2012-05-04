@@ -4,6 +4,9 @@ package com.code.aon.webmail;
 
 public interface IContact {
 
+	String getEmailLarge();
+	String getEmailSummary();
+	
 	Boolean getContactGroup();
 	void setContactGroup(Boolean contactGroup);
 	

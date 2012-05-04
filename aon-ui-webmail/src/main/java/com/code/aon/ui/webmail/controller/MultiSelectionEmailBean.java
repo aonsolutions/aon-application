@@ -1,28 +1,18 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.webmail.Contact;
-import com.code.aon.webmail.dao.IWebMailAlias;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.IContact;
 
 public class MultiSelectionEmailBean {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(MultiSelectionEmailBean.class);
-	
 	private ListDataModel model;
 	
 	private List<SelectionEmail> emails; 
@@ -51,24 +41,15 @@ public class MultiSelectionEmailBean {
 		this.currentPage = 1;
 		if ( loadContacts ) {
 	        emails = new ArrayList<SelectionEmail>();
-	    	try{
-				IManagerBean bean = FormUtil.getController(IWebMailConstants.BEAN_CONTACT).getManagerBean();
-				Criteria criteria = new Criteria();			
-				String email = bean.getFieldName(IWebMailAlias.CONTACT_EMAIL);
-				String contacts = bean.getFieldName(IWebMailAlias.CONTACT_CONTACTS);
-				Expression exp1 = ExpressionUtilities.getNotNullExpression(email);
-				Expression exp2 = ExpressionUtilities.getNotNullExpression(contacts);
-				criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));				
-				criteria.addOrder(bean.getFieldName(IWebMailAlias.CONTACT_DISPLAY_NAME));
-				List<ITransferObject> lst = bean.getList(criteria);
-	            for (int i = 0, max = lst.size(); i < max; i++) {
+    		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			List<IContact> contacts = mailConfig.getContact().getEmailContacts();
+			if ( contacts != null ) {
+	            for ( IContact contact : contacts ) {
 	            	SelectionEmail se = new SelectionEmail();
-	            	se.setEmail((Contact) lst.get(i));
+	            	se.setEmail( contact );
 	            	se.setSelected(Boolean.FALSE);
-	            	emails.add(se);
-	            }
-	    	} catch (ManagerBeanException e) {
-	    		LOGGER.error( e.getMessage(), e );
+		            emails.add(se);
+	            }					
 			}
 	    	this.model = new ListDataModel( emails );
 		} else {
@@ -107,8 +88,8 @@ public class MultiSelectionEmailBean {
 	/**
 	 * @return the selectedRows
 	 */
-	public List<Contact> getSelectedRows() {
-	    List<Contact> selectedRows = new ArrayList<Contact>();
+	public List<IContact> getSelectedRows() {
+	    List<IContact> selectedRows = new ArrayList<IContact>();
 	    for( SelectionEmail se : emails ) {
 	    	if ( se.isSelected() ) {
                 selectedRows.add(se.getEmail());	    		
@@ -121,7 +102,7 @@ public class MultiSelectionEmailBean {
 		
 		private boolean selected;
 		
-		private Contact email;
+		private IContact email;
 
 		/**
 		 * @return the selected
@@ -154,14 +135,14 @@ public class MultiSelectionEmailBean {
 		/**
 		 * @return the email
 		 */
-		public Contact getEmail() {
+		public IContact getEmail() {
 			return email;
 		}
 
 		/**
 		 * @param email the email to set
 		 */
-		public void setEmail(Contact email) {
+		public void setEmail(IContact email) {
 			this.email = email;
 		}
 		

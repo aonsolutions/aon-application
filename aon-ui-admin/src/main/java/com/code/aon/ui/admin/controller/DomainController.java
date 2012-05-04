@@ -31,7 +31,6 @@ import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.SignatureDBController;
 import com.esferalia.aon.entity.IEntityAlias;
