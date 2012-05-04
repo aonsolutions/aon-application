@@ -339,22 +339,30 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 	}
 	
-	public List<ApplicationOption> getOptions( boolean allOptions ) {
-		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+	public List<ApplicationCategory> getCategories() {
+		List<ApplicationCategory> list = new ArrayList<ApplicationCategory>();
 		for( ApplicationCategory category : getOptionController().getCategories() ) {
 			if (! this.deniedModulesMap.containsValue(category) ) {
-				if ( allOptions || category.isRendered() ) {
-					for( OptionGroup group : category.getGroups() ) {
-						if ( allOptions || group.isRendered() ) {
-							for( ApplicationOption option : group.getOptions() ) {
-								if ( allOptions || option.isRendered() ) {
-									list.add(option);	
-								}
+				list.add(category);
+			}
+		}
+		return list;
+	}
+	
+	public List<ApplicationOption> getOptions( boolean allOptions ) {
+		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+		for( ApplicationCategory category : getCategories() ) {
+			if ( allOptions || category.isRendered() ) {
+				for( OptionGroup group : category.getGroups() ) {
+					if ( allOptions || group.isRendered() ) {
+						for( ApplicationOption option : group.getOptions() ) {
+							if ( allOptions || option.isRendered() ) {
+								list.add(option);	
 							}
 						}
 					}
-				}				
-			}
+				}
+			}				
 		}
 		return list;
 	}		
