@@ -285,6 +285,16 @@ public class PosShiftController extends BasicController {
 		}
 	}
 	
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = (Invoice)this.getInvoiceModel().getRowData();
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, invoice.getProject().getId(), IPmsConstants.POS_SHIFT_FORM_NAME, IPmsConstants.POS_SHIFT_CONTROLLER_NAME + ".onBackPosShift");
+	}
+	
+	public void onBackPosShift(ActionEvent event) throws ManagerBeanException {
+		initInvoiceData();
+	}
+	
 	
 	
 	public class PaymethodCount {

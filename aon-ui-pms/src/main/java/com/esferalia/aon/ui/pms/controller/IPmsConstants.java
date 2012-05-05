@@ -14,6 +14,7 @@ public interface IPmsConstants {
 	String ADVANCE_INVOICE_CONTROLLER_SEARCH = "advanceInvoice_search";
 	String COLLECTIONS_CONTROLLER_NAME = "pmsCollections";
 	String DIVERT_CONTROLLER_NAME = "divert";
+	String POS_SHIFT_CONTROLLER_NAME = "posShift";
 	String RACK_CONTROLLER_NAME = "rack";
 	String RACK_SEARCH_LISTENER_NAME = "rackSearch";
 	String RESERVATION_CONTROLLER_NAME = "reservation";
@@ -29,6 +30,7 @@ public interface IPmsConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
+	String POS_SHIFT_FORM_NAME = "posShift_form";
 	String RACK_LIST_NAME = "rack_list";
 	String RESERVATION_IO_LIST_NAME = "reservationIO_list";
 
