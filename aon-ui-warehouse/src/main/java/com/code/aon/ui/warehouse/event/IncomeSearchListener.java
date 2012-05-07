@@ -4,11 +4,15 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -21,10 +25,20 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	private IncomeStatus[] incomeStatuses;
 	
     private Item item;
+    
+    private WorkPlace workPlace;
 	
 	public String getPreffix() throws ManagerBeanException {
 		return REGISTRY_SEARCH_PREFFIX;
 	}		
+	
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
 
 	public Supplier getSupplier() {
 		return supplier;
@@ -61,7 +75,13 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		CompanyCollectionsController controller = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		super.completeCriteria( criteria);
+		if (getWorkPlace() != null && getWorkPlace().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.INCOME_WORK_PLACE_ID), getWorkPlace().getId());			
+		} else {
+			criteria.addInExpression(getFieldName(IEntityAlias.INCOME_WORK_PLACE_ID), controller.getCurrentUserWorkPlacesIds());
+		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INCOME_SUPPLIER_ID), getSupplier().getId());			
 		}

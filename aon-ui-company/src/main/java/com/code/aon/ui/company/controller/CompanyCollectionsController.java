@@ -215,13 +215,7 @@ public class CompanyCollectionsController {
 
 	public List<SelectItem> getCurrentUserWorkPlaces() throws ManagerBeanException {
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
-   		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
-   		Criteria criteria = new Criteria();
-   		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), true);
-   		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
-    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
-    	List<ITransferObject> list = workPlaceBean.getList(criteria);
-    	for (ITransferObject to : list) {
+    	for(ITransferObject to: getCurrentUserWorkPlaceList()){
     		WorkPlace workPlace = (WorkPlace)to;
     		workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
     	}
@@ -236,7 +230,24 @@ public class CompanyCollectionsController {
 		return workPlaceBean.getCount(criteria);
 	}
 	
-
+	private List<ITransferObject> getCurrentUserWorkPlaceList() throws ManagerBeanException {
+		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
+		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
+		return workPlaceBean.getList(criteria);
+	}
+	
+	public List<Integer> getCurrentUserWorkPlacesIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for(ITransferObject to: getCurrentUserWorkPlaceList()){
+			WorkPlace wp = (WorkPlace) to;
+			list.add(wp.getId());
+		}
+		return list;
+	}
+	
 	public List<SelectItem> getDepartments() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Department.class);
@@ -251,3 +262,4 @@ public class CompanyCollectionsController {
 	}
 	
 }
+

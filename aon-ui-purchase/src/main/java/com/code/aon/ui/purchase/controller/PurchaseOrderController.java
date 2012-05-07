@@ -37,7 +37,6 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
@@ -57,6 +56,15 @@ public class PurchaseOrderController {
 	private int productIndex;
 	private int detailIndex;
 	private Criteria purchasePrintcriteria = new Criteria();
+	
+	private CompanyCollectionsController companyCollections;
+	
+	public CompanyCollectionsController getCompanyCollections() {
+		if(companyCollections == null){
+			companyCollections = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		}
+		return companyCollections;
+	}
 	
 	public int getProductIndex() {
 		return productIndex;
@@ -170,27 +178,9 @@ public class PurchaseOrderController {
 		if(getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ){
 			return " AND ProposalDetail.proposal.workPlace = :workplaceId";
 		} else {
-			return " AND ProposalDetail.proposal.workPlace IN ( " + StringUtils.join(getCurrentUserWorkPlacesIds(), ",") +" )"; 
+			return " AND ProposalDetail.proposal.workPlace IN ( " + StringUtils.join(getCompanyCollections().getCurrentUserWorkPlacesIds(), ",") +" )"; 
 		}
 	}
-	
-	private List<Integer> getCurrentUserWorkPlacesIds() throws ManagerBeanException {
-		List<Integer> list = new LinkedList<Integer>();
-		for(ITransferObject to: getCurrentUserWorkPlaces()){
-			WorkPlace wp = (WorkPlace) to;
-			list.add(wp.getId());
-		}
-		return list;
-	}
-	
-	private List<ITransferObject> getCurrentUserWorkPlaces() throws ManagerBeanException {
-   		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
-   		Criteria criteria = new Criteria();
-   		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
-   		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
-    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
-    	return workPlaceBean.getList(criteria);
-	}	
 	
 	private void buildGroupDetail() throws ManagerBeanException{
 		detailModel = new ListDataModel(obtainGroupDetail());
@@ -207,7 +197,7 @@ public class PurchaseOrderController {
 			if((getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ) ){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getParams().getWorkPlace().getId());
 			} else {
-				criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCurrentUserWorkPlacesIds());
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCompanyCollections().getCurrentUserWorkPlacesIds());
 			}
 			if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
@@ -226,7 +216,7 @@ public class PurchaseOrderController {
 		if(getParams().getWorkPlace() != null && getParams().getWorkPlace().getId() != null ){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getParams().getWorkPlace().getId());
 		} else {
-			criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCurrentUserWorkPlacesIds());
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID), getCompanyCollections().getCurrentUserWorkPlacesIds());
 		}
 		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());

@@ -18,7 +18,8 @@ import com.code.aon.company.WorkplaceDepartment;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -64,11 +65,12 @@ public class ProposalSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		CompanyCollectionsController controller = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		super.completeCriteria( criteria );		
 		if (getWorkPlace() != null && getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROPOSAL_WORK_PLACE_ID), getWorkPlace().getId());			
 		} else {
-			criteria.addInExpression(getFieldName(IEntityAlias.PROPOSAL_WORK_PLACE_ID), getCurrentUserWorkPlacesIds());
+			criteria.addInExpression(getFieldName(IEntityAlias.PROPOSAL_WORK_PLACE_ID), controller.getCurrentUserWorkPlacesIds());
 		}
 		if (getDepartment() != null && getDepartment().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROPOSAL_DEPARTMENT_ID), getDepartment().getId());			
@@ -116,22 +118,6 @@ public class ProposalSearchListener extends ControllerSearchListener {
 		return wdBean.getList(wdCriteria);
 	}
 	
-	private List<Integer> getCurrentUserWorkPlacesIds() throws ManagerBeanException {
-		List<Integer> list = new LinkedList<Integer>();
-		for(ITransferObject to: getCurrentUserWorkPlaces()){
-			WorkPlace wp = (WorkPlace) to;
-			list.add(wp.getId());
-		}
-		return list;
-	}
 	
-	private List<ITransferObject> getCurrentUserWorkPlaces() throws ManagerBeanException {
-   		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
-   		Criteria criteria = new Criteria();
-   		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
-   		UserUtils.getInstance().addScopeFilterToCriteria(criteria, workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID));
-    	criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
-    	return workPlaceBean.getList(criteria);
-	}	
 
 }
