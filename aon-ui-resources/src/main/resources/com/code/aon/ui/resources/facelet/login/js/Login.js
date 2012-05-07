@@ -25,7 +25,9 @@ function loadInnerWindow(){
 function concatHost() {
 	if ( domain == 'true' ) {
 		if (document.forms[0].j_username.value.indexOf("@") < 0) {
-			var context = location.pathname.substring( 1, location.pathname.length );
+			var context = location.pathname;
+			var context = context.substr( context.search("/aon-.*")+1);
+			//var context = location.pathname.substring( 1, location.pathname.length );
 			context = "/" + context.substring( 0, context.indexOf("/") );
 			// hostname = calcHost(location.hostname);
 			hostname = document.forms[0].login_domain.value;
