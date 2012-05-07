@@ -30,7 +30,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
-import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationCategory;
@@ -69,8 +68,8 @@ public class ActionDeniedController implements IAuditConstants {
 	private IControllerListener listener;
 	
 	public ActionDeniedController() {
-		initDeniedModules();
 		User user = UserUtils.getInstance().getLoggedUser();
+		initDeniedModules(user);
 		this.deniedActionsMap = new HashMap<String, ApplicationOption>();
 		for( ApplicationOption option : getOptions(getDeniedActions(user)) ) {
 			this.deniedActionsMap.put(option.getAction(), option);
@@ -160,14 +159,14 @@ public class ActionDeniedController implements IAuditConstants {
 		return null;		
 	}
 
-	private Map<String,Module> getEnabledModules() {
+	private Map<String,Module> getEnabledModules( User user ) {
 		Map<String,Module> enabledModules = new HashMap<String, Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
-			DomainApplication da = getAuditController().getDomainApplication();
+			Integer da = AdminUtil.getDomainApplication(user.getDomain(), getAuditController().getApplication().getId());
 			String filed = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
-			criteria.addEqualExpression( filed, da.getId());
+			criteria.addEqualExpression( filed, da );
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
 				enabledModules.put( dam.getModule().getName(), dam.getModule() );
@@ -320,10 +319,10 @@ public class ActionDeniedController implements IAuditConstants {
 		return deniedModules;
 	}
 	
-	private void initDeniedModules() {
+	private void initDeniedModules( User user ) {
 		this.deniedModulesMap = new HashMap<String, ApplicationCategory>();
 		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, MODULES_ENABLED) ) {
-			Map<String,Module> enabledModules = getEnabledModules();
+			Map<String,Module> enabledModules = getEnabledModules(user);
 			Map<String,Module> deniedModules = getDeniedModules();
 			for( ApplicationCategory category : getOptionController().getCategories() ) {
 				if (! ArrayUtils.contains(SKIP_CATEGORIES, category.getAlias()) ) {

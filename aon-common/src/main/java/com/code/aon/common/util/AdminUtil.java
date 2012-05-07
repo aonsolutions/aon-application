@@ -15,7 +15,7 @@ public class AdminUtil {
 		return HibernateUtil.getSession(sessionFactoryName).createQuery(query);		
 	}
 	
-	private static Integer getDomainApplication( Integer domain, Integer application ) {
+	public static Integer getDomainApplication( Integer domain, Integer application ) {
 		Query query = getQuery("SELECT id FROM DomainApplication da WHERE da.active = true and da.domain = ? and da.application = ?");
 		query.setInteger(0, domain).setInteger(1, application);
 		return (Integer) query.uniqueResult();

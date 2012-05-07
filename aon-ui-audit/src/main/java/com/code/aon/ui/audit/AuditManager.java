@@ -52,18 +52,6 @@ public class AuditManager implements IAuditConstants {
 		}
 		return null;
 	}
-
-	public static DomainApplication getDoaminApplication( Integer domain, Integer application ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), domain );
-		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application );
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			return (DomainApplication) list.get(0);
-		}
-		return null;
-	}
 	
 	public static User getUser( Integer userId ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());

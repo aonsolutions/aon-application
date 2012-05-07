@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Application;
-import com.code.aon.config.DomainApplication;
 import com.code.aon.ui.audit.AuditManager;
 
 /**
@@ -22,8 +20,6 @@ public class AuditController {
 
 	private Application application;
 	
-	private DomainApplication domainApplication;
-	
 	/**
 	 * Instantiates a new application option controller.
 	 */
@@ -33,10 +29,6 @@ public class AuditController {
 
 	public Application getApplication() {
 		return application;
-	}
-	
-	public DomainApplication getDomainApplication() {
-		return domainApplication;
 	}
 
 	public Action getAction( String name ) throws ManagerBeanException {
@@ -48,7 +40,6 @@ public class AuditController {
 		try {
 			this.application = AuditManager.getApplication(context);
 			LOGGER.info( "Using {}", application );
-			this.domainApplication = AuditManager.getDoaminApplication(DomainManager.getCurrentDomain(), application.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error getting application", e );
 		}		
