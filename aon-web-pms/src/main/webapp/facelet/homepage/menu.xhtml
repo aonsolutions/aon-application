@@ -9,13 +9,21 @@
 			value="#{pmsBundle.pms_hotel_group}"
 			action="menu_hotel" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-company" />
-		<c:if test="#{aonRole.financeOperator}">
+		<c:if test="#{aonRole.saleOperator or aonRole.financeOperator}">
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
 				action="menu_sales" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-sales" />
+		</c:if>
+		<c:if test="#{aonRole.purchaseOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
+			<aon:commandLink id="purchase"
+				value="#{appBundle.menu_purchase}"
+				action="menu_purchase" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-purchase" />
+		</c:if>
+		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="treasury"
-				value="#{financeBundle.finance_menu_group}"
+				value="#{bundle.aon_module_finance}"
 				action="menu_treasury" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-treasury" />
 		</c:if>
@@ -27,4 +35,11 @@
 		</c:if>
 	</ui:define>
 
+	<ui:define name="beforeWebMapMenuContent">	
+		<aon:menuItem id="changePassword" action="changePassword_form"
+			iconClass="aon-icon-changePassword"
+			actionListener="#{changePassword.onInit}"
+			value="#{securityBundle.aon_security_change_password}" />
+	</ui:define>	
+	
  </ui:composition>

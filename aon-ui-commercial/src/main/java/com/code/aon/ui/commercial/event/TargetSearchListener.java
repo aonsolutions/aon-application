@@ -1,22 +1,15 @@
 package com.code.aon.ui.commercial.event;
 
 
-import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
@@ -24,6 +17,7 @@ import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TargetSearchListener extends RegistrySearchListener implements ICommercialConstants {
 
@@ -69,10 +63,11 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		this.trackingStatuses = trackingStatuses;
 	}
 	
+	@Deprecated
 	public String getUserName() {
 		return userName;
 	}
-
+	@Deprecated
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -94,7 +89,7 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getTargetStatuses())) {
-			String status = getController().resolveAlias(ICommercialAlias.TARGET_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.TARGET_STATUS);
 			addEnumToCriteria(criteria, status, getTargetStatuses());
 		}
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
@@ -109,23 +104,29 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
+		
+		
+		// ?????????
 		if (! StringUtils.isEmpty(getUserName()) ){					
 			criteria.addEqualExpression("id", getTargetId());
 		}
+		// ?????????
+		
 		super.completeCriteria( criteria );
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	private Integer getTargetId() throws ManagerBeanException {
-		String select = "select ec.target "
-			+ "from Ectarget as ec "
-			+ "where ec.login='" + getUserName() + "')))";	
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		List<Target> targetList = query.list();
-		if (targetList.size() > 0) {
-			return targetList.get(0).getId();
-		}
+//		String select = "select ec.target "
+//			+ "from Ectarget as ec "
+//			+ "where ec.login='" + getUserName() + "')))";	
+//		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+//		Query query = session.createQuery(select);
+//		List<Target> targetList = query.list();
+//		if (targetList.size() > 0) {
+//			return targetList.get(0).getId();
+//		}
 		return -1;
 	}
 }

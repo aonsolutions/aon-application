@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
@@ -29,7 +28,6 @@ import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -41,7 +39,6 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
@@ -54,6 +51,7 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.SortOrderMap;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceEntryController implements ISpecialAccountEntry{
 
@@ -233,9 +231,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void resetOrder(){
 		this.order = new SortOrderMap();
-		this.order.put(IFinanceAlias.FINANCE_DUE_DATE, Ordering.ASCENDING);
-		this.order.put(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
-		this.order.put(IFinanceAlias.FINANCE_CONCEPT, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_DUE_DATE, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE, Ordering.ASCENDING);
+		this.order.put(IEntityAlias.FINANCE_CONCEPT, Ordering.ASCENDING);
 	}
 	
 	private void initializeHeader() throws ManagerBeanException {
@@ -278,25 +276,25 @@ public class FinanceEntryController implements ISpecialAccountEntry{
         try {
         	IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            Expression amountExpr = ExpressionUtilities.getNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression expensesExpr = ExpressionUtilities.getNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
+            criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
+            Expression amountExpr = ExpressionUtilities.getNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
+            Expression expensesExpr = ExpressionUtilities.getNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_EXPENSES), new Double(0));
             criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
-            Expression pendingExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
-            Expression returnedExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
+            Expression pendingExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+            Expression returnedExpr = ExpressionUtilities.getEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
             criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExpr, returnedExpr));
             if (AonUtil.getRoleManager().isConfidentiality()) {
-            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), getSecurityLevel());	
+            	criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), getSecurityLevel());	
             } else {
-            	criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+            	criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
             }
             Expression existingLinesIdsExpr = obtainExistingLinesIds(financeBean);
             if (existingLinesIdsExpr != null) {
                 criteria.addExpression(obtainExistingLinesIds(financeBean));
             }
-            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
-            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_REFERENCE_CODE));
-            criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_CONCEPT));
+            criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
+            criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_REFERENCE_CODE));
+            criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_CONCEPT));
             resetOrder();
             this.finances = new ListDataModel(financeBean.getList(criteria));
         } catch (ManagerBeanException e) {
@@ -309,7 +307,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		Iterator<?> iterator = ((List<?>)lines.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			Expression idExpression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_ID), finance.getId());
+			Expression idExpression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_ID), finance.getId());
 			expression = ExpressionUtilities.getAndExpression(expression, idExpression);
 		}
 		return expression;
@@ -463,7 +461,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			IManagerBean fTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 			IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator<?> iterator = accountEntryFTrackingBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
@@ -489,7 +487,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		if (accountEntry != null) {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator<?> iterator = accountEntryDetailBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
@@ -502,7 +500,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		if (accountEntry != null) {
 			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
 			Iterator<?> iterator = accountEntryBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntry accountEntry = (AccountEntry)iterator.next();
@@ -531,8 +529,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		if (accountEntry != null) {
 			IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
+			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
 			Iterator<?> iterator = accountEntryFTrackingBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
@@ -545,8 +543,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	private boolean hasThisTracking(Finance finance) throws ManagerBeanException {
 		IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
+		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
 		return (accountEntryFTrackingBean.getCount(criteria) > 0);
 	}
 
@@ -554,7 +552,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		try {
 			AccountEntryController entryController = (AccountEntryController) FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
+			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -676,7 +674,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 		IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
 		Iterator<?> iter = accountEntryFBatchBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			String msg = "Asiento generado automáticamente. No se puede modificar.";
@@ -690,8 +688,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		setSecurityLevel(entry.getSecurityLevel());
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
-		criteria.addOrder(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ID), false);
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addOrder(accountEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ID), false);
 		iter = accountEntryDetailBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
@@ -710,7 +708,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 		IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), entry.getId());
 		iter = accountEntryFTrackingBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iter.next();

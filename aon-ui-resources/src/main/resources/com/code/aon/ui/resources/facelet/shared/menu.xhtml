@@ -13,6 +13,10 @@
 				<aon:componentGroup
 					family="javax.faces.Command"
 					method="#{selectedMenu.updateCommands}">	
+					<aon:componentGroupMethod
+						family="javax.faces.Command"
+						rendered="#{aonConfiguration.bean.actionDenied.modulesEnabled}"
+						method="#{actionDenied.renderedModule}" />
 					<ui:insert name="menuContent"/>
 				</aon:componentGroup>		
 				<ui:insert name="afterMenuContent"/>		

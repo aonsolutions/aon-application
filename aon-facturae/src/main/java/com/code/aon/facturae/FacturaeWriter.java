@@ -25,21 +25,19 @@ import com.code.aon.facturae.enumeration.TaxTypeCode;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 import es.mityc.facturae.utils.MarshallerUtil;
 import es.mityc.facturae31.AccountType;
@@ -165,7 +163,7 @@ public class FacturaeWriter {
 	private GeoTree getGeoTree( GeoZone geozone ) throws ManagerBeanException {
 		IManagerBean rMediaBean = BeanManager.getManagerBean(GeoTree.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rMediaBean.getFieldName(IGeoZoneAlias.GEO_TREE_CHILD_ID), geozone.getId());
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.GEO_TREE_CHILD_ID), geozone.getId());
 		List<ITransferObject> list = rMediaBean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (GeoTree) list.get(0);
@@ -219,8 +217,8 @@ public class FacturaeWriter {
 		RegistryMedia result = null;
 		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
-		criteria.addEqualExpression(rMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
 		List<ITransferObject> list = rMediaBean.getList(criteria);
 		if(! list.isEmpty()) {
 			for( ITransferObject to : list ) {
@@ -279,7 +277,7 @@ public class FacturaeWriter {
 	private RecordData getRecordData(Registry registry) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(RecordData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RECORD_DATA_REGISTRY_ID), registry.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if(! list.isEmpty()) {
 			return (RecordData) list.get(0);
@@ -644,12 +642,12 @@ public class FacturaeWriter {
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		int offset = 0;
 		Criteria criteria = new Criteria();
-		String status = bean.getFieldName(IFinanceAlias.INVOICE_STATUS);
+		String status = bean.getFieldName(IEntityAlias.INVOICE_STATUS);
 		criteria.addEqualExpression( status, InvoiceStatus.SCORED);
-		String type = bean.getFieldName(IFinanceAlias.INVOICE_TYPE);
+		String type = bean.getFieldName(IEntityAlias.INVOICE_TYPE);
 		criteria.addEqualExpression( type, com.code.aon.finance.enumeration.InvoiceType.SALES);
 		if ( id.length > 0 ) {
-			String idField = bean.getFieldName(IFinanceAlias.INVOICE_ID);
+			String idField = bean.getFieldName(IEntityAlias.INVOICE_ID);
 			criteria.addEqualExpression( idField, id[0] );			
 		} else {
 			int count = bean.getCount(criteria);
@@ -665,7 +663,7 @@ public class FacturaeWriter {
 	public static List<ITransferObject> getAonInvoices() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		String type = bean.getFieldName(IFinanceAlias.INVOICE_TYPE);
+		String type = bean.getFieldName(IEntityAlias.INVOICE_TYPE);
 		criteria.addEqualExpression( type, com.code.aon.finance.enumeration.InvoiceType.SALES);
 		return bean.getList(criteria);
 	}

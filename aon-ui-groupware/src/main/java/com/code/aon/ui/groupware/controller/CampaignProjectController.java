@@ -31,13 +31,13 @@ import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.ProcessTask;
 import com.code.aon.groupware.Task;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignProjectController extends LinesController {
 
@@ -173,9 +173,9 @@ public class CampaignProjectController extends LinesController {
 			Campaign campaign = (Campaign) getMasterController().getTo();
 			IManagerBean b = BeanManager.getManagerBean(ProcessDetail.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(b.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), campaign.getProcess()
+			c.addEqualExpression(b.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), campaign.getProcess()
 					.getId());
-			c.addEqualExpression(b.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
+			c.addEqualExpression(b.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
 			setProcessCount(b.getCount(c));
 			DataModel model = super.getModel();
 			List<CampaignProjectExtended> newList = new LinkedList<CampaignProjectExtended>();
@@ -252,9 +252,9 @@ public class CampaignProjectController extends LinesController {
 			Campaign campaign = (Campaign) getMasterController().getTo();
 			Process process = campaign.getProcess();
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID),process.getId());
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE),true);
-			criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID),process.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE),true);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to : list ) {
 				ProcessDetail processDetail = (ProcessDetail) to;

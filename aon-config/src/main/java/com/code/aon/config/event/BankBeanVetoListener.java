@@ -9,8 +9,8 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.Bank;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -30,9 +30,9 @@ public class BankBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Bank.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IConfigAlias.BANK_CODE), bank.getCode());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.BANK_CODE), bank.getCode());
 			if (bank.getId() != null) {
-				criteria.addNotEqualExpression(bean.getFieldName(IConfigAlias.BANK_ID), bank.getId());	
+				criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.BANK_ID), bank.getId());	
 			}
 			List<?> list = bean.getList(criteria);
 			if (list != null && list.size() > 0) {

@@ -19,11 +19,33 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  *************** DOMAIN SWITCHER ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainSwitcher</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.DomainSwitcher
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<value>#{domainSwitcherListeners}</value>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ************* USER UTILS ***************** -->
 	<managed-bean>
 		<managed-bean-name>userUtils</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.config.util.UserUtils
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* CHANGE PASSWORD ***************** -->
+	<managed-bean>
+		<managed-bean-name>changePassword</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ChangePasswordController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -724,6 +746,7 @@
 			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009Rate/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
 	<!-- =================== WORKGROUP ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -731,5 +754,21 @@
 			<to-view-id>/com/code/aon/ui/config/facelet/workgroup/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
+	
+	<!-- =================== CHANGE PASSWORD ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>changePassword_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/changePassword/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== DOMAIN SWITCHER ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domain_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/domain/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>

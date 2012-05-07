@@ -13,6 +13,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	// --------------------------------------------------------------
 	private Date		fromDate = null;		
-	
+	private File		imagesDir = null;
 	
 	
 
@@ -47,6 +48,10 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
+	}
+	
+	public void setImagesDir(File imagesDir) {
+		this.imagesDir = imagesDir;
 	}
 
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
@@ -68,7 +73,8 @@ public class MysqlDB extends DefaultMysqlDB{
 		MyEnterprise myEnterprise = 
 			new MyEnterprise(this, 
 					myAgreement,
-					myCalendar);
+					myCalendar,
+					imagesDir);
 		MyContract myContract= 
 			new MyContract(this, 
 					myEnterprise, 
@@ -158,7 +164,7 @@ public class MysqlDB extends DefaultMysqlDB{
             		"jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org");
             String user = line.getOptionValue(ctsqlUserOption.getOpt(), "dbuser");
             String passwd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "serubd2000");
-            
+
             String mysqlDBArgs [] = {
             		"-url", url,
             		"-user", user,
@@ -168,6 +174,14 @@ public class MysqlDB extends DefaultMysqlDB{
             };
             DBContext.main(mysqlDBArgs);
             
+            String mysqlDomainDBArgs [] = {
+            		"-url", url,
+            		"-user", user,
+            		"-passwd", passwd,
+            		"-out" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/AbstractDomainMysqlDB.java" ,
+            		"-template" , "src/main/java/com/esferalia/aon/payroll/ctsql2mysql/templates/MysqlDomainDB.java.vm" 
+            };
+            DBContext.main(mysqlDomainDBArgs);
             
     	}
         catch( ParseException exp ) {

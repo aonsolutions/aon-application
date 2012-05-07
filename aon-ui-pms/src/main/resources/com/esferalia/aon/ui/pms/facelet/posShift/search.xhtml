@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="posShiftSearch">
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
+				<ui:param name="controller" value="#{posShift}" />
+			</ui:include>
+				
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{posShift}" />
+
+				<ui:define name="searchContent">
+					
+					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
+					<aon:selectOneMenu 
+						value="#{posShiftSearch.hotel}" >
+						<f:selectItem itemLabel=" - " itemValue="null" />
+						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+						<a4j:support event="onchange" reRender="posShiftSearch" ignoreDupResponses="true" />
+						<a4j:support event="oninputchanged" reRender="posShiftSearch" ignoreDupResponses="true" />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel value="#{pmsBundle.pms_pos}" />
+					<aon:selectOneMenu id="PosShift_pos"  
+						value="#{posShiftSearch.pos}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}" />
+						<f:selectItems value="#{posShiftSearch.hotelPosList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_opening}" />
+					<aon:div>
+						<aon:outputLabel for="PosShift_startTime-From"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="PosShift_startTime-From"
+							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
+							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							defaultTime="00:00:00"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							/>
+						<aon:outputLabel for="PosShift_startTime-To"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="PosShift_startTime-To"
+							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
+							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							defaultTime="23:59:59"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							/>
+					</aon:div>
+					
+					<aon:outputLabel value="#{pmsBundle.pms_closing}" />
+					<aon:div>
+						<aon:outputLabel for="PosShift_endTime-From"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+						<aon:selectInputDate id="PosShift_endTime-From"
+							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
+							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							defaultTime="00:00:00"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							/>
+						<aon:outputLabel for="PosShift_endTime-To"
+							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+						<aon:selectInputDate id="PosShift_endTime-To"
+							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
+							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							defaultTime="23:59:59"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							/>
+					</aon:div>
+						
+				</ui:define>
+			</ui:decorate>				
+		</aon:form>
+		
+	</ui:define>
+</ui:composition>

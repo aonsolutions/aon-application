@@ -29,7 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -258,7 +258,7 @@ public class AgreementTree {
 				BeanManager.getManagerBean(AgreementLevelCategory.class);
 			Criteria c = new Criteria();
 			c.addEqualExpression(
-					bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), 
+					bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), 
 					level.getId());
 			List<?> list = bean.getList(c);
 			@SuppressWarnings("unchecked")

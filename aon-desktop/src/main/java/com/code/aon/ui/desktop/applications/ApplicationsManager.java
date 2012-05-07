@@ -57,7 +57,7 @@ public class ApplicationsManager implements IDesktopConstants {
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
 				String role = property.substring( property.indexOf( ';' ) + 1 , property.length() );
-				boolean isUserInRole = role.equals("") || ec.isUserInRole( role );
+				boolean isUserInRole = role.equals("") || AonUtil.isUserInRole( role );
 				application = new App( appId, appDescription, context, bar, isUserInRole );
 			} else {
 				application = new App( appId, appDescription, context, new char[] {'1','0','0'}, true );

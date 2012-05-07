@@ -5,13 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.project.controller.IProjectConstants;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryProjectControllerListener extends ControllerAdapter {
 	
@@ -33,7 +33,7 @@ public class RegistryProjectControllerListener extends ControllerAdapter {
 			Project project = (Project) event.getController().getTo();
 			BasicController c = (BasicController) FormUtil.getController(IProjectConstants.PROJECT_CONTROLLER_NAME);
 			c.onEditSearch(null);
-			c.getCriteria().addEqualExpression(c.getFieldName(IProjectAlias.PROJECT_ID), project.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.PROJECT_ID), project.getId());
 			c.onSearch(null);
 			c.onSelect(null);
 			c.setBackAction( getBackAction() );

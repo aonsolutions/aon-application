@@ -7,9 +7,9 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceRegistryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
@@ -19,7 +19,7 @@ public class InvoiceRegistryBeanVetoListener extends ManagerBeanVetoListenerAdap
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), iregistry.getRegistry().getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), iregistry.getRegistry().getId());
 			if (invoiceBean.getList(criteria).size() > 0) {
 				throw new ManagerBeanVetoListenerException("Imposible borrar registro. Tiene facturas asociadas.");
 			}

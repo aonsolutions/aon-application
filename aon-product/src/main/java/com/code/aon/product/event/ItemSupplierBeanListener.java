@@ -9,8 +9,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.product.ItemSupplier;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemSupplierBeanListener extends ManagerBeanListenerAdapter {
 
@@ -21,10 +21,10 @@ public class ItemSupplierBeanListener extends ManagerBeanListenerAdapter {
 		ItemSupplier supItem = (ItemSupplier)event.getTo();
 		IManagerBean supItemBean = BeanManager.getManagerBean(ItemSupplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
-		criteria.addNotEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ID), supItem.getId());
-		criteria.addGreaterThanOrEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
-		criteria.addOrder(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY));
+		criteria.addEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
+		criteria.addNotEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supItem.getId());
+		criteria.addGreaterThanOrEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
+		criteria.addOrder(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 		List<ITransferObject> list = supItemBean.getList(criteria);
 		int index = supItem.getPriority();
 		for (ITransferObject to : list) {
@@ -45,14 +45,14 @@ public class ItemSupplierBeanListener extends ManagerBeanListenerAdapter {
 			ItemSupplier supItem = (ItemSupplier)event.getTo();
 			IManagerBean supItemBean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
-			criteria.addNotEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ID), supItem.getId());
-			criteria.addEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
+			criteria.addEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
+			criteria.addNotEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supItem.getId());
+			criteria.addEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
 			if (supItemBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
-				criteria.addNotEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ID), supItem.getId());
-				criteria.addOrder(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY));
+				criteria.addEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
+				criteria.addNotEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supItem.getId());
+				criteria.addOrder(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 				List<ITransferObject> list = supItemBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
@@ -75,10 +75,10 @@ public class ItemSupplierBeanListener extends ManagerBeanListenerAdapter {
 		ItemSupplier supItem = (ItemSupplier)evt.getTo();
 		IManagerBean supItemBean = BeanManager.getManagerBean(ItemSupplier.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
-		criteria.addNotEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_ID), supItem.getId());
-		criteria.addGreaterThanOrEqualExpression(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
-		criteria.addOrder(supItemBean.getFieldName(IProductAlias.ITEM_SUPPLIER_PRIORITY));
+		criteria.addEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), supItem.getItem().getId());
+		criteria.addNotEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ID), supItem.getId());
+		criteria.addGreaterThanOrEqualExpression(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY), supItem.getPriority());
+		criteria.addOrder(supItemBean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 		List<ITransferObject> list = supItemBean.getList(criteria);
 		int index = supItem.getPriority() + 1;
 		for (ITransferObject to : list) {

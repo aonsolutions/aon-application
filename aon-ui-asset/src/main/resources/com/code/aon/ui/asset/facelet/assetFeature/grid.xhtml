@@ -9,45 +9,28 @@
 	<aon:div styleClass="aon-scroll-area">
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-			<ui:param name="controller" value="#{assetFeature}" />
+			<ui:param name="controller" value="#{controller}" />
 			<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
 			
 			<ui:define name="columns">
+				
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputLabel value="#{assetBundle.asset_feature}" />
 					</f:facet>
 					<aon:outputText value="#{to.feature.name}" rendered="#{formList}"  />
 					<aon:selectOneMenu id="AssetFeature_feature" rendered="#{formEdit}"
-						value="#{assetFeature.to.feature}" >
-						<f:selectItem itemLabel="-" itemValue="#{null}" />
-						<f:selectItems value="#{assetCollections.featureList}" />
+						value="#{controller.to.feature}">
+						<f:selectItems value="#{assetCollections.features}" />
 					</aon:selectOneMenu>
-					<!--  
-					<ui:include src="/com/code/aon/ui/asset/facelet/feature/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{assetFeature.to.feature}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{formEdit}" />
-					</ui:include>
-					-->
 					<f:facet name="footer">
 						<aon:selectOneMenu id="AssetFeature_feature-New" rendered="#{formNew}"
-							value="#{assetFeature.to.feature}" >
-							<f:selectItem itemLabel="-" itemValue="#{null}" />
-							<f:selectItems value="#{assetCollections.featureList}" />
+							value="#{controller.to.feature}">
+							<f:selectItems value="#{assetCollections.features}" />
 						</aon:selectOneMenu>
-						<!--  
-						<ui:include src="/com/code/aon/ui/asset/facelet/feature/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{assetFeature.to.feature}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupSuffix" value="-New" />
-						</ui:include>
-						-->
 					</f:facet>
 				</aon:column>
+				
 			</ui:define>
 			
 		</ui:decorate>

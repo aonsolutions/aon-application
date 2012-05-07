@@ -14,14 +14,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingDetailKind;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RentingProvider {
 
@@ -43,7 +44,8 @@ public class RentingProvider {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE i.type != 1 "); // No Ventas
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("i.domain"));
+			stmt.append(" AND i.type != 1 "); // No Ventas
 			stmt.append(" AND it.tax_type = 2"); // IRPF
 			stmt.append(" AND it.withholding_type = 1"); // IRPF de alquileres
 			stmt.append(" AND i.tax_date >= ?");
@@ -107,7 +109,8 @@ public class RentingProvider {
 			stmt.append(" FROM invoice_tax it ");
 			stmt.append(" INNER JOIN invoice_detail id ON (it.invoice_detail = id.id)"); 
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)"); 
-			stmt.append(" WHERE i.type != 1 "); // No Ventas
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("i.domain"));
+			stmt.append(" AND i.type != 1 "); // No Ventas
 			stmt.append(" AND it.tax_type = 2"); // IRPF
 			stmt.append(" AND it.withholding_type = 1"); // IRPF de alquileres
 			stmt.append(" AND i.tax_date >= ?");
@@ -155,9 +158,9 @@ public class RentingProvider {
 		}
 		IManagerBean bean = BeanManager.getManagerBean(Renting.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_YEAR), renting.getYear());
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ADMINISTRATION), renting.getAdministration());
-		String periodAlias = bean.getFieldName(IFiscalAlias.RENTING_PERIOD);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_YEAR), renting.getYear());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ADMINISTRATION), renting.getAdministration());
+		String periodAlias = bean.getFieldName(IEntityAlias.RENTING_PERIOD);
 
 		int i = renting.getPeriod().ordinal(); 
 		if (i == 0 ) {

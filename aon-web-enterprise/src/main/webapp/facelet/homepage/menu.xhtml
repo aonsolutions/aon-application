@@ -7,7 +7,7 @@
 	<ui:define name="menuContent">
 		<c:if test="#{aonRole.commercialOperator}">
 			<aon:commandLink id="commercial"
-				value="#{commercialBundle.commercial_module_group}"
+				value="#{bundle.aon_module_commercial}"
 				action="menu_commercial" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-commercial" />
 		</c:if>
@@ -31,16 +31,22 @@
 		</c:if>
 		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="treasury"
-				value="#{financeBundle.finance_menu_group}"
+				value="#{bundle.aon_module_finance}"
 				action="menu_treasury" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-treasury" />
 		</c:if>
 		<c:if test="#{aonRole.warehouseOperator}">
 			<aon:commandLink id="warehouse"
-				value="#{warehouseBundle.warehouse_menu_group}"
+				value="#{bundle.aon_module_warehouse}"
 				action="menu_warehouse" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-warehouse" />
 		</c:if>
+		<c:if test="#{aonRole.accountingOperator}">		
+			<aon:commandLink id="accounting"
+				value="#{appBundle.menu_accounting}"
+				action="menu_accounting" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-accounting" />
+		</c:if>				
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"

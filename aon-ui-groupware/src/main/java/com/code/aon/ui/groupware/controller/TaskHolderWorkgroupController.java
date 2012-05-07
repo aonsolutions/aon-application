@@ -13,12 +13,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.TaskHolderWorkgroup;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaskHolderWorkgroupController extends LinesController {
 	
@@ -29,8 +29,8 @@ public class TaskHolderWorkgroupController extends LinesController {
 		try {
 			IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-			criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+			criteria.addEqualExpression(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+			criteria.addOrder(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));
 			for (ITransferObject to : workGroupBean.getList(criteria)) {
 				WorkGroup workGroup = (WorkGroup) to;
 				List<?> groups = (List<?>) getModel().getWrappedData();

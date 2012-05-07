@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_domains}" />
+				<ui:param name="controller" value="#{adminDomain}" />
+				<ui:param name="skipResetButton" value="#{!adminMain.domainManagement}" />
+				<ui:param name="skipSearchButton" value="#{!adminMain.config.showDomainSearch}" />
+				<ui:param name="skipRemoveButton" value="#{!adminDomain.deletable}" />
+				<ui:param name="skipBackButton" value="#{!adminMain.config.showDomainBack}" />				
+				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
+				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
+				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="domainApplications" rendered="#{!adminDomain.new}"
+						value="#{adminBundle.admin_applications}" immediate="true"
+						action="domainApplication_list" actionListener="#{domainApplication.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities"/>
+					<aon:commandButton id="domainUsers" rendered="#{!adminDomain.new}"
+						value="#{adminBundle.admin_users}" immediate="true"
+						action="domainUser_list" actionListener="#{domainUser.onSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-user"/>
+					<aon:commandButton id="domainCapabilities"
+						rendered="#{!adminDomain.new and adminMain.config.showDomainCapabilities}"
+						value="#{adminBundle.admin_capabilities}" immediate="true"
+						action="domainCapabilities" actionListener="#{domainCapabilities.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-account-entry-close"/>
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="Domain_name"
+						value="#{bundle.aon_name}" />
+					<c:if test="#{adminDomain.new}" >
+						<aon:div>
+							<aon:inputText id="Domain_name"
+								validator="#{adminDomain.idCheck}" required="true"
+								size="40" maxlength="#{adminDomain.domainNameMaxLength}" 
+								value="#{adminDomain.to.name}" />
+							<c:if test="#{adminDomain.addDomainSuffix}" >								
+								<aon:outputText value="."
+									styleClass="aon-bold aon-margin-left aon-margin-right" />								
+								<aon:inputText size="20" disabled="true"
+									value="#{adminMain.currentDomain.subDomainSuffix}" />
+							</c:if>			
+						</aon:div>
+					</c:if>
+					<c:if test="#{!adminDomain.new}" >
+						<aon:inputText id="Domain_name"
+							size="60" disabled="true" value="#{adminDomain.to.name}" />							
+					</c:if>
+
+					<aon:outputLabel for="Domain_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Domain_description" required="true"
+						size="95" value="#{adminDomain.to.description}" />
+
+					<c:if test="#{adminDomain.new}">
+						<aon:outputText value="#{adminBundle.admin_domain_administrator}" />
+						<aon:div>
+							<aon:outputLabel for="Domain_userUid"
+								value="#{bundle.aon_login}" styleClass="aon-italic"/>						
+							<aon:inputText id="Domain_userUid" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" maxlength="16" value="#{adminDomain.to.administrator.uid}" />
+							<aon:outputLabel for="Domain_userName" styleClass="aon-margin-left aon-italic"
+								value="#{bundle.aon_name}" />						
+							<aon:inputText id="Domain_userName" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" value="#{adminDomain.to.administrator.name}" />
+							<aon:outputLabel for="Domain_userSurname" styleClass="aon-margin-left aon-italic"
+								value="#{bundle.aon_surname}" />						
+							<aon:inputText id="Domain_userSurname" required="true"
+								styleClass="aon-inputText aon-margin-left"
+								size="20" value="#{adminDomain.to.administrator.surname}" />
+						</aon:div>					
+					</c:if>
+
+					<c:if test="#{adminMain.config.showDomainActive}" >
+						<aon:outputLabel for="Domain_active"
+							value="#{bundle.aon_active}" />
+						<aon:selectBooleanCheckbox id="Domain_active"
+							value="#{adminDomain.to.active}" />								
+					</c:if>				
+
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:outputLabel for="Domain_type"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Domain_type" 
+							value="#{adminDomain.to.type}">
+							<f:selectItems value="#{adminCollections.domainTypes}" />
+						</aon:selectOneMenu>		
+					</c:if>
+
+					<c:if test="#{adminDomain.showDomainSubDomainSuffix}" >
+						<aon:outputLabel for="Domain_subDomainSuffix"
+							value="#{adminBundle.admin_domain_subDomainSuffix}" />
+						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
+							required="true" value="#{adminDomain.to.subDomainSuffix}" />
+					</c:if>
+
+					<c:if test="#{aonRole.sysAdmin or (adminDomain.to.parent.id != null)}" >
+						<aon:outputLabel for="Domain_parentDomain"
+							value="#{adminBundle.admin_domain_parent}" />
+						<c:if test="#{aonRole.sysAdmin}" >								
+							<aon:selectOneMenu id="Domain_parentDomain"
+								value="#{adminDomain.to.parent}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{adminDomain.parentDomains}" />
+							</aon:selectOneMenu>
+						</c:if>								
+						<c:if test="#{!aonRole.sysAdmin}" >	
+							<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
+								value="#{adminDomain.to.parent.name}" />
+						</c:if>
+					</c:if>								
+					
+					<c:if test="#{adminDomain.to.documentManagement}" >
+						<aon:outputLabel for="Domain_maxDocumentSize"
+							value="#{adminBundle.admin_domain_maxDocumentSize}" />
+						<rich:inputNumberSlider id="Domain_maxDocumentSize"
+							value="#{adminDomain.to.maxDocumentSize}"
+							minValue="1" maxValue="16"/>
+							
+						<aon:outputLabel for="Domain_maxTotalDocumentSize"
+							value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
+						<h:panelGrid columns="2">
+							<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
+								valueChangeListener="#{adminDomain.maxTotalDocumentSizeChanged}"
+								value="#{adminDomain.to.maxTotalDocumentSize}"
+								minValue="100" maxValue="1500" step="100"/>
+							<aon:outputLink target="_blank"
+								styleClass="aon-margin-left" value="#{adminMain.config.documentalStorageURL}">
+								<aon:outputText value="#{adminBundle.admin_service_terms}" />
+							</aon:outputLink>	
+						</h:panelGrid>							
+					</c:if>								
+					
+				</aon:panelGrid>
+				
+				<c:if test="#{!adminDomain.new}" >
+					<aon:panelTabSet selectedTab="#{adminDomain.selectedTab}" >
+					
+						<aon:panelTab name="mailAccount" label="#{webmailBundle.webmail_mailAccount}">
+							<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
+								<ui:param name="controller" value="#{mailConfig.mailAccount}" />
+								<ui:param name="skipDefaultAccountColumn" value="#{true}" />
+							</ui:include>						
+	                    </aon:panelTab>
+
+						<aon:panelTab name="signature" label="#{webmailBundle.webmail_signature}">
+							<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+								<ui:param name="controller" value="#{mailConfig.signature}" />
+							</ui:include>						
+	                    </aon:panelTab>
+	                    
+						<aon:panelTab name="userWorkGroups" label="#{adminBundle.admin_workgroups}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/workGroup/grid.xhtml" >
+								<ui:param name="controller" value="#{workGroup}" />
+							</ui:include>
+	                    </aon:panelTab>
+
+						<aon:panelTab name="scopes" label="#{adminBundle.admin_scopes}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/scope/grid.xhtml" >
+								<ui:param name="controller" value="#{scope}" />
+							</ui:include>
+	                    </aon:panelTab>
+	
+					</aon:panelTabSet>
+				</c:if>		
+								
+			</aon:div>
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+</ui:composition>

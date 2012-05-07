@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -28,6 +26,7 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class LoanController extends BasicController{
 	
@@ -43,7 +42,7 @@ public class LoanController extends BasicController{
 	private Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
+		criteria.addEqualExpression(loanAccountBean.getFieldName(IEntityAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
 		Iterator<?> iter = loanAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			LoanAccount loanAccount = (LoanAccount)iter.next();
@@ -89,9 +88,9 @@ public class LoanController extends BasicController{
 			c.setParams(spp);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_CODE);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
 			criteria.addExpression(alias, account.getCode() + IAccountingConstants.ASTERISK);
-			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {

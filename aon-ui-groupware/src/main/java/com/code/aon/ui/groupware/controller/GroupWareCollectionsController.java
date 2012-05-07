@@ -25,7 +25,6 @@ import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.ProcessTransitionType;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.CampaignStatus;
@@ -39,6 +38,7 @@ import com.code.aon.groupware.enumeration.TaskHolderType;
 import com.code.aon.groupware.enumeration.TaskPeriod;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class GroupWareCollectionsController {
 
@@ -159,9 +159,9 @@ public class GroupWareCollectionsController {
 		IManagerBean favoriteCategoriesBean = BeanManager.getManagerBean(FavoriteCategory.class);
 		User user = UserUtils.getInstance().getLoggedUser();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(favoriteCategoriesBean.getFieldName(IGroupwareAlias.FAVORITE_CATEGORY_USER_ID),
+		criteria.addEqualExpression(favoriteCategoriesBean.getFieldName(IEntityAlias.FAVORITE_CATEGORY_USER_ID),
 				user.getId());
-		criteria.addOrder(favoriteCategoriesBean.getFieldName(IGroupwareAlias.FAVORITE_CATEGORY_DESCRIPTION));
+		criteria.addOrder(favoriteCategoriesBean.getFieldName(IEntityAlias.FAVORITE_CATEGORY_DESCRIPTION));
 		List<ITransferObject> list = favoriteCategoriesBean.getList(criteria);
 		for (ITransferObject to: list) {
 			FavoriteCategory category = (FavoriteCategory) to;
@@ -182,7 +182,7 @@ public class GroupWareCollectionsController {
 			taskHolders = new LinkedList<SelectItem>();
 			IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_ACTIVE), true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_ACTIVE), true);
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to:list) {
 				TaskHolder taskHolder = (TaskHolder) to;
@@ -197,9 +197,9 @@ public class GroupWareCollectionsController {
 		List<SelectItem> taskHolderWorkgroups = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
 		if (workGroup != null) {
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), workGroup.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_ID), workGroup.getId());
 		}
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
@@ -214,9 +214,9 @@ public class GroupWareCollectionsController {
 		List<SelectItem> taskHolderWorkgroups = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
 		if (taskHolder != null && taskHolder.getId() != null) {
-			criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
 		}
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
@@ -231,7 +231,7 @@ public class GroupWareCollectionsController {
 		List<SelectItem> jobTypeList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(JobType.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.JOB_TYPE_DESCRIPTION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.JOB_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			JobType type = (JobType) to;
@@ -258,7 +258,7 @@ public class GroupWareCollectionsController {
 		List<SelectItem> processList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(ProcessTransitionType.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_TRANSITION_TYPE_DESCRIPTION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROCESS_TRANSITION_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			ProcessTransitionType ptt = (ProcessTransitionType) to;
@@ -285,8 +285,8 @@ public class GroupWareCollectionsController {
 		List<SelectItem> processList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Process.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DESCRIPTION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROCESS_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			Process process = (Process) to;
@@ -300,7 +300,7 @@ public class GroupWareCollectionsController {
 		List<SelectItem> campaignTypeList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(CampaignType.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.CAMPAIGN_TYPE_DESCRIPTION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.CAMPAIGN_TYPE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			CampaignType campaignType = (CampaignType) to;
@@ -327,9 +327,9 @@ public class GroupWareCollectionsController {
 		List<SelectItem> processDetailList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(ProcessDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			ProcessDetail processDetail = (ProcessDetail) to;
@@ -343,7 +343,7 @@ public class GroupWareCollectionsController {
 		List<SelectItem> profileList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(CostProfile.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IGroupwareAlias.COST_PROFILE_DESCRIPTION));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.COST_PROFILE_DESCRIPTION));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			CostProfile profile = (CostProfile) to;

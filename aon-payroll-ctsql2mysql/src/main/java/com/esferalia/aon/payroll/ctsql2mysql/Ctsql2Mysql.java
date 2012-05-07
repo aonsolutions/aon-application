@@ -1,11 +1,16 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -15,6 +20,11 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+
+import com.code.aon.dbutils.AonSQLException;
+import com.code.aon.dbutils.AonSQLFile;
+import com.code.aon.dbutils.AonSQLScript;
+import com.code.aon.master.VersionManager;
 
 
 
@@ -60,6 +70,7 @@ public class Ctsql2Mysql
 	private boolean dryRun;
 	
 	private Date fromDate;
+	private File imagesDir;
 	
 
 	public Ctsql2Mysql(String args [] ) {
@@ -133,6 +144,13 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "trapasar los datos a partir de esta fecha M/d/Y" );
     	Option fromDateOption = OptionBuilder.create( "from" );
 
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArg(true);
+    	OptionBuilder.withArgName( "dir" );
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "ruta del directorio de imagenes ( logos y firmas )" );
+    	Option imagesDirOption = OptionBuilder.create( "images" );
+
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -142,6 +160,7 @@ public class Ctsql2Mysql
     	options.addOption(ctsqlPasswdOption);
     	options.addOption(mysqlPasswdOption);
     	options.addOption(fromDateOption);
+    	options.addOption(imagesDirOption);
     	
     	CommandLineParser parser = new PosixParser();   
 
@@ -170,6 +189,11 @@ public class Ctsql2Mysql
 	        	fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
 	        }
 
+            String imagesDirPath = line.getOptionValue(imagesDirOption.getOpt());
+            if ( imagesDirPath != null ) {
+            	imagesDir = new File(imagesDirPath);
+            }
+
 		} catch (Exception e) {
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
 		}
@@ -181,11 +205,41 @@ public class Ctsql2Mysql
 		return DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
 	}
 	
-	protected Connection getMysqlConnection() throws SQLException {
+	protected Connection getMysqlConnection() throws SQLException{
 		return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
 	}
 
-	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException {
+	
+	protected Connection getMysqlConnectionEx() throws SQLException, AonSQLException, IOException {
+		try {
+			return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
+		} catch ( SQLException e ) {
+
+			Pattern pattern = Pattern.compile("(jdbc:mysql://[^/]+)/([^/?]+)");
+			
+			Matcher matcher = pattern.matcher(mysqlURL);
+			System.out.println(matcher.find());
+			String mysqlServerURL = matcher.group(1);
+			String dbName = matcher.group(2);
+
+			Connection connection = 
+					DriverManager.getConnection(mysqlServerURL, mysqlUser, mysqlPasswd);
+			
+			URL createURL = getCreateScript();
+            AonSQLFile sqlCreateFile = new AonSQLFile(createURL.openStream());
+            sqlCreateFile.setDbName(dbName);
+            sqlCreateFile.setFileName( createURL.getFile());
+            AonSQLScript script = new AonSQLScript(sqlCreateFile, connection);
+            script.execute();
+            
+            VersionManager versionManager = new VersionManager();
+            versionManager.uptodateDatabase(connection);
+            
+			return connection;
+		}
+	}
+
+	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException, AonSQLException, IOException {
 		if ( ctsqlURL == null ){
 			return;
 		}
@@ -196,13 +250,14 @@ public class Ctsql2Mysql
         try {
 	        ctsqlConnection = getCtsqlConnection();  
 	        	
-	        mysqlConnection =  getMysqlConnection();
+	        mysqlConnection =  getMysqlConnectionEx();
 	
 	        mysqlConnection.setAutoCommit(false);
 	        
 	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
 	        
 	        mysqlWriter.setFromDate(fromDate);
+	        mysqlWriter.setImagesDir(imagesDir);
 	        
 	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
 	        mysqlWriter.writeAll(ctsqlReader);
@@ -219,15 +274,28 @@ public class Ctsql2Mysql
         }
 	}
 	
-	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException
+	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException, AonSQLException, IOException
     {
+		//String dbName = matcher.group(2);
+		
 		new Ctsql2Mysql(args).transfer();
     }
 
 	public boolean isDryRun() {
 		return dryRun;
 	}
-
 	
+	
+
+	private static  URL getCreateScript() {
+        String name = "com/esferalia/aon/payroll/ctsql2mysql/create.database.sql";
+        return getScript(name);
+	}
+
+	private static  URL getScript(String name) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return cl.getResource(name);
+    }
+
 }
 

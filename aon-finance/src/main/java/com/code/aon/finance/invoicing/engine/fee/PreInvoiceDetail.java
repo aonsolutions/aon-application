@@ -10,11 +10,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PreInvoiceDetail extends InvoiceDetail {
 	
@@ -72,9 +72,9 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID),id);
-    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
-    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
+    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID),id);
+    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
+    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
     	Iterator iter = taxDetailBean.getList(criteria).iterator();
     	while (iter.hasNext()) {
     		TaxDetail taxDetail = (TaxDetail)iter.next();

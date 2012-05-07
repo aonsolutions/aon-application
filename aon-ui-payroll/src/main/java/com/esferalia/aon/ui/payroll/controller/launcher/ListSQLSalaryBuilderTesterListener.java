@@ -42,16 +42,12 @@ public class ListSQLSalaryBuilderTesterListener extends
 
 		LogMessage testMsg = new LogMessage(level, msg );
 		if ( salaryDraft != null ) {
-			try {
-				testMsg.setContractId(salaryDraft.getContract());
-				testMsg.setEmployeeName(salaryDraft.getEmployeeName());
-				testMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
-				testMsg.setStartDate(salaryDraft.getStartDate());
-				testMsg.setEndDate(salaryDraft.getEndDate());
-				testMsg.setIssueDate(salaryDraft.getIssueDate());
-			} catch (SQLException e) {
-				// TODO employee & enterprise name a null ???
-			}
+			testMsg.setContractId(salaryDraft.getContract());
+			testMsg.setEmployeeName(salaryDraft.getEmployeeName());
+			testMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
+			testMsg.setStartDate(salaryDraft.getStartDate());
+			testMsg.setEndDate(salaryDraft.getEndDate());
+			testMsg.setIssueDate(salaryDraft.getIssueDate());
 		}
 
 		getTestList().add(testMsg);

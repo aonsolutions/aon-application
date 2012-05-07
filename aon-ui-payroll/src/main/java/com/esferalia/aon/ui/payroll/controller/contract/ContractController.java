@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +30,6 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -49,7 +47,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -193,7 +191,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			Contract to = (Contract) getTo();
 			IController c = FormUtil.getController(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
 			c.onSearch(event);
 			this.initializeVariables(event);
 		} catch (ManagerBeanException e) {
@@ -216,7 +214,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			ContractDeductionController c = (ContractDeductionController) FormUtil.getController(IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER);
 			c.reset(false);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar las deducciones del contrato (" + e.getMessage() +")";
@@ -230,7 +228,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			Contract to = (Contract) getTo();
 			ContractEmbargoController c = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
@@ -244,7 +242,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			Contract to = (Contract) getTo();
 			ContractBonusController c = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
 			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
+			c.getCriteria().addEqualExpression(c.getFieldName(IEntityAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
@@ -326,7 +324,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
 				List<ITransferObject> list = bean.getList(criteria);
 				for (ITransferObject to : list) {
 					WorkPlace w = (WorkPlace)to; 
@@ -355,7 +353,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+				criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseActivity ea = (EnterpriseActivity) to;
@@ -386,7 +384,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseCCC.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
+				criteria.addEqualExpression(ecBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
@@ -412,7 +410,7 @@ public class ContractController extends BasicController implements IVariablesHan
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
 			Criteria  criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				PayrollWorkPlace pw = (PayrollWorkPlace) list.get(0);
@@ -505,8 +503,8 @@ public class ContractController extends BasicController implements IVariablesHan
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				ContractAttachment attach = (ContractAttachment) list.get(0);
@@ -591,7 +589,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			IrpfDataController controller = (IrpfDataController) AonUtil.getRegisteredBean(IPayrollConstants.IRPF_DATA_CONTROLLER_NAME);
 			controller.onEditSearch(event);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.IRPF_DATA_CONTRACT_ID),c.getId());
+			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID),c.getId());
 			controller.clearCriteria();
 			controller.setCriteria(criteria);
 			controller.onSearch(event);
@@ -652,7 +650,7 @@ public class ContractController extends BasicController implements IVariablesHan
 			if(getAgreement()!=null && getAgreement().getId()!=null){
 				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
+				criteria.addEqualExpression(cBean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
 				for (ITransferObject to : cBean.getList(criteria)) {
 					AgreementLevelCategory alc = (AgreementLevelCategory) to;
 					String name = alc.getLevel().getDescription()+" - "+alc.getDescription();
@@ -673,8 +671,8 @@ public class ContractController extends BasicController implements IVariablesHan
 			if(contract.getAgreementLevelCategory()!=null){
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
 				List<ITransferObject> list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					AgreementLevelData d = (AgreementLevelData) list.get(0);

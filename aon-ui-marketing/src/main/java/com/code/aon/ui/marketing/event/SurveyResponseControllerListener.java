@@ -8,11 +8,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.SurveyResponse;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SurveyResponseControllerListener extends ControllerAdapter {
 
@@ -23,7 +23,7 @@ public class SurveyResponseControllerListener extends ControllerAdapter {
 		try {
 			Criteria criteria = new Criteria();
 			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-			String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_SURVEY_RESPONSE_ID);
+			String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_SURVEY_RESPONSE_ID);
 			criteria.addEqualExpression( id, response.getId() );
 			List<ITransferObject> list = bean.getList(criteria);
 			for( ITransferObject to : list ) {

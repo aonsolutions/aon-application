@@ -15,9 +15,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -25,6 +25,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceCheckingController {
 
@@ -93,9 +94,10 @@ public class FinanceCheckingController {
 		}
 		String select = "SELECT invoice " +
 						"FROM Invoice invoice " +
-						"WHERE invoice.id NOT IN (SELECT finance.invoice.id FROM Finance finance WHERE finance.invoice IS NOT NULL) " +
+						"WHERE " + DomainManager.getSQLWhereClause("invoice.domain") +
+						" AND invoice.id NOT IN (SELECT finance.invoice.id FROM Finance finance WHERE finance.invoice IS NOT NULL) " +
 						dateCriteria +
-						"ORDER BY invoice.issueDate, invoice.referenceCode";
+						" ORDER BY invoice.issueDate, invoice.referenceCode";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		noFinanceInvoiceList = query.list();
@@ -111,15 +113,15 @@ public class FinanceCheckingController {
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
 		if (getFromDate() != null) {
-			criteria.addGreaterThanOrEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getFromDate());
+			criteria.addGreaterThanOrEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), getFromDate());
 		}
 		if (getToDate() != null) {
-			criteria.addLessThanOrEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), getToDate());
+			criteria.addLessThanOrEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), getToDate());
 		}
-		criteria.addOrder(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
-		criteria.addOrder(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REFERENCE_CODE));
+		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
+		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_REFERENCE_CODE));
 		Iterator<ITransferObject> invoiceIter = invoiceBean.getList(criteria).iterator();
 		while (invoiceIter.hasNext()) {
 			double invoiceTotal = 0;
@@ -133,7 +135,7 @@ public class FinanceCheckingController {
 			double financeTotal = 0;
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 			Iterator<ITransferObject> financeIter = financeBean.getList(criteria).iterator();
 			while (financeIter.hasNext()) {
 				Finance finance = (Finance)financeIter.next();

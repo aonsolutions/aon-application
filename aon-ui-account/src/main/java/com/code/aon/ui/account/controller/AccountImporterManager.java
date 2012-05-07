@@ -3,11 +3,11 @@ package com.code.aon.ui.account.controller;
 import java.util.List;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 
 public class AccountImporterManager {
@@ -24,7 +24,7 @@ public class AccountImporterManager {
 	public void addAccount(Account account) throws ManagerBeanException {
 		if (account != null) {
 			Criteria c = new Criteria();
-			c.addEqualExpression(getManagerBean().getFieldName(IAccountAlias.ACCOUNT_CODE), account.getCode());
+			c.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.ACCOUNT_CODE), account.getCode());
 			List<ITransferObject> list = getManagerBean().getList(c);
 			if (list == null || list.isEmpty()) {
 				bean.insert(account);

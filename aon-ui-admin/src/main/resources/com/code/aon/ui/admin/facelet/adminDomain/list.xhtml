@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainList">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_domains}" />
+				<ui:param name="controller" value="#{adminDomain}" />
+				<ui:param name="skipResetButton" value="#{!adminMain.domainManagement}" />
+				<ui:param name="skipSearchButton" value="#{!adminMain.config.showDomainSearch}" />
+			</ui:include>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{adminDomain}" />
+					<ui:param name="rows" value="20" />					
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="Domain.name">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"/>
+						</aon:column>
+	
+						<aon:column alias="Domain.description">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}"/>
+						</aon:column>
+	
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="Domain.parent.name">
+							<f:facet name="header">
+								<aon:outputText value="#{adminBundle.admin_domain_parent}" />
+							</f:facet>
+							<aon:outputText value="#{to.parent.name}"/>
+						</aon:column>
+
+						<c:if test="#{adminMain.config.showDomainActive}" >
+							<aon:column styleClass="aon-editDataTable-iconColumn"
+								alias="Domain.active" >
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_active}" />
+								</f:facet>
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon #{(to.active)?'aon-icon-checked':'aon-icon-check'}" />							
+							</aon:column>
+						</c:if>
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>

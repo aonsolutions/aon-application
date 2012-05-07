@@ -71,7 +71,7 @@ public class ApplicationParameterController {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private void loadParameters() throws ManagerBeanException {
 		parameters = new TreeMap<String, ApplicationParameter>();
 		managerBean = BeanManager.getManagerBean(ApplicationParameter.class);

@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.common.BeanManager;
@@ -23,9 +21,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PeriodEntriesManager {
 	private PeriodEntriesParams params;
@@ -152,16 +152,16 @@ public class PeriodEntriesManager {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), type);
+		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), type);
 		if (securityLevel != null) {
-			criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);	
+			criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		}
 		List<ITransferObject> list = entryBean.getList(criteria);
 		for (ITransferObject to : list) {
 			AccountEntry entry = (AccountEntry) to;
 			Criteria c = new Criteria();
-			c.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			c.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
 			List<ITransferObject> details = entryDetailBean.getList(c);
 			for (ITransferObject detail : details) {
 				entryDetailBean.remove(detail);
@@ -177,8 +177,8 @@ public class PeriodEntriesManager {
 		if (!util.existsEntry(params.getPeriod(), AccountEntryType.OPENING, SecurityLevel.OFFICIAL)) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			Criteria c = new Criteria();
-			c.addLessThanExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), params.getPeriod().getInitiationDate());
-			c.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
+			c.addLessThanExpression(periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE), params.getPeriod().getInitiationDate());
+			c.addEqualExpression(periodBean.getFieldName(IEntityAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
 			if (periodBean.getList(c).size() > 0) {
 				String msg = "No existe el asiento de apertura en el ejercicio " + params.getPeriod().getName() + ".";
 				throw new ManagerBeanException(msg);
@@ -204,7 +204,7 @@ public class PeriodEntriesManager {
 	private Account getResultAcount() throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), "129");
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "129");
 		Iterator<ITransferObject> iter = accountBean.getList(c).iterator();
 		if (!iter.hasNext()) {
 			Account account = new Account();
@@ -213,7 +213,7 @@ public class PeriodEntriesManager {
 			accountBean.insert(account);
 		}
 		c = new Criteria();
-		c.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), "1290");
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "1290");
 		iter = accountBean.getList(c).iterator();
 		if (!iter.hasNext()) {
 			Account account = new Account();
@@ -222,7 +222,7 @@ public class PeriodEntriesManager {
 			accountBean.insert(account);
 		}
 		c = new Criteria();
-		c.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), "129000000");
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "129000000");
 		iter = accountBean.getList(c).iterator();
 		Account account = null;
 		if (!iter.hasNext()) {
@@ -242,7 +242,9 @@ public class PeriodEntriesManager {
 		StringBuilder sw = new StringBuilder();
 		sw.append("SELECT account.id,SUM(debit),SUM(credit)");
 		sw.append(" FROM AccountEntryDetail ");
-		sw.append("WHERE accountEntry.accountPeriod = '");
+		sw.append(" WHERE ");
+		sw.append( DomainManager.getSQLWhereClause("accountEntry.domain") );
+		sw.append(" AND accountEntry.accountPeriod = '");
 		sw.append(period.getId());
 		sw.append("'");
 		if (accountEntryType == AccountEntryType.OPERATING) {
@@ -420,9 +422,9 @@ public class PeriodEntriesManager {
 		entry = (AccountEntry) entryBean.insert(entry);
 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
+		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(criteria);
 		if (list.size() <= 0) {
 			String msg = "No existe asiento de cierre en el ejercicio " + params.getPeriod().getId() + " (" + securityLevel + ").";
@@ -431,9 +433,9 @@ public class PeriodEntriesManager {
 		previous = (AccountEntry) list.get(0);
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria detailCriteria = new Criteria();
-		detailCriteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
+		detailCriteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
 				.getId());
-		detailCriteria.addOrder(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_LINE));
+		detailCriteria.addOrder(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_LINE));
 		List<ITransferObject> details = entryDetailBean.getList(detailCriteria);
 		if (details.size() <= 0) {
 			String msg = "El asiento de cierre en el ejercicio " + params.getPeriod().getId() + " no tiene apuntes.";

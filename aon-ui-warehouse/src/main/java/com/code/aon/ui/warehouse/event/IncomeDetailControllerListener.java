@@ -12,7 +12,7 @@ import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.ui.warehouse.controller.IncomeDetailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeDetailControllerListener extends ControllerAdapter {
 
@@ -61,8 +61,8 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 	private	Integer calculateNextLine(Income income) throws ManagerBeanException {
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		Projection projection = Projection.max(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		Projection projection = Projection.max(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 		Object value = incomeDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}

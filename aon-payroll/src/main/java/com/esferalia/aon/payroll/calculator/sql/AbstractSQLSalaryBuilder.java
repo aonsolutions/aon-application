@@ -48,7 +48,8 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	public void setContract(Object contract) {
 		SQLSalaryProxy salaryProxy = 
 			( SQLSalaryProxy) contract;
-		salary.setContract(salaryProxy.getId());
+		salary.setDomain(salaryProxy.getDomainId());
+		salary.setContract(salaryProxy.getContractId());
 	}
 
 	@Override

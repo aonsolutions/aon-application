@@ -6,96 +6,106 @@ package com.code.aon.ui.common.role;
  * @author ecastellano
  * 
  */
-public interface IAonRole {
-
+public enum IAonRole {
 
 	/**
 	 * Role de Operador
 	 */
-	String USER = "User";
+	USER( "User" ),
 
 	/**
 	 * Role de Invitado
 	 */
-	String GUEST = "Guest";
+	GUEST( "Guest" ),
 
 	/**
 	 * Role de Administrador
 	 */
-	String ADMIN = "Admin";
+	ADMIN( "Admin" ),
 
 	/**
 	 * Role de Configuración
 	 */
-	String CONFIG = "Config";
+	CONFIG( "Config" ),
 	
 	/**
 	 * Role de Auditor
 	 */
-	String AUDITOR = "Auditor";
+	AUDITOR( "Auditor" ),
 
 	/**
 	 * Role de Acceso a la función de confidencialidad.
 	 */
-	String CONFIDENTIALITY = "Confidentiality";
+	CONFIDENTIALITY( "Confidentiality" ),
 
 	/**
 	 * Role de Acceso a Productos
 	 */
-	String PRODUCT = "Product";
+	PRODUCT( "Product" ),
 	
 	/**
 	 * Role de Acceso a Comercial
 	 */
-	String COMMERCIAL = "Commercial";
+	COMMERCIAL( "Commercial" ),
 
 	/**
 	 * Role de Acceso a Ventas
 	 */
-	String SALE = "Sale";
+	SALE( "Sale" ),
 
 	/**
 	 * Role de Acceso a Compras
 	 */
-	String PURCHASE = "Purchase";
+	PURCHASE( "Purchase" ),
 	
 	/**
 	 * Role de Acceso a Almacén
 	 */
-	String WAREHOUSE = "Warehouse";
+	WAREHOUSE( "Warehouse" ),
 	
 	/**
 	 * Role de Acceso a Contabilidad
 	 */
-	String ACCOUNTING = "Accounting";
+	ACCOUNTING( "Accounting" ),
 
 	/**
 	 * Role de Acceso a Facturación y Tesoreria
 	 */
-	String FINANCE = "Finance";
+	FINANCE( "Finance" ),
 
 	/**
 	 * Role de Acceso a Estadísticas
 	 */
-	String STATISTICS = "Statistics";
+	STATISTICS( "Statistics" ),
 	
 	/**
 	 * Role de Monitor de Tareas.
 	 */
-	String TASK_MONITORING = "TaskMonitoring";
+	TASK_MONITORING( "TaskMonitoring" ),
 
 	/**
 	 * Role para dar capacidad de firmar documentos electrónicos.
 	 */
-	String E_SIGNATURE = "eSignature";
+	E_SIGNATURE( "eSignature" ),
 	
 	/**
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
-	String SIS_ADMIN = "SisAdmin";
+	SYS_ADMIN( "SisAdmin" ),
 	
 	/**
 	 * Role de acceso a los informes de nominas.
 	 */
-	String TGC = "Tgc";
+	TGC( "Tgc" );
+	
+	private String name;
+
+	private IAonRole(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
 }

@@ -19,18 +19,19 @@ import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.AssetType;
 import com.code.aon.asset.Feature;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ViewerType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityViewerController {
 	
@@ -40,6 +41,12 @@ public class ActivityViewerController {
 	private Date viewerStartDate;
 	private Integer startDateIncrease;
 	private Integer assetAvailability;
+	private List<Integer> timeFractionList;
+	private AssetActivity selectedAssetActivity;
+	private DataModel assetModel;
+	private List<DayAssetList> dayAssetList;
+	private Integer[] featureFilter ;
+	private List<AssetDayList> assetDayList = new ArrayList<AssetDayList>();
 	
 	
 	public Integer getAssetAvailability() {
@@ -83,7 +90,6 @@ public class ActivityViewerController {
 	}
 	
 	
-	private AssetActivity selectedAssetActivity;
 	
 	public AssetActivity getSelectedAssetActivity() {
 		return selectedAssetActivity;
@@ -159,8 +165,6 @@ public class ActivityViewerController {
 		return dayList;
 	}
 	
-	private DataModel assetModel;
-	private List<DayAssetList> dayAssetList;
 	
 	public DataModel getAssetModel() throws ManagerBeanException {
 		if(assetModel==null){
@@ -182,7 +186,6 @@ public class ActivityViewerController {
 		this.dayAssetList = dayAssetList;
 	}	
 	
-	private Integer[] featureFilter ;
 	
 	public Integer[] getFeatureFilter() {
 		return featureFilter;
@@ -212,27 +215,10 @@ public class ActivityViewerController {
 		return null;
 	}
 
-	private boolean fractionCell;
-	private int numFraction = (IAssetConstants.END_TIME - IAssetConstants.START_TIME) * (60 / IAssetConstants.FRACTION_TIME); 
-	private List<Integer> timeFractionList;
 	
 	public List<Integer> getTimeFractionList() {
 		if(timeFractionList != null){
 			timeFractionList = new ArrayList<Integer>();
-//		int blank=60/IAssetConstants.FRACTION_TIME;
-//		int inc=0;
-//		for(int i=0; i<numFraction; i++){
-//			if(blank<60/IAssetConstants.FRACTION_TIME){
-//				timeFractionList.add(i,blank*IAssetConstants.FRACTION_TIME);
-//				blank++;
-//				fractionCell=true;
-//			} else {
-//				timeFractionList.add(i,IAssetConstants.START_TIME+inc);
-//				blank=1;
-//				inc++;
-//				fractionCell=false;
-//			}
-//		}
 			for(int i=0; i<31; i++){
 				timeFractionList.add(i,i);
 			}
@@ -251,34 +237,21 @@ public class ActivityViewerController {
 			for( Integer id : getFeatureFilter() ) {
 				if ( featureClause == null ) {
 					featureClause = "AssetFeature.feature = ";
-//					featureClause = "AssetFeature.feature.id = ";
 				} else {
 					featureClause += "OR AssetFeature.feature = ";
-//					featureClause += "OR AssetFeature.feature.id = ";
 				}
 				featureClause += id + " ";
 			}
 			featureClause = "AND (" + featureClause + ") ";
 		}
 
-		String availableClause = null;
-		if( getAssetAvailability() != null && getAssetAvailability() > 0 ){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(getViewerStartDate());
-			availableClause = "AND (AssetActivity.day NOT BETWEEN '";
-			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-			availableClause += "AND '";
-			cal.add(Calendar.DAY_OF_MONTH, getAssetAvailability());
-			availableClause += new java.sql.Date(cal.getTimeInMillis()) + "' ";
-			availableClause += "OR AssetActivity.id IS NULL )";
-			availableClause += " ";
-		}
-		
 		String availableClause2 = null;
 		if( getAssetAvailability() != null && getAssetAvailability() > 0 ){
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(getViewerStartDate());
-			availableClause2 = "AND Asset.id not in (select asset from asset_activity where day BETWEEN '";
+			availableClause2 = "AND Asset.id not in (select asset from asset_activity where " 
+								+ DomainManager.getSQLWhereClause("asset_activity.domain") 
+								+ "AND day BETWEEN '";
 			availableClause2 += new java.sql.Date(cal.getTimeInMillis()) + "' ";
 			availableClause2 += "AND '";
 			cal.add(Calendar.DAY_OF_MONTH, getAssetAvailability()-1);
@@ -287,54 +260,18 @@ public class ActivityViewerController {
 			availableClause2 += " ";
 		}
 		
-		
-		String select = "SELECT Asset "
-			+ "FROM AssetActivity as AssetActivity LEFT JOIN AssetActivity.asset as Asset, " 
-			+ "AssetFeature as AssetFeature RIGHT JOIN AssetFeature.asset as Asset "
-			+ "WHERE 1 = 1 "
-			+ (featureClause == null ? "" : featureClause) 
-			+ (availableClause == null ? "" : availableClause) 
-			+ "GROUP BY Asset.id "
-			+ "ORDER BY Asset.id"
-			;
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query query = session.createQuery(select);
-//		
-//		String sqlSelect = "SELECT Asset.* "
-//			+ " FROM (asset as Asset "
-//			+ " LEFT JOIN asset_activity as AssetActivity on AssetActivity.asset = Asset.id) "
-//			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Asset.id "
-//			
-////			+ " FROM (asset_activity as AssetActivity  "
-////			+ " RIGHT JOIN asset as Asset on AssetActivity.asset = Asset.id) "
-////			+ " RIGHT JOIN asset_feature as AssetFeature on AssetFeature.asset = Asset.id "
-//	
-//			+ "WHERE 1 = 1 "
-//			
-//			+ (featureClause == null ? "" : featureClause) 
-//			
-//			+ (availableClause == null ? "" : availableClause) 
-//			
-////			+ " AND   CommercialTracking.date >= '"
-////			+ new java.sql.Date(this.params.getFromDate().getTime())
-////			+ "' AND CommercialTracking.date <= '"
-////			+ new java.sql.Date(this.params.getToDate().getTime())
-//			+ "GROUP BY Asset.id "
-//			+ "ORDER BY Asset.id, AssetActivity.day asc"
-//
-//			;
-		
 		String sqlSelect = "SELECT Asset.* "
 			+ " FROM asset as Asset "
 			+ " LEFT JOIN asset_feature as AssetFeature on AssetFeature.asset = Asset.id "
-			+ "WHERE 1 = 1 "
+			+ "WHERE " + DomainManager.getSQLWhereClause("Asset.domain")
+			+ (featureClause != null || availableClause2 != null?"":" AND ")
 			+ (featureClause == null ? "" : featureClause) 
 			+ (availableClause2 == null ? "" : availableClause2) 
 			+ "GROUP BY Asset.id "
 			+ "ORDER BY Asset.id"
 			;
 		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		
 		
 		List<AssetReservation> list = new LinkedList<AssetReservation>();
 		for(Object to: sqlQuery.list()){
@@ -345,22 +282,6 @@ public class ActivityViewerController {
 			list.add(r);
 		}
 
-//		IManagerBean bean = BeanManager.getManagerBean(AssetFeature.class);
-//		Criteria criteria = null;
-//		if(getFeatureFilter()!=null ){
-//			criteria = new Criteria();
-//			addFeaturesToCriteria(criteria, bean.getFieldName(IAssetAlias.ASSET_FEATURE_FEATURE_ID), getFeatureFilter());
-//			criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_FEATURE_ASSET_ID));
-//		}
-//		List<ITransferObject> assetFeatureList = bean.getList(criteria);
-//		List<AssetReservation> list = new LinkedList<AssetReservation>();
-//		for(ITransferObject to: assetFeatureList){
-//			AssetFeature af = (AssetFeature)to;
-//			AssetReservation r = new AssetReservation();
-//			r.setAsset(af.getAsset());
-//			r.setAssetDayModel(new ListDataModel(buildAssetDayList(af.getAsset())));
-//			list.add(r);
-//		}
 		assetModel = new ListDataModel(list);	
 	}
 	
@@ -396,7 +317,6 @@ public class ActivityViewerController {
 		assetModel = new ListDataModel(assetList);
 	}
 	
-	private List<AssetDayList> assetDayList = new ArrayList<AssetDayList>();
 	public List<AssetDayList> getAssetDayList(){
 		return assetDayList;
 	}
@@ -416,22 +336,6 @@ public class ActivityViewerController {
 				d.getFractions().add(new Fraction(false));
 				assetDayList.add(new AssetDayList());
 			}
-			
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
-				criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
-				criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
-				List<ITransferObject> activityList = bean.getList(criteria);
-				if(!activityList.isEmpty()){
-					for(ITransferObject to: activityList){
-						AssetActivity aa = (AssetActivity) to;
-					}
-				}
-			} catch (ManagerBeanException e) {
-				// TODO: handle exception
-			}
 		}
 		
 		return assetDayList;
@@ -449,9 +353,9 @@ public class ActivityViewerController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
-			criteria.addBetweenExpression(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
-			criteria.addOrder(bean.getFieldName(IAssetAlias.ASSET_ACTIVITY_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), a.getId());
+			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getViewerDays().get(0), getViewerDays().get(getViewerDays().size()-1));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE));
 			List<ITransferObject> activityList = bean.getList(criteria);
 			if(!activityList.isEmpty()){
 				for(ITransferObject to: activityList){

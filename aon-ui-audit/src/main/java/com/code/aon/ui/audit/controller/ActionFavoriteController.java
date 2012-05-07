@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionFavorite;
-import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,6 +23,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * The Class FavoriteOptionController.
@@ -59,10 +59,10 @@ public class ActionFavoriteController implements IAuditConstants {
 	private List<ITransferObject> getList( IManagerBean bean, int size ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		User user = UserUtils.getInstance().getLoggedUser();
-		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_USER_ID), user.getId());
 		Integer appId = getAuditController().getApplication().getId();
-		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
-		criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_POSITION));
 		List<ITransferObject> list = bean.getList(criteria);
 		if ( list.size() > size ) {
 			for( int i = list.size()-1; i+1 > size; i-- ) {
@@ -80,9 +80,9 @@ public class ActionFavoriteController implements IAuditConstants {
 	}
 	
 	public void onInit( ActionEvent event ) {
-		this.options = new ArrayList<ApplicationOption>( getOptionController().getOptions(false) );
+		this.options = new ArrayList<ApplicationOption>( getDeniedController().getOptions(false) );
 		this.options.removeAll(this.favorites);
-		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedActionsMap().values();
+		Collection<ApplicationOption> deniedList = getDeniedController().getDeniedOptions();
 		this.options.removeAll(deniedList);
 	}
 	
@@ -130,18 +130,17 @@ public class ActionFavoriteController implements IAuditConstants {
 			IManagerBean bean = BeanManager.getManagerBean(ActionFavorite.class);
 			Criteria criteria = new Criteria();
 			User user = UserUtils.getInstance().getLoggedUser();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_USER_ID), user.getId());
 			Integer appId = getAuditController().getApplication().getId();
-			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
-			criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ACTION_FAVORITE_POSITION));
 			List<ITransferObject> actionFavorites = bean.getList(criteria);
 			if (! actionFavorites.isEmpty() ) {
 				Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-				Map<String,ApplicationOption> denied = getDeniedController().getDeniedActionsMap();
 				for( ITransferObject to : actionFavorites ) {
 					String action = ((ActionFavorite) to).getAction().getName();
 					ApplicationOption option = options.get(action);
-					if ( (option != null) && (!denied.containsKey(action)) ) {
+					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
 						list.add(option);
 					} else {
 						bean.remove(to);
@@ -172,5 +171,5 @@ public class ActionFavoriteController implements IAuditConstants {
 		}
 		return this.menuTemplate;
 	}
-	
+
 }

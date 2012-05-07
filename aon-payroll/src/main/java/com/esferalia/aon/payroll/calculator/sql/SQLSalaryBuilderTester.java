@@ -3,15 +3,12 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLReader;
 import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 

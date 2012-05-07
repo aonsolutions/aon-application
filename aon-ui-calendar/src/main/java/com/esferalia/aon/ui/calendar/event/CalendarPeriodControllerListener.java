@@ -20,13 +20,13 @@ public class CalendarPeriodControllerListener extends ControllerAdapter {
 			calendar.setFriday(DayType.WORKING_DAY);
 			calendar.setSaturday(DayType.NOT_WORKING_DAY);
 			calendar.setSunday(DayType.NOT_WORKING_DAY);
-			calendar.setMondayHours(8);
-			calendar.setTuesdayHours(8);
-			calendar.setWednesdayHours(8);
-			calendar.setThursdayHours(8);
-			calendar.setFridayHours(8);
-			calendar.setSaturdayHours(0);
-			calendar.setSundayHours(0);
+			calendar.setMondayHours(8.0);
+			calendar.setTuesdayHours(8.0);
+			calendar.setWednesdayHours(8.0);
+			calendar.setThursdayHours(8.0);
+			calendar.setFridayHours(8.0);
+			calendar.setSaturdayHours(0.0);
+			calendar.setSundayHours(0.0);
 	}
 	
 	@Override

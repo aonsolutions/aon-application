@@ -17,12 +17,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class AudabridgeParametersController {
@@ -110,7 +110,7 @@ public class AudabridgeParametersController {
 	private Criteria getCriteria() throws ManagerBeanException {
 		try {
 			Criteria criteria = new Criteria();
-			String nameAlias = getManagerBean().getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME);
+			String nameAlias = getManagerBean().getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME);
 			criteria.addExpression(nameAlias, AUDABRIDGE_PATTERN);
 			return criteria;
 		} catch (ExpressionException e) {

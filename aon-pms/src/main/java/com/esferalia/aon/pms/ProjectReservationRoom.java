@@ -1,100 +1,66 @@
 package com.esferalia.aon.pms;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.product.Item;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.entity.master.ProjectReservationRoomDB;
 
 @Entity
 @Table(name="project_reservation_room")
-public class ProjectReservationRoom implements ITransferObject {
+public class ProjectReservationRoom extends ProjectReservationRoomDB {
 
-	private static final long serialVersionUID = -2595051575335189544L;
+	private static final long serialVersionUID = 1L;
 
-	private Integer id;
-	private ProjectReservation projectReservation;
-	private int roomIndex;
-    private Item item;
+	private boolean showRoomDetail;
+	private String roomNumber;
+	private String firstRoomNumber;
 
-    @Id
-	@GeneratedValue
-	@Column(nullable=false)
-	public Integer getId() {
-		return id;
+	@Transient
+	public boolean isShowRoomDetail() {
+		return showRoomDetail;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	public void setShowRoomDetail(boolean showRoomDetail) {
+		this.showRoomDetail = showRoomDetail;
 	}
 
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="project_reservation", nullable=false)
-	public ProjectReservation getProjectReservation() {
-		return projectReservation;
-	}
-
-	public void setProjectReservation(ProjectReservation projectReservation) {
-		this.projectReservation = projectReservation;
-	}
-
-    @Column(name="room_index", nullable=false)
-    public int getRoomIndex() {
-        return roomIndex;
-    }
-    public void setRoomIndex(int roomIndex) {
-        this.roomIndex = roomIndex;
-    }
-
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="item", nullable=false)
-	public Item getItem() {
-		return item;
-	}
-
-	public void setItem(Item item) {
-		this.item = item;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final ProjectReservationRoom o = (ProjectReservationRoom) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.item, o.item)
-				.append(this.projectReservation, o.projectReservation)
-				.append(this.roomIndex, o.roomIndex)
-				.isEquals();
+	@Transient
+	public String getRoomNumber() throws ManagerBeanException {
+		if (roomNumber == null) {
+			roomNumber = obtainRoomNumber(false);
 		}
-		return ObjectUtils.equals(getId(), o.getId());		
+		return roomNumber;
+	}
+	public void setRoomNumber(String roomNumber) {
+		this.roomNumber = roomNumber;
 	}
 	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)
-			.append(item)
-			.append(projectReservation)
-			.append(roomIndex)
-			.toHashCode();
+	@Transient
+	public String getFirstRoomNumber() throws ManagerBeanException {
+		if (firstRoomNumber == null) {
+			firstRoomNumber = obtainRoomNumber(true);
+		}
+		return firstRoomNumber;
+	}
+	public void setFirstRoomNumber(String firstRoomNumber) {
+		this.firstRoomNumber = firstRoomNumber;
+	}
+	
+	private String obtainRoomNumber(boolean first) throws ManagerBeanException{
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID), getId());
+		criteria.addOrder(reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE), first);
+		for (ITransferObject ito : reservationRoomDetailBean.getList(criteria)) {
+			return ((ProjectReservationRoomDetail)ito).getRoom().getAsset().getName();
+		}
+		return null;
 	}
 
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
-	
 }

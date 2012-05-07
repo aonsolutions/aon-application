@@ -9,12 +9,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyUtil {
 
@@ -28,8 +27,8 @@ public class CompanyUtil {
 				Company company = (Company)iterator.next();
 	    		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 	    		Criteria criteria = new Criteria();
-	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
-	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), company.getId());
+	    		criteria.addEqualExpression(registryAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
 	    		Iterator<?> iter = registryAddressBean.getList(criteria).iterator();
 	    		if (iter.hasNext()) {
 	    			RegistryAddress registryAddress = (RegistryAddress)iter.next();
@@ -49,12 +48,11 @@ public class CompanyUtil {
 		Company company = (Company) list.get(0);
 		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(enterpriseBean.getFieldName(ICompanyAlias.ENTERPRISE_REGISTRY_ID), company.getId());
+		criteria.addEqualExpression(enterpriseBean.getFieldName(IEntityAlias.ENTERPRISE_REGISTRY_ID), company.getId());
 		list = enterpriseBean.getList(criteria);
 		if (list == null || list.size() < 1) {
 			throw new IllegalStateException("No existe un enterprise vinculado a company!");
 		}
 		return (Enterprise) list.get(0);
 	}
-	
 }

@@ -10,7 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -46,7 +46,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
 				List<?> list = bean.getList(c);
 				salaryPayments = (Collection<SalaryPayment>) list;
 				for(SalaryPayment sp: salaryPayments){

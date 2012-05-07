@@ -5,6 +5,7 @@ import java.util.Map;
 import com.code.aon.report.ReportException;
 
 import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
 
 /**
  * Factory to obtain a suitable
@@ -33,6 +34,6 @@ public interface IJRExporterFactory {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	void fillJRParametersMap(Map<Object,Object> map) throws ReportException;
+	void fillJRParametersMap(Map<String,Object> fillMap, Map<JRExporterParameter,Object> exporterMap) throws ReportException;
 
 }

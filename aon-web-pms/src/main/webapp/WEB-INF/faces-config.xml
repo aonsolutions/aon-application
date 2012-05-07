@@ -61,6 +61,10 @@
 			<to-view-id>/facelet/menu/sales.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>menu_purchase</from-outcome>
+			<to-view-id>/facelet/menu/purchase.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>menu_treasury</from-outcome>
 			<to-view-id>/facelet/menu/treasury.xhtml</to-view-id> 
 		</navigation-case>
@@ -137,6 +141,7 @@
 			<value>#{itemCompositionChildListener}</value>				
 			<value>#{itemTariffChildListener}</value>
 			<value>#{itemCatalogueChildListener}</value>
+			<value>#{itemSupplierChildListener}</value>
 		</list-entries>
 	</managed-bean>
 
@@ -223,6 +228,28 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.account.bridge -->
 			<value>#{bankConceptAccountListener}</value>
+		</list-entries>
+	</managed-bean>
+	
+	<!-- ************ PURCHASE LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>purchasePrintEmailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.purchase.util.IEmailControllerListener</value-class>
+			<!--  aon.ui.purchase -->
+			<value>#{purchasePrintEmailListener}</value>
+		</list-entries>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>purchaseEmailOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.purchase.util.IEmailControllerListener</value-class>
+			<!--  aon.ui.purchase -->
+			<value>#{purchaseEmailListener}</value>
 		</list-entries>
 	</managed-bean>
 

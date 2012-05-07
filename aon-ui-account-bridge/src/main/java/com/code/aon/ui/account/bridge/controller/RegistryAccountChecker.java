@@ -16,12 +16,12 @@ import org.hibernate.Session;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -30,6 +30,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public abstract class RegistryAccountChecker implements Serializable {
 
@@ -171,7 +172,7 @@ public abstract class RegistryAccountChecker implements Serializable {
 			AccountManager c = (AccountManager) FormUtil.getController( "accountManager" );
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
 			Expression exp1 = null;
 			for (IAccount ca : to.getAccounts()) {
 				Expression exp2 = ExpressionUtilities.getEqualExpression(alias, ca.getAccount().getId());
@@ -200,10 +201,11 @@ public abstract class RegistryAccountChecker implements Serializable {
 		Session session = HibernateUtil.getSession(sessionFatoryName);
 		String pojo = getPojoName();
 		String stmt = "SELECT new com.code.aon.ui.account.bridge.controller.RegistryAccountCheckerTo(c) "
-				+ " FROM " + pojo + " as c ";
+				+ " FROM " + pojo + " as c "
+				+ " WHERE " + DomainManager.getSQLWhereClause(pojo + ".domain");
 		if (getCompanyName() != null) {
 			String c = StringUtils.replaceChars(getCompanyName(), "*", "%");
-			stmt += " WHERE registry.name LIKE '" + c + "' ";
+			stmt += " AND registry.name LIKE '" + c + "' ";
 		}
 		OrderByList l = getCriteria().getOrderByList();
 		if (l != null && l.getOrders().size() > 0) {

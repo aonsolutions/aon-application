@@ -9,7 +9,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailVariableController;
 
 public class ContractPaymentSearchListener extends ControllerSearchListener {
@@ -19,16 +19,16 @@ public class ContractPaymentSearchListener extends ControllerSearchListener {
 //		ContractDetailVariableController controller = (ContractDetailVariableController) this.getController();
 //		String alias = null;
 //		if(controller.getHandler().isSearchCurrentVariables()){
-//			alias = getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE);
+//			alias = getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE);
 //			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 //			Expression expr2 = ExpressionUtilities.getNullExpression(alias);
 //			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-//			alias = getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE);
+//			alias = getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE);
 //			criteria.addLessThanOrEqualExpression(alias, new Date());
 //		}
-//		alias = getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE);
+//		alias = getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE);
 //		criteria.addOrder(alias, false);
-//		alias = getFieldName(IPayrollAlias.CONTRACT_PAYMENT_DESCRIPTION);
+//		alias = getFieldName(IEntityAlias.CONTRACT_PAYMENT_DESCRIPTION);
 //		criteria.addOrder(alias);
 	}
 

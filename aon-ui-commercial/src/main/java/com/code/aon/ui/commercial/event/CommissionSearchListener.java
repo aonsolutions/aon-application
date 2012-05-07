@@ -2,11 +2,11 @@ package com.code.aon.ui.commercial.event;
 
 import java.util.Date;
 
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommissionSearchListener extends ControllerSearchListener {
 
@@ -61,16 +61,16 @@ public class CommissionSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getStartDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.COMMISSION_START_DATE), getStartDateFrom());
 		}
 		if (getStartDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_START_DATE), getStartDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.COMMISSION_START_DATE), getStartDateTo());
 		}
 		if (getEndDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.COMMISSION_END_DATE), getEndDateFrom());
 		}
 		if (getEndDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(ICommercialAlias.COMMISSION_END_DATE), getEndDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.COMMISSION_END_DATE), getEndDateTo());
 		}
 	}	
 }

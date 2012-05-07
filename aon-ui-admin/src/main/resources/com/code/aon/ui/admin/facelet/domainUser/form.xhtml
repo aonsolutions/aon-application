@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainUserForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
+				<ui:param name="controller" value="#{domainUser}" />
+				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
+				<ui:param name="skipRemoveButton" value="#{!domainUser.userRemoveable}" />
+				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_user_remove_confirm}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="resetPassword"
+						value="#{adminBundle.admin_reset_password}"
+						actionListener="#{domainUser.onResetPassword}"
+						rendered="#{!domainUser.new}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities">
+						<aon:actionListener method="#{saveActionListener}" />
+					</aon:commandButton>				
+					<aon:commandButton id="changePassword"
+						value="#{adminBundle.admin_change_password}"
+						actionListener="#{domainUser.onShowChangePasswordWindow}"
+						reRender="showChangePasswordWindow"
+						rendered="#{(!domainUser.new) and adminMain.config.showDomainUserChangePassword}"
+						styleClass="aon-finding-toolbar-item aon-icon-utilities">
+					</aon:commandButton>
+				</ui:define>								
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+
+					<aon:outputLabel for="DomainUser_login"
+						value="#{bundle.aon_login}" />
+					<h:panelGrid>
+						<aon:inputText id="DomainUser_login"
+							size="20" maxlength="16" required="true" 
+							validator="#{domainUser.idCheck}"
+							value="#{domainUser.to.login}" />
+						<aon:outputText value="#{adminBundle.admin_user_init_password}"
+							styleClass="aon-margin-left"
+							rendered="#{domainUser.new}" />							
+					</h:panelGrid>
+						
+					<aon:outputLabel for="DomainUser_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="DomainUser_name"
+						size="20" maxlength="64" required="true" 
+						value="#{domainUser.to.name}" />
+												
+					<c:if test="#{adminMain.config.showDomainUserPasswordExpirationTimestamp}" >						
+						<aon:outputLabel for="DomainUser_passwordExpiration"
+							value="#{adminBundle.admin_password_expiration}" />
+						<aon:selectInputDate id="DomainUser_passwordExpiration" 
+							value="#{domainUser.to.passwordExpiration}"
+							timeZone="#{timeZoneController.timeZone}" inputSize="20"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}"/>
+					</c:if>
+
+					<aon:outputLabel for="DomainUser_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="DomainUser_active"
+						disabled="#{!domainUser.userActivable}" 
+						value="#{domainUser.to.active}" />
+				
+				</aon:panelGrid>
+
+				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
+                    
+                    <c:if test="#{!domainUser.new}" >
+						<aon:panelTab name="userWorkGroups" label="#{adminBundle.admin_workgroups}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/grid.xhtml" />						
+	                    </aon:panelTab>
+
+						<aon:panelTab name="scopes" label="#{adminBundle.admin_scopes}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/grid.xhtml" />
+	                    </aon:panelTab>
+
+						<aon:panelTab name="contacts"
+							label="#{webmailBundle.webmail_email}">						
+							<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
+								<ui:param name="controller" value="#{mailConfig.contact}" />
+							</ui:include>						
+	                    </aon:panelTab>
+			
+						<aon:panelTab name="mailAccount"
+							label="#{webmailBundle.webmail_mailAccount}">
+							<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
+								<ui:param name="controller" value="#{mailConfig.mailAccount}" />
+							</ui:include>						
+	                    </aon:panelTab>
+
+						<aon:panelTab name="signature"
+							label="#{webmailBundle.webmail_signature}">
+							<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+								<ui:param name="controller" value="#{mailConfig.signature}" />
+							</ui:include>						
+	                    </aon:panelTab>
+
+					</c:if>
+                    
+				</aon:panelTabSet>					
+
+			</aon:div>
+		</aon:form>
+
+		<c:if test="#{adminMain.config.showDomainUserChangePassword}" >
+			<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
+		</c:if>
+
+	</ui:define>
+</ui:composition>

@@ -3,9 +3,14 @@ package com.code.aon.sales.bridge;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.project.Project;
@@ -13,22 +18,50 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryManager {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryManager.class.getName());
+
 	public Delivery salesDelivery(Sales sales, String series, int number, Date issueDate, Warehouse warehouse) throws ManagerBeanException {
-		updateSalesStatus(sales);
-		Delivery delivery = createDelivery(sales, series, number, issueDate);
-		createDeliveryDetails(delivery, sales, warehouse);
-		return delivery;
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+
+			HibernateUtil.beginTransaction(sessionName);
+			
+			updateSalesStatus(sales);
+			Delivery delivery = createDelivery(sales, series, number, issueDate);
+			createDeliveryDetails(delivery, sales, warehouse);
+
+			HibernateUtil.getSession(sessionName).flush();
+			HibernateUtil.commitTransaction(sessionName);
+			
+			return delivery;
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg,daoe);
+			}
+			LOGGER.error(e.getMessage());
+			throw new ManagerBeanException(e.getMessage(),e);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
 	}
 
 	private void updateSalesStatus(Sales sales) throws ManagerBeanException {
@@ -72,9 +105,9 @@ public class DeliveryManager {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), sales.getId());
-		criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
-		criteria.addOrder(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), sales.getId());
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
+		criteria.addOrder(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_LINE));
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			SalesDetail salesDetail = (SalesDetail)iterator.next();
@@ -124,8 +157,8 @@ public class DeliveryManager {
 		salesDetailBean.update(salesDetail);
 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
-		criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
 		if (salesDetailBean.getCount(criteria) == 0) {
 			updateSalesStatus(salesDetail.getSales());
 		}
@@ -136,8 +169,8 @@ public class DeliveryManager {
 	private	Integer calculateNextLine(Delivery delivery) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-		Projection projection = Projection.max(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		Projection projection = Projection.max(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 		Object value = deliveryDetailBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}

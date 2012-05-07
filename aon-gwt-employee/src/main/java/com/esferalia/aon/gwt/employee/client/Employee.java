@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -17,17 +18,16 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class Employee implements EntryPoint {
 
+	
 	interface GWTResources extends ClientBundle {
 		@NotStrict
 		@Source("gwt.css")
 		CssResource css();
+		
+		@Source("richCss/images/aon-header/aon-menuBar.png")
+		ImageResource menuBar();
 	}
 
-	interface RichResources extends ClientBundle {
-		@NotStrict
-		@Source("richCss/aon-richCss.css")
-		CssResource css();
-	}
 
 
 	interface Binder extends UiBinder<DockLayoutPanel, Employee> {
@@ -37,6 +37,7 @@ public class Employee implements EntryPoint {
 	
 	
 	@UiField Employees employees;
+	@UiField Documents documents;
 	@UiField EmployeeDetail employeeDetail;
 
 	/**
@@ -44,10 +45,9 @@ public class Employee implements EntryPoint {
 	 * controls and hooking up event handler.
 	 */
 	public void onModuleLoad() {
-
+		
 		// Inject rich styles.
 		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
-		GWT.<RichResources>create(RichResources.class).css().ensureInjected();
 
 		// Create the UI defined in Mail.ui.xml.
 		DockLayoutPanel outer = binder.createAndBindUi(this);
@@ -63,5 +63,6 @@ public class Employee implements EntryPoint {
 		root.add(outer);
 		
 		employees.setEmployeeDetail(employeeDetail);
+		documents.setEmployeeDetail(employeeDetail);
 	}
 }

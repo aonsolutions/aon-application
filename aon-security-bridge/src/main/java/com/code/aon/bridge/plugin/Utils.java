@@ -12,18 +12,12 @@
  */
 package com.code.aon.bridge.plugin;
 
-import java.security.Principal;
-
-import javax.faces.context.FacesContext;
-
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
 import com.code.aon.bridge.jndi.IJNDIConstants;
 import com.code.aon.bridge.jndi.SecurityLocator;
 import com.code.aon.bridge.jndi.SecurityLocatorException;
 import com.code.aon.jaas.auth.AonGenericPrincipal;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.deployment.DeploymentException;
 
 /**
@@ -51,35 +45,6 @@ public class Utils {
     	}
 		return console;
 	}
-
-	/**
-	 * Gets security <code>AuthPrincipal</code> from given application server Principal.
-	 * this is because some AS do not give us an instance of <code>Principal</code>. 
-	 * 
-	 * @param principal
-	 * @return
-	 */
-	public static final AuthPrincipal getAuthPrincipal(Principal principal) {
-		AuthPrincipal authPrincipal = new AuthPrincipal( IConstants.UNAUTHENTICATED_IDENTITY );
-		if ( principal != null && principal instanceof AuthPrincipal ) {
-			authPrincipal = ( (AuthPrincipal) principal );
-		} else if ( principal != null ) {
-			authPrincipal = new AuthPrincipal( principal.getName() );
-		}
-		return authPrincipal;
-	}
-	
-	/**
-	 * Gets security <code>AuthPrincipal</code> from the FacecContext Principal.
-	 * This is because some AS do not give us an instance of <code>Principal</code>. 
-	 * 
-	 * @return the auth principal
-	 */
-	public static AuthPrincipal getAuthPrincipal() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		Principal principal = ctx.getExternalContext().getUserPrincipal();
-		return getAuthPrincipal(principal);
-	}	
 
 	/**
 	 * Return <code>AonGenericPrincipal</code> in the application server AonSessionManager MBean.

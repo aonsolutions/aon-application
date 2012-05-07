@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,14 +15,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -37,14 +36,14 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
-import com.code.aon.ui.sign.controller.ISignatureController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class SaleInvoiceController extends InvoiceController implements ISignatureController, IFinanceConstants, IFinanceMessages {
+public class SaleInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
 	private RegistryValidationManager vm;
 	private DeliveryTransferManager deliveryTransferManager;
@@ -64,19 +63,13 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 	}
 
 	public boolean isSeriesActive() throws ManagerBeanException {
-		String seriesId = getInvoice().getSeries();
-		if (StringUtils.isEmpty(seriesId)) {
-			return true;
-		} else {
-			IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-			Series series = (Series)seriesBean.get(seriesId);
-			return (series != null && series.isActive());
-		}
+		String seriesCode = getInvoice().getSeries();
+		return (StringUtils.isEmpty(seriesCode)?true:SeriesUtil.isSeriesActive(seriesCode));
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel((String)event.getNewValue());
 		if (getInvoice() != null) {
 			getInvoice().setNumber(number);
 			getInvoice().setSecurityLevel(securityLevel);
@@ -89,21 +82,6 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
     	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iterator = seriesBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			Series series = (Series)iterator.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
-	}
-
 	public void onFindNextFreeNumber(ActionEvent event) throws ManagerBeanException {
 		int number = (getInvoice().getNumber() == 0 ? 1 : getInvoice().getNumber());
 
@@ -111,12 +89,12 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		while (true) {
 			Criteria criteria = new Criteria();
 			if (getInvoice().getSeries() == null) {
-				criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+				criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 			} else {
-				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), getInvoice().getSeries());
+				criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), getInvoice().getSeries());
 			}
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER), number);
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER), number);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
 			if (invoiceBean.getCount(criteria) == 0) {
 				break;
 			}
@@ -151,7 +129,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Criteria criteria = new Criteria();
 		if (getInvoice() != null) {
-			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), getInvoice().getRegistry().getId());
+			criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_ID), getInvoice().getRegistry().getId());
 			Iterator<?> iterator = customerBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (Customer)iterator.next();
@@ -184,9 +162,9 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
@@ -203,12 +181,12 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		if (!isReadOnly()) {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
-			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
-			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
-			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES));
-			criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), getInvoice().getRegistry().getId());
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_STATUS), DeliveryStatus.PENDING);
+			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_ISSUE_TIME));
+			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_SERIES));
+			criteria.addOrder(deliveryBean.getFieldName(IEntityAlias.DELIVERY_NUMBER));
 			deliveryList.addAll(deliveryBean.getList(criteria));
 		}
 		getDeliveryTransferManager().setDeliveryList(deliveryList);
@@ -243,14 +221,14 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
 		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
 			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
 				invoiceDetail.setUpdateEnabled(!iterator.hasNext());
@@ -259,4 +237,12 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		}
 	}
 
+	public List<SelectItem> getInvoiceAttachmentTypes() {
+		List<SelectItem> invoiceAttachmentTypes = new LinkedList<SelectItem>();
+		InvoiceAttachmentType type = InvoiceAttachmentType.RECEIPT;
+		String name = type.getName(AonUtil.getCurrentLocale());
+		invoiceAttachmentTypes.add( new SelectItem(type, name) );
+		return invoiceAttachmentTypes;
+	}
+	
 }

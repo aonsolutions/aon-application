@@ -14,13 +14,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Campaign;
 import com.code.aon.groupware.CampaignProject;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.CampaignStatus;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignController extends BasicController {
 	
@@ -58,7 +58,7 @@ public class CampaignController extends BasicController {
         try {
             IManagerBean bean = BeanManager.getManagerBean(CampaignProject.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
+            criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
             List<ITransferObject> list = bean.getList(criteria);
             for (ITransferObject to:list) {
                 CampaignProject cp = (CampaignProject) to;
@@ -86,7 +86,7 @@ public class CampaignController extends BasicController {
         try {
             IManagerBean bean = BeanManager.getManagerBean(CampaignProject.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
+            criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
             List<ITransferObject> list = bean.getList(criteria);
             for(ITransferObject to : list ) {
                 CampaignProject cp = (CampaignProject) to;

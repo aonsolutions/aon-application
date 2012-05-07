@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -74,7 +75,8 @@ public class TasStatEngine {
 		+",null "+ TOTAL
 		+" FROM offer o"
 		+" INNER JOIN registry r ON r.id = o.target"
-		+" WHERE o.project=?";
+		+" WHERE o.project=?"
+		+" AND " + DomainManager.getStaticSQLWhereClause("o.domain");
 
 	private static String INVOICE_STATEMENT = 
 			"SELECT i.id " + ID
@@ -93,7 +95,8 @@ public class TasStatEngine {
 			+",null " + STATUS_DATE
 			+" FROM invoice i"
 			+" INNER JOIN registry r ON r.id = i.registry"
-			+" WHERE i.project=?";
+			+" WHERE i.project=?"
+			+" AND " + DomainManager.getStaticSQLWhereClause("i.domain");
 
 	private static String SALES_STATEMENT = 
 			"SELECT s.id " + ID
@@ -112,7 +115,8 @@ public class TasStatEngine {
 			+",null " + STATUS_DATE
 			+" FROM sales s"
 			+" INNER JOIN registry r ON r.id = s.customer"
-			+" WHERE s.project=?";
+			+" WHERE s.project=?"
+			+" AND " + DomainManager.getStaticSQLWhereClause("s.domain");
 
 	private static String PURCHASE_STATEMENT = 
 			"SELECT p.id " + ID
@@ -131,7 +135,8 @@ public class TasStatEngine {
 			+",null " + STATUS_DATE
 			+" FROM purchase p"
 			+" INNER JOIN registry r ON r.id = p.supplier"
-			+" WHERE p.project=?";
+			+" WHERE p.project=?"
+			+" AND " + DomainManager.getStaticSQLWhereClause("p.domain");
 
 	private static String DELIVERY_STATEMENT = 
 			"SELECT d.id " + ID
@@ -150,7 +155,8 @@ public class TasStatEngine {
 			+",null " + STATUS_DATE
 			+" FROM delivery d"
 			+" INNER JOIN registry r ON r.id = d.customer"
-			+" WHERE d.project=?";
+			+" WHERE d.project=?"
+			+" AND " + DomainManager.getStaticSQLWhereClause("d.domain");
 
 	private static String INCOME_STATEMENT = 
 			"SELECT i.id " + ID
@@ -169,7 +175,8 @@ public class TasStatEngine {
 			+",null " + STATUS_DATE
 			+" FROM income i"
 			+" INNER JOIN registry r ON r.id = i.supplier"
-			+" WHERE i.project=?";
+			+" WHERE i.project=?"
+			+" AND " + DomainManager.getStaticSQLWhereClause("i.domain");
 
 	public List<TasStatHeader> getTasHeaders(TasStatParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
@@ -184,7 +191,7 @@ public class TasStatEngine {
 			stmt.append(" INNER JOIN make mk ON md.make = mk.id");
 			stmt.append(" INNER JOIN target t ON pt.target = t.registry");
 			stmt.append(" INNER JOIN registry r ON r.id = t.registry");
-			stmt.append(" WHERE 1=1");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("pt.domain"));
 			if (params.getFromDate() != null) {
 				stmt.append(" AND p.date >= ?");
 			}
@@ -296,6 +303,7 @@ public class TasStatEngine {
 		try {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(TAS_ITEM_STATEMENT);
+			stmt.append(" AND " + DomainManager.getStaticSQLWhereClause("ti.domain") );
 			if (params.getFromDate() != null) {
 				stmt.append(" AND p.date >= ?");
 			}
@@ -361,6 +369,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				details.add(populateTasStatDetail(TasStatDetailType.OFFER, detailsRs ));
@@ -382,6 +391,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				TasStatDetailType type = null;
@@ -412,6 +422,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				details.add(populateTasStatDetail(TasStatDetailType.SALES, detailsRs ));
@@ -433,6 +444,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				details.add(populateTasStatDetail(TasStatDetailType.PURCHASE, detailsRs ));
@@ -454,6 +466,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				details.add(populateTasStatDetail(TasStatDetailType.DELIVERY, detailsRs ));
@@ -475,6 +488,7 @@ public class TasStatEngine {
 		try {
 			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
 			detailsPs.setInt(1, detail.getId());
+			DomainManager.fillHostVariables(detailsPs, 2);
 			detailsRs = detailsPs.executeQuery();
 			while (detailsRs.next()) {
 				details.add(populateTasStatDetail(TasStatDetailType.INCOME, detailsRs ));

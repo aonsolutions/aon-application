@@ -7,7 +7,6 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractBonusColumns;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractBonus extends SQLCollection<IContractBonus> implements IContractBonus{

@@ -11,12 +11,10 @@ import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -26,7 +24,6 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -36,6 +33,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceRecorder implements ITransferObject {
 
@@ -219,7 +217,7 @@ public class InvoiceRecorder implements ITransferObject {
 		IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 		IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
 		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
 		boolean wrong = false;
 		for (ITransferObject to: list) {
@@ -229,8 +227,8 @@ public class InvoiceRecorder implements ITransferObject {
 				if (item.getProduct().getType() == ProductType.EXPENSE) {
 					Integer productId = item.getProduct().getId();
 					criteria = new Criteria();
-					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-					criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
+					criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
+					criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.PURCHASE);
 					List<ITransferObject> expenseAccountList = productAccountBean.getList(criteria);
 					if (expenseAccountList == null || expenseAccountList.size() == 0) {
 						wrong = true;
@@ -238,8 +236,8 @@ public class InvoiceRecorder implements ITransferObject {
 					} else {
 						ProductAccount expenseAccount = (ProductAccount) expenseAccountList.get(0);
 						Criteria c = new Criteria();
-						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
-						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
+						c.addEqualExpression(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
+						c.addOrder(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER), false);
 						List<ITransferObject> ahs = accountHelperBean.getList(c);
 						AccountHelper first = null;
 						boolean used = false;
@@ -302,7 +300,7 @@ public class InvoiceRecorder implements ITransferObject {
 		double financeTotal = 0;
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 		List<ITransferObject> finances = financeBean.getList(criteria);
 		for (ITransferObject to: finances) {
 			Finance finance = (Finance) to;

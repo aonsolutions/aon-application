@@ -3,7 +3,6 @@ package com.code.aon.account.bridge.event;
 import java.util.List;
 
 import com.code.aon.account.bridge.CreditorAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -14,6 +13,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CreditorAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -36,9 +36,9 @@ public class CreditorAccountBeanVetoListener extends ManagerBeanVetoListenerAdap
 			}
 			IManagerBean bean = BeanManager.getManagerBean(CreditorAccount.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID), creditorAccount.getCreditor().getId());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_CREDITOR_ID), creditorAccount.getCreditor().getId());
 			if ( creditorAccount.getId() != null ) {
-				String idAlias = bean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_ID);
+				String idAlias = bean.getFieldName(IEntityAlias.CREDITOR_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, creditorAccount.getId());
 				c.addExpression(exp);	
 			}

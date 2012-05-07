@@ -1,7 +1,6 @@
 package com.code.aon.finance.bridge.invoicing;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,7 +15,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -26,6 +24,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RectificationInvoicingManager {
 
@@ -42,7 +41,7 @@ public class RectificationInvoicingManager {
 			throws ManagerBeanException {
 		Invoice rectifier = createRectifierInvoice(invoice, series, number, issueDate, cause, RectificationType.SPECIAL_RECTIFIER);
 		createInvoiceAddress(rectifier, invoice);
-		createRectifierInvoiceDetails(rectifier, invoice, true, percent);
+		createRectifierInvoiceDetails(rectifier, invoice, percent);
 		// No se duplican los vencimientos, puesto que lo único que cambia es la cuota de IVA.
 		updateRectifiedInvoice(rectifier, invoice);
 		return rectifier;
@@ -51,7 +50,7 @@ public class RectificationInvoicingManager {
 	public Invoice rectifyInvoice(Invoice invoice, String series, int number, Date issueDate, String cause) throws ManagerBeanException {
 		Invoice rectifier = createRectifierInvoice(invoice, series, number, issueDate, cause, RectificationType.NORMAL_RECTIFIER);
 		createInvoiceAddress(rectifier, invoice);
-		createRectifierInvoiceDetails(rectifier, invoice, false, 0.0);
+		createRectifierInvoiceDetails(rectifier, invoice, 0.0);
 		createRectifierInvoiceFinances(rectifier, invoice);
 		updateRectifiedInvoice(rectifier, invoice);
 		return rectifier;
@@ -60,6 +59,7 @@ public class RectificationInvoicingManager {
 	private Invoice createRectifierInvoice(Invoice invoice, String series, int number, Date issueDate, String cause, 
 			RectificationType rectificationtype) throws ManagerBeanException {
 		Invoice rectifier = new Invoice();
+		rectifier.setProject(invoice.getProject());
 		rectifier.setSeries(series);
 		rectifier.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		rectifier.setRegistry(invoice.getRegistry());
@@ -83,16 +83,10 @@ public class RectificationInvoicingManager {
 		return (Invoice)invoiceBean.insert(rectifier);
 	}
 
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
-    	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
-	}
-
 	private void createInvoiceAddress(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
 		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
 			InvoiceAddress invoiceAddress = (InvoiceAddress)ito;
 			InvoiceAddress rectifierAddress = new InvoiceAddress();
@@ -103,54 +97,67 @@ public class RectificationInvoicingManager {
 			rectifierAddress.setAddress2(invoiceAddress.getAddress2());
 			rectifierAddress.setZip(invoiceAddress.getZip());
 			rectifierAddress.setCity(invoiceAddress.getCity());
+			rectifierAddress.setProvince(invoiceAddress.getProvince());
 			rectifierAddress.setGeozone(invoiceAddress.getGeozone());
 			invoiceAddressBean.insert(rectifierAddress);
 		}
 	}
 
-	private void createRectifierInvoiceDetails(Invoice rectifier, Invoice invoice, boolean taxDataInDetail, double percent) 
-			throws ManagerBeanException {
-		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+	private void createRectifierInvoiceDetails(Invoice rectifier, Invoice invoice, double percent) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			InvoiceDetail rectifierDetail = new InvoiceDetail();
 			rectifierDetail.setInvoice(rectifier);
+			rectifierDetail.setProject(invoiceDetail.getProject());
 			rectifierDetail.setLine(invoiceDetail.getLine());
 			rectifierDetail.setItem(invoiceDetail.getItem());
 			rectifierDetail.setDescription(invoiceDetail.getDescription());
-			rectifierDetail.setTaxDataInDetail(taxDataInDetail);
-			rectifierDetail.setQuantity((taxDataInDetail) ? 0.0 : CommonUtil.round(0 - invoiceDetail.getQuantity(), 3));
-			rectifierDetail.setPrice((taxDataInDetail) ? 0.0 : invoiceDetail.getPrice());
-			rectifierDetail.setDiscountExpression((taxDataInDetail) ? new DiscountExpression("0.0") : invoiceDetail.getDiscountExpression());
+			rectifierDetail.setQuantity((invoice.isSpecialRectifier()) ? 0.0 : CommonUtil.round(0 - invoiceDetail.getQuantity(), 3));
+			rectifierDetail.setPrice((invoice.isSpecialRectifier()) ? 0.0 : invoiceDetail.getPrice());
+			rectifierDetail.setDiscountExpression((invoice.isSpecialRectifier()) ? new DiscountExpression("0.0") : invoiceDetail.getDiscountExpression());
 			rectifierDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			rectifierDetail.setSourceId(null);
 			rectifierDetail.setTaxableBase(getPriceStrategy().getBasePrice(rectifierDetail));
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
-			if (taxDataInDetail) {
-				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
-				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_TAX_TYPE), TaxType.VAT);
-				Iterator<?> iterator = invoiceTaxBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					InvoiceTax invoiceTax = (InvoiceTax)iterator.next();
-					double quota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getPercentage() / 100); 
-					rectifierDetail.setVatPercent(invoiceTax.getPercentage());
+			rectifierDetail.setTaxDataInDetail(true);
+
+			InvoiceTax invoiceVatTax = obtainInvoiceTax(invoiceDetail, TaxType.VAT);
+			if (invoiceVatTax != null) {
+				if (invoice.isSpecialRectifier()) {
+					double quota = invoiceVatTax.getQuota();
+					if (quota == 0) {
+						quota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceVatTax.getPercentage() / 100); 
+					}
+					rectifierDetail.setVatPercent(invoiceVatTax.getPercentage());
 					rectifierDetail.setVatQuota(CommonUtil.round(quota * percent * (-1) / 100));
+				} else {
+					rectifierDetail.setVatPercent(invoiceVatTax.getPercentage());
+					rectifierDetail.setVatQuota(CommonUtil.round(invoiceVatTax.getQuota() * (-1)));
 				}
 			}
+			InvoiceTax invoiceRetentionTax = obtainInvoiceTax(invoiceDetail, TaxType.RETENTION);
+			if (invoiceRetentionTax != null) {
+				rectifierDetail.setRetentionPercent(invoiceRetentionTax.getPercentage());
+				rectifierDetail.setRetentionQuota(CommonUtil.round(invoiceRetentionTax.getQuota() * (-1)));
+			}
+
+			rectifierDetail.getInvoice().setUpdateEnabled(false);
 			invoiceDetailBean.insert(rectifierDetail);
 		}
+
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		rectifier = (Invoice)invoiceBean.update(rectifier);
 	}
 
 	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		criteria.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_ID));
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
+		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_ID));
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
 			Finance rectifierFinance = new Finance();
@@ -184,6 +191,23 @@ public class RectificationInvoicingManager {
 		invoice = (Invoice) HibernateUtil.getSession(sessionFactoryName).merge(invoice);
 		invoice.setUpdateEnabled(false);
 		invoiceBean.update(invoice);
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+    	return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
+	private InvoiceTax obtainInvoiceTax(InvoiceDetail invoiceDetail, TaxType taxType) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE), taxType);
+		for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
+			return (InvoiceTax)ito;
+		}
+		return null;
 	}
 
 }

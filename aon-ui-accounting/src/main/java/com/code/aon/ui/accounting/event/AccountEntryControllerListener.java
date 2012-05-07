@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -17,6 +16,7 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryControllerListener extends ControllerAdapter {
 
@@ -117,7 +117,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
             Integer id = entry.getId();
             IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), id);
+            criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), id);
             event.getController().setCriteria(criteria);
             event.getController().onSearch(null);
 	        c.setTotalCredit(null);

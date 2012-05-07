@@ -48,6 +48,7 @@
 				<value>#{sellerForm}</value>
 				<value>#{sellerMediaListener}</value>
 				<value>#{sellerAddressListener}</value>
+				<value>#{sellerAddInfoListener}</value>
 				<value>#{sellerRAttachChildListener}</value>
 			</list-entries>
 		</managed-property>
@@ -178,6 +179,57 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<!--  **** SELLER ADDINFO **** -->
+	<managed-bean>
+		<managed-bean-name>sellerAddInfo</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>sellerAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>seller</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>sellerAddInfoListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>sellerAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddInfo_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- **** SELLER DOCUMENTS **** --> 
 	<managed-bean>
 		<managed-bean-name>sellerRAttach</managed-bean-name>

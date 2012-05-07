@@ -15,7 +15,7 @@ import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 
@@ -26,10 +26,10 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 		DeliveryDetail detail = (DeliveryDetail)event.getTo();
 		IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
-		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
+		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), detail.getId());
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine();
 		for (ITransferObject to : list) {
@@ -50,14 +50,14 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 			DeliveryDetail detail = (DeliveryDetail)event.getTo();
 			IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-			criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
-			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
+			criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), detail.getId());
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-				criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
-				criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+				criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
+				criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), detail.getId());
+				criteria.addOrder(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
@@ -84,10 +84,10 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 
 		IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
-		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
-		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
+		criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
+		criteria.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_ID), detail.getId());
+		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE), detail.getLine());
+		criteria.addOrder(detailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
 		int index = detail.getLine() + 1;
 		for (ITransferObject to : list) {

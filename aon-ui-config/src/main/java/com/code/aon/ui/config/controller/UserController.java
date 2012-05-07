@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class UserController extends BasicController {
 	
@@ -30,7 +30,7 @@ public class UserController extends BasicController {
 		if ( firstSearch ) {
 			try {
 				Criteria criteria = getCriteria(); 
-				criteria.addEqualExpression(getFieldName(IConfigAlias.USER_ACTIVE), Boolean.TRUE);
+				criteria.addEqualExpression(getFieldName(IEntityAlias.USER_ACTIVE), Boolean.TRUE);
 			} catch (ManagerBeanException e) {
 				LOGGER.error( e.getMessage(), e);
 			}

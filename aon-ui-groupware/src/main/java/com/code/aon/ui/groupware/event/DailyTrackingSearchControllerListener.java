@@ -9,10 +9,8 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.TaskHolder;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
@@ -27,6 +25,7 @@ import com.code.aon.ui.groupware.controller.IGroupWareConstants;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DailyTrackingSearchControllerListener extends ControllerSearchListener {
 
@@ -169,9 +168,7 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		DailyTrackingController controller = (DailyTrackingController) FormUtil.getController(IGroupWareConstants.DAILY_TRACKING_CONTROLLER_NAME);
-		CompanyUtil companyUtil = new CompanyUtil(); 
-		controller .getCriteria().addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_ENTERPRISE_ID), companyUtil.getActiveEnterprise().getId() );
-		String taskHolderAlias = getFieldName(IGroupwareAlias.DAILY_TRACKING_TASK_HOLDER_ID);
+		String taskHolderAlias = getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID);
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 			criteria.addEqualExpression(taskHolderAlias, taskHolder.getId() );
@@ -181,16 +178,16 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 			}
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_REGISTRY_ID), getRegistry().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DAILY_TRACKING_REGISTRY_ID), getRegistry().getId());
 		}		
 		if ((getProject() != null) && (getProject().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_PROJECT_ID), getProject().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DAILY_TRACKING_PROJECT_ID), getProject().getId());
 		}		
 		if ((getActivityType() != null) && (getActivityType().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_ACTIVITY_TYPE_ID), getActivityType().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DAILY_TRACKING_ACTIVITY_TYPE_ID), getActivityType().getId());
 		}		
 		if ((getJobType() != null) && (getJobType().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_JOB_TYPE_ID), getJobType().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DAILY_TRACKING_JOB_TYPE_ID), getJobType().getId());
 		}		
 	}
 	

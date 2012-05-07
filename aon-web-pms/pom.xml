@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>6.23-SNAPSHOT</version>
+		<version>7.0-SNAPSHOT</version>
+		<relativePath>../aon-web-parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-pms</artifactId>
 	<packaging>war</packaging>
-	<version>6.23-SNAPSHOT</version>
 	<description>AON WEB PMS</description>
 	<name>AON WEB PMS</name>
 	<properties>
@@ -22,6 +22,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rpm-maven-plugin</artifactId>
+				<version>2.0.1</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -29,85 +30,85 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.asset</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.db.manager</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
@@ -123,43 +124,55 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.geozone</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.ui.pms</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.product</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.project</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.purchase</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
 		</dependency>
  		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.registry</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.seller</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.stat</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.warehouse</artifactId>
+			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

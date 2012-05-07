@@ -9,10 +9,10 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.product.ItemTariff;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemBeanListener extends ManagerBeanListenerAdapter {
 
@@ -29,8 +29,8 @@ public class ItemBeanListener extends ManagerBeanListenerAdapter {
 		ItemPricesManager pricesManager = new ItemPricesManager();
 		IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_ITEM_ID), item.getId());
-		criteria.addNotEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TYPE), ItemTariffType.FIXED);
+		criteria.addEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_ITEM_ID), item.getId());
+		criteria.addNotEqualExpression(itemTariffBean.getFieldName(IEntityAlias.ITEM_TARIFF_TYPE), ItemTariffType.FIXED);
 		for (ITransferObject ito : itemTariffBean.getList(criteria)) {
 			ItemTariff itemTariff = (ItemTariff)ito;
 			pricesManager.onProfitChanged(itemTariff, new Double(itemTariff.getProfitPercent()));

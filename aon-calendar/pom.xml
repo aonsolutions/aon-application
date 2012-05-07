@@ -3,21 +3,28 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.27-SNAPSHOT</version>
+		<version>7.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.calendar</artifactId>
-	<version>6.27-SNAPSHOT</version>
 	<description>AON CALENDAR</description>
 	<name>AON CALENDAR</name>
+
 	<dependencies>
 		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.entity</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
-			<version>${pom.version}</version>
+			<artifactId>aon.config</artifactId>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+	
 </project>
  

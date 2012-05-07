@@ -1,5 +1,7 @@
 package com.code.aon.ui.document.tree;
 
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_TREE_CONTROLLER_NAME;
+
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.faces.context.FacesContext;
@@ -10,7 +12,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public enum EnterpriseTreeType {
 	
-	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
+	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formDocumentTree", null ),
 	PROJECT( EnterpriseTreeData.PROJECT_ICON, "project_formTree", "onSelectTreeProject" ),
 	DOCUMENT( EnterpriseTreeData.DOCUMENT_ICON, "enterpriseDocument_formTree", "onSelectTreeDocument" ),
 	;
@@ -25,7 +27,7 @@ public enum EnterpriseTreeType {
 		this.action = action;
 		this.icon = calculateIcon(icon);
 		if ( method != null ) {
-			String expression = "#{enterpriseTree." + method + "}";
+			String expression = "#{" + ENTERPRISE_TREE_CONTROLLER_NAME + "." + method + "}";
 			this.actionListener = calculateActionListener(expression);
 		}
 	}

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.DesktopController;
@@ -30,7 +31,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 	private static final String APP_BUNDLE = "appBundle";
 	
 	private static final String totalMessages = "SELECT count(*) FROM Message as msg " +
-	"WHERE msg.sentDate BETWEEN :fromDate AND :toDate";
+	"WHERE msg.domain = :domain AND msg.sentDate BETWEEN :fromDate AND :toDate";
 
 	private ApplicationsManager.App app;
 
@@ -125,6 +126,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
         String sessionFactoryName = HibernateUtil.getSessionFactoryName();
         Session session = HibernateUtil.getSession(sessionFactoryName);
         Query query = session.createQuery( totalMessages );
+        query.setInteger("domain", DomainManager.getCurrentDomain());
         query.setDate( "fromDate", fromDate.getTime() );
         query.setDate( "toDate", toDate.getTime() );
         long sent = (Long) query.uniqueResult();

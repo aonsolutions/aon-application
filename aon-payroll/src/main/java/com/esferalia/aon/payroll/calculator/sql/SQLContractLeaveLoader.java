@@ -1,30 +1,22 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.LeaveType.COMMON_DISEASE;
+import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEASE;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.ObjectUtils.Null;
-
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
-
-import static com.esferalia.aon.payroll.enumeration.LeaveType.*;
 
 public class SQLContractLeaveLoader  {
 	

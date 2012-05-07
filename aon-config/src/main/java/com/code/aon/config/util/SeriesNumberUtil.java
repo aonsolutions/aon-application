@@ -11,9 +11,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Clase de utilidad para la manipulación de la serie y el número de los
@@ -30,10 +31,10 @@ public class SeriesNumberUtil {
 	 * @param seriesId Id de la serie hay que devolver.
 	 * @return la Serie.
 	 */
-	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
+	public static Series obtainSeries(String seriesCode) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_CODE), seriesCode);
 		Iterator<ITransferObject> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (Series)iter.next();
@@ -66,7 +67,8 @@ public class SeriesNumberUtil {
 		String hqlQuery = 
 			"SELECT MAX(" + table.toLowerCase() + ".number)"
 				+ " FROM " + table + " " + table.toLowerCase()
-				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'");
+				+ " WHERE "	+ table.toLowerCase() + ".series " + ((series==null) ? "IS NULL" : " = '" + series + "'")
+				+ " AND "	+ DomainManager.getSQLWhereClause(table.toLowerCase() + ".domain");
 		if (criteria != null) {
 			hqlQuery = CriteriaUtilities.toSQLString(criteria, hqlQuery);
 		}

@@ -8,13 +8,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.TariffCatalogue;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CatalogueControllerListener extends ControllerAdapter implements IItemMessages {
 
@@ -48,7 +48,7 @@ public class CatalogueControllerListener extends ControllerAdapter implements II
 		try {
 			IManagerBean tariffCatalogueBean = BeanManager.getManagerBean(TariffCatalogue.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_ID),catalogue.getId());
+			criteria.addEqualExpression(tariffCatalogueBean.getFieldName(IEntityAlias.TARIFF_CATALOGUE_CATALOGUE_ID),catalogue.getId());
 			for (ITransferObject ito : tariffCatalogueBean.getList(criteria)) {
 				TariffCatalogue tariffCatalogue = (TariffCatalogue)ito;
 				tariffCatalogueBean.remove(tariffCatalogue);

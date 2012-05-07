@@ -20,18 +20,20 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.DelayTime;
 import com.code.aon.groupware.enumeration.Priority;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AlarmController extends BasicController {
 	
@@ -97,7 +99,7 @@ public class AlarmController extends BasicController {
 	
 	private Criteria getCriteria(IManagerBean bean, Date from, Date to, boolean onlyPending) throws ManagerBeanException {
     	Criteria criteria = new Criteria();
-    	String statusAlias = bean.getFieldName(IGroupwareAlias.ALARM_STATUS);
+    	String statusAlias = bean.getFieldName(IEntityAlias.ALARM_STATUS);
     	Expression expr1 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.PENDING);
     	if ( onlyPending ) {
     		criteria.addExpression(expr1);
@@ -105,9 +107,10 @@ public class AlarmController extends BasicController {
         	Expression expr2 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.READ);
         	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));    		
     	}
-    	String userAlias = bean.getFieldName(IGroupwareAlias.ALARM_USER_ID);
-    	criteria.addEqualExpression(userAlias, UserUtils.getInstance().getLoggedUser().getId());
-    	String dateAlias = bean.getFieldName(IGroupwareAlias.ALARM_ALARM_DATE);
+    	String userAlias = bean.getFieldName(IEntityAlias.ALARM_USER_ID);
+    	AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+    	criteria.addEqualExpression(userAlias, principal.getUserId());
+    	String dateAlias = bean.getFieldName(IEntityAlias.ALARM_ALARM_DATE);
     	if ( from != null ) {
         	criteria.addGreaterThanOrEqualExpression(dateAlias, from);	
     	}

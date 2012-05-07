@@ -2,7 +2,15 @@ package com.code.aon.common.util;
 
 import java.security.Principal;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.security.auth.Subject;
+
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.jaas.auth.AuthPrincipal;
 
 /**
  * Esta clase implementa el interfaz <code>Principal</code> y representa un usuario.
@@ -17,6 +25,14 @@ import org.apache.commons.lang.StringUtils;
  * @since 1.0
  */
 public class BasicPrincipal implements Principal {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicPrincipal.class.getName());
+	
+	/**
+	 * Tell the JNDI subject name.
+	 */
+	private static final String SECURITY_SUBJECT = "java:comp/env/security/subject";
+	
 
     /** Principal domain. ej: code.es */
     private String domain;
@@ -85,4 +101,26 @@ public class BasicPrincipal implements Principal {
 		return "aon@" + domain + "/" + application;
 	}
 
+	public static AuthPrincipal getAuthPrincipal() {
+		InitialContext ic = null;
+		try {
+			ic = new InitialContext();
+			Subject subject = (Subject) ic.lookup(SECURITY_SUBJECT);
+            if (subject != null && subject.getPrincipals() != null) {
+    			return (AuthPrincipal) subject.getPrincipals().iterator().next();
+            }
+		} catch (NamingException e) {
+			LOGGER.error( "Error getting principal from " + SECURITY_SUBJECT, e );
+		} finally {
+			if ( ic != null) {
+				try {
+					ic.close();
+				} catch (NamingException e) {
+					LOGGER.error( "Error closing context " + SECURITY_SUBJECT, e );
+				}
+			}
+		}
+		return null;
+	}
+	
 }

@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posShiftList">
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservationIO_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_list}" />
+				
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="reservationIO-search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}" 
+						action="reservationIO_search" actionListener="#{reservationIO.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:htmlCommandLink id="reservationIO-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="reservationIO" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="reservationIO_list"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{bundle.aon_listing}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="reservationIO" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>	
+				</ui:define>
+			</ui:decorate>
+ 
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:dataTable id="reservationIOData" value="#{reservationIO.model}" sortMode="multi"
+					var="to" rows="20" rendered="#{reservationIO.model.rowCount > 0}">
+					
+					<aon:rowSelector action="reservation_form" actionListener="#{reservationIO.onSelect}" />
+					
+					<aon:column id="roomNumberColumn" label="#{pmsBundle.pms_room_number}" 
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_room_number}" />
+						</f:facet>
+						<aon:div>
+							<aon:outputText
+								rendered="#{reservationIO.checkin}" 
+								value="#{to.projectReservationRoom.firstRoomNumber}" />
+							<aon:outputText 
+								rendered="#{!reservationIO.checkin}" 
+								value="#{to.projectReservationRoom.roomNumber}" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column id="productCodeColumn" label="#{pmsBundle.pms_room_type}" 
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_room_type}" />
+						</f:facet>
+						<aon:outputText
+							value="#{to.item.product.code} - #{to.item.product.name}" />
+					</aon:column>
+
+					<aon:column id="guestNameColumn" label="#{pmsBundle.pms_guest}" 
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{pmsBundle.pms_guest}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.guestFullName}" />
+					</aon:column>
+
+					<aon:column id="startDateColumn" label="#{bundle.aon_start_date}"
+						styleClass="aon-editDataTable-dateColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_start_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.startDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column id="endDateColumn" label="#{bundle.aon_end_date}"
+						styleClass="aon-editDataTable-dateColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_end_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.endDate}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>
+					
+					<aon:column id="agencyNameColumn" label="#{pmsBundle.pms_agency}" 
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{pmsBundle.pms_agency}" />
+						</f:facet>
+						<aon:outputText rendered="#{to.projectReservation.agency!=null}" 
+							value="#{to.projectReservation.agency.registry.fullName}" />
+						<aon:outputText rendered="#{to.projectReservation.company!=null}"
+							value="#{to.projectReservation.company.registry.fullName}" />
+						<aon:outputText rendered="#{to.projectReservation.agency==null and to.projectReservation.company==null}"
+							value="Directo" />
+					</aon:column>
+					
+					<aon:column id="reservationIdColumn" label="#{pmsBundle.pms_reservation_id}"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_reservation_id}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.id}" />
+					</aon:column>
+
+					<aon:column id="reservationCodeColumn" label="#{pmsBundle.pms_reservation_code}"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_reservation_code}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.code}" />
+					</aon:column>
+
+					<aon:column id="reservationStatusColumn" label="#{bundle.aon_status}"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.status}"   />
+					</aon:column>
+				
+				</aon:dataTable>
+
+				<aon:dataScroller2 for="reservationIOData" showNote="true" />
+				
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -6,7 +6,6 @@ import java.util.Date;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -14,6 +13,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignActionLookupListener extends ControllerAdapter {
 
@@ -23,7 +23,7 @@ public class CampaignActionLookupListener extends ControllerAdapter {
 		try {
 			IController controller = event.getController();
 			Criteria criteria = getController().getCriteria();
-			String endDate = controller.getFieldName(IMarketingAlias.MARKETING_ACTION_END_DATE);
+			String endDate = controller.getFieldName(IEntityAlias.MARKETING_ACTION_END_DATE);
 			Date date = DateUtils.truncate(new Date(), Calendar.DATE);
 			date = DateUtils.addDays(date, 1);
 			Expression expr1 = ExpressionUtilities.getNullExpression(endDate);

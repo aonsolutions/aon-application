@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="RegistryAddInfo_attribute" value="#{bundle.aon_name}" />
+	<aon:inputText id="RegistryAddInfo_attribute"
+		value="#{controller.to.attribute}"
+		required="true" 
+		size="40" maxlength="32" />
+
+	<aon:outputLabel for="RegistryAddInfo_value" value="#{bundle.aon_value}" />
+	<aon:inputText id="RegistryAddInfo_value"
+		value="#{controller.to.value}"
+		required="true" 
+		size="100" maxlength="128" />
+
+	<aon:outputLabel for="RegistryAddInfo_valueDate" value="#{bundle.aon_date}" />
+	<aon:selectInputDate id="RegistryAddInfo_valueDate"
+		value="#{controller.to.valueDate}"
+		required="true" inputSize="7"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}" />
+
+</ui:composition>

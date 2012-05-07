@@ -21,7 +21,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.Holiday;
 import com.esferalia.aon.calendar.HolidayDetail;
-import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class CalendarHolidayDataController {
@@ -61,17 +61,17 @@ public class CalendarHolidayDataController {
 		try {
 			bean = BeanManager.getManagerBean(HolidayDetail.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-			criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
-			criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+			criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE));
 			list = bean.getList(criteria);
 			holidays.put(holiday.getDescription(), list);
 			holiday = holiday.getHoliday();
 			while(holiday!=null && holiday.getId()!=null){
 				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
-				criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
-				criteria.addOrder(bean.getFieldName(ICalendarAlias.HOLIDAY_DETAIL_DATE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_HOLIDAY_ID), holiday.getId());
+				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE), startCal.getTime(), endCal.getTime());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.HOLIDAY_DETAIL_DATE));
 				list = bean.getList(criteria);
 				holidays.put(holiday.getDescription(), list);
 				holiday = holiday.getHoliday();

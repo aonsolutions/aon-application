@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +18,7 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.controller.AccountAppParamsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountingPeriodUtil {
 
@@ -45,9 +45,9 @@ public class AccountingPeriodUtil {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
 		criteria.addGreaterThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
+				.getFieldName(IEntityAlias.PERIOD_DEADLINE), date);
 		criteria.addLessThanOrEqualExpression(periodBean
-				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
+				.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE), date);
 		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		if (!iter.hasNext()) {
 			String msg = "No hay ejercicio contable definido para la fecha indicada";
@@ -60,7 +60,7 @@ public class AccountingPeriodUtil {
 	public Period getPreviousPeriod(Period period) throws ManagerBeanException {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		String deadlineAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		String deadlineAlias = periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE);
 		criteria.addLessThanOrEqualExpression(deadlineAlias, period.getInitiationDate());
 		criteria.addOrder(deadlineAlias, false);
 		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();

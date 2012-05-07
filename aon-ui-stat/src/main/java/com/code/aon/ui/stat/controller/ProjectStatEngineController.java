@@ -34,17 +34,18 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.groupware.DailyTracking;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectStatEngineController {
 
@@ -280,7 +281,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Offer> getApprovedOffers() throws ManagerBeanException {
-		String select = "select Offer from Offer as Offer where Offer.status in (1, 4) AND Offer.project.id = "
+		String select = "select Offer from Offer as Offer where "+DomainManager.getSQLWhereClause("Offer.domain")+" AND Offer.status in (1, 4) AND Offer.project.id = "
 				+ project.getId() + " order by Offer.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -290,7 +291,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Invoice> getSaleInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where Invoice.type = 1 AND Invoice.project.id = "
+		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type = 1 AND Invoice.project.id = "
 				+ project.getId() + " order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -300,7 +301,7 @@ public class ProjectStatEngineController {
 
 	@SuppressWarnings("unchecked")
 	public List<Invoice> getCostInvoices() throws ManagerBeanException {
-		String select = "select Invoice from Invoice as Invoice where Invoice.type <> 1 AND Invoice.project.id = "
+		String select = "select Invoice from Invoice as Invoice where "+DomainManager.getSQLWhereClause("Invoice.domain")+" AND Invoice.type <> 1 AND Invoice.project.id = "
 				+ project.getId() + " order by Invoice.issueDate desc";
 		Session session = HibernateUtil.getSession(HibernateUtil
 				.getSessionFactoryName());
@@ -313,7 +314,7 @@ public class ProjectStatEngineController {
 		IManagerBean bean = BeanManager.getManagerBean(DailyTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
-				bean.getFieldName(IGroupwareAlias.DAILY_TRACKING_PROJECT_ID),
+				bean.getFieldName(IEntityAlias.DAILY_TRACKING_PROJECT_ID),
 				project.getId());
 		List<?> list = bean.getList(criteria);
 		return (List<DailyTracking>) list;
@@ -420,10 +421,10 @@ public class ProjectStatEngineController {
 				.getManagerBean(com.code.aon.groupware.Task.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(
-				taskBean.getFieldName(IGroupwareAlias.TASK_PROJECT_ID),
+				taskBean.getFieldName(IEntityAlias.TASK_PROJECT_ID),
 				getProject().getId());
 		criteria.addGreaterThanOrEqualExpression(
-				taskBean.getFieldName(IGroupwareAlias.TASK_START_DATE),
+				taskBean.getFieldName(IEntityAlias.TASK_START_DATE),
 				fromDate);
 		List<ITransferObject> list = taskBean.getList(criteria);
 		TaskSeries s1 = new TaskSeries(TaskStatus.PENDING.getName(locale));

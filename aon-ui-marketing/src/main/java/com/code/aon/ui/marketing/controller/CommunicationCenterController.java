@@ -40,7 +40,6 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.Template;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
@@ -49,7 +48,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -62,6 +60,7 @@ import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommunicationCenterController implements IMarketingConstants {
 
@@ -379,8 +378,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private void updateTargetProfile() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(TargetProfile.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_TARGET_ID), this.target.getId());
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_QUESTION_ID), getQuestion().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_PROFILE_TARGET_ID), this.target.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_PROFILE_QUESTION_ID), getQuestion().getId());
 		TargetProfile targetProfile = null;
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
@@ -414,7 +413,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.questionValues.clear();
 		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
 		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			QuestionValue questionValue = (QuestionValue) iter.next();
@@ -434,8 +433,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private SurveyQuestion getFirstSurveyQuestion() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
-		criteria.addOrder( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION) );
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
+		criteria.addOrder( bean.getFieldName(IEntityAlias.SURVEY_QUESTION_POSITION) );
 		List<ITransferObject> list = bean.getList(criteria, 0, 1);
 		if (! list.isEmpty() ) {
 			return (SurveyQuestion) list.get(0);
@@ -446,23 +445,23 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private SurveyWorkflow getSurveyWorkflow( SurveyQuestion surveyQuestion ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(SurveyWorkflow.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_SURVEY_QUESTION_ID), surveyQuestion.getId() );
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.SURVEY_WORKFLOW_SURVEY_QUESTION_ID), surveyQuestion.getId() );
 		if (this.questionValueId != null ) {
-			criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_QUESTION_VALUE_ID), this.questionValueId );
+			criteria.addEqualExpression( bean.getFieldName(IEntityAlias.SURVEY_WORKFLOW_QUESTION_VALUE_ID), this.questionValueId );
 		} else {
-			String textField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_TEXT);
+			String textField = bean.getFieldName(IEntityAlias.SURVEY_WORKFLOW_TEXT);
 			if (this.response.getText() != null) {
 				criteria.addEqualExpression( textField, this.response.getDate() );
 			} else {
 				criteria.addNullExpression(textField);
 			}
-			String dateField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_DATE);
+			String dateField = bean.getFieldName(IEntityAlias.SURVEY_WORKFLOW_DATE);
 			if (this.response.getDate() != null) {
 				criteria.addEqualExpression( dateField, this.response.getDate() );			
 			} else {
 				criteria.addNullExpression(dateField);
 			}
-			String numberField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_NUMBER);
+			String numberField = bean.getFieldName(IEntityAlias.SURVEY_WORKFLOW_NUMBER);
 			if (this.response.getNumber() != null) {
 				criteria.addEqualExpression( numberField, this.response.getNumber() );			
 			} else {
@@ -485,8 +484,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
-		String position = bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION);
+		criteria.addEqualExpression( bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
+		String position = bean.getFieldName(IEntityAlias.SURVEY_QUESTION_POSITION);
 		criteria.addGreaterThanExpression( position, surveyQuestion.getPosition() );
 		criteria.addOrder( position );
 		List<ITransferObject> list = bean.getList(criteria, 0, 1);
@@ -499,8 +498,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private RegistryMedia getTargetMedia( Integer id, MediaType type ) throws ManagerBeanException {
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), id);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), id);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
 		List<ITransferObject> list = mediaBean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (RegistryMedia) list.get(0);
@@ -511,8 +510,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private RegistryAddress getTargetAddress( Integer id ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			return (RegistryAddress) list.get(0);
@@ -533,9 +532,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private void blockActionTarget() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		Criteria criteria = new Criteria();
-		String userId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_USER_ID);
+		String userId = bean.getFieldName(IEntityAlias.ACTION_TARGET_USER_ID);
 		criteria.addEqualExpression(userId, user.getId() );
-		String actionId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID);
+		String actionId = bean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID);
 		criteria.addEqualExpression(actionId, this.action.getId());		
 		for( ITransferObject to : bean.getList(criteria) ) {
 			ActionTarget at = (ActionTarget) to;
@@ -584,7 +583,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
+		String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
 		criteria.addOrder( id );
 		if ( !onlyCount ) {
 			Expression exp1 = ExpressionUtilities.getNullExpression("ActionTarget.user");
@@ -598,8 +597,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 				}
 			}	
 		}
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
-		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
+		String status = bean.getFieldName(IEntityAlias.ACTION_TARGET_STATUS);
 		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
 		criteria.addExpression(expression1);
 		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);

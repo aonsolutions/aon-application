@@ -19,21 +19,21 @@ public class CalendarControllerListener extends ControllerAdapter {
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		Calendar c = (Calendar) getController().getTo();
-		c.setAnualHours(0);
+		c.setAnualHours(0.0);
 		c.setMonday(DayType.WORKING_DAY);
-		c.setMondayHours(8);
+		c.setMondayHours(8.0);
 		c.setTuesday(DayType.WORKING_DAY);
-		c.setTuesdayHours(8);
+		c.setTuesdayHours(8.0);
 		c.setWednesday(DayType.WORKING_DAY);
-		c.setWednesdayHours(8);
+		c.setWednesdayHours(8.0);
 		c.setThursday(DayType.WORKING_DAY);
-		c.setThursdayHours(8);
+		c.setThursdayHours(8.0);
 		c.setFriday(DayType.WORKING_DAY);
-		c.setFridayHours(8);
+		c.setFridayHours(8.0);
 		c.setSaturday(DayType.NOT_WORKING_DAY);
-		c.setSaturdayHours(0);
+		c.setSaturdayHours(0.0);
 		c.setSunday(DayType.NOT_WORKING_DAY);
-		c.setSundayHours(0);
+		c.setSundayHours(0.0);
 	}
 	
 	@Override

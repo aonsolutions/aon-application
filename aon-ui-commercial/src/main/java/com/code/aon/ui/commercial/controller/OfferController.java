@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -21,7 +22,6 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetSeller;
 import com.code.aon.commercial.TargetSupplier;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
@@ -34,19 +34,16 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.Series;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.config.util.SeriesUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.OfferInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -54,18 +51,15 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.bridge.ProjectTasManager;
 import com.code.aon.sales.bridge.SalesManager;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
-import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -79,6 +73,7 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
 
@@ -341,24 +336,25 @@ public class OfferController extends BasicController implements ISignatureContro
 	public boolean isLinesPending() throws ManagerBeanException {
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
-		criteria.addNotNullExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID));
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
+		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
 		return (offerDetailBean.getCount(criteria) > 0);
 	}
 
 	public boolean isLinesSold() throws ManagerBeanException {
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
-		criteria.addNotNullExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID));
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
+		criteria.addNotNullExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID));
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_SALE);
 		return (offerDetailBean.getCount(criteria) > 0);
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
-		int number = obtainMaxNumber((String)event.getNewValue());
-		SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
+		String series = (String) event.getNewValue();
+		int number = obtainMaxNumber(series);
+		SecurityLevel securityLevel = SeriesUtil.getSeriesSecurityLevel( series );
 		Offer offer = getOffer();
 		if (offer != null) {
 			offer.setNumber(number);
@@ -368,21 +364,6 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
     	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
-	}
-
-	@SuppressWarnings("unchecked")
-	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
-		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
-			if (series.getSecurityLevel() != null) {
-				return series.getSecurityLevel();
-			}
-		}
-		return null;
 	}
 
 	public void targetData(LookupChangeEvent event) throws ManagerBeanException {
@@ -406,7 +387,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
@@ -432,9 +413,9 @@ public class OfferController extends BasicController implements ISignatureContro
 		if (id != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IEntityAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
 			while(iterator.hasNext()) {
 				Project project = (Project)iterator.next();
@@ -459,20 +440,19 @@ public class OfferController extends BasicController implements ISignatureContro
 		getManagerBean().initializePOJO(to);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadCommercial(Integer id) throws ManagerBeanException {
 		if (id != null) {
 			Offer offer = getOffer();
 			IManagerBean targetSellerBean = BeanManager.getManagerBean(TargetSeller.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_TARGET_ID), id);
-			criteria.addEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_STATUS), TargetSellerStatus.ACTIVE);
-			criteria.addLessThanOrEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_START_DATE), offer.getIssueDate());
-			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_END_DATE), offer.getIssueDate());
-			Expression endNullExpr = ExpressionUtilities.getNullExpression(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_END_DATE));
+			criteria.addEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_TARGET_ID), id);
+			criteria.addEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_STATUS), TargetSellerStatus.ACTIVE);
+			criteria.addLessThanOrEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_START_DATE), offer.getIssueDate());
+			Expression endDateExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_END_DATE), offer.getIssueDate());
+			Expression endNullExpr = ExpressionUtilities.getNullExpression(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_END_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(endDateExpr, endNullExpr));
-			criteria.addOrder(targetSellerBean.getFieldName(ICommercialAlias.TARGET_SELLER_START_DATE));
-			Iterator iter = targetSellerBean.getList(criteria).iterator();
+			criteria.addOrder(targetSellerBean.getFieldName(IEntityAlias.TARGET_SELLER_START_DATE));
+			Iterator<ITransferObject> iter = targetSellerBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				offer.setSeller(((TargetSeller)iter.next()).getSeller());
 			} else {
@@ -482,7 +462,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			Offer offer = getOffer();
@@ -494,8 +473,8 @@ public class OfferController extends BasicController implements ISignatureContro
 				} else {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+					Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}
@@ -520,8 +499,8 @@ public class OfferController extends BasicController implements ISignatureContro
 
 			IManagerBean bean = BeanManager.getManagerBean(TargetSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
-			criteria.addEqualExpression(bean.getFieldName(ICommercialAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_SUPPLIER_TARGET_ID), offer.getTarget().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TARGET_SUPPLIER_SUPPLIER_ID), offer.getSupplier().getId());
 			Iterator<?> iterator = bean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				TargetSupplier targetSupplier = (TargetSupplier)iterator.next();
@@ -574,7 +553,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		Offer offer = manager.createOfferVersion(to);
 		
 		this.onEditSearch(event);
-		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
+		this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.OFFER_ID), offer.getId());
 		this.onSearch(event);
 		this.getModel().setRowIndex(0);
 		this.onSelect(event);
@@ -631,7 +610,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		Offer offer = manager.copyOffer(to, getOfferSeries(), getOfferNumber(), getOfferTarget(), getOfferDate());
 
 		this.onEditSearch(event);
-		this.getCriteria().addEqualExpression(this.getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
+		this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.OFFER_ID), offer.getId());
 		this.onSearch(event);
 		this.getModel().setRowIndex(0);
 		this.onSelect(event);
@@ -639,19 +618,9 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setSalesSeries(obtainSalesSeries(to.getSeries()));
+		setSalesSeries(SeriesUtil.ensureSalesSeries(to.getSeries()));
 		setSalesNumber(obtainMaxSalesNumber(getSalesSeries()));
 		setSalesDate(new Date());
-	}
-
-	private String obtainSalesSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isSales()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onSalesSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -662,34 +631,29 @@ public class OfferController extends BasicController implements ISignatureContro
 		return SeriesNumberUtil.obtainNumber(seriesId, "Sales");
 	}
 
-	public void onSales(ActionEvent event) throws ManagerBeanException {
-		Offer to = getOffer();
-		SalesManager salesManager = new SalesManager();
-		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
-
-		IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
-		salesController.onEditSearch(event);
-		salesController.getCriteria().addEqualExpression(salesController.getFieldName(ISalesAlias.SALES_ID), sales.getId());
-		salesController.onSearch(event);
-		salesController.getModel().setRowIndex(0);
-		salesController.onSelect(event);
+	public void onSales(ActionEvent event) {
+		try {
+			Offer to = getOffer();
+			SalesManager salesManager = new SalesManager();
+			Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
+			IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
+			salesController.onEditSearch(event);
+			salesController.getCriteria().addEqualExpression(salesController.getFieldName(IEntityAlias.SALES_ID), sales.getId());
+			salesController.onSearch(event);
+			salesController.getModel().setRowIndex(0);
+			salesController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo grabar el pedido. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceSeries(SeriesUtil.ensureInvoiceSeries(to.getSeries()));
 		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
-	}
-
-	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isInvoice()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -702,17 +666,23 @@ public class OfferController extends BasicController implements ISignatureContro
 		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
 	}
 
-	public void onInvoice(ActionEvent event) throws ManagerBeanException {
-		Offer to = getOffer();
-		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
+	public void onInvoice(ActionEvent event)  {
+		try {
+			Offer to = getOffer();
+			OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
+			Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
-		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		invoiceController.onSearch(event);
-		invoiceController.getModel().setRowIndex(0);
-		invoiceController.onSelect(event);
+			IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onEditSearch(event);
+			invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
+			invoiceController.onSearch(event);
+			invoiceController.getModel().setRowIndex(0);
+			invoiceController.onSelect(event);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo generar la factura. (" + e.getMessage()+ ")";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public Invoice getInvoice() throws ManagerBeanException {
@@ -720,16 +690,16 @@ public class OfferController extends BasicController implements ISignatureContro
 		if (offer != null && offer.getId() != null) {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
-			criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offer.getId());
+			criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
 			Iterator<?> iterator = offerDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				OfferDetail offerDetail = (OfferDetail)iterator.next();
 
 				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.OFFER);
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), offerDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.OFFER);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), offerDetail.getId());
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -747,20 +717,10 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onProjectTasShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setProjectTasSeries(obtainProjectTasSeries(to.getSeries()));
+		setProjectTasSeries(SeriesUtil.ensureProjectTasSeries(to.getSeries()));
 		setProjectTasNumber(obtainMaxProjectTasNumber(getProjectTasSeries()));
 		setProjectTasDate(new Date());
 		setProjectTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
-	}
-
-	private String obtainProjectTasSeries(String seriesId) throws ManagerBeanException {
-		if (StringUtils.isNotEmpty(seriesId)) {
-			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
-			if (series != null && series.isTas()) {
-				return series.getId();
-			}
-		}
-		return null;
 	}
 
 	public void onProjectTasSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -778,7 +738,7 @@ public class OfferController extends BasicController implements ISignatureContro
 
 		IController projectTasController = FormUtil.getController(PROJECT_TAS_CONTROLLER_NAME);
 		projectTasController.onEditSearch(event);
-		projectTasController.getCriteria().addEqualExpression(projectTasController.getFieldName(ITASAlias.PROJECT_TAS_ID), projectTas.getId());
+		projectTasController.getCriteria().addEqualExpression(projectTasController.getFieldName(IEntityAlias.PROJECT_TAS_ID), projectTas.getId());
 		projectTasController.onSearch(event);
 		projectTasController.getModel().setRowIndex(0);
 		projectTasController.onSelect(event);
@@ -813,12 +773,12 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	@Override
 	public String getAttachmentMimeTypeAlias() {
-		return ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE;
+		return IEntityAlias.OFFER_ATTACHMENT_MIME_TYPE;
 	}
 
 	@Override
 	public String getAttachmentParentAlias() {
-		return ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID;
+		return IEntityAlias.OFFER_ATTACHMENT_OFFER_ID;
 	}
 
 	@Override
@@ -861,9 +821,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetPhone() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FIXED_PHONE);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FIXED_PHONE);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL),true);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			RegistryMedia rmedia = (RegistryMedia)iter.next();
@@ -875,9 +835,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetCellularPhone() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.CELLULAR);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.CELLULAR);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL),true);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			RegistryMedia rmedia = (RegistryMedia)iter.next();
@@ -889,9 +849,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetFax() throws ManagerBeanException{		
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FAX);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FAX);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL),true);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			RegistryMedia rmedia = (RegistryMedia)iter.next();
@@ -903,9 +863,9 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetEmail() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.EMAIL);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.EMAIL);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL),true);
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			RegistryMedia rmedia = (RegistryMedia)iter.next();
@@ -917,7 +877,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	public RegistryPayMethod getTargetPayMethod() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
+		criteria.addEqualExpression(mediaBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			RegistryPayMethod rpay = (RegistryPayMethod)iter.next();

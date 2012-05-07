@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
@@ -72,10 +73,26 @@
 					accesskey="#{bundle.aon_key_cancel}" />
 			</c:if>															
 				
-			<ui:insert name="beforeSpinToolbarContent"/>				
+			<ui:insert name="beforeSpinToolbarContent"/>
+			
+			<c:if test="#{showMoreMenu}">
+				<aon:dropDownMenu value="#{bundle.aon_more2}"
+				 	style="display:inline-block;font-size:0.8em;margin-right:4px;" >
+		             <f:facet name="label">
+		             	<aon:panelGroup>
+		             		<aon:outputText value="#{bundle.aon_more2}" /> 
+		                     <aon:graphicImage style="vertical-align:middle;"
+		                     	value="#{aonResource.resolve['/images/aon-icon/aon-icon-dropDown.gif']}" />
+		                    </aon:panelGroup>
+		             </f:facet>			
+		             <ui:insert name="moreMenuContent"/>		                
+				</aon:dropDownMenu>			
+			</c:if>				
 				
 			<c:if test="#{(!skipSpin) and (controller != null)}">
-				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
+				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}"
+					action="#{saveAction}" rendered="#{!formNew}"
+					style="float:right;margin-right:0;" />
 			</c:if>
 			
 			<c:if test="#{!skipFocusFirst}">

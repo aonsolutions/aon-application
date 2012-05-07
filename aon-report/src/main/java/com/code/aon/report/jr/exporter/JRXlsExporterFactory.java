@@ -3,11 +3,11 @@ package com.code.aon.report.jr.exporter;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import com.code.aon.report.IReportConstants;
-import com.code.aon.report.ReportException;
 
 /**
  * 
@@ -19,22 +19,18 @@ import com.code.aon.report.ReportException;
  */
 public class JRXlsExporterFactory implements IJRExporterFactory {
 
-    /* (non-Javadoc)
-     * @see com.code.aon.ui.report.jr.exporter.IJRExporterFactory#getJRExporter()
-     */
-    public JRExporter getJRExporter() {
+    @Override
+	public JRExporter getJRExporter() {
         return new JRXlsExporter();
     }
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.report.jr.exporter.IJRExporterFactory#fillJRParametersMap(java.util.Map)
-	 */
-	public void fillJRParametersMap(Map<Object,Object> map) throws ReportException {
-		map.put(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-		map.put(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-		map.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
-		map.put(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-		map.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.FALSE );
+	@Override
+	public void fillJRParametersMap(Map<String, Object> fillMap, Map<JRExporterParameter, Object> exporterMap) {
+		exporterMap.put(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+		exporterMap.put(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+		exporterMap.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+		exporterMap.put(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+		fillMap.put(IReportConstants.SHOULD_PRINT_HEADERS, Boolean.FALSE );
 	}
 
 }

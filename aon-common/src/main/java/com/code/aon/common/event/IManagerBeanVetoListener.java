@@ -34,4 +34,12 @@ public interface IManagerBeanVetoListener {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException;
+
+	/**
+     * This method gets called before a bean is searched.
+     * 
+     * @param evt A ManagerBeanEvent object describing the event source.
+	 * @throws ManagerBeanVetoListenerException
+	 */
+	void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException;
 }

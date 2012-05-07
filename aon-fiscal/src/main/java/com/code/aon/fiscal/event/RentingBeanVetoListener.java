@@ -10,10 +10,10 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.fiscal.Renting;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RentingBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -45,11 +45,11 @@ public class RentingBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Renting.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_YEAR), renting.getYear());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_PERIOD), renting.getPeriod());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ADMINISTRATION), renting.getAdministration());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_YEAR), renting.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_PERIOD), renting.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ADMINISTRATION), renting.getAdministration());
 			if (renting.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ID), renting.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ID), renting.getId()));
 			}
 			int size = bean.getCount(c);
 			if (size > 0) {
@@ -65,11 +65,11 @@ public class RentingBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Renting.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_YEAR), renting.getYear());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_PERIOD), renting.getPeriod());
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ADMINISTRATION), renting.getAdministration());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_YEAR), renting.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_PERIOD), renting.getPeriod());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ADMINISTRATION), renting.getAdministration());
 			if (renting.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.RENTING_ID), renting.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.RENTING_ID), renting.getId()));
 			}
 			List<ITransferObject> list = bean.getList(c);
 			if (list == null || list.size() == 0) {

@@ -15,7 +15,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AgreementLevelDataController extends LinesController {
 
@@ -32,7 +32,7 @@ public class AgreementLevelDataController extends LinesController {
 				//TODO ¿Utilizar las fechas del pojo activo?
 				Date date = new Date();
 				
-				String alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+				String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
 				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
 				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
 				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));

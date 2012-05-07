@@ -7,38 +7,9 @@
 <bean-config>
 
 	<bean description="">
-		<pojo>com.code.aon.groupware.Campaign</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.groupware.CampaignType</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.groupware.CostProfile</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
 		<pojo>com.code.aon.groupware.DailyTracking</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.groupware.event.DailyTrackingBeanVetoListener</vetoListener>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.groupware.Process</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 
@@ -49,17 +20,4 @@
 		</listeners>
 	</bean>
 
-	<bean description="">
-		<pojo>com.code.aon.groupware.Task</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
-		<pojo>com.code.aon.groupware.TaskHolder</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.company.event.EnterpriseContainerBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
 </bean-config>

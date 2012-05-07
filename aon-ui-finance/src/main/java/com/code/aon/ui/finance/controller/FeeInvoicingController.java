@@ -26,7 +26,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -44,6 +43,7 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FeeInvoicingController implements IProgression, IFinanceConstants, IFinanceMessages {
 
@@ -128,12 +128,12 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		if (series == null) {
-			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+			criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series.getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series.getCode());
 		}
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IEntityAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
@@ -189,7 +189,7 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 				Invoice lastInvoice = (Invoice)invoicedList.toArray()[invoicedList.size()-1];
 				IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 				Criteria criteria = new Criteria();
-				criteria.addBetweenExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
+				criteria.addBetweenExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), firstInvoice.getId(), lastInvoice.getId());
 				invoiceController.onEditSearch(event);
 				invoiceController.setCriteria(criteria);
 				invoiceController.onSearch(event);

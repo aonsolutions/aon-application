@@ -30,10 +30,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.product.ItemAttachment;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemAttachController extends LinesController {
 
@@ -187,7 +187,7 @@ public class ItemAttachController extends LinesController {
 			IManagerBean attachmentBean = BeanManager.getManagerBean(ItemAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addExpression(getCriteria().getExpression());
-			criteria.addEqualExpression(getFieldName(IProductAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
 			Iterator<ITransferObject> iter = attachmentBean.getList(criteria).iterator();
 			return iter.hasNext();
 		} catch (ManagerBeanException e) {

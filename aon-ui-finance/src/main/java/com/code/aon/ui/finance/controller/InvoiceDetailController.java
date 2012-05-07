@@ -14,7 +14,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -35,6 +34,7 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailController extends LinesController implements IFinanceConstants {
 
@@ -153,9 +153,9 @@ public class InvoiceDetailController extends LinesController implements IFinance
 		} else {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), tax.getId());
-			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), taxDate);
-			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), taxDate);
+			criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), taxDate);
+			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), taxDate);
 			Iterator<?> iterator = taxDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				TaxDetail taxDetail = (TaxDetail)iterator.next();

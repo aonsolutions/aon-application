@@ -22,18 +22,17 @@ import com.code.aon.groupware.Campaign;
 import com.code.aon.groupware.CampaignProject;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
 import com.code.aon.project.ProjectType;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AddCampaignProjectController {
 	
@@ -209,9 +208,9 @@ public class AddCampaignProjectController {
         }
         IManagerBean bean = BeanManager.getManagerBean(ProcessDetail.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
-        criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
-        criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+        criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+        criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_ACTIVE), true);
+        criteria.addOrder(bean.getFieldName(IEntityAlias.PROCESS_DETAIL_POSITION));
         List<ITransferObject> list =  bean.getList(criteria);
         if (list != null && list.size()>0) {
         	return (ProcessDetail) list.get(0);
@@ -229,15 +228,15 @@ public class AddCampaignProjectController {
 					IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 					Criteria criteria = new Criteria();
 					if (getRegistry() != null && getRegistry().getId() != null) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
 					}
 					if (getProjectType() != null && getProjectType().getId() != null) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
 					}
 					if (!StringUtils.isBlank(getProjectName())) {
-						criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_NAME), getProjectName());
+						criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_NAME), getProjectName());
 					}
-					criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), true);
+					criteria.addEqualExpression(projectBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
 					List<ITransferObject> list = projectBean.getList(criteria);
 					for (ITransferObject to:list) {
 						Project d = (Project) to;
@@ -246,8 +245,8 @@ public class AddCampaignProjectController {
 				} else {
 					IManagerBean activityBean = BeanManager.getManagerBean(ProjectActivity.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_ACTIVITY_TYPE_ID), getActivityType().getId());
-					criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_ACTIVE), true);
+					criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ACTIVITY_TYPE_ID), getActivityType().getId());
+					criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_ACTIVE), true);
 					if (getRegistry() != null && getRegistry().getId() != null) {
 						criteria.addEqualExpression("ProjectActivity.project.registry.id", getRegistry().getId());
 					}
@@ -269,8 +268,8 @@ public class AddCampaignProjectController {
 		// Si el dossier ya está añadido en la campaña, se excluye.
 		IManagerBean cdBean = BeanManager.getManagerBean(CampaignProject.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(cdBean.getFieldName(IGroupwareAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
-		c.addEqualExpression(cdBean.getFieldName(IGroupwareAlias.CAMPAIGN_PROJECT_PROJECT_ID), project.getId());
+		c.addEqualExpression(cdBean.getFieldName(IEntityAlias.CAMPAIGN_PROJECT_CAMPAIGN_ID), campaign.getId());
+		c.addEqualExpression(cdBean.getFieldName(IEntityAlias.CAMPAIGN_PROJECT_PROJECT_ID), project.getId());
 		List<ITransferObject> ex = cdBean.getList(c);
 		if (ex.size() == 0) {
 			CampaignProject cd = new CampaignProject();
@@ -310,11 +309,11 @@ public class AddCampaignProjectController {
 		IManagerBean managerBean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
 		if (getRegistry() != null) {
-			criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
+			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
 		}
-		criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), true);
-		criteria.addOrder(managerBean.getFieldName(IProjectAlias.PROJECT_NAME));
-		criteria.addOrder(managerBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID));
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.PROJECT_ACTIVE), true);
+		criteria.addOrder(managerBean.getFieldName(IEntityAlias.PROJECT_NAME));
+		criteria.addOrder(managerBean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID));
 		List<ITransferObject> list = managerBean.getList(criteria);
 		for (ITransferObject to : list ) {
 			Project project = (Project) to;

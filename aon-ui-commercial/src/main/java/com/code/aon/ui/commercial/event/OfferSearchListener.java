@@ -3,7 +3,6 @@ package com.code.aon.ui.commercial.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
@@ -13,6 +12,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferSearchListener extends ControllerSearchListener {
 
@@ -83,19 +83,19 @@ public class OfferSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getOfferType() != null) {
-			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TYPE), getOfferType());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_TYPE), getOfferType());			
 		}
 		if (getTarget() != null && getTarget().getId() != null) {
-			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_TARGET_ID), getTarget().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_TARGET_ID), getTarget().getId());			
 		}
 		if (getSupplier() != null && getSupplier().getId() != null) {
-			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_SUPPLIER_ID), getSupplier().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_SUPPLIER_ID), getSupplier().getId());			
 		}
 		if (getSeller() != null && getSeller().getId() != null) {
-			criteria.addEqualExpression(getFieldName(ICommercialAlias.OFFER_SELLER_ID), getSeller().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.OFFER_SELLER_ID), getSeller().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getOfferStatuses())) {
-			String status = getController().resolveAlias(ICommercialAlias.OFFER_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.OFFER_STATUS);
 			addEnumToCriteria(criteria, status, getOfferStatuses());
 		}
 	}	

@@ -17,7 +17,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
@@ -27,7 +26,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -130,9 +129,9 @@ public class SettleController {
 		try {
 			IManagerBean dataBean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_VACATION_CONCEPT);
-			criteria.addOrExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_NOTICE_DAY_CONCEPT);
-			criteria.addOrExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_COMPENSATION_CONCEPT);
+			criteria.addEqualExpression(dataBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_VACATION_CONCEPT);
+			criteria.addOrExpression(dataBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_NOTICE_DAY_CONCEPT);
+			criteria.addOrExpression(dataBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_COMPENSATION_CONCEPT);
 			List<ITransferObject> list = dataBean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
@@ -140,7 +139,7 @@ public class SettleController {
 					if(ap.getValue()!=null && !ap.getValue().isEmpty()){
 						IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 						criteria = new Criteria();
-						criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(ap.getValue()));
+						criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(ap.getValue()));
 						PaymentConcept pc = (PaymentConcept) bean.getList(criteria).get(0);
 						if(ap.getName().equals(PayrollAppParamsController.SETTLE_VACATION_CONCEPT)){
 							setVacationConcept(pc);

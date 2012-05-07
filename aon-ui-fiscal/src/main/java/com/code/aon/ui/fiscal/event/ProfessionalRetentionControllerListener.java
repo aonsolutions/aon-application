@@ -7,12 +7,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Enterprise;
 import com.code.aon.fiscal.ProfessionalRetention;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.ui.fiscal.controller.ProfessionalRetentionController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProfessionalRetentionControllerListener extends ControllerAdapter{
 	
@@ -32,7 +32,7 @@ public class ProfessionalRetentionControllerListener extends ControllerAdapter{
 		try {
 			ProfessionalRetentionController prc = (ProfessionalRetentionController) event.getController();
 			if (prc.getEnterprise() != null && prc.getEnterprise().getId() != null ){
-				prc.getCriteria().addEqualExpression(prc.getFieldName(IFiscalAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), prc.getEnterprise().getId());
+				prc.getCriteria().addEqualExpression(prc.getFieldName(IEntityAlias.PROFESSIONAL_RETENTION_ENTERPRISE_ID), prc.getEnterprise().getId());
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible formar el criterio de la búsqueda.";

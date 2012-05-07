@@ -1,6 +1,5 @@
 package com.code.aon.ui.document.event;
 
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_ENTERPRISE_ID;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
@@ -10,6 +9,7 @@ import com.code.aon.ui.document.controller.IEnterpriseController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Listener added to the EnterpriseController
@@ -32,7 +32,8 @@ public class EnterpriseProjectListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Project project = (Project) event.getController().getTo();
-		project.setEnterprise(enterpriseController.getEnterprise());
+		project.setRegistry(enterpriseController.getEnterprise().getRegistry());
+		project.setDomain(enterpriseController.getEnterprise().getDomain());
 	}
 
 	@Override
@@ -42,8 +43,10 @@ public class EnterpriseProjectListener extends ControllerAdapter {
 			if ((enterprise != null) && (enterprise.getId() != null)) {
 				try {
 					Criteria criteria = event.getController().getCriteria();
-					String enterpriseId = event.getController().getFieldName(PROJECT_ENTERPRISE_ID);
-					criteria.addEqualExpression(enterpriseId, enterprise.getId());						
+					String registryId = event.getController().getFieldName(IEntityAlias.PROJECT_REGISTRY_ID);
+					criteria.addEqualExpression(registryId, enterprise.getRegistry().getId());						
+					String active = event.getController().getFieldName(IEntityAlias.PROJECT_ACTIVE);
+					criteria.addEqualExpression(active, Boolean.TRUE);
 				} catch (ManagerBeanException e) {
 					throw new ControllerListenerException(e.getMessage(), e);
 				}

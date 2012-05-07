@@ -20,7 +20,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public abstract class ContractDetailVariableHandler extends AbstractVariableHandler {
@@ -40,14 +40,14 @@ public abstract class ContractDetailVariableHandler extends AbstractVariableHand
 			Contract contract = (Contract) master.getTo();
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();  
-			String alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID);
+			String alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID);
 			criteria.addEqualExpression(alias, contract.getId());
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
+			alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE);
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(alias);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 			criteria.addOrder(alias, false);
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
+			alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME);
 			criteria.addOrder(alias);
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
@@ -65,8 +65,8 @@ public abstract class ContractDetailVariableHandler extends AbstractVariableHand
 	public List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), name);
 		return bean.getList(criteria);
 	}
 	

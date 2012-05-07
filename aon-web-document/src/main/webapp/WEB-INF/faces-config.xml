@@ -67,7 +67,7 @@
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.document -->
-			<value>#{enterpriseTreeControllerListener}</value>
+			<value>#{enterpriseDocumentTreeControllerListener}</value>
 			<value>#{enterpriseAlfrescoListener}</value>
 			<!--  aon.ui.project -->
 			<value>#{enterpriseProjectChildListener}</value>

@@ -29,15 +29,14 @@ public class CampaignController extends BasicController implements IMarketingCon
 		List<SelectItem> actionMediaTypes = mcc.getActionMediaTypes();
 		if ( AonUtil.isBeanValue(CAMPAIGN_CONTROLLER_NAME, SHOW_PHONE_ACTION_MEDIA_TYPE) ) {
 			return actionMediaTypes;
-		} else {
-			List<SelectItem> list = new LinkedList<SelectItem>();
-			for (SelectItem item : actionMediaTypes) {
-				if (! ActionMediaType.PHONE.equals(item.getValue()) ) {
-					list.add(item);
-				}
+		} 
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for (SelectItem item : actionMediaTypes) {
+			if (! ActionMediaType.PHONE.equals(item.getValue()) ) {
+				list.add(item);
 			}
-			return list;
 		}
+		return list;
 	}
 
 	public ResourceBundle getBundle() {

@@ -12,7 +12,7 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class SalaryDraftSearchListener extends ControllerSearchListener {
@@ -52,10 +52,10 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		SalaryDraftController c =  (SalaryDraftController) getController();
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PERSON_ID), getPerson().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 		}
 		if(c.getMonth()!=null){
 			Calendar startCal = Calendar.getInstance();
@@ -66,9 +66,9 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 			endCal.set(Calendar.YEAR, c.getYear());
 			endCal.set(Calendar.MONTH, c.getMonth().getValue());
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-//			criteria.addLessThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_START_DATE), startCal.getTime());
-//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), endCal.getTime());
-//			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+//			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_START_DATE), startCal.getTime());
+//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), endCal.getTime());
+//			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
 //			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 		}
 		if ( criteria.getExpression() == null ) {

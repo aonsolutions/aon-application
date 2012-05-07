@@ -2,7 +2,6 @@ package com.code.aon.ui.groupware.event;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Task;
-import com.code.aon.ui.common.role.RoleManager;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -57,8 +56,7 @@ public class TaskControllerListener extends ControllerAdapter {
 		TaskController controller = (TaskController) event.getController();
 		Task task = (Task) controller.getTo();
 		if (!task.isUnassigned() && !controller.isMyTask()) {
-			RoleManager role = AonUtil.getRoleManager();
-			if (role != null && !role.isAdmin() && !role.isTaskMonitor()) {
+			if (!AonUtil.getRoleManager().isAdmin() && !AonUtil.getRoleManager().isTaskMonitor()) {
 				throw new ControllerListenerException(
 						"No se puede Modificar la Tarea. Ha sido asumida por otro Usuario.");
 			}

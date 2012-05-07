@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.util.AccountUtil;
 import com.code.aon.common.ManagerBeanException;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -75,11 +75,11 @@ public class AccountController extends BasicController {
 				selectItem.setLabel( "-" );
 				availableOrders.add(selectItem);
 				selectItem = new SelectItem();
-				selectItem.setValue(getManagerBean().getFieldName(IAccountAlias.ACCOUNT_CODE) );
+				selectItem.setValue(getManagerBean().getFieldName(IEntityAlias.ACCOUNT_CODE) );
 				selectItem.setLabel( AonUtil.getMessage("accountBundle","account_account" ));
 				availableOrders.add(selectItem);
 				selectItem = new SelectItem();
-				selectItem.setValue(getManagerBean().getFieldName(IAccountAlias.ACCOUNT_DESCRIPTION) );
+				selectItem.setValue(getManagerBean().getFieldName(IEntityAlias.ACCOUNT_DESCRIPTION) );
 				selectItem.setLabel( AonUtil.getMessage("bundle","aon_description" ));
 				availableOrders.add(selectItem);
 			} catch (ManagerBeanException e) {

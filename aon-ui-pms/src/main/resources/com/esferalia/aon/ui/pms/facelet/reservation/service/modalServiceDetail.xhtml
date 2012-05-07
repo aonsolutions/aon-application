@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showServiceDetailWindow">
+		<c:if test="#{controller.showServiceDetailWindow}">
+			<rich:modalPanel id="serviceDetailModalPanel" minHeight="240" minWidth="640" 
+				rendered="#{controller.showServiceDetailWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{pmsBundle.pms_services}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onCancel}"
+							reRender="aonContent" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showServiceDetailWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="serviceDetailFrom">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="serviceDetail-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_save} #{pmsBundle.pms_service}"
+										actionListener="#{controller.onAssignReservationService}">
+										<rich:componentControl for="serviceDetailModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showServiceDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+									<aon:commandButton id="serviceDetail-remove"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										value="#{bundle.aon_remove} #{pmsBundle.pms_service}"
+										rendered="#{!controller.new and !reservation.to.crs and !controller.to.extra}"
+										actionListener="#{controller.onRemoveReservationService}">
+										<rich:componentControl for="serviceDetailModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showServiceDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+									<aon:commandButton id="serviceDetail-back"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_back}" 
+										actionListener="#{controller.onCancel}"
+										reRender="aonContent" immediate="true">
+										<f:setPropertyActionListener
+											target="#{controller.showServiceDetailWindow}"
+											value="#{false}" />
+									</aon:commandButton>	
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid columns="2" styleClass="aon-width-all"
+										columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
+
+										<aon:outputLabel for="ProjectReservationService_roomItem"
+											value="#{pmsBundle.pms_room}"
+											rendered="#{reservation.to.roomAssignedCount > 0}" />
+										<aon:selectOneMenu id="ProjectReservationService_roomItem" 
+											value="#{controller.serviceReservationRoom}"
+											rendered="#{reservation.to.roomAssignedCount > 0}">
+											<f:selectItems value="#{controller.reservationRoomItems}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel value="#{bundle.aon_date}"
+											rendered="#{controller.new}" />
+										<aon:div rendered="#{controller.new}">
+											<aon:outputLabel for="ProjectReservationService_fromDate" 
+												styleClass="aon-margin-right aon-italic"
+												value="#{bundle.aon_date_from}" />
+											<aon:selectInputDate id="ProjectReservationService_fromDate" 
+												value="#{controller.serviceFromDate}" required="true"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}" />
+											<aon:outputLabel for="ProjectReservationService_toDate" 
+												styleClass="aon-margin-right aon-italic"
+												value="#{bundle.aon_date_to}" />
+											<aon:selectInputDate id="ProjectReservationService_toDate" 
+												value="#{controller.serviceToDate}" required="true"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}" />
+										</aon:div>
+
+										<aon:outputLabel for="Item_id" 
+											value="#{pmsBundle.pms_service}" />
+										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}" />
+										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{controller.to.item}" />
+											<ui:param name="idRequired" value="#{true}" />
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+											<ui:param name="skipGoToButton" value="#{true}" />
+											<ui:param name="lookupRendered" value="#{!reservation.to.crs and !controller.to.extra}" />
+											<ui:param name="lookupInputOnFocus" value="ProjectReservationService_quantity" />
+											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_salesPrice" />
+											<aon:methodParam name="lookupChangeListener"
+												value="#{controller.onItemChanged}" type="lookupChangeListener" />
+										</ui:include>
+
+										<aon:outputLabel for="ProjectReservationService_quantity" 
+											value="#{pmsBundle.pms_units}" />
+										<aon:outputText	value="#{controller.serviceQuantity}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}">
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+										</aon:outputText>
+										<aon:inputText id="ProjectReservationService_quantity" 
+											value="#{controller.serviceQuantity}" size="5" required="true"
+											rendered="#{!reservation.to.crs and !controller.to.extra}" 
+											valueChangeListener="#{controller.onQuantityChanged}" 
+											reRender="ProjectReservationService_salesPrice"
+											focus="ProjectReservationService_salesPrice" />
+
+										<aon:outputLabel for="ProjectReservationService_salesPrice" 
+											value="#{bundle.aon_unit_price}" />
+										<aon:outputText	value="#{controller.servicePrice}" styleClass="aon-bold"
+											rendered="#{reservation.to.crs or controller.to.extra}">
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+										</aon:outputText>
+										<aon:inputText id="ProjectReservationService_salesPrice" 
+											value="#{controller.servicePrice}" size="5" required="true"
+											rendered="#{!reservation.to.crs and !controller.to.extra}" 
+											valueChangeListener="#{controller.onSalesPriceChanged}" />
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

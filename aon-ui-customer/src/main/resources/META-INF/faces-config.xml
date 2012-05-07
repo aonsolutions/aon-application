@@ -668,7 +668,7 @@
 		</managed-property>
 	</managed-bean>
 
-	<!--  **** CUSTOMER ADDINFO **** -->
+	<!--  **** CUSTOMER DIR STAFF **** -->
 	<managed-bean>
 		<managed-bean-name>customerDirStaff</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryDirStaffLinesController</managed-bean-class>

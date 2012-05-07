@@ -22,6 +22,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementLevel;
@@ -30,7 +31,6 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.expression.IExpression;
 
 public class ContractVariableHandler extends AbstractVariableHandler{
@@ -49,21 +49,21 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			// se cargan las variables del contrato
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), false);
 			if(isSearchCurrentVariables()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), new Date());
-				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
 				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getInactiveDate());
-					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getInactiveDate());
+					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}
 			if(!StringUtils.isEmpty(getVariableFilter())){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), getVariableFilter());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), getVariableFilter());
 			}
 			List<IVariableData> dataList = null;
 			dataList = new LinkedList<IVariableData>();
@@ -78,14 +78,14 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
 				// se cargan las variables del nivel retributivo
 				bean = BeanManager.getManagerBean(AgreementLevelData.class);
-				String label = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID);
+				String label = bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID);
 				AgreementLevel level = contract.getAgreementLevelCategory().getLevel();
 				criteria = new Criteria();
 				criteria.addEqualExpression(label, level.getId());
 				if(!StringUtils.isEmpty(getVariableFilter())){
-					criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter());
 				}
-				criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_START_DATE), false);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_START_DATE), false);
 				list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					for(ITransferObject to: list){
@@ -105,14 +105,14 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 				}
 				// se cargan las variables del convenio
 				bean = BeanManager.getManagerBean(AgreementData.class);
-				label = bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_AGREEMENT_ID);
+				label = bean.getFieldName(IEntityAlias.AGREEMENT_DATA_AGREEMENT_ID);
 				Agreement agreement = contract.getAgreementLevelCategory().getLevel().getAgreement();
 				criteria = new Criteria();
 				criteria.addEqualExpression(label, agreement.getId());
 				if(!StringUtils.isEmpty(getVariableFilter())){
-					criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME), getVariableFilter());
+					criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME), getVariableFilter());
 				}
-				criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_START_DATE), false);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_START_DATE), false);
 				list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					for(ITransferObject to: list){
@@ -150,14 +150,14 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			Contract contract = (Contract) getController().getTo();
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();  
-			String alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID);
+			String alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID);
 			criteria.addEqualExpression(alias, contract.getId());
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
+			alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE);
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(alias);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 			criteria.addOrder(alias, false);
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
+			alias = bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME);
 			criteria.addOrder(alias);
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
@@ -178,7 +178,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			//TODO ¿Utilizar las fechas del pojo activo?
 			Date date = new Date();
 			
-			alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+			alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
 			Expression ex1 = ExpressionUtilities.getNullExpression(alias);
 			Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
 			criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));

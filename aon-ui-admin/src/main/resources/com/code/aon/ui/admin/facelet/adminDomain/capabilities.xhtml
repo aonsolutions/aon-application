@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="domainCapabilitiesForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_capabilities}" />
+				<ui:define name="additionalToolbarContent">				
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="adminDomain_form"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>				
+			</ui:decorate>			
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+					<ui:param name="controller" value="#{domainCapabilities}" />
+					<ui:param name="skipSaveButton" value="#{!domainCapabilities.new}" />
+					<ui:param name="skipRemoveButton" value="#{!domainCapabilities.deletable}" />
+					<ui:param name="skipResetButton" value="#{empty domainCapabilities.capabilities}" />
+					<ui:param name="newSaveButtonRendered" value="#{controller.new and adminMain.termsOfServiceAccepted}" />
+					<ui:param name="rows" value="0" />
+					<ui:define name="columns">
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputLabel for="DomainCapabilities_select"
+									value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to}" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:selectOneMenu id="DomainCapabilities_select" 
+										rendered="#{formNew}"
+										value="#{domainCapabilities.to}">
+										<f:selectItems value="#{domainCapabilities.capabilities}" />
+									</aon:selectOneMenu>
+									<ui:include src="/com/code/aon/ui/admin/facelet/adminMain/termsOfService.xhtml" >
+										<ui:param name="controller" value="#{domainCapabilities}" />
+										<ui:param name="serviceAcceptedReRender" value="#{dataTableId}" />
+										<ui:param name="termsOfServiceURL" value="#{adminMain.properties.newDomainCapabilityURL}" />
+									</ui:include>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+	
+</ui:composition>

@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.TaxAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.TaxAccountType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,6 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaxAccountListener extends ControllerAdapter {
 
@@ -33,7 +33,7 @@ public class TaxAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
 			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();
@@ -136,8 +136,8 @@ public class TaxAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), type);
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TYPE), type);
 			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();
@@ -156,8 +156,8 @@ public class TaxAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), type);
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
+			criteria.addEqualExpression(taxAccountBean.getFieldName(IEntityAlias.TAX_ACCOUNT_TYPE), type);
 			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();

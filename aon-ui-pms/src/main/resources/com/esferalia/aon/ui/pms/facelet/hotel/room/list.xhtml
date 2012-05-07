@@ -7,60 +7,22 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="assetList">
+		<aon:form id="roomList">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
 				<ui:param name="controller" value="#{room}" />
 			</ui:include>
- 
 
 			<aon:div styleClass="aon-scroll-area">
-				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{room}" />
-					
 					<ui:define name="columns">
- 
-						<aon:column alias="Room.asset.name" >
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.asset.name}" />
-						</aon:column>
-	
-						<aon:column alias="Room.hotel.workPlace.description">
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_hotel}" />
-							</f:facet>
-							<aon:outputText value="#{to.hotel.workPlace.description}" />
-						</aon:column>
-	
-						<aon:column alias="Room.item.product.code" >
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.item.product.code}" />
-								<aon:outputText value=" - " />
-								<aon:outputText value="#{to.item.product.name}" />
-							</aon:div>
-						</aon:column>
-	
-						<aon:column alias="Room.item.product.code" >
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:div>
-								<aon:outputText value="#{to.item.product.code}" />
-								<aon:outputText value=" - " />
-								<aon:outputText value="#{to.item.product.name}" />
-							</aon:div>
-						</aon:column>
+						
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/list_content.xhtml" />
 	
 					</ui:define>
 				</ui:decorate>
-				
 			</aon:div>
 
 		</aon:form>

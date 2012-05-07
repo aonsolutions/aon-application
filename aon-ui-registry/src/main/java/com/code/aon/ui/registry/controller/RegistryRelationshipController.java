@@ -14,8 +14,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryRelationship;
 import com.code.aon.registry.Relationship;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryRelationshipController extends BasicController {
 	
@@ -26,7 +26,7 @@ public class RegistryRelationshipController extends BasicController {
 			try {
 				IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(registryBean.getFieldName(IRegistryAlias.REGISTRY_ID), event.getNewValue());
+				criteria.addEqualExpression(registryBean.getFieldName(IEntityAlias.REGISTRY_ID), event.getNewValue());
 				Iterator<?> iter = registryBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					Registry registry = (Registry)iter.next();
@@ -43,7 +43,7 @@ public class RegistryRelationshipController extends BasicController {
 			try {
 				IManagerBean relationshipBean = BeanManager.getManagerBean(Relationship.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(relationshipBean.getFieldName(IRegistryAlias.RELATIONSHIP_ID), event.getNewValue());
+				criteria.addEqualExpression(relationshipBean.getFieldName(IEntityAlias.RELATIONSHIP_ID), event.getNewValue());
 				Iterator<?> iter = relationshipBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					Relationship relationship = (Relationship)iter.next();

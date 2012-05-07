@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.employee.client;
 
 import java.util.List;
 
+import com.esferalia.aon.gwt.employee.shared.Cost;
 import com.esferalia.aon.gwt.employee.shared.Employee;
 import com.esferalia.aon.gwt.employee.shared.Enterprise;
 import com.esferalia.aon.gwt.employee.shared.Salary;
@@ -15,6 +16,10 @@ public interface EmployeesServiceAsync {
 			throws IllegalArgumentException;
 	void getSalaries(Employee employee, AsyncCallback<List<Salary>> callback)
 			throws IllegalArgumentException;
-	void getSalaryReceiptHTML(Salary salary, float zoomRatio, AsyncCallback<String> callback)
+	void getCostReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
+	void getSalaryReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
+	void getSalaryReceiptHTML(Salary salary, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 }

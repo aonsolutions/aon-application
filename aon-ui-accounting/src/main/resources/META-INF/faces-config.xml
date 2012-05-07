@@ -1051,6 +1051,11 @@
 			<from-outcome>defaultParams</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/params/form.xhtml</to-view-id>
 		</navigation-case>
+		<!-- Clave de navegacion valida para AON-AIO, para no chocar con payroll  -->
+		<navigation-case>
+			<from-outcome>accountingDefaultParams</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/params/form.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- **************** ACCOUNT ENTRY ********************* -->
 	<navigation-rule>

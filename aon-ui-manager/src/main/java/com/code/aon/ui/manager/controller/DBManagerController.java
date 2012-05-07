@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.DAOConstantsResolver;
+import com.code.aon.common.domain.DomainEntityListener;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.master.VersionManager;
 import com.code.aon.ui.manager.BeanManagerEx;
@@ -60,18 +61,6 @@ public class DBManagerController implements IManagerConstants {
 			DbUtils.closeQuietly(connection);
 		}		
 	}
-
-	private boolean test( DBConnnection dbc ) throws SQLException {
-	    Connection connection = null;
-	    boolean connected = false;
-		try {
-			connection = getConnection(dbc);
-			connected = true;
-		} finally {
-			DbUtils.closeQuietly(connection);
-		}	
-		return connected;
-	}	
 	
 	public boolean exists( DBConnnection dbc ) {
 	    Connection connection = null;
@@ -192,6 +181,7 @@ public class DBManagerController implements IManagerConstants {
 		AnnotationConfiguration configuration = new AnnotationConfiguration();
 		dbc.configure(configuration);
    		configuration.buildMappings();
+   		configuration.setListener("pre-insert", new DomainEntityListener());
 		SessionFactory sessionFactory = configuration.buildSessionFactory();
 		BeanManagerEx.getInstance().update(sessionFactory);
         DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);

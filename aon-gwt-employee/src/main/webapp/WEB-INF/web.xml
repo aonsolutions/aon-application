@@ -43,6 +43,66 @@
     <servlet-name>employeesServlet</servlet-name>
     <url-pattern>/aon_gwt_employee/employees</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>documentsServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.DocumentsServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>documentsServlet</servlet-name>
+    <url-pattern>/aon_gwt_employe/documents</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>documentsServlet</servlet-name>
+    <url-pattern>/aon_gwt_employee/documents</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>openDocument2ImageServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocument2ImageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>openDocument2ImageServlet</servlet-name>
+    <url-pattern>/openDocument2Image/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>salaryExporterServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.SalaryExporterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>salaryExporterServlet</servlet-name>
+    <url-pattern>/salary/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>costExporterServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.CostExporterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>costExporterServlet</servlet-name>
+    <url-pattern>/cost/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>openDocumentConverterServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.OpenDocumentConverterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>openDocumentConverterServlet</servlet-name>
+    <url-pattern>/document/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>jasperImageServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.JasperImageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jasperImageServlet</servlet-name>
+    <url-pattern>/jasper_image/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>documentServlet</servlet-name>
+    <servlet-class>com.esferalia.aon.gwt.employee.server.DocumentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>documentServlet</servlet-name>
+    <url-pattern>/rattach/*</url-pattern>
+  </servlet-mapping>
   <context-param>
     <description>
 			Improving render phase performance. You should increase

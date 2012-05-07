@@ -44,17 +44,6 @@
         <url-pattern>*.jspx</url-pattern>
     </servlet-mapping>
 
-	<!-- WS Servlet -->
-    <servlet>
-        <servlet-name>ReservationService</servlet-name>
-        <servlet-class>com.esferalia.aon.pms.reservation.service.AonPmsSoap</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ReservationService</servlet-name>
-        <url-pattern>/ReservationService</url-pattern>
-    </servlet-mapping>
-
 	<!-- JSF SUN-RI CONFIGURATION -->
 	<context-param>
 		<description>
@@ -320,6 +309,9 @@
 	<security-role><role-name>Confidentiality</role-name></security-role>
 	<security-role><role-name>Product</role-name></security-role>
 	<security-role><role-name>Commercial</role-name></security-role>
+	<security-role><role-name>Sale</role-name></security-role>
+	<security-role><role-name>Purchase</role-name></security-role>
+	<security-role><role-name>Warehouse</role-name></security-role>
 	<security-role><role-name>Finance</role-name></security-role>
 	<security-role><role-name>Accounting</role-name></security-role>
 	<security-role><role-name>Statistics</role-name></security-role>

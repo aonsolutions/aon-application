@@ -27,7 +27,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -104,18 +104,18 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getParams().getSalaryType());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), getParams().getSalaryType());
 			if(getParams().getPerson()!=null && getParams().getPerson().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_PERSON_ID), getParams().getPerson().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_PERSON_ID), getParams().getPerson().getId());
 			}
 			if(getParams().getEnterprise()!=null && getParams().getEnterprise().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
 			}
 			if(getParams().getStartDate()!=null){
-				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getStartDate());
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getParams().getStartDate());
 			}
 			if(getParams().getEndDate()!=null){
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getEndDate());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getParams().getEndDate());
 			}
 			setExistingSalaries(bean.getList(criteria));
 		} catch (ManagerBeanException e) {

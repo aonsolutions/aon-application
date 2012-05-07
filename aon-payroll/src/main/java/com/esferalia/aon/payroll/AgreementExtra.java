@@ -6,49 +6,25 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.entity.master.AgreementExtraDB;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 
 @Entity
 @Table(name="agreement_extra")
-public class AgreementExtra implements ITransferObject {
+public class AgreementExtra extends AgreementExtraDB  {
 
-	private static final long serialVersionUID = -3253265204034502980L;
+	private static final long serialVersionUID = 1L;
 
 	private static final Pattern AGREEMENT_DATE_PATTERN = 
 		Pattern.compile("(\\d+)/(\\d+)\\s*\\+?([-]?\\d+)?");
 
-	private Integer id;
-	private Agreement agreement;
-	private AgreementPayment agreementPayment;
-	private String startDate;	
-	private String endDate;
-	private String issueDate;
-	
-	/**
-	 * 
-	 * @param string dd/mm [year offset]
-	 * @return
-	 */
 	public static Date parseAgreementDate ( String string, int year ) {
 		
 		Matcher matcher = AGREEMENT_DATE_PATTERN.matcher(string);
@@ -72,108 +48,14 @@ public class AgreementExtra implements ITransferObject {
 		return DateUtils.truncate(calendar, Calendar.DAY_OF_MONTH).getTime();
 	}
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	@ManyToOne
-    @JoinColumn( name="agreement", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_AGREEMENT_EXTRA_AGREEMENT")
-	@Index(name = "IDX_AGREEMENT_EXTRA_AGREEMENT")
-	public Agreement getAgreement() {
-		return agreement;
-	}
-	public void setAgreement(Agreement agreement) {
-		this.agreement = agreement;
-	}
-	
-	@ManyToOne
-	@JoinColumn( name="agreement_payment", updatable = false )	
-	@ForeignKey(name = "FK_AGREEMENT_EXTRA_AGREEMENT_PAYMENT")
-	@Index(name = "IDX_AGREEMENT_EXTRA_AGREEMENT_PAYMENT")
-	public AgreementPayment getAgreementPayment() {
-		return agreementPayment;
-	}
-	public void setAgreementPayment(AgreementPayment agreementPayment) {
-		this.agreementPayment = agreementPayment;
-	}
-	
-	@Column( name = "start_date", length = 32, nullable = false )
-    public String getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
-	
 	public Date getStartDate(int year ) {
-		return parseAgreementDate(startDate, year);
+		return parseAgreementDate(getStartDate(), year);
 	}
-
-	@Column( name = "end_date", length = 32, nullable = false )
-    public String getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
-	}	
-	
 	public Date getEndDate(int year ) {
-		return parseAgreementDate(endDate, year);
+		return parseAgreementDate(getEndDate(), year);
 	}
-	
-	
-	@Column( name = "issue_date", length = 32, nullable = false )
-	public String getIssueDate() {
-		return issueDate;
-	}
-	public void setIssueDate(String issueDate) {
-		this.issueDate = issueDate;
-	}	
-	
 	public Date getIssueDate(int year ) {
-		return parseAgreementDate(issueDate, year);
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final AgreementExtra o = (AgreementExtra) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.agreement, o.agreement)			
-				.append(this.agreementPayment, o.agreementPayment)
-				.append(this.startDate, o.startDate)
-				.append(this.endDate, o.endDate)
-				.append(this.issueDate, o.issueDate)			
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)
-			.append(agreement)
-			.append(agreementPayment)
-			.append(startDate)
-			.append(endDate)
-			.append(issueDate)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+		return parseAgreementDate(getIssueDate(), year);
 	}
 	
 	@Transient
@@ -181,14 +63,14 @@ public class AgreementExtra implements ITransferObject {
 		return Month.getMonthByValue(getMonth(getStartDate())!=null?getMonth(getStartDate()):0);
 	}
 	public void setStartDateMonth(Month startDateMonth){
-		startDate = setMonth(getStartDate(), startDateMonth, "01");
+		setStartDate( setMonth(getStartDate(), startDateMonth, "01"));
 	}
 	@Transient
 	public boolean getStartDatePrevious(){
 		return getPrevious(getStartDate());
 	}
 	public void setStartDatePrevious(boolean startDatePrevious){
-		startDate = setPrevious(getStartDate(), startDatePrevious);
+		setStartDate( setPrevious(getStartDate(), startDatePrevious));
 	}
 	@Transient
 	public Month getEndDateMonth(){
@@ -197,14 +79,14 @@ public class AgreementExtra implements ITransferObject {
 	public void setEndDateMonth(Month endDateMonth){
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MONTH, endDateMonth.ordinal());
-		endDate = setMonth(getEndDate(), endDateMonth, String.valueOf(cal.getActualMaximum(Calendar.DAY_OF_MONTH)));
+		setEndDate( setMonth(getEndDate(), endDateMonth, String.valueOf(cal.getActualMaximum(Calendar.DAY_OF_MONTH))));
 	}
 	@Transient
 	public boolean getEndDatePrevious(){
 		return getPrevious(getEndDate());
 	}
 	public void setEndDatePrevious(boolean endDatePrevious){
-		endDate = setPrevious(getEndDate(), endDatePrevious);
+		setEndDate( setPrevious(getEndDate(), endDatePrevious));
 	}
 	@Transient
 	public Month getIssueDateMonth() {
@@ -213,7 +95,7 @@ public class AgreementExtra implements ITransferObject {
 	public void setIssueDateMonth(Month issueDateMonth) {
 		if( issueDateMonth != null ){
 			String m = (new Integer(issueDateMonth.ordinal()+1)).toString();
-			issueDate = (issueDate==null?"01":issueDate.substring(0, 2))+"/"+(m.length()==1?"0"+m:m);
+			setIssueDate( (getIssueDate()==null?"01":getIssueDate().substring(0, 2))+"/"+(m.length()==1?"0"+m:m));
 		}
 	}
 	@Transient
@@ -221,7 +103,7 @@ public class AgreementExtra implements ITransferObject {
 		return getDay(getIssueDate());
 	}
 	public void setIssueDateDay(Integer issueDateDay) {
-		issueDate = setDay(issueDate, issueDateDay.toString());
+		setIssueDate( setDay(getIssueDate(), issueDateDay.toString()));
 	}
 	
 	

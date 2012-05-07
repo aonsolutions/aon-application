@@ -8,7 +8,6 @@ import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferTerm;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
@@ -16,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferImportManager {
 
@@ -39,9 +39,9 @@ public class OfferImportManager {
 		int version = 0;
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_SERIES), series);
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_NUMBER), number);
-		criteria.addOrder(offerBean.getFieldName(ICommercialAlias.OFFER_VERSION), false);
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_SERIES), series);
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_NUMBER), number);
+		criteria.addOrder(offerBean.getFieldName(IEntityAlias.OFFER_VERSION), false);
 		Iterator<?> iterator = offerBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			Offer offer = (Offer)iterator.next();
@@ -74,7 +74,7 @@ public class OfferImportManager {
 	private void importOffer(Integer sourceId, Offer offer) throws ManagerBeanException {
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), sourceId);
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), sourceId);
 		for (ITransferObject to : offerDetailBean.getList(criteria)) {
 			OfferDetail sourceDetail = (OfferDetail)to;
 			OfferDetail offerDetail = sourceDetail;
@@ -86,7 +86,7 @@ public class OfferImportManager {
 
 		IManagerBean offerAttachBean = BeanManager.getManagerBean(OfferAttachment.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(offerAttachBean.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID), sourceId);
+		criteria.addEqualExpression(offerAttachBean.getFieldName(IEntityAlias.OFFER_ATTACHMENT_OFFER_ID), sourceId);
 		for (ITransferObject to : offerAttachBean.getList(criteria)) {
 			OfferAttachment sourceAttach = (OfferAttachment)to;
 			OfferAttachment offerAttach = sourceAttach;
@@ -97,7 +97,7 @@ public class OfferImportManager {
 
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID), sourceId);
+		criteria.addEqualExpression(offerTermBean.getFieldName(IEntityAlias.OFFER_TERM_OFFER_ID), sourceId);
 		for (ITransferObject to : offerTermBean.getList(criteria)) {
 			OfferTerm sourceTerm = (OfferTerm)to;
 			OfferTerm offerTerm = sourceTerm;

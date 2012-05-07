@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.irpf;
 
-import com.code.aon.common.AonException;
 import com.code.aon.config.enumeration.Administration;
 
 public class IrpfCalculatorNotFoundException extends IrpfException {

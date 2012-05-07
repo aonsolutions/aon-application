@@ -18,6 +18,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.CustomerFee;
@@ -133,10 +134,11 @@ public class CustomerFeeController extends LinesController {
 	public void onNoFeeCustomers(ActionEvent event) {
 		Calendar calendar = new GregorianCalendar();
 		String select = "select distinct(customer) "
-			+ "from Customer as customer "
-			+ "where customer.status= 0 AND ( "
-			+ "customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee) "
-			+ "AND "
+			+ " from Customer as customer "
+			+ " where " + DomainManager.getSQLWhereClause("customer.domain") 
+			+ " and customer.status= 0 AND ( "
+			+ " customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee) "
+			+ " AND "
 			+ "customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee where finalDate < '"
 			+ calendar.getTime() + "')))";	
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());

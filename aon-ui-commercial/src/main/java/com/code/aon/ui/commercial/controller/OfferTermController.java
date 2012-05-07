@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -16,6 +15,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the offer maintenance.
@@ -51,7 +51,7 @@ public class OfferTermController extends LinesController {
 	public void setGeneral(boolean general) throws ManagerBeanException {
 		this.general = general;
 		List<Expression> initExpressions = new ArrayList<Expression>();
-		String generalAlias = getFieldName(ICommercialAlias.OFFER_TERM_GENERAL);
+		String generalAlias = getFieldName(IEntityAlias.OFFER_TERM_GENERAL);
 		Expression expression = ExpressionUtilities.getEqualExpression(generalAlias, general);
 		initExpressions.add( expression );
 		setInitExpressions(initExpressions);
@@ -70,7 +70,7 @@ public class OfferTermController extends LinesController {
 					throws ControllerListenerException {
 				try {
 					Criteria criteria = event.getController().getCriteria();
-					String generalField = event.getController().getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL);
+					String generalField = event.getController().getFieldName(IEntityAlias.COMMERCIAL_TERM_GENERAL);
 					criteria.addEqualExpression(generalField, general);
 				} catch (ManagerBeanException e) {
 					throw new ControllerListenerException( e.getMessage(), e );

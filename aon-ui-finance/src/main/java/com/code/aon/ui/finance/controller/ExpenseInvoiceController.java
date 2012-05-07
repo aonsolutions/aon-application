@@ -12,7 +12,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -20,6 +19,7 @@ import com.code.aon.ui.finance.util.CreditorValidationManager;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ExpenseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
@@ -66,10 +66,10 @@ public class ExpenseInvoiceController extends InvoiceController implements IFina
 		IManagerBean bean = getAttachmentBean();
 		try {
 			Criteria criteria = new Criteria();
-			String invoiceAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID);
+			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
 			criteria.addEqualExpression(invoiceAlias, ((Invoice)to).getId());
 			String typeAlias;
-			typeAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE);
+			typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE);
 			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {

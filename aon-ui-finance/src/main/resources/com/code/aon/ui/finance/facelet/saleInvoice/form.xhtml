@@ -21,63 +21,14 @@
 					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
+					<ui:param name="showMoreMenu" value="#{true}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
-							<aon:commandButton id="deliveryTransfer"
-								value="#{financeBundle.finance_invoice_deliveries}"
-								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.readOnly}"
-								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
-								actionListener="#{saleInvoice.onDeliveryTransferShow}"
-								reRender="showDeliveryTransferWindow">
-								<f:setPropertyActionListener target="#{saleInvoice.showDeliveryTransferWindow}"
-									value="#{true}" />
-							</aon:commandButton>
-						</c:if>
-						<aon:commandButton id="finances"
-							value="#{bundle.aon_key_finance_description}"
-							title="#{bundle.aon_key_finance_accelerator}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
-							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							actionListener="#{saleInvoice.generateFinances}"
-							accesskey="#{bundle.aon_key_finance}">
-							<f:setPropertyActionListener target="#{saleInvoice.backActionListener}"
-								value="#{null}" />
-							<f:setPropertyActionListener target="#{saleInvoice.backAction}"
-								value="#{null}" />
-						</aon:commandButton>
-						<aon:commandButton id="rectify"
-							value="#{financeBundle.finance_rectify}"
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource}"
-							styleClass="aon-finding-toolbar-item aon-icon-version"
-							actionListener="#{saleInvoice.onRectificationShow}"
-							reRender="showRectificationWindow">
-							<f:setPropertyActionListener target="#{saleInvoice.showRectificationWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-						<c:if test="#{aonRole.accountingOperator}">
-							<aon:commandButton id="record"
-								value="#{financeBundle.finance_record}"
-								actionListener="#{saleInvoice.onRecordInvoice}"
-								rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
-								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
-								reRender="saleInvoiceForm" 
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandButton id="unrecord"
-								value="#{financeBundle.finance_unrecord}"
-								actionListener="#{saleInvoice.onUnrecordInvoice}"
-								rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
-								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
-								reRender="saleInvoiceForm"
-								onclick="Richfaces.showModalPanel('waitProccess')" 
-					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-						</c:if>
 						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
 								rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
 								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-								reRender="showNewMessageWindow">
+								style="width: 14px;" reRender="showNewMessageWindow">
 							</aon:commandButton>
 						</c:if>						
 						<aon:htmlCommandLink id="saleInvoice-report"
@@ -90,7 +41,67 @@
 							<f:setPropertyActionListener target="#{saleInvoiceSigner.reportKey}"
 								value="#{company.saleInvoiceTemplateValue}" />
 						</aon:htmlCommandLink>
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+					</ui:define>
+					<ui:define name="moreMenuContent">
+						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+							<aon:menuItem id="deliveryTransfer"
+								value="#{financeBundle.finance_invoice_deliveries}"
+								immediate="#{true}" rendered="#{!saleInvoice.new and !saleInvoice.readOnly}"
+								iconClass="aon-icon-sincronize"
+								actionListener="#{saleInvoice.onDeliveryTransferShow}"
+								reRender="showDeliveryTransferWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showDeliveryTransferWindow}"
+									value="#{true}" />
+							</aon:menuItem>
+						</c:if>
+						<aon:menuItem id="finances"
+							value="#{bundle.aon_key_finance_description}"
+							title="#{bundle.aon_key_finance_accelerator}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
+							iconClass="aon-icon-tree"
+							actionListener="#{saleInvoice.generateFinances}"
+							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{saleInvoice.backActionListener}"
+								value="#{null}" />
+							<f:setPropertyActionListener target="#{saleInvoice.backAction}"
+								value="#{null}" />
+						</aon:menuItem>
+						<aon:menuItem id="rectify"
+							value="#{financeBundle.finance_rectify}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource}"
+							iconClass="aon-icon-version"
+							actionListener="#{saleInvoice.onRectificationShow}"
+							reRender="showRectificationWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showRectificationWindow}"
+								value="#{true}" />
+						</aon:menuItem>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:menuItem id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{saleInvoice.onRecordInvoice}"
+								rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.recorded}"
+								iconClass="aon-icon-task-assume"
+								reRender="saleInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:menuItem id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{saleInvoice.onUnrecordInvoice}"
+								rendered="#{saleInvoice.recorded and !saleInvoice.accountSource}"
+								iconClass="aon-icon-task-liberate"
+								reRender="saleInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+						</c:if>
+						<aon:menuItem id="documents"
+							value="#{bundle.aon_documents}"
+							rendered="#{!saleInvoice.new}"
+							iconClass="aon-icon-payroll"
+							reRender="showDocumentWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showDocumentWindow}"
+								value="#{true}" />							
+						</aon:menuItem>						
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{saleInvoice.new or (!saleInvoice.to.signed)}" />
@@ -283,7 +294,7 @@
 							value="#{saleInvoice.address}" 
 							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}" />
 						<aon:outputText styleClass="aon-margin-left aon-bold"
-							value="(#{saleInvoice.city})"
+							value="#{saleInvoice.location}"
 							rendered="#{saleInvoiceAddress.to.id != null or (saleInvoice.readOnly and saleInvoice.to.registryAddress.id != null)}" />
 						<aon:div layout="inline" styleClass="aon-margin-left">
 							<aon:commandButton id="invoiceAddressButton"
@@ -470,6 +481,10 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalDocuments.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+			<ui:param name="attachmentController" value="#{saleInvoiceAttach}" />
 		</ui:include>
 		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/saleInvoice/delivery/modalTransfer.xhtml" />

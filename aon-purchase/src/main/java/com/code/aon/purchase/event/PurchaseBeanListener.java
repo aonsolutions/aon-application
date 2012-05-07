@@ -9,8 +9,8 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.project.Project;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -21,7 +21,7 @@ public class PurchaseBeanListener extends ManagerBeanListenerAdapter {
 		Project project = (purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null;
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
 		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
 			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
 			if (purchaseDetail.getProject() == null || purchaseDetail.getProject().getId() == null) {

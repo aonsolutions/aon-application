@@ -29,8 +29,7 @@ public class DomainUtil {
      * @param host the host
      * @return true, if successful
      */
-    private static boolean existsDomain( String host ) {
-    	BasicLdap ldap = new BasicLdap();
+    private static boolean existsDomain( BasicLdap ldap, String host ) {
     	Name dn = NameResolver.getDomainDN(host);
     	return ldap.exists(dn, DOMAIN);
     }
@@ -38,16 +37,27 @@ public class DomainUtil {
     /**
      * Gets the domain.
      *
-     * @param request the request
+     * @param hostName
      * @return the domain
      */
     public static String getDomain( String hostName ) {
+    	return getDomain( new BasicLdap(), hostName );    	
+    }
+
+    /**
+     * Gets the domain.
+     *
+     * @param ldap
+     * @param hostName
+     * @return the domain
+     */
+    public static String getDomain( BasicLdap ldap, String hostName ) {
     	String host = hostName;
     	if (! isIPAddress(host) ) {
-    		if (! existsDomain(host) ) {
+    		if (! existsDomain(ldap, host) ) {
     			String domain = StringUtils.substringAfter(host, ".");
     			while (! StringUtils.isBlank(domain) ) {
-    				if ( existsDomain(domain) ) {
+    				if ( existsDomain(ldap, domain) ) {
     					host = domain;
     					break;
     				}
@@ -56,6 +66,6 @@ public class DomainUtil {
     		}
     	}
     	return host;    	
-    }
-	
+    }    
+    
 }

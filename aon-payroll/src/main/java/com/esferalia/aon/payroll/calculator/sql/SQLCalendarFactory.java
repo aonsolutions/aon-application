@@ -14,7 +14,6 @@ import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarHolidayColumns;
-import com.mysql.jdbc.exceptions.DeadlockTimeoutRollbackMarker;
 
 public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	

@@ -25,7 +25,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
-import com.code.aon.registry.dao.IRegistryAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	
@@ -97,8 +97,8 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			criteria.addOrder(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), true);
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addOrder(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), true);
 			Iterator<ITransferObject> iter = rAddressBean.getList(criteria, 0, 1).iterator();
 			if(iter.hasNext()){
 				return (RegistryAddress)iter.next();

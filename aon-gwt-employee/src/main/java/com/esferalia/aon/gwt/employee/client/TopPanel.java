@@ -16,8 +16,16 @@
 package com.esferalia.aon.gwt.employee.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -25,12 +33,50 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class TopPanel extends Composite {
 
-  interface Binder extends UiBinder<Widget, TopPanel> { }
-  private static final Binder binder = GWT.create(Binder.class);
+	interface Binder extends UiBinder<Widget, TopPanel> {
+	}
 
+	private static final Binder binder = GWT.create(Binder.class);
 
-  public TopPanel() {
-    initWidget(binder.createAndBindUi(this));
-  }
+	@UiField HTML  html;
+	
+	public TopPanel() {
+
+		String url = "header.jsp";
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET,
+				URL.encode(url));
+		try {
+			Request request = builder.sendRequest(null, new RequestCallback() {
+
+				@Override
+				public void onResponseReceived(Request request,
+						Response response) {
+					// TODO Auto-generated method stub
+					if (200 == response.getStatusCode()) {
+						// Process the response in response.getText()
+						html.setHTML(response.getText());
+						
+					} else {
+						// Handle the error. Can get the status text from
+						// response.getStatusText()
+					}
+				}
+
+				@Override
+				public void onError(Request request, Throwable t) {
+					// TODO Auto-generated method stub
+					// Couldn't connect to server (could be timeout, SOP
+					// violation, etc.)
+					Window.alert(t.getLocalizedMessage());
+				}
+			});
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			// Couldn't connect to server
+			Window.alert(e.getLocalizedMessage());
+		}
+		initWidget(binder.createAndBindUi(this));
+	}
 
 }

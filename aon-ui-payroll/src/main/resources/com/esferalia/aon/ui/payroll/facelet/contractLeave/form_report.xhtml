@@ -55,7 +55,7 @@
 	
 	<aon:outputLabel for="ContractLeaveDetail_date"
 		value="#{bundle.aon_date}" />
-	<aon:selectInputDate id="ContractLeaveDetail_date" required="true"
+	<aon:selectInputDate id="ContractLeaveDetail_date" required="true" ajaxSingle="true"
 		renderAsPopup="true" value="#{contractLeave.report.date}"
 		popupDateFormat="dd/MM/yyyy">
 	</aon:selectInputDate>

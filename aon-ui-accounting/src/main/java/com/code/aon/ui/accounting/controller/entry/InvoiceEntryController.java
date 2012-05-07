@@ -23,10 +23,8 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
@@ -34,7 +32,6 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
@@ -54,7 +51,6 @@ import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
@@ -66,7 +62,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -93,6 +88,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceEntryController implements ISpecialAccountEntry {
 
@@ -665,7 +661,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			try {
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID),
+				criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID),
 						detail.getAccount().getId());
 				Iterator<ITransferObject> iterator = accountBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
@@ -1118,11 +1114,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES), series);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE),
 				invoiceType);
 		Projection projection = Projection.max(invoiceBean
-				.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+				.getFieldName(IEntityAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
@@ -1251,7 +1247,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryDetailBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry
+				.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry
 				.getId());
 		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
@@ -1275,13 +1271,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean
-				.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+				.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
 			Criteria taxCriteria = new Criteria();
 			taxCriteria.addEqualExpression(invoiceTaxBean
-					.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail
+					.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail
 					.getId());
 			Iterator<ITransferObject> taxIter = invoiceTaxBean.getList(taxCriteria).iterator();
 			while (taxIter.hasNext()) {
@@ -1290,7 +1286,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 			Criteria accountCriteria = new Criteria();
 			accountCriteria.addEqualExpression(invoiceAccountBean
-					.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID),
+					.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID),
 					invoiceDetail.getId());
 			Iterator<ITransferObject> accountIter = invoiceAccountBean.getList(accountCriteria)
 					.iterator();
@@ -1304,7 +1300,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private void deleteFinances(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID),
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID),
 				invoice.getId());
 		Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
@@ -1326,7 +1322,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+					IEntityAlias.ACCOUNT_ENTRY_ID), entry.getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -1488,7 +1484,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_CODE), seriesId);
 		Iterator<?> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			Series series = (Series) iter.next();
@@ -1503,15 +1499,15 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		if (StringUtils.isEmpty(seriesId)) {
-			criteria.addNullExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES));
+			criteria.addNullExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES));
 		} else {
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES),
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERIES),
 					seriesId);
 		}
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE),
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE),
 				InvoiceType.SALES);
 		Projection projection = Projection.max(invoiceBean
-				.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+				.getFieldName(IEntityAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
@@ -1527,7 +1523,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryInvoiceBean
-				.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),
+				.getFieldName(IEntityAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),
 				entry.getId());
 		Iterator<?> iter = accountEntryInvoiceBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
@@ -1591,7 +1587,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
 			Iterator<?> iter = financeBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				finances.add((Finance)iter.next());
@@ -1609,7 +1605,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 			Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				InvoiceEntryDetail detail = new InvoiceEntryDetail();
@@ -1623,7 +1619,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				detail.setTaxableBase(invoiceDetail.getTaxableBase());
 
 				Criteria taxCriteria = new Criteria();
-				taxCriteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				taxCriteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
 				Iterator<?> taxIter= invoiceTaxBean.getList(taxCriteria).iterator();
 				while(taxIter.hasNext()){
 					InvoiceTax invoiceTax = (InvoiceTax)taxIter.next();
@@ -1653,7 +1649,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				}
 
 				Criteria accountCriteria = new Criteria();
-				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
 				Iterator<?> accountIter= invoiceAccountBean.getList(accountCriteria).iterator();
 				if(accountIter.hasNext()){
 					InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)accountIter.next();
@@ -1727,9 +1723,9 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		List<SelectItem> retList = new LinkedList<SelectItem>();
 		if (a != null) {
 			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
-			String accountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
-			String balAccountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
-			String counterAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER);
+			String accountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
+			String balAccountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
+			String counterAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountAlias, a.getCode());
 			String c = "%";

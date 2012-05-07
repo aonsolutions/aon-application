@@ -1,10 +1,8 @@
 package com.code.aon.ui.document.tree;
 
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_ACTIVE;
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_ENTERPRISE_ID;
-import static com.code.aon.project.dao.IProjectAlias.PROJECT_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
+import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
 
 import java.util.ArrayList;
@@ -38,9 +36,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.document.event.EnterpriseDocumentSearchListener;
 import com.code.aon.ui.project.controller.ProjectController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class EnterpriseTree implements ICompanyConstants {
 
@@ -59,6 +59,13 @@ public class EnterpriseTree implements ICompanyConstants {
 	private EnterpriseDocument document;
 
 	private String splitterPosition = "250";
+	
+	public EnterpriseTree() {
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		ec.setSkipResetButton(! mc.isAdministrator());
+		ec.setSkipRemoveButton(! mc.isAdministrator());
+	}
 
 	public EnterpriseDocument getDocument() {
 		return document;
@@ -135,9 +142,9 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadProjects( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(PROJECT_ACTIVE), Boolean.TRUE);
-		criteria.addOrder(bean.getFieldName(PROJECT_NAME));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_REGISTRY_ID), enterprise.getRegistry().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_ACTIVE), Boolean.TRUE);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
@@ -352,4 +359,10 @@ public class EnterpriseTree implements ICompanyConstants {
 		onReloadTree(event);
 	}		
 
+	public void onTreeViewSelect( ActionEvent event ) {
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		controller.onTreeViewSelect(event);
+		controller.setTreeTemplateSuffix("DocumentTree");
+	}
+	
 }

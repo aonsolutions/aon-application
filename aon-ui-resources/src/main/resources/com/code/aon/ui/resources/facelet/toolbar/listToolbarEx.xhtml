@@ -8,7 +8,7 @@
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipSearchButton}">
 				<aon:commandButton id="#{toolbarID}-search"
-					title="#{bundle.aon_key_search_accelerator}"
+					title="#{bundle.aon_key_search_accelerator}" immediate="true"
 					value="#{bundle.aon_search}" reRender="#{searchButtonReRender}"
 					action="#{searchAction}" actionListener="#{searchActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"

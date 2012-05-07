@@ -5,7 +5,6 @@ package com.code.aon.account.bridge.event;
 import java.util.List;
 
 import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +15,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -41,13 +41,13 @@ public class ProductAccountBeanVetoListener extends ManagerBeanVetoListenerAdapt
 			}
 			IManagerBean bean = BeanManager.getManagerBean(ProductAccount.class);
 			Integer id = productAccount.getProduct().getId();
-			String alias = bean.getFieldName( IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID);
-			String typeAlias = bean.getFieldName( IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE);
+			String alias = bean.getFieldName( IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID);
+			String typeAlias = bean.getFieldName( IEntityAlias.PRODUCT_ACCOUNT_TYPE);
 			Criteria c = new Criteria();
 			c.addEqualExpression(alias, id);
 			c.addEqualExpression(typeAlias, productAccount.getType());
 			if ( productAccount.getId() != null ) {
-				String idAlias = bean.getFieldName( IAccountBridgeAlias.PRODUCT_ACCOUNT_ID);
+				String idAlias = bean.getFieldName( IEntityAlias.PRODUCT_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, productAccount.getId());
 				c.addExpression( exp );	
 			}

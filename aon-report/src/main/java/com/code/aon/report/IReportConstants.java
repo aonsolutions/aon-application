@@ -22,7 +22,7 @@ public interface IReportConstants {
 	 * Name of the disgester rules file for parsing the report configuration
 	 * file.
 	 */
-	String RULES_FILE = "report_config_digester.xml";;
+	String RULES_FILE = "report_config_digester.xml";
 
 	/**
 	 * JasperReports parameter. Under this key, a <code>java.lang.Boolean</code>

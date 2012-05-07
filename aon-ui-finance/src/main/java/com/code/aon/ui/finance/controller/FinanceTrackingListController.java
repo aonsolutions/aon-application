@@ -9,8 +9,8 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingListController extends BasicController {
 
@@ -20,15 +20,15 @@ public class FinanceTrackingListController extends BasicController {
 		try {
 			String financeAlias = "Finance_";
 			String trackingAlias = "FinanceTracking_finance_";
-			if (event.getComponent().getId().contains(IFinanceAlias.FINANCE_AMOUNT)) {
-				financeAlias = IFinanceAlias.FINANCE_AMOUNT;
-				trackingAlias = IFinanceAlias.FINANCE_TRACKING_AMOUNT;
-			} else if (event.getComponent().getId().contains(IFinanceAlias.FINANCE_DUE_DATE)) {
-				financeAlias = IFinanceAlias.FINANCE_DUE_DATE;
-				trackingAlias = IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE;
-			} else if (event.getComponent().getId().contains(IFinanceAlias.FINANCE_SECURITY_LEVEL)) {
-				financeAlias = IFinanceAlias.FINANCE_SECURITY_LEVEL;
-				trackingAlias = IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL;
+			if (event.getComponent().getId().contains(IEntityAlias.FINANCE_AMOUNT)) {
+				financeAlias = IEntityAlias.FINANCE_AMOUNT;
+				trackingAlias = IEntityAlias.FINANCE_TRACKING_AMOUNT;
+			} else if (event.getComponent().getId().contains(IEntityAlias.FINANCE_DUE_DATE)) {
+				financeAlias = IEntityAlias.FINANCE_DUE_DATE;
+				trackingAlias = IEntityAlias.FINANCE_TRACKING_TRACKING_DATE;
+			} else if (event.getComponent().getId().contains(IEntityAlias.FINANCE_SECURITY_LEVEL)) {
+				financeAlias = IEntityAlias.FINANCE_SECURITY_LEVEL;
+				trackingAlias = IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL;
 			}
 			event.getComponent().setId(event.getComponent().getId().replace(financeAlias, trackingAlias));
 

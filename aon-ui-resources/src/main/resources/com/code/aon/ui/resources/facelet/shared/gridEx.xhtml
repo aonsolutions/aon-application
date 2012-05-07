@@ -74,7 +74,7 @@
 					<c:if test="#{!skipRemoveButton}">				
 						<aon:confirmButton
 							id="#{dataTableId}-remove" title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
-							immediate="true"
+							immediate="true"  rendered="#{removeButtonRendered}"
 							reRender="#{dataTableId}Div#{(removeButtonReRender != null)?',':''}#{removeButtonReRender}"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"

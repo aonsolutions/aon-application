@@ -4,11 +4,10 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.27-SNAPSHOT</version>
+		<version>7.0-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
-	<version>6.27-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>AON-PAYROLL-CTSQL2MYSQL</name>
@@ -22,6 +21,22 @@
 		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-payroll-ctsql2mysqlr</connection>
 		<url>http://dev.esferalia.com/websvn/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
+
+        <repositories>
+                <repository>
+                        <id>dynamicJasper-public-repository</id>
+                        <name>DynamicJasper public Repository</name>
+                        <url>http://archiva.fdvs.com.ar/repository/public1/</url>
+                        <releases>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>false</enabled>
+                                <updatePolicy>never</updatePolicy>
+                        </snapshots>
+                </repository>
+        </repositories>
 
 	<dependencies>
 		<dependency>
@@ -81,21 +96,21 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
@@ -110,24 +125,40 @@
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.salary</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.calendar</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-dbutils</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon-master</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -187,6 +218,8 @@
 							<requires>
 								<require>slf4j</require>
 								<require>inotify-java</require>
+								<require>aon-dbutils</require>
+								<require>aon-master</require>
 								<require>jakarta-commons-cli</require>
 								<require>jakarta-commons-lang</require>
 								<require>jakarta-commons-logging</require>
@@ -199,6 +232,7 @@
 									<dependency>
 										<includes>
 											<include>com.code.aon:aon.config</include>
+											<include>com.code.aon:aon.config</include>
 											<include>com.code.aon:aon.common</include>
 											<include>com.code.aon:aon.registry</include>
 											<include>com.code.aon:aon.company</include>
@@ -206,6 +240,7 @@
 											<include>com.esferalia.aon:aon.salary</include>
 											<include>com.esferalia.aon:aon.payroll</include>
 											<include>com.esferalia.aon:aon.calendar</include>
+											<include>com.esferalia.aon:aon.entity.common</include>
 											<include>com.transtools:ctsql-jdbc:2.2.3.6</include>
 										</includes>
 									</dependency>
@@ -251,6 +286,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/aon.calendar-${project.version}.jar</location>
 											<destination>aon-calendar.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.entity.common-${project.version}.jar</location>
+											<destination>aon-entity-common.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/ctsql-jdbc-2.2.3.6.jar</location>

@@ -603,20 +603,21 @@
  										</aon:div>
 										<rich:subTable id="bankStatementLinkTable" 
 											rendered="#{to.checked and controller.showBankStatementLink}"
-											value="#{controller.bankStatementLinkList}" var="statementLink">
+											value="#{controller.bankStatementLinkList}" var="statementLink"
+											rowClasses="aon-subTable-column-yellow">
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
 											<aon:column colspan="3"	
-												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="-- #{financeBundle.finance_link_transfer} --"
 													rendered="#{statementLink.linkedBankStatementLink != null}" />
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{statementLink.date}">
 													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 														timeZone="#{timeZoneController.timeZoneId}" />
@@ -624,7 +625,7 @@
 											</aon:column>
 
 											<c:if test="#{aonRole.confidentiality}">
-												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-yellow-column">
+												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-column">
 													<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
 														styleClass="aon-icon-confidential" style="padding-left:15px"
 														rendered="#{statementLink.confidential}" />
@@ -633,7 +634,7 @@
 												</aon:column>
 											</c:if>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
 													rendered="#{statementLink.financeBatch}" />
 												<c:if test="#{aonRole.accountingOperator}">
@@ -644,11 +645,11 @@
 													rendered="#{statementLink.financeTracking or statementLink.financeBatch}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{statementLink.description}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{financeBundle.finance_return_abbrv}" 
 													rendered="#{to.returned}" /> 
 												<aon:outputText value="#{financeBundle.finance_payment}" 
@@ -657,14 +658,14 @@
 													rendered="#{!statementLink.payment}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-yellow-column">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{statementLink.amount}">
 													<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 												</aon:outputText>
 											</aon:column>
 
 											<aon:column colspan="2" 
-												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{financeBundle.finance_finance_date_abbrv}: "
 													rendered="#{statementLink.financeTracking}" />
 												<aon:outputText value="#{statementLink.dueDate}"
@@ -678,14 +679,15 @@
 										<rich:subTable id="accountEntryTable"
 											rendered="#{aonRole.accountingOperator and to.recorded and controller.showAccountEntry}"
 											value="#{controller.accountEntryDetails}" var="entryDetail"
-											headerClass="aon-editDataTable-textColumn aon-subTable-green-header aon-italic aon-bold">
+											headerClass="aon-editDataTable-textColumn aon-subTable-column aon-subTable-column-green-header aon-italic aon-bold"
+											rowClasses="aon-subTable-column-green">
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
 											<aon:column colspan="4" 
-												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:div>
 														<aon:outputText value="#{financeBundle.finance_account_entry}: " />
@@ -696,7 +698,7 @@
 											</aon:column>
 
 											<c:if test="#{aonRole.confidentiality}">
-												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-green-column">
+												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-column">
 													<f:facet name="header">
 														<aon:div>
 															<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
@@ -710,7 +712,7 @@
 												</aon:column>
 											</c:if>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:div>
 														<aon:outputText value="#{bundle.aon_date}: " />
@@ -723,14 +725,14 @@
 												<aon:outputText value="#{entryDetail.account.code}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:outputText value="#{bundle.aon_concept}" />
 												</f:facet>
 												<aon:outputText value="#{entryDetail.account.description}" />
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:outputText value="#{financeBundle.finance_debit}" />
 												</f:facet>
@@ -739,7 +741,7 @@
 												</aon:outputText>
 											</aon:column>
 
-											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-numberColumn aon-italic aon-bold aon-subTable-column">
 												<f:facet name="header">
 													<aon:outputText value="#{financeBundle.finance_credit}" />
 												</f:facet>
@@ -749,7 +751,7 @@
 											</aon:column>
 
 											<aon:column colspan="2"	
-												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-column">
 												<aon:outputText value="#{entryDetail.balancingAccount.code}" />
 											</aon:column>
 										</rich:subTable>

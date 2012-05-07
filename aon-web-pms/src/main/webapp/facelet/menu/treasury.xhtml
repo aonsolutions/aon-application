@@ -78,7 +78,6 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="bankStatement"
 										value="#{financeBundle.finance_bank_statement_module}"
-										rendered="#{bankStatement.availableRegistryBanks > 0}"
 										actionListener="#{bankStatement.onEditSearch}"
 										action="bankStatement_search" />
 								</aon:div>
@@ -88,30 +87,6 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-
-						<aon:panelGrid id="group_treasury_forecast"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-forecast aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_forecast_menu}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cashFlowForecast"
-										value="#{financeBundle.finance_cashflow_forecast_module}"
-										rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
-										actionListener="#{cashFlowForecast.onEditSearch}"
-										action="cashFlowForecast_search" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cashFlowForecastReport"
-										value="#{financeBundle.finance_cashflow_forecast_report_module}"
-										rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
-										actionListener="#{cashFlowForecastReport.onEditSearch}"
-										action="cashFlowForecastReport_search" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 
 						<c:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_treasury_auxiliar"
@@ -134,7 +109,6 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
 
 						<aon:panelGrid id="group_treasury_utilities"
 							styleClass="aon-width-all" columnClasses="aon-padding"

@@ -27,12 +27,10 @@ import com.code.aon.account.bridge.AccountEntryBankStatement;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
 import com.code.aon.account.bridge.BankConceptAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
 import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -48,7 +46,6 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -63,7 +60,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.dynamic.DynaElements;
 import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -76,6 +72,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankStatementController extends BasicController implements IFinanceConstants {
 
@@ -179,6 +176,19 @@ public class BankStatementController extends BasicController implements IFinance
 			writer = new AccountEntryFinanceWriter();
 		}
 		return writer;
+	}
+
+	public void onEditSearch(ActionEvent event) {
+		try {
+			if (getAvailableRegistryBanks() == 0) {
+				String msg = "No hay Cuentas Bancarias definidas";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} catch (ManagerBeanException ex) {
+			throw new AbortProcessingException(ex);
+		}
+		super.onEditSearch(event);
 	}
 
 	public void onSeeAll(ActionEvent event) throws ManagerBeanException {
@@ -407,7 +417,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onFullReset(ActionEvent event) {
 		try {
-			getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), new Integer(0));
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), new Integer(0));
 			onReset(event);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
@@ -435,7 +445,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private void searchBankStatements(RegistryBank registryBank) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), registryBank.getId());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), registryBank.getId());
 		setCriteria(criteria);
 		searchBankStatements();
 	}
@@ -463,7 +473,7 @@ public class BankStatementController extends BasicController implements IFinance
 		setAonFile(null);
 
 		try {
-			getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), new Integer(0));
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), new Integer(0));
 			setTo(null);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
@@ -495,7 +505,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private int obtainLotNumber() throws ManagerBeanException {
-		Projection projection = Projection.max(getManagerBean().getFieldName(IFinanceAlias.BANK_STATEMENT_LOT_NUMBER));
+		Projection projection = Projection.max(getManagerBean().getFieldName(IEntityAlias.BANK_STATEMENT_LOT_NUMBER));
 		Object value = getManagerBean().getUniqueResult(projection, null);
 		if (value != null) {
 			return ((Integer) value).intValue() + 1;
@@ -528,7 +538,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 		if (bankStatement != null) {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
 			setCriteria(criteria);
 			onSearch(null);
 		}
@@ -542,9 +552,9 @@ public class BankStatementController extends BasicController implements IFinance
 
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), getRegistryBank().getRegistry().getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistryBank().getRegistry().getId());
 		String bankAcc = line.substring(2, 10) + "__" + line.substring(10, 20);
-		criteria.addExpression(ExpressionUtilities.getLikeExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAcc));
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_BANK_ACCOUNT), bankAcc));
 		Iterator<?> iterator = rBankBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryBank)iterator.next();
@@ -599,7 +609,7 @@ public class BankStatementController extends BasicController implements IFinance
 			setCsvToDate(bankStatement.getOperationDate());
 
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
 			setCriteria(criteria);
 			onSearch(null);
 		}
@@ -787,56 +797,56 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		for (int key=1; key<=3 && to.isPending(); key++) {
 			Criteria criteriaFin = new Criteria();
-			criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+			criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
 	        Criteria criteriaTrk = new Criteria();
-			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
-			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteriaTrk.addNullExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
-			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteriaTrk.addNullExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
+			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
 			if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 
-				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
 	        if (!returned) {
-				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
-				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.BATCHED);
+				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.BATCHED);
 
-				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.PAID);
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.PAID);
 			} else {
-				criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
+				criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
 
-				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.RETURNED);
 			}
 			switch (key) {
 				case 1: {
-					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
-					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getOperationDate());
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT), to.getAmount());
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), to.getOperationDate());
 
-					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
-					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), to.getOperationDate());
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE), to.getOperationDate());
 					break;
 				}
 				case 2: {
-					criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), to.getAmount());
-					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
-					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+					criteriaFin.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT), to.getAmount());
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), fromDate, toDate);
+					criteriaFin.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
 
-					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
-					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
-					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
+					criteriaTrk.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_AMOUNT), to.getAmount());
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+					criteriaTrk.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE));
 					break;
 				}
 				case 3: {
-					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
-					criteriaFin.addBetweenExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
-					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_AMOUNT));
-					criteriaFin.addOrder(financeBean.getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT), fromAmount, toAmount);
+					criteriaFin.addBetweenExpression(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE), fromDate, toDate);
+					criteriaFin.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_AMOUNT));
+					criteriaFin.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_DUE_DATE));
 
-					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
-					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
-					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT));
-					criteriaTrk.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE));
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
+					criteriaTrk.addBetweenExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+					criteriaTrk.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_AMOUNT));
+					criteriaTrk.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE));
 					break;
 				}
 			}
@@ -885,21 +895,21 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		for (int key=1; key<=2 && to.isPending(); key++) {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), new Boolean(to.isPayment()));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
-			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addNullExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
-			criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
+			criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addNullExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
+			criteria.addNotEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			switch (key) {
 				case 1: {
-					criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
+					criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
 					break;
 				}
 				case 2: {
-					criteria.addBetweenExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
-					criteria.addOrder(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE));
+					criteria.addBetweenExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
+					criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE));
 					break;
 				}
 			}
@@ -949,42 +959,42 @@ public class BankStatementController extends BasicController implements IFinance
 		for (int key=1; key<=3 && to.isPending(); key++) {
 	        String source = Integer.toString(StatementLinkSource.ACCOUNT.ordinal());
 	        String sourceId = bankAccount.getCode();
-	        Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
-	        Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
+	        Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
+	        Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE_ID));
 	        Expression accountExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
 	        Expression bankConceptExpr = null;
 	        for (BankConcept bankConcept : getRelatedBankConcepts(bankAccount)) {
 		        source = Integer.toString(StatementLinkSource.BANK_CONCEPT.ordinal());
 		        sourceId = Integer.toString(bankConcept.getId());
-		        expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
-		        expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
+		        expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
+		        expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE_ID));
 		        Expression andExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
 	        	bankConceptExpr = (bankConcept == null) ? andExpr : ExpressionUtilities.getOrExpression(bankConceptExpr, andExpr);
 			}
 	        Criteria criteria = new Criteria();
 	        criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
-	        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
+	        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
-	        criteria.addNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
-			criteria.addNotEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
+	        criteria.addNullExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
+			criteria.addNotEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
 			switch (key) {
 				case 1: {
-			        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), to.getAmount());
-			        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), to.getOperationDate());
+			        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT), to.getAmount());
+			        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), to.getOperationDate());
 					break;
 				}
 				case 2: {
-			        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), to.getAmount());
-			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
-					criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
+			        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT), to.getAmount());
+			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
+					criteria.addOrder(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
 					break;
 				}
 				case 3: {
-			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
-			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
-					criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
+			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
+			        criteria.addBetweenExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
+					criteria.addOrder(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
 					break;
 				}
 			}
@@ -1005,7 +1015,7 @@ public class BankStatementController extends BasicController implements IFinance
 				if (link.getSource() == StatementLinkSource.BANK_CONCEPT) {
 					IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 					criteria = new Criteria();
-					criteria.addEqualExpression(bankConceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), linkedAccount.getId());
+					criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), linkedAccount.getId());
 					for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
 						linkedBankConcept = ((BankConceptAccount)ito).getBankConcept();
 						break;
@@ -1032,36 +1042,36 @@ public class BankStatementController extends BasicController implements IFinance
 	private void findBankStatement(BankStatement to) throws ManagerBeanException {
 		for (int key=1; key<=5 && to.isPending(); key++) {
 			Criteria criteria = new Criteria();
-			criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_STATUS), StatementStatus.PENDING);
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_PAYMENT), new Boolean(to.isPayment()));
-			criteria.addOrder(getFieldName(IFinanceAlias.BANK_STATEMENT_OPERATION_DATE), false);
+			criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_STATUS), StatementStatus.PENDING);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_PAYMENT), new Boolean(to.isPayment()));
+			criteria.addOrder(getFieldName(IEntityAlias.BANK_STATEMENT_OPERATION_DATE), false);
 			switch (key) {
 				case 1: {
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
 					break;
 				}
 				case 2: {
-					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
 					break;
 				}
 				case 3: {
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
-					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
 					break;
 				}
 				case 4: {
-					criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
-					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
-					criteria.addNotEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
+					criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_AMOUNT), to.getAmount());
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), to.getDescription());
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_COMMON_CONCEPT), to.getCommonConcept());
 					break;
 				}
 				case 5: {
 					String likeStr = StringUtils.substring(to.getDescription(), 0, 15) + "%";
-					criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_DESCRIPTION), likeStr));
+					criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IEntityAlias.BANK_STATEMENT_DESCRIPTION), likeStr));
 					break;
 				}
 			}
@@ -1072,12 +1082,12 @@ public class BankStatementController extends BasicController implements IFinance
 
 				IManagerBean linkBean = BeanManager.getManagerBean(BankStatementLink.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
-				criteria.addNotEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.BANK_CONCEPT);
-				criteria.addNotEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.ACCOUNT);
+				criteria.addEqualExpression(linkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+				criteria.addNotEqualExpression(linkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.BANK_CONCEPT);
+				criteria.addNotEqualExpression(linkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.ACCOUNT);
 				if (linkBean.getCount(criteria) == 0) {
 					criteria = new Criteria();
-					criteria.addEqualExpression(linkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+					criteria.addEqualExpression(linkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
 					if (linkBean.getCount(criteria) > 0) {
 						List<ITransferObject> linkList = linkBean.getList(criteria);
 						if (key == 1 || key == 3 || key == 4 || linkList.size() == 1) {
@@ -1159,7 +1169,7 @@ public class BankStatementController extends BasicController implements IFinance
 		statementLinkList.clearCheckedStatementLinks();
 		statementLinkList.onEditSearch(null);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkList.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), to.getId());
+		criteria.addEqualExpression(statementLinkList.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), to.getId());
 		statementLinkList.setCriteria(criteria);
 		statementLinkList.onSearch(null);
 
@@ -1175,12 +1185,12 @@ public class BankStatementController extends BasicController implements IFinance
 				financeSearch.setFinanceStatuses(financeStatuses);
 			}
 	        criteria = new Criteria();
-			criteria.addEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteria.addEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteria.addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
-			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
-			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
+			criteria.addBetweenExpression(financeList.getFieldName(IEntityAlias.FINANCE_AMOUNT), fromAmount, toAmount);
+			criteria.addBetweenExpression(financeList.getFieldName(IEntityAlias.FINANCE_DUE_DATE), fromDate, toDate);
 			criteria.setOrderByList(financeList.getOrderList());
 			financeList.setCriteria(criteria);
 			financeList.onSearch(null);
@@ -1197,12 +1207,12 @@ public class BankStatementController extends BasicController implements IFinance
 				trackingSearch.setFinanceTrackingTypes(financeTrackingTypes);
 			}
 			criteria = new Criteria();
-			criteria.addEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteria.addEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteria.addEqualExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
-			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
-			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+			criteria.addBetweenExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
+			criteria.addBetweenExpression(trackingList.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
 			criteria.setOrderByList(trackingList.getOrderList());
 			trackingList.setCriteria(criteria);
 			trackingList.onSearch(null);
@@ -1212,14 +1222,14 @@ public class BankStatementController extends BasicController implements IFinance
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
 			batchList.onEditSearch(null);
 			criteria = new Criteria();
-			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(payment));
+			criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), new Boolean(payment));
 	        if (!AonUtil.getRoleManager().isConfidentiality()) {
-				criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+				criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 			}
-			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addNullExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
-			criteria.addNotEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
-			criteria.addBetweenExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
+			criteria.addEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addNullExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
+			criteria.addNotEqualExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
+			criteria.addBetweenExpression(batchList.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
 			criteria.setOrderByList(batchList.getOrderList());
 			batchList.setCriteria(criteria);
 			batchList.onSearch(null);
@@ -1229,43 +1239,43 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
         String source = Integer.toString(StatementLinkSource.ACCOUNT.ordinal());
         String sourceId = bankAccount.getCode();
-        Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
-        Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
+        Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
+        Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE_ID));
         Expression accountExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
         Expression bankConceptExpr = null;
         for (BankConcept bankConcept : getRelatedBankConcepts(bankAccount)) {
 	        source = Integer.toString(StatementLinkSource.BANK_CONCEPT.ordinal());
 	        sourceId = Integer.toString(bankConcept.getId());
-	        expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
-	        expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
+	        expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
+	        expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE_ID));
 	        Expression andExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
         	bankConceptExpr = (bankConcept == null) ? andExpr : ExpressionUtilities.getOrExpression(bankConceptExpr, andExpr);
 		}
         criteria = new Criteria();
         criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
-        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
+        criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
         if (!AonUtil.getRoleManager().isConfidentiality()) {
-			criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
-        criteria.addNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
-		criteria.addNotEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
-        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
-        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
-		criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
+        criteria.addNullExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
+		criteria.addNotEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
+        criteria.addBetweenExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
+        criteria.addBetweenExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
+		criteria.addOrder(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
 		getBankStatementLinkManager().setLinkTransferList(statementLinkBean.getList(criteria));
 		getBankStatementLinkManager().setLinkTransferModel(null);
 
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		criteria = new Criteria();
-		criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), bankAccount.getId());
-		criteria.addBetweenExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), fromDate, toDate);
+		criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), bankAccount.getId());
+		criteria.addBetweenExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE), fromDate, toDate);
 		if ((to.isPayment() && to.getAmount() < 0) || (!to.isPayment() && to.getAmount() >= 0)) {
-			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT), to.getAmount());
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DEBIT), to.getAmount());
 		} else {
-			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT), to.getAmount());
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_CREDIT), to.getAmount());
 		}
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
-			criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			criteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
 		getBankStatementLinkManager().setEntryDetailList(entryDetailBean.getList(criteria));
 		getBankStatementLinkManager().setEntryDetailModel(null);
@@ -1293,7 +1303,7 @@ public class BankStatementController extends BasicController implements IFinance
 		List<BankConcept> bankConcepts = new LinkedList<BankConcept>();
 		IManagerBean bankConceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bankConceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), account.getId());
+		criteria.addEqualExpression(bankConceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_ACCOUNT_ID), account.getId());
 		for (ITransferObject ito : bankConceptAccBean.getList(criteria)) {
 			BankConceptAccount bankConceptAccount = (BankConceptAccount)ito;
 			bankConcepts.add(bankConceptAccount.getBankConcept());
@@ -1327,8 +1337,8 @@ public class BankStatementController extends BasicController implements IFinance
 	private List<ITransferObject> getBankStatementLinkList(BankStatement statement) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
-		criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+		criteria.addOrder(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_SOURCE));
 		return statementLinkBean.getList(criteria);
 	}
 
@@ -1476,7 +1486,7 @@ public class BankStatementController extends BasicController implements IFinance
 				} else {
 					if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
 						IManagerBean conceptAccountBean = BeanManager.getManagerBean(BankConceptAccount.class);
-						String conceptAlias = conceptAccountBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
+						String conceptAlias = conceptAccountBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
 						BankConcept concept = (BankConcept)statementLink.getSourceTo();
 						Criteria criteria = new Criteria();
 						criteria.addEqualExpression(conceptAlias, concept.getId());
@@ -1507,21 +1517,21 @@ public class BankStatementController extends BasicController implements IFinance
 					for (BankStatementLink linkTransfer : transferList) {
 						IManagerBean entryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 						Criteria criteria = new Criteria();
-						String alias = entryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
+						String alias = entryStatementBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
 						criteria.addEqualExpression(alias, linkTransfer.getBankStatement().getId());
 						for (ITransferObject ito : entryStatementBean.getList(criteria)) {
 							entry = ((AccountEntryBankStatement)ito).getAccountEntry();
 
 							IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 							criteria = new Criteria();
-							alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID);
+							alias = entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID);
 							criteria.addEqualExpression(alias, entry.getId());
-							alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
+							alias = entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
 							criteria.addEqualExpression(alias, bankAccount.getId());
 							if ((statement.isPayment() && statement.getAmount() < 0) || (!statement.isPayment() && statement.getAmount() >= 0)) {
-								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
+								alias = entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
 							} else {
-								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
+								alias = entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
 							}
 							criteria.addEqualExpression(alias, statement.getAmount());
 							if (entryDetailBean.getCount(criteria) == 0) {
@@ -1610,11 +1620,11 @@ public class BankStatementController extends BasicController implements IFinance
 		if (statement.isRecorded()) {
 			IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+			criteria.addEqualExpression(statementLinkBean.getFieldName(IEntityAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
 			if (statementLinkBean.getCount(criteria) > 0) {
 				IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 				criteria = new Criteria();
-				String alias = accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
+				String alias = accEntryStatementBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
 				criteria.addEqualExpression(alias, statement.getId());
 				for (ITransferObject ito : accEntryStatementBean.getList(criteria)) {
 					AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)ito;
@@ -1622,7 +1632,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 					IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 					criteria = new Criteria();
-					alias = accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID);
+					alias = accEntryFBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID);
 					criteria.addEqualExpression(alias, accEntry.getId());
 					for (ITransferObject fto : accEntryFBatchBean.getList(criteria)) {
 						AccountEntryFinanceBatch accEntryFBatch = (AccountEntryFinanceBatch)fto;
@@ -1639,7 +1649,7 @@ public class BankStatementController extends BasicController implements IFinance
 			        IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 					IManagerBean accEntryTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 					criteria = new Criteria();
-					alias = accEntryTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID);
+					alias = accEntryTrackingBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID);
 					criteria.addEqualExpression(alias, accEntry.getId());
 					for (ITransferObject fto : accEntryTrackingBean.getList(criteria)) {
 						AccountEntryFinanceTracking accEntryTracking = (AccountEntryFinanceTracking)fto;
@@ -1673,7 +1683,7 @@ public class BankStatementController extends BasicController implements IFinance
 			BankStatement to = (BankStatement)getModel().getRowData();
 			IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), to.getId());
+			criteria.addEqualExpression(accEntryStatementBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), to.getId());
 			Iterator<ITransferObject> iterator = accEntryStatementBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)iterator.next();
@@ -1691,7 +1701,7 @@ public class BankStatementController extends BasicController implements IFinance
 	private List<ITransferObject> getAccountEntryDetails(AccountEntry accEntry) throws ManagerBeanException {
 		IManagerBean accEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accEntry.getId());
+		criteria.addEqualExpression(accEntryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accEntry.getId());
 		return accEntryDetailBean.getList(criteria);
 	}
 
@@ -1714,8 +1724,8 @@ public class BankStatementController extends BasicController implements IFinance
 	public void onLoad(ActionEvent event, BankStatement statement, String backAction, String backActionListener) throws ManagerBeanException {
 		onEditSearch(null);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), statement.getRegistryBank().getId());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_ID), statement.getId());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), statement.getRegistryBank().getId());
 		setCriteria(criteria);
 
 		setRegistryBank(statement.getRegistryBank());

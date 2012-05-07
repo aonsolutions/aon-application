@@ -33,12 +33,11 @@
 	<aon:outputLabel for="Income_workPlace_id"
 		value="#{companyBundle.company_workplace}" />
 	<aon:selectOneMenu id="Income_workPlace_id"
-		value="#{companyCollections.workPlace}"
-		valueChangeListener="#{controller.addIdEqualExpression}">
+		value="#{searchController.workPlace}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-	</aon:selectOneMenu>					
-
+	</aon:selectOneMenu>
+	
 	<c:if test="#{aonRole.confidentiality}">
 		<aon:outputLabel for="Income_securityLevel"
 			value="#{bundle.aon_confidential}" />

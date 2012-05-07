@@ -22,12 +22,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
-import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 
 public class GeozoneIrpfController {
@@ -137,13 +136,13 @@ public class GeozoneIrpfController {
 			IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpf.class);
 			Criteria criteria = new Criteria();
 			completeCriteria(criteria);
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID));
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_START_DATE));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE));
+			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE));
 			List<ITransferObject> irpfList = bean.getList(criteria);
 			for(ITransferObject to: irpfList){
 				GeozoneIrpf irpf = (GeozoneIrpf) to;
 				g = new GeozoneIrpfList();
-				g.setGeozone(irpf.getGeozone());
+				g.setGeozoneCode(irpf.getGeozoneCode());
 				g.setYear(irpf.getYear());
 				if(!list.contains(g)){
 					list.add(g);
@@ -158,9 +157,9 @@ public class GeozoneIrpfController {
 		GeozoneIrpfList irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfDescendant.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_ID), irpf.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
 		List<ITransferObject> descList = bean.getList(criteria);
 		List<GeozoneIrpfDescendantsList> list = new LinkedList<GeozoneIrpfDescendantsList>();
 		GeozoneIrpfDescendantsList gl = new GeozoneIrpfDescendantsList();
@@ -187,9 +186,9 @@ public class GeozoneIrpfController {
 		GeozoneIrpfList irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfHandicap.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_ID), irpf.getGeozone().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_ID), irpf.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
 		List<ITransferObject> handicapList = bean.getList(criteria);
 		List<GeozoneIrpfHandicapList> list = new LinkedList<GeozoneIrpfHandicapList>();
 		GeozoneIrpfHandicapList gl = new GeozoneIrpfHandicapList();
@@ -223,18 +222,18 @@ public class GeozoneIrpfController {
 			endCal.set(Calendar.YEAR, getYear());
 			endCal.set(Calendar.MONTH, Calendar.DECEMBER);
 			endCal.set(Calendar.DAY_OF_MONTH, 31);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
 		}
 		if(getAdministration()!=null){
 			if(getAdministration()== Administration.ALAVA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), ARABA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), ARABA_ID);
 			} else if(getAdministration()== Administration.BIZKAIA){				
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), BIZKAIA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), BIZKAIA_ID);
 			} else if(getAdministration()== Administration.GIPUZKOA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), GIPUZKOA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), GIPUZKOA_ID);
 			} else if(getAdministration()== Administration.NAVARRA){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_GEOZONE_ID), NAFARROA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), NAFARROA_ID);
 			}
 		}
 	}
@@ -243,7 +242,7 @@ public class GeozoneIrpfController {
 
 	public class GeozoneIrpfList{
 		private Integer id;
-		private GeoZone geozone;
+		private String geozoneCode;
 		private Integer year;
 		public Integer getId() {
 			return id;
@@ -251,11 +250,11 @@ public class GeozoneIrpfController {
 		public void setId(Integer id) {
 			this.id = id;
 		}
-		public GeoZone getGeozone() {
-			return geozone;
+		public String getGeozoneCode() {
+			return geozoneCode;
 		}
-		public void setGeozone(GeoZone geozone) {
-			this.geozone = geozone;
+		public void setGeozoneCode(String geozoneCode) {
+			this.geozoneCode = geozoneCode;
 		}
 		public Integer getYear() {
 			return year;
@@ -270,7 +269,7 @@ public class GeozoneIrpfController {
 			final GeozoneIrpfList o =  (GeozoneIrpfList) obj;
 			if (o.getId() == null && getId() == null) {
 				return new EqualsBuilder()
-					.append(this.geozone, o.geozone)			
+					.append(this.geozoneCode, o.geozoneCode)			
 					.append(this.year, o.year)			
 					.isEquals();
 			}

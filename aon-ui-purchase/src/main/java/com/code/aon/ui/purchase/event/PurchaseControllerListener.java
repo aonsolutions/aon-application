@@ -22,7 +22,6 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		((Purchase)controller.getTo()).setStatus(PurchaseStatus.PENDING);
 		((Purchase)controller.getTo()).setDocumentType(PurchaseDocumentType.NORMAL);
 		controller.setAddresses(null);
-		controller.setProjects(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetPurchasePayMethod();
 	}
@@ -32,7 +31,6 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		PurchaseController controller = (PurchaseController)event.getController();
 		try {
 			controller.loadAddresses(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
-			controller.loadProjects(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
@@ -52,6 +50,20 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		if (purchase.getProject() != null && purchase.getProject().getId() != null) {
 			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 			purchaseDetailController.onSearch(null);
+		}
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		PurchaseController purchaseController = (PurchaseController)this.getController();
+		Purchase purchase = (Purchase)purchaseController.getTo();
+		if (purchase.getProject() == null || purchase.getProject().getId() == null) {
+			try {
+				purchaseController.removePurchaseDetailProject();
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage());
+			}
 		}
 	}
 	

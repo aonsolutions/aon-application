@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.code.aon.account.bridge.PayMethodTypeDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,10 +15,10 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -57,11 +56,11 @@ public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoL
 			}
 			IManagerBean bean = BeanManager.getManagerBean(PayMethodTypeDetailAccount.class);
 			Integer id = payMethodTypeDetailAccount.getPayMethodTypeDetail().getId();
-			String alias = bean.getFieldName( IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID );
+			String alias = bean.getFieldName( IEntityAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_PAY_METHOD_TYPE_DETAIL_ID );
 			Criteria c = new Criteria();
 			c.addEqualExpression(alias, id);
 			if ( payMethodTypeDetailAccount.getId() != null ) {
-				String idAlias = bean.getFieldName( IAccountBridgeAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_ID);
+				String idAlias = bean.getFieldName( IEntityAlias.PAY_METHOD_TYPE_DETAIL_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, payMethodTypeDetailAccount.getId());
 				c.addExpression( exp );	
 			}
@@ -89,7 +88,7 @@ public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoL
 			PayMethodTypeDetailAccount pmtda = (PayMethodTypeDetailAccount) evt.getTo();
 			IManagerBean ftBean = BeanManager.getManagerBean(FinanceTracking.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(ftBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID), pmtda.getPayMethodTypeDetail().getId() );
+			c.addEqualExpression(ftBean.getFieldName(IEntityAlias.FINANCE_TRACKING_PAY_METHOD_TYPE_DETAIL_ID), pmtda.getPayMethodTypeDetail().getId() );
 			int size = ftBean.getCount(c);
 			if (size > 0) {
 				throw new ManagerBeanVetoListenerException("Existen movimientos de vencimientos que apuntan a esta cuenta");

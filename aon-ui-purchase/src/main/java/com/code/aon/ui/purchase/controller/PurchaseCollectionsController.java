@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 
@@ -20,6 +21,7 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
 public class PurchaseCollectionsController {
 	List<SelectItem> purchaseStatuses;
 	List<SelectItem> documentTypes;
+	List<SelectItem> proposalStatuses;
 
 	public List<SelectItem> getPurchaseStatuses() {
 		if (purchaseStatuses == null) {
@@ -45,6 +47,19 @@ public class PurchaseCollectionsController {
 			}
 		}
 		return documentTypes;
+	}
+	
+	public List<SelectItem> getProposalStatuses() {
+		if (proposalStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			proposalStatuses = new LinkedList<SelectItem>();
+			for (ProposalStatus status : ProposalStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				proposalStatuses.add(item);
+			}
+		}
+		return proposalStatuses;
 	}
 
 }

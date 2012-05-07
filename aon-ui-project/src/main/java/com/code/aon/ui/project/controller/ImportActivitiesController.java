@@ -19,11 +19,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Project;
 import com.code.aon.project.ProjectActivity;
 import com.code.aon.project.ProjectType;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ImportActivitiesController {
 
@@ -98,15 +98,15 @@ public class ImportActivitiesController {
 		List<SelectItem> projects = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
-		String identifier = bean.getFieldName(IProjectAlias.PROJECT_ID);
+		String identifier = bean.getFieldName(IEntityAlias.PROJECT_ID);
 		criteria.addNotEqualExpression(identifier, getProject().getId());
 		ProjectType projectType = getProject().getProjectType();
 		if (projectType == null || projectType.getId() == null) {
-			criteria.addNullExpression( bean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID));	
+			criteria.addNullExpression( bean.getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID));	
 		} else {
-			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID),projectType.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_PROJECT_TYPE_ID),projectType.getId());
 		}
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_NAME));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			Project project = (Project) to;
@@ -134,7 +134,7 @@ public class ImportActivitiesController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ProjectActivity.class);
 			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_PROJECT_ID);
+			String alias = bean.getFieldName(IEntityAlias.PROJECT_ACTIVITY_PROJECT_ID);
 			criteria.addEqualExpression(alias, getProjectId());
 			List<ITransferObject> beanList = bean.getList(criteria);
 			for (ITransferObject to:beanList) {

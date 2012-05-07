@@ -8,9 +8,9 @@ import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SalesSearchListener extends RegistrySearchListener {
 
@@ -63,10 +63,10 @@ public class SalesSearchListener extends RegistrySearchListener {
 	protected void completeCriteria(Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
 		if (getCustomer() != null && getCustomer().getId() != null) {
-			criteria.addEqualExpression(getFieldName(ISalesAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.SALES_CUSTOMER_ID), getCustomer().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getSalesStatuses())) {
-			String status = getController().resolveAlias(ISalesAlias.SALES_STATUS);
+			String status = getController().resolveAlias(IEntityAlias.SALES_STATUS);
 			addEnumToCriteria(criteria, status, getSalesStatuses());
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {

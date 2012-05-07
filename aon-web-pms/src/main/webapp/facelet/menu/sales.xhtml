@@ -44,6 +44,11 @@
 											action="bank-sales"
 											value="#{configBundle.config_bank_module}" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-sales" 
+											action="tariff_list-sales" actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>									
 								</c:if>																											
 							</aon:div>
 						</aon:panelGrid>
@@ -56,6 +61,12 @@
 									<aon:outputText value="#{appBundle.menu_sales}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="advanceInvoice" 
+											action="advanceInvoice_search" actionListener="#{advanceInvoice.onEditSearch}"
+											value="#{pmsBundle.pms_advance_invoice_module}">
+										</aon:commandLink>
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceManagement"
 											action="saleInvoice_search"

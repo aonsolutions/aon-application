@@ -18,7 +18,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -28,6 +27,7 @@ import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class StatEngineController {
 
@@ -728,12 +728,12 @@ public class StatEngineController {
 					.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), customer);
+					.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
 			criteria.addBetweenExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), parameters
+					.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), parameters
 					.getFromDate(), parameters.getToDate());
 			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+					.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
@@ -761,11 +761,11 @@ public class StatEngineController {
 					.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), customer);
+					.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
 			criteria.addBetweenExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+					.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
 			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+					.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
@@ -791,9 +791,9 @@ public class StatEngineController {
 			
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), customer);
-			criteria.addBetweenExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 			
 			if(checkLevel==0){
 				criteria.addEqualExpression("Invoice.lines.item.product.category.id",this.params.getCategory());
@@ -828,8 +828,8 @@ public class StatEngineController {
 			
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), iType);
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 			criteria.addEqualExpression("Invoice.lines.item.product.id",this.getProduct());
 			
 			setInvoiceBackAction("abc_product_stats");
@@ -1265,7 +1265,7 @@ public class StatEngineController {
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());
 		FormUtil.getController("invoicePrint").setCriteria(criteria);
 }
 

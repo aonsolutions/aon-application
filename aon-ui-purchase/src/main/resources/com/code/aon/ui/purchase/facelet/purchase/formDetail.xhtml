@@ -246,10 +246,49 @@
 					reRender="showProjectWindow">
 					<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 					<f:setPropertyActionListener target="#{purchase.showProjectWindow}"
-						value="#{purchase.pending and purchase.projectCount > 0}" />								
+						value="#{purchase.pending}" />								
 					<f:setPropertyActionListener target="#{purchase.showDetailProjectWindow}"
-						value="#{purchase.pending and purchase.projectCount > 0}" />								
+						value="#{purchase.pending}" />								
 				</aon:commandButton>
+				<aon:commandLink id="purchaseDetailProposalLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 20px;" 
+					value="&#160;"  
+					rendered="#{to.proposalDetail!=null and to.proposalDetail.id!=null}" 
+					actionListener="#{controller.onLoadProposal}"
+					action="proposal_form"
+					reRender="aonContent">
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-120, aon-noborder aon-bold aon-text-left">
+							<f:facet name="header">
+								<aon:outputText value="#{purchaseBundle.purchase_purchaseProposal}" />
+							</f:facet>
+							
+							<aon:outputText value="#{purchaseBundle.purchase_issueDate}" />
+							<aon:div>
+								<aon:outputText value="#{to.proposalDetail.proposal.issueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+								<aon:div styleClass="aon-margin-left" style="display:inline;" >
+									<aon:outputText value="(" />
+									<aon:outputText value="#{to.proposalDetail.proposal.status}" />
+									<aon:outputText value=")" />
+								</aon:div>
+							</aon:div>
+		
+							<aon:outputText value="#{companyBundle.company_workplace}" />
+							<aon:outputText	value="#{to.proposalDetail.proposal.workPlace.description}"  />
+							
+							<aon:outputText value="#{companyBundle.company_department}" />
+							<aon:outputText	value="#{to.proposalDetail.proposal.department.name}" />
+						
+							<aon:outputText value="#{bundle.aon_comment}" />
+							<aon:outputText value="#{to.proposalDetail.proposal.remarks}"  />
+							
+						</aon:panelGrid>
+					</rich:toolTip>
+				</aon:commandLink>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>

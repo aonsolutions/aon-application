@@ -1,210 +1,21 @@
 package com.code.aon.fiscal;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.fiscal.enumeration.TaxColumn;
-import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.vat.tax.VatTaxAmount;
+import com.esferalia.aon.entity.master.VatTaxDetailDB;
 
 @Entity
-@Table(name = "fs_vat_detail")
-public class VatTaxDetail implements ITransferObject {
+@Table(name="fs_vat_detail")
+public class VatTaxDetail extends VatTaxDetailDB {
 
-	private static final long serialVersionUID = -4734071580890529329L;
+	private static final long serialVersionUID = 1L;
 
-    private Integer id;
-    private VatTax vatTax;
-    private VatTaxKey key;
-    private double percent;
-    private double taxableBase;
-    private double quota;
-    private double deductibleQuota;
-    private double taxableBaseAdjust;
-    private double quotaAdjust;
-    private double deductibleQuotaAdjust;
-    private double taxableBaseAccumulated;
-    private double quotaAccumulated;
-    private double deductibleQuotaAccumulated;
-    private double taxableBaseDeclared;
-    private double quotaDeclared;
-    private double deductibleQuotaDeclared;
-    private double taxableBaseResult;
-    private double quotaResult;
-    private double deductibleQuotaResult;
     private boolean descriptionDisabled;
-
-    @Id
-    @GeneratedValue
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="fs_vat", nullable = false)
-    public VatTax getVatTax() {
-        return vatTax;
-    }
-    public void setVatTax(VatTax vatTax) {
-        this.vatTax = vatTax;
-    }
-
-    @Column(name="vat_key",nullable=false)
-   	@Type(type = "stringEnum", parameters = { @Parameter(name = "enumClassname", value = "com.code.aon.fiscal.enumeration.VatTaxKey") })
-    public VatTaxKey getKey() {
-        return key;
-    }
-    public void setKey(VatTaxKey key) {
-        this.key = key;
-    }
-
-    @Column(nullable=true)
-    public double getPercent() {
-        return percent;
-    }
-    public void setPercent(double percent) {
-        this.percent = percent;
-    }
-
-    @Column(name="taxable_base", precision=15, scale=3)
-	public double getTaxableBase() {
-		return taxableBase;
-	}
-	public void setTaxableBase(double taxableBase) {
-		this.taxableBase = taxableBase;
-	}
-	
-    @Column(name="quota", precision=15, scale=3)
-	public double getQuota() {
-		return quota;
-	}
-	public void setQuota(double quota) {
-		this.quota = quota;
-	}
-
-    @Column(name="deductible_quota", precision=15, scale=3)
-	public double getDeductibleQuota() {
-		return deductibleQuota;
-	}
-	public void setDeductibleQuota(double deductibleQuota) {
-		this.deductibleQuota= deductibleQuota;
-	}
-
-    @Column(name="adj_taxable_base", precision=15, scale=3)
-	public double getTaxableBaseAdjust() {
-		return taxableBaseAdjust;
-	}
-	public void setTaxableBaseAdjust(double taxableBaseAdjust) {
-		this.taxableBaseAdjust = taxableBaseAdjust;
-	}
-	
-    @Column(name="adj_quota", precision=15, scale=3)
-	public double getQuotaAdjust() {
-		return quotaAdjust;
-	}
-	public void setQuotaAdjust(double quotaAdjust) {
-		this.quotaAdjust = quotaAdjust;
-	}
-
-    @Column(name="adj_deductible_quota", precision=15, scale=3)
-	public double getDeductibleQuotaAdjust() {
-		return deductibleQuotaAdjust;
-	}
-	public void setDeductibleQuotaAdjust(double deductibleQuotaAdjust) {
-		this.deductibleQuotaAdjust= deductibleQuotaAdjust;
-	}
-
-    @Column(name="acu_taxable_base", precision=15, scale=3)
-	public double getTaxableBaseAccumulated() {
-		return taxableBaseAccumulated;
-	}
-	public void setTaxableBaseAccumulated(double taxableBaseAccumulated) {
-		this.taxableBaseAccumulated= taxableBaseAccumulated;
-	}
-	
-    @Column(name="acu_quota", precision=15, scale=3)
-	public double getQuotaAccumulated() {
-		return quotaAccumulated;
-	}
-	public void setQuotaAccumulated(double quotaAccumulated) {
-		this.quotaAccumulated = quotaAccumulated;
-	}
-
-    @Column(name="acu_deductible_quota", precision=15, scale=3)
-	public double getDeductibleQuotaAccumulated() {
-		return deductibleQuotaAccumulated;
-	}
-	public void setDeductibleQuotaAccumulated(double deductibleQuotaAccumulated) {
-		this.deductibleQuotaAccumulated= deductibleQuotaAccumulated;
-	}
-	
-	
-    @Column(name="dec_taxable_base", precision=15, scale=3)
-	public double getTaxableBaseDeclared() {
-		return taxableBaseDeclared;
-	}
-	public void setTaxableBaseDeclared(double taxableBaseDeclared) {
-		this.taxableBaseDeclared= taxableBaseDeclared;
-	}
-	
-    @Column(name="dec_quota", precision=15, scale=3)
-	public double getQuotaDeclared() {
-		return quotaDeclared;
-	}
-	public void setQuotaDeclared(double quotaDeclared) {
-		this.quotaDeclared = quotaDeclared;
-	}
-
-    @Column(name="dec_deductible_quota", precision=15, scale=3)
-	public double getDeductibleQuotaDeclared() {
-		return deductibleQuotaDeclared;
-	}
-	public void setDeductibleQuotaDeclared(double deductibleQuotaDeclared) {
-		this.deductibleQuotaDeclared = deductibleQuotaDeclared;
-	}
-	
-    @Column(name="res_taxable_base", precision=15, scale=3)
-	public double getTaxableBaseResult() {
-		return taxableBaseResult;
-	}
-	public void setTaxableBaseResult(double taxableBaseResult) {
-		this.taxableBaseResult = taxableBaseResult;
-	}
-	
-    @Column(name="res_quota", precision=15, scale=3)
-	public double getQuotaResult() {
-		return quotaResult;
-	}
-	public void setQuotaResult(double quotaResult) {
-		this.quotaResult= quotaResult;
-	}
-
-    @Column(name="res_deductible_quota", precision=15, scale=3)
-	public double getDeductibleQuotaResult() {
-		return deductibleQuotaResult;
-	}
-	public void setDeductibleQuotaResult(double deductibleQuotaResult) {
-		this.deductibleQuotaResult= deductibleQuotaResult;
-	}
 
 	@Transient
 	public boolean isDescriptionDisabled() {
@@ -275,68 +86,7 @@ public class VatTaxDetail implements ITransferObject {
 		setQuotaResult(CommonUtil.round(getQuotaAccumulated() - getQuotaDeclared()));
 		setQuota(CommonUtil.round(getQuotaResult() + getQuotaAdjust()));
 	}
-	
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final VatTaxDetail o = (VatTaxDetail) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.vatTax, o.vatTax)			
-				.append(this.key, o.key)
-				.append(this.percent, o.percent)				
-				.append(this.taxableBase, o.taxableBase)			
-				.append(this.quota, o.quota)
-				.append(this.deductibleQuota, o.deductibleQuota)
-				.append(this.taxableBaseAdjust, o.taxableBaseAdjust)
-				.append(this.quotaAdjust, o.quotaAdjust)
-				.append(this.deductibleQuotaAdjust, o.deductibleQuotaAdjust)
-				.append(this.taxableBaseAccumulated,o.taxableBaseAccumulated)
-				.append(this.quotaAccumulated, o.quotaAccumulated)
-				.append(this.deductibleQuotaAccumulated, o.deductibleQuotaAccumulated)
-				.append(this.taxableBaseDeclared, o.taxableBaseDeclared)
-				.append(this.quotaDeclared, o.quotaDeclared)
-				.append(this.deductibleQuotaDeclared, o.deductibleQuotaDeclared)
-				.append(this.taxableBaseResult, o.taxableBaseResult)
-				.append(this.quotaResult, o.quotaResult)
-				.append(this.deductibleQuotaResult, o.deductibleQuotaResult)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)		
-			.append(this.vatTax)			
-			.append(this.key)
-			.append(this.percent)				
-			.append(this.taxableBase)			
-			.append(this.quota)
-			.append(this.deductibleQuota)
-			.append(this.taxableBaseAdjust)
-			.append(this.quotaAdjust)
-			.append(this.deductibleQuotaAdjust)
-			.append(this.taxableBaseAccumulated)
-			.append(this.quotaAccumulated)
-			.append(this.deductibleQuotaAccumulated)
-			.append(this.taxableBaseDeclared)
-			.append(this.quotaDeclared)
-			.append(this.deductibleQuotaDeclared)
-			.append(this.taxableBaseResult)
-			.append(this.quotaResult)
-			.append(this.deductibleQuotaResult)
-			.toHashCode();
-	}	
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
 	public void add(TaxColumn column, VatTaxAmount amount) {
 		if (column == TaxColumn.ACUMULADO) {
 			setTaxableBaseAccumulated(CommonUtil.round(amount.getTaxableBase() + getTaxableBaseAccumulated()));

@@ -3,13 +3,13 @@ package com.code.aon.ui.accounting.controller.amortization;
 import java.util.List;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationTypeImporterManager {
 	
@@ -47,7 +47,7 @@ public class AmortizationTypeImporterManager {
 		}
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IAccountAlias.ACCOUNT_CODE), account.getCode());
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), account.getCode());
 		List<ITransferObject> list = bean.getList(c);
 		if (list == null || list.isEmpty()) {
 			throw new ManagerBeanException("No existe la cuenta contable " + account.getCode());

@@ -1,20 +1,27 @@
 package com.code.aon.ui.purchase.controller;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -22,22 +29,20 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.purchase.util.IEmailControllerListener;
+import com.code.aon.purchase.util.IEmailable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -46,6 +51,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
+import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -54,12 +60,13 @@ import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class PurchaseController extends BasicController implements IPurchaseConstants {
+public class PurchaseController extends BasicController implements IPurchaseConstants, IEmailable {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseController.class.getName());
 
 	private List<SelectItem> addresses;
-	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
@@ -75,6 +82,32 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private Date invoiceDate;
 	private PurchaseEmailUtil emailUtil;
 	
+	private List<String> moreRecipients;
+	
+	private List<IEmailControllerListener> emailControllerListenerClasses;
+
+	
+	public List<IEmailControllerListener> getEmailControllerListenerClasses() {
+		return emailControllerListenerClasses;
+	}
+
+	public void setEmailControllerListenerClasses(
+			List<IEmailControllerListener> emailControllerListenerClasses) {
+		this.emailControllerListenerClasses = emailControllerListenerClasses;
+	}
+
+	@Override
+	public List<String> getMoreRecipients() {
+		if(moreRecipients==null){
+			moreRecipients = new ArrayList<String>();
+		}
+		return moreRecipients;
+	}
+
+	public void setMoreRecipients(List<String> moreRecipients) {
+		this.moreRecipients = moreRecipients;
+	}
+	
     public PurchaseController() {
     	this.emailUtil = new PurchaseEmailUtil();
     }
@@ -85,14 +118,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
-	}
-	
-    public List<SelectItem> getProjects() {
-		return projects;
-	}
-	
-	public void setProjects(List<SelectItem> projects) {
-		this.projects = projects;
 	}
 	
 	public Boolean getDefaultPayMethod() {
@@ -208,7 +233,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private boolean isInIncome(Purchase purchase) throws ManagerBeanException {
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
 		return incomeDetailBean.getCount(criteria) > 0;
 	}
 
@@ -242,15 +267,15 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		if (purchase != null && purchase.getId() != null) {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
 			Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				PurchaseDetail purchaseDetail = (PurchaseDetail)iterator.next();
 
 				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.PURCHASE);
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), purchaseDetail.getId());
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.PURCHASE);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), purchaseDetail.getId());
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
@@ -273,11 +298,9 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			((Purchase)this.getTo()).setSupplier(supplier);
 			((Purchase)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
-			loadProjects(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
-			setProjects(null);
 		}
 	}
 
@@ -290,7 +313,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		if (id != null) {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				RegistryAddress address = (RegistryAddress)iter.next();
@@ -311,52 +334,34 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return 0;
 	}
 	
-	public void loadProjects(Integer id) throws ManagerBeanException {
-		this.projects = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
-			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
-			Iterator<?> iterator = projectBean.getList(criteria).iterator();
-			while(iterator.hasNext()) {
-				Project project = (Project)iterator.next();
-				SelectItem item = new SelectItem(project, project.getName());
-				projects.add(item);
-			}
-		}
-	}
-
-	public int getProjectCount() {
-		if (projects != null) {
-			return projects.size();
-		}
-		return 0;
-	}
-	
 	public void removePurchaseProject(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		Project project = to.getProject();
 		to.setProject(null);
 		getManagerBean().restoreNullSubPOJOs(to);
 		getManagerBean().update(to);
 		getManagerBean().initializePOJO(to);
 
-		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), to.getId());
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
-		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
-			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
-			purchaseDetail.setProject(null);
-			purchaseDetailBean.update(purchaseDetail);
+		removePurchaseDetailProject(); 
+	}
+	
+	public void removePurchaseDetailProject() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getManagerBean().get(((Purchase)this.getTo()).getId());
+		Project project = purchase.getProject();
+		if(project!=null && project.getId()!=null ){
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
+			for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+				purchaseDetail.setProject(null);
+				purchaseDetailBean.update(purchaseDetail);
+			}
 		}
-
 		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
 		purchaseDetailController.onSearch(null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Purchase)this.getTo()).getPayMethod() != null && ((Purchase)this.getTo()).getPayMethod().getId() != null) {
@@ -367,8 +372,8 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 				} else {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
-					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
+					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}
@@ -435,7 +440,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		if (workPlace != null) {
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			criteria.addEqualExpression(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
 			Iterator<?> iterator = warehouseBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (Warehouse)iterator.next();
@@ -451,7 +456,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onEditSearch(event);
-		incomeController.getCriteria().addEqualExpression(incomeController.getFieldName(IWarehouseAlias.INCOME_ID), income.getId());
+		incomeController.getCriteria().addEqualExpression(incomeController.getFieldName(IEntityAlias.INCOME_ID), income.getId());
 		incomeController.onSearch(event);
 		incomeController.getModel().setRowIndex(0);
 		incomeController.onSelect(event);
@@ -469,23 +474,51 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
-		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
 	}
+	
+	public String getDescription(ITransferObject parent) {
+		Purchase purchase = (Purchase) parent;
+		return "purchase_" + purchase.getReferenceCode().replace("/", "-");
+	}
+	
+	public PurchaseEmailUtil getEmailController() {
+		return emailUtil;
+	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
+		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean("purchaseReport");
+		purchaseReportManager.setValued(true);
 		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 		if (webmailController.isLogged()) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
-			emailUtil.initMessageController(messageController, (Purchase) getTo());
+			fireBeforeEmailSend(event, getTo());
+			emailUtil.initMessageController(messageController, (Purchase) getTo(), getMoreRecipients());
 			messageController.setShowNewMessageWindow(true);
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
 		}
 	}		
+	
+	@SuppressWarnings("unchecked")
+	public byte[] getPurchaseData(Purchase purchase) throws ManagerBeanException {
+		ITransferObject to = purchase;
+		try {
+			ReportManager reportManager = new ReportManager();
+			reportManager.setCollectionProvider( new SingleCollectionProvider(to) );
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			reportManager.execute( out, "purchaseForm");
+			return out.toByteArray();
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onReport " + e.getMessage());
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
 	
 	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
 		Invoice invoice = getInvoice();
@@ -494,5 +527,17 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
 		}
 	}
+	
+
+	/*
+	 * 
+	 * EMAIL EVENTS LISTENERS
+	 * 
+	 */
+	protected void fireBeforeEmailSend(ActionEvent event, ITransferObject to) throws ManagerBeanException {
+		for(IEmailControllerListener l: getEmailControllerListenerClasses()){
+			l.beforeEmailSend(to);
+		}
+	}	
 
 }

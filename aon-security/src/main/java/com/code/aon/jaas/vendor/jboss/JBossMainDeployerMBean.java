@@ -67,8 +67,17 @@ public interface JBossMainDeployerMBean extends org.jboss.system.ServiceMBean {
   /**
    * Gets the Data Source connection properties.
    *
-   * @param principal the principal
+   * @param domainName
+   * @param application 
    * @return the DSMD properties
    */
   Properties getConnectionProperties(String domainName, String application);
+
+  /**
+   * Gets the Data Source connection properties.
+   *
+   * @return the DSMD properties
+   */
+  Properties getConnectionProperties();
+
 }

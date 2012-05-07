@@ -17,8 +17,8 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeInvoicingManager {
 
@@ -87,8 +87,8 @@ public class IncomeInvoicingManager {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-		criteria.addOrder(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_LINE));
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		criteria.addOrder(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();

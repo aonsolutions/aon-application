@@ -9,8 +9,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.product.ItemComposition;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ItemCompositionBeanListener extends ManagerBeanListenerAdapter {
 
@@ -21,10 +21,10 @@ public class ItemCompositionBeanListener extends ManagerBeanListenerAdapter {
 		ItemComposition cmpItem = (ItemComposition)event.getTo();
 		IManagerBean cmpItemBean = BeanManager.getManagerBean(ItemComposition.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
-		criteria.addNotEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
-		criteria.addGreaterThanOrEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
-		criteria.addOrder(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE));
+		criteria.addEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
+		criteria.addNotEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
+		criteria.addGreaterThanOrEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
+		criteria.addOrder(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE));
 		List<ITransferObject> list = cmpItemBean.getList(criteria);
 		int index = cmpItem.getSequence();
 		for (ITransferObject to : list) {
@@ -45,14 +45,14 @@ public class ItemCompositionBeanListener extends ManagerBeanListenerAdapter {
 			ItemComposition cmpItem = (ItemComposition)event.getTo();
 			IManagerBean cmpItemBean = BeanManager.getManagerBean(ItemComposition.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
-			criteria.addNotEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
-			criteria.addEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
+			criteria.addEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
+			criteria.addNotEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
+			criteria.addEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
 			if (cmpItemBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
-				criteria.addNotEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
-				criteria.addOrder(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE));
+				criteria.addEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
+				criteria.addNotEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
+				criteria.addOrder(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE));
 				List<ITransferObject> list = cmpItemBean.getList(criteria);
 				int index = 1;
 				for (ITransferObject to : list) {
@@ -75,10 +75,10 @@ public class ItemCompositionBeanListener extends ManagerBeanListenerAdapter {
 		ItemComposition cmpItem = (ItemComposition)evt.getTo();
 		IManagerBean cmpItemBean = BeanManager.getManagerBean(ItemComposition.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
-		criteria.addNotEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
-		criteria.addGreaterThanOrEqualExpression(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
-		criteria.addOrder(cmpItemBean.getFieldName(IProductAlias.ITEM_COMPOSITION_SEQUENCE));
+		criteria.addEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ITEM_ID), cmpItem.getItem().getId());
+		criteria.addNotEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_ID), cmpItem.getId());
+		criteria.addGreaterThanOrEqualExpression(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE), cmpItem.getSequence());
+		criteria.addOrder(cmpItemBean.getFieldName(IEntityAlias.ITEM_COMPOSITION_SEQUENCE));
 		List<ITransferObject> list = cmpItemBean.getList(criteria);
 		int index = cmpItem.getSequence() + 1;
 		for (ITransferObject to : list) {

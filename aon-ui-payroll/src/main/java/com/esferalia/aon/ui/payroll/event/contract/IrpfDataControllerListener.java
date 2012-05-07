@@ -20,7 +20,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.IrpfData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
@@ -69,8 +69,8 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 			if(getController().getRowCount()>1){
 				IrpfData data = (IrpfData) getController().getTo();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(getController().getFieldName(IPayrollAlias.IRPF_DATA_CONTRACT_ID), data.getContract().getId());
-				criteria.addOrder(getController().getFieldName(IPayrollAlias.IRPF_DATA_START_DATE), false);
+				criteria.addEqualExpression(getController().getFieldName(IEntityAlias.IRPF_DATA_CONTRACT_ID), data.getContract().getId());
+				criteria.addOrder(getController().getFieldName(IEntityAlias.IRPF_DATA_START_DATE), false);
 				List<ITransferObject>  list = getController().getManagerBean().getList(criteria);
 				IrpfData preData = (IrpfData) list.get(1);
 				Calendar cal = Calendar.getInstance();
@@ -109,14 +109,14 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 				regController.initializeModel();
 				regController.getCriteria().addGreaterThanOrEqualExpression(
 						regController.getFieldName(
-								IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+								IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
 				if(data.getEndDate()!=null){
 					regController.getCriteria().addLessThanOrEqualExpression(
 							regController.getFieldName(
-									IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+									IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
 				}
 				regController.getCriteria().addOrder(regController.getFieldName(
-						IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE));
+						IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE));
 				regController.onSearch(null);
 				if(regController.getRowCount()>0){
 					regController.getModel().setRowIndex(0);

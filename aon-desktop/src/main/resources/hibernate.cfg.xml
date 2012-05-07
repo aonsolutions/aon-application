@@ -50,17 +50,22 @@
 
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 		
 		<!-- Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CNAE2009"/>
 		<mapping class="com.code.aon.config.CNAE2009Rate"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
@@ -100,6 +105,9 @@
 		<!-- AON-MESSAGING Mapping files -->
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>		
+		
+		<!-- AON-PRODUCT Mapping files -->  
+		<mapping class="com.code.aon.product.Catalogue"/>
 		
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>

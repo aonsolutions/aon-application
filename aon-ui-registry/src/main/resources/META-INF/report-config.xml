@@ -136,4 +136,46 @@
 		</params>
 	</report>
 	
+	<!-- *********  FAX  ********* -->
+	<report id="corporateIdentity_fax" description="Fax report">
+		<template path="/com/code/aon/ui/registry/report/corporateIdentity_fax.jasper" />
+		<collection provider="#{corporateIdentity}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+	<!-- *********  LETTER  ********* -->
+	<report id="corporateIdentity_letter" description="Letter report">
+		<template path="/com/code/aon/ui/registry/report/corporateIdentity_letter.jasper" />
+		<collection provider="#{corporateIdentity}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
+			<param id="company" value="#{corporateIdentity.getCompany}" />
+			<param id="recordData" value="#{corporateIdentity.getRecordData}" />
+		</params>
+	</report>
+	
+	<!--  *********  LABEL  ********* -->
+	<report id="corporateIdentity_label" description="Label report">
+		<template path="/com/code/aon/ui/registry/report/corporateIdentity_label.jasper" />
+		<collection provider="#{corporateIdentity}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
+	<!--  *********  RECIBI  ********* -->
+	<report id="corporateIdentity_receipt" description="Recibi report">
+		<template path="/com/code/aon/ui/registry/report/corporateIdentity_receipt.jasper" />
+		<collection provider="#{corporateIdentity}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
+			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
 </report-config>

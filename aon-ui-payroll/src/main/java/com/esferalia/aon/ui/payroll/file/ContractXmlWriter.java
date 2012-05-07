@@ -21,7 +21,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -1770,8 +1770,8 @@ public class ContractXmlWriter {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), getContract().getId());
-				criteria.addNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), getContract().getId());
+				criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 				for(ITransferObject to: bean.getList(criteria)){
 					ContractData data = (ContractData) to;
 					contractDataMap.put(data.getName(), data.getExpression().replace('"', ' ').trim());
@@ -1786,8 +1786,8 @@ public class ContractXmlWriter {
 	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return ((EnterpriseCCC)list.get(0)).getCcc();

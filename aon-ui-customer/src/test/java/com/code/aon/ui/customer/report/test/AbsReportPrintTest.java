@@ -5,7 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.collections.map.HashedMap;
 
 import junit.framework.TestCase;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -28,14 +31,16 @@ import com.code.aon.report.jr.exporter.JRExporterFactoryManager;
 public abstract class AbsReportPrintTest extends TestCase {
 
 	private JRDataSource dataSource;
-	private Map<Object, Object> parameters;
+	private Map<String, Object> params1;
+	private Map<JRExporterParameter, Object> params2;
 
-	protected abstract Map<Object, Object> getParameters();
+	protected abstract Map<String, Object> getParameters();
 	protected abstract Collection<?> getData();
 	protected abstract InputStream getReportTemplate();
 	
 	public void setUp() throws Exception {
-		parameters = getParameters();
+		params1 = getParameters();
+		params2 = new HashMap<JRExporterParameter, Object>();
 		dataSource = new JRBeanCollectionDataSource(getData());
 	}
 	
@@ -65,17 +70,17 @@ public abstract class AbsReportPrintTest extends TestCase {
 
 			File outFile = File.createTempFile("aon-report-test", ".pdf");
 			
-			parameters.put(JRExporterParameter.OUTPUT_STREAM, new FileOutputStream(outFile));
+			params2.put(JRExporterParameter.OUTPUT_STREAM, new FileOutputStream(outFile));
 			
 			IJRExporterFactory factory = JRExporterFactoryManager.getJRExporterFactory(getOutputFormat());
-			factory.fillJRParametersMap(parameters);
+			factory.fillJRParametersMap(params1,params2);
 			
 			JasperReport jr = getJasperReport();
-			JasperPrint print = JasperFillManager.fillReport(jr, parameters, dataSource);
-			parameters.put(JRExporterParameter.JASPER_PRINT, print);
+			JasperPrint print = JasperFillManager.fillReport(jr, params1, dataSource);
+			params2.put(JRExporterParameter.JASPER_PRINT, print);
 
 			JRExporter exporter = factory.getJRExporter();
-			exporter.setParameters(parameters);
+			exporter.setParameters(params2);
 			exporter.exportReport();
 			System.out.println( "Report created at " + outFile.getAbsolutePath() );
 

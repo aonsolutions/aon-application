@@ -19,7 +19,6 @@ import com.code.aon.file.tax.model.MOD347.data.Declared;
 import com.code.aon.file.tax.model.MOD347.data.Deponent;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -28,6 +27,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class MOD347Writer implements IFinanceConstants{
 	
@@ -117,7 +117,7 @@ public class MOD347Writer implements IFinanceConstants{
 	private void fillDeclared(Deponent deponent, Mod347 mod347, MOD347Format format)  throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Mod347Detail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.MOD347DETAIL_MOD347_ID), mod347.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.MOD347DETAIL_MOD347_ID), mod347.getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			Mod347Detail detail = (Mod347Detail) to;	

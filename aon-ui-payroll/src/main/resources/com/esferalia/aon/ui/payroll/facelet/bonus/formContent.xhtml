@@ -9,11 +9,11 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 <!--  
-	<c:if test="#{!aonRole.sisAdmin}" >
+	<c:if test="#{!aonRole.sysAdmin}" >
 		<aon:outputLabel value="#{bundle.aon_concept}" />
 		<aon:outputText value="#{controller.to.bonusConcept.description}" />
 	</c:if>
-	<c:if test="#{aonRole.sisAdmin}" >
+	<c:if test="#{aonRole.sysAdmin}" >
 -->	
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonusConcept/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.to.bonusConcept}" />
@@ -36,13 +36,13 @@
 	<aon:inputText id="ContractBonus_description" size="64" maxlength="64" 
 		value="#{controller.to.description}" />
 	
-	<c:if test="#{!aonRole.sisAdmin}">
+	<c:if test="#{!aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractBonus_expression2" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:outputText id="ContractBonus_expression2" size="64" 
 			value="#{(controller.to.expression!=null and controller.to.expression!='')?(controller.to.expression):(controller.to.bonusConcept.expression)}" />
 	</c:if>
 
-	<c:if test="#{aonRole.sisAdmin}">
+	<c:if test="#{aonRole.sysAdmin}">
 		<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}"  />
 		<aon:inputTextarea id="ContractBonus_expression" cols="64" rows="2" maxlength="128"
 			value="#{controller.to.expression}" required="true">
@@ -69,7 +69,7 @@
 	</c:if>
 	
 	<c:if test="#{!skipResult}">
-		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<aon:outputLabel for="ContractBonus_result" value="#{payrollBundle.payroll_result}" />
 		<h:panelGrid columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
 				style="color:#{(controller.result!=null)?('black'):('red')};" >

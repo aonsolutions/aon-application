@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,6 +17,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductAccountListener extends ControllerAdapter {
 
@@ -34,7 +34,7 @@ public class ProductAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), item.getProduct().getId());
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), item.getProduct().getId());
 			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				ProductAccount productAccount = (ProductAccount)iterator.next();
@@ -137,8 +137,8 @@ public class ProductAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), type);
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), type);
 			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				ProductAccount productAccount = (ProductAccount)iterator.next();
@@ -157,8 +157,8 @@ public class ProductAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
-			criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), type);
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
+			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), type);
 			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				ProductAccount productAccount = (ProductAccount)iterator.next();

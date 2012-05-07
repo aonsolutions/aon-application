@@ -4,7 +4,6 @@ package com.code.aon.account.bridge.event;
 import java.util.List;
 
 import com.code.aon.account.bridge.TaxAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -15,6 +14,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaxAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -40,13 +40,13 @@ public class TaxAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			}
 			IManagerBean bean = BeanManager.getManagerBean(TaxAccount.class);
 			Integer id = taxAccount.getTax().getId();
-			String alias = bean.getFieldName( IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID);
-			String typeAlias = bean.getFieldName( IAccountBridgeAlias.TAX_ACCOUNT_TYPE);
+			String alias = bean.getFieldName( IEntityAlias.TAX_ACCOUNT_TAX_ID);
+			String typeAlias = bean.getFieldName( IEntityAlias.TAX_ACCOUNT_TYPE);
 			Criteria c = new Criteria();
 			c.addEqualExpression(alias, id);
 			c.addEqualExpression(typeAlias, taxAccount.getType());
 			if ( taxAccount.getId() != null ) {
-				String idAlias = bean.getFieldName( IAccountBridgeAlias.TAX_ACCOUNT_ID);
+				String idAlias = bean.getFieldName( IEntityAlias.TAX_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, taxAccount.getId());
 				c.addExpression( exp );	
 			}

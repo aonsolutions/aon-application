@@ -14,13 +14,13 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.event.EventCartridge;
 
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AnnualReportManager {
 
@@ -61,7 +61,7 @@ public class AnnualReportManager {
 		params.setParams(new SummaryProviderParameters());
 		IManagerBean bean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.PERIOD_ID),"2010");
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PERIOD_ID),"2010");
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0 ) {
 			ITransferObject to = list.get(0);

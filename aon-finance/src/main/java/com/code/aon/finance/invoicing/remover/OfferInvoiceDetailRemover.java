@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
@@ -15,6 +14,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferInvoiceDetailRemover implements IInvoiceDetailRemover {
 	
@@ -35,8 +35,8 @@ public class OfferInvoiceDetailRemover implements IInvoiceDetailRemover {
 				offerDetailBean.update(offerDetail);
 
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), offerDetail.getOffer().getId());
-				criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
+				criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ID), offerDetail.getOffer().getId());
+				criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.ON_INVOICE);
 				if (offerDetailBean.getCount(criteria) == 0) {
 					IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 					Offer offer = offerDetail.getOffer();

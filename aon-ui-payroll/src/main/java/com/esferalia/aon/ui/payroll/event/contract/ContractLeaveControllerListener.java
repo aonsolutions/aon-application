@@ -13,7 +13,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController;
@@ -70,7 +70,8 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			}
 			completeTO(getController(event));
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException();
+			String msg = "Error al guardar los datos. ";
+			throw new ControllerListenerException(msg + "(" +e+")");
 		}
 	}
 	
@@ -120,7 +121,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	private boolean hasMoreLines(ContractLeave leave) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
 		if(bean.getList(criteria).size()>1){
 			return true;
 		}
@@ -135,6 +136,9 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	
 	private ITransferObject completeMaster(ControllerEvent event, ContractLeave leave, ContractLeaveDetail detail) {
 		leave.setContract(((ContractLeaveController)getController()).getContract());
+		if(leave.getParent()!=null && leave.getParent().getId()==null){
+			leave.setParent(null);
+		}
 		if(detail.getType()==LeaveReportType.LEAVE){
 			leave.setStartDate(detail.getDate());
 		} else if(detail.getType()==LeaveReportType.DISCHARGE){

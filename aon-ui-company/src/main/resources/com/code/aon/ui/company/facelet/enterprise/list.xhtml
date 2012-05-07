@@ -18,7 +18,7 @@
 			<aon:div styleClass="aon-scroll-area">
 	
 				<c:if test="#{enterprise.treeView}">  
-					<aon:methodParam name="rowSelectorAction" value="enterprise_formTree" />
+					<aon:methodParam name="rowSelectorAction" value="#{enterprise.formAction}" />
 				</c:if>
 				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >

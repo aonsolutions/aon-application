@@ -34,96 +34,17 @@ import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.Priority;
+import com.esferalia.aon.entity.master.AlarmDB;
 
 @Entity
 @Table(name="alarm")
-public class Alarm implements ITransferObject {
+public class Alarm extends AlarmDB {
 
-	private static final long serialVersionUID = 5331239358786123832L;
+	private static final long serialVersionUID = 1L;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Alarm.class);
 
-	private Integer id;
-	private String description;
-	private Date alarmDate;
-	private AlarmStatus status;
-	private AlarmSource source;
-	private Integer sourceId;
 	private ITransferObject to;
-	private User user;
-	private Priority priority;
-
-	@Id
-	@GeneratedValue
-	@Column(nullable=false)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@Column(nullable=false)
-	@Lob
-	@Type(type="stringClob")	
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	@Column(name="alarm_date", nullable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getAlarmDate() {
-		return alarmDate;
-	}
-	public void setAlarmDate(Date alarmDate) {
-		this.alarmDate = alarmDate;
-	}
-
-	public AlarmStatus getStatus() {
-		return status;
-	}
-	public void setStatus(AlarmStatus status) {
-		this.status = status;
-	}
-
-	@Column(nullable=false)
-	public AlarmSource getSource() {
-		return source;
-	}
-	public void setSource(AlarmSource source) {
-		this.source = source;
-	}
-
-	@Column(name="source_id")
-	public Integer getSourceId() {
-		return sourceId;
-	}
-	public void setSourceId(Integer sourceId) {
-		this.sourceId = sourceId;
-	}
-
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	@ForeignKey(name = "FK_ALARM_USER_ID")
-	@Index(name = "IDX_ALARM_USER_ID")
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	@Column(nullable=false)
-	@Enumerated
-	public Priority getPriority() {
-		return priority;
-	}
-	public void setPriority(Priority priority) {
-		this.priority = priority;
-	}
 	
 	@Transient
 	public ITransferObject getTo() {
@@ -135,40 +56,40 @@ public class Alarm implements ITransferObject {
 
 	@Transient
 	public boolean isPending() {
-        return status == AlarmStatus.PENDING;
+        return getStatus() == AlarmStatus.PENDING;
     }
 	@Transient
 	public boolean isHighPriority() {
-        return priority == Priority.HIGH;
+        return getPriority() == Priority.HIGH;
     }
 	@Transient
 	public boolean isMediumPriority() {
-        return priority == Priority.NORMAL;
+        return getPriority() == Priority.NORMAL;
     }
 	@Transient
 	public boolean isLowPriority() {
-        return priority == Priority.LOW;
+        return getPriority() == Priority.LOW;
     }
 	@Transient
     public boolean isFromTask() {
-        return source == AlarmSource.TASK;
+        return getSource() == AlarmSource.TASK;
     }
     @Transient
     public boolean isFromNotice() {
-        return source == AlarmSource.NOTICE;
+        return getSource() == AlarmSource.NOTICE;
     }
     @Transient
     public boolean isFromExternal() {
-        return source == AlarmSource.EXTERNAL;
+        return getSource() == AlarmSource.EXTERNAL;
     }
 
     @Transient
     public Notice getNotice() {
-    	if ( (source == AlarmSource.NOTICE) && (sourceId != null) ) {
+    	if ( (getSource() == AlarmSource.NOTICE) && (getSourceId() != null) ) {
     		if ( to == null ) {
     			try {
     				IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
-    				to = noticeBean.get(sourceId);
+    				to = noticeBean.get(getSourceId());
     			} catch (ManagerBeanException e) {
     				LOGGER.error( e.getMessage(), e );
     			}    			
@@ -206,49 +127,15 @@ public class Alarm implements ITransferObject {
     }    
     @Transient
     public boolean isNotice() {
-    	return source == AlarmSource.NOTICE;
+    	return getSource() == AlarmSource.NOTICE;
     }   
     @Transient
     public boolean isCommercialTracking() {
-    	return source == AlarmSource.COMMERCIAL_TRACKING;
+    	return getSource() == AlarmSource.COMMERCIAL_TRACKING;
     }    
     @Transient
     public boolean isCallCenter() {
-    	return source == AlarmSource.CALL_CENTER;
+    	return getSource() == AlarmSource.CALL_CENTER;
     }    
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final Alarm o = (Alarm) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.alarmDate, o.alarmDate)
-				.append(this.description, o.description)
-				.append(this.priority, o.priority)
-				.append(this.source, o.source)
-				.append(this.sourceId, o.sourceId)
-				.append(this.status, o.status)
-				.append(this.user, o.user)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().
-			append(alarmDate).append(description).
-			append(id).append(priority).
-			append(source).append(sourceId).
-			append(status).append(user).
-			toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
 
 }

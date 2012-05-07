@@ -24,8 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.company.Company;
+import com.code.aon.config.Domain;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
@@ -141,9 +143,16 @@ public class CompanyDisplay {
 			Configuration configuration = getConfiguration(dbProperties);
 			if ( configuration != null ) {
 				factory = configuration.buildSessionFactory();
-				
 				StatelessSession session = factory.openStatelessSession();
+				String domain = DomainResolver.getDomain(AonUtil.getServerName(), AonUtil.isSkipLdap());				
+				Criteria domainCriteria = session.createCriteria(Domain.class);
+				domainCriteria.add(Restrictions.eq("name", domain));
+				List<?> domainList = domainCriteria.list();
+				Domain dom = (!domainList.isEmpty())?(Domain) domainList.get(0):null; 
 				Criteria companyCriteria = session.createCriteria(Company.class);
+				if (dom != null) {
+					companyCriteria.add(Restrictions.eq("domain", dom.getId()));	
+				}
 				List<?> companyList = companyCriteria.list();
 				if (! companyList.isEmpty() ) {
 					Company company = (Company) companyList.get(0); 

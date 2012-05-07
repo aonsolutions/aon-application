@@ -2,12 +2,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
-		<aon:form id="assetStretch">
+		<aon:form id="roomSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
@@ -19,24 +20,8 @@
 				<ui:param name="controller" value="#{room}" />
 
 				<ui:define name="searchContent">
-						
-					<aon:outputLabel value="#{bundle.aon_name}" />
-					<aon:inputText id="Room_asset_name" 
-						valueChangeListener="#{room.addExpression}" />
-						
-					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
-					<aon:selectOneMenu id="Room_hotel"
-						value="#{roomSearch.hotel}" >
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-					</aon:selectOneMenu>
 					
-					<aon:outputLabel value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Room_item"
-						value="#{roomSearch.item}" >
-						<f:selectItem itemLabel=" - " itemValue="#{null}" />
-						<f:selectItems value="#{pmsCollections.roomItems}" />
-					</aon:selectOneMenu>
+					<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/search_content.xhtml" />
 						
 				</ui:define>
 			</ui:decorate>				

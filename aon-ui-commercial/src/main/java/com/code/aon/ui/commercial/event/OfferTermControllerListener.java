@@ -3,7 +3,6 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -13,6 +12,7 @@ import com.code.aon.ui.commercial.controller.OfferTermController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferTermControllerListener extends ControllerAdapter {
 
@@ -50,9 +50,9 @@ public class OfferTermControllerListener extends ControllerAdapter {
 	private	Integer calculateNextLine(Offer offer, boolean general) throws ManagerBeanException {
 		IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_OFFER_ID),offer.getId());
-		criteria.addEqualExpression(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_GENERAL), general);
-		Projection projection = Projection.max(offerTermBean.getFieldName(ICommercialAlias.OFFER_TERM_LINE));
+		criteria.addEqualExpression(offerTermBean.getFieldName(IEntityAlias.OFFER_TERM_OFFER_ID),offer.getId());
+		criteria.addEqualExpression(offerTermBean.getFieldName(IEntityAlias.OFFER_TERM_GENERAL), general);
+		Projection projection = Projection.max(offerTermBean.getFieldName(IEntityAlias.OFFER_TERM_LINE));
 		Object value = offerTermBean.getUniqueResult(projection, criteria);
 		return (value != null) ? ((Integer)value) + 1 : 1;
 	}

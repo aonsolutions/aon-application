@@ -160,7 +160,7 @@
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
 							
-								<c:if test="#{loggedUser.userInRole['Admin'] and desktop.updatesAvailable}">
+								<c:if test="#{aonRole.admin and desktop.updatesAvailable}">
 									<aon:panelCollapsible expanded="true" label="#{appBundle.desktop_update_title}">
 										<aon:div>
 											<aon:outputLink value="#{desktop.updateApplicationURL}" target="_blank">
@@ -202,13 +202,13 @@
 							
 							<aon:div styleClass="aon-support-telephone">
 								<aon:div styleClass="aon-support-telephone-internal">
-									<aon:outputText value="#{appBundle.desktop_support_telephone_number}" />
+									<aon:outputText value="#{bundle.aon_support_telephone_number}" />
 								</aon:div>
 							</aon:div>		
 							
 							<aon:div styleClass="aon-support-mail">
 								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html">	
-										<aon:outputText value="#{appBundle.desktop_support_send_email}" />
+										<aon:outputText value="#{bundle.aon_support_send_email}" />
 							    </aon:outputLink>
 							</aon:div>
 						</aon:div>

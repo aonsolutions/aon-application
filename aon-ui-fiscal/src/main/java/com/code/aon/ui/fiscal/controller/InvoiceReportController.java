@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
@@ -70,7 +71,8 @@ public class InvoiceReportController {
 			stmt.append("  FROM invoice_tax it ");
 			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
 			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
-			stmt.append("  WHERE 1 = 1 ");
+			stmt.append("  WHERE ");
+			stmt.append( DomainManager.getSQLWhereClause("it.domain"));
 			if (params.getFromTaxDate() != null) {
 				stmt.append(" AND i.tax_date >= ?");
 			}

@@ -94,12 +94,18 @@
 										<aon:inputText id="InvoiceAddress_city" required="true"
 											value="#{invoiceAddress.to.city}" size="50" maxlength="45" />
 
-										<aon:outputLabel for="InvoiceAddress_geozone_id"
+										<aon:outputLabel for="InvoiceAddress_province"
 											value="#{registryBundle.registry_geozone}" />
-										<aon:selectOneMenu id="InvoiceAddress_geozone_id" required="true"
-											value="#{invoiceAddress.to.geozone}">
-											<f:selectItems value="#{geozoneCollections.geoTrees}" />
-										</aon:selectOneMenu>
+										<aon:div>
+											<aon:selectOneMenu id="InvoiceAddress_geozone_id" required="true"
+												value="#{invoiceAddress.to.geozone}"
+												rendered="#{invoiceAddress.new or (invoiceAddress.to.geozone != null and invoiceAddress.to.geozone.id != null)}">
+												<f:selectItems value="#{geozoneCollections.geoTrees}" />
+											</aon:selectOneMenu>
+											<aon:inputText id="InvoiceAddress_province" required="true"
+												value="#{invoiceAddress.to.province}" size="50" maxlength="45" 
+												rendered="#{!invoiceAddress.new and (invoiceAddress.to.geozone == null or invoiceAddress.to.geozone.id == null)}" />
+										</aon:div>
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

@@ -30,7 +30,6 @@ import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -39,10 +38,10 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AEB19Writer implements IFinanceConstants {
 	
@@ -152,7 +151,7 @@ public class AEB19Writer implements IFinanceConstants {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			InvoicePriceStrategy strategy = new InvoicePriceStrategy();
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 			Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 			for (int i=0; i<5&&iterator.hasNext(); i++) {
 				InvoiceDetail detail = (InvoiceDetail)iterator.next();
@@ -221,7 +220,7 @@ public class AEB19Writer implements IFinanceConstants {
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
 			Iterator iterator = invoiceAddressBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return (InvoiceAddress)iterator.next();
@@ -234,7 +233,7 @@ public class AEB19Writer implements IFinanceConstants {
 	private IAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
+		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), registryId);
 		Iterator iterator = rAddressBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryAddress)iterator.next();

@@ -29,7 +29,6 @@ import com.code.aon.ui.util.DownloadUtil;
 
 public class DynaReportManager {
 
-	@SuppressWarnings("unchecked")
 	public void toExcel(DynaReport dynaReport,String filename, Collection<?> c) {
 		HttpServletResponse response = null;
 		OutputStream out = null;
@@ -45,7 +44,7 @@ public class DynaReportManager {
 			JasperPrint jp = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds);
 			IJRExporterFactory fm = JRExporterFactoryManager.getJRExporterFactory(OutputFormat.XLS); 
 			JRExporter exporter = fm.getJRExporter();
-			fm.fillJRParametersMap(exporter.getParameters());
+			fm.fillJRParametersMap(null,exporter.getParameters());
 		    exporter.setParameter(JRExporterParameter.JASPER_PRINT, jp);
 		    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out); 
 			exporter.exportReport();

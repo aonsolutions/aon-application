@@ -5,17 +5,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.security.auth.Subject;
-
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
 import org.hibernate.connection.DatasourceConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.ConnectionProvider;
+import com.code.aon.jaas.auth.AuthPrincipal;
 
 /**
  * A strategy for obtaining JDBC connections.
@@ -25,11 +23,6 @@ import com.code.aon.common.util.ConnectionProvider;
  */
 
 public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0ConnectionProvider {
-
-	/**
-	 * Tell the JNDI subject name.
-	 */
-	public static final String SECURITY_SUBJECT = "java:comp/env/security/subject";
 
 	/**
 	 * Logger initialization
@@ -48,16 +41,16 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 			LOGGER.error(msg);
 			throw new HibernateException(msg);
 		}
-		try {
-			Properties connectionProperties = ConnectionProvider.getDBProperties(getPrincipal());
+
+		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		if ( principal != null ) {
+			Properties connectionProperties = ConnectionProvider.getDBProperties(principal);
 			LOGGER.info( "Connection properties: {}", connectionProperties );
 			props.putAll( connectionProperties );
-			super.configure(props);			
-		} catch ( NamingException ne ) {
+			super.configure(props);						
+		} else {
 			dataSourceProvider = new DatasourceConnectionProvider();
-			dataSourceProvider.configure(props);
-		} catch (Exception e) {
-			throw new HibernateException("Could not find connection service", e);
+			dataSourceProvider.configure(props);			
 		}
 	}
 	
@@ -94,12 +87,6 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 		} else {
 			return super.supportsAggressiveRelease();			
 		}
-	}
-
-	private Principal getPrincipal() throws NamingException {
-		InitialContext ic = new InitialContext();
-		Subject subject = (Subject) ic.lookup(SECURITY_SUBJECT);
-		return subject.getPrincipals().iterator().next();
 	}
 
 }

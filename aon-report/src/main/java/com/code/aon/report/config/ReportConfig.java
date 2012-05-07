@@ -56,7 +56,7 @@ public class ReportConfig {
 	/**
 	 * Map of report parameters.
 	 */
-	private Map<Object,Object> params;
+	private Map<String,Object> params;
 
 	/**
 	 * Map of dynamic report parameters.
@@ -207,7 +207,7 @@ public class ReportConfig {
 	 */
 	public void addParam(String id, String value) {
 		if (params == null) {
-			params = new HashMap<Object,Object>();
+			params = new HashMap<String,Object>();
 		}
 		params.put(id, value);
 	}
@@ -216,7 +216,7 @@ public class ReportConfig {
 	 * Returns the parameters map.
 	 * @return The parameters map.
 	 */
-	public Map<Object, Object> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 

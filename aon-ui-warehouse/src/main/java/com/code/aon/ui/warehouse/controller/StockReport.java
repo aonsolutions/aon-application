@@ -17,9 +17,9 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.PriceType;
 import com.code.aon.warehouse.stock.StockManager;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class StockReport implements ICollectionProvider{
 	
@@ -172,20 +172,20 @@ public class StockReport implements ICollectionProvider{
 			IManagerBean bean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
 			if (getWarehouse() != null && getWarehouse().getId() != null) {
-				criteria.addEqualExpression( bean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), getWarehouse().getId() );
+				criteria.addEqualExpression( bean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), getWarehouse().getId() );
 			}
 			if (getItem() != null && getItem().getId() != null) {
-				criteria.addEqualExpression( bean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), getItem().getId() );
+				criteria.addEqualExpression( bean.getFieldName(IEntityAlias.STOCK_ITEM_ID), getItem().getId() );
 			}
 			if (StringUtils.isNotBlank(getQuantity())) {
-				criteria.addExpression(bean.getFieldName(IWarehouseAlias.STOCK_QUANTITY), getQuantity());
+				criteria.addExpression(bean.getFieldName(IEntityAlias.STOCK_QUANTITY), getQuantity());
 			}
 			if (isByItem()) {
-				criteria.addOrder(bean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID));
-				criteria.addOrder(bean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.STOCK_ITEM_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID));
 			} else {
-				criteria.addOrder(bean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID));
-				criteria.addOrder(bean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.STOCK_ITEM_ID));
 			}
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {

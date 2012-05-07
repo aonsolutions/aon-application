@@ -1,7 +1,11 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 
@@ -41,6 +45,8 @@ public class MailConfigController {
 	
 	private IMailAccountController mailAccount;
 	
+	private IContactController contact;
+	
 	private boolean richTextEnabled = true;
 	
 	private boolean showMailAccountList;
@@ -57,6 +63,28 @@ public class MailConfigController {
 	
 	private List<SelectItem> signatures;
 	
+	public MailConfigController() {
+		if ( AonUtil.isSkipLdap() ) {
+			SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+			setSignature(signature);
+			MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+			setMailAccount(account);			
+			ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+			setContact(contact);			
+		}
+	}
+	
+	public IContactController getContact() {
+		if ( contact == null ) {
+			contact = (IContactController) AonUtil.getRegisteredBean(BEAN_CONTACT);
+		}
+		return contact;
+	}
+
+	public void setContact(IContactController contact) {
+		this.contact = contact;
+	}
+
 	public ISignatureController getSignature() {
 		if ( signature == null ) {
 			signature = (ISignatureController) AonUtil.getRegisteredBean(BEAN_SIGNATURE);
@@ -122,7 +150,9 @@ public class MailConfigController {
 		IMailAccount account = getSelectMailAccount();
 		if ( account != null ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			return ObjectUtils.equals(webmail.getServer().getAccount(), account);			
+			if ( webmail.getServer() != null ) {
+				return ObjectUtils.equals(webmail.getServer().getAccount(), account);	
+			}			
 		}
 		return false;
 	}

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipResetButton" value="#{true}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		<ui:param name="skipResetButton" value="#{true}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
+		
+		<ui:define name="columns">
+		
+			<aon:column styleClass="aon-editDataTable-iconColumn">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:commandLink id="ProposalDetail-selectButton"
+					styleClass="aon-table-row-link" value="&#160;"
+					immediate="true" ajaxSingle="true" requestDelay="100"
+					rendered="#{to.pending}"
+					actionListener="#{proposalDetail.onSelect}"
+					onkeyup="#{dataTableId}KeyUp(this)"
+					onfocus="#{dataTableId}SelectRow(this)"
+					onblur="#{dataTableId}DeselectRow(this)"
+					focus="#{(focusOnSelect != null)?(focusOnSelect):''}" />
+				<f:facet name="footer">
+					<aon:div>
+						<aon:commandButton
+							id="ProposalDetail-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							styleClass="aon-editDataTable-button aon-icon-reset"
+							rendered="#{!proposal.processed}" 
+							actionListener="#{proposalDetail.onReset}"
+							accesskey="#{bundle.aon_key_new_line}" 
+							focus="#{(focusOnAdd != null)?(focusOnAdd):''}" />
+					</aon:div>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+				<f:facet name="header">
+					<aon:outputLabel for="ProposalDetail_item" value="#{productBundle.product_item}" />
+				</f:facet>
+				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+				</ui:include>		
+				<f:facet name="footer">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupSuffix" value="-New" />
+						<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity-New" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupControllerListener" value="#{proposal.departmentItemFilter}" />
+					</ui:include>		
+				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel for="ProposalDetail_quantity" value="#{bundle.aon_quantity}" />
+				</f:facet>
+				<aon:outputText value="#{to.quantity}" rendered="#{formList}">
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+				</aon:outputText>
+				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
+					value="#{to.quantity}" required="true">
+					<f:validateDoubleRange minimum="0.0" />
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
+						value="#{controller.to.quantity}" required="true">
+						<f:validateDoubleRange minimum="0.0" />
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+			
+			<c:if test="#{aonRole.purchaseOperator}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.aon_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.item.price}" rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<f:facet name="footer">
+					</f:facet>
+				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+					<f:facet name="header">
+						<aon:outputLabel value="#{bundle.aon_total}" />
+					</f:facet>
+					<aon:outputText value="#{to.quantity * to.item.price}" rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+					</aon:outputText>
+					<f:facet name="footer">
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+				<f:facet name="header">
+					<aon:outputLabel value="INFO" />
+				</f:facet>
+				<aon:commandLink id="proposalDetailPurchaseLink" immediate="true"
+					styleClass="#{aonRole.purchaseOperator ? 'aon-button-goto' : 'aon-icon-info'}"
+					style="padding-right: 20px;" 
+					value="&#160;"  
+					rendered="#{!to.pending and to.purchaseDetail!=null}" 
+					actionListener="#{controller.onLoadPurchase}"
+					disabled="#{!aonRole.purchaseOperator}"
+					action="purchase_form"
+					reRender="aonContent">
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
+						<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
+							<f:facet name="header">
+								<aon:outputText value="#{purchaseBundle.purchase_purchase}" />
+							</f:facet>
+							<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number} " />
+							<aon:outputText value="#{to.purchaseDetail.purchase.referenceCode}" />
+						</aon:panelGrid>
+					</rich:toolTip>
+				</aon:commandLink>
+				
+			</aon:column>
+			
+		</ui:define>
+
+	</ui:decorate>
+
+</ui:composition>

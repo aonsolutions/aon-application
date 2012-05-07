@@ -39,7 +39,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContex
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -164,7 +164,7 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
 					controller.getManagerBean().
-					getFieldName(IPayrollAlias.CONTRACT_ID), 
+					getFieldName(IEntityAlias.CONTRACT_ID), 
 					message.getContractId() );
 			
 			

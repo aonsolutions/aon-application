@@ -11,7 +11,6 @@ import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.ActionEntry;
 import com.code.aon.audit.ActionFavorite;
 import com.code.aon.audit.Session;
-import com.code.aon.audit.dao.IAuditAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,7 +20,6 @@ import com.code.aon.company.EnterpriseUser;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.document.AlfrescoUserManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -31,6 +29,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Listener added to the EnterpriseController
@@ -109,11 +108,11 @@ public class EnterpriseUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		EnterpriseUser user = (EnterpriseUser) event.getController().getTo();
 		try {
-			deleteEntries(UserScope.class, IConfigAlias.USER_SCOPE_USER_ID, user.getId());
-			deleteEntries(ActionDenied.class, IAuditAlias.ACTION_DENIED_USER_ID, user.getId());
-			deleteEntries(ActionFavorite.class, IAuditAlias.ACTION_FAVORITE_USER_ID, user.getId());
-			deleteEntries(ActionEntry.class, IAuditAlias.ACTION_ENTRY_SESSION_USER_ID, user.getId());
-			deleteEntries(Session.class, IAuditAlias.SESSION_USER_ID, user.getId());
+			deleteEntries(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, user.getId());
+			deleteEntries(ActionDenied.class, IEntityAlias.ACTION_DENIED_USER_ID, user.getId());
+			deleteEntries(ActionFavorite.class, IEntityAlias.ACTION_FAVORITE_USER_ID, user.getId());
+			deleteEntries(ActionEntry.class, IEntityAlias.ACTION_ENTRY_SESSION_USER_ID, user.getId());
+			deleteEntries(Session.class, IEntityAlias.SESSION_USER_ID, user.getId());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

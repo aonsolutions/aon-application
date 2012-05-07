@@ -14,8 +14,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.tas.Make;
-import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tas.enumeration.ProjectStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TasCollectionsController {
 
@@ -37,7 +37,7 @@ public class TasCollectionsController {
 			makes = new LinkedList<SelectItem>();
 			IManagerBean makeBean = BeanManager.getManagerBean(Make.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(makeBean.getFieldName(ITASAlias.MAKE_NAME));
+			criteria.addOrder(makeBean.getFieldName(IEntityAlias.MAKE_NAME));
 			Iterator<ITransferObject> iter = makeBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				Make make = (Make) iter.next();

@@ -7,14 +7,12 @@ import static com.code.aon.ldap.NameResolver.DOMAINS;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_DUPLICATED;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_USED;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.convert.Converter;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
@@ -22,10 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
@@ -33,6 +31,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
+import com.code.aon.webmail.ISignature;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
@@ -92,7 +91,7 @@ public class SignatureController extends LdapBasicController implements ISignatu
 	
 	@Override
 	protected void initDAO() {
-		AuthPrincipal auth = Utils.getAuthPrincipal();
+		AuthPrincipal auth = BasicPrincipal.getAuthPrincipal();
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 
@@ -120,7 +119,7 @@ public class SignatureController extends LdapBasicController implements ISignatu
 		return signatures;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<MailAccount> getReferences( Name id ) {
 		List<MailAccount> list = null;
 		try {
@@ -147,20 +146,10 @@ public class SignatureController extends LdapBasicController implements ISignatu
 		}					
 	}
 	
-	private boolean checkRemovable( Signature signature ) {
-		List<MailAccount> list = getReferences( signature.getId() );
-		if ( (list!=null) && (!list.isEmpty()) ) {
-			AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, SIGNATURE_USED, signature.getName() );
-			return false;
-		}
-		return true;
-	}
-	
 	@Override
-	public void onRemove(ActionEvent event) {
-		if ( checkRemovable((Signature) getTo() ) ) {
-			super.onRemove(event);			
-		}
+	public boolean isRemovable( ISignature signature ) {
+		List<MailAccount> list = getReferences( ((Signature)signature).getId() );
+		return (list == null) || list.isEmpty();
 	}
 	
 }

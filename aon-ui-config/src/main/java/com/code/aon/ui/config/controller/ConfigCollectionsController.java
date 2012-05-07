@@ -20,7 +20,6 @@ import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
@@ -29,8 +28,10 @@ import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ConfigCollectionsController {
 	
@@ -156,7 +157,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> vatTaxes = new LinkedList<SelectItem>();
 		IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taxBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.VAT);
+		criteria.addEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.VAT);
 		for (ITransferObject ito : taxBean.getList(criteria)) {
 			Tax tax = (Tax)ito;
 			SelectItem item = new SelectItem(tax, tax.getName());
@@ -169,7 +170,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> vatTaxes = new LinkedList<SelectItem>();
 		IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taxBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.VAT);
+		criteria.addEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.VAT);
 		for (ITransferObject ito : taxBean.getList(criteria)) {
 			Tax tax = (Tax)ito;
 			SelectItem item = new SelectItem(tax.getId(), tax.getName());
@@ -182,7 +183,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> retentionTaxes = new LinkedList<SelectItem>();
 		IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taxBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.RETENTION);
+		criteria.addEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.RETENTION);
 		for (ITransferObject ito : taxBean.getList(criteria)) {
 			Tax tax = (Tax)ito;
 			SelectItem item = new SelectItem(tax, tax.getName());
@@ -195,7 +196,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> retentionTaxes = new LinkedList<SelectItem>();
 		IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taxBean.getFieldName(IConfigAlias.TAX_TYPE), TaxType.RETENTION);
+		criteria.addEqualExpression(taxBean.getFieldName(IEntityAlias.TAX_TYPE), TaxType.RETENTION);
 		for (ITransferObject ito : taxBean.getList(criteria)) {
 			Tax tax = (Tax)ito;
 			SelectItem item = new SelectItem(tax.getId(), tax.getName());
@@ -205,71 +206,67 @@ public class ConfigCollectionsController {
 	}
 
 	public List<SelectItem> getTasSeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_TAS);
+		return getSeries(false, IEntityAlias.SERIES_TAS);
 	}
 
 	public List<SelectItem> getTasSeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_TAS);
+		return getSeries(true, IEntityAlias.SERIES_TAS);
 	}	
 
 	public List<SelectItem> getOfferSeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_OFFER);
+		return getSeries(false, IEntityAlias.SERIES_OFFER);
 	}
 
 	public List<SelectItem> getOfferSeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_OFFER);
+		return getSeries(true, IEntityAlias.SERIES_OFFER);
 	}	
 
 	public List<SelectItem> getSalesSeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_SALES);
+		return getSeries(false, IEntityAlias.SERIES_SALES);
 	}
 
 	public List<SelectItem> getSalesSeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_SALES);
+		return getSeries(true, IEntityAlias.SERIES_SALES);
 	}	
 
 	public List<SelectItem> getDeliverySeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_DELIVERY);
+		return getSeries(false, IEntityAlias.SERIES_DELIVERY);
 	}
 
 	public List<SelectItem> getDeliverySeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_DELIVERY);
+		return getSeries(true, IEntityAlias.SERIES_DELIVERY);
 	}	
 
 	public List<SelectItem> getInvoiceSeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_INVOICE);
+		return getSeries(false, IEntityAlias.SERIES_INVOICE);
 	}
 
 	public List<SelectItem> getInvoiceSeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_INVOICE);
+		return getSeries(true, IEntityAlias.SERIES_INVOICE);
 	}	
 
 	public List<SelectItem> getRectificationSeries() throws ManagerBeanException{
-		return getSeries(false, IConfigAlias.SERIES_RECTIFICATION);
+		return getSeries(false, IEntityAlias.SERIES_RECTIFICATION);
 	}
 
 	public List<SelectItem> getRectificationSeriesIds() throws ManagerBeanException {
-		return getSeries(true, IConfigAlias.SERIES_RECTIFICATION);
+		return getSeries(true, IEntityAlias.SERIES_RECTIFICATION);
 	}	
 
-	public List<SelectItem> getSeries(boolean onlyId, String typeAlias) throws ManagerBeanException {
+	public List<SelectItem> getSeries(boolean onlyCode, String typeAlias) throws ManagerBeanException {
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(typeAlias), new Boolean(true));
-		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
-			criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
-		criteria.addOrder(seriesBean.getFieldName(IConfigAlias.SERIES_ID));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID));
+		criteria.addOrder(seriesBean.getFieldName(IEntityAlias.SERIES_CODE));
 		for (ITransferObject ito : seriesBean.getList(criteria)) {
 			Series serie = (Series)ito;
-			SelectItem item;
-			if (onlyId) {
-				item = new SelectItem(serie.getId(), serie.getId()); 
-			} else {
-				item = new SelectItem(serie, serie.getId());
-			} 
+			SelectItem item = new SelectItem(onlyCode?serie.getCode():serie, serie.getCode());
 			series.add(item);
 		}
 		return series;
@@ -286,7 +283,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
 		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(scopeBean.getFieldName(IConfigAlias.SCOPE_DESCRIPTION));
+		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
 		for (ITransferObject ito : scopeBean.getList(criteria)) {
 			Scope scope = (Scope)ito;
 			SelectItem item = new SelectItem(scope, scope.getDescription());
@@ -308,8 +305,8 @@ public class ConfigCollectionsController {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+		criteria.addEqualExpression(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addOrder(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));
 		for (ITransferObject ito : workGroupBean.getList(criteria)) {
 			WorkGroup workGroup = (WorkGroup)ito;
 			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
@@ -322,8 +319,8 @@ public class ConfigCollectionsController {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+		criteria.addEqualExpression(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addOrder(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));
 		for (ITransferObject ito : workGroupBean.getList(criteria)) {
 			WorkGroup workGroup = (WorkGroup)ito;
 			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
@@ -343,7 +340,26 @@ public class ConfigCollectionsController {
 		List<SelectItem> payMethods = new LinkedList<SelectItem>();
 		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_NAME));
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+		for (ITransferObject ito : payMethodBean.getList(criteria)) {
+			PayMethod pMethod = (PayMethod)ito;
+			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			payMethods.add(item);
+		}
+		return payMethods;
+	}
+
+	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
+		directPayMethods.add(PayMethodType.CASH_BASIS);
+		directPayMethods.add(PayMethodType.DEBIT_CARD);
+		directPayMethods.add(PayMethodType.CREDIT_CARD);
+
+		List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
 		for (ITransferObject ito : payMethodBean.getList(criteria)) {
 			PayMethod pMethod = (PayMethod)ito;
 			SelectItem item = new SelectItem(pMethod, pMethod.getName());
@@ -356,7 +372,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> payMethodTypeDetails = new LinkedList<SelectItem>();
 		IManagerBean payMethodTypeDetailBean = BeanManager.getManagerBean(PayMethodTypeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IConfigAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
+		criteria.addOrder(payMethodTypeDetailBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE_DETAIL_DESCRIPTION));
 		for (ITransferObject ito : payMethodTypeDetailBean.getList(criteria)) {
 			PayMethodTypeDetail p = (PayMethodTypeDetail)ito;
 			SelectItem item = new SelectItem(p, p.getDescription());
@@ -369,7 +385,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> tariffs = new LinkedList<SelectItem>();
 		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(tariffBean.getFieldName(IConfigAlias.TARIFF_NAME));
+		criteria.addOrder(tariffBean.getFieldName(IEntityAlias.TARIFF_NAME));
 		for (ITransferObject ito : tariffBean.getList(criteria)) {
 			Tariff tariff = (Tariff)ito;
 			SelectItem item = new SelectItem(tariff, tariff.getName());
@@ -382,7 +398,7 @@ public class ConfigCollectionsController {
 		List<SelectItem> commissionTypes = new LinkedList<SelectItem>();
 		IManagerBean commissionTypeBean = BeanManager.getManagerBean(CommissionType.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(commissionTypeBean.getFieldName(IConfigAlias.COMMISSION_TYPE_NAME));
+		criteria.addOrder(commissionTypeBean.getFieldName(IEntityAlias.COMMISSION_TYPE_NAME));
 		for (ITransferObject ito : commissionTypeBean.getList(criteria)) {
 			CommissionType commissionType = (CommissionType)ito;
 			SelectItem item = new SelectItem(commissionType, commissionType.getName());

@@ -23,7 +23,7 @@
 				<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-correo.png']}" />
-					<aon:div><aon:outputText value="#{appBundle.aon_webmail}" /></aon:div>
+					<aon:div><aon:outputText value="#{webmailBundle.webmail_main}" /></aon:div>
 				</aon:outputLink>
 			</aon:div>
 			
@@ -68,21 +68,23 @@
 				</aon:commandLink>
 			</aon:div>
 
-			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="DocumentsVisible">
+			<aon:div styleClass="aon-sidebarIcons-icon" rendere="#{aonRole.userInRole['DocumentsVisible']}">
 				<aon:commandLink action="corporateIdentityAttach_list" actionListener="#{company.onLoad}">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
-					<aon:div><aon:outputText value="#{appBundle.aon_corporate_identity}" /></aon:div>
+					<aon:div><aon:outputText value="#{bundle.aon_documents}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 			
-			<aon:div styleClass="aon-sidebarIcons-icon" renderedOnUserRole="Admin">
-				<aon:commandLink action="company" actionListener="#{company.onLoad}">
-					<aon:graphicImage height="32" width="32"
-						url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
-					<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
-				</aon:commandLink>
-			</aon:div>
+			<c:if test="#{aonRole.admin}">
+				<aon:div styleClass="aon-sidebarIcons-icon">
+					<aon:commandLink action="company" actionListener="#{company.onLoad}">
+						<aon:graphicImage height="32" width="32"
+							url="#{aonResource.resolveLocal['/images/aon-icon-big-enterprise-configure.png']}" />
+						<aon:div><aon:outputText value="#{companyBundle.company_data_module}"/></aon:div>
+					</aon:commandLink>
+				</aon:div>
+			</c:if>
 			
 		</aon:div>
 	</aon:form>

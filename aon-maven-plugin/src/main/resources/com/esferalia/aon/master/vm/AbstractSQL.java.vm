@@ -68,7 +68,7 @@ public abstract class AbstractSQL  {
 		/**
 		* @returns $column.remarks 
 		*/
-		public ${column.javaClass} get${column}() throws SQLException;
+		public ${column.javaClass} get${column}() ;
 		
 #end
 	}
@@ -77,7 +77,7 @@ public abstract class AbstractSQL  {
 #foreach ($column in $table.columns)
 		private $column.javaClass $column.javaName #if ( $column.defaultValue ) = $column.defaultValue #end ; 
 		
-		public ${column.javaClass} get${column}() throws SQLException
+		public ${column.javaClass} get${column}()
 		{
 			return $column.javaName;
 		}

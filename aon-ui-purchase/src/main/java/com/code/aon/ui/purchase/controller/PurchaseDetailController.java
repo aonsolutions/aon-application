@@ -22,7 +22,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseDetailController extends LinesController implements IPurchaseConstants {
 
@@ -76,6 +76,9 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	}
 
 	public void addPurchaseDetailProject(ActionEvent event) throws ManagerBeanException {
+		if(purchaseDetail.getProject()!=null && purchaseDetail.getProject().getId()==null){
+			purchaseDetail.setProject(null);
+		}
 		getManagerBean().update(purchaseDetail);
 	}
 
@@ -130,7 +133,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
@@ -160,8 +163,8 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
-		criteria.addOrder(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), false);
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
+		criteria.addOrder(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_ID), false);
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
@@ -173,8 +176,13 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 	public void onBackPurchase(ActionEvent event) throws ManagerBeanException {
 		PurchaseController purchaseController = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
 		purchaseController.refresh(event);
-
 		onSearch(event);
+	}
+	
+	public void onLoadProposal(ActionEvent event) throws ManagerBeanException {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		BasicController proposalController = (BasicController)AonUtil.getRegisteredBean(IPurchaseConstants.PROPOSAL_CONTROLLER_NAME);
+		proposalController.onLoad(event, purchaseDetail.getProposalDetail().getProposal().getId(), "purchase_form", null);
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.code.aon.ui.commercial.event;
 
 import com.code.aon.commercial.ProjectCommercial;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -9,6 +8,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommercialTrackingSearchListener extends ControllerSearchListener {
 
@@ -43,11 +43,11 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
-			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID);
+			String alias = getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			
 		}
 		if ( (getProject() != null) && (getProject().getId() != null) ) {
-			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_PROJECT_ID);
+			String alias = getFieldName(IEntityAlias.COMMERCIAL_TRACKING_PROJECT_ID);
 			criteria.addEqualExpression(alias, getProject().getId());			
 		}
 	}

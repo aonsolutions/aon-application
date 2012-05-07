@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.employee.shared;
 
+
 public class StringUtils {
 	
 	public static boolean isEmpty(String str) {
@@ -41,5 +42,17 @@ public class StringUtils {
 	private static boolean isDelimiter(char ch, String delimiters) {
 		return delimiters.indexOf(ch) != -1;
 	}
+	
 
+	public static String format(final String format, final String... args) {
+	    String[] split = format.split("%s");
+	    final StringBuffer msg = new StringBuffer();
+	    for (int pos = 0; pos < split.length - 1; pos += 1) {
+	        msg.append(split[pos]);
+	        msg.append(args[pos]);
+	    }
+	    msg.append(split[split.length - 1]);
+	    return msg.toString();
+	 }
+	
 }

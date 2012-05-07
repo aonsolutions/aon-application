@@ -77,7 +77,7 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 
 	@Override
 	public void setContract(Object contract) {
-		this.contract = ( ( SQLSalaryProxy ) contract).getId();
+		this.contract = ( ( SQLSalaryProxy ) contract).getContractId();
 	}
 
 	@Override

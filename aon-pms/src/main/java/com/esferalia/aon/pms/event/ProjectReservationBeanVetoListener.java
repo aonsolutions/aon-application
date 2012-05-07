@@ -1,68 +1,48 @@
 package com.esferalia.aon.pms.event;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.company.Enterprise;
-import com.code.aon.company.util.CompanyUtil;
-import com.code.aon.registry.Registry;
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.pms.enumeration.BookingHolder;
-import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
-    	to.getProject().setEnterprise(obtainEnterprise());
-    	to.getProject().setProjectType(null);
-    	to.getProject().setDate(to.getStartDate());
-    	to.getProject().setRegistry(obtainProjectReservationRegistry(to));
-	    to.getProject().setName(obtainProjectReservationName(to));
-    	to.getProject().setReservation(true);
-    	to.getProject().setActive(to.getStatus() == ReservationStatus.ACTIVE);
+    	ReservationUtils reservationUtils = new ReservationUtils();
+    	try {
+    		reservationUtils.fillProject(to);
+    		calculateReservationTotals(reservationUtils, to);
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
+    	}
     }
 
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectReservation to = (ProjectReservation)evt.getTo();
-    	to.getProject().setDate(to.getStartDate());
-    	to.getProject().setRegistry(obtainProjectReservationRegistry(to));
-	    to.getProject().setName(obtainProjectReservationName(to));
-    	to.getProject().setReservation(true);
-    	to.getProject().setActive(to.getStatus() == ReservationStatus.ACTIVE);
-    }
-
-    private Enterprise obtainEnterprise() throws ManagerBeanVetoListenerException {
+    	ReservationUtils reservationUtils = new ReservationUtils();
     	try {
-	    	CompanyUtil companyUtil = new CompanyUtil();
-	    	return companyUtil.getActiveEnterprise();
-    	} catch (ManagerBeanException e) {
-    		throw new ManagerBeanVetoListenerException(e.getMessage(), e);
+    		reservationUtils.fillProject(to);
+    		calculateReservationTotals(reservationUtils, to);
+    	} catch (ManagerBeanException ex) {
+    		throw new ManagerBeanVetoListenerException(ex.getMessage(), ex);
     	}
     }
 
-    private Registry obtainProjectReservationRegistry(ProjectReservation to) {
-    	if (to.getBookingHolder() == BookingHolder.AGENCY && to.getAgency() != null && to.getAgency().getId() != null) {
-    		return to.getAgency().getRegistry();
-    	} else if (to.getBookingHolder() == BookingHolder.COMPANY && to.getCompany() != null && to.getCompany().getId() != null) {
-    		return to.getCompany().getRegistry();
-    	}
-    	return to.getHotel().getCustomer().getRegistry();
-    }
+	private void calculateReservationTotals(ReservationUtils reservationUtils, ProjectReservation reservation) throws ManagerBeanException {
+		if (!reservation.isCrs()) {
+			double taxableBase = reservationUtils.getReservationCalculatedTaxableBase(reservation);
+			double vatQuota = reservationUtils.getReservationCalculatedVatQuota(reservation);
 
-    private String obtainProjectReservationName(ProjectReservation to) {
-    	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-    	String dates = formatter.format(to.getStartDate()) + "-" + formatter.format(to.getEndDate());
-    	String sellerName = (to.getSeller() != null && to.getSeller().getId() != null) ? " - " + to.getSeller().getRegistry().getFullName() : "";
-    	return StringUtils.abbreviate(dates + " " + to.getCode() + sellerName, 64);
-    }
+			reservation.setTaxableBase(taxableBase);
+			reservation.setVatQuota(vatQuota);
+			reservation.setTotal(CommonUtil.round(taxableBase + vatQuota));
+		}
+	}
 
 }

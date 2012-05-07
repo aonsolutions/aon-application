@@ -1,10 +1,14 @@
 package com.code.aon.ui.finance.controller;
 
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
+import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
@@ -38,8 +41,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.bridge.IncomeTransferManager;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseInvoiceController extends InvoiceController implements IFinanceConstants, IFinanceMessages {
 	
@@ -107,9 +110,9 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-		criteria.addOrder(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
+		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
 		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
@@ -126,12 +129,12 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		if (!isReadOnly()) {
 			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
 			criteria = new Criteria();
-			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
-			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_STATUS), IncomeStatus.PENDING);
-			criteria.addEqualExpression(incomeBean.getFieldName(IWarehouseAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
-			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_ISSUE_TIME));
-			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_SERIES));
-			criteria.addOrder(incomeBean.getFieldName(IWarehouseAlias.INCOME_NUMBER));
+			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_SUPPLIER_ID), getInvoice().getRegistry().getId());
+			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_STATUS), IncomeStatus.PENDING);
+			criteria.addEqualExpression(incomeBean.getFieldName(IEntityAlias.INCOME_SECURITY_LEVEL), getInvoice().getSecurityLevel());
+			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_ISSUE_TIME));
+			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_SERIES));
+			criteria.addOrder(incomeBean.getFieldName(IEntityAlias.INCOME_NUMBER));
 			incomeList.addAll(incomeBean.getList(criteria));
 		}
 		getIncomeTransferManager().setIncomeList(incomeList);
@@ -166,14 +169,14 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			criteria = new Criteria();
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
 			if (invoiceDetailBean.getList(criteria).iterator().hasNext()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)invoiceDetailBean.getList(criteria).iterator().next();
 				invoiceDetail.setUpdateEnabled(!iterator.hasNext());
@@ -187,10 +190,9 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		IManagerBean bean = getAttachmentBean();
 		try {
 			Criteria criteria = new Criteria();
-			String invoiceAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_INVOICE_ID);
-			criteria.addEqualExpression(invoiceAlias, ((Invoice)to).getId());
-			String typeAlias;
-			typeAlias = bean.getFieldName(IFinanceAlias.INVOICE_ATTACHMENT_MIME_TYPE);
+			String invoiceAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_INVOICE_ID);
+			criteria.addEqualExpression(invoiceAlias, getInvoice().getId());
+			String typeAlias = bean.getFieldName(IEntityAlias.INVOICE_ATTACHMENT_MIME_TYPE);
 			criteria.addEqualExpression(typeAlias, MimeType.MIME_PDF);
 			List<ITransferObject> list = bean.getList(criteria);
 			if (! list.isEmpty() ) {
@@ -215,5 +217,5 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
-
+	
 }

@@ -10,7 +10,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -18,6 +17,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ScopeFilterListener extends ControllerAdapter {
 
@@ -44,7 +44,7 @@ public class ScopeFilterListener extends ControllerAdapter {
 	private static List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
 		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
+		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
 		return userScopeBean.getList(criteria);
 	}
 	

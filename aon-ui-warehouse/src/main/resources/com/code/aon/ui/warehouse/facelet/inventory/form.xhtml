@@ -10,12 +10,14 @@
 	<ui:define name="content">
 		<aon:form id="inventoryForm">
 
+			<aon:methodParam name="resetActionListener" value="#{inventory.onStartClosing}" type="actionListener" />
+			<aon:methodParam name="resetAction" value="inventory_close"/>
+			
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipResetButton" value="true" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="inventory_close-excel-report"

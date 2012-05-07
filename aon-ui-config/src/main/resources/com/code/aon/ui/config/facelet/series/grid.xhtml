@@ -19,20 +19,20 @@
 				</ui:decorate>
 
 				<aon:div styleClass="aon-scroll-area">
-					<ui:decorate
-						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					
 						<ui:param name="controller" value="#{series}" />
 						<ui:define name="columns">
-							<aon:column	alias="Series.id" 
-								styleClass="aon-editDataTable-textColumn aon-width-80">
+							<aon:column	alias="Series.code" 
+								styleClass="aon-editDataTable-textColumn aon-width-60">
 								<f:facet name="header">
-									<aon:outputLabel for="Series_id" value="#{bundle.aon_id}" />
+									<aon:outputLabel for="Series_code" value="#{bundle.aon_id}" />
 								</f:facet>
-								<aon:outputText value="#{to.id}" />
+								<aon:outputText value="#{to.code}" />
 								<f:facet name="footer">
-									<aon:inputText id="Series_id"
+									<aon:inputText id="Series_code"
 										rendered="#{formNew}" size="7" maxlength="5"
-										value="#{series.to.id}" required="#{true}" />
+										value="#{series.to.code}" required="#{true}" />
 								</f:facet>
 							</aon:column>
 
@@ -44,18 +44,38 @@
 								<aon:outputText rendered="#{formList}"
 									value="#{to.description}" />
 								<aon:inputText id="Series_description"
-									rendered="#{formEdit}" size="40" maxlength="32" 
+									rendered="#{formEdit}" size="20" maxlength="32" 
 									value="#{series.to.description}" required="#{true}" />
 								<f:facet name="footer">
 									<aon:inputText id="Series_description-New"
-										rendered="#{formNew}" size="40" maxlength="32" 
+										rendered="#{formNew}" size="20" maxlength="32" 
 										value="#{series.to.description}" required="#{true}" />
+								</f:facet>
+							</aon:column>
+
+							<aon:column alias="Series.scope" 
+								styleClass="aon-editDataTable-textColumn aon-width-130">
+								<f:facet name="header">
+									<aon:outputLabel for="Series_scope" value="#{bundle.aon_scope}" />
+								</f:facet>
+								<aon:outputText rendered="#{formList}"
+									value="#{to.scope.description}" />
+									
+								<aon:selectOneMenu id="Series_scope" required="#{true}"
+									rendered="#{formEdit}" value="#{series.to.scope}">
+									<f:selectItems value="#{configCollections.currentUserScopes}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="Series-New" required="#{true}"
+										rendered="#{formNew}" value="#{series.to.scope}">
+										<f:selectItems value="#{configCollections.currentUserScopes}" />
+									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 
 							<c:if test="#{aonConfiguration.bean.series.showTasData}">
 								<aon:column alias="Series.tas" 
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_tas" value="#{configBundle.config_series_tas}" />
 									</f:facet>
@@ -74,7 +94,7 @@
 
 							<c:if test="#{aonConfiguration.bean.series.showOfferData}">
 								<aon:column alias="Series.offer"
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass=" aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_offer" value="#{configBundle.config_series_offers}" />
 									</f:facet>
@@ -93,7 +113,7 @@
 
 							<c:if test="#{aonConfiguration.bean.series.showSalesData}">
 								<aon:column alias="Series.sales" 
-								 	styleClass="aon-editDataTable-textColumn aon-width-60">
+								 	styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_sales" value="#{configBundle.config_series_sales}" />
 									</f:facet>
@@ -112,7 +132,7 @@
 
 							<c:if test="#{aonConfiguration.bean.series.showDeliveryData}">
 								<aon:column alias="Series.delivery" 
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_delivery" value="#{configBundle.config_series_deliveries}" />
 									</f:facet>
@@ -131,7 +151,7 @@
 
 							<c:if test="#{aonConfiguration.bean.series.showInvoiceData}">
 								<aon:column alias="Series.invoice" 
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_invoice" value="#{configBundle.config_series_invoices}" />
 									</f:facet>
@@ -150,7 +170,7 @@
 
 							<c:if test="#{aonConfiguration.bean.series.showInvoiceData}">
 								<aon:column alias="Series.rectification" 
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_rectification" value="#{configBundle.config_series_rectifications}" />
 									</f:facet>
@@ -169,7 +189,7 @@
 
 							<c:if test="#{aonRole.confidentiality}">
 								<aon:column alias="Series.securityLevel" 
-									styleClass="aon-editDataTable-textColumn aon-width-60">
+									styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 									<f:facet name="header">
 										<aon:outputLabel for="Series_securityLevel" value="#{bundle.aon_confidential}" />
 									</f:facet>
@@ -187,7 +207,7 @@
 							</c:if>
 
 							<aon:column alias="Series.active" 
-								styleClass="aon-editDataTable-textColumn aon-width-60">
+								styleClass="aon-text-center aon-editDataTable-textColumn aon-width-60">
 								<f:facet name="header">
 									<aon:outputLabel for="Series_active" value="#{configBundle.config_series_active}" />
 								</f:facet>

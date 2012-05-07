@@ -3,7 +3,6 @@ package com.code.aon.accounting.event;
 import java.util.List;
 
 import com.code.aon.accounting.BalanceDetail;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -12,6 +11,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * @author Consulting & Development
@@ -25,9 +25,9 @@ public class BalanceDetailListener extends ManagerBeanListenerAdapter {
 		
 		IManagerBean bdBean = BeanManager.getManagerBean(BalanceDetail.class);
 		Criteria criteria = new Criteria();
-		String balanceAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
-		String sortKeyAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_SORT_KEY);
-		String detailIdAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_ID);
+		String balanceAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID);
+		String sortKeyAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_SORT_KEY);
+		String detailIdAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_ID);
 		criteria.addEqualExpression(balanceAlias, bd.getBalance().getId());
 		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailIdAlias, bd.getId()));
 		criteria.addGreaterThanOrEqualExpression(sortKeyAlias, bd.getSortKey());
@@ -48,9 +48,9 @@ public class BalanceDetailListener extends ManagerBeanListenerAdapter {
 		
 		IManagerBean bdBean = BeanManager.getManagerBean(BalanceDetail.class);
 		Criteria criteria = new Criteria();
-		String balanceAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID);
-		String sortKeyAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_SORT_KEY);
-		String detailIdAlias = bdBean.getFieldName(IAccountingAlias.BALANCE_DETAIL_ID);
+		String balanceAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID);
+		String sortKeyAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_SORT_KEY);
+		String detailIdAlias = bdBean.getFieldName(IEntityAlias.BALANCE_DETAIL_ID);
 		criteria.addEqualExpression(balanceAlias, bd.getBalance().getId());
 		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailIdAlias, bd.getId()));
 		criteria.addGreaterThanOrEqualExpression(sortKeyAlias, bd.getSortKey());

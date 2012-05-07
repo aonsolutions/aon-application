@@ -1,89 +1,48 @@
 package com.esferalia.aon.pms;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.time.DateUtils;
 
-import com.code.aon.asset.AssetActivity;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
+import com.esferalia.aon.entity.master.ProjectReservationRoomDetailDB;
 
 @Entity
 @Table(name="project_reservation_room_detail")
-public class ProjectReservationRoomDetail implements ITransferObject {
+public class ProjectReservationRoomDetail extends ProjectReservationRoomDetailDB {
 
-	private static final long serialVersionUID = -2595051575335189544L;
+	private static final long serialVersionUID = 1L;
 
-	private Integer id;
-	private ProjectReservationRoom projectReservationRoom;
-    private AssetActivity assetActivity;
+    @Transient
+    public Room getRoom() throws ManagerBeanException {
+    	if (getAssetActivity() != null && getAssetActivity().getAsset() != null) {
+        	return (Room)BeanManager.getManagerBean(Room.class).get(getAssetActivity().getAsset().getId());
+    	}
+    	return null;
+    }
 
-    @Id
-	@GeneratedValue
-	@Column(nullable=false)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Transient
+    public boolean isFirstNight() {
+    	if (getAssetActivity() != null && getAssetActivity().getAsset() != null) {
+    		return getProjectReservationRoom().getProjectReservation().getStartDate().equals(getAssetActivity().getDate());
+    	}
+    	return false;
+    }
 
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="project_reservation_room", nullable=false)
-	public ProjectReservationRoom getProjectReservationRoom() {
-		return projectReservationRoom;
-	}
+    @Transient
+    public boolean isLastNight() {
+    	if (getAssetActivity() != null && getAssetActivity().getAsset() != null) {
+    		return DateUtils.addDays(getProjectReservationRoom().getProjectReservation().getEndDate(), -1).equals(getAssetActivity().getDate());
+    	}
+    	return false;
+    }
 
-	public void setProjectReservationRoom(ProjectReservationRoom projectReservationRoom) {
-		this.projectReservationRoom = projectReservationRoom;
-	}
+    @Transient
+    public boolean isInvoiced() {
+    	return (getProjectReservationRoom() != null && getProjectReservationRoom().getProjectReservation().isInvoiced());
+    }
 
-	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn(name="asset_activity", nullable=false)
-	public AssetActivity getAssetActivity() {
-		return assetActivity;
-	}
-
-	public void setAssetActivity(AssetActivity assetActivity) {
-		this.assetActivity = assetActivity;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (this == obj) return true;
-		if (obj.getClass() != getClass()) return false;
-		final ProjectReservationRoomDetail o = (ProjectReservationRoomDetail) obj;
-		if (o.getId() == null && getId() == null) {
-			return new EqualsBuilder()
-				.append(this.assetActivity, o.assetActivity)
-				.append(this.projectReservationRoom, o.projectReservationRoom)
-				.isEquals();
-		}
-		return ObjectUtils.equals(getId(), o.getId());		
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()
-			.append(id)
-			.append(assetActivity)
-			.append(projectReservationRoom)
-			.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return new PojoToStringBuilder(this).toString();
-	}
-	
 }

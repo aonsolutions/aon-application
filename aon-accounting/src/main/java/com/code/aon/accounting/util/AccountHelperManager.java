@@ -10,14 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountHelperManager {
 
@@ -37,28 +38,28 @@ public class AccountHelperManager {
 
 	public String getAccountAlias() throws ManagerBeanException {
 		if (accountAlias == null) {
-			accountAlias = getBean().getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
+			accountAlias = getBean().getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
 		}
 		return accountAlias;
 	}
 
 	public String getAccountIdAlias() throws ManagerBeanException {
 		if (accountIdAlias == null) {
-			accountIdAlias = getBean().getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID);
+			accountIdAlias = getBean().getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_ID);
 		}
 		return accountIdAlias;
 	}
 
 	public String getBalancingAccountAlias() throws ManagerBeanException {
 		if (balancingAccountAlias == null) {
-			balancingAccountAlias = getBean().getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
+			balancingAccountAlias = getBean().getFieldName(IEntityAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
 		}
 		return balancingAccountAlias;
 	}
 
 	public String getBalancingAccountIdAlias() throws ManagerBeanException {
 		if (balancingAccountIdAlias == null) {
-			balancingAccountIdAlias = getBean().getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_ID);
+			balancingAccountIdAlias = getBean().getFieldName(IEntityAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_ID);
 		}
 		return balancingAccountIdAlias;
 	}
@@ -80,7 +81,7 @@ public class AccountHelperManager {
 			List<ITransferObject> list = getBean().getList(criteria);
 			if (list != null && list.size() > 0) {
 				AccountHelper ah = (AccountHelper) list.get(0);
-				int c = (ah.getCounter()==null?0:ah.getCounter()) + i;
+				int c = ah.getCounter() + i;
 				ah.setCounter( c );
 				if (c == 0) {
 					getBean().remove(ah);
@@ -114,15 +115,16 @@ public class AccountHelperManager {
 				Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 				
 				// Borrado de las filas actuales.
-				String delete = "delete from AccountHelper as ah";
+				String delete = "delete from AccountHelper as ah where " + DomainManager.getSQLWhereClause("ah.domain");
 		        int rows = session.createQuery(delete).executeUpdate();
 		        LOGGER.info( "Filas borradas: "  +  rows );
 
 		        IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
-				String select = "select detail.account, detail.balancingAccount, count(*)" +
-								" from AccountEntryDetail as detail " +
-								" where detail.balancingAccount is not null" +
-								" group by detail.account, detail.balancingAccount ";
+				String select = "SELECT detail.account, detail.balancingAccount, count(*)" +
+								" FROM AccountEntryDetail AS detail " +
+								" WHERE " + DomainManager.getSQLWhereClause("detail.domain") +
+								" AND detail.balancingAccount is not null" +
+								" GROUP BY detail.account, detail.balancingAccount ";
 				
 		        Query query = session.createQuery(select);
 		        List<?> list = query.list();

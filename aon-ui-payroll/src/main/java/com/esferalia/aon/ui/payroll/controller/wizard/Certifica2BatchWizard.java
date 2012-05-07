@@ -31,7 +31,7 @@ import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
@@ -507,10 +507,10 @@ public class Certifica2BatchWizard extends Certifica2Factory implements Serializ
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), type);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), startDate);
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), endDate);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), type);
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startDate);
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endDate);
 			
 			List<ITransferObject> salaryList = bean.getList(criteria);
 			if(!salaryList.isEmpty()){
@@ -525,7 +525,7 @@ public class Certifica2BatchWizard extends Certifica2Factory implements Serializ
 	private Certifica2BatchDetail getExistingDetalle(Contract contract) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DETAIL_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CONTRACT_ID), contract.getId());
 		Iterator<ITransferObject> it = bean.getList(criteria).iterator();
 		while(it.hasNext()){
 			Certifica2BatchDetail d = (Certifica2BatchDetail) it.next();
@@ -543,10 +543,10 @@ public class Certifica2BatchWizard extends Certifica2Factory implements Serializ
 	private void onSearch(ActionEvent event) {
 		ContractController controller = (ContractController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		try {
-			controller.getCriteria().addNotNullExpression(controller.getFieldName(IPayrollAlias.CONTRACT_END_DATE));
-			controller.getCriteria().addOrder(controller.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
-			controller.getCriteria().addOrder(controller.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
-			controller.getCriteria().addOrder(controller.getFieldName(IPayrollAlias.CONTRACT_PERSON_REGISTRY_NAME));
+			controller.getCriteria().addNotNullExpression(controller.getFieldName(IEntityAlias.CONTRACT_END_DATE));
+			controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_REGISTRY_NAME));
+			controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_FIRST_SURNAME));
+			controller.getCriteria().addOrder(controller.getFieldName(IEntityAlias.CONTRACT_PERSON_REGISTRY_NAME));
 			controller.onSearch(event);
 			initializeModel(controller.getManagerBean().getList(controller.getCriteria()));
 		} catch (ManagerBeanException e) {

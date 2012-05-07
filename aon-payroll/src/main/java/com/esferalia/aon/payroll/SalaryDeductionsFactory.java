@@ -10,7 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.Deductions;
@@ -46,7 +46,7 @@ public class SalaryDeductionsFactory implements IDeductionsFactory {
 			} else {
 				IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
 				Criteria c = new Criteria();
-				c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
 				List<?> list = bean.getList(c);
 				salaryDeductions = (Collection<SalaryDeduction>) list;
 				for(SalaryDeduction sd: salaryDeductions){

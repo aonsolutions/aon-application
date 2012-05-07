@@ -22,7 +22,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -142,11 +142,11 @@ public class Certifica2ListController extends BasicController {
 		setSuspensionCauseForAll(null);
 		IController controller = FormUtil.getController(IPayrollConstants.CERTIFICA2_BATCH_CONTROLLER_NAME);
 		try {
-			getCriteria().addNotNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
-			getCriteria().addNotEqualExpression(getFieldName(IPayrollAlias.CONTRACT_STATUS), ContractStatus.BATCHED);
-//			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_STATUS), ContractStatus.PENDING);
-			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), ((Certifica2Batch)controller.getTo()).getEnterprise().getId());
-			getCriteria().addOrder(getFieldName(IPayrollAlias.CONTRACT_END_DATE), false);
+			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
+			getCriteria().addNotEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.BATCHED);
+//			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_STATUS), ContractStatus.PENDING);
+			getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), ((Certifica2Batch)controller.getTo()).getEnterprise().getId());
+			getCriteria().addOrder(getFieldName(IEntityAlias.CONTRACT_END_DATE), false);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

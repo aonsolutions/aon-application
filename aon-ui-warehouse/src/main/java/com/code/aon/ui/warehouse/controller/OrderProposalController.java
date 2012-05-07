@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.warehouse.ItemWarehouse;
 import com.code.aon.warehouse.Warehouse;
@@ -65,7 +66,8 @@ public class OrderProposalController implements ICollectionProvider{
     		+" LEFT OUTER JOIN pcategory c ON p.category = c.id"
     		+" LEFT OUTER JOIN stock s ON iw.item = s.item AND iw.warehouse = s.warehouse"
     		+" INNER JOIN warehouse w ON iw.warehouse = w.id"
-    		+" WHERE IFNULL(s.quantity,0) <= iw.stock_min";
+    		+" WHERE " + DomainManager.getSQLWhereClause("iw.domain")
+    		+" AND IFNULL(s.quantity,0) <= iw.stock_min";
         if (getWarehouse() != null) {
         	stmt += " AND iw.warehouse = " + getWarehouse().getId();
         }

@@ -5,8 +5,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tas.Model;
-import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TasItemSearchListener extends ControllerSearchListener {
 
@@ -28,7 +28,7 @@ public class TasItemSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if ((getModel() != null) && (getModel().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(ITASAlias.TAS_ITEM_MODEL_ID), getModel().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.TAS_ITEM_MODEL_ID), getModel().getId());			
 		}
 	}
 

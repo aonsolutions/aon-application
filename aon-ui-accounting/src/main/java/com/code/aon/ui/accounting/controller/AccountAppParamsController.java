@@ -13,7 +13,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,6 +20,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountAppParamsController{
 	
@@ -91,7 +91,7 @@ public class AccountAppParamsController{
 				String value = defaultParameters.get(key); 
 				if (StringUtils.endsWith(key, "_ACC")) {
 					Criteria c = new Criteria();
-					c.addEqualExpression(bean.getFieldName(IAccountAlias.ACCOUNT_CODE), value);
+					c.addEqualExpression(bean.getFieldName(IEntityAlias.ACCOUNT_CODE), value);
 					Iterator<ITransferObject> accounts = bean.getList(c).iterator();
 					if (accounts.hasNext()) {
 						Account account = (Account) accounts.next();

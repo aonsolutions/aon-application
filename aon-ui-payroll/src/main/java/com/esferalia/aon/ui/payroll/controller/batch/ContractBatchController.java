@@ -28,7 +28,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchAttachment;
 import com.esferalia.aon.payroll.ContractBatchDetail;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
@@ -191,8 +191,8 @@ public class ContractBatchController extends BasicController {
 	private void checkDiskCreated() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractBatchAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BATCH_ATTACHMENT_CONTRACT_BATCH_ID), ((ContractBatch)getTo()).getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BATCH_ATTACHMENT_ATTACHMENT_TYPE), ContractBatchAttachmentType.AFI_DOCUMENT);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_ATTACHMENT_CONTRACT_BATCH_ID), ((ContractBatch)getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BATCH_ATTACHMENT_ATTACHMENT_TYPE), ContractBatchAttachmentType.AFI_DOCUMENT);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			setRecorded(true);

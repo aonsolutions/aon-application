@@ -27,7 +27,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
@@ -40,6 +39,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxController extends BasicController {
 
@@ -168,9 +168,9 @@ public class VatTaxController extends BasicController {
 			if (isNew()) {
 				VatTax vatTax = (VatTax) getTo();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-				criteria.addLessThanExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
-				criteria.addOrder(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_PERIOD), false);
+				criteria.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+				criteria.addLessThanExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
+				criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_PERIOD), false);
 				System.out.println(criteria);
 				List<ITransferObject> list = getManagerBean().getList(criteria);
 				if (list != null && list.size() > 0) {
@@ -333,11 +333,11 @@ public class VatTaxController extends BasicController {
 			VatTax vatTax = (VatTax) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
-			criteria.addLessThanExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), vatTax.getPeriod());
-			Expression e1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_TAXABLE_BASE_ADJUST), 0.0);
-			Expression e2 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_DEDUCTIBLE_QUOTA_ADJUST), 0.0);
-			Expression e3 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_QUOTA_ADJUST), 0.0);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
+			criteria.addLessThanExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), vatTax.getPeriod());
+			Expression e1 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_TAXABLE_BASE_ADJUST), 0.0);
+			Expression e2 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_DEDUCTIBLE_QUOTA_ADJUST), 0.0);
+			Expression e3 = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_QUOTA_ADJUST), 0.0);
 			Expression e4 = ExpressionUtilities.getOrExpression(e1, e2);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(e3, e4));
 			System.out.println(criteria);
@@ -357,8 +357,8 @@ public class VatTaxController extends BasicController {
 			VatTax vatTax = (VatTax) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
-			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), getPreviousPeriod());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), vatTax.getYear());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), getPreviousPeriod());
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
 				VatTaxDetail detail = (VatTaxDetail) to;
@@ -443,8 +443,8 @@ public class VatTaxController extends BasicController {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(VatTaxDeclaration.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
-				criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_PERCENT),false);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DECLARATION_PERCENT),false);
 				List<?> list = bean.getList(criteria);
 				return (List<VatTaxDeclaration>) list;
 			} catch (ManagerBeanException e) {

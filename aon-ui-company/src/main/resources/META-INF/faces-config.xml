@@ -1269,6 +1269,29 @@
 		</managed-property>
 	</managed-bean>	
 	
+	<!-- ************* DEPARTMENT ***************** -->
+	<managed-bean>
+		<managed-bean-name>department</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.Department</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>department</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Department_name</value>
+		</managed-property>				
+	</managed-bean>
+	
 	<!-- **** ENTERPRISE PARAMETERS **** --> 
 	<managed-bean>
 		<managed-bean-name>enterpriseParams</managed-bean-name>
@@ -1364,6 +1387,14 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
+	
+	<!-- =================== Department ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>department_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/department/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 			
 </faces-config>
 		

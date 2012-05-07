@@ -3,10 +3,10 @@ package com.code.aon.ui.product.event;
 import java.util.Date;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CatalogueSearchListener extends ControllerSearchListener {
 
@@ -61,16 +61,16 @@ public class CatalogueSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (getStartDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CATALOGUE_START_DATE), getStartDateFrom());
 		}
 		if (getStartDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_START_DATE), getStartDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CATALOGUE_START_DATE), getStartDateTo());
 		}
 		if (getEndDateFrom() != null) {
-			criteria.addGreaterThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateFrom());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CATALOGUE_END_DATE), getEndDateFrom());
 		}
 		if (getEndDateTo() != null) {
-			criteria.addLessThanOrEqualExpression(getFieldName(IProductAlias.CATALOGUE_END_DATE), getEndDateTo());
+			criteria.addLessThanOrEqualExpression(getFieldName(IEntityAlias.CATALOGUE_END_DATE), getEndDateTo());
 		}
 	}	
 }

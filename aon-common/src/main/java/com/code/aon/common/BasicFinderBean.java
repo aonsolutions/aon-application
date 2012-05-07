@@ -5,6 +5,12 @@ import java.util.List;
 
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.event.FinderBeanEvent;
+import com.code.aon.common.event.IManagerBeanListener;
+import com.code.aon.common.event.IManagerBeanVetoListener;
+import com.code.aon.common.event.ManagerBeanListenerSupport;
+import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.event.ManagerBeanVetoListenerSupport;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.Projection;
@@ -27,6 +33,16 @@ public class BasicFinderBean implements IFinderBean {
 	private IDAO dao;
 
 	/**
+	 * Bean Listeners.
+	 */
+	private ManagerBeanListenerSupport listeners;
+
+	/**
+	 * Bean Veto Listeners.
+	 */
+	private ManagerBeanVetoListenerSupport vetoListeners;
+	
+	/**
 	 * Construct a finder bean.
 	 * 
 	 * @param dao
@@ -42,14 +58,60 @@ public class BasicFinderBean implements IFinderBean {
 		return dao;
 	}
 
+	/**
+	 * @return Returns the listeners.
+	 */
+	protected ManagerBeanListenerSupport getListeners() {
+		return listeners;
+	}
+
+	/**
+	 * @return Returns the vetoListeners.
+	 */
+	protected ManagerBeanVetoListenerSupport getVetoListeners() {
+		return vetoListeners;
+	}
+
+	/**
+	 * Listener registration method. Tell the ManagerBeanListenerSupport to add a new
+	 * <code>IManagerBeanListener</code>.
+	 * 
+	 * @param listener
+	 */
+	public void addManagerBeanListener( IManagerBeanListener listener ) {
+		if (listeners == null) {
+			listeners = new ManagerBeanListenerSupport();
+		}
+		listeners.addListener( listener );
+	}
+
+	/**
+	 * Listener registration method. Tell the ManagerBeanVetoListenerSupport to add a new
+	 * <code>IManagerBeanVetoListener</code>.
+	 * 
+	 * @param vetoListener
+	 */
+	public void addManagerBeanVetoListener( IManagerBeanVetoListener vetoListener ) {
+		if (vetoListeners == null) {
+			vetoListeners = new ManagerBeanVetoListenerSupport(); 
+		}
+		vetoListeners.addListener( vetoListener );
+	}
+
 	/* 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IFinderBean#getList(com.code.aon.ql.Criteria)
 	 */
 	public List<ITransferObject> getList(Criteria criteria) throws ManagerBeanException {
 		try {
-			return dao.getList(criteria);
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
+			List<ITransferObject> ret = dao.getList(criteria);
+			return ret;
 		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
@@ -58,27 +120,44 @@ public class BasicFinderBean implements IFinderBean {
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IFinderBean#getList(com.code.aon.ql.Criteria, int, int)
 	 */
-	public List<ITransferObject> getList(Criteria criteria, int offset, int count)
-			throws ManagerBeanException {
+	public List<ITransferObject> getList(Criteria criteria, int offset, int count) throws ManagerBeanException {
 		try {
-			return dao.getList(criteria, offset, count);
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
+			List<ITransferObject> ret = dao.getList(criteria, offset, count);
+			return ret;
 		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
 
-	public List getList(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
+	public List<?> getList(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
 		try {
-			return dao.getList(projectionList, criteria);
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
+			List<?> ret = dao.getList(projectionList, criteria);
+			return ret;
 		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
 
 	public Object getUniqueResult(Projection projection, Criteria criteria) throws ManagerBeanException {
 		try {
-			return dao.getUniqueResult(projection, criteria);
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
+			Object ret = dao.getUniqueResult(projection, criteria);
+			return ret;
 		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
@@ -106,6 +185,9 @@ public class BasicFinderBean implements IFinderBean {
 				obl = criteria.getOrderByList();
 				criteria.setOrderByList( null );
 			}
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
 			int count = dao.getCount(criteria);
 			if ( criteria != null ) {
 				criteria.setOrderByList( obl );	
@@ -113,15 +195,22 @@ public class BasicFinderBean implements IFinderBean {
 			return count;
 		} catch (DAOException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
 		}
+	}
+
+	private FinderBeanEvent getNewFinderBeanEvent(Criteria criteria) {
+		return new FinderBeanEvent(criteria,getPOJOClass());
 	}
 
 	/* 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.IFinderBean#getPOJOClass()
 	 */
-	public Class getPOJOClass() {
-		return dao.getPOJOClass();
+	@SuppressWarnings("unchecked")
+	public Class<ITransferObject> getPOJOClass() {
+		return (Class<ITransferObject>) dao.getPOJOClass();
 	}
 
 	/*
@@ -172,4 +261,16 @@ public class BasicFinderBean implements IFinderBean {
 		}
 	}
 
+	/**
+     * Fire an existing FinderBeanEvent to any registered vetoListeners.
+	 * 
+	 * @param evt the FinderBeanEvent object
+	 * @throws ManagerBeanVetoListenerException
+	 */
+	private void fireVetoableBeanSearched( FinderBeanEvent evt ) throws ManagerBeanVetoListenerException{
+		if (getVetoListeners() != null) {
+			getVetoListeners().vetoableBeanSearched( evt );
+		}
+	}
+	
 }

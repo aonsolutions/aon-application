@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div styleClass="aon-scroll-area">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		
+			<ui:param name="controller" value="#{controller}" />
+			<ui:param name="columnClasses" value="
+				aon-editDataTable-textColumn, aon-editDataTable-dateColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-dateColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-dateColumn, 
+				aon-editDataTable-dateColumn, aon-editDataTable-dateColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+	
+			<ui:define name="columns">
+			
+				<aon:column alias="AssetActivity.date"
+					styleClass="aon-editDataTable-dateColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputLabel for="AssetActivity_date"
+							value="#{bundle.aon_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.date}" rendered="#{formList}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+					<aon:selectInputDate id="AssetActivity_date" rendered="#{formEdit}"  
+						value="#{controller.to.date}" size="20"
+						inputSize="16" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+					<f:facet name="footer">
+						<aon:selectInputDate id="AssetActivity_date-New" rendered="#{formNew}"  
+							value="#{controller.to.date}" size="20"
+							inputSize="16" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+						</aon:selectInputDate>
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="AssetActivity_comments" 
+							value="#{assetBundle.asset_activity_why}" />
+					</f:facet>
+					<aon:outputText value="#{to.comments}" rendered="#{formList}" size="25" />
+					<aon:inputTextarea value="#{controller.to.comments}" id="AssetActivity_comments"
+						cols="50" rows="4" rendered="#{formEdit}" >
+						<f:validateLength maximum="128" />
+					</aon:inputTextarea>
+					<f:facet name="footer">
+						<aon:inputTextarea value="#{controller.to.comments}" id="AssetActivity_comments-New"
+							cols="50" rows="4" rendered="#{formNew}" >
+							<f:validateLength maximum="128" />
+						</aon:inputTextarea>
+					</f:facet>
+				</aon:column>		
+				
+			</ui:define>
+	
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>

@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="aonHeader" styleClass="aon-header">
+		<aon:panelGrid columns="3" width="100%" 
+			columnClasses="aon-header-name,aon-header-options aon-width-300">
+			
+			<aon:div style="margin-top: 10px">
+				<aon:outputConnectionStatus id="aonStatus" layout="block"
+					startStyleClass="aon-outputConnectionStatus-start"
+					stopStyleClass="aon-outputConnectionStatus-stop"
+					onstart="resetStatusError();" />
+				<aon:div id="status_error" style="display: none"
+					styleClass="aon-outputConnectionStatus-failed" />
+				<aon:outputText value="/ #{domainSwitcher.domainName}"
+					styleClass="aon-header-title" />
+			</aon:div>
+
+			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
+				style="color:#999;">
+				<aon:form id="headerOptionsForm" prependId="false">
+					<c:if test="#{domainSwitcher.domainCount > 0}">
+						<aon:panelGroup>
+			 				<aon:commandLink id="DomainSwitch" 
+								title="#{configBundle.config_domain_module}"
+								value="#{configBundle.config_domain_module}"
+								styleClass="aon-header-domain"
+								style="text-decoration: underline;"
+								actionListener="#{domainSwitcher.onEditSearch}"					
+								action="domain_list" />
+						</aon:panelGroup>
+					</c:if>
+					<aon:panelGroup>
+						<h:outputLink id="logout" styleClass="aon-header-logout"
+							style="text-decoration: underline;"
+							value="http://login.aonsolutions.es/">
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}">
+								<a4j:support event="onclick"
+									onsubmit="disableRFAjax()"
+									ajaxSingle="true" immediate="true" bypassUpdates="true"
+									actionListener="#{aonConfiguration.logout}" />
+							</aon:outputText>
+						</h:outputLink>
+					</aon:panelGroup> 
+				</aon:form>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:div styleClass="aon-header-additionalInfo">
+			<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
+				<aon:div styleClass="aon-float-right">
+					<aon:div styleClass="aon-header-menu-item aon-nowrap">
+						<c:if test="#{loggedUser.logged}">		
+							<aon:div styleClass="aon-padding-right" layout="inline">
+								<aon:outputText value="#{loggedUser.loggedUserName}"
+									style="border-right:1px solid;"
+									styleClass="aon-padding-right" />
+							</aon:div>
+							<aon:outputText value="#{loggedUser.companyName}" />
+						</c:if>		
+					</aon:div>
+				</aon:div>
+			</c:if>
+			<c:if test="#{!aonConfiguration.properties.hideApplicationVersion}">
+				<aon:outputFormat value="#{bundle.aon_version}"
+					styleClass="aon-version-label"
+					rendered="#{aonConfiguration.properties.applicationVersion != null}" >
+					<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+				</aon:outputFormat>
+			</c:if>				
+			<aon:graphicImage title="Google"
+				value="#{aonResource.resolve['/images/aon-header/google.png']}" />			
+			<aon:div layout="inline" styleClass="aon-header-menu-item">
+				<h:outputLink value="http://mail.google.com" target="_blank">
+					<aon:outputText value="#{webmailBundle.webmail_main}" />
+				</h:outputLink> 			
+				<h:outputLink value="https://mail.google.com/mail/#contacts" target="_blank">
+					<aon:outputText value="#{webmailBundle.webmail_email}" />
+				</h:outputLink> 			
+				<h:outputLink value="http://www.google.com/calendar" target="_blank">
+					<aon:outputText value="Calendar" />
+				</h:outputLink> 			
+				<h:outputLink value="http://docs.google.com" target="_blank">
+					<aon:outputText value="Docs" />
+				</h:outputLink>
+			</aon:div> 			
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

@@ -22,7 +22,6 @@ import org.dom4j.io.XMLWriter;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -38,6 +37,7 @@ import com.code.aon.company.Company;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BalanceManager {
 	
@@ -156,9 +156,9 @@ public class BalanceManager {
 	private void dumpTable(Balance balance) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(BalanceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_BALANCE_ID),
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID),
 				balance.getId());
-		criteria.addOrder(bean.getFieldName(IAccountingAlias.BALANCE_DETAIL_SORT_KEY));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.BALANCE_DETAIL_SORT_KEY));
 		List<ITransferObject> balanceDetailList = bean.getList(criteria);
 		list = new LinkedList<BalanceItem>();
 		for (ITransferObject to : balanceDetailList) {
@@ -366,7 +366,7 @@ public class BalanceManager {
 		if (previous.getPeriod() != null) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			Criteria criteria = new Criteria();
-			String deadlineAlias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+			String deadlineAlias = periodBean.getFieldName(IEntityAlias.PERIOD_INITIATION_DATE);
 			criteria.addLessThanExpression(deadlineAlias, previous.getPeriod().getInitiationDate());
 			criteria.addOrder(deadlineAlias, false);
 			Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();

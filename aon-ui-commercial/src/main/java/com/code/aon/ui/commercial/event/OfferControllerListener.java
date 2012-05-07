@@ -3,7 +3,6 @@ package com.code.aon.ui.commercial.event;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.common.BeanManager;
@@ -19,6 +18,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class OfferControllerListener extends ControllerAdapter implements ICommercialConstants {
 
@@ -53,8 +53,8 @@ public class OfferControllerListener extends ControllerAdapter implements IComme
 			IManagerBean offerTermBean = BeanManager.getManagerBean(OfferTerm.class);
 			IManagerBean commercialTermBean = BeanManager.getManagerBean(CommercialTerm.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(commercialTermBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL), true);
-			criteria.addOrder(commercialTermBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE));
+			criteria.addEqualExpression(commercialTermBean.getFieldName(IEntityAlias.COMMERCIAL_TERM_GENERAL), true);
+			criteria.addOrder(commercialTermBean.getFieldName(IEntityAlias.COMMERCIAL_TERM_LINE));
 			int line = 0;
 			for (ITransferObject to : commercialTermBean.getList(criteria)) {
 				CommercialTerm commercialTerm = (CommercialTerm)to;

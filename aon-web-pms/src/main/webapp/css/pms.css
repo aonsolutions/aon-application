@@ -101,14 +101,19 @@
 	text-decoration: underline;
 }
 
-.no-padding {
-	padding: 0;
+.pms-invoiced-cell {
+	background-color: #3D9E07;
+	display: block;
 }
-.reserved-cell {
+.pms-active-cell {
 	background-color: #FFA54F;
 	display: block;
 }
-.available-cell {
+.pms-available-cell {
 	background-color: #FFFFFF;
 	display: block;
 }
+.aon-icon-calc{
+	background:transparent url(images/aon-icon/aon-icon-calc.png) scroll left center no-repeat;	
+ }
+

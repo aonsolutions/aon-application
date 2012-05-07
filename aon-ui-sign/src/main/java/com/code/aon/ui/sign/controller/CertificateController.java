@@ -33,12 +33,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.event.ScopeFilterListener;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CertificateController {
 
@@ -257,9 +257,9 @@ public class CertificateController {
 	private Criteria getCertificateCriteria( IManagerBean bean ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		Serializable id = companyController.obtainCompany().getId();
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
-		String scopeAlias = bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
+		String scopeAlias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
 		criteria.addExpression( ScopeFilterListener.getExpression(scopeAlias) );
 		return criteria;
 	}

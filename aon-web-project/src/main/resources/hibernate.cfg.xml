@@ -31,7 +31,6 @@
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>				
 
 		<!-- AON-CALENDAR Mapping files -->		
@@ -62,17 +61,22 @@
 
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CNAE2009"/>
 		<mapping class="com.code.aon.config.CNAE2009Rate"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
@@ -85,7 +89,7 @@
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 
-		<!-- AON-GEOZONE Mapping files -->		
+		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
@@ -156,6 +160,8 @@
 		<mapping class="com.code.aon.project.ProjectType"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
@@ -176,7 +182,7 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 
-		<!-- AON-SALES Mapping files -->	
+		<!-- AON-SALES Mapping files -->
 		<mapping class="com.code.aon.sales.Sales"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
 
@@ -186,7 +192,7 @@
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 		
-		<!-- AON-WAREHOUSE Mapping files -->		
+		<!-- AON-WAREHOUSE Mapping files -->
 		<mapping class="com.code.aon.warehouse.Delivery"/>
 		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
 		<mapping class="com.code.aon.warehouse.Income"/>

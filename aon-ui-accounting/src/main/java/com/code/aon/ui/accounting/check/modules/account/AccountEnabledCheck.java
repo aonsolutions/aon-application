@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ui.accounting.check.AonCheckException;
 import com.code.aon.ui.accounting.check.CheckCategory;
 import com.code.aon.ui.accounting.check.CheckParams;
@@ -48,7 +49,8 @@ public class AccountEnabledCheck implements ICheckModule {
 			"SELECT a.id"
 			+" FROM account a "
 			+" WHERE a.entryEnabled = 1 "
-			+" AND a.level < 5 ";
+			+" AND a.level < 5 "
+			+" AND " + DomainManager.getSQLWhereClause("a.domain");
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
 		List<?> queryList = query
 				.addScalar("id", Hibernate.INTEGER)
@@ -74,7 +76,8 @@ public class AccountEnabledCheck implements ICheckModule {
 			"SELECT a.id"
 			+" FROM account a "
 			+" WHERE a.entryEnabled = 0 "
-			+" AND a.level = 5 ";
+			+" AND a.level = 5 "
+			+" AND " + DomainManager.getSQLWhereClause("a.domain");
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(select);
 		List<?> queryList = query
 				.addScalar("id", Hibernate.INTEGER)

@@ -106,7 +106,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{configBundle.config_pay_method}" />
 							</f:facet>
-							<aon:outputText value="#{controller.payMethod}">
+							<aon:outputText value="#{to.payMethod}">
 								<aon:abbreviateConverter maxWidth="15" />
 							</aon:outputText>
 						</aon:column>
@@ -127,20 +127,23 @@
 							</aon:outputText>
 						</aon:column>
 
-						<c:if test="#{company.EInvoice}">
-							<aon:column alias="Invoice.signed"
-								styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{signBundle.sign_signature}" />
-								</f:facet>
+						<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<c:if test="#{company.EInvoice}">								
 								<aon:outputText value="&#160;" rendered="#{to.signed}"
 									title="#{signBundle.sign_signed}"
 									styleClass="aon-icon aon-icon-signed" />
 								<aon:outputText value="&#160;" rendered="#{!to.signed}"
 									title="#{signBundle.sign_sign_pending}"
 									styleClass="aon-icon aon-icon-unsigned" />
-							</aon:column>
-						</c:if>
+							</c:if>								
+							<aon:outputText value="&#160;" rendered="#{to.attachmentAvailable}"
+								title="#{bundle.aon_documents}"
+								styleClass="aon-icon aon-icon-payroll" />
+						</aon:column>
+						
 					</ui:define>
 				</ui:decorate>			
 

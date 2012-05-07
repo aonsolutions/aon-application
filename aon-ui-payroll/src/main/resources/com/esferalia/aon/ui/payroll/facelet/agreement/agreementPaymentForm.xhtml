@@ -59,7 +59,7 @@
 			<f:selectItems value="#{commonCollections.months}"  />
 		</aon:selectOneMenu>
 
-		<c:if test="#{aonRole.sisAdmin}">
+		<c:if test="#{aonRole.sysAdmin}">
 			<aon:outputLabel for="agreementPayment_expression"
 				value="#{payrollBundle.payroll_salary_expression}" />
 			<aon:inputTextarea id="agreementPayment_expression" cols="60" rows="3"

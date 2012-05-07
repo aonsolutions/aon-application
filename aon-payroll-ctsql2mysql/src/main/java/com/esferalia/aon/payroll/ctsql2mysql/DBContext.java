@@ -87,7 +87,7 @@ public class DBContext extends VelocityContext{
 				
 				
 				put(Types.BLOB, "Blob");
-				put(Types.LONGVARBINARY, "InputStream");
+				put(Types.LONGVARBINARY, "Blob");
 				
 			}
 		};

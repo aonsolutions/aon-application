@@ -30,10 +30,12 @@
 			<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
+						<ui:insert name="beforeLogoutContent" />
 						<aon:form prependId="false">			
 							<h:outputLink id="logout" styleClass="aon-logout"
 								value="http://login.aonsolutions.es/">
-								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+								<aon:outputText styleClass="aon-logout-text"
+									value="#{securityBundle.aon_login_user_logout}" />
 								<a4j:support event="onclick"
 									onsubmit="disableRFAjax()"
 									ajaxSingle="true" immediate="true" bypassUpdates="true"
@@ -43,11 +45,13 @@
 					</aon:div>
 				</aon:div>
 			</c:if>
-			<aon:outputFormat value="#{bundle.aon_version}"
-				styleClass="aon-version-label"
-				rendered="#{aonConfiguration.properties.applicationVersion != null}" >
-				<f:param value="#{aonConfiguration.properties.applicationVersion}" />
-			</aon:outputFormat>
+			<c:if test="#{!aonConfiguration.properties.hideApplicationVersion}">
+				<aon:outputFormat value="#{bundle.aon_version}"
+					styleClass="aon-version-label"
+					rendered="#{aonConfiguration.properties.applicationVersion != null}" >
+					<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+				</aon:outputFormat>
+			</c:if>				
 			<ui:insert name="afterVersionContent" />
 		</aon:div>
 	</aon:div>

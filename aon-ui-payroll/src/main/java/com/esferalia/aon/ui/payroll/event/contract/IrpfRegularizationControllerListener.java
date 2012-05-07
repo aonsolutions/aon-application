@@ -11,7 +11,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.IrpfData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class IrpfRegularizationControllerListener extends ControllerAdapter{
@@ -32,14 +32,14 @@ public class IrpfRegularizationControllerListener extends ControllerAdapter{
 				regController.initializeModel();
 				regController.getCriteria().addGreaterThanOrEqualExpression(
 						regController.getFieldName(
-								IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+								IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
 				if(data.getEndDate()!=null){
 					regController.getCriteria().addLessThanOrEqualExpression(
 							regController.getFieldName(
-									IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+									IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
 				}
 				regController.getCriteria().addOrder(regController.getFieldName(
-						IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE));
+						IEntityAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE));
 				regController.onSearch(null);
 				if(regController.getModel().isRowAvailable()){
 					regController.onSelectFirst(null);

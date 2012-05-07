@@ -16,10 +16,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 import com.code.aon.warehouse.enumeration.PriceType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class WarehouseCollectionsController {
 
@@ -40,7 +40,7 @@ public class WarehouseCollectionsController {
 			warehouses = new LinkedList<SelectItem>();
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+			criteria.addOrder(warehouseBean.getFieldName(IEntityAlias.WAREHOUSE_NAME));
 			List<ITransferObject> c = warehouseBean.getList(criteria);
 			Iterator<ITransferObject> iter = c.iterator();
 			while (iter.hasNext()) {

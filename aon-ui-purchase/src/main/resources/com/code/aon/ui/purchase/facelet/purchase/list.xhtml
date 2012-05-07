@@ -58,59 +58,11 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{purchase}" />
 					<ui:define name="columns">
-						<aon:column alias="Purchase.series,Purchase.number"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							</f:facet>
-							<aon:outputText value="#{to.referenceCode}" />
-						</aon:column>
-
-						<aon:column alias="Purchase.issueDate"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_date}" />
-							</f:facet>
-							<aon:outputText value="#{to.issueDate}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column alias="Purchase.supplier.registry.name"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{supplierBundle.supplier_supplier}" />
-							</f:facet>
-							<aon:outputText value="#{to.supplier.registry.fullName}">
-								<aon:abbreviateConverter maxWidth="50" />
-							</aon:outputText>
-						</aon:column>
-
-						<aon:column alias="Purchase.supplier.registry.document"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<h:outputText value="#{bundle.aon_company_document}" />
-							</f:facet>
-							<aon:outputText value="#{to.supplier.registry.document}" />
-						</aon:column>
-		
-						<aon:column alias="Purchase.status"
-							styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_status}" />
-							</f:facet>
-							<aon:outputText value="#{to.status}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-numberColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
-							<aon:outputText value="#{purchase.purchaseTotalPrice}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
+					
+						<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/list_content.xhtml" >
+							<ui:param name="controller" value="#{purchase}" />
+						</ui:include>
+					
 					</ui:define>
 				</ui:decorate>
 

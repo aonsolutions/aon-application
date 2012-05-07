@@ -12,13 +12,45 @@ public interface IReservationConstants {
 	String PERCENT = "Percent";
 	String AMOUNT = "Amount";
 	String BOOKING_HOLDER = "BookingHolder";
+	String VAT_TAX = "IVA";
+	String OTHER_TAX = "Others";
 	
-	String CREATE_RESERVATION = "A";
+	String ADD_RESERVATION = "A";
 	String MODIFY_RESERVATION = "M";
 	String CANCEL_RESERVATION = "B";
 	
+	String CRO_SOURCE = "2";
+
 	String AGENCY_TYPE = "5";
 	String COMPANY_TYPE = "4";
 	String IATA = "IATA";
+	String SOLRES = "Solres";
+	String REQRES = "Reqres";
+	String CRO = "CRO";
+	String AGENCY_REBATE = "S";
+	String RATE_PLAN = "RATEPLAN";
+	String EUR = "EUR";
 
+	String GUEST_HOLDER = "C";
+	String AGENCY_HOLDER = "A";
+	String COMPANY_HOLDER = "E";
+
+	String CHILDREN_COUNT = "8";
+	String ADT = "ADT";
+	String CHD = "CHD";
+
+	String SERVICE_TYPE = "ServiceType";
+	String SERVICE_TYPE_ROOM = "H";
+
+	String SIRIUS = "SIRIUS";
+	String PLS = "PLS";
+	String EXT = "EXT";
+	String GPS = "GPS";
+	String GP = "GP";
+	String ES = "ES";
+	String TR = "TR";
+	String CUST_PROFILE = "CustProfile";
+	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
+	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";
+	String SOAP_SERVER_URL = "PMS_SOAP_SERVER_URL";
 }

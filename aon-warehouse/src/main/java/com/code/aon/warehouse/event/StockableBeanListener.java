@@ -13,7 +13,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.IStockable;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class StockableBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -58,8 +58,8 @@ public class StockableBeanListener extends ManagerBeanListenerAdapter {
 	private Stock obtainStock(IStockable stockable) throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID), stockable.getItem().getId());
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_WAREHOUSE_ID), stockable.getWarehouse().getId());
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID), stockable.getItem().getId());
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_WAREHOUSE_ID), stockable.getWarehouse().getId());
 		Iterator<?> iterator = stockBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (Stock)iterator.next();

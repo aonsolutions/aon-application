@@ -7,7 +7,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.agreement.AgreementLevelController;
 import com.esferalia.aon.ui.payroll.controller.agreement.AgreementPaymentController;
@@ -42,7 +42,7 @@ public class AgreementTreeControllerListener extends ControllerAdapter{
 		controller.initialize();
 		AgreementLevelController levelController = (AgreementLevelController) AonUtil.getRegisteredBean(IPayrollConstants.AGREEMENT_LEVEL_CONTROLLER_NAME);
 		levelController.clearCriteria();
-		levelController.getCriteria().addEqualExpression(levelController.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_AGREEMENT_ID), ((Agreement)getController().getTo()).getId());
+		levelController.getCriteria().addEqualExpression(levelController.getFieldName(IEntityAlias.AGREEMENT_LEVEL_AGREEMENT_ID), ((Agreement)getController().getTo()).getId());
 		levelController.onSearch(null);
 	}
 

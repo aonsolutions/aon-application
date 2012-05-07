@@ -92,17 +92,23 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>		
 		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 
 		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Application"/>
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
+		<mapping class="com.code.aon.config.ApplicationUser"/>
 		<mapping class="com.code.aon.config.Bank"/>
 		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CNAE2009"/>
 		<mapping class="com.code.aon.config.CNAE2009Rate"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.Domain"/>
+		<mapping class="com.code.aon.config.DomainApplication"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
 		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
 		<mapping class="com.code.aon.config.Series"/>
@@ -164,6 +170,7 @@
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
 		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectAttachment"/>
 		<mapping class="com.code.aon.project.ProjectActivity"/>
 		<mapping class="com.code.aon.project.ProjectType"/>
 				
@@ -185,6 +192,8 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
+		<mapping class="com.code.aon.purchase.Proposal"/>
+		<mapping class="com.code.aon.purchase.ProposalDetail"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
@@ -234,15 +243,23 @@
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>								
 				
 		<!-- AON-PMS Mapping files -->	
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
+		<mapping class="com.esferalia.aon.pms.Pos"/>
+		<mapping class="com.esferalia.aon.pms.PosShift"/>
+		<mapping class="com.esferalia.aon.pms.PosShiftCount"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
 		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
 		<mapping class="com.esferalia.aon.pms.Room"/>
 
 	</session-factory>

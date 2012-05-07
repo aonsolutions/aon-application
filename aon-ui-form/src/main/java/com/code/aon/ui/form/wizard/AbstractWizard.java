@@ -26,6 +26,7 @@ import com.code.aon.ui.form.BasicController;
  * 
  *
  */
+@Deprecated
 public abstract class AbstractWizard {
 
 	private boolean visible;

@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -422,7 +421,7 @@ public class SQLContractDelayCalculatorContext
 
 		@Override
 		public void setContract(Object contract) {
-			this.contract = ( ( SQLSalaryProxy ) contract).getId();
+			this.contract = ( ( SQLSalaryProxy ) contract).getContractId();
 		}
 		
 		@Override

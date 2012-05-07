@@ -27,7 +27,6 @@ import com.code.aon.file.tax.model.MOD303.MOD303Format;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
@@ -37,6 +36,7 @@ import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class VatTaxDeclarationController extends LinesController {
 	public static final String BEAN_NAME = "vatTaxDeclaration";
@@ -119,7 +119,7 @@ public class VatTaxDeclarationController extends LinesController {
 
 	private void duplicateDeclaration(VatTax vatTax,VatTax previousVatTax) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), previousVatTax.getId());
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), previousVatTax.getId());
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		for (ITransferObject to: list ) {
 			VatTaxDeclaration dec = (VatTaxDeclaration) to;
@@ -146,12 +146,12 @@ public class VatTaxDeclarationController extends LinesController {
 
 	private void fillYearPreviousData(VatTax vatTax, VatTaxDeclaration dec) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addLessThanExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
-		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), false);
-		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
+		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
+		criteria.addLessThanExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
+		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), false);
+		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		double pycq = 0.0;
 		if (list != null && list.size() > 0){
@@ -163,12 +163,12 @@ public class VatTaxDeclarationController extends LinesController {
 	
 	private void fillPreviousData(VatTax vatTax,VatTaxDeclaration dec) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
-		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
-		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
-		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
+		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		criteria.addEqualExpression( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
+		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
+		criteria.addOrder( getManagerBean().getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		double pd = 0.0;
 		double pp = 0.0;
@@ -184,10 +184,10 @@ public class VatTaxDeclarationController extends LinesController {
 	private VatTax getPreviousVatTax(VatTax vatTax) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
 		Criteria criteria = new Criteria();
-		criteria.addNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_ID), vatTax.getId());
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), false);
-		criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), false);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_ID), vatTax.getId());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), vatTax.getYear());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_YEAR), false);
+		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_PERIOD), false);
 		List<ITransferObject> list = bean.getList(criteria);
 		if (list != null && list.size() > 0) {
 			return (VatTax) list.get(0); 

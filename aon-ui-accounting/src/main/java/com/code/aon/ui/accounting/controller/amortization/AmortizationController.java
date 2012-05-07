@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.common.BeanManager;
@@ -22,6 +21,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationController extends BasicController {
 
@@ -59,8 +59,8 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getFixedAssetAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
-			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar la lista de cuentas";
@@ -79,8 +79,8 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAccumulatedAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
-			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar la lista de cuentas";
@@ -99,8 +99,8 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAllocationAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
-			criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), true);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
+			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar la lista de cuentas";

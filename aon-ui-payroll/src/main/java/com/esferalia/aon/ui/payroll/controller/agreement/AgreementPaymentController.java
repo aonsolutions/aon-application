@@ -37,7 +37,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.IVariablesHandler;
@@ -155,18 +155,18 @@ public class AgreementPaymentController extends LinesController implements IVari
 		if(a.getId()!=null){
 			try {
 				this.clearCriteria();
-				this.getCriteria().addEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), a.getId());
-				this.getCriteria().addOrder(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
+				this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), a.getId());
+				this.getCriteria().addOrder(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
 				Expression expr1 = null;
 				Expression expr2 = null;
 				if(isSearchCurrent()){
-					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-					expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+					expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
 					this.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				} else {
 					if(getInactiveDate()!=null){
-						expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), getInactiveDate());
-						expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+						expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), getInactiveDate());
+						expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
 						this.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 					}
 				}
@@ -190,8 +190,8 @@ public class AgreementPaymentController extends LinesController implements IVari
 			AgreementPayment alp = (AgreementPayment) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_TYPE), alp.getType());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_CODE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_TYPE), alp.getType());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.PAYMENT_CONCEPT_CODE));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
 				PaymentConcept pc = (PaymentConcept) to;
@@ -350,6 +350,7 @@ public class AgreementPaymentController extends LinesController implements IVari
 		super.onReset(event);
 		reset(true);
 		setAgreementExtra(null);
+		getHandler().setVariablesModel(null);
 	}
 	
 	public void reset(boolean panelVisible) {
@@ -380,8 +381,8 @@ public class AgreementPaymentController extends LinesController implements IVari
 	private List<ITransferObject> existingAgreementLevelData(String name, AgreementLevel level) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), level.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), name);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), level.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_DATA_NAME), name);
 		return bean.getList(criteria);
 	}
 	
@@ -392,8 +393,8 @@ public class AgreementPaymentController extends LinesController implements IVari
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), ap.getAgreement().getId());
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID), ap.getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_EXTRA_AGREEMENT_ID), ap.getAgreement().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID), ap.getId());
 				List<ITransferObject> list = bean.getList(criteria);
 				if(list.isEmpty()){
 					AgreementExtra ae = new AgreementExtra();

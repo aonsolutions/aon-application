@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.BankConceptAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -16,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class BankConceptAccountListener extends ControllerAdapter {
 
@@ -31,7 +31,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
+			criteria.addEqualExpression(conceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
 			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
@@ -111,7 +111,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
+			criteria.addEqualExpression(conceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
 			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
@@ -130,7 +130,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
+			criteria.addEqualExpression(conceptAccBean.getFieldName(IEntityAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
 			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();

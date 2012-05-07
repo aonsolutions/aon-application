@@ -7,14 +7,14 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<rich:suggestionbox for="#{inputId}" width="400" height="150"
-		frequency="0.6" var="contact"
+		frequency="0.6" var="suggestContact"
 		suggestionAction="#{webmailMessage.suggestionEmails}" 
-		fetchValue="#{contact.emailLarge}, " tokens=",;">
+		fetchValue="#{suggestContact.emailLarge}, " tokens=",;">
 		<h:column>
-			<aon:outputText value="#{contact.displayName}" />
+			<aon:outputText value="#{suggestContact.displayName}" />
 		</h:column>
 		<h:column>
-			<aon:outputText value="#{contact.emailSummary}" styleClass="aon-italic" />
+			<aon:outputText value="#{suggestContact.emailSummary}" styleClass="aon-italic" />
 		</h:column>
 	</rich:suggestionbox>
 	

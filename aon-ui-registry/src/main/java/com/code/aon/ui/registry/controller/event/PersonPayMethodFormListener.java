@@ -14,10 +14,10 @@ import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
@@ -28,7 +28,7 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 
 			IManagerBean rPayBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 			Criteria rPayBeanCriteria = new Criteria();
-			rPayBeanCriteria.addEqualExpression(rPayBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
+			rPayBeanCriteria.addEqualExpression(rPayBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
 			Iterator<?> iter = rPayBean.getList(rPayBeanCriteria).iterator();
 			if(iter.hasNext()){
 				RegistryPayMethod pm = (RegistryPayMethod)iter.next(); 

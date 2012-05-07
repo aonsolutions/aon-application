@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.ProjectCommercial;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,6 +32,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used in the offer maintenance.
@@ -138,11 +138,11 @@ public class CommercialTrackingController extends BasicController {
 					CommercialTracking ct = (CommercialTracking) getTo();
 					try {					
 						if ( ct.getSeller().getId() != null ) {
-							String alias = controller.getFieldName(ICommercialAlias.OFFER_SELLER_ID);
+							String alias = controller.getFieldName(IEntityAlias.OFFER_SELLER_ID);
 							controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
 						}
 						if ( ct.getProject().getTarget().getId() != null ) {
-							String alias = controller.getFieldName(ICommercialAlias.OFFER_TARGET_ID);
+							String alias = controller.getFieldName(IEntityAlias.OFFER_TARGET_ID);
 							controller.getCriteria().addEqualExpression(alias, ct.getProject().getTarget().getId());
 						}						
 					} catch (ManagerBeanException e) {
@@ -174,8 +174,8 @@ public class CommercialTrackingController extends BasicController {
 		Criteria criteria = new Criteria();
 		criteria.addExpression(getCriteria().getExpression());
 		try {
-			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID));
-			criteria.addOrder(this.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE));
+			criteria.addOrder(this.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID));
+			criteria.addOrder(this.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> getCollection exception: ", e);
 			addMessage(e.getMessage());

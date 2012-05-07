@@ -10,7 +10,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class IncomeBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -21,7 +21,7 @@ public class IncomeBeanListener extends ManagerBeanListenerAdapter {
 		Project project = (income.getProject() != null && income.getProject().getId() != null) ? income.getProject() : null;
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
 			IncomeDetail incomeDetail = (IncomeDetail)ito;
 			if (incomeDetail.getProject() == null || incomeDetail.getProject().getId() == null) {

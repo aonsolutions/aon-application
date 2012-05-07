@@ -4,14 +4,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.27-SNAPSHOT</version>
+		<version>7.0-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.code.aon</groupId>
 	<artifactId>aon-common-resources</artifactId>
-	<version>6.27-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<description>Plantillas de impresion (jasper).</description>
 	<name>AON COMMON TEMPLATES</name>
 
@@ -25,8 +23,116 @@
 		<url>http://dev.esferalia.com/websvn/wsvn/aon.web.parent</url>
 	</scm>
 
-	<build>
+  	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jasperreports-maven-plugin</artifactId>
+				<version>${jasperreportsMavenPluginVersion}</version>
+				<executions>
+					<execution>
+						<id>SALE INVOICE</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/saleInvoiceTemplate2</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/saleInvoiceTemplate2</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+					<execution>
+						<id>OFFER EXTENDED</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/offerExtended</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/offerExtended</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ELECTROMEDICAL</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/electromedical</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/electromedical</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+					<execution>
+						<id>MEDISER</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/mediser</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/mediser</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+					<execution>
+						<id>SALE INVOICE GT EUS</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/saleInvoiceGtEus</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/saleInvoiceGtEus</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+					<execution>
+						<id>AMILIBIA</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile-reports</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>jasperreports/amilibia</sourceDirectory>
+							<outputDirectory>${project.build.directory}/templates/amilibia</outputDirectory>
+							<xmlValidation>true</xmlValidation>
+							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.jasperreports</groupId>
+						<artifactId>jasperreports</artifactId>
+						<version>${jasperReportsVersion}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.ui.warehouse</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.ui.finance</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-jcl</artifactId>
+						<version>1.5.11</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
@@ -40,11 +146,43 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>true</doCheck>
-					<doUpdate>true</doUpdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>jasperreports-maven-plugin</artifactId>
+										<versionRange>
+											[1.0-beta-2,)
+										</versionRange>
+										<goals>
+											<goal>compile-reports</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore/>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>
@@ -52,6 +190,24 @@
 			<groupId>izenpe</groupId>
 			<artifactId>izenpesigner-applet</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.warehouse</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.finance</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
@@ -98,7 +254,7 @@
 									<directory>/home/COMMON-RESOURCES/aon-report</directory>
 									<sources>
 										<source>
-											<location>templates</location>
+											<location>${project.build.directory}/templates</location>
 										</source>
 									</sources>
 								</mapping>
@@ -108,10 +264,10 @@
 									<groupname>jboss</groupname>
 									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
 									<sources>
-                                                                                <softlinkSource>
-                                                                                        <location>/home/COMMON-RESOURCES/aon-ui-sign/izenpesigner-applet-1.0.jar</location>
-                                                                                        <destination>izenpesigner-applet.jar</destination>
-                                                                                </softlinkSource>
+										<softlinkSource>
+											<location>/home/COMMON-RESOURCES/aon-ui-sign/izenpesigner-applet-1.0.jar</location>
+											<destination>izenpesigner-applet.jar</destination>
+										</softlinkSource>
 									</sources>
 									<dependency>
 										<includes>
@@ -131,4 +287,3 @@
 		</profile>
 	</profiles>
 </project>
- 

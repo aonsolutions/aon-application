@@ -14,14 +14,13 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.TaskHolder;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class TaskHolderController extends RegistryController {
 	
@@ -41,14 +40,14 @@ public class TaskHolderController extends RegistryController {
 		try {
 			IManagerBean userBean = BeanManager.getManagerBean(User.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_ACTIVE),true);
+			criteria.addEqualExpression(userBean.getFieldName(IEntityAlias.USER_ACTIVE),true);
 			List<?> list = userBean.getList(criteria);
 			List<User> users = (List<User>) list;
 			for (User user : users) {
 				criteria = new Criteria();
-				criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_HOLDER_USER_ID),user.getId());
+				criteria.addEqualExpression(getFieldName(IEntityAlias.TASK_HOLDER_USER_ID),user.getId());
 				if (!isNew()) {
-					criteria.addNotEqualExpression(getFieldName(IGroupwareAlias.TASK_HOLDER_ID),((TaskHolder) getTo()).getId());	
+					criteria.addNotEqualExpression(getFieldName(IEntityAlias.TASK_HOLDER_ID),((TaskHolder) getTo()).getId());	
 				}
 				List<?> ths = getManagerBean().getList(criteria);
 				if (ths == null || ths.size() == 0) {
@@ -67,8 +66,8 @@ public class TaskHolderController extends RegistryController {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
-		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+		criteria.addEqualExpression(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addOrder(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));
 		for (ITransferObject ito : workGroupBean.getList(criteria)) {
 			WorkGroup workGroup = (WorkGroup)ito;
 			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());

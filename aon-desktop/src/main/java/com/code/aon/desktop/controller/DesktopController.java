@@ -36,17 +36,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.desktop.DesktopNoticeSummary;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.groupware.Note;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -57,6 +56,7 @@ import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DesktopController implements IDesktopConstants {
 	
@@ -91,6 +91,7 @@ public class DesktopController implements IDesktopConstants {
         String select = "select notice.type, count(*) " +
                         "from Notice as notice, Alarm as alarm " +
                         "where notice.id = alarm.sourceId " +
+                        "and " + DomainManager.getSQLWhereClause("notice.domain") +
                         "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
                         "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
                         "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " " +
@@ -123,8 +124,8 @@ public class DesktopController implements IDesktopConstants {
     private void updateRecentNoteModel() throws ManagerBeanException {
     	IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(noteBean.getFieldName(IGroupwareAlias.NOTE_OWNER_ID), UserUtils.getInstance().getLoggedUser().getId());
-    	criteria.addOrder(noteBean.getFieldName(IGroupwareAlias.NOTE_DATE), false);
+    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), UserUtils.getInstance().getLoggedUser().getId());
+    	criteria.addOrder(noteBean.getFieldName(IEntityAlias.NOTE_DATE), false);
     	this.recentNoteModel = new ListDataModel(noteBean.getList(criteria));
     }
     
@@ -137,7 +138,7 @@ public class DesktopController implements IDesktopConstants {
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
         try {
-            criteria.addEqualExpression(noteController.getFieldName(IGroupwareAlias.NOTE_ID), note.getId());
+            criteria.addEqualExpression(noteController.getFieldName(IEntityAlias.NOTE_ID), note.getId());
             noteController.setCriteria(criteria);
             noteController.onSearch(null);
             noteController.getModel().setRowIndex(0);
@@ -160,8 +161,8 @@ public class DesktopController implements IDesktopConstants {
         NoticeController noticeController = (NoticeController)FormUtil.getController(NOTICE_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         try {
-            criteria.addEqualExpression(noticeController.getFieldName(IGroupwareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
-            criteria.addBetweenExpression(noticeController.getFieldName(IGroupwareAlias.NOTICE_DATE), from.getTime(), to.getTime());
+            criteria.addEqualExpression(noticeController.getFieldName(IEntityAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
+            criteria.addBetweenExpression(noticeController.getFieldName(IEntityAlias.NOTICE_DATE), from.getTime(), to.getTime());
             noticeController.setCriteria(criteria);
             noticeController.onSearch(null);
         } catch (ManagerBeanException e) {
@@ -199,7 +200,7 @@ public class DesktopController implements IDesktopConstants {
 		try {
 			IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
+			criteria.addEqualExpression(registryAttachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
 			Iterator<ITransferObject> iter = registryAttachBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (RegistryAttachment)iter.next();

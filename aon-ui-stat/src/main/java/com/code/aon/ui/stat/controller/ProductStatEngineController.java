@@ -14,19 +14,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.purchase.PurchaseDetail;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.warehouse.Stock;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductStatEngineController {
 
@@ -174,9 +171,9 @@ public class ProductStatEngineController {
 	public void getPendingSales() throws ManagerBeanException {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_ITEM_ID),item.getId());
-		criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS),SalesDetailStatus.SETTLED);
-		Projection projection = Projection.sum(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_QUANTITY));
+		criteria.addEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_ITEM_ID),item.getId());
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_STATUS),SalesDetailStatus.SETTLED);
+		Projection projection = Projection.sum(salesDetailBean.getFieldName(IEntityAlias.SALES_DETAIL_QUANTITY));
 		Object value = salesDetailBean.getUniqueResult(projection, criteria);
 		setPendingSaleQuantity((value != null) ? ((Double)value) :0);
 	}
@@ -184,9 +181,9 @@ public class ProductStatEngineController {
 	public void getPendingPurchases() throws ManagerBeanException {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ITEM_ID),item.getId());
-		criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS),PurchaseDetailStatus.SETTLED);
-		Projection projection = Projection.sum(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_QUANTITY));
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_ITEM_ID),item.getId());
+		criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_STATUS),PurchaseDetailStatus.SETTLED);
+		Projection projection = Projection.sum(purchaseDetailBean.getFieldName(IEntityAlias.PURCHASE_DETAIL_QUANTITY));
 		Object value = purchaseDetailBean.getUniqueResult(projection, criteria);
 		setPendingPurhaseQuantity((value != null) ? ((Double)value) :0);
 	}
@@ -194,8 +191,8 @@ public class ProductStatEngineController {
 	public void getTotalStocks() throws ManagerBeanException {
 		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID),item.getId());
-		Projection projection = Projection.sum(stockBean.getFieldName(IWarehouseAlias.STOCK_QUANTITY));
+		criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID),item.getId());
+		Projection projection = Projection.sum(stockBean.getFieldName(IEntityAlias.STOCK_QUANTITY));
 		Object value = stockBean.getUniqueResult(projection, criteria);
 		setTotalStock((value != null) ? ((Double)value) :0);
 		}
@@ -203,9 +200,9 @@ public class ProductStatEngineController {
 	public void getAveragePurchasesPrice() throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ITEM_ID),item.getId());
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_TYPE),InvoiceType.PURCHASE);
-		Projection projection = Projection.avg(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_PRICE));
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_ID),item.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_TYPE),InvoiceType.PURCHASE);
+		Projection projection = Projection.avg(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_PRICE));
 		Object value = invoiceDetailBean.getUniqueResult(projection, criteria);
 		setAveragePurchasePrice((value != null) ? ((Double)value) :0);
 		}

@@ -11,10 +11,10 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.fiscal.Mod347;
-import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Mod347Status;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class Mod347BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -52,9 +52,9 @@ public class Mod347BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Mod347.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.MOD347_YEAR), mod347.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.MOD347_YEAR), mod347.getYear());
 			if (mod347.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.MOD347_ID), mod347.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.MOD347_ID), mod347.getId()));
 			}
 			int size = bean.getCount(c);
 			if (size > 0) {
@@ -70,9 +70,9 @@ public class Mod347BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Mod347.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.MOD347_YEAR), mod347.getYear());
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.MOD347_YEAR), mod347.getYear());
 			if (mod347.getId() != null) {
-				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.MOD347_ID), mod347.getId()));
+				c.addExpression(ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.MOD347_ID), mod347.getId()));
 			}
 			List<ITransferObject> list = bean.getList(c);
 			if (list == null || list.size() == 0) {
@@ -96,8 +96,8 @@ public class Mod347BeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Mod347.class);
 			Criteria c = new Criteria();
-			c.addEqualExpression(bean.getFieldName(IFiscalAlias.MOD347_YEAR), mod347.getYear());
-			c.addOrder(bean.getFieldName(IFiscalAlias.MOD347_NUMBER), false);
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.MOD347_YEAR), mod347.getYear());
+			c.addOrder(bean.getFieldName(IEntityAlias.MOD347_NUMBER), false);
 			List<ITransferObject> list = bean.getList(c);
 			if (list == null || list.size() == 0) {
 				return 1;

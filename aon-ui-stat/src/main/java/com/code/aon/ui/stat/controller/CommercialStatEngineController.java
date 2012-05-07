@@ -24,7 +24,6 @@ import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.BeanManager;
@@ -32,9 +31,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
@@ -43,13 +42,13 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
-import com.code.aon.seller.dao.ISellerAlias;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommercialStatEngineController {
 	
@@ -878,7 +877,8 @@ public class CommercialStatEngineController {
 
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain") 
+				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.seller.id = "
 				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -896,7 +896,8 @@ public class CommercialStatEngineController {
 	private void getPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND CommercialTracking.status = 0 AND  CommercialTracking.seller.id = "
 				+ seller.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -913,7 +914,8 @@ public class CommercialStatEngineController {
 	private void getDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.seller.id = " + seller.getId()
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.offer.seller.id = " + seller.getId()
 				+ " AND   OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
@@ -1097,7 +1099,7 @@ public class CommercialStatEngineController {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(sellerBean
-				.getFieldName(ISellerAlias.SELLER_ID),
+				.getFieldName(IEntityAlias.SELLER_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = sellerBean.getList(criteria);
@@ -1111,7 +1113,7 @@ public class CommercialStatEngineController {
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(targetBean
-				.getFieldName(ICommercialAlias.TARGET_REGISTRY_ID),
+				.getFieldName(IEntityAlias.TARGET_REGISTRY_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = targetBean.getList(criteria);
@@ -1125,7 +1127,7 @@ public class CommercialStatEngineController {
 		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(productBean
-				.getFieldName(IProductAlias.PRODUCT_ID),
+				.getFieldName(IEntityAlias.PRODUCT_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = productBean.getList(criteria);
@@ -1139,7 +1141,7 @@ public class CommercialStatEngineController {
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(categoryBean
-				.getFieldName(IProductAlias.PRODUCT_CATEGORY_ID),
+				.getFieldName(IEntityAlias.PRODUCT_CATEGORY_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = categoryBean.getList(criteria);
@@ -1153,7 +1155,7 @@ public class CommercialStatEngineController {
 		setCommercialActivityStatus(true);
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		Criteria cri = new Criteria();
-		cri.addEqualExpression(sellerBean.getFieldName(ISellerAlias.SELLER_ID),
+		cri.addEqualExpression(sellerBean.getFieldName(IEntityAlias.SELLER_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = sellerBean.getList(cri);
@@ -1169,17 +1171,17 @@ public class CommercialStatEngineController {
 		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS),
 				CommercialTrackingStatus.CLOSED);
 		list2 = commercialTrackingBean.getList(criteria);
 
@@ -1213,7 +1215,7 @@ public class CommercialStatEngineController {
 		IManagerBean commercialTrackingBean = BeanManager
 				.getManagerBean(CommercialTracking.class);
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ID),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_ID),
 				((CommercialTracking) this.getVisitsModel().getRowData())
 						.getId());
 		c.clearCriteria();
@@ -1225,35 +1227,35 @@ public class CommercialStatEngineController {
 	public void onOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((Offer) this.getOffersModel().getRowData()).getId());
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((Offer) this.getOffersModel().getRowData()).getId());
 		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onDoneOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getDoneOffersModel().getRowData()).getOffer().getId());
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((OfferDetail) this.getDoneOffersModel().getRowData()).getOffer().getId());
 		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onLostOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getLostOffersModel().getRowData()).getOffer().getId());
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((OfferDetail) this.getLostOffersModel().getRowData()).getOffer().getId());
 		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onPendingOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getPendingOffersModel().getRowData()).getOffer().getId());
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((OfferDetail) this.getPendingOffersModel().getRowData()).getOffer().getId());
 		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onClosedOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getClosedOffersModel().getRowData()).getOffer().getId());
+		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_ID), ((OfferDetail) this.getClosedOffersModel().getRowData()).getOffer().getId());
 		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 
@@ -1264,18 +1266,18 @@ public class CommercialStatEngineController {
 		criteria
 				.addEqualExpression(
 						commercialTrackingBean
-								.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
+								.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
 						((ControlSummary) getActivityModel().getRowData())
 								.getId());
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID),
 				this.getSeller().getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		CommercialTrackingStatus c;
 		if (commercialActivityStatus) {
@@ -1283,7 +1285,7 @@ public class CommercialStatEngineController {
 		} else
 			c = CommercialTrackingStatus.PENDING;
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS), c);
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS), c);
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = commercialTrackingBean.getList(criteria);
 
@@ -1303,7 +1305,7 @@ public class CommercialStatEngineController {
 		setCommercialActivityStatus(false);
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		Criteria cri = new Criteria();
-		cri.addEqualExpression(sellerBean.getFieldName(ISellerAlias.SELLER_ID),
+		cri.addEqualExpression(sellerBean.getFieldName(IEntityAlias.SELLER_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list;
 		list = sellerBean.getList(cri);
@@ -1319,17 +1321,17 @@ public class CommercialStatEngineController {
 		List<ITransferObject> list2;
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_SELLER_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS),
 				CommercialTrackingStatus.PENDING);
 		list2 = commercialTrackingBean.getList(criteria);
 
@@ -1362,7 +1364,7 @@ public class CommercialStatEngineController {
 		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
 		Criteria cri = new Criteria();
 		cri.addEqualExpression(TargetBean
-				.getFieldName(ICommercialAlias.TARGET_ID),
+				.getFieldName(IEntityAlias.TARGET_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = TargetBean.getList(cri);
@@ -1380,14 +1382,14 @@ public class CommercialStatEngineController {
 		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS),
 				CommercialTrackingStatus.CLOSED);
 		list2 = commercialTrackingBean.getList(criteria);
 
@@ -1420,7 +1422,7 @@ public class CommercialStatEngineController {
 		IManagerBean TargetBean = BeanManager.getManagerBean(Target.class);
 		Criteria cri = new Criteria();
 		cri.addEqualExpression(TargetBean
-				.getFieldName(ICommercialAlias.TARGET_ID),
+				.getFieldName(IEntityAlias.TARGET_ID),
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = TargetBean.getList(cri);
@@ -1438,14 +1440,14 @@ public class CommercialStatEngineController {
 		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS),
 				CommercialTrackingStatus.PENDING);
 		list2 = commercialTrackingBean.getList(criteria);
 
@@ -1479,17 +1481,17 @@ public class CommercialStatEngineController {
 		criteria
 				.addEqualExpression(
 						commercialTrackingBean
-								.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
+								.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
 						((ControlSummary) getActivityModel().getRowData())
 								.getId());
 		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				this.getTarget().getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getFromDate());
 		;
 		criteria.addLessThanOrEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_DATE),
 				this.params.getToDate());
 		CommercialTrackingStatus c;
 		if (commercialActivityStatus) {
@@ -1497,7 +1499,7 @@ public class CommercialStatEngineController {
 		} else
 			c = CommercialTrackingStatus.PENDING;
 		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS), c);
+				.getFieldName(IEntityAlias.COMMERCIAL_TRACKING_STATUS), c);
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		list = commercialTrackingBean.getList(criteria);
 		activitiesList = new LinkedList<CommercialTracking>();
@@ -1643,13 +1645,13 @@ public class CommercialStatEngineController {
 
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
-		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_PRODUCT_PRODUCT_CATEGORY_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
-						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
 		}
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
-		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER));
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
 		offerList= new LinkedList<Offer>();
@@ -1684,13 +1686,13 @@ public class CommercialStatEngineController {
 		setProductName(((Stat) productStatModel.getRowData()).getName());
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID),((Stat) productStatModel.getRowData()).getKey());
-		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_ITEM_ID),((Stat) productStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
-						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
 		}
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
-		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER));
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
 		offerList= new LinkedList<Offer>();
@@ -1708,13 +1710,13 @@ public class CommercialStatEngineController {
 		
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ADDRESS_GEOZONE_ID),((Stat) yearStatModel.getRowData()).getKey());
-		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ADDRESS_GEOZONE_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
-						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
 		}
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
-		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER));
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
 		offerList= new LinkedList<Offer>();
@@ -1732,13 +1734,13 @@ public class CommercialStatEngineController {
 		
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_SELLER_ID),((Stat) yearStatModel.getRowData()).getKey());
-		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_SELLER_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
-						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
 		}
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
-		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER));
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
 		offerList= new LinkedList<Offer>();
@@ -1755,13 +1757,13 @@ public class CommercialStatEngineController {
 		setTargetName(((Stat)  yearStatModel.getRowData()).getName());
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_TARGET_ID),((Stat) yearStatModel.getRowData()).getKey());
-		criteria.addBetweenExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
+		criteria.addEqualExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_TARGET_ID),((Stat) yearStatModel.getRowData()).getKey());
+		criteria.addBetweenExpression(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE), this.params.getFromDate(), this.params.getToDate());
 		if (!ArrayUtils.isEmpty(this.params.getOfferStatuses())) {
-						addEnumToCriteria(criteria, offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
+						addEnumToCriteria(criteria, offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_STATUS), this.params.getOfferStatuses());
 		}
-		criteria.addOrder(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
-		Projection projection = Projection.group(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER));
+		criteria.addOrder(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER_ISSUE_DATE),false);
+		Projection projection = Projection.group(offerDetailBean.getFieldName(IEntityAlias.OFFER_DETAIL_OFFER));
 		List<ITransferObject> list = new LinkedList<ITransferObject>();
 		Iterator iter = offerDetailBean.getList(new ProjectionList(projection), criteria).iterator();
 		offerList= new LinkedList<Offer>();
@@ -1769,21 +1771,6 @@ public class CommercialStatEngineController {
     		Offer od = (Offer)iter.next();
 			offerList.add(od);
     	}
-		
-		/*String select = "select OfferDetail "
-				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.target.id = "
-				+ ((Stat) yearStatModel.getRowData()).getKey()
-				+ " AND   OfferDetail.offer.issueDate >= '"
-				+ new java.sql.Date(this.params.getFromDate().getTime())
-				+ "' AND OfferDetail.offer.issueDate <= '"
-				+ new java.sql.Date(this.params.getToDate().getTime())
-				+ "' group by OfferDetail.offer.id"
-				+ " order by OfferDetail.offer.issueDate desc";
-		Session session = HibernateUtil.getSession(HibernateUtil
-				.getSessionFactoryName());
-		Query query = session.createQuery(select);
-		offerList = query.list();*/
 		setOfferBackAction("commercial_target_stats_year");
 	}
 
@@ -1885,7 +1872,8 @@ public class CommercialStatEngineController {
 
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 1 AND  CommercialTracking.target.id = "
+				+ " where " +DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND CommercialTracking.status = 1 AND  CommercialTracking.project.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -1903,7 +1891,8 @@ public class CommercialStatEngineController {
 	private void getTargetPendingVisitModel() throws ManagerBeanException {
 		String select = "select CommercialTracking "
 				+ "from CommercialTracking as CommercialTracking "
-				+ "where  CommercialTracking.status = 0 AND  CommercialTracking.target.id = "
+				+ " where " + DomainManager.getSQLWhereClause("CommercialTracking.domain")
+				+ " AND  CommercialTracking.status = 0 AND  CommercialTracking.project.target.id = "
 				+ target.getId()
 				+ " AND   CommercialTracking.date >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
@@ -1920,7 +1909,8 @@ public class CommercialStatEngineController {
 	private void getTargetDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.offer.target.id = " + target.getId()
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.offer.target.id = " + target.getId()
 				+ " AND   OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
@@ -1955,8 +1945,9 @@ public class CommercialStatEngineController {
 	private void getProductDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.product = " + product.getId()
-				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ " where " + DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.item.product = " + product.getId()
+				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())
@@ -1990,8 +1981,9 @@ public class CommercialStatEngineController {
 	private void getCategoryDoneOffers() throws ManagerBeanException {
 		String select = "select OfferDetail "
 				+ "from OfferDetail as OfferDetail "
-				+ "where  OfferDetail.item.product.category = " + productCategory.getId()
-				+ " AND   OfferDetail.offer.issueDate >= '"
+				+ " where " +DomainManager.getSQLWhereClause("OfferDetail.domain")
+				+ " AND OfferDetail.item.product.category = " + productCategory.getId()
+				+ " AND OfferDetail.offer.issueDate >= '"
 				+ new java.sql.Date(this.params.getFromDate().getTime())
 				+ "' AND OfferDetail.offer.issueDate <= '"
 				+ new java.sql.Date(this.params.getToDate().getTime())

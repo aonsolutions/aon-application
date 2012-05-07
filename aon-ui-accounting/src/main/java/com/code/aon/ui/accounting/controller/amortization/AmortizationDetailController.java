@@ -15,7 +15,6 @@ import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.amortization.AmortizationManager;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -26,6 +25,7 @@ import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationDetailController extends LinesController {
 
@@ -110,8 +110,8 @@ public class AmortizationDetailController extends LinesController {
 		List<ITransferObject> all = new LinkedList<ITransferObject>(); 
 		Criteria criteria = ac.getCriteria();
 		List<ITransferObject> list = ac.getManagerBean().getList(criteria);
-		String idAlias = getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID);
-		String dateAlias = getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE);
+		String idAlias = getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID);
+		String dateAlias = getManagerBean().getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE);
 		for (ITransferObject to:list) {
 			Amortization am = (Amortization) to;
 			Criteria c = new Criteria();
@@ -202,7 +202,7 @@ public class AmortizationDetailController extends LinesController {
 					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
+					IEntityAlias.ACCOUNT_ENTRY_ID), detail.getAccountEntry().getId());
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);

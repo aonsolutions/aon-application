@@ -299,6 +299,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<!-- **************** AuditDomainChangeListener **************  -->
+	<managed-bean>
+		<managed-bean-name>auditDomainChangeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.audit.domain.AuditDomainChangeListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- =================== Action ================= -->	
 	<navigation-rule>
 		<navigation-case>

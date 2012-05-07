@@ -27,7 +27,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.esferalia.aon.file.payroll.fan.FAN;
 import com.esferalia.aon.file.payroll.fan.data.AYN;
@@ -45,7 +44,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
@@ -206,8 +205,8 @@ public class FANWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), ccc.getActivity().getEnterprise().getRegistry().getId() );
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), ccc.getActivity().getEnterprise().getRegistry().getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_REPRESENTATIVE_LABOR), true );
 			List<ITransferObject> dirStaffList = bean.getList(criteria);
 			if (! dirStaffList.isEmpty() ) {
 				return (RegistryDirStaff) dirStaffList.get(0);	
@@ -440,10 +439,10 @@ public class FANWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_BONUS_SALARY_ID), salary.getId());
-//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_START_DATE), getEndDate());
-//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), getStartDate());
-//			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_BONUS_SALARY_ID), salary.getId());
+//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_START_DATE), getEndDate());
+//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE), getStartDate());
+//			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_BONUS_END_DATE));
 //			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
@@ -1075,14 +1074,14 @@ public class FANWriter {
 		List<ISalary> list;
 		Criteria criteria = new Criteria();
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-		String alias = bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+		String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(alias, ccc.getActivity().getEnterprise().getId());
-		alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 		criteria.addGreaterThanOrEqualExpression(alias, startCal.getTime());
-		alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 		criteria.addLessThanOrEqualExpression(alias, endCal.getTime());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_EMPLOYEE_NAME));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 		list = new LinkedList<ISalary>();
 //		Double total = new Double(0);
 //		for( ITransferObject to : bean.getList(criteria) ) {
@@ -1103,14 +1102,14 @@ public class FANWriter {
 		List<ISalary> list;
 		Criteria criteria = new Criteria();
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-		String alias = bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+		String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(alias, ccc.getActivity().getEnterprise().getId());
-		alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 		criteria.addGreaterThanOrEqualExpression(alias, startCal.getTime());
-		alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
 		criteria.addLessThanOrEqualExpression(alias, endCal.getTime());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_EMPLOYEE_NAME));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 		list = new LinkedList<ISalary>();
 		Double total = new Double(0);
 		for( ITransferObject to : bean.getList(criteria) ) {
@@ -1144,8 +1143,8 @@ public class FANWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), ccc.getActivity().getEnterprise().getRegistry().getId() );
-			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_BANK_ACTIVE), true );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), ccc.getActivity().getEnterprise().getRegistry().getId() );
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_BANK_ACTIVE), true );
 			List<ITransferObject> bankList = bean.getList(criteria);
 			if(bankList.size()>0){
 				return (RegistryBank) bankList.get(0);
@@ -1170,10 +1169,10 @@ public class FANWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), c.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SALARY);
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), startCal.getTime());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), endCal.getTime());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), c.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE), startCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), endCal.getTime());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				salary = (Salary) list.get(0);
@@ -1227,13 +1226,13 @@ public class FANWriter {
 	private List<ITransferObject> getContracts(EnterpriseCCC ccc, Date startDate) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ENTERPRISE_CCC_ID), ccc.getId());
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE), startDate);
-		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ENTERPRISE_CCC_ID), ccc.getId());
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), startDate);
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-//		criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_START_DATE), new Date());
-//		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
-//		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+//		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), new Date());
+//		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
+//		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
 //		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 		return bean.getList(criteria);
 	}
@@ -1243,8 +1242,8 @@ public class FANWriter {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNotNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){

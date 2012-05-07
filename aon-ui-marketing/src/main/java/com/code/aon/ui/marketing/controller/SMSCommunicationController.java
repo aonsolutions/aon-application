@@ -27,7 +27,6 @@ import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.util.Utils;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -35,6 +34,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.messaging.controller.IMessagingConstants;
 import com.code.aon.ui.messaging.controller.SMSController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class SMSCommunicationController implements IMarketingConstants {
 	
@@ -80,9 +80,9 @@ public class SMSCommunicationController implements IMarketingConstants {
 	private List<String> getCellulars( Target target ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		String mediaType = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE);
+		String mediaType = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE);
 		criteria.addEqualExpression(mediaType, MediaType.CELLULAR);
-		String registryId = bean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+		String registryId = bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID);
 		criteria.addEqualExpression(registryId, target.getRegistry().getId());
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {

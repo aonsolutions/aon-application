@@ -11,7 +11,6 @@ import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
-import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -22,6 +21,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignActionTargetController extends LinesController {
 
@@ -34,7 +34,7 @@ public class CampaignActionTargetController extends LinesController {
 	@SuppressWarnings("unchecked")
 	private List<Integer> getCurrentTargets() throws ManagerBeanException {
 		Criteria criteria = getCriteria();
-		String targetId = getFieldName(IMarketingAlias.ACTION_TARGET_TARGET_ID);
+		String targetId = getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID);
 		ProjectionList projectList = new ProjectionList(Projection.property(targetId));
 		return getManagerBean().getList(projectList, criteria);
 	}
@@ -113,7 +113,7 @@ public class CampaignActionTargetController extends LinesController {
 		if (this.actionSelected) {
 			clearCriteria();
 			Criteria criteria = getCriteria();
-			String alias = getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID);
+			String alias = getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID);
 			MarketingAction action = (MarketingAction) event.getNewValue();
 			criteria.addEqualExpression(alias, action.getId());
 			initializeModel();

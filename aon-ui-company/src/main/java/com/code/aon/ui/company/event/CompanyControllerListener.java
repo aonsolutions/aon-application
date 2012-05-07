@@ -5,27 +5,26 @@ import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyControllerListener extends ControllerAdapter {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			ICompanyController c = (ICompanyController)event.getController();
@@ -33,9 +32,9 @@ public class CompanyControllerListener extends ControllerAdapter {
 			
 			Criteria criteriaMedia = new Criteria();
 			IManagerBean beanMedia = BeanManager.getManagerBean(RegistryMedia.class);
-			String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+			String registryIdFieldName = beanMedia.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID);
 			criteriaMedia.addEqualExpression(registryIdFieldName,company.getId());
-			List mediaList = beanMedia.getList(criteriaMedia);
+			List<ITransferObject> mediaList = beanMedia.getList(criteriaMedia);
 			
 			RegistryMedia phone = new RegistryMedia();
 			phone.setRegistry(company);
@@ -50,7 +49,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 			web.setRegistry(company);
 			web.setMediaType(MediaType.WEB);
 			
-			Iterator mediaIter = mediaList.iterator();
+			Iterator<ITransferObject> mediaIter = mediaList.iterator();
 			while (mediaIter.hasNext()){
 				RegistryMedia rmedia = (RegistryMedia)mediaIter.next();
 				switch (rmedia.getMediaType()) {
@@ -163,7 +162,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 	private Scope obtainScope() throws ManagerBeanException {
 		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(scopeBean.getFieldName(IConfigAlias.SCOPE_ID));
+		criteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_ID));
 		return (Scope)scopeBean.getList(criteria).get(0);
 	}
 

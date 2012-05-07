@@ -31,7 +31,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -44,6 +43,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyEmailUtil implements ICompanyConstants {
 
@@ -106,11 +106,11 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	public static String[] getEmails( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		String type = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE );
+		String type = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE );
 		criteria.addEqualExpression( type, MediaType.EMAIL );
-		String registryField = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID );
+		String registryField = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID );
 		criteria.addEqualExpression( registryField, registry.getId() );		
-		String administrative = bean.getFieldName( IRegistryAlias.REGISTRY_MEDIA_ADMINISTRATIVE );
+		String administrative = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE );
 		criteria.addEqualExpression( administrative, Boolean.TRUE );
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {

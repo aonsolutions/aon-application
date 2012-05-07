@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryNoteLinesController extends LinesController {
 	
@@ -67,18 +67,18 @@ public class RegistryNoteLinesController extends LinesController {
 
 	private Criteria createCustomCriteria(Criteria customCriteria) throws ManagerBeanException {
 		if(getFromDate() != null){
-			customCriteria.addGreaterThanOrEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTE_DATE), getFromDate());
+			customCriteria.addGreaterThanOrEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTE_DATE), getFromDate());
 		}
 		if(getToDate() != null){
-			customCriteria.addLessThanOrEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTE_DATE), getToDate());
+			customCriteria.addLessThanOrEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTE_DATE), getToDate());
 		}
 		if(getNoteType() != null){
-			customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), getNoteType());
+			customCriteria.addEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), getNoteType());
 		}
-		customCriteria.addNotEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
+		customCriteria.addNotEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
 		IController controller = getMasterController();
 		Serializable pk = controller.getManagerBean().getId(controller.getTo());
-		customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), pk );
+		customCriteria.addEqualExpression(this.getFieldName(IEntityAlias.REGISTRY_NOTE_REGISTRY_ID), pk );
 		return customCriteria;
 	}
 }

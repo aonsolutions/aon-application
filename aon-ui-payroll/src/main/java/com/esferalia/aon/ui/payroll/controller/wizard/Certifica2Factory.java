@@ -21,7 +21,7 @@ import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 public class Certifica2Factory {
@@ -34,8 +34,8 @@ public class Certifica2Factory {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNotNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -62,9 +62,9 @@ public class Certifica2Factory {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_ENTERPRISE_ID),contract.getWorkPlace().getEnterprise().getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_STATUS),FileStatus.PENDING);
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE), false);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_ENTERPRISE_ID),contract.getWorkPlace().getEnterprise().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_STATUS),FileStatus.PENDING);
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DATE), false);
 			List<?> list = bean.getList(criteria);
 			return (List<Certifica2Batch>)list;
 		} catch (ManagerBeanException e) {
@@ -79,7 +79,7 @@ public class Certifica2Factory {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), remesa.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CERTIFICA2BATCH_DETAIL_CERTIFICA2BATCH_ID), remesa.getId());
 			List<?> list = bean.getList(criteria);
 			return (List<Certifica2BatchDetail>)list;
 		} catch (ManagerBeanException e) {

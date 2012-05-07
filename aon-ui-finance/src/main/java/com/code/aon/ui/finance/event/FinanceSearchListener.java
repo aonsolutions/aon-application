@@ -9,13 +9,13 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.controller.FinanceController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceSearchListener extends FinanceListSearchListener {
 
@@ -80,15 +80,15 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
+		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getRegistry().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getRegistry().getId());			
 		}		
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
 		}
 		if (getPayMethods() != null && getPayMethodsSize() > 0) {
-			String payMethod = getController().resolveAlias(IFinanceAlias.FINANCE_PAY_METHOD_ID);
+			String payMethod = getController().resolveAlias(IEntityAlias.FINANCE_PAY_METHOD_ID);
 			addEnumToCriteria(criteria, payMethod, getPayMethodsIds().toArray());
 		}
 		super.completeCriteria(criteria);

@@ -6,14 +6,20 @@ import com.esferalia.aon.salary.SalaryException;
 
 public class SQLSalaryProxy implements ISalaryProxy {
 
-	private Integer id;
+	private Integer domainId;
+	private Integer contractId;
 	
-	public SQLSalaryProxy( Integer id ) {
-		this.id = id;
+	public SQLSalaryProxy( Integer contractId, Integer domainId  ) {
+		this.domainId = domainId;
+		this.contractId = contractId;
 	}
 	
-	public Integer getId() {
-		return id;
+	public Integer getDomainId() {
+		return domainId;
+	}
+	
+	public Integer getContractId() {
+		return contractId;
 	}
 	
 	@Override

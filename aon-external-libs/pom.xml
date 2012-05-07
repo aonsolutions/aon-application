@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>6.27-SNAPSHOT</version>
+		<version>7.0-SNAPSHOT</version>
+		<relativePath>../aon-web-parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.code.aon</groupId>
 	<artifactId>aon-external-libs</artifactId>
-	<version>6.27-SNAPSHOT</version>
 	<description>AON EXTERNAL LIBS</description>
 	<name>AON EXTERNAL LIBS</name>
 
@@ -17,22 +17,6 @@
 		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</connection>
 		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</developerConnection>
 	</scm>
-
-	<repositories>
-		<repository>
-			<id>dynamicJasper-public-repository</id>
-			<name>DynamicJasper public Repository</name>
-			<url>http://archiva.fdvs.com.ar/repository/public1/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -98,17 +82,12 @@
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
 			<version>1.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
@@ -143,7 +122,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.6</version>
+			<version>3.7</version>
 		</dependency>
 		<dependency>
 			<groupId>jfree</groupId>
@@ -208,17 +187,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.jsf.bridge</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.5.11</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>4.0.0</version>
+			<version>${jasperReportsVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>oro</groupId>
@@ -314,7 +288,7 @@
 											<include>commons-discovery:commons-discovery:0.2</include>
 											<include>commons-io:commons-io:1.4</include>
 											<include>commons-lang:commons-lang:2.5</include>
-											<include>commons-net:commons-net:2.1</include>
+											<include>commons-net:commons-net:2.2</include>
 											<include>commons-validator:commons-validator:1.3.1</include>
 											<include>org.richfaces.ui:richfaces-ui:3.3.3.Final</include>
 											<include>org.richfaces.framework:richfaces-api:3.3.3.Final</include>
@@ -322,7 +296,7 @@
 											<include>org.apache.velocity:velocity:1.6.4</include>
 											<include>velocity-tools:velocity-tools:1.2</include>
 											<include>com.lowagie:itext:2.1.7</include>
-											<include>org.apache.poi:poi:3.6</include>
+											<include>org.apache.poi:poi:3.7</include>
 											<include>jfree:jcommon:1.0.15</include>
 											<include>jfree:jfreechart:1.0.12</include>
 											<include>com.sun:jimi:1.0</include>
@@ -335,9 +309,9 @@
 											<include>org.apache.sanselan:sanselan:0.97-incubator</include>
 											<include>sinadura:sinaduraCore:1.3.0.MOD2</include>
 											<include>com.esendex:Esendex:0.0.1</include>
-											<include>com.code.aon:aon.jsf.bridge:${pom.version}</include>
+											<include>com.code.aon:aon.jsf.bridge:${project.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
-											<include>net.sf.jasperreports:jasperreports:4.0.0</include>
+											<include>net.sf.jasperreports:jasperreports:${jasperReportsVersion}</include>
 											<include>ar.com.fdvs:DynamicJasper:3.2.1</include>
 											<include>oro:oro:2.0.8</include>
 											<include>javax.mail:mail:1.4.2</include>
@@ -355,9 +329,14 @@
 
 
 						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.maven.wagon</groupId>
+								<artifactId>wagon-ssh</artifactId>
+								<version>1.0-beta-7</version>
+							</dependency>
+						</dependencies>
 					</plugin>
-
-
 				</plugins>
 			</build>
 		</profile>

@@ -15,7 +15,6 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Loan;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.LoanStatus;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -30,6 +29,7 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class LoanEntryController  {
 
@@ -176,7 +176,7 @@ public class LoanEntryController  {
 	private void loadAccountEntryController(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryController entryController = (AccountEntryController)FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), entry.getId());
+		criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ENTRY_ID), entry.getId());
 		entryController.setCriteria(criteria);
 		entryController.onSearch(null);
 		entryController.getModel().setRowIndex(0);

@@ -445,9 +445,9 @@ public class ReportManager {
 		if (config.getParams() != null) {
 			LOGGER.debug("Passing Custom Parameters");
 			Map<String, Object> map = new HashMap<String, Object>();
-			Iterator<Object> iter = config.getParams().keySet().iterator();
+			Iterator<String> iter = config.getParams().keySet().iterator();
 			while (iter.hasNext()) {
-				String key = (String) iter.next();
+				String key = iter.next();
 				String value = (String) config.getParams().get(key);
 				if (value.startsWith("#")) {
 					String controllerName = value.substring(value.indexOf("{") + 1, value

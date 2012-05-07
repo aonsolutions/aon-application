@@ -15,7 +15,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -64,8 +64,8 @@ public class EnterprisePayrollController {
     	LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_CCC));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_CCC));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			EnterpriseCCC ccc = (EnterpriseCCC)to;
@@ -84,8 +84,8 @@ public class EnterprisePayrollController {
     	LinkedList<SelectItem> list = new LinkedList<SelectItem>();
     	IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-    	criteria.addOrder(bean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_TYPE));
+    	criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+    	criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_TYPE));
     	for (ITransferObject to : bean.getList(criteria)) {
     		EnterpriseActivity a = (EnterpriseActivity)to;
     		String label = a.getDescription();
@@ -97,15 +97,15 @@ public class EnterprisePayrollController {
 	private void loadMainActivity() throws ManagerBeanException {
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(activityBean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-		criteria.addEqualExpression(activityBean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
+		criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+		criteria.addEqualExpression(activityBean.getFieldName(IEntityAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
 		List<ITransferObject> activities = activityBean.getList(criteria);
 		if (! activities.isEmpty() ) {
 			setActivity( (EnterpriseActivity) activities.get(0) );
 			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);
 			Criteria cccCriteria = new Criteria();
-			cccCriteria.addEqualExpression(cccBean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ID), getActivity().getId());
-			cccCriteria.addEqualExpression(cccBean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
+			cccCriteria.addEqualExpression(cccBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ID), getActivity().getId());
+			cccCriteria.addEqualExpression(cccBean.getFieldName(IEntityAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
 			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
 			if (! cccs.isEmpty() ) {
 				setCcc( (EnterpriseCCC) cccs.get(0) );

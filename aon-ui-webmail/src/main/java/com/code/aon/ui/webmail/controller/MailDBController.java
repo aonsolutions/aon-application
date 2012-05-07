@@ -2,9 +2,6 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.INVALID_NAME;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_NAME;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_SOURCE;
-import static com.code.aon.webmail.db.Signature.SIGNATURE_SOURCE_ID;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -17,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.converter.MappedTransferObjectConverter;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.enumeration.MailSource;
 
 public abstract class MailDBController extends BasicController {
 
@@ -29,26 +26,20 @@ public abstract class MailDBController extends BasicController {
 	
 	private Converter converter;
 	
-	private MailSource source;
-	
-	private Integer sourceId;
+	private User user;
 	
 	protected abstract String getDuplicatedMessage( String name );
 	
-	public MailSource getSource() {
-		return source;
+	protected abstract String getUserAlias() throws ManagerBeanException;
+	
+	protected abstract String getNameAlias() throws ManagerBeanException;
+	
+	public User getUser() {
+		return user;
 	}
 
-	public void setSource(MailSource source) {
-		this.source = source;
-	}
-
-	public Integer getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(Integer sourceId) {
-		this.sourceId = sourceId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Converter getConverter() {
@@ -57,18 +48,31 @@ public abstract class MailDBController extends BasicController {
 		}
 		return converter;
 	}	
+	
+	public void setConverter(Converter converter) {
+		this.converter = converter;
+	}
 
-	public void setEnterprise( Integer id ) throws ManagerBeanException {
-		this.source = MailSource.ENTERPRISE;
-		this.sourceId = id;
-		updateCriteria();
+	public void updateUser( User user ) throws ManagerBeanException {
+		if ( (user != null) && (user.getId() != null) ) {
+			setUser(user);
+		} else {
+			setUser(null);
+		}
+		resetCriteria();
 	}
 	
-	private void updateCriteria() throws ManagerBeanException {
+	private void resetCriteria() throws ManagerBeanException {
 		clearCriteria();
-		Criteria criteria = getCriteria();
-		criteria.addEqualExpression(SIGNATURE_SOURCE, this.source);
-		criteria.addEqualExpression(SIGNATURE_SOURCE_ID, this.sourceId);		
+		completeCriteria( getCriteria() );
+	}
+	
+	public void completeCriteria( Criteria criteria ) throws ManagerBeanException {
+		if ( user != null ) {
+			criteria.addEqualExpression(getUserAlias(), user.getId());	
+		} else {
+			criteria.addNullExpression(getUserAlias());
+		}		
 	}
 	
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
@@ -85,8 +89,8 @@ public abstract class MailDBController extends BasicController {
 	
 	private boolean exists( String name ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(SIGNATURE_SOURCE, this.source);
-		criteria.addEqualExpression(SIGNATURE_NAME, name);		
+		completeCriteria( criteria );
+		criteria.addEqualExpression(getNameAlias(), name);		
 		return getManagerBean().getCount(criteria) > 0;
 	}
 	

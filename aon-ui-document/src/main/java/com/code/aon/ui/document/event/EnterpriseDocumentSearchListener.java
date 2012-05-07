@@ -218,7 +218,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 				IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
 				enterprise = (Enterprise) enterpriseBean.createNewTo();
 			} else {
-				enterprise = mc.getLoggedUser().getEnterprise();				
+				enterprise = mc.getEnterprise();				
 			}
 			setEnterprise(enterprise);
 		} catch (ManagerBeanException e) {

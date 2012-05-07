@@ -12,10 +12,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceExcelDetailledReport  implements ICollectionProvider{
 
@@ -47,8 +47,8 @@ public class InvoiceExcelDetailledReport  implements ICollectionProvider{
 		}
 		Criteria criteria = controller.getCriteria();
 		IManagerBean taxBean = BeanManager.getManagerBean(InvoiceTax.class);
-		String alias1 = taxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID);
-		String alias2 = taxBean.getFieldName(IFinanceAlias.INVOICE_TAX_TAX_TYPE);
+		String alias1 = taxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID);
+		String alias2 = taxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE);
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		List<ITransferObject> taxes = new LinkedList<ITransferObject>();
 		List<ITransferObject> invoices = bean.getList(criteria);

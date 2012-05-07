@@ -1,5 +1,6 @@
 package com.code.aon.accounting.amortization;
 
+
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -13,7 +14,6 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
@@ -24,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationManager {
 
@@ -113,8 +114,8 @@ public class AmortizationManager {
 	private void deletePendingDetails(Amortization a) throws ManagerBeanException {
 		IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
-		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_STATUS),AmortizationDetailStatus.PENDING);
+		c.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		c.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS),AmortizationDetailStatus.PENDING);
 		List<ITransferObject> details = detailBean.getList(c);
 		for (ITransferObject tro: details) {
 			AmortizationDetail detail = (AmortizationDetail) tro;
@@ -160,9 +161,9 @@ public class AmortizationManager {
 
 	private AmortizationDetail insertable(IManagerBean bean, Amortization a, Date first) throws ManagerBeanException {
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), first);
-		c.addOrder(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), first);
+		c.addOrder(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE));
 		List<ITransferObject> list = bean.getList(c);
 		AmortizationDetail exists = null;	
 		if (list != null && list.size() > 0) {
@@ -173,10 +174,10 @@ public class AmortizationManager {
 
 	private Date ensurePeriodLast(IManagerBean bean, Amortization a, Date last) throws ManagerBeanException {
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-		c.addLessThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
-		c.addGreaterThanOrEqualExpression(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE), last);
-		c.addOrder(bean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+		c.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), last);
+		c.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE), last);
+		c.addOrder(bean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE));
 		List<ITransferObject> list = bean.getList(c);
 		if (list != null && list.size() > 0) {
 			AmortizationDetail exists = (AmortizationDetail) list.get(0);
@@ -266,10 +267,10 @@ public class AmortizationManager {
 	public void checkSale(Amortization a) throws ManagerBeanException {
 		IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
+		c.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
 		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
-		c.addGreaterThanExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
-		c.addNotEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.PENDING); 
+		c.addGreaterThanExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
+		c.addNotEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_STATUS), AmortizationDetailStatus.PENDING); 
 		int count = detailBean.getCount(c);
 		if (count > 0) {
 			throw new ManagerBeanException("Existe una cuota posterior a la fecha de cancelación, bloqueada o contabilizada.");
@@ -280,9 +281,9 @@ public class AmortizationManager {
 		IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
 		Criteria c = new Criteria();
 		Date cancelDate = DateUtils.addDays(a.getDeadline(), -1);
-		c.addEqualExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
-		c.addGreaterThanExpression(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
-		c.addOrder(detailBean.getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE));
+		c.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID),a.getId());
+		c.addGreaterThanExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_TO_DATE),cancelDate);
+		c.addOrder(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE));
 		List<ITransferObject> details = detailBean.getList(c);
 		for (ITransferObject tro: details) {
 			AmortizationDetail detail = (AmortizationDetail) tro;

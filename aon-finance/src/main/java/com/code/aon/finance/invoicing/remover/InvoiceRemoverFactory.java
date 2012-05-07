@@ -64,6 +64,7 @@ public class InvoiceRemoverFactory {
 			register(AccountInvoiceDetailRemover.class);
 			register(DirectInvoiceDetailRemover.class);
 			register(OfferInvoiceDetailRemover.class);
+			register(AdvanceInvoiceDetailRemover.class);
 		} catch (InvoicingException e) {
 			e.printStackTrace();
 		}

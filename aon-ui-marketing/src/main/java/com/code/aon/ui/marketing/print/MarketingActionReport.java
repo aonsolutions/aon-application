@@ -1,7 +1,5 @@
 package com.code.aon.ui.marketing.print;
 
-import static com.code.aon.marketing.dao.IMarketingAlias.ACTION_TARGET_ACTION_ID;
-import static com.code.aon.marketing.dao.IMarketingAlias.ACTION_TARGET_TARGET_ID;
 import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET;
 import static com.code.aon.ui.common.ICommonConstants.COMMENT;
 import static com.code.aon.ui.common.ICommonConstants.COMPANY_DOCUMENT;
@@ -41,6 +39,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.marketing.controller.IMarketingConstants;
 import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 
 public class MarketingActionReport {
@@ -91,8 +90,8 @@ public class MarketingActionReport {
 			Target target = srd.getSurveyResponse().getTarget();
 			if ( (at == null) || (! at.getTarget().equals(target)) ) {
 				Criteria _criteria = new Criteria();
-				_criteria.addEqualExpression(atBean.getFieldName(ACTION_TARGET_TARGET_ID), target.getId());
-				_criteria.addEqualExpression(atBean.getFieldName(ACTION_TARGET_ACTION_ID), action.getId());
+				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID), target.getId());
+				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), action.getId());
 				List<ITransferObject> atList = atBean.getList(_criteria);
 				if (! atList.isEmpty() ) {
 					at = (ActionTarget) atList.get(0);

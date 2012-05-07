@@ -18,9 +18,9 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.registry.RegistryDirStaff;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.registry.controller.RegistryDirStaffLinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -180,7 +180,7 @@ public class ContractBuilder {
 	public void loadDefaultFields(Contract contract) throws ManagerBeanException {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_DIR_STAFF_CONTROLLER);
-		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
+		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IEntityAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
 		rDirStaff.onSearch(null);
 		RegistryDirStaff dir = null; 
 		if(rDirStaff.getModel().getRowCount()<=0){

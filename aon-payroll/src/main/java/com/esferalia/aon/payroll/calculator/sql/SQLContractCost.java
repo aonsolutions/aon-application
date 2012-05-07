@@ -1,17 +1,9 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import com.esferalia.aon.payroll.calculator.IContractCost;
-import com.esferalia.aon.payroll.calculator.IContractDeduction;
-import com.esferalia.aon.payroll.calculator.IContractEmbargo;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractEmbargoColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemCostColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;

@@ -27,7 +27,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.calendar.CalendarHoliday;
 import com.esferalia.aon.calendar.CalendarPeriod;
-import com.esferalia.aon.calendar.dao.ICalendarAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CalendarController extends BasicController {
 
@@ -110,20 +110,20 @@ public class CalendarController extends BasicController {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(CalendarHoliday.class);
 				Criteria criteria = new Criteria();
-				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId()); 
+				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId()); 
 				calendar = calendar.getCalendar();
 				while(calendar!=null){
-					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId());
+					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_CALENDAR_ID), calendar.getId());
 					e1 = ExpressionUtilities.getOrExpression(e1, e2);
 					calendar = calendar.getCalendar();
 				}
 				criteria.addExpression(e1);
-				criteria.addOrder(bean.getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_DATE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_DATE));
 				java.util.Calendar startCal = new GregorianCalendar();
 				java.util.Calendar endCal = new GregorianCalendar();
 				startCal.set(year, java.util.Calendar.JANUARY, 1);
 				endCal.set(year, java.util.Calendar.DECEMBER, 31);
-				criteria.addBetweenExpression(bean.getFieldName(ICalendarAlias.CALENDAR_HOLIDAY_DATE), startCal.getTime(), endCal.getTime());
+				criteria.addBetweenExpression(bean.getFieldName(IEntityAlias.CALENDAR_HOLIDAY_DATE), startCal.getTime(), endCal.getTime());
 				for(ITransferObject to: bean.getList(criteria)){
 					list.add(to);
 				}
@@ -146,10 +146,10 @@ public class CalendarController extends BasicController {
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(CalendarPeriod.class);
 				Criteria criteria = new Criteria();
-				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(ICalendarAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId()); 
+				Expression e1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId()); 
 				calendar = calendar.getCalendar();
 				while(calendar!=null){
-					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(ICalendarAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId());
+					Expression e2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IEntityAlias.CALENDAR_PERIOD_CALENDAR_ID), calendar.getId());
 					e1 = ExpressionUtilities.getOrExpression(e1, e2);
 					calendar = calendar.getCalendar();
 				}

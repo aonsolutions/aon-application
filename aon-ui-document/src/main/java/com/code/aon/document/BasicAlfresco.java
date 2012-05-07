@@ -49,8 +49,16 @@ public class BasicAlfresco {
 	/** The store used throughout the samples */
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, "SpacesStore");
 	
-	private File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
+	private static File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
 
+	private static final String SERVER_PORT = "server.port";
+
+	private static final String SERVER_HOST = "server.host";
+	
+	public static final String SERVER_ADMIN_USER = "server.admin.user";
+	
+	public static final String SERVER_ADMIN_PASSWORD = "server.admin.password";
+	
 	private String serverURL;
 	private String serverUserName;
 	private String serverPassword;	
@@ -75,12 +83,15 @@ public class BasicAlfresco {
 		this.serverPassword = password;
 		setSessionProperties();
 	}
+	
+	public static Properties getAlfrescoProperties() {
+		return PropertiesUtil.loadProperties(ALFRESCO_PROPERTIES);		
+	}
 
 	private void setSessionProperties() {
-		Properties properties = PropertiesUtil
-				.loadProperties(ALFRESCO_PROPERTIES);
-		String serverHost = properties.getProperty("server.host");
-		String serverPort = properties.getProperty("server.port");
+		Properties properties = getAlfrescoProperties();		
+		String serverHost = properties.getProperty(SERVER_HOST);
+		String serverPort = properties.getProperty(SERVER_PORT);
 		serverURL = "http://" + serverHost
 				+ (!StringUtils.isEmpty(serverPort) ? ":" + serverPort : "")
 				+ "/alfresco/api";

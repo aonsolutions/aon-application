@@ -226,7 +226,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 					if ( exprBuffer.length() > 0 )  { 
 						exprBuffer.append(" + ");
 					}
-					exprBuffer.append(String.format("( %s + %s + %s ) * %.2f / 100 )", 
+					exprBuffer.append(String.format("(( %s + %s + %s ) * %.2f / 100 )", 
 							UNEMPLOY_ENTERPRISE, FP_ENTERPRISE, FOGASA_ENTERPRISE,  prcAccFgs  ));
 				}
 			}

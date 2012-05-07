@@ -17,12 +17,12 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -115,8 +115,8 @@ public class FinanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			try {
 				IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-				criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED);
+				criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+				criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED);
 				for (ITransferObject to : trackingBean.getList(criteria)) {
 					trackingBean.remove(to);
 				}

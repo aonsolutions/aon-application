@@ -53,30 +53,35 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 	}
 
 	public void insertSalary() throws SQLException{
+		int domainId = salary.getDomain();
 		int salaryId = sqlWriter.insertSalary(salary);
-
 		for (AbstractSQL.SalaryCost salaryCost : salaryCosts) {
 			salaryCost.setSalary(salaryId);
+			salaryCost.setDomain(domainId);
 			sqlWriter.insertSalaryCost(salaryCost);
 		}
 
 		for (AbstractSQL.SalaryBonus salaryBonus : salaryBonuses) {
 			salaryBonus.setSalary(salaryId);
+			salaryBonus.setDomain(domainId);
 			sqlWriter.insertSalaryBonus(salaryBonus);
 		}
 
 		for (AbstractSQL.SalaryEmbargo salaryEmbargo : salaryEmbargos) {
 			salaryEmbargo.setSalary(salaryId);
+			salaryEmbargo.setDomain(domainId);
 			sqlWriter.insertSalaryEmbargo(salaryEmbargo);
 		}
 
 		for (AbstractSQL.SalaryPayment salaryPayment : salaryPayments) {
 			salaryPayment.setSalary(salaryId);
+			salaryPayment.setDomain(domainId);
 			sqlWriter.insertSalaryPayment(salaryPayment);
 		}
 
 		for (AbstractSQL.SalaryDeduction salaryDeduction : salaryDeductions) {
 			salaryDeduction.setSalary(salaryId);
+			salaryDeduction.setDomain(domainId);
 			sqlWriter.insertSalaryDeduction(salaryDeduction);
 		}
 	}

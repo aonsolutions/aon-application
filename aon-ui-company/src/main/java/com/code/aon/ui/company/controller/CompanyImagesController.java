@@ -29,10 +29,10 @@ import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyImagesController extends LinesController implements ICompanyConstants {
 
@@ -241,9 +241,9 @@ public class CompanyImagesController extends LinesController implements ICompany
 		Criteria criteria = new Criteria();
 		RegistryAttachment ra = (RegistryAttachment) getTo();
 		if (ra.getId() != null) {
-			criteria.addNotEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), ra.getId());
+			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_ID), ra.getId());
 		}
-		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_DESCRIPTION), imageName);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DESCRIPTION), imageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
 			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, COMPANY_IMAGE_DUPLICATED_NAME));

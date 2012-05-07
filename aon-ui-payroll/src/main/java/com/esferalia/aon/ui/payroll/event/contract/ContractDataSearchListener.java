@@ -9,7 +9,7 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ContractDataSearchListener extends ControllerSearchListener {
 	
@@ -18,14 +18,14 @@ public class ContractDataSearchListener extends ControllerSearchListener {
 //		if(getController()){
 //			
 //		}
-		String alias = getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
+		String alias = getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE);
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 		Expression expr2 = ExpressionUtilities.getNullExpression(alias);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-//		alias = getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE);
+//		alias = getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE);
 //		criteria.addLessThanOrEqualExpression(alias, new Date());
 		criteria.addOrder(alias, false);
-		alias = getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
+		alias = getFieldName(IEntityAlias.CONTRACT_DATA_NAME);
 		criteria.addOrder(alias);
 	}
 

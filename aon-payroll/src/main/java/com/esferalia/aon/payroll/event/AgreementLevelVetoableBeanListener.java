@@ -10,9 +10,9 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerAdapter {
 
@@ -31,7 +31,7 @@ public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerA
 	private void removeAgreementLevelCategories(AgreementLevel al) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelCategory.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), al.getId());
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), al.getId());
 		List<ITransferObject> list = bean.getList(c);
 		for (ITransferObject to : list) {
 			bean.remove(to);

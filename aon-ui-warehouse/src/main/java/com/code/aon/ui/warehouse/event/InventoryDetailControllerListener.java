@@ -14,7 +14,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
-import com.code.aon.warehouse.dao.IWarehouseAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class InventoryDetailControllerListener extends ControllerAdapter {
 	
@@ -28,7 +28,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 			Double q = new Double(quantity);
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID) ,inventoryDetail.getItem().getId());
+			criteria.addEqualExpression(stockBean.getFieldName(IEntityAlias.STOCK_ITEM_ID) ,inventoryDetail.getItem().getId());
 			Iterator<?> stockListIter = stockBean.getList(criteria).iterator();
 			if (stockListIter.hasNext()){
 				Stock stock = (Stock) stockListIter.next();

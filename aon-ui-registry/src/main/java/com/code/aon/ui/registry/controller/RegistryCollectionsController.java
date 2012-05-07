@@ -12,7 +12,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
@@ -24,7 +23,6 @@ import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
@@ -32,6 +30,7 @@ import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.entity.IEntityAlias;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.registry</code>.
@@ -108,7 +107,7 @@ public class RegistryCollectionsController {
     	List<SelectItem> relationships = new LinkedList<SelectItem>();
     	IManagerBean relationshipBean = BeanManager.getManagerBean(Relationship.class);
     	Criteria criteria = new Criteria();
-    	criteria.addOrder(relationshipBean.getFieldName(IRegistryAlias.RELATIONSHIP_DESCRIPTION));
+    	criteria.addOrder(relationshipBean.getFieldName(IEntityAlias.RELATIONSHIP_DESCRIPTION));
     	Iterator<?> iter = relationshipBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Relationship relationship = (Relationship)iter.next();
@@ -189,7 +188,7 @@ public class RegistryCollectionsController {
     	List<SelectItem> segments = new LinkedList<SelectItem>();
     	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
     	Criteria criteria = new Criteria();
-    	criteria.addOrder(segmentBean.getFieldName(IRegistryAlias.SEGMENT_NAME));
+    	criteria.addOrder(segmentBean.getFieldName(IEntityAlias.SEGMENT_NAME));
     	Iterator<?> iter = segmentBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Segment segment = (Segment)iter.next();
@@ -203,7 +202,7 @@ public class RegistryCollectionsController {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(userBean.getFieldName(IConfigAlias.USER_NAME));
+		criteria.addOrder(userBean.getFieldName(IEntityAlias.USER_NAME));
 		Iterator<?> iter = userBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			User user = (User)iter.next();
@@ -217,7 +216,7 @@ public class RegistryCollectionsController {
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			RegistryBank rBank = (RegistryBank)iter.next();
@@ -231,8 +230,8 @@ public class RegistryCollectionsController {
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ACTIVE), true);
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACTIVE), true);
 		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			RegistryBank rBank = (RegistryBank)iter.next();
@@ -254,7 +253,7 @@ public class RegistryCollectionsController {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(categoryBean.getFieldName(IRegistryAlias.CATEGORY_NAME));
+		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
 		Iterator<?> iter = categoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Category category = (Category) iter.next();
@@ -275,8 +274,8 @@ public class RegistryCollectionsController {
     	List<String> addInfos = new LinkedList<String>();
     	IManagerBean addInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
     	Criteria criteria = new Criteria();
-    	criteria.addOrder(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
-		Projection projection = Projection.group(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
+    	criteria.addOrder(addInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
+		Projection projection = Projection.group(addInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
 		Iterator<?> iter = addInfoBean.getList(new ProjectionList(projection), criteria).iterator();
     	while(iter.hasNext()){
     		String addInfo = (String)iter.next();

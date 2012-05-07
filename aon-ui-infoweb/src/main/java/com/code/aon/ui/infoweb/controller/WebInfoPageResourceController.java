@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageResource;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class WebInfoPageResourceController extends BasicController implements IInfoWebConstants {
 	
@@ -22,7 +22,7 @@ public class WebInfoPageResourceController extends BasicController implements II
 		try {
 			clearCriteria();
 			Criteria criteria = getCriteria();
-			criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), webInfoPage.getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.WEB_INFO_PAGE_RESOURCE_WEB_INFO_PAGE_ID), webInfoPage.getId());
 			onCancel(event);
 			initializeModel();
 			this.webInfoPage = webInfoPage;

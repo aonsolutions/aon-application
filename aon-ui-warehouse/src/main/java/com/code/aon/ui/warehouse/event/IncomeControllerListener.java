@@ -28,7 +28,6 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 			((Income)controller.getTo()).setStatus(IncomeStatus.PENDING);
 			((Income)controller.getTo()).setWorkPlace((WorkPlace)((SelectItem)companyColls.getCurrentUserWorkPlaces().get(0)).getValue());
 			controller.setAddresses(null);
-			controller.setProjects(null);
 	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
 			controller.setDefaultPayMethod(null);
 			controller.resetIncomePayMethod();
@@ -42,7 +41,6 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		IncomeController controller = (IncomeController)event.getController();
 		try {
 			controller.loadAddresses(((Income)controller.getTo()).getSupplier().getRegistry().getId());
-			controller.loadProjects(((Income)controller.getTo()).getSupplier().getRegistry().getId());
 	        controller.setWarehouse(controller.obtainWarehouse((Income)controller.getTo()));
 			controller.loadDefaultPayMethod(((Income)controller.getTo()).getSupplier().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
@@ -63,6 +61,20 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		if (income.getProject() != null && income.getProject().getId() != null) {
 			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 			incomeDetailController.onSearch(null);
+		}
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		IncomeController incomeController = (IncomeController)this.getController();
+		Income income = (Income)incomeController.getTo();
+		if (income.getProject() == null || income.getProject().getId() == null) {
+			try {
+				incomeController.removeIncomeDetailProject();
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e.getMessage());
+			}
 		}
 	}
 

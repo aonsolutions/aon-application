@@ -47,7 +47,6 @@ import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -61,7 +60,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
@@ -174,7 +173,7 @@ public class ContractGenerationWizard extends BasicController{
 	private void loadPayment() {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AgreementPayment.class);
-			String identifier = bean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID);
+			String identifier = bean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID);
 			Integer data = getAgreement().getId();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(identifier, data);
@@ -405,7 +404,7 @@ public class ContractGenerationWizard extends BasicController{
 			Criteria criteria = new Criteria();
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevel.class);
-				String identifier = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_AGREEMENT_ID);
+				String identifier = bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_AGREEMENT_ID);
 				Integer data = getAgreement().getId();
 				criteria.addEqualExpression(identifier, data);
 				for( ITransferObject to : bean.getList(criteria) ) {
@@ -426,7 +425,7 @@ public class ContractGenerationWizard extends BasicController{
 			Criteria criteria = new Criteria();
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelCategory.class);
-				String identifier = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID);
+				String identifier = bean.getFieldName(IEntityAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID);
 				Integer data = getAgreementLevel().getId();
 				criteria.addEqualExpression(identifier, data);
 				for( ITransferObject to : bean.getList(criteria) ) {
@@ -626,8 +625,8 @@ public class ContractGenerationWizard extends BasicController{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				return (ContractAttachment) list.get(0);
@@ -797,7 +796,7 @@ public class ContractGenerationWizard extends BasicController{
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
 				List<ITransferObject> list = bean.getList(criteria);
 				for (ITransferObject to : list) {
 					WorkPlace w = (WorkPlace)to; 
@@ -818,8 +817,8 @@ public class ContractGenerationWizard extends BasicController{
 		LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
-		criteria.addOrder(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_CCC));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ENTERPRISE_CCC_CCC));
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to : list) {
 			EnterpriseCCC ccc = (EnterpriseCCC)to;
@@ -879,8 +878,8 @@ public class ContractGenerationWizard extends BasicController{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)getTo()).getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)getTo()).getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				setContrataAttach((ContractAttachment) list.get(0));

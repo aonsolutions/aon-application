@@ -21,15 +21,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyWebInfoPageController extends BasicController implements IInfoWebConstants {
 	
@@ -64,7 +63,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		int position = 0;
 		try{
 			Criteria criteria = new Criteria();
-			criteria.addOrder(getManagerBean().getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), false);
+			criteria.addOrder(getManagerBean().getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION), false);
 			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
 			if (list.size() > 0) {
 				WebInfoPage wip = (WebInfoPage)list.get(0);
@@ -104,7 +103,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			int newPosition = oldPosition + movement;
 			
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION), newPosition);
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			if (!list.isEmpty()) {
 				WebInfoPage otherPage = (WebInfoPage) list.get(0);
@@ -192,7 +191,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		try {
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
+			criteria.addEqualExpression(wipdBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
 			List<ITransferObject> listWipd = wipdBean.getList(criteria);
 			if (listWipd.size() > 0) detail = (WebInfoPageDetail)listWipd.get(0);
 			else detail = new WebInfoPageDetail();
@@ -227,7 +226,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		List<SelectItem> images = new LinkedList<SelectItem>();
 		IManagerBean rattachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rattachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
+		criteria.addEqualExpression(rattachBean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.ADDITIONAL_IMAGE);
 		List<ITransferObject> list = rattachBean.getList(criteria);
 		for (int i=0; i <list.size(); i++) {
 			RegistryAttachment rattach = (RegistryAttachment)list.get(i);
@@ -255,10 +254,10 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		Criteria criteria = new Criteria();
 		WebInfoPage wip = (WebInfoPage) getTo();
 		if ( wip.getId() != null ) {
-			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), wip.getId());
+			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IEntityAlias.WEB_INFO_PAGE_ID), wip.getId());
 			criteria.addExpression(exp);
 		}		
-		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), pageName);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WEB_INFO_PAGE_NAME), pageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
 			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));

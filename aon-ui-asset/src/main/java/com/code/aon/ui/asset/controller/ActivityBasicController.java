@@ -14,7 +14,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.AssetActivity;
-import com.code.aon.asset.dao.IAssetAlias;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -22,6 +21,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityBasicController extends BasicController{
 	
@@ -113,7 +113,7 @@ public class ActivityBasicController extends BasicController{
 		try {
 			((ActivityDialogController)AonUtil.getRegisteredBean(("activityDialog"))).setRequest(false);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(this.getFieldName(IAssetAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.PENDING);
+			criteria.addEqualExpression(this.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
 			this.setCriteria(criteria);
 			this.onSearch(null);
 			this.setCriteria(new Criteria());
@@ -127,7 +127,7 @@ public class ActivityBasicController extends BasicController{
 
 	public void acceptPendingAssetList(ActionEvent event){
 		try {
-			changeActivityStatus(ActivityStatus.ACCEPTED);
+			changeActivityStatus(ActivityStatus.MAINTENANCE);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al aceptar la reserva. "+e.getMessage());
 			throw new AbortProcessingException(e.getMessage(),e);
@@ -137,7 +137,7 @@ public class ActivityBasicController extends BasicController{
 	
 	public void cancelPendingAssetList(ActionEvent event){
 		try {
-			changeActivityStatus(ActivityStatus.REFUSED);
+			changeActivityStatus(ActivityStatus.OUT_OF_ORDER);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al denegar la reserva.");
 			throw new AbortProcessingException(e.getMessage(),e);

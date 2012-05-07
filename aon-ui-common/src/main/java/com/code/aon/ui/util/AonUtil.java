@@ -1,9 +1,13 @@
 package com.code.aon.ui.util;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_ROLE_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.CONFIGURATION_CONTROLLER_NAME;
 import static com.code.aon.ui.common.ICommonConstants.SKIP_LDAP;
 
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -17,6 +21,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -30,7 +35,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
-import com.code.aon.ui.common.role.RoleManager;
+import com.code.aon.ui.common.role.BasicRoleManager;
 
 /**
  * AonUtil includes some common methods.
@@ -153,8 +158,8 @@ public class AonUtil {
 	 * 
 	 * @return the Role Manager Controller
 	 */
-	public static RoleManager getRoleManager() {
-		return (RoleManager) AonUtil.getRegisteredBean("aonRole");
+	public static BasicRoleManager getRoleManager() {
+		return (BasicRoleManager) AonUtil.getRegisteredBean("aonRole");
 
 	}
 
@@ -209,9 +214,8 @@ public class AonUtil {
 	 * @return the remote user
 	 */
 	public static boolean isUserInRole(String role) {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ExternalContext ec = ctx.getExternalContext();
-		return ec.isUserInRole(role);
+		BasicRoleManager rm = (BasicRoleManager) AonUtil.getRegisteredBean(AON_ROLE_CONTROLLER_NAME);
+		return rm.isUserInRole(role);
 	}
 
 	/**
@@ -634,5 +638,22 @@ public class AonUtil {
 		String value = fc.getExternalContext().getInitParameter(SKIP_LDAP);		
 		return BooleanUtils.toBoolean(value);
 	}
+ 
+    /**
+     * Sort the list of SelectItem
+     * 
+     * @param list
+     */
+    public static void sortSelectItems( List<SelectItem> list ) {
+    	Comparator<SelectItem> comparator = new Comparator<SelectItem>() {
+
+			@Override
+			public int compare(SelectItem o1, SelectItem o2) {
+				return o1.getLabel().compareTo(o2.getLabel());
+			}
+    		
+		};
+    	Collections.sort( list, comparator );
+    }
     
 }

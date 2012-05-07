@@ -26,7 +26,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.Notice;
 import com.code.aon.ldap.BasicLdap;
@@ -37,6 +36,7 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
 public class NoticeController extends BasicController implements IAonObjectClasses, ILdapConstants {
@@ -102,9 +102,9 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private List<User> getUser(Integer id) throws ManagerBeanException {
 		IManagerBean managerBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ID), id);
-		criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
-		criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_ID), id);
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_ACTIVE), true);
+		criteria.addOrder(managerBean.getFieldName(IEntityAlias.USER_NAME));
 		List<?> list = managerBean.getList(criteria); 
 		return (List<User>) list; 
 	}
@@ -113,8 +113,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private List<User> getAllUsers() throws ManagerBeanException {
 		IManagerBean managerBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
-		criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_ACTIVE), true);
+		criteria.addOrder(managerBean.getFieldName(IEntityAlias.USER_NAME));
 		List<?> list = managerBean.getList(criteria); 
 		return (List<User>) list; 
 	}
@@ -122,8 +122,8 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private List<User> getWorkGroupUsers(Integer workGroupId) throws ManagerBeanException {
 		IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
-		criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
+		criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
+		criteria.addOrder(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_NAME));
 		List<User> result = new LinkedList<User>();
 		for (ITransferObject to : managerBean.getList(criteria)) {
 			UserWorkGroup userWorkGroup = (UserWorkGroup) to;
@@ -168,7 +168,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		try {
 			IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID),
+			criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_WORK_GROUP_ID),
 					workGroup.getId());
 			return managerBean.getCount(criteria) > 0;
 		} catch (ManagerBeanException e) {
@@ -182,9 +182,9 @@ public class NoticeController extends BasicController implements IAonObjectClass
 			this.workGroups = new LinkedList<SelectItem>();
 			IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS),
+			criteria.addEqualExpression(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS),
 					WorkGroupStatus.ACTIVE);
-			criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+			criteria.addOrder(workGroupBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));
 			Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				WorkGroup workGroup = (WorkGroup) iter.next();

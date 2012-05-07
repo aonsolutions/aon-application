@@ -1,6 +1,7 @@
 package com.code.aon.common.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,8 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.EntityType;
 import org.hibernate.type.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
@@ -28,6 +31,8 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 public class DAOConstantsResolver {
 
 	private Configuration configuration;
+    private final static Logger LOGGER = LoggerFactory.getLogger(DAOConstantsResolver.class);
+	private static String EMPTY = "";
 
 	/**
 	 * The Constructor.

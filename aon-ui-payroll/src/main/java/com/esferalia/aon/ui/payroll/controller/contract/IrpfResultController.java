@@ -18,7 +18,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.IrpfRegularization;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;

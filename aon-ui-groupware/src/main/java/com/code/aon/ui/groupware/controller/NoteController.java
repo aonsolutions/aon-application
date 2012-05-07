@@ -14,9 +14,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class NoteController extends BasicController {
 	
@@ -45,7 +45,7 @@ public class NoteController extends BasicController {
         try {
             IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
+            criteria.addEqualExpression(managerBean.getFieldName(IEntityAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
             Iterator<?> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();

@@ -28,7 +28,7 @@ import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
@@ -128,7 +128,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 				//TODO ¿Utilizar las fechas del pojo activo?
 				Date date = new Date();
 				
-				String alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+				String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
 				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
 				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
 				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
@@ -147,8 +147,8 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	protected List<ITransferObject> existingAgreementData(String name, Agreement agreement) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_AGREEMENT_ID), agreement.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME), name);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_AGREEMENT_ID), agreement.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AGREEMENT_DATA_NAME), name);
 		return bean.getList(criteria);
 	}
 	@Override

@@ -8,7 +8,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="activityForm">
+		<aon:form id="roomForm">
 
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -20,11 +20,6 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panelGrid id="roomTable" columns="2" width="100%">
-					<aon:outputLabel for="room_name" value="#{bundle.aon_name}" />
-					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
-						size="15" required="#{true}">
-						<f:validateLength maximum="10" />
-					</aon:inputText>
 					
 					<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 					<aon:selectOneMenu 
@@ -38,22 +33,27 @@
 						<f:selectItems value="#{pmsCollections.roomItems}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="room_name" value="#{bundle.aon_number}" />
+					<aon:inputText id="room_name" value="#{room.to.asset.name}" 
+						size="5" maxlength="5" required="true" />
+
 				</aon:panelGrid>
 				
-				<aon:panel rendered="#{!room.new}">
-					<f:facet name="header">
-						<aon:outputLabel value="#{assetBundle.asset_asset_feature}" />
-					</f:facet>
-					<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" />
-				</aon:panel>
+				<aon:div styleClass="aon-group" style="width: 100%; margin-top: 2em;">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="#{assetBundle.asset_feature_module}"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<ui:include src="/com/code/aon/ui/asset/facelet/assetFeature/grid.xhtml" >
+								<ui:param name="controller" value="#{roomFeature}" />
+							</ui:include>
+						</aon:div>
+					</aon:div>
+				</aon:div>
 				
 			</aon:div>
 		</aon:form>
-		
-<!--  
-		<aon:lookupButtonPopup lookup="#{assetTypeLookup}" />
-		<aon:lookupButtonPopup lookup="#{featureLookup}" />
--->
-		
+
 	</ui:define>
 </ui:composition>

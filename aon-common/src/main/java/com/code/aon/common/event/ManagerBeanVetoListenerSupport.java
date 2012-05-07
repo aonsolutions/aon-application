@@ -66,4 +66,10 @@ public class ManagerBeanVetoListenerSupport implements IManagerBeanVetoListener 
 		}
 	}
 
+	public void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException {
+		for (IManagerBeanVetoListener listener: listeners) {
+			listener.vetoableBeanSearched( evt );
+		}
+	}
+
 }

@@ -164,6 +164,106 @@
 			<value>/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- **** CORPORATE IDENTITY **** -->
+	<managed-bean>
+		<managed-bean-name>corporateIdentity</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.CorporateIdentity</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** CORPORATE IDENTITY DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.CorporateIdentityController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentityAttachControllerListener}</value> 
+				<value>#{corporateIdentityAttachScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityAttachScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>RegistryAttachment_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>corporateIdentityChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>corporateIdentityAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registry_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
@@ -293,5 +393,45 @@
 			<to-view-id>/com/code/aon/ui/registry/facelet/streetType/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
-	
+
+	<!-- =================== Category ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>category_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/category/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Corporate Identity Navigation Rules ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/corporate.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_predefined</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/predefined.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_fax</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/fax.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_letter</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/letter.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_label</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/label.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentity_receipt</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/receipt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 </faces-config>

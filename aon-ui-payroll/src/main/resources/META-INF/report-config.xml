@@ -39,26 +39,31 @@
 	<!--  
 		TEMPLATES DE IMPRESION DE LA NOMINA 
 	-->
-	<report id="salary" description="Current Salary report ">
+	<report id="salary" description="Default salary report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<collection provider="#{salary}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
 		</params>
 	</report>
 
-	<report id="salaryTemplate1" description="Current Salary report ">
-		<template
-			path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
+	<report id="idazkiak_es" description="Spanish Idazkiak salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/idazkiak_es.jasper" />
 		<collection provider="#{salary}" forceRefresh="true" />
 		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+		</params>
+	</report>
+
+	<report id="nominasta" description="Default Nominasta salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/nominasta.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
+		</params>
+	</report>
+
+	<report id="nominasta_ldh" description="Lopez de Hoyos Delegation's Nominasta salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/nominasta_ldh.jasper" />
+		<collection provider="#{salary}" forceRefresh="true" />
+		<params>
 		</params>
 	</report>
 

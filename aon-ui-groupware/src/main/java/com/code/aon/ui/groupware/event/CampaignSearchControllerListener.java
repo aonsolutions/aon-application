@@ -4,13 +4,13 @@ package com.code.aon.ui.groupware.event;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.CampaignType;
 import com.code.aon.groupware.Process;
-import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignSearchControllerListener extends ControllerSearchListener {
 
@@ -73,7 +73,7 @@ public class CampaignSearchControllerListener extends ControllerSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		if (isStatusDeleted() || isStatusFinished() || isStatusInProgress() || isStatusPending()) {
-			String statusAlias = getFieldName(IGroupwareAlias.CAMPAIGN_STATUS);
+			String statusAlias = getFieldName(IEntityAlias.CAMPAIGN_STATUS);
 			// Hay que realizar una expression OR con los valores
 			// seleccionados. Como hay
 			// cuatro valores de status creamos un array con esas

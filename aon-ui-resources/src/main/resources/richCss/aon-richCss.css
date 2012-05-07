@@ -107,6 +107,14 @@ color:#000;
 
 .aon-noborder{border:0 !important;}
 .aon-border{border:#ccc 1px solid;}
+.aon-border-left{border-left:#ccc 1px solid;}
+.aon-border-right{border-right:#ccc 1px solid;}
+.aon-border-top{border-top:#ccc 1px solid;}
+.aon-border-bottom{border-bottom:#ccc 1px solid;}
+.aon-border-left-black{border-left:#000 2px solid;}
+.aon-border-right-black{border-right:#000 2px solid;}
+.aon-border-top-black{border-top:#000 2px solid;}
+.aon-border-bottom-black{border-bottom:#000 2px solid;}
 
 .aon-input-required {
 	color:#2152A5;
@@ -364,6 +372,9 @@ color:#000;
 .aon-icon-delete{
 	background:transparent url(images/aon-icon/aon-icon-delete.png) scroll left center no-repeat;
  }
+.aon-icon-removed{
+	background:transparent url(images/aon-icon/aon-icon-removed.png) scroll left center no-repeat;
+ }
 .aon-icon-search{
 	background:transparent url(images/aon-icon/aon-icon-search.png) scroll left center no-repeat;
   }
@@ -457,7 +468,10 @@ color:#000;
  .aon-icon-exception{
 	background:transparent url(images/aon-icon/aon-icon-exception.png) scroll left center no-repeat;	
  }
- .aon-icon-pay{
+ .aon-icon-wrong{
+	background:transparent url(images/aon-icon/aon-icon-wrong.png) scroll left center no-repeat;	
+ }
+.aon-icon-pay{
 	background:transparent url(images/aon-icon/aon-icon-pay.png) scroll left center no-repeat;	
  }
  .aon-icon-return{
@@ -849,6 +863,7 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-csv-file.png) scroll left center no-repeat;	
 }
 
+/*  other icon  */
 .aon-icon-comment{
 	background:transparent url(images/aon-icon/aon-comment.gif) scroll left center no-repeat;	
 }
@@ -861,11 +876,35 @@ color:#000;
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
 }
+.aon-icon-winsuite{
+	background:transparent url(images/aon-icon/aon-icon-winsuite.png) no-repeat scroll center left;
+}
+.aon-icon-redtrabaja{
+	background:transparent url(images/aon-icon/aon-icon-redtrabaja.png) no-repeat scroll center left;
+}
+.aon-icon-contrata{
+	background:transparent url(images/aon-icon/aon-icon-contrata.png) no-repeat scroll center left;
+}
 .aon-icon-tree-units{
 	background:transparent url(images/aon-icon/aon-tree-units.png) scroll left center no-repeat;	
 }
 .aon-icon-daily-tracking{
 	background:transparent url(images/aon-icon/aon-daily-tracking.gif) scroll left center no-repeat;	
+}
+.aon-icon-fee{
+	background:transparent url(images/aon-icon/aon-icon-fee.png) scroll left center no-repeat;
+}
+.aon-icon-relationship{
+	background:transparent url(images/aon-icon/aon-icon-relationship.png) scroll left center no-repeat;
+}
+.aon-icon-segment{
+	background:transparent url(images/aon-icon/aon-icon-segment.png) scroll left center no-repeat;
+}
+.aon-icon-data{
+	background:transparent url(images/aon-icon/aon-icon-data.png) scroll left center no-repeat;
+}
+.aon-icon-documents{
+	background:transparent url(images/aon-icon/aon-icon-documents.png) scroll left center no-repeat;
 }
 
 /******* GROUP  **********/
@@ -1470,7 +1509,13 @@ color:#000;
 	height:40px;
 	padding:2px 10px;
 }
-
+.aon-header-company{
+	background:#fff;
+	padding:5px 10px 2px 40px;
+	width: auto;
+	text-align:center;
+	font-size:1.2em;
+}
 .aon-logo{
 	padding:0px 0 0 20px;
 	float:left;
@@ -1512,6 +1557,25 @@ color:#000;
 	width:20%;
 	text-align:right;
 	font-size:0.9em;
+}
+.aon-header-options{
+	background:#fff;
+	padding:5px 10px 2px 40px;
+	width:30%;
+	text-align:right;
+	font-size:0.8em;
+}
+.aon-header-logout{
+	background:transparent url(images/aon-icon/aon-icon-logout.png) no-repeat scroll center left;
+	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
+}
+.aon-header-domain{
+	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll left center no-repeat;
+	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
 }
 
 /* barra con la fecha y el boton de desconectar*/
@@ -1863,9 +1927,10 @@ color:#000;
 .aon-finding-toolbar{
 	background:transparent url(images/aon-content/aon-content-title-internal.png) left center repeat-y;
 	padding:0 1em;
+	width: 100%;
 	}
 .aon-finding-toolbar-item-group{
-	padding: 3px 2em 3px 1em;
+	padding: 3px 0;
 	}
 
 .aon-finding-toolbar-item{
@@ -2197,6 +2262,11 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 /***************************/
 /*    HOMEPAGE             */
 /***************************/
+.aon-company-header-label{
+	font-weight: bold;
+	font-size:14px;	
+}
+
 .aon-company-label{
 	font-weight: bold;
 	font-size:14px;
@@ -2466,30 +2536,48 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-book{
 	background:transparent url(images/aon-main-menu/aon-icon-book.png) no-repeat scroll center left;
 }
+.aon-icon-room{
+	background:transparent url(images/aon-main-menu/aon-icon-room.png) no-repeat scroll center left;
+}
+.aon-icon-pos{
+	background:transparent url(images/aon-main-menu/aon-icon-pos.png) no-repeat scroll center left;
+}
 .aon-icon-car{
 	background:transparent url(images/aon-main-menu/aon-icon-car.png) no-repeat scroll center left;
 }
 .aon-icon-audatex{
 	background:transparent url(images/aon-main-menu/aon-icon-audatex.png) no-repeat scroll center left;
 }
-
-.aon-subTable-green-header{
+.aon-icon-logo{
+	background:transparent url(images/aon-icon/aon-icon-logo.png) no-repeat scroll center left;
+}
+.aon-icon-changePassword{
+	background:transparent url(images/aon-main-menu/aon-icon-changePassword.png) no-repeat scroll center left;
+}
+.aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 
-	background-color: #D5FCC0; 
 	font-size: 0.9em;
 }
-.aon-subTable-green-column{
-	padding-left: 10px; 
-	border: none; 
+.aon-subTable-column-green{
 	background-color: #F2FDEC; 
-	font-size: 0.9em;
 }
-.aon-subTable-yellow-column{
-	padding-left: 10px; 
-	border: none; 
+.aon-subTable-column-green-header{
+	background-color: #D5FCC0; 
+}
+.aon-subTable-column-green-selected{
+	background-color: #D5FCC0 !important;
+	cursor: pointer;
+}
+.aon-subTable-column-yellow{
 	background-color: #FBEDB6; 
-	font-size: 0.9em;
+}
+.aon-subTable-column-yellow-header{
+	background-color: #F8DF7C; 
+}
+.aon-subTable-column-yellow-selected{
+	background-color: #F8DF7C !important; 
+	cursor: pointer;
 }
 
 

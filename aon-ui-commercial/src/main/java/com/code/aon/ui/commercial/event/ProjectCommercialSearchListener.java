@@ -1,13 +1,13 @@
 package com.code.aon.ui.commercial.event;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.project.controller.event.ProjectSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProjectCommercialSearchListener extends ProjectSearchListener {
 
@@ -41,11 +41,11 @@ public class ProjectCommercialSearchListener extends ProjectSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria(criteria);
 		if ((getTarget() != null) && (getTarget().getId() != null)) {
-			String alias = getFieldName(ICommercialAlias.PROJECT_COMMERCIAL_TARGET_ID);
+			String alias = getFieldName(IEntityAlias.PROJECT_COMMERCIAL_TARGET_ID);
 			criteria.addEqualExpression(alias, getTarget().getId());			
 		}
 		if ((getSeller() != null) && (getSeller().getId() != null)) {
-			String alias = getFieldName(ICommercialAlias.PROJECT_COMMERCIAL_SELLER_ID);
+			String alias = getFieldName(IEntityAlias.PROJECT_COMMERCIAL_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			
 		}
 	}

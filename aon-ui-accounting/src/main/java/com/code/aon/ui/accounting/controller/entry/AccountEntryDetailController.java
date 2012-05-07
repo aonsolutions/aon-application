@@ -8,7 +8,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -22,6 +21,7 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.report.StatementController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountEntryDetailController extends LinesController {
 
@@ -153,9 +153,9 @@ public class AccountEntryDetailController extends LinesController {
 
 		c.onEditSearch(event);
 		Criteria criteria = c.getCriteria();
-		String alias = c.getFieldName(IAccountAlias.ACCOUNT_CODE);
+		String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
 		criteria.addExpression(alias, account.getCode() + IAccountingConstants.ASTERISK);
-		alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+		alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 		criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 
 		c.onSearch(event);

@@ -12,7 +12,7 @@ import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDraftController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
@@ -53,10 +53,10 @@ public class IrpfDraftSearchListener extends ControllerSearchListener {
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		IrpfDraftController c =  (IrpfDraftController) getController();
 		if ((getPerson() != null) && (getPerson().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PERSON_ID), getPerson().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());			
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
+			criteria.addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 		}
 		if ( criteria.getExpression() == null ) {
 			throw new ManagerBeanException("Debe indicar algún criterio de búsqueda");

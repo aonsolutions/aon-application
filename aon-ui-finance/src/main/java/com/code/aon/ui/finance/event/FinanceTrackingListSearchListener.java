@@ -3,12 +3,12 @@ package com.code.aon.ui.finance.event;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class FinanceTrackingListSearchListener extends ControllerSearchListener {
 
@@ -33,13 +33,13 @@ public class FinanceTrackingListSearchListener extends ControllerSearchListener 
 
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		criteria.addNullExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
-		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
+		criteria.addNullExpression(getFieldName(IEntityAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
+		criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), getRegistryBank().getId());
 		}
 		if (!ArrayUtils.isEmpty(getFinanceTrackingTypes())) {
-			String status = getController().resolveAlias(IFinanceAlias.FINANCE_TRACKING_TYPE);
+			String status = getController().resolveAlias(IEntityAlias.FINANCE_TRACKING_TYPE);
 			addEnumToCriteria(criteria, status, getFinanceTrackingTypes());
 		}
 	}
