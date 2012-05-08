@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>7.0-SNAPSHOT</version>
+		<version>6.70</version>
 		<relativePath>../aon-web-parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -13,9 +12,9 @@
 	<name>AON EXTERNAL LIBS</name>
 
 	<scm>
-		<url>http://dev.esferalia.com/websvn/wsvn/aon-external-libs</url>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</connection>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</developerConnection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.70.x/aon-external-libs</url>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.70.x/aon-external-libs</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.70.x/aon-external-libs</developerConnection>
 	</scm>
 
 	<dependencies>
