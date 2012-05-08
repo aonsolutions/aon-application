@@ -24,6 +24,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.ui.pms.util.ReportUtils;
 
 public class ReservationInOutController implements ICollectionProvider {
 	
@@ -103,20 +104,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		String select = "SELECT pr.project, prr.id, iF(isnull(a.name),'---',a.name), prr.item, prg.name"
-			+ " FROM project_reservation as pr"
-			+ " LEFT JOIN project_reservation_room AS prr ON prr.project_reservation=pr.project"
-			+ " LEFT JOIN project_reservation_guest AS prg ON prg.project_reservation=pr.project"
-			+ " LEFT JOIN project_reservation_room_detail AS prrd ON prrd.project_reservation_room=prr.id"
-			+ " LEFT JOIN asset_activity AS aa ON aa.id=prrd.asset_activity" 
-			+ " LEFT JOIN asset AS a ON a.id=aa.asset"
-			+ " LEFT JOIN registry as ar on ar.id = pr.agency"
-			+ " WHERE pr.status <> " + ReservationStatus.CANCELLED.ordinal()
-			+ ( getHotel() != null ? " AND pr.hotel = " + getHotel().getId():"" )
-			+ " AND pr."+(isCheckin() ?"start_date":"end_date")+" BETWEEN :start AND :end"
-			+ " GROUP BY pr.project, prr.id"
-			+ getOrder()
-			;
+		String select = ReportUtils.getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), shortOption);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
@@ -131,22 +119,6 @@ public class ReservationInOutController implements ICollectionProvider {
 		}
 		setList(list);
 		setModel(new ListDataModel(getList()));
-	}
-	
-	public String getOrder( ) {
-		String order = " ORDER BY";
-		if(shortOption.equals(SortType.RESERVATION.ordinal())){
-			order += " pr.project";
-		} else if(shortOption.equals(SortType.GUEST.ordinal())){
-			order += " prg.name";
-		} else if(shortOption.equals(SortType.AGENCY_AND_GUEST.ordinal())){
-			order += " ar.name, prg.name";
-		} else if(shortOption.equals(SortType.AGENCY.ordinal())){
-			order += " ar.name";
-		} else if(shortOption.equals(SortType.ROOM_NUMBER.ordinal())){
-			order += " iF(isnull(a.name),'ZZZZZZZZ',a.name)";
-		}
-		return order;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -165,7 +137,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	/////////////////////////////////////
 	/////////////////////////////////////
 	
-	enum SortType {
+	public enum SortType {
 		RESERVATION,
 		GUEST,
 		AGENCY_AND_GUEST,
