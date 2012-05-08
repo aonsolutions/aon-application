@@ -13,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationUser;
+import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -69,6 +70,15 @@ public class DomainApplicationUserController extends LinesController {
 				}
 				return StringUtils.join(profileNames, ", ");
 			}
+		}
+		return null;
+	}
+
+	public Domain getUserDomain() throws ManagerBeanException {
+		if ( getModel().isRowAvailable() ) {
+			ApplicationUser user = (ApplicationUser) getSelectedTO();
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			return (Domain) bean.get(user.getUser().getDomain());
 		}
 		return null;
 	}

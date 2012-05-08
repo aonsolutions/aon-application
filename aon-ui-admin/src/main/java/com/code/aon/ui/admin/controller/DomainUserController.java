@@ -5,6 +5,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_USER;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
+import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
 
 import java.security.MessageDigest;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -50,6 +52,12 @@ public class DomainUserController extends BasicController {
 
 	private String selectedTab;
 	
+	private IdCheckUtil idCheck;
+	
+	public DomainUserController() {
+		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
+	}
+
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
 	}
@@ -61,8 +69,17 @@ public class DomainUserController extends BasicController {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
+
+	public IdCheckUtil getIdCheck() {
+		return idCheck;
+	}
+
+	public void setIdCheck(IdCheckUtil idCheck) {
+		this.idCheck = idCheck;
+	}
+
 	public void idCheck(FacesContext context, UIComponent component, Object value) {
+		this.idCheck.idCheck( (String) value );
 	}		
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

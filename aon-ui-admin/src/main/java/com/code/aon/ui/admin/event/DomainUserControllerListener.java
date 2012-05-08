@@ -29,8 +29,16 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
 		updateWebmail( duc.getDomainUser() );
+		duc.getIdCheck().setOldValue( duc.getDomainUser().getLogin() );
 	}
 	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainUserController duc = (DomainUserController) event.getController();
+		duc.getIdCheck().setOldValue( null );
+	}
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {

@@ -20,7 +20,7 @@
 			<ui:param name="showDataScroller" value="#{!skipProfileEdit}" />
 			<ui:define name="columns">
 		
-				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+				<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn"
 					alias="Profile.name">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
@@ -34,6 +34,17 @@
 					</f:facet>
 					<aon:outputText value="#{controller.roleList}"/>
 				</aon:column>
+
+
+				<c:if test="#{!skipDomainColumn}">
+					<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn"
+						alias="Profile.domain.name">
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_domain}" />
+						</f:facet>
+						<aon:outputText value="#{to.domain.name}"/>
+					</aon:column>
+				</c:if>				
 
 				<c:if test="#{!skipDeniedModulesColumn}">
 					<aon:column styleClass="aon-editDataTable-textColumn">

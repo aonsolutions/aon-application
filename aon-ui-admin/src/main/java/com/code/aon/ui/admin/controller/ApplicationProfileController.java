@@ -29,7 +29,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class ApplicationProfileController extends LinesController {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(DBManagerController.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(ApplicationProfileController.class);
 	
 	public String getRoleList() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {

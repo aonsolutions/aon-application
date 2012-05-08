@@ -11,7 +11,6 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
@@ -64,13 +62,6 @@ public class DomainController extends BasicController {
 	public Domain getDomain() {
 		return (Domain) getTo();
 	}	
-
-	public boolean isDeletable() {
-		if (! ObjectUtils.equals(getDomain(), getAdmin().getCurrentDomain())  ) {
-			return getAdmin().getUserType() != UserType.NORMAL;
-		}
-		return false;
-	}
 	
 	public boolean isChildDomain() {
 		DomainType type = getDomain().getType();

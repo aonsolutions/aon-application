@@ -15,14 +15,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_domains}" />
 				<ui:param name="controller" value="#{adminDomain}" />
-				<ui:param name="skipResetButton" value="#{!adminMain.domainManagement}" />
-				<ui:param name="skipSearchButton" value="#{!adminMain.config.showDomainSearch}" />
-				<ui:param name="skipRemoveButton" value="#{!adminDomain.deletable}" />
-				<ui:param name="skipBackButton" value="#{!adminMain.config.showDomainBack}" />				
-				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
-				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
-				<ui:param name="removeOnClick" value="Richfaces.showModalPanel('waitProccess')" />
-				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
+				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="domainApplications" rendered="#{!adminDomain.new}"
 						value="#{adminBundle.admin_applications}" immediate="true"
@@ -186,6 +179,5 @@
 								
 			</aon:div>
 		</aon:form>
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

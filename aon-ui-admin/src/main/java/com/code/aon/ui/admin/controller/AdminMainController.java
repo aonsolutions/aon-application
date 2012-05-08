@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -33,15 +32,12 @@ import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.admin.util.ManagerLogger;
 import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
-import com.esferalia.aon.entity.IEntityAlias;
 
 public class AdminMainController implements IAdminConstants {
 	
@@ -236,22 +232,13 @@ public class AdminMainController implements IAdminConstants {
 		return type;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void initEsferaliaUser( ActionEvent event ) {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		try {
-			controller.setInitExpressions(Collections.EMPTY_LIST);			
-			controller.clearCriteria();
-			controller.onSearch(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}				
 		AonUtil.getRoleManager().setUserInRole(IAonRole.SYS_ADMIN, true);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
 	}
 
-	private void initNormalUser( ActionEvent event ) {
+	private void initDomain( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
 			controller.select(event, currentDomain.getId());
@@ -259,36 +246,12 @@ public class AdminMainController implements IAdminConstants {
 			LOGGER.error( e.getMessage(), e );
 		}				
 	}
-
-	private void initParentUser( ActionEvent event ) {
-		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		try {
-			List<Expression> initExpressions = new LinkedList<Expression>();
-			String cn = controller.getFieldName(IEntityAlias.DOMAIN_ID);
-			Expression expr1 = ExpressionUtilities.getEqualExpression(cn, currentDomain.getId());
-			String parent = "Domain<parent.id";
-			Expression expr2 = ExpressionUtilities.getEqualExpression(parent, currentDomain.getId());
-			initExpressions.add( ExpressionUtilities.getOrExpression(expr1, expr2) );
-			controller.setInitExpressions(initExpressions);
-			controller.clearCriteria(); 
-			controller.onSearch(null);
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}			
-	}
 	
 	private void init( ActionEvent event ) {
 		this.config = PropertiesUtil.loadProperties(this.userType.getResource());
-		switch ( this.userType ) {
-			case ESFERALIA:
-				initEsferaliaUser(event);
-				break;
-			case NORMAL:
-				initNormalUser(event);
-				break;
-			case PARENT:
-				initParentUser(event);
-				break;
+		initDomain(event);
+		if ( this.userType == UserType.ESFERALIA ) {
+			initEsferaliaUser(event);			
 		}
 	}	
 	

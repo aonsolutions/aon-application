@@ -656,10 +656,6 @@
 					<key>Profile_application_id</key>
                     <value>application.id</value>
 				</map-entry>
-				<map-entry>
-					<key>Profile_domain_id</key>
-                    <value>domain</value>
-				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>		
@@ -805,16 +801,8 @@
 	<!-- =================== Domain ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>adminDomain_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>adminDomain_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>adminDomain_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>domainCapabilities</from-outcome>

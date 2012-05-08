@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.util;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.NEED_MAIL_ACCOUNT;
 import static com.code.aon.ui.admin.controller.IAdminConstants.WRONG_MAIL_ACCOUNT;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;

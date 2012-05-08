@@ -10,8 +10,8 @@ public interface IAdminConstants {
 	String APPLICATION_CONTROLLER_NAME = "adminApplication";
 	String DOMAIN_CONTROLLER_NAME = "adminDomain";
 	String APPLICATION_PROFILE_CONTROLLER_NAME = "applicationProfile";
+	String DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME = "domainApplicationProfile";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";	
-	String DB_MANAGER_CONTROLLER_NAME = "dbManager";	
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";
@@ -31,9 +31,8 @@ public interface IAdminConstants {
 	// Messages
 	String WRONG_MAIL_ACCOUNT = "admin_wrong_mail_account";
 	String NEED_MAIL_ACCOUNT = "admin_need_mail_account";
-	String DB_NOT_EXIST = "admin_db_not_exist";
-	String DB_DUPLICATED = "admin_db_duplicated";
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
+	String USER_DUPLICATED = "admin_user_duplicated_login";
 	
 	// Navigation
 	String DOMAIN_LIST = DOMAIN_CONTROLLER_NAME + "_list";
