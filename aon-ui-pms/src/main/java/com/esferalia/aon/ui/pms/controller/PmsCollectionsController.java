@@ -37,25 +37,38 @@ public class PmsCollectionsController {
 
 	public List<SelectItem> getCurrentUserHotels() throws ManagerBeanException {
 		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
-		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
-		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
-		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
-		for (ITransferObject ito : hotelBean.getList(criteria)) {
+		for (ITransferObject ito : getCurrentUserHotelList()) {
 			Hotel hotel = (Hotel)ito;
 			SelectItem item = new SelectItem(hotel, hotel.getWorkPlace().getDescription());
 			currentUserHotels.add(item);
 		}
 		return currentUserHotels;
 	}
-
+	
 	public int getCurrentUserHotelsCount() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		return hotelBean.getCount(criteria);
+	}
+	
+	public List<ITransferObject> getCurrentUserHotelList() throws ManagerBeanException {
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
+		return hotelBean.getList(criteria);
+	}
+	
+	public List<Integer> getCurrentUserHotelIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for(ITransferObject to: getCurrentUserHotelList() ){
+			Hotel h = (Hotel) to;
+			list.add(h.getId());
+		}
+		return list;
 	}
 
 	public List<SelectItem> getReservationStatuses() {

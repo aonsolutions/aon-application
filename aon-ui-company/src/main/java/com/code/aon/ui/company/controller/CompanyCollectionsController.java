@@ -230,7 +230,7 @@ public class CompanyCollectionsController {
 		return workPlaceBean.getCount(criteria);
 	}
 	
-	private List<ITransferObject> getCurrentUserWorkPlaceList() throws ManagerBeanException {
+	public List<ITransferObject> getCurrentUserWorkPlaceList() throws ManagerBeanException {
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));

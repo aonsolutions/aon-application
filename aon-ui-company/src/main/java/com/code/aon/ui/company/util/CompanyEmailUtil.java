@@ -141,15 +141,19 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	}
 
 	public String getEmailContent( String text ) {
+		return getEmailContent( text, null );
+	}
+	
+	public String getEmailContent( String text, String bodyHeader ) {
 		StringBuffer body = new StringBuffer();
 		body.append( "<html><head>" );
 		body.append( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" );
 		body.append( "</head><body>" );
 		
-		body.append(AonUtil.getMessage(BUNDLE_NAME, COMPANY_EMAIL_BODY_HEADER) );
+		body.append(StringUtils.isEmpty(bodyHeader)?AonUtil.getMessage(BUNDLE_NAME, COMPANY_EMAIL_BODY_HEADER):bodyHeader );
 		body.append( text );
 		body.append(AonUtil.getMessage(BUNDLE_NAME, COMPANY_EMAIL_BODY_FOOTER) );		
-
+		
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		body.append( getCompany().getName() ).append( "<br/>" );
 		RegistryMedia phone = companyController.getPhone();

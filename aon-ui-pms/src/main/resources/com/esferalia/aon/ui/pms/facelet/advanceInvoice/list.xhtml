@@ -155,6 +155,14 @@
 							<h:outputText value="#{to.hotel.workPlace.description}" />
 						</aon:column>
 
+						<aon:column alias="ProjectReservation.rooms.tariff.id"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_tariff}" />
+							</f:facet>
+							<h:outputText value="#{to.tariffInfo}" />
+						</aon:column>
+
 						<aon:column alias="ProjectReservation.code"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">

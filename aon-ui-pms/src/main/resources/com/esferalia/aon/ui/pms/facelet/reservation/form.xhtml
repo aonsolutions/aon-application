@@ -38,7 +38,7 @@
 					<aon:confirmButton id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}"
 						title="#{pmsBundle.pms_no_show}"
-						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new}"
+						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new and reservation.noShowable}"
 						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{pmsBundle.pms_no_show_confirm}"

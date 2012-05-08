@@ -1,8 +1,11 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +15,8 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,17 +25,19 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.Room;
-import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.ui.pms.util.ReportUtils;
 
 public class RoomBookingController implements ICollectionProvider {
 	
@@ -88,86 +95,130 @@ public class RoomBookingController implements ICollectionProvider {
 		this.model = model;
 	}
 	
-	private List<ITransferObject> getSelectedHotels() throws ManagerBeanException{
-		if(getHotel()!=null && getHotel().getId()!=null){
-			List<ITransferObject> list = new LinkedList<ITransferObject>();
-			list.add(getHotel());
-			return list;
-		} else {
-			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
-			Criteria hotelCriteria = new Criteria();
-			hotelCriteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
-			UserUtils.getInstance().addScopeFilterToCriteria(hotelCriteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
-			hotelCriteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
-			return hotelBean.getList(hotelCriteria);
-		}
-	}
-	
+	@SuppressWarnings("rawtypes")
 	private void buildBookingList() throws ManagerBeanException {
-		
 		setBookingList(new LinkedList<RoomBookingController.Booking>());
-			
-		for(ITransferObject hto: getSelectedHotels()){
-			Hotel hotel = (Hotel) hto;
-			addBooking(hotel);
-		}
-	}
-	
-	private void addBooking(Hotel hotel) throws ManagerBeanException {
-		Calendar fromCal = Calendar.getInstance();
-		Calendar toCal = Calendar.getInstance();
-		fromCal.setTime(getFromDate());
-		toCal.setTime(getToDate());
 		
-		Booking booking = null;
-		while(fromCal.before(toCal) || fromCal.equals(toCal)){
-			
-			IManagerBean bean = BeanManager.getManagerBean(ProjectReservationRoom.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID), hotel.getId());
-			if(getAgency()!=null && getAgency().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());
-			}
-			if(getItem()!=null && getItem().getId()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ITEM_ID), getItem().getId());
-			}
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_START_DATE), fromCal.getTime());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_END_DATE), fromCal.getTime());
-			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-			criteria.addOrder(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_HOTEL_ID));
-			
-			booking = new Booking();
-			booking.setDate(fromCal.getTime());
-			List<ITransferObject> roomList = bean.getList(criteria);
-			booking.setHotel(hotel.getWorkPlace().getDescription());
-			
-			for(ITransferObject to: roomList){
-				ProjectReservationRoom room = (ProjectReservationRoom) to;
-				// para el listado de booking no se tienen en cuenta los desvios a hoteles externos  
-				// ( desvio externo = reserva facturada sin habitacion asignada )
-				if( !(room.getProjectReservation().getStatus()==ReservationStatus.INVOICED && room.getRoomNumber()==null)){
-					if(room.getProjectReservation().getStartDate().equals(fromCal.getTime())){
-						booking.setRoomCheckin(booking.getRoomCheckin()+1);
-						booking.setRoomBusy(booking.getRoomBusy()+1);
-						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
-						booking.setGuestCheckin(booking.getGuestCheckin()+room.getAdults()+room.getChildren());
-					} else if(room.getProjectReservation().getEndDate().equals(fromCal.getTime())){
-						booking.setRoomCheckout(booking.getRoomCheckout()+1);
-						booking.setGuestCheckout(booking.getGuestCheckout()+room.getAdults()+room.getChildren());
-					} else {
-						booking.setRoomBusy(booking.getRoomBusy()+1);
-						booking.setGuestTotal(booking.getGuestTotal()+room.getAdults()+room.getChildren());
-					}
+		buildEmptyList(getHotel());
+
+		String checkinSelect = ReportUtils.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String checkoutSelect = ReportUtils.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String occupationSelect = ReportUtils.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String roomsSelect = ReportUtils.getHotelRoomsSQL(getHotel());
+
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+
+		Query checkinQuery = session.createSQLQuery(checkinSelect);
+		checkinQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		checkinQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
+
+		Query checkoutQuery = session.createSQLQuery(checkoutSelect);
+		checkoutQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		checkoutQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
+		
+		Query occupationQuery = session.createSQLQuery(occupationSelect);
+		occupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+
+		Query roomsQuery = session.createSQLQuery(roomsSelect);
+
+		Iterator checkinIterator = checkinQuery.list().iterator();
+		Iterator checkoutIterator = checkoutQuery.list().iterator();
+		Iterator occupationIterator = occupationQuery.list().iterator();
+		Iterator roomsIterator = roomsQuery.list().iterator();
+		
+		Object checkin = null;
+		if( checkinIterator.hasNext() ){
+			checkin = checkinIterator.next();
+		}
+		Object checkout = null;
+		if( checkoutIterator.hasNext() ){
+			checkout = checkoutIterator.next();
+		}
+		Object occupation = null;
+		if( occupationIterator.hasNext() ){
+			occupation = occupationIterator.next();
+		}
+		Object rooms = null;
+		if( roomsIterator.hasNext() ){
+			rooms = roomsIterator.next();
+		}
+		
+		int roomBusy = 0;
+		int guestTotal = 0;
+		
+		for(Booking booking: getBookingList() ){
+			String checkinHotel = checkin!=null?(String) (((Object[])checkin)[0]):null;
+			String checkoutHotel = checkout!=null?(String) (((Object[])checkout)[0]):null;
+			Date checkinDate = checkin!=null?(Date) (((Object[])checkin)[1]):null;
+			Date checkoutDate = checkout!=null?(Date) (((Object[])checkout)[1]):null;
+			if( booking.getDate().equals(checkinDate) && booking.getHotel().equals(checkinHotel) ){
+				booking.setRoomCheckin( ((BigInteger) (((Object[])checkin)[2])).intValue() );
+				booking.setGuestCheckin( ((BigDecimal) (((Object[])checkin)[3])).intValue() );
+				if( checkinIterator.hasNext() ){
+					checkin = checkinIterator.next();
 				}
 			}
-			
-			bean = BeanManager.getManagerBean(Room.class);
-			criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
-			booking.setRoomTotal(bean.getCount(criteria));
-			
-			getBookingList().add(booking);
-			fromCal.add(Calendar.DAY_OF_MONTH, 1);
+			if( booking.getDate().equals(checkoutDate) && booking.getHotel().equals(checkoutHotel) ){
+				booking.setRoomCheckout( ((BigInteger) (((Object[])checkout)[2])).intValue() );
+				booking.setGuestCheckout( ((BigDecimal) (((Object[])checkout)[3])).intValue() );
+				if( checkoutIterator.hasNext() ){
+					checkout = checkoutIterator.next();
+				}
+			}
+			String occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
+			if( booking.getDate().equals(getFromDate()) && booking.getHotel().equals(occupationHotel) ){
+				booking.setRoomBusy( ((BigInteger) (((Object[])occupation)[1])).intValue() );
+				roomBusy = ((BigInteger) (((Object[])occupation)[1])).intValue();
+				booking.setGuestTotal( ((BigDecimal) (((Object[])occupation)[2])).intValue() );
+				guestTotal = ((BigDecimal) (((Object[])occupation)[2])).intValue();
+				if( occupationIterator.hasNext() ){
+					occupation = occupationIterator.next();
+				}
+			} else {
+				roomBusy += (booking.getRoomCheckin() - booking.getRoomCheckout());
+				booking.setRoomBusy( roomBusy );
+				guestTotal += (booking.getGuestCheckin() - booking.getGuestCheckout());
+				booking.setGuestTotal( guestTotal );
+			}
+			String roomHotel = rooms!=null?((String) ((Object[])rooms)[0]):null;
+			if( !booking.getHotel().equals(roomHotel) ){
+				if( roomsIterator.hasNext() ){
+					rooms = roomsIterator.next();
+				}
+			}
+			booking.setRoomTotal( ((BigInteger) (((Object[])rooms)[1])).intValue() );
+		}
+	}
+	
+	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{
+		PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		Calendar fromCal = Calendar.getInstance();
+		Calendar toCal = Calendar.getInstance();
+		if( getHotel() != null && getHotel().getId()!=null ){
+			fromCal.setTime(getFromDate());
+			toCal.setTime(getToDate());
+			while(fromCal.before(toCal) || fromCal.equals(toCal)){
+				Booking b = new Booking();
+				b.setHotel(getHotel().getWorkPlace().getDescription());
+				b.setDate(fromCal.getTime());
+				getBookingList().add(b);
+				fromCal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+		} else {
+			for(ITransferObject to: collections.getCurrentUserHotelList() ){
+				Hotel hotel = (Hotel) to;
+//				if(h.getScope().getId()!=1){
+					fromCal.setTime(getFromDate());
+					toCal.setTime(getToDate());
+					while(fromCal.before(toCal) || fromCal.equals(toCal)){
+						Booking b = new Booking();
+						b.setHotel(hotel.getWorkPlace().getDescription());
+						b.setDate(fromCal.getTime());
+						getBookingList().add(b);
+						fromCal.add(Calendar.DAY_OF_MONTH, 1);
+					}
+//				}
+			}
 		}
 	}
 

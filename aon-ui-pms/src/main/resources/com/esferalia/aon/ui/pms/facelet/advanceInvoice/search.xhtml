@@ -90,6 +90,7 @@
 							value="#{productBundle.product_tariff}"/>
 						<aon:selectOneMenu id="ProjectReservation_tariff" 
 							value="#{advanceInvoiceSearch.tariff}">
+							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{pmsCollections.tariffs}" />
 						</aon:selectOneMenu>
 						

@@ -27,7 +27,6 @@ public class PurchasePrintController extends PurchaseController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchasePrintController.class.getName());
 	
-	
 	public void onInitSendEmail( ActionEvent event ) {
 		try {		
 			WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
@@ -39,7 +38,7 @@ public class PurchasePrintController extends PurchaseController {
 				PurchaseEmailUtil emailUtil = controller.getEmailController();
 				messageController.setSubject( emailUtil.getEmailSubject() );
 				String body = emailUtil.getEmailBody();
-				messageController.updateMessageBody( emailUtil.getEmailContent(body) );
+				messageController.updateMessageBody( emailUtil.getEmailContent(body, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, IPurchaseMessages.PURCHASE_EMAIL_BODY_HEADER)) );
 				messageController.setShowNewMessageWindow(true);
 			} else {
 				AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);

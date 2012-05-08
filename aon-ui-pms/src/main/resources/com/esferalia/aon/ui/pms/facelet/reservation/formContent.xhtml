@@ -191,14 +191,32 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
-	<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
-		rendered="#{!reservation.active or !aonRole.saleOperator}"  />
-	<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-		required="true" rendered="#{reservation.active and aonRole.saleOperator}"
-		valueChangeListener="#{reservation.onHolderChanged}"
-		reRender="BookingHolderLabelDiv,BookingHolderValueDiv,ProjectReservation_roomTariff">
-		<f:selectItems value="#{pmsCollections.bookingHolders}" />
-	</aon:selectOneMenu>
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" rendered="#{!reservation.new}">
+		<aon:div>
+			<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
+				rendered="#{!reservation.active or !aonRole.saleOperator}"  />
+			<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
+				required="true" rendered="#{reservation.active and aonRole.saleOperator}"
+				valueChangeListener="#{reservation.onHolderChanged}"
+				reRender="BookingHolderLabelDiv,BookingHolderValueDiv,ProjectReservation_roomTariff">
+				<f:selectItems value="#{pmsCollections.bookingHolders}" />
+			</aon:selectOneMenu>
+		</aon:div>
+
+		<aon:div>
+			<aon:outputLabel value="#{pmsBundle.pms_advance}:" 
+				rendered="#{aonRole.saleOperator or (!aonRole.saleOperator and reservation.to.advance>0)}"
+				styleClass="aon-margin-right aon-italic" />
+			<aon:outputText rendered="#{!aonRole.saleOperator and reservation.to.advance>0}"	
+				value="#{reservation.to.advance}" styleClass="aon-bold" >
+				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+			</aon:outputText>
+			<aon:inputText value="#{reservation.to.advance}"
+				size="8" maxlength="12"
+				rendered="#{reservation.active and aonRole.saleOperator}"
+				disabled="#{reservation.to.advanceInvoiced}" />
+		</aon:div>
+	</aon:panelGrid>
 
 	<aon:div id="BookingHolderLabelDiv">
 		<aon:outputLabel for="Customer_id-Agency" value="#{pmsBundle.pms_agency}"

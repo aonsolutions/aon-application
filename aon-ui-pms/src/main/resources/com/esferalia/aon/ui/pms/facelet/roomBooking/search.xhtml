@@ -72,7 +72,9 @@
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 								action="roomBooking_list"
 								actionListener="#{roomBooking.onSearch}"
-								accesskey="#{bundle.aon_key_search}" />
+								accesskey="#{bundle.aon_key_search}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								
 						</aon:panelGrid>
 					
@@ -82,6 +84,8 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>
 </ui:composition>

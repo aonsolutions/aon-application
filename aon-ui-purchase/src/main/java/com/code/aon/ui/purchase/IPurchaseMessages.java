@@ -6,6 +6,7 @@ public interface IPurchaseMessages {
 	String BUNDLE_KEY = "purchaseBundle";
 
 	String PURCHASE_EMAIL_SUBJECT = "purchase_email_subject";
+	String PURCHASE_EMAIL_BODY_HEADER = "purchase_email_body_header";
 	String PURCHASE_EMAIL_BODY = "purchase_email_body";
 	
 	

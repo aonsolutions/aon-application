@@ -123,14 +123,17 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), getId());
 		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		int i = 1;
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			Tariff tariff = ((ProjectReservationRoom)ito).getTariff();
 			String rooms = ((ProjectReservationRoom)ito).getRoomNumber();
+			rooms = (rooms==null?"R"+i:rooms);
 			if (!tariffInfoMap.containsKey(tariff.getId())) {
 				tariffInfoMap.put(tariff.getId(), tariff.getName() + " (" + rooms);
 			} else {
 				tariffInfoMap.put(tariff.getId(), tariffInfoMap.get(tariff.getId()) + ", " + rooms);
 			}
+			i++;
 		}
 
 		String tariffInfo = "";

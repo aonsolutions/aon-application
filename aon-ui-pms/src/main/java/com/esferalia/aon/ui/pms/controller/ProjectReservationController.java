@@ -478,6 +478,11 @@ public class ProjectReservationController extends BasicController implements IPm
 		cancelReservation(event, false);
 	}
 	
+	public boolean isNoShowable() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getTo();
+		return DateUtils.truncate(reservation.getStartDate(), Calendar.DAY_OF_MONTH).before(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+	}
+	
 	public void onNoShow(ActionEvent event) throws ManagerBeanException {
 		cancelReservation(event, true);
 	}
