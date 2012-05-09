@@ -1,5 +1,6 @@
 package com.code.aon.ui.audit.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.context.ExternalContext;
@@ -20,8 +21,10 @@ import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
 
-public class AuditDomainChangeListener implements IDomainChangeListener {
+public class AuditDomainChangeListener implements IDomainChangeListener, Serializable {
 
+	private static final long serialVersionUID = -7806308122004034352L;
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditDomainChangeListener.class);
 
 	@Override

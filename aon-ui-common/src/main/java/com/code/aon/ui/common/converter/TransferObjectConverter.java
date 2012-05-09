@@ -23,7 +23,7 @@ import com.code.aon.common.ManagerBeanException;
  * 
  *
  */
-public class TransferObjectConverter implements Converter {
+public class TransferObjectConverter implements Converter, Serializable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TransferObjectConverter.class);
 	

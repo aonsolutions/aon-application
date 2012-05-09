@@ -22,12 +22,14 @@
 	</head>
 
 	<body id="aon-body" onload="loadInnerWindow();">
+	<!-- 
 		<c:if test="#{dbUptodate.uptodate}">
 			<ui:include src="/com/code/aon/ui/dbutils/facelet/uptodate/uptodatePanel.xhtml" />
 		</c:if>	
 		<c:if test="#{!dbUptodate.uptodate}">
-			<ui:include src="/com/code/aon/ui/resources/facelet/login/templates/loginContent.xhtml" />
 		</c:if>	
+	 -->
+			<ui:include src="/com/code/aon/ui/resources/facelet/login/templates/loginContent.xhtml" />
 	</body>
   
 </f:view>

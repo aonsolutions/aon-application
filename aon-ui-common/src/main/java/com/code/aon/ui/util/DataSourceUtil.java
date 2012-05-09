@@ -32,7 +32,7 @@ public class DataSourceUtil {
 	 * @return the DB properties
 	 */
 	public static Properties getDBProperties( String server, String context, boolean skipLdap ) {
-    	String domain = DomainResolver.getDomain(server, skipLdap);
+    	String domain = DomainResolver.getDomain(server);
     	String application = DomainResolver.getApplication(context);
     	BasicPrincipal bp = new BasicPrincipal(domain, application);
     	return ConnectionProvider.getDBProperties(new AuthPrincipal(bp.getName()));

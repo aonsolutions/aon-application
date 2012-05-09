@@ -1,9 +1,11 @@
 package com.code.aon.common.dao.hibernate;
-
+        
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import javax.faces.context.FacesContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
@@ -11,16 +13,8 @@ import org.hibernate.connection.DatasourceConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.jaas.auth.AuthPrincipal;
-
-/**
- * A strategy for obtaining JDBC connections.
- * 
- * @author Consulting & Development. Aimar Tellitu - 27/03/2008
- * 
- */
 
 public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0ConnectionProvider {
 
@@ -42,7 +36,8 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 			throw new HibernateException(msg);
 		}
 
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		Principal p =  FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+		AuthPrincipal principal = (AuthPrincipal) p;
 		if ( principal != null ) {
 			Properties connectionProperties = ConnectionProvider.getDBProperties(principal);
 			LOGGER.info( "Connection properties: {}", connectionProperties );

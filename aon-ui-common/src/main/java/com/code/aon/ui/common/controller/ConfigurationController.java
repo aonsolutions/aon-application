@@ -38,8 +38,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.code.aon.common.util.Classpath;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
@@ -48,7 +46,7 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants, ILdapConstants, IAonObjectClasses {
+public class ConfigurationController implements Serializable, ICommonConstants {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
 
@@ -263,10 +261,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		factory.setNamespaceAware(true);
 		factory.setValidating(true);
 		factory.setIgnoringElementContentWhitespace(true);
-		factory.setAttribute( JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		factory.setAttribute( JAXPConstants.JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
 		String[] schemas = getXmlSchemas();
-		factory.setAttribute( JAXP_SCHEMA_SOURCE, schemas );		
+		factory.setAttribute( JAXPConstants.JAXP_SCHEMA_SOURCE, schemas );		
 		
 		Document document = null;
 		LogErrorHandler errorHandler = new LogErrorHandler();

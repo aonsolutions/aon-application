@@ -144,7 +144,7 @@ public class CompanyDisplay {
 			if ( configuration != null ) {
 				factory = configuration.buildSessionFactory();
 				StatelessSession session = factory.openStatelessSession();
-				String domain = DomainResolver.getDomain(AonUtil.getServerName(), AonUtil.isSkipLdap());				
+				String domain = DomainResolver.getDomain(AonUtil.getServerName());				
 				Criteria domainCriteria = session.createCriteria(Domain.class);
 				domainCriteria.add(Restrictions.eq("name", domain));
 				List<?> domainList = domainCriteria.list();

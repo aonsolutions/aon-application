@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -16,7 +17,7 @@ import com.code.aon.common.enumeration.MimeType;
  * @author ecastellano
  * 
  */
-public class AonFile {
+public class AonFile implements Serializable{
 
 	private byte[] data;
 	
