@@ -191,7 +191,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_bookingHolder" value="#{pmsBundle.pms_reservation_holder}" />
-	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" rendered="#{!reservation.new}">
+	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto" >
 		<aon:div>
 			<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
 				rendered="#{!reservation.active or !aonRole.saleOperator}"  />
@@ -203,7 +203,7 @@
 			</aon:selectOneMenu>
 		</aon:div>
 
-		<aon:div>
+		<aon:div rendered="#{!reservation.new}">
 			<aon:outputLabel value="#{pmsBundle.pms_advance}:" 
 				rendered="#{aonRole.saleOperator or (!aonRole.saleOperator and reservation.to.advance>0)}"
 				styleClass="aon-margin-right aon-italic" />
