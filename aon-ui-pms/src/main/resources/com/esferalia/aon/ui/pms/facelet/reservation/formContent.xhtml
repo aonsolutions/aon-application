@@ -207,14 +207,14 @@
 			<aon:outputLabel value="#{pmsBundle.pms_advance}:" 
 				rendered="#{aonRole.saleOperator or (!aonRole.saleOperator and reservation.to.advance>0)}"
 				styleClass="aon-margin-right aon-italic" />
-			<aon:outputText rendered="#{!aonRole.saleOperator and reservation.to.advance>0}"	
-				value="#{reservation.to.advance}" styleClass="aon-bold" >
+			<aon:outputText value="#{reservation.to.advance}"  
+				rendered="#{(aonRole.saleOperator and reservation.to.advanceInvoiced) or (!aonRole.saleOperator and reservation.to.advance>0)}"	
+				styleClass="aon-bold" >
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
 			<aon:inputText value="#{reservation.to.advance}"
 				size="8" maxlength="12"
-				rendered="#{reservation.active and aonRole.saleOperator}"
-				disabled="#{reservation.to.advanceInvoiced}" />
+				rendered="#{aonRole.saleOperator and reservation.active and !reservation.to.advanceInvoiced}" />
 		</aon:div>
 	</aon:panelGrid>
 
