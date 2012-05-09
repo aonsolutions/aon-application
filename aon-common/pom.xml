@@ -20,7 +20,7 @@
 			<groupId>com.esferalia.aon</groupId> 
 			<artifactId>aon.access</artifactId>
 			<version>${project.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
