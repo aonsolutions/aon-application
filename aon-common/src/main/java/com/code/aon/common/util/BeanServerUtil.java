@@ -11,6 +11,8 @@ import javax.management.ObjectName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
+
 public class BeanServerUtil {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BeanServerUtil.class.getName());
@@ -22,6 +24,10 @@ public class BeanServerUtil {
 	public static final String LDAP_SERVICE_REF = "jboss.admin:service=AonLdap";
 	
 	public static final ObjectName LDAP_SERVICE = getObjectName(LDAP_SERVICE_REF);
+	
+	public static final String AON_SECURITY_DOMAIN = "aon-login";
+	
+	public static final String JAAS_SECURITY = "jboss.security:service=JaasSecurityManager";
 	
 	private static ObjectName getObjectName( String ref ) {
 		try {
@@ -54,6 +60,17 @@ public class BeanServerUtil {
 			}
 		}
 		return server;
+	}
+
+	public static void flushAuthenticationCache(String domain) throws AonException {
+		try {
+			ObjectName name = getObjectName(JAAS_SECURITY);
+			Object[] params = { domain };
+			String[] sig = { String.class.getName() };
+			getMBeanServer().invoke(name, "flushAuthenticationCache", params, sig);
+		} catch (Throwable e) {
+			throw new AonException( e.getMessage(), e );
+		}
 	}
 	
 }

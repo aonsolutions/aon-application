@@ -14,15 +14,10 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
-import com.code.aon.bridge.plugin.UserManager;
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -139,16 +134,6 @@ public class DomainController extends BasicController {
 		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
 		contact.updateUser(user);
 		contact.initializeModel();		
-	}
-
-	public void flushAuthenticationCache( User user ) {
-		try {
-			IConsoleAdmin console = Utils.getSecurityConsole();
-			AuthPrincipal principal = new AuthPrincipal( user.getLogin() + "@" + getDomain().getName() );			
-			console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);
-		} catch (DeploymentException e) {
-			LOGGER.error( "Error flushing authenticaction cache for " + user, e );
-		}
 	}
 	
 }

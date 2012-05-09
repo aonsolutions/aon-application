@@ -14,5 +14,6 @@ public class ConfigConstants {
 	public static final String SCOPE = "scope";
 	public static final String TAX = "tax";
 	public static final String TAX_DETAIL = "taxDetail";
+	public static final String CHANGE_PASSWORD = "changePassword";
 	
 }

@@ -21,7 +21,7 @@
 					<aon:commandButton id="resetPassword"
 						value="#{adminBundle.admin_reset_password}"
 						actionListener="#{domainUser.onResetPassword}"
-						rendered="#{!domainUser.new}"
+						rendered="#{!domainUser.new}" reRender="passwordChangedWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 						<aon:actionListener method="#{saveActionListener}" />
 					</aon:commandButton>				
@@ -116,6 +116,7 @@
 		<c:if test="#{adminMain.config.showDomainUserChangePassword}" >
 			<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/changePassword.xhtml" />
 		</c:if>
-
+		<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
+		
 	</ui:define>
 </ui:composition>

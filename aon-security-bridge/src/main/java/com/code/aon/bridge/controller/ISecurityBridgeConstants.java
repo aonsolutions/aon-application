@@ -14,10 +14,14 @@ public interface ISecurityBridgeConstants {
 	
 	String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 	
+	String USER_PASSWORD_INVALID = "aon_login_err_0";
+	
 	String AON_LAST_EXCEPTION_KEY = "AON_LAST_EXCEPTION_KEY";
 
 	String PASSWORD_ERROR = "aon_security_passwd_error";
 	
 	String NEW_PASSWORD_ERROR = "aon_security_new_passwd_error";
+	
+	String PASSWORD_CHANGED = "aon_security_password_changed";
 	
 }

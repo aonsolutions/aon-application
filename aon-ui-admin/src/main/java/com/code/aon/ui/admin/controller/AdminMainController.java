@@ -1,5 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.USER_PASSWORD_INVALID;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedReader;
@@ -94,10 +95,6 @@ public class AdminMainController implements IAdminConstants {
 		return userType;
 	}
 	
-	private void setUserType(UserType userType) {
-		this.userType = userType;
-	}
-	
 	public Domain getCurrentDomain() {
 		return currentDomain;
 	}
@@ -163,10 +160,9 @@ public class AdminMainController implements IAdminConstants {
 		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
 		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
-			setUserType(UserType.ESFERALIA);
-			init(event);
+			AonUtil.getRoleManager().setUserInRole(IAonRole.SYS_ADMIN, true);
 		} else {
-			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", _user);
+			String message = AonUtil.getMessage(BUNDLE_NAME, USER_PASSWORD_INVALID, _user);
 			AonUtil.addErrorMessage(message);
 		}
 		_user = null;
