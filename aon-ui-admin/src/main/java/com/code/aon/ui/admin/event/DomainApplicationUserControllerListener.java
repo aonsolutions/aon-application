@@ -1,6 +1,8 @@
 package com.code.aon.ui.admin.event;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 
@@ -10,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.admin.Profile;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.ui.admin.controller.AdminMainController;
+import com.code.aon.ui.admin.controller.DomainApplicationController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
+import com.code.aon.ui.admin.controller.DomainController;
 import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -30,6 +34,14 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
 		dauc.setUserProfiles(new Profile[0]);
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		Integer domain = dac.getDomainApplication().getDomain();
+		if ( dauc.isShowParentDomainUsers() ) {
+			DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			domain = dc.getParentDomain().getId();
+			dauc.setShowParentDomainUsers(false);
+		}
+		dac.updateAvailableUsers(domain);
 	}
 
 	@Override

@@ -38,8 +38,6 @@ public class DomainController extends BasicController {
 	
 	private List<SelectItem> parentDomains;
 	
-	private boolean showCompanyWindow;
-	
 	private String selectedTab;
 	
 	private AdminMainController getAdmin() {
@@ -58,27 +56,22 @@ public class DomainController extends BasicController {
 		return (Domain) getTo();
 	}	
 	
-	public boolean isChildDomain() {
-		DomainType type = getDomain().getType();
-		return (type == null) || (type == DomainType.ENTERPRISE);
+	public Domain getParentDomain() {
+		Domain parent = getDomain().getParent();
+		if ( (parent != null) && (parent.getId() != null) ) {
+			return parent;
+		}		
+		return null;
 	}
-
+	
 	public boolean isShowDomainSubDomainSuffix() {
-		if (! isChildDomain()  ) {
+		if ( getDomain().getType() != DomainType.ENTERPRISE ) {
 			if ( getDomain().isDomainManagement() || getAdmin().isSysAdmin() ) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	public boolean isShowCompanyWindow() {
-		return showCompanyWindow;
-	}
-
-	public void setShowCompanyWindow(boolean showCompanyWindow) {
-		this.showCompanyWindow = showCompanyWindow;
-	}	
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateParentDomains() {

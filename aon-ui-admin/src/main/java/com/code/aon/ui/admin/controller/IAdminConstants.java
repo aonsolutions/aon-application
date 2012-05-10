@@ -11,7 +11,11 @@ public interface IAdminConstants {
 	String DOMAIN_CONTROLLER_NAME = "adminDomain";
 	String APPLICATION_PROFILE_CONTROLLER_NAME = "applicationProfile";
 	String DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME = "domainApplicationProfile";
+	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";	
+	String APPLICATION_USER_CONTROLLER_NAME = "appUser";
+	String USER_SCOPE_EX_CONTROLLER_NAME = "userScopeEx";
+	String USER_WORK_GROUP_EX_CONTROLLER_NAME = "userWorkGroupEx";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";

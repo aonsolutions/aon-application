@@ -18,12 +18,12 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="UserScope_scope"
 					required="true" rendered="#{formEdit}" value="#{controller.to.scope}">
-					<f:selectItems value="#{configCollections.scopes}" />
+					<f:selectItems value="#{domainUser.scopes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="UserScope_scope-New"
 						required="true" rendered="#{formNew}" value="#{controller.to.scope}">
-						<f:selectItems value="#{configCollections.scopes}" />
+						<f:selectItems value="#{domainUser.scopes}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

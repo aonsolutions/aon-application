@@ -79,5 +79,5 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 	}	
-	
+
 }

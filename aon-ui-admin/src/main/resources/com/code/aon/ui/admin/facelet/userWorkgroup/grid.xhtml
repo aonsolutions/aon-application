@@ -18,12 +18,12 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="UserWorkgroup_workgroup"
 					required="true" rendered="#{formEdit}" value="#{controller.to.workGroup}">
-					<f:selectItems value="#{configCollections.workgroups}" />
+					<f:selectItems value="#{domainUser.workgroups}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="UserWorkgroup_workgroup-New"
 						required="true" rendered="#{formNew}" value="#{controller.to.workGroup}">
-						<f:selectItems value="#{configCollections.workgroups}" />
+						<f:selectItems value="#{domainUser.workgroups}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

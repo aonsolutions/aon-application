@@ -5,9 +5,20 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
 		<ui:param name="skipSearchButton" value="#{true}" />
-	</ui:include>
+		<ui:define name="additionalToolbarContent" >
+			<aon:commandButton id="#{toolbarID}-overload"
+				value="#{adminBundle.admin_overload}"
+				rendered="#{adminDomain.parentDomain != null}"
+				reRender="#{controller.beanName}Div"
+				styleClass="aon-finding-toolbar-item aon-icon-new" >
+				<f:setPropertyActionListener value="#{true}"
+					target="#{controller.showParentDomainUsers}" />
+				<aon:actionListener method="#{controller.onReset}" />									
+			</aon:commandButton>
+		</ui:define>
+	</ui:decorate>
 
 	<aon:div styleClass="aon-scroll-area">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
@@ -30,12 +41,14 @@
 					<aon:outputText value="#{controller.profileList}"/>
 				</aon:column>
 		
-				<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn">
-					<f:facet name="header">
-						<aon:outputText value="#{adminBundle.admin_domain}" />
-					</f:facet>
-					<aon:outputText value="#{controller.userDomain.name}"/>
-				</aon:column>
+				<c:if test="#{adminDomain.parentDomain != null}">		
+					<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_domain}" />
+						</f:facet>
+						<aon:outputText value="#{controller.userDomain.name}"/>
+					</aon:column>
+				</c:if>
 		
 				<aon:column styleClass="aon-editDataTable-iconColumn"
 					alias="ApplicationUser.active" >

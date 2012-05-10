@@ -8,14 +8,12 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CON
 import java.util.Date;
 
 import javax.mail.Address;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
@@ -40,7 +38,7 @@ public class ManagerLogger {
 	
 	private boolean configured;
 	
-	private IMailAccount getMailAccount() throws ManagerBeanException {
+	private IMailAccount getMailAccount() {
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		IMailAccount account = mailConfig.getDefaultMailAccount();
 		if (account!=null) {
@@ -64,9 +62,7 @@ public class ManagerLogger {
 				this.sender = new EmailSender(from, account);
 				this.configured = true;				
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e );
-		} catch (AddressException e) {
+		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e );
 		}
 	}

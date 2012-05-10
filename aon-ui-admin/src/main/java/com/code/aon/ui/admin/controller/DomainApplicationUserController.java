@@ -22,6 +22,16 @@ public class DomainApplicationUserController extends LinesController {
 	
 	private Profile[] userProfiles;
 	
+	private boolean showParentDomainUsers;
+	
+	public boolean isShowParentDomainUsers() {
+		return showParentDomainUsers;
+	}
+
+	public void setShowParentDomainUsers(boolean showParentDomainUsers) {
+		this.showParentDomainUsers = showParentDomainUsers;
+	}
+
 	public Profile[] getUserProfiles() {
 		return userProfiles;
 	}

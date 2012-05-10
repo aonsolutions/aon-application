@@ -6,15 +6,21 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_USER;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
+import static com.code.aon.ui.admin.controller.IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_EX_CONTROLLER_NAME;
 import static com.code.aon.ui.config.controller.ConfigConstants.CHANGE_PASSWORD;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -38,6 +44,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.config.controller.BasicChangePasswordController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -245,5 +253,68 @@ public class DomainUserController extends BasicController {
 			bean.insert(uwg);
 		}
 	}		
-		
+
+	private Set<Scope> getAvalaibleScopes() throws ManagerBeanException {
+		Set<Scope> scopes = new HashSet<Scope>();
+		IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+		Criteria scopeCriteria = new Criteria();
+		scopeCriteria.addOrder(scopeBean.getFieldName(IEntityAlias.SCOPE_DESCRIPTION));
+		for( ITransferObject to : scopeBean.getList(scopeCriteria) ) {
+			scopes.add( (Scope) to );
+		}
+		IController controller = FormUtil.getController(USER_SCOPE_EX_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(controller.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getDomainUser().getId());
+		for( ITransferObject to : controller.getManagerBean().getList(criteria) ) {
+			UserScope us = (UserScope) to;
+			scopes.remove(us.getScope());
+		}
+		if (! controller.isNew() ) {
+			UserScope us = (UserScope) controller.getTo();
+			scopes.add( us.getScope() );
+		}
+		return scopes;
+	}
+	
+	public List<SelectItem> getScopes() throws ManagerBeanException {
+		List<SelectItem> scopes = new LinkedList<SelectItem>();
+		for (Scope scope : getAvalaibleScopes()) {
+			SelectItem item = new SelectItem(scope, scope.getDescription());
+			scopes.add(item);
+		}
+		return scopes;
+	}	
+
+	private Set<WorkGroup> getAvalaibleWorkgroups() throws ManagerBeanException {
+		Set<WorkGroup> workgroups = new HashSet<WorkGroup>();
+		IManagerBean wgBean = BeanManager.getManagerBean(WorkGroup.class);
+		Criteria wgCriteria = new Criteria();
+		wgCriteria.addEqualExpression(wgBean.getFieldName(IEntityAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		wgCriteria.addOrder(wgBean.getFieldName(IEntityAlias.WORK_GROUP_DESCRIPTION));	
+		for( ITransferObject to : wgBean.getList(wgCriteria) ) {
+			workgroups.add( (WorkGroup) to );
+		}
+		IController controller = FormUtil.getController(USER_WORK_GROUP_EX_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(controller.getFieldName(IEntityAlias.USER_WORK_GROUP_USER_ID), getDomainUser().getId());
+		for( ITransferObject to : controller.getManagerBean().getList(criteria) ) {
+			UserWorkGroup uwg = (UserWorkGroup) to;
+			workgroups.remove(uwg.getWorkGroup());
+		}
+		if (! controller.isNew() ) {
+			UserWorkGroup uwg = (UserWorkGroup) controller.getTo();
+			workgroups.add( uwg.getWorkGroup() );
+		}
+		return workgroups;
+	}
+	
+	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
+		List<SelectItem> workgroups = new LinkedList<SelectItem>();
+		for (WorkGroup workgroup : getAvalaibleWorkgroups()) {
+			SelectItem item = new SelectItem(workgroup, workgroup.getDescription());
+			workgroups.add(item);
+		}
+		return workgroups;
+	}	
+	
 }
