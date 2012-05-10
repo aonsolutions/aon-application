@@ -234,8 +234,8 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail.setItem(service.getItem());
 				invoiceDetail.setDescription(obtainDetailDescription(date, reservationInvoiceTo.getRoom(), service.getItem()));
 				invoiceDetail.setQuantity(service.getQuantity());
-				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
 				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+				invoiceDetail.setPrice(strategy.getUnitPrice(invoiceDetail, date, reservationInvoiceTo.getHotel().getCustomer().getTariff()));
 				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 				invoiceDetail.setTaxableBase(strategy.getBasePrice(invoiceDetail));
 				invoiceDetail.setWorkPlace(reservationInvoiceTo.getHotel().getWorkPlace());
