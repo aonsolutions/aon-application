@@ -16,6 +16,7 @@ public interface IAdminConstants {
 	String APPLICATION_USER_CONTROLLER_NAME = "appUser";
 	String USER_SCOPE_EX_CONTROLLER_NAME = "userScopeEx";
 	String USER_WORK_GROUP_EX_CONTROLLER_NAME = "userWorkGroupEx";
+	String DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME = "domainApplicationModule";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";
@@ -26,6 +27,7 @@ public interface IAdminConstants {
 	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	String DEFAULT_SUBDOMAIN_SUFFIX = "aonsolutions.es";
+	String AON_AIO_APPLICATION = "aon-aio";
 	
 	String USER_TABLE = "user";
 	String COMPANY_TABLE = "company";
