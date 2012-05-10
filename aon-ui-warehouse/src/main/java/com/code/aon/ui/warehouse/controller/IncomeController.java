@@ -161,6 +161,15 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
+	
+	public Double getIncomesTotalAmount() throws ManagerBeanException {
+		double incomesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Income i = (Income) to;
+			incomesTotalAmount += getIncomeTotalPrice(i);
+		}
+		return incomesTotalAmount;
+	}
 
 	public boolean isPending(){
 		Income income = (Income)this.getTo();
@@ -345,6 +354,10 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public double getIncomeTotalPrice() throws ManagerBeanException {
 		Income income = (Income)this.getModel().getRowData();
+		return getIncomeTotalPrice(income);
+	}
+
+	public double getIncomeTotalPrice(Income income) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(income, income.getSupplier());
 	}
 

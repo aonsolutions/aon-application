@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="income" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -40,13 +40,25 @@
 	<variable name="currentIncome" class="com.code.aon.warehouse.Income">
 		<variableExpression><![CDATA[(com.code.aon.warehouse.Income)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
+	<variable name="totalAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($V{currentIncome}, $V{currentIncome}.getSupplier()))]]></variableExpression>
+	</variable>
 	<group name="offerGroup">
-		<groupExpression><![CDATA[$F{id}]]></groupExpression>
+		<groupExpression><![CDATA[null]]></groupExpression>
 		<groupHeader>
 			<band splitType="Stretch"/>
 		</groupHeader>
 		<groupFooter>
-			<band splitType="Stretch"/>
+			<band height="16" splitType="Stretch">
+				<textField pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement key="textField" x="480" y="2" width="75" height="14"/>
+					<box>
+						<topPen lineStyle="Solid"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
+				</textField>
+			</band>
 		</groupFooter>
 	</group>
 	<background>
@@ -179,7 +191,7 @@
 	</columnHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
-			<textField pattern="" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-113" x="363" y="1" width="85" height="13"/>
 				<box>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
@@ -193,7 +205,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTaxableBase($V{currentIncome}))]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-113" x="468" y="1" width="85" height="13"/>
 				<box>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
