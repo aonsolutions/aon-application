@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
@@ -179,6 +180,15 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		this.invoiceDate = invoiceDate;
 	}
 	
+	public Double getDeliveriesTotalAmount() throws ManagerBeanException {
+		double deliveriesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Delivery d = (Delivery) to;
+			deliveriesTotalAmount += getDeliveryTotalPrice(d);
+		}
+		return deliveriesTotalAmount;
+	}
+
 	public boolean isCustomerReadOnly() {
 		Delivery delivery = (Delivery)this.getTo();
 		return (delivery.getProject() != null && delivery.getProject().getId() != null);
@@ -386,6 +396,10 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 	public double getDeliveryTotalPrice() throws ManagerBeanException {
 		Delivery delivery = (Delivery)this.getModel().getRowData();
+		return getDeliveryTotalPrice(delivery) ;
+	}
+	
+	private double getDeliveryTotalPrice(Delivery delivery) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(delivery, delivery.getCustomer());
 	}
 

@@ -144,13 +144,8 @@ public class RectificationInvoicingManager {
 				rectifierDetail.setRetentionPercent(invoiceRetentionTax.getPercentage());
 				rectifierDetail.setRetentionQuota(CommonUtil.round(invoiceRetentionTax.getQuota() * (-1)));
 			}
-
-			rectifierDetail.getInvoice().setUpdateEnabled(false);
 			invoiceDetailBean.insert(rectifierDetail);
 		}
-
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		rectifier = (Invoice)invoiceBean.update(rectifier);
 	}
 
 	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
