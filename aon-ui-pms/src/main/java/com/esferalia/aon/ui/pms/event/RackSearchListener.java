@@ -115,7 +115,8 @@ public class RackSearchListener extends ControllerSearchListener {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
 		}
 		if (StringUtils.isNotEmpty(getRoomName())) {
-			criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IEntityAlias.ROOM_ASSET_NAME), getRoomName() + "%"));			
+			String roomExpr = (getRoomName().indexOf("*") >= 0) ? (getRoomName().replace('*', '%')) : ("%" + getRoomName() + "%");
+			criteria.addExpression(ExpressionUtilities.getLikeExpression(getFieldName(IEntityAlias.ROOM_ASSET_NAME), roomExpr));
 		}
 		if (!ArrayUtils.isEmpty(getFeatures())) {
 			String status = getController().resolveAlias("Room.features.feature.id");

@@ -90,7 +90,7 @@ public class ProjectReservationRoomController extends LinesController {
 				Date startDate = reservationRoom.getProjectReservation().getStartDate();
 				Date endDate = reservationRoom.getProjectReservation().getEndDate();
 				Date date = new Date();
-				if (date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
+				if (reservationRoom.getRoomNumber() == null || date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
 					date = null;
 				}
 				RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);

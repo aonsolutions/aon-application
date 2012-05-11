@@ -97,7 +97,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 			whereClause += " AND Room.asset IN (SELECT id FROM asset WHERE name LIKE :name)";
 		}
 		if (getFilterParams().getViewerStartDate() != null && getFilterParams().getViewerEndDate() != null) {
-			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE " + DomainManager.getSQLWhereClause("domain") + " AND date BETWEEN :start AND :end)";
+			whereClause += " AND Room.asset NOT IN (SELECT asset FROM asset_activity WHERE date BETWEEN :start AND :end)";
 		}
 		if (getFilterParams().getFeatureFilter() != null && getFilterParams().getFeatureFilter().length > 0) {
 			String featureClause = "";

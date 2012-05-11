@@ -48,16 +48,6 @@ public class RoomSearchListener extends ControllerSearchListener {
 		setItem(null);
 	}
 	
-	@Override
-	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
-		}
-		if (getItem() != null && getItem().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
-		}
-	}
-	
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			return getHotelRoomItems(getHotel());
@@ -93,4 +83,14 @@ public class RoomSearchListener extends ControllerSearchListener {
 		return roomItems;
 	}
 
+	@Override
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		if (getHotel() != null && getHotel().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
+		}
+		if (getItem() != null && getItem().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
+		}
+	}
+	
 }
