@@ -131,7 +131,9 @@ public class ContactDBController extends MailDBController implements IContactCon
     		Criteria criteria = new Criteria();
     		setUser( UserUtils.getInstance().getLoggedUser() );
     		completeCriteria(criteria);
-    		criteria.addNotNullExpression("Contact.contactData.email");
+			Expression exp1 = ExpressionUtilities.getNullExpression("Contact.contactData");
+			Expression exp2 = ExpressionUtilities.getNotNullExpression("Contact.contactData<email");
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
     		criteria.addOrder(getFieldName(IEntityAlias.CONTACT_DISPLAY_NAME));
     		return (List) getManagerBean().getList(criteria);
     	} catch (ManagerBeanException e) {

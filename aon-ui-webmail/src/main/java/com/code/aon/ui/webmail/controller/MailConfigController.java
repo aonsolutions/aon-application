@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
@@ -381,6 +382,30 @@ public class MailConfigController {
 			defaultAccount = list.get(0);
 		}
 		return defaultAccount;
+	}
+	
+	public void onInitMailAccount( ActionEvent event ) throws ManagerBeanException {
+		if ( getMailAccount() instanceof MailAccountDBController ) {
+			MailAccountDBController controller = (MailAccountDBController) getMailAccount();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getMailAccount().onSearch(event);
+	}
+
+	public void onInitSignature( ActionEvent event ) throws ManagerBeanException {
+		if ( getSignature() instanceof SignatureDBController ) {
+			SignatureDBController controller = (SignatureDBController) getSignature();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getSignature().onSearch(event);
+	}
+
+	public void onInitContact( ActionEvent event ) throws ManagerBeanException {
+		if ( getContact() instanceof ContactDBController ) {
+			ContactDBController controller = (ContactDBController) getContact();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getContact().onSearch(event);
 	}
 	
 }

@@ -24,7 +24,6 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.ContactConverter;
 import com.code.aon.webmail.Contact;

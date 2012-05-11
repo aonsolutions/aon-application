@@ -159,6 +159,34 @@
 							</aon:div>
 						</aon:panelGrid>
 
+						<aon:panelGrid id="group_general_email"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-mail">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_main}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccountChange"
+										action="mailAccount_list"
+										actionListener="#{mailConfig.onInitMailAccount}"
+										value="#{webmailBundle.webmail_mailAccount}" />						
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="signature"
+										action="signature_list"
+										actionListener="#{mailConfig.onInitSignature}"
+										value="#{webmailBundle.webmail_signature}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contact"
+										action="contact_list"
+										actionListener="#{mailConfig.onInitContact}"
+										value="#{webmailBundle.webmail_email}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
 					</aon:panelGroup>
 
 				</h:panelGrid>

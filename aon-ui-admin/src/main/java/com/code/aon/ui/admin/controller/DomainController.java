@@ -118,15 +118,15 @@ public class DomainController extends BasicController {
 	public void initWebmail( User user ) throws ManagerBeanException {
 		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
 		signature.updateUser(user);
-		signature.initializeModel();
+		signature.onSearch(null);
 
 		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
 		account.updateUser(user);
-		account.initializeModel();		
+		account.onSearch(null);		
 
 		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
 		contact.updateUser(user);
-		contact.initializeModel();		
+		contact.onSearch(null);		
 	}
 	
 }

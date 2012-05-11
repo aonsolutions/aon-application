@@ -293,7 +293,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>contactDB</value>
+			<value>contact</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
