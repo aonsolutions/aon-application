@@ -67,6 +67,13 @@
 			<aon:outputText value="#{controller.purchaseTotalPrice}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			<f:facet name="footer">
+				<aon:div style="float:right">
+					<aon:outputText style="text-align:right" value="#{controller.purchasesTotalAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</f:facet>
 		</aon:column>
 	</c:if>
 

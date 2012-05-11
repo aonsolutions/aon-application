@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -51,6 +51,7 @@
 	<field name="rectifier" class="java.lang.Boolean"/>
 	<field name="rectified" class="java.lang.Boolean"/>
 	<field name="rectificationInvoicesString" class="java.lang.String"/>
+	<field name="project" class="com.code.aon.project.Project"/>
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>
 	<variable name="comments" class="java.lang.String">
@@ -394,7 +395,7 @@
 	<detail>
 		<band height="183" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-2" positionType="Float" x="179" y="68" width="245" height="14">
+				<reportElement key="subreport-2" positionType="Float" x="179" y="85" width="245" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{lines}.size()>0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -402,13 +403,13 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="71" y="33" width="483" height="29"/>
+				<reportElement key="subreport-1" positionType="Float" x="71" y="50" width="483" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false))]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-3" positionType="Float" x="71" y="105" width="483" height="29">
+				<reportElement key="subreport-3" positionType="Float" x="71" y="122" width="483" height="29">
 					<printWhenExpression><![CDATA[new Boolean($F{finances}.size() > 0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -416,7 +417,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceFinances")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="479" y="68" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="479" y="85" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -429,7 +430,7 @@
 				<textFieldExpression><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="479" y="82" width="62" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="479" y="99" width="62" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -442,7 +443,7 @@
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" positionType="Float" x="137" y="8" width="417" height="15" isRemoveLineWhenBlank="true">
+				<reportElement key="textField-53" positionType="Float" x="137" y="25" width="417" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -457,7 +458,7 @@
 				<textFieldExpression><![CDATA[$V{comments}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-54" positionType="Float" x="71" y="8" width="66" height="15">
+				<reportElement key="textField-54" positionType="Float" x="71" y="25" width="66" height="15">
 					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -472,7 +473,7 @@
 				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-44" positionType="Float" x="541" y="82" width="13" height="14"/>
+				<reportElement key="textField-44" positionType="Float" x="541" y="99" width="13" height="14"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -483,6 +484,36 @@
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA["€"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-53" positionType="Float" x="137" y="10" width="417" height="15" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project}.getName()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-54" positionType="Float" x="71" y="10" width="66" height="15">
+					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_project} + ":"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

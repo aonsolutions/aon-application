@@ -89,6 +89,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private Date rectificationDate;
 	private String rectificationCause;
 	private FinanceEmailUtil emailController;
+	private double totalInvoiceAmount;
 
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -156,6 +157,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			return addresses.size();
 		}
 		return 0;
+	}
+	
+	public double getTotalInvoiceAmount() {
+		return totalInvoiceAmount;
+	}
+
+	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
+		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {

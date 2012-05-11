@@ -298,6 +298,15 @@ public class OfferController extends BasicController implements ISignatureContro
 		return (Offer) this.getTo();
 	}
 	
+	public Double getOffersTotalAmount() throws ManagerBeanException {
+		double offersTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Offer o = (Offer) to;
+			offersTotalAmount += getOfferTotalPrice(o);
+		}
+		return offersTotalAmount;
+	}
+	
 	public boolean isReadOnly() {
 		return !isPending() || getOffer().isSigned(); 
 	}	
@@ -538,6 +547,10 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public double getOfferTotalPrice() throws ManagerBeanException {
 		Offer offer = (Offer)this.getModel().getRowData();
+		return getOfferTotalPrice(offer);
+	}
+	
+	public double getOfferTotalPrice(Offer offer) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 

@@ -194,6 +194,15 @@ public class SalesController extends BasicController implements ISalesConstants 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
+	
+	public Double getSalesTotalAmount() throws ManagerBeanException {
+		double salesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Sales s = (Sales) to;
+			salesTotalAmount += getSalesTotalPrice(s);
+		}
+		return salesTotalAmount;
+	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
 		Sales sales = (Sales)this.getTo();
@@ -405,6 +414,10 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public double getSalesTotalPrice() throws ManagerBeanException {
 		Sales sales = (Sales)this.getModel().getRowData();
+		return getSalesTotalPrice(sales);
+	}
+	
+	public double getSalesTotalPrice(Sales sales) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
 	}
 

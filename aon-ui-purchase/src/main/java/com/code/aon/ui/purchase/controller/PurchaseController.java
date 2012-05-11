@@ -224,6 +224,15 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
 	}
+	
+	public Double getPurchasesTotalAmount() throws ManagerBeanException {
+		double purchasesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Purchase p = (Purchase) to;
+			purchasesTotalAmount += getPurchaseTotalPrice(p);
+		}
+		return purchasesTotalAmount;
+	}
 
 	public boolean isInIncome() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getTo();
@@ -401,6 +410,10 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public double getPurchaseTotalPrice() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getModel().getRowData();
+		return getPurchaseTotalPrice(purchase);
+	}
+
+	public double getPurchaseTotalPrice(Purchase purchase) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
 	}
 
