@@ -98,11 +98,15 @@
 				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_adults" 
 					value="#{controller.to.adults}" rendered="#{formEdit}"
-					required="true" size="2" maxlength="3" />
+					required="true" size="2" maxlength="3">
+					<f:validateLongRange minimum = "1" />
+				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ReservationRequestRoom_adults-New" 
 						value="#{controller.to.adults}" rendered="#{formNew}"
-						required="true" size="2" maxlength="3" />
+						required="true" size="2" maxlength="3">
+						<f:validateLongRange minimum = "1" />
+					</aon:inputText>
 				</f:facet>
 			</aon:column>
 
