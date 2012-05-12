@@ -13,9 +13,6 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +22,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
@@ -37,11 +35,15 @@ public class GeozoneIrpfController {
 	private final static Integer BIZKAIA_ID = 48;
 	private final static Integer GIPUZKOA_ID = 20;
 	private final static Integer NAFARROA_ID = 31;
+	private final static String ARABA_CODE = "01";
+	private final static String BIZKAIA_CODE = "48";
+	private final static String GIPUZKOA_CODE = "20";
+	private final static String NAFARROA_CODE = "31";
 	
 	private DataModel irpfModel;
 	private DataModel descendantModel;
 	private DataModel handicapModel;
-	private GeozoneIrpfList selectedIrpf;
+	private GeoIrpf selectedIrpf;
 	private Administration administration;
 	private Integer year;
 	private List<SelectItem> administrationList;
@@ -71,10 +73,10 @@ public class GeozoneIrpfController {
 	public String getBackActionListener(){
 		return null;
 	}
-	public GeozoneIrpfList getSelectedIrpf(){
+	public GeoIrpf getSelectedIrpf(){
 		return selectedIrpf;
 	}
-	public void setSelectedIrpf(GeozoneIrpfList selectedIrpf) {
+	public void setSelectedIrpf(GeoIrpf selectedIrpf) {
 		this.selectedIrpf = selectedIrpf;
 	}
 	
@@ -122,7 +124,7 @@ public class GeozoneIrpfController {
 	}
 	
 	public void onSelectGeozone(ActionEvent event){
-		setSelectedIrpf((GeozoneIrpfList) getIrpfModel().getRowData());
+		setSelectedIrpf((GeoIrpf) getIrpfModel().getRowData());
 		try {
 			initializeDescendantsModel();
 			initializeHasndicapModel();
@@ -132,21 +134,20 @@ public class GeozoneIrpfController {
 	}
 	
 	private void initializeIrpfModel() {
-		List<GeozoneIrpfList> list = new LinkedList<GeozoneIrpfList>();
-		GeozoneIrpfList g;
+		List<GeoIrpf> list = new LinkedList<GeoIrpf>();
+		GeoIrpf g;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpf.class);
+			ProjectionList pl = new ProjectionList();
+			pl.add(Projection.group(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE)));
 			Criteria criteria = new Criteria();
 			completeCriteria(criteria);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_START_DATE));
-			List<ITransferObject> irpfList = bean.getList(criteria);
-			for(ITransferObject to: irpfList){
-				GeozoneIrpf irpf = (GeozoneIrpf) to;
-				g = new GeozoneIrpfList();
-				g.setGeozoneCode(irpf.getGeozoneCode());
-				g.setGeozoneName(irpf.getGeozoneName());
-				g.setYear(irpf.getYear());
+			for(Object o: bean.getList(new ProjectionList(Projection.group(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE))), criteria) ){
+				g = new GeoIrpf();
+				g.setGeozoneCode(o.toString());
+				g.setYear(getYear());
 				if(!list.contains(g)){
 					list.add(g);
 				}
@@ -157,59 +158,59 @@ public class GeozoneIrpfController {
 		}
 	}
 	private void initializeDescendantsModel() throws ManagerBeanException {
-		GeozoneIrpfList irpf = getSelectedIrpf();
+		GeoIrpf irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfDescendant.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_ID), irpf.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
 		List<ITransferObject> descList = bean.getList(criteria);
-		List<GeozoneIrpfDescendantsList> list = new LinkedList<GeozoneIrpfDescendantsList>();
-		GeozoneIrpfDescendantsList gl = new GeozoneIrpfDescendantsList();
+		List<GeoIrpfDescendants> list = new LinkedList<GeoIrpfDescendants>();
+		GeoIrpfDescendants d = new GeoIrpfDescendants();
 		for(ITransferObject to: descList){
 			GeozoneIrpfDescendant g = (GeozoneIrpfDescendant) to;
 			if(list.isEmpty()){
-				gl.setFromAmount(g.getGeozoneIrpf().getAmount());
-				list.add(gl);
-			} else if(!gl.getFromAmount().equals(g.getGeozoneIrpf().getAmount())){
-				gl.setToAmount(g.getGeozoneIrpf().getAmount());
-				gl = new GeozoneIrpfDescendantsList();
-				gl.setFromAmount(g.getGeozoneIrpf().getAmount());
-				list.add(gl);
+				d.setFromAmount(g.getGeozoneIrpf().getAmount());
+				list.add(d);
+			} else if(!d.getFromAmount().equals(g.getGeozoneIrpf().getAmount())){
+				d.setToAmount(g.getGeozoneIrpf().getAmount());
+				d = new GeoIrpfDescendants();
+				d.setFromAmount(g.getGeozoneIrpf().getAmount());
+				list.add(d);
 			}
 			GeozoneIrpfCount descendants = new GeozoneIrpfCount();
 			descendants.setCount(g.getDescendant());
 			descendants.setPercent(g.getPercent());
-			gl.getDescendants().add(descendants);
+			d.getDescendants().add(descendants);
 		}
 		
 		setDescendantModel(new ListDataModel(list));
 	}
 	private void initializeHasndicapModel() throws ManagerBeanException {
-		GeozoneIrpfList irpf = getSelectedIrpf();
+		GeoIrpf irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfHandicap.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_ID), irpf.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
 		List<ITransferObject> handicapList = bean.getList(criteria);
-		List<GeozoneIrpfHandicapList> list = new LinkedList<GeozoneIrpfHandicapList>();
-		GeozoneIrpfHandicapList gl = new GeozoneIrpfHandicapList();
+		List<GeoIrpfHandicap> list = new LinkedList<GeoIrpfHandicap>();
+		GeoIrpfHandicap h = new GeoIrpfHandicap();
 		for(ITransferObject to: handicapList){
 			GeozoneIrpfHandicap g = (GeozoneIrpfHandicap) to;
 			if(list.isEmpty()){
-				gl.setFromAmount(g.getGeozoneIrpf().getAmount());
-				list.add(gl);
-			} else if(!gl.getFromAmount().equals(g.getGeozoneIrpf().getAmount())){
-				gl.setToAmount(g.getGeozoneIrpf().getAmount());
-				gl = new GeozoneIrpfHandicapList();
-				gl.setFromAmount(g.getGeozoneIrpf().getAmount());
-				list.add(gl);
+				h.setFromAmount(g.getGeozoneIrpf().getAmount());
+				list.add(h);
+			} else if(!h.getFromAmount().equals(g.getGeozoneIrpf().getAmount())){
+				h.setToAmount(g.getGeozoneIrpf().getAmount());
+				h = new GeoIrpfHandicap();
+				h.setFromAmount(g.getGeozoneIrpf().getAmount());
+				list.add(h);
 			}
 			GeozoneIrpfCount handicap = new GeozoneIrpfCount();
 			handicap.setCount(g.getHandicap());
 			handicap.setPercent(g.getPercent());
-			gl.getHandicap().add(handicap);
+			h.getHandicap().add(handicap);
 		}
 		setHandicapModel(new ListDataModel(list));
 	}
@@ -230,31 +231,22 @@ public class GeozoneIrpfController {
 		}
 		if(getAdministration()!=null){
 			if(getAdministration()== Administration.ALAVA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), ARABA_ID.toString());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), ARABA_CODE);
 			} else if(getAdministration()== Administration.BIZKAIA){				
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), BIZKAIA_ID.toString());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), BIZKAIA_CODE);
 			} else if(getAdministration()== Administration.GIPUZKOA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), GIPUZKOA_ID.toString());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), GIPUZKOA_CODE);
 			} else if(getAdministration()== Administration.NAVARRA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), NAFARROA_ID.toString());
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), NAFARROA_CODE);
 			}
 		}
 	}
 	
-	
 
-	public class GeozoneIrpfList{
-		private Integer id;
+	public class GeoIrpf {
 		private String geozoneCode;
-		private String geozoneName;
 		private Integer year;
 		
-		public Integer getId() {
-			return id;
-		}
-		public void setId(Integer id) {
-			this.id = id;
-		}
 		public String getGeozoneCode() {
 			return geozoneCode;
 		}
@@ -262,29 +254,19 @@ public class GeozoneIrpfController {
 			this.geozoneCode = geozoneCode;
 		}
 		public String getGeozoneName() {
-			return geozoneName;
-		}
-		public void setGeozoneName(String geozoneName) {
-			this.geozoneName = geozoneName;
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(GeoZone.class);
+				return ((GeoZone)bean.get(Integer.parseInt(this.getGeozoneCode()))).getName();
+			} catch (ManagerBeanException e) {
+				// NADA 
+			}
+			return "";
 		}
 		public Integer getYear() {
 			return year;
 		}
 		public void setYear(Integer year) {
 			this.year = year;
-		}
-		public boolean equals(Object obj) {
-			if (obj == null) return false;
-			if (this == obj) return true;
-			if (obj.getClass() != getClass()) return false;
-			final GeozoneIrpfList o =  (GeozoneIrpfList) obj;
-			if (o.getId() == null && getId() == null) {
-				return new EqualsBuilder()
-					.append(this.geozoneCode, o.geozoneCode)			
-					.append(this.year, o.year)			
-					.isEquals();
-			}
-			return ObjectUtils.equals(getId(), o.getId());		
 		}
 	}
 	public class GeozoneIrpfCount{
@@ -303,7 +285,7 @@ public class GeozoneIrpfController {
 			this.percent = percent;
 		}
 	}
-	public class GeozoneIrpfDescendantsList{
+	public class GeoIrpfDescendants{
 		private Double fromAmount;
 		private Double toAmount;
 		private List<GeozoneIrpfCount> descendants;
@@ -329,7 +311,7 @@ public class GeozoneIrpfController {
 			this.descendants = descendants;
 		}
 	}
-	public class GeozoneIrpfHandicapList{
+	public class GeoIrpfHandicap{
 		private Double fromAmount;
 		private Double toAmount;
 		private List<GeozoneIrpfCount> handicap;
