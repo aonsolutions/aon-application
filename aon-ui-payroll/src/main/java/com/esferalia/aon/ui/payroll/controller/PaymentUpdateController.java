@@ -30,6 +30,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
@@ -93,16 +94,19 @@ public class PaymentUpdateController {
 	}
 	
 	public void onEditSearch(ActionEvent event) {
-		if ( AonUtil.isBeanValue(PAYMENT_UPDATE_CONTROLLER, SHOW_ENTERPRISE_IN_SEARCH) ) {
-			try {
+		try {
+			if ( AonUtil.isBeanValue(PAYMENT_UPDATE_CONTROLLER, SHOW_ENTERPRISE_IN_SEARCH) ) {
 				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
 				setEnterprise((Enterprise) bean.createNewTo());
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible realizar la búsqueda de los datos. [" + e.getMessage()+"]";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg,e);
-			}	
-		}
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+				setEnterprise((Enterprise) bean.get(UserUtils.getInstance().getLoggedUser().getEnterprise()));
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible realizar la búsqueda de los datos. [" + e.getMessage()+"]";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}	
 		Date date = new Date();
 		setMonth(Month.getMonthByValue(CommonUtil.getMonth(date)));
 		setYear(CommonUtil.getYear(date));
