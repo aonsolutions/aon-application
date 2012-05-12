@@ -22,7 +22,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
@@ -143,6 +145,7 @@ public class GeozoneIrpfController {
 				GeozoneIrpf irpf = (GeozoneIrpf) to;
 				g = new GeozoneIrpfList();
 				g.setGeozoneCode(irpf.getGeozoneCode());
+				g.setGeozoneName(irpf.getGeozoneName());
 				g.setYear(irpf.getYear());
 				if(!list.contains(g)){
 					list.add(g);
@@ -227,13 +230,13 @@ public class GeozoneIrpfController {
 		}
 		if(getAdministration()!=null){
 			if(getAdministration()== Administration.ALAVA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), ARABA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), ARABA_ID.toString());
 			} else if(getAdministration()== Administration.BIZKAIA){				
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), BIZKAIA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), BIZKAIA_ID.toString());
 			} else if(getAdministration()== Administration.GIPUZKOA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), GIPUZKOA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), GIPUZKOA_ID.toString());
 			} else if(getAdministration()== Administration.NAVARRA){
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), NAFARROA_ID);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_GEOZONE_CODE), NAFARROA_ID.toString());
 			}
 		}
 	}
@@ -243,7 +246,9 @@ public class GeozoneIrpfController {
 	public class GeozoneIrpfList{
 		private Integer id;
 		private String geozoneCode;
+		private String geozoneName;
 		private Integer year;
+		
 		public Integer getId() {
 			return id;
 		}
@@ -255,6 +260,12 @@ public class GeozoneIrpfController {
 		}
 		public void setGeozoneCode(String geozoneCode) {
 			this.geozoneCode = geozoneCode;
+		}
+		public String getGeozoneName() {
+			return geozoneName;
+		}
+		public void setGeozoneName(String geozoneName) {
+			this.geozoneName = geozoneName;
 		}
 		public Integer getYear() {
 			return year;
