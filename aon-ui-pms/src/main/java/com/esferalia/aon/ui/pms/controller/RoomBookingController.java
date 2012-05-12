@@ -26,18 +26,15 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
-import com.esferalia.aon.ui.pms.util.ReportUtils;
+import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class RoomBookingController implements ICollectionProvider {
 	
@@ -49,7 +46,7 @@ public class RoomBookingController implements ICollectionProvider {
 	private Date fromDate;
 	private Date toDate;
 	
-	private List<Booking> bookingList;
+	private List<DayBooking> bookingList;
 	private DataModel model;
 	
 	public Hotel getHotel() {
@@ -82,10 +79,10 @@ public class RoomBookingController implements ICollectionProvider {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	public List<Booking> getBookingList() {
+	public List<DayBooking> getBookingList() {
 		return bookingList;
 	}
-	public void setBookingList(List<Booking> bookingList) {
+	public void setBookingList(List<DayBooking> bookingList) {
 		this.bookingList = bookingList;
 	}
 	public DataModel getModel() {
@@ -97,14 +94,16 @@ public class RoomBookingController implements ICollectionProvider {
 	
 	@SuppressWarnings("rawtypes")
 	private void buildBookingList() throws ManagerBeanException {
-		setBookingList(new LinkedList<RoomBookingController.Booking>());
+		PmsReportManager reportManager = PmsReportManager.getInstance();
+		
+		setBookingList(new LinkedList<RoomBookingController.DayBooking>());
 		
 		buildEmptyList(getHotel());
-
-		String checkinSelect = ReportUtils.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
-		String checkoutSelect = ReportUtils.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
-		String occupationSelect = ReportUtils.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
-		String roomsSelect = ReportUtils.getHotelRoomsSQL(getHotel());
+		
+		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel());
 
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 
@@ -126,53 +125,45 @@ public class RoomBookingController implements ICollectionProvider {
 		Iterator occupationIterator = occupationQuery.list().iterator();
 		Iterator roomsIterator = roomsQuery.list().iterator();
 		
-		Object checkin = null;
-		if( checkinIterator.hasNext() ){
-			checkin = checkinIterator.next();
-		}
-		Object checkout = null;
-		if( checkoutIterator.hasNext() ){
-			checkout = checkoutIterator.next();
-		}
-		Object occupation = null;
-		if( occupationIterator.hasNext() ){
-			occupation = occupationIterator.next();
-		}
-		Object rooms = null;
-		if( roomsIterator.hasNext() ){
-			rooms = roomsIterator.next();
-		}
+		Object checkin = checkinIterator.hasNext()?checkinIterator.next():null;
+		Object checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
+		Object occupation = occupationIterator.hasNext()?occupationIterator.next():null;
+		Object rooms = roomsIterator.hasNext()?roomsIterator.next():null;
 		
 		int roomBusy = 0;
 		int guestTotal = 0;
 		
-		for(Booking booking: getBookingList() ){
+		for(DayBooking booking: getBookingList() ){
 			String checkinHotel = checkin!=null?(String) (((Object[])checkin)[0]):null;
 			String checkoutHotel = checkout!=null?(String) (((Object[])checkout)[0]):null;
 			Date checkinDate = checkin!=null?(Date) (((Object[])checkin)[1]):null;
 			Date checkoutDate = checkout!=null?(Date) (((Object[])checkout)[1]):null;
+			// Se cargan las entradas de habitaciones y de huespedes
 			if( booking.getDate().equals(checkinDate) && booking.getHotel().equals(checkinHotel) ){
 				booking.setRoomCheckin( ((BigInteger) (((Object[])checkin)[2])).intValue() );
 				booking.setGuestCheckin( ((BigDecimal) (((Object[])checkin)[3])).intValue() );
-				if( checkinIterator.hasNext() ){
-					checkin = checkinIterator.next();
-				}
+				checkin = checkinIterator.hasNext()?checkinIterator.next():null;
 			}
+			// Se cargan las salidas de habitaciones y de huespedes
 			if( booking.getDate().equals(checkoutDate) && booking.getHotel().equals(checkoutHotel) ){
 				booking.setRoomCheckout( ((BigInteger) (((Object[])checkout)[2])).intValue() );
 				booking.setGuestCheckout( ((BigDecimal) (((Object[])checkout)[3])).intValue() );
-				if( checkoutIterator.hasNext() ){
-					checkout = checkoutIterator.next();
-				}
+				checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
 			}
+			// Se cargan la ocupacion de habitaciones y el total de huespedes
 			String occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
-			if( booking.getDate().equals(getFromDate()) && booking.getHotel().equals(occupationHotel) ){
-				booking.setRoomBusy( ((BigInteger) (((Object[])occupation)[1])).intValue() );
-				roomBusy = ((BigInteger) (((Object[])occupation)[1])).intValue();
-				booking.setGuestTotal( ((BigDecimal) (((Object[])occupation)[2])).intValue() );
-				guestTotal = ((BigDecimal) (((Object[])occupation)[2])).intValue();
-				if( occupationIterator.hasNext() ){
-					occupation = occupationIterator.next();
+			if( booking.getDate().equals(getFromDate()) ){
+				if( !booking.getHotel().equals(occupationHotel) ){
+					booking.setRoomBusy( 0 );
+					booking.setGuestTotal( 0 );
+					roomBusy = 0;
+					guestTotal = 0;
+				} else {
+					booking.setRoomBusy( ((BigInteger) (((Object[])occupation)[1])).intValue() );
+					roomBusy = ((BigInteger) (((Object[])occupation)[1])).intValue();
+					booking.setGuestTotal( ((BigDecimal) (((Object[])occupation)[2])).intValue() );
+					guestTotal = ((BigDecimal) (((Object[])occupation)[2])).intValue();
+					occupation = occupationIterator.hasNext()?occupationIterator.next():null;
 				}
 			} else {
 				roomBusy += (booking.getRoomCheckin() - booking.getRoomCheckout());
@@ -180,11 +171,10 @@ public class RoomBookingController implements ICollectionProvider {
 				guestTotal += (booking.getGuestCheckin() - booking.getGuestCheckout());
 				booking.setGuestTotal( guestTotal );
 			}
+			// Se carga el total de habitaciones
 			String roomHotel = rooms!=null?((String) ((Object[])rooms)[0]):null;
 			if( !booking.getHotel().equals(roomHotel) ){
-				if( roomsIterator.hasNext() ){
-					rooms = roomsIterator.next();
-				}
+				rooms = roomsIterator.hasNext()?roomsIterator.next():null;
 			}
 			booking.setRoomTotal( ((BigInteger) (((Object[])rooms)[1])).intValue() );
 		}
@@ -198,7 +188,7 @@ public class RoomBookingController implements ICollectionProvider {
 			fromCal.setTime(getFromDate());
 			toCal.setTime(getToDate());
 			while(fromCal.before(toCal) || fromCal.equals(toCal)){
-				Booking b = new Booking();
+				DayBooking b = new DayBooking();
 				b.setHotel(getHotel().getWorkPlace().getDescription());
 				b.setDate(fromCal.getTime());
 				getBookingList().add(b);
@@ -207,17 +197,15 @@ public class RoomBookingController implements ICollectionProvider {
 		} else {
 			for(ITransferObject to: collections.getCurrentUserHotelList() ){
 				Hotel hotel = (Hotel) to;
-//				if(h.getScope().getId()!=1){
-					fromCal.setTime(getFromDate());
-					toCal.setTime(getToDate());
-					while(fromCal.before(toCal) || fromCal.equals(toCal)){
-						Booking b = new Booking();
-						b.setHotel(hotel.getWorkPlace().getDescription());
-						b.setDate(fromCal.getTime());
-						getBookingList().add(b);
-						fromCal.add(Calendar.DAY_OF_MONTH, 1);
-					}
-//				}
+				fromCal.setTime(getFromDate());
+				toCal.setTime(getToDate());
+				while(fromCal.before(toCal) || fromCal.equals(toCal)){
+					DayBooking b = new DayBooking();
+					b.setHotel(hotel.getWorkPlace().getDescription());
+					b.setDate(fromCal.getTime());
+					getBookingList().add(b);
+					fromCal.add(Calendar.DAY_OF_MONTH, 1);
+				}
 			}
 		}
 	}
@@ -296,7 +284,7 @@ public class RoomBookingController implements ICollectionProvider {
 	/**************************************************/
 	/**************************************************/
 	
-	public class Booking {
+	public class DayBooking {
 		private String hotel;
 		private Date date;
 		private Integer roomCheckin;
@@ -309,7 +297,7 @@ public class RoomBookingController implements ICollectionProvider {
 		private Integer guestCheckout;
 		private Integer guestTotal;
 		
-		public Booking (){
+		public DayBooking (){
 			roomCheckin=0;
 			roomCheckout=0;
 			roomBusy=0;

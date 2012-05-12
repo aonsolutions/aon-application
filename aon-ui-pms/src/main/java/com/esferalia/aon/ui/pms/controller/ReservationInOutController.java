@@ -24,7 +24,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.ui.pms.util.ReportUtils;
+import com.esferalia.aon.ui.pms.util.PmsReportManager;;
 
 public class ReservationInOutController implements ICollectionProvider {
 	
@@ -104,7 +104,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		String select = ReportUtils.getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), shortOption);
+		String select = PmsReportManager.getInstance().getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), shortOption);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));

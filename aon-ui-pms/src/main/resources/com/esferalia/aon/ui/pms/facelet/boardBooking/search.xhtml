@@ -70,7 +70,9 @@
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 								action="boardBooking_list"
 								actionListener="#{boardBooking.onSearch}"
-								accesskey="#{bundle.aon_key_search}" />
+								accesskey="#{bundle.aon_key_search}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								
 						</aon:panelGrid>
 					
@@ -78,6 +80,8 @@
 			</aon:div>
 			
 		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>
 </ui:composition>

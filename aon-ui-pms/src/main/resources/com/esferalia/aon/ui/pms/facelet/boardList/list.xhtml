@@ -22,7 +22,9 @@
 						value="#{bundle.aon_search}" 
 						action="boardList_list"
 						actionListener="#{boardList.onSearch}"
-						accesskey="#{bundle.aon_key_search}" />
+						accesskey="#{bundle.aon_key_search}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:htmlCommandLink id="boardList-excel-report"
 						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
@@ -147,5 +149,8 @@
 			</aon:div>
 
 		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
 	</ui:define>
 </ui:composition>

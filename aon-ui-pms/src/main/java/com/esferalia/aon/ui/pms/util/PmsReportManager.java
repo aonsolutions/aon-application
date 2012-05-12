@@ -17,19 +17,32 @@ import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
 import com.esferalia.aon.ui.pms.controller.ReservationInOutController.SortType;
 
 
-public class ReportUtils {
+public class PmsReportManager {
 	
-	private static CompanyCollectionsController companyCollections;
-	private static PmsCollectionsController pmsCollections;
+	private CompanyCollectionsController companyCollections;
+	private PmsCollectionsController pmsCollections;
+
+	private static PmsReportManager manager;
 	
-	public static CompanyCollectionsController getCompanyCollections() {
+	private PmsReportManager(){
+		
+	}
+	
+	public static PmsReportManager getInstance(){
+		if(manager == null){
+			manager = new PmsReportManager();
+		}
+		return manager; 
+	}
+	
+	private CompanyCollectionsController getCompanyCollections() {
 		if(companyCollections==null){
 			companyCollections = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		}
 		return companyCollections;
 	}
 	
-	public static PmsCollectionsController getPmsCollections() {
+	private PmsCollectionsController getPmsCollections() {
 		if(pmsCollections==null){
 			pmsCollections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		}
@@ -37,19 +50,19 @@ public class ReportUtils {
 	}
 
 	
-	public static String getRoomBookingSQL() {
+	public String getRoomBookingSQL() {
 		return null;
 	}
 	
-	public static String getWorkPlanningSQL() {
+	public String getWorkPlanningSQL() {
 		return null;
 	}
 	
-	public static String getBoardListSQL() {
+	public String getBoardListSQL() {
 		return null;
 	}
 	
-	public static String getBoardBookingSQL(Hotel hotel, boolean searchNoRoomBoard) throws ManagerBeanException{
+	public String getBoardBookingSQL(Hotel hotel, boolean searchNoRoomBoard) throws ManagerBeanException{
 			
 		String select = ""
 				+ " ( SELECT W.description, " 
@@ -95,7 +108,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	public static String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, Integer shortOption){
+	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, Integer shortOption){
 		String order = " ORDER BY";
 		
 		if(shortOption.equals(SortType.RESERVATION.ordinal())){
@@ -128,7 +141,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	public static String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
 		String select = "SELECT W.description, PR.start_date, count(PR.start_date), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -145,7 +158,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	public static String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
 		String select = "SELECT W.description, PR.end_date, count(PR.end_date), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -162,7 +175,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	public static String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
 		String select = "SELECT W.description, count(PRR.id), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -180,7 +193,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	public static String getHotelRoomsSQL(Hotel hotel) throws ManagerBeanException{
+	public String getHotelRoomsSQL(Hotel hotel) throws ManagerBeanException{
 		String select = "SELECT W.description, count(R.hotel)"
 				+ " FROM room as R"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
@@ -192,7 +205,7 @@ public class ReportUtils {
 		return select;
 	}
 	
-	private static String getHotelIds(Hotel hotel) throws ManagerBeanException{
+	private String getHotelIds(Hotel hotel) throws ManagerBeanException{
 		String hotelIds = "";
 		if( hotel != null ){
 			hotelIds = hotel.getId().toString();
