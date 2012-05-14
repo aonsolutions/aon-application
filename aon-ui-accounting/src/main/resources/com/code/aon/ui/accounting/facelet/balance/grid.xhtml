@@ -53,14 +53,14 @@
 					rendered="#{to==balanceDetail.to}" value="#{balanceDetail.to.sortKey}"
 					maxlength="4" size="2" />
 				<aon:div styleClass="aon-nowrap" rendered="#{to!=balanceDetail.to}">
-					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-up.gif"
+					<aon:graphicImage url="/css/images/aon-arrow-up.gif"
 						title="#[#{to.sortKey}]"
 						style="cursor:pointer" rendered="#{to.sortKey != 0}">
 						<a4j:support event="onclick"
 							actionListener="#{balanceDetail.onMoveUp}"
 							reRender="balanceDetailData" />
 					</aon:graphicImage>
-					<aon:graphicImage url="/css/images/aon-icon/aon-arrow-down.gif"
+					<aon:graphicImage url="/css/images/aon-arrow-down.gif"
 						title="#[#{to.sortKey}]"
 						style="cursor:pointer"
 						rendered="#{to.sortKey &lt; (balanceDetail.model.rowCount-1)}">

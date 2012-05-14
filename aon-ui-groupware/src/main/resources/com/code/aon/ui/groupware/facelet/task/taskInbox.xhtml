@@ -145,7 +145,7 @@
 						<aon:commandButton id="task-select"
 							immediate="true" value="&#160;"
 							styleClass="aon-icon-commandButton aon-icon-rowSelector"
-							style="padding:0px;margin:0px;padding-left:5px;"
+							style="padding:0px;margin:0px;padding-left:10px;"
 							actionListener="#{task.onSelect}" action="task_form">
 						</aon:commandButton>
 					</aon:column>
@@ -164,7 +164,7 @@
 								reRender="taskData"
 								onclick="if (!confirm('#{groupwareBundle.groupware_task_start}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-start"
-								style="padding:0px;margin:0px;padding-left:5px;"
+								style="padding:0px;margin:0px;padding-left:15px;"
 								actionListener="#{task.onStartTaskFromList}" />
 							<aon:commandButton id="task-stop"
 								alt="#{groupwareBundle.groupware_task_stop}"
@@ -174,7 +174,7 @@
 								reRender="taskData"
 								onclick="if (!confirm('#{groupwareBundle.groupware_task_stop}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-stop"
-								style="padding:0px;margin:0px;padding-left:5px;"
+								style="padding:0px;margin:0px;padding-left:15px;"
 								actionListener="#{task.onStopTaskFromList}" />
 							<aon:commandButton id="task-reopen"
 								alt="#{groupwareBundle.groupware_task_reopen}"
@@ -184,7 +184,7 @@
 								reRender="taskData"
 								onclick="if (!confirm('#{groupwareBundle.groupware_task_reopen}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-reopen"
-								style="padding:0px;margin:0px;padding-left:5px;width:18px;"
+								style="padding:0px;margin:0px;padding-left:15px;width:18px;"
 								actionListener="#{task.onReopenTaskFromList}" />
 						</aon:div>
 					</aon:column>
@@ -195,19 +195,19 @@
 						</f:facet>
 							<aon:outputText value="&#160;" rendered="#{to.highPriority}"
 								alt="#{groupwareBundle.groupware_high}" title="#{groupwareBundle.groupware_high}"
-								style="padding:0px;margin:0px;padding-left:15px;" 
-								styleClass="aon-icon-high-priority" />
+								style="padding:0px;margin:0px;padding-left:10px;" 
+								styleClass="aon-icon-task-high-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.lowPriority}"
 								alt="#{groupwareBundle.groupware_low}" title="#{groupwareBundle.groupware_low}"
-								style="padding:0px;margin:0px;padding-left:15px;"
-								 styleClass="aon-icon-low-priority" />
+								style="padding:0px;margin:0px;padding-left:10px;"
+								styleClass="aon-icon-task-low-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.normalPriority}"
 								alt="#{groupwareBundle.groupware_normal}" title="#{groupwareBundle.groupware_normal}"
-								style="padding:0px;margin:0px;padding-left:15px;"
-								styleClass="aon-icon-medium-priority" />
+								style="padding:0px;margin:0px;padding-left:10px;"
+								styleClass="aon-icon-task-medium-priority" />
 							<aon:outputText value="&#160;" rendered="#{to.nonePriority}" 
 								alt="#{groupwareBundle.groupware_none}"
-								style="padding:0px;margin:0px;padding-left:15px;" 
+								style="padding:0px;margin:0px;padding-left:10px;" 
 								title="#{groupwareBundle.groupware_none}"/>
 					</aon:column>
 
@@ -244,7 +244,7 @@
 							onclick="if (!confirm('#{groupwareBundle.groupware_task_finish}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-task-finish"
 							actionListener="#{task.onFinishTaskFromList}"
-							style="padding:0px;margin:0px;padding-left:5px;"/>
+							style="padding:0px;margin:0px;padding-left:15px;"/>
 
 					</aon:column>
 
@@ -262,7 +262,7 @@
 							reRender="taskData"
 							onclick="if (!confirm('#{groupwareBundle.groupware_task_release}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-contact"
-							style="padding:0px;margin:0px;padding-left:5px;"
+							style="padding:0px;margin:0px;padding-left:15px;"
 							actionListener="#{task.onReleaseTaskFromList}" />
 
 						<aon:commandButton id="task-assume"
@@ -274,7 +274,7 @@
 							reRender="taskData"
 							onclick="if (!confirm('#{groupwareBundle.groupware_task_assume}?')) return false;"
 							styleClass="aon-icon-commandButton aon-icon-contactGroup"
-							style="padding:0px;margin:0px;padding-left:5px;"
+							style="padding:0px;margin:0px;padding-left:15px;"
 							actionListener="#{task.onAssumeTaskFromList}" />
 
 					</aon:column>

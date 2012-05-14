@@ -16,8 +16,13 @@
 			</ui:include>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{withholdingReport}" />
-
+				<ui:param name="skipAfterSearch" value="true" />
+				
 				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{withholdingReport.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="withholdingReport_list" />
+
 					
 					<!--  Condicionar al mono empresa -->
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml">

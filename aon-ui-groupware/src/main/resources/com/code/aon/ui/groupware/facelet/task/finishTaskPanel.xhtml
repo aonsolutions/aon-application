@@ -30,7 +30,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton value="#{groupwareBundle.groupware_task_finish}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										actionListener="#{task.onFinishTransitionTask}"
+										actionListener="#{task.onFinishTransitionTask}" immediate="true"
 										action="task_list" />
 								</aon:div>
 							</aon:panelGrid>
@@ -58,7 +58,7 @@
 								</aon:div>
 							</aon:div>
 							
-							<aon:selectOneRadio id="task_transitionSelected" reRender="optionDetail"
+							<aon:selectOneRadio id="task_transitionSelected" reRender="optionDetail,task_transitionSelected"
 								ajaxSingle="true"
 								value="#{task.transitionSelected}" layout="pageDirection">
 								<f:selectItems value="#{task.transitions}" />

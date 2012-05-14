@@ -33,7 +33,7 @@ public class BalanceDefaults {
 	private static final String ABBREVIATED_OPERATING_BALANCE_FILE = "abbreviated_operating_balance.txt";
 	private static final String ABBREVIATED_PATRIMONY_BALANCE_FILE = "abbreviated_patrimony_balance.txt";
 	
-	public Balance reloadBalance(Balance balance) throws ManagerBeanException{
+	public Balance reloadBalance(Balance balance, int type) throws ManagerBeanException{
 		//inicio transaccion
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -53,10 +53,10 @@ public class BalanceDefaults {
 				for (ITransferObject to : list) {
 					detailBean.remove(to);
 				}
-				balance = loadBalance(balance);
+				balance = loadBalance(balance,type);
 				balance = (Balance) HibernateUtil.getSession(sessionName).merge(balance);
 				balance = (Balance) bean.update(balance);				
-				insertDetails(balance);
+				insertDetails(balance,type);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -79,43 +79,43 @@ public class BalanceDefaults {
 		}
 	}
 
-	private void insertDetails(Balance balance) throws ManagerBeanException, IOException {
-		if (balance.getId() == 1) {
+	private void insertDetails(Balance balance, int type) throws ManagerBeanException, IOException {
+		if (type == 1) {
 			loadClosingBalance(balance);
-		} else if (balance.getId() == 2) {
+		} else if (type == 2) {
 			loadOperatingBalance(balance);
-		} else if (balance.getId() == 3) {
+		} else if (type == 3) {
 			loadAbbreviatedClosingBalance(balance);
-		} else if (balance.getId() == 4) {
+		} else if (type == 4) {
 			loadAbbreviatedOperatingBalance(balance);
-		} else if (balance.getId() == 5) {
+		} else if (type == 5) {
 			loadAbbreviatedPatrimonyBalance(balance);
 		}
 		
 	}
 
-	private Balance loadBalance(Balance balance) {
-		if (balance.getId() == 1) {
+	private Balance loadBalance(Balance balance,int type) {
+		if (type == 1) {
 			balance.setName("BALANCE DE SITUACIÓN");
 			balance.setRemovable(false);
 			balance.setType(BalanceType.CLOSING);
 			return balance;
-		} else if (balance.getId() == 2) { 
+		} else if (type == 2) { 
 			balance.setName("CUENTA DE EXPLOTACIÓN");
 			balance.setRemovable(false);
 			balance.setType(BalanceType.OPERATING);
 			return balance;
-		} else if (balance.getId() == 3) { 
+		} else if (type == 3) { 
 			balance.setName("BALANCE DE SITUACIÓN (ABREVIADO)");
 			balance.setRemovable(false);
 			balance.setType(BalanceType.CLOSING);
 			return balance;
-		} else if (balance.getId() == 4) { 
+		} else if (type == 4) { 
 			balance.setName("CUENTA DE EXPLOTACIÓN (ABREVIADA)");
 			balance.setRemovable(false);
 			balance.setType(BalanceType.OPERATING);
 			return balance;
-		} else if (balance.getId() == 5) {
+		} else if (type == 5) {
 			balance.setName("ESTADO DE CAMBIOS EN EL PATRIMONIO NETO (ABREVIADO)");
 			balance.setRemovable(false);
 			balance.setType(BalanceType.PATRIMONY);

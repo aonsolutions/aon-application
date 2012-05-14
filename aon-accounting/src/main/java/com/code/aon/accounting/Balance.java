@@ -5,22 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import com.code.aon.accounting.enumeration.BalanceType;
-import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.entity.master.BalanceDB;
 
 @Entity
@@ -31,6 +22,10 @@ public class Balance extends BalanceDB {
 	
 
 	private Set<BalanceDetail> lines;
+
+	public Balance() {
+		setRemovable(true);
+	}
 	
 	@OneToMany(mappedBy = "balance", cascade={CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE})
 	@OrderBy()
