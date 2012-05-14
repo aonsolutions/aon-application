@@ -1,13 +1,9 @@
 package com.esferalia.aon.web.employee.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-
-import java.security.Principal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import org.slf4j.Logger;
@@ -17,6 +13,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.company.EnterpriseUser;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
@@ -27,9 +24,6 @@ import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.IMailAccount;
-import com.code.aon.webmail.WebmailUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
@@ -51,9 +45,8 @@ public class ManagerController implements IPayrollConstants {
 	private String homeTemplate;
 	
 	public ManagerController() {
-		this.principal = resolvePrincipal();
+		this.principal = BasicPrincipal.getAuthPrincipal();
 		this.loggedUser = resolveUser();
-		initWebmail();
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
 		if ( isEnterprise() ) {
 			initEnterprise();
@@ -75,28 +68,26 @@ public class ManagerController implements IPayrollConstants {
 	public boolean isEnterprise() {
 		return this.loggedUser.getRegistry() == null;
 	}
-
-	private AuthPrincipal resolvePrincipal() {
-		AuthPrincipal user = null;
-		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		return user;
-	}
 	
 	private EnterpriseUser resolveUser() {
+		EnterpriseUser user = null;
 		try {
             IManagerBean bean = BeanManager.getManagerBean(EnterpriseUser.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_login"), getPrincipal().getShortName() );
-            List<ITransferObject> list = bean.getList(criteria);
-            if (! list.isEmpty() ) {
-                return (EnterpriseUser) list.get(0);
+            if ( getPrincipal().getUserId() != null ) {
+            	user = (EnterpriseUser) bean.get(getPrincipal().getUserId());
             } else {
-            	String message = "El usuario no existe";
+                Criteria criteria = new Criteria();
+                criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_login"), getPrincipal().getShortName() );
+                if ( getPrincipal().getDomainId() != null ) {
+                	criteria.addEqualExpression( bean.getFieldName("EnterpriseUser_domain"), getPrincipal().getDomainId() );
+                }
+                List<ITransferObject> list = bean.getList(criteria);
+                if (! list.isEmpty() ) {
+                    user = (EnterpriseUser) list.get(0);
+                }
+            }
+            if ( user == null ) {
+                String message = "El usuario no existe";
             	LOGGER.error(message);
     			AonUtil.addErrorMessage(message);
     			throw new AbortProcessingException(message);
@@ -104,25 +95,11 @@ public class ManagerController implements IPayrollConstants {
         } catch (ManagerBeanException e) {
         	LOGGER.error( "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
         }
-        return null;		
+        return user;		
 	}
 	
 	public String getHomeTemplate() {
 		return homeTemplate;
-	}
-
-	private void initWebmail() {
-		try {
-			WebMailController controller = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			IMailAccount mailAccount = WebmailUtil.getDefaultAccount(this.principal.getDomain(), true);
-			if (mailAccount!=null) {
-				controller.init(mailAccount);
-			}		
-		} catch (Throwable e) {
-			LOGGER.error(">>>> initWebmail exception ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
 	}
 	
 	private void initEnterpriseTree() {
