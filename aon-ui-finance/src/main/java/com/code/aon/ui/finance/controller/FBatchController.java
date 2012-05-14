@@ -159,14 +159,13 @@ public class FBatchController extends BasicController implements ICollectionProv
 		super.onEditSearch(event);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	FinanceBatch to = (FinanceBatch)this.getTo();
 		if (to != null && to.getId() != null) {
 			IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accEntryFBatchBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), to.getId());
-			Iterator iterator = accEntryFBatchBean.getList(criteria).iterator();
+			Iterator<?> iterator = accEntryFBatchBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
 				return accountEntryFbatch.getAccountEntry().getId();
@@ -218,8 +217,8 @@ public class FBatchController extends BasicController implements ICollectionProv
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         criteria.addEqualExpression(financeController.getFieldName(IEntityAlias.FINANCE_PAYMENT), new Boolean(payment));
-        criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
         if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
+            criteria.addGreaterThanExpression(financeController.getFieldName(IEntityAlias.FINANCE_AMOUNT), new Double(0));
         	if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
         		String payMethodTypeAlias = financeController.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE);
         		criteria.addEqualExpression(payMethodTypeAlias, PayMethodType.NEGOTIABLE_DOCUMENT);
@@ -266,7 +265,6 @@ public class FBatchController extends BasicController implements ICollectionProv
         fBatchDetailController.onSearch(null);
     }
 
-    @SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
@@ -278,7 +276,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-        Iterator iterator = financeController.getCheckedFinances().iterator();
+        Iterator<?> iterator = financeController.getCheckedFinances().iterator();
         while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
             finance.setFinanceStatus(FinanceStatus.BATCHED);
@@ -300,7 +298,6 @@ public class FBatchController extends BasicController implements ICollectionProv
         onSearchFinance(event);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
@@ -311,7 +308,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
+		Iterator<?> iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
         while(iterator.hasNext()){
         	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
         	financeBatchDetailBean.remove(fBatchDetail);
@@ -321,11 +318,10 @@ public class FBatchController extends BasicController implements ICollectionProv
         onSearchFinance(event);
     }
 
-	@SuppressWarnings("unchecked")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
     	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
+        Collection<?> fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if ((fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19) || (fbatch.getFinanceBatchType() == FinanceBatchType.AEB_19_D)) {
 			AEB19Writer aeb19Writer = new AEB19Writer();
 			aebOutput = aeb19Writer.createAEB19(getCompany(), fbatch, fbatchDetailCollection);
@@ -353,8 +349,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
 	}
 
-	@SuppressWarnings("unchecked")
-	private Collection obtainDetailsCollection(FinanceBatch fbatch) {
+	private Collection<?> obtainDetailsCollection(FinanceBatch fbatch) {
 		String select = "select fbatchDetail " +
     					"from FinanceBatchDetail as fbatchDetail " +
     					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
