@@ -180,7 +180,7 @@
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
-		
+
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Proposal"/>
 		<mapping class="com.code.aon.purchase.ProposalDetail"/>

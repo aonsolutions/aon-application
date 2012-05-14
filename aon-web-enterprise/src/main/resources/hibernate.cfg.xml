@@ -214,6 +214,12 @@
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
+		<!-- AON-TAS Mapping files -->	
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.ProjectTas"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
+
 		<!-- AON-WAREHOUSE Mapping files -->		
 		<mapping class="com.code.aon.warehouse.Delivery"/>
 		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
