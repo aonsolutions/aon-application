@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="newDomainForm">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_new_domain}" />
+				<ui:param name="controller" value="#{adminNewDomain}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="newDomainAccept" 
+						value="#{bundle.aon_accept}" 
+						actionListener="#{adminNewDomain.onSave}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2">
+				
+					<aon:outputLabel value="#{securityBundle.aon_security_user_password}" 
+						for="passwd"/>
+					<aon:inputSecret id="passwd" 
+						value="#{adminNewDomain.password}" size="30" maxlength="20" />
+
+					<aon:outputLabel for="Domain_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Domain_name" required="true"
+						size="40" maxlength="64" 
+						value="#{adminNewDomain.domainName}" />
+
+					<aon:outputLabel for="Domain_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Domain_description" required="true"
+						size="95" maxlength="64" 
+						value="#{adminNewDomain.domainDescription}" />
+				</aon:panelGrid>
+				
+				<aon:div styleClass="aon-margin-top"
+					style="background-color:black; color: #DDDDDD;font-family: Monospace; padding: 5px;" 
+					rendered="#{adminNewDomain.output != null}">
+					<aon:outputText value="#{adminNewDomain.output}"
+						escape="false"/>
+				</aon:div>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

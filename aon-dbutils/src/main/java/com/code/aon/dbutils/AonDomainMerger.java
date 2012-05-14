@@ -1,5 +1,8 @@
 package com.code.aon.dbutils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -12,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Stack;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -34,21 +38,23 @@ public class AonDomainMerger {
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 			
-	private List<String> tables = new LinkedList<String>();
-	private Stack<String> stack = new Stack<String>();
+	private static final List<String> tables = new LinkedList<String>();
+	private static final Stack<String> stack = new Stack<String>();
 	
 	private Map<String,Map<Integer,Integer>> keys;
 	private Connection source;
 	private Connection target;
-
+	private String domainName;
+	
 	private String insertStmt;
 	private Integer newDomain;
 
 	private PreparedStatement insert;
 	
-	public AonDomainMerger(Connection source,Connection target) {
+	public AonDomainMerger(Connection source,Connection target, String domainName) {
 		this.source = source;
 		this.target = target;
+		this.domainName = domainName;
 		keys = new HashMap<String, Map<Integer,Integer>>();
 	}
 
@@ -58,6 +64,10 @@ public class AonDomainMerger {
 	
 	public Connection getTargetConnection() {
 		return target;
+	}
+	
+	public String getDomainName() {
+		return domainName;
 	}
 
 	public void execute() throws AonSQLException {
@@ -72,23 +82,24 @@ public class AonDomainMerger {
                 LOGGER.warn("No existen tablas en la BD origen!");
                 rs.close();
             } else {
-            	LOGGER.info("Construyendo el orden de inserción!");
-            	addTable(metaData,DOMAIN);
-                do {
-                	String tableName = rs.getString(TABLE_NAME);
-                    String tableType = rs.getString(TABLE_TYPE);
-            		if (TABLE.equalsIgnoreCase(tableType)) {
-	                    if (isMergeableTable(tableName,metaData)) {
-	                    	addTable(metaData,tableName);
-	                    } else {
-	                    	System.out.println("Ignorando la tabla --> " +tableName);    	
-	                    }
-            		}
-                } while (rs.next());
-                rs.close();
-                LOGGER.info("Hecho!");
+            	if (tables.size() == 0) {
+	            	LOGGER.info("Construyendo el orden de inserción!");
+	            	addTable(metaData,DOMAIN);
+	                do {
+	                	String tableName = rs.getString(TABLE_NAME);
+	                    String tableType = rs.getString(TABLE_TYPE);
+	            		if (TABLE.equalsIgnoreCase(tableType)) {
+		                    if (isMergeableTable(tableName,metaData)) {
+		                    	addTable(metaData,tableName);
+		                    } else {
+		                    	System.out.println("Ignorando la tabla --> " +tableName);    	
+		                    }
+	            		}
+	                } while (rs.next());
+	                rs.close();
+	                LOGGER.info("Hecho!");
+            	}
             }
-            LOGGER.info("Orden de las "+ tables.size() + " tablas.");
             getTargetConnection().setAutoCommit(false);
             
             Statement s = getTargetConnection().createStatement();
@@ -102,10 +113,15 @@ public class AonDomainMerger {
     			System.out.println( i + ".- Merging table " + table );
    				merge(metaData,table);	
             }
+            
+            String stmt = "UPDATE domain SET description=name,name = ? where id = ?";
+            PreparedStatement ps = getTargetConnection().prepareStatement(stmt);
+            ps.setString(1, getDomainName());
+            ps.setInt(2, newDomain);
+            ps.execute();
+            
             getTargetConnection().commit();
 			System.out.println( "COMMIT!");
-            getSourceConnection().close();
-            getTargetConnection().close();
 		} catch (Throwable e) {
             try {
 				getTargetConnection().rollback();
@@ -228,7 +244,9 @@ public class AonDomainMerger {
 	private Integer insert(DatabaseMetaData metaData, ResultSet rs, Table t) throws SQLException {
 		int id = rs.getInt( t.getPkColumn() );
 		Integer newId = null;
-
+		if ("action_denied".equals(t.getName())) {
+			System.out.println();
+		}
 		boolean notFound = (keys.get(t.getName()).get(id) == null);
 		if (notFound) {
 			for (int x = 0; x < t.getInsertColumns().length; x++) {
@@ -284,7 +302,9 @@ public class AonDomainMerger {
 		return newId;
 	}
 	private boolean isDirectId(String fkTable) {
-		return fkTable.equals("application");
+		return fkTable.equals("application")
+				|| fkTable.equals("action");
+				
 	}
 	private boolean isNoDomainTable(String fkTable) {
 		return fkTable.equals("cno")
@@ -446,18 +466,15 @@ public class AonDomainMerger {
 	}
 
 
-	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException {
+	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
 		Class.forName("org.gjt.mm.mysql.Driver");
-//		Connection source= DriverManager.getConnection("jdbc:mysql://volga/aon-macayc-aonsolutions-es","dbuser","serubd2000");
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-esferalia-com","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-inelco-mac-asesores-es","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-nabaroa-com","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-zapatitos-mac-asesores-es","root",null);
-		
-		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon_master","dbuser","serubd2000");
-		Connection source = DriverManager.getConnection("jdbc:mysql://volga/aon-aonsolutions-es","dbuser","serubd2000");
-		
-		AonDomainMerger merger = new AonDomainMerger(source, target);
+		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/aon_unused","dbuser","serubd2000");
+		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-zapatitos-mac-asesores-es","root",null);
+		String domainName = "test1.esferalia.net";
+		AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
 		merger.execute();
+        source.close();
+        target.close();
+		
 	}
 }

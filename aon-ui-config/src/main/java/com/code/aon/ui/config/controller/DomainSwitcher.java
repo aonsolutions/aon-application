@@ -97,6 +97,28 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	public void setParentDomain(Integer parentDomain) {
 		this.parentDomain = parentDomain;
 	}
+	
+	public boolean isDomainCreationAvailable() {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
+		String q = "SELECT d.parent,d.domainManagement FROM domain d"
+				+ " WHERE d.id = " + domainId
+				+ " AND d.active = 1";
+		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
+		List<?> queryList = query
+				.addScalar("parent", Hibernate.INTEGER)
+				.addScalar("domainManagement", Hibernate.BOOLEAN)
+				.list();
+		Iterator<?> iterator = queryList.iterator();
+		if (iterator.hasNext()) {
+			Object[] arr = (Object[]) iterator.next();
+			Integer parent = (Integer) arr[0]; 
+			Boolean management = (Boolean) arr[1];
+			if (parent == null && management) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public DataModel getModel() {
 		if (model == null) {

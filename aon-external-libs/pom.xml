@@ -211,7 +211,7 @@
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>3.2.1</version>
+			<version>3.2.2</version>
 		</dependency>
 	</dependencies>
 	<profiles>
@@ -311,7 +311,7 @@
 											<include>com.code.aon:aon.jsf.bridge:${project.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
 											<include>net.sf.jasperreports:jasperreports:${jasperReportsVersion}</include>
-											<include>ar.com.fdvs:DynamicJasper:3.2.1</include>
+											<include>ar.com.fdvs:DynamicJasper:3.2.2</include>
 											<include>oro:oro:2.0.8</include>
 											<include>javax.mail:mail:1.4.2</include>
 											<include>org.jboss.slf4j:slf4j-jboss-logging:1.0.2.GA</include>

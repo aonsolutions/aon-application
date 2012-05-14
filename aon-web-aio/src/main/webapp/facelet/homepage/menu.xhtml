@@ -24,27 +24,6 @@
 		<aon:commandLink id="management" value="#{bundle.aon_module_management}" 
 			action="menu_management" 
 			immediate="true" styleClass="aon-top-menu-item"/>
-
-<!-- 		
-		<c:if test="#{aonRole.saleOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
-			<aon:commandLink id="sales"
-				value="#{appBundle.menu_sales}"
-				action="menu_sales" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.purchaseOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
-			<aon:commandLink id="purchase"
-				value="#{appBundle.menu_purchase}"
-				action="menu_purchase" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.financeOperator}">
-			<aon:commandLink id="expenses"
-				value="#{productBundle.product_expense_module}"
-				action="menu_expenses" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
- -->
 		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="treasury"
 				value="#{bundle.aon_module_finance}"

@@ -79,6 +79,13 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 			
+	<!-- ************* NEW DOMAIN ***************** -->
+	<managed-bean>
+		<managed-bean-name>adminNewDomain</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.NewDomainController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>adminDomain</managed-bean-name>
@@ -828,5 +835,12 @@
 			<to-view-id>/com/code/aon/ui/admin/facelet/domainApplication/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>			
-		
+
+	<!-- =================== New Domain  ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>newDomain_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/newDomain/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>			
 </faces-config>
