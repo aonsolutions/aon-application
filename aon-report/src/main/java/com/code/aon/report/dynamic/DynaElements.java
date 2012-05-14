@@ -55,7 +55,7 @@ public class DynaElements {
 	public static final Style COLUMN_HEADER_STYLE = new Style();
 	static {
 		COLUMN_HEADER_STYLE.setFont(HEADER_FONT);
-		COLUMN_HEADER_STYLE.setBorderBottom(Border.PEN_1_POINT);
+		COLUMN_HEADER_STYLE.setBorderBottom(Border.PEN_1_POINT());
 		COLUMN_HEADER_STYLE.setHorizontalAlign(HorizontalAlign.CENTER);
 		COLUMN_HEADER_STYLE.setVerticalAlign(VerticalAlign.MIDDLE);
 		COLUMN_HEADER_STYLE.setBackgroundColor(Color.WHITE);

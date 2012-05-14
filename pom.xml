@@ -198,7 +198,9 @@
 		<module>aon-web-ebackoffice</module>
 		<module>aon-web-ecommerce</module>
 -->
+<!-- 
 		<module>aon.python</module>
+ -->
 	</modules>
 
 	<scm>
