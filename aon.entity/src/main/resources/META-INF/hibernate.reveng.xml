@@ -717,8 +717,13 @@
 		<column name="descendient_count" type="java.lang.Integer"/>
 		<column name="contract_type" exclude="true"/>
 		<column name="ceuta_melilla" exclude="true"/>
-		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
-		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
+		<column name="annual_remuneration" type="java.lang.Double"/>
+		<column name="deduccibles_expenses" type="java.lang.Double"/>
+		<column name="spousal_support" type="java.lang.Double"/>
+		<column name="food_annuity" type="java.lang.Double"/>
+		<column name="request_irpf" type="java.lang.Double"/>
+  		<column name="irregular_18_2_reduction" property="irregular18_2Reduction" type="java.lang.Double"/>
+		<column name="irregular_18_3_reduction" property="irregular18_3Reduction" type="java.lang.Double"/>
 	</table>
 
 	<table name="irpf_data_ascendants">
