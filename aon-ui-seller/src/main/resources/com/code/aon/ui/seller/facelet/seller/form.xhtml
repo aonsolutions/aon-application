@@ -24,24 +24,9 @@
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{seller}" />
-						<ui:param name="showFeeButton" value="#{false}" />
-						<ui:param name="showProjectButton" value="#{false}" />
-						<ui:param name="showNotesButton" value="#{false}" />
-						<ui:param name="showRelationshipButton" value="#{false}" />
-						<ui:param name="showRecordDataButton" value="#{false}" />
-						<ui:param name="showSegmentButton" value="#{false}" />
 						<ui:param name="showAddInfoButton" value="#{true}" />
-						<ui:param name="showDirStaffButton" value="#{false}" />
-						<ui:param name="showDocumentButton" value="#{documentManager.show}" />
 						
-						<ui:param name="feeController" value="#{null}" />
-						<ui:param name="projectController" value="#{null}" />
-						<ui:param name="notesController" value="#{null}" /> 
-						<ui:param name="relationshipController" value="#{null}" /> 
-						<ui:param name="recordDataController" value="#{null}" /> 
-						<ui:param name="segmentController" value="#{null}" /> 
 						<ui:param name="addInfoController" value="#{sellerAddInfo}" /> 
-						<ui:param name="dirStaffController" value="#{null}" /> 
 						<ui:param name="rAttachController" value="#{sellerRAttach}" />
 					</ui:include>
 				</ui:define>

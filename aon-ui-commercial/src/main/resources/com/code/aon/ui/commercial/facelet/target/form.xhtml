@@ -18,44 +18,27 @@
 				</ui:define>
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
-						<ui:param name="showFeeButton" value="#{false}" />
 						<ui:param name="showNotesButton" value="#{aonConfiguration.bean.target.showNote}" />
-						<ui:param name="showRelationshipButton" value="#{false}" />
-						<ui:param name="showRecordDataButton" value="#{false}" />
 						<ui:param name="showSegmentButton" value="#{true}" />
 						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.target.showAddInfo}" />
-						
-						<!--  
 						<ui:param name="showProductButton" value="#{aonConfiguration.bean.target.showProduct}" />
-						<ui:param name="showSellerButton" value="#{aonConfiguration.bean.target.showSeller}" />
 						<ui:param name="showProjectButton" value="#{aonConfiguration.bean.target.showProject}" />
 						<ui:param name="showProfileButton" value="#{aonConfiguration.bean.target.showProfile}" />
-						<ui:param name="showEcommerceButton" value="#{aonConfiguration.bean.target.showEcommerceTab}" />
-						<ui:param name="showSupplierButton" value="#{aonConfiguration.bean.target.showSupplier}" />
-						-->
+						<ui:param name="showTargetSellerButton" value="#{aonConfiguration.bean.target.showSeller}" />
+						<ui:param name="showTargetSupplierButton" value="#{aonConfiguration.bean.target.showSupplier}" />
 						
-						<ui:param name="showDirStaffButton" value="#{false}" />
-						<ui:param name="showDocumentButton" value="#{documentManager.show}" />
-						
-						<!--  -->
+						<ui:param name="projectButtonLabel" value="#{commercialBundle.commercial_target_operation_module}" />
+						<aon:methodParam name="projectResetActionListener" value="#{targetProjectCommercial.onResetTargetProject}" type="actionListener" />
 												
-						<ui:param name="feeController" value="#{null}" />
 						<ui:param name="notesController" value="#{targetNote}" />
-						<ui:param name="relationshipController" value="#{null}" />
-						<ui:param name="recordDataController" value="#{null}" />
 						<ui:param name="segmentController" value="#{targetSegment}" />
 						<ui:param name="addInfoController" value="#{targetAddInfo}" />
-
-						<!--  
 						<ui:param name="productController" value="#{targetItem}" />
-						<ui:param name="sellerController" value="#{targetSeller}" />
-						<ui:param name="projectController" value="#{targetProjectCommercial}" />
-						<ui:param name="profileController" value="#{targetProfile}" />
-						<ui:param name="ecommerceController" value="#{aonConfiguration.bean.target.showEcommerceTab}" />
-						<ui:param name="supplierController" value="#{targetSupplier}" />
-						-->
-						
-						<ui:param name="dirStaffController" value="#{null}" />
+						<ui:param name="projectController" value="#{projectCommercial}" />
+						<ui:param name="targetItemController" value="#{targetItem}" />
+						<ui:param name="targetProfileController" value="#{targetProfile}" />
+						<ui:param name="targetSellerController" value="#{targetSeller}" />
+						<ui:param name="targetSupplierController" value="#{targetSupplier}" />
 						<ui:param name="rAttachController" value="#{targetRAttach}" />
 					</ui:include>
 				</ui:define>
@@ -144,27 +127,35 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{aonConfiguration.bean.target.showProduct}">
+						<c:if test="#{aonConfiguration.bean.target.showProduct and targetItem.model.rowCount > 0}">
 							<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" />
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" >
+									<ui:param name="removeButtonReRender" value="targetTab" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.target.showSeller}">
+						<c:if test="#{aonConfiguration.bean.target.showSeller and targetSeller.model.rowCount > 0}">
 							<aon:panelTab id="targetSeller" label="#{sellerBundle.seller_seller}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" >
+									<ui:param name="removeButtonReRender" value="targetTab" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.target.showProject}">
+						<c:if test="#{aonConfiguration.bean.target.showProject and targetProjectCommercial.model.rowCount > 0}">
 							<aon:panelTab id="targetProjectCommercial" label="#{commercialBundle.commercial_target_operation_module}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetProjectCommercial/grid.xhtml" />
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetProjectCommercial/grid.xhtml" >
+									<ui:param name="removeButtonReRender" value="targetTab" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.target.showProfile}">
+						<c:if test="#{aonConfiguration.bean.target.showProfile and targetProfile.model.rowCount > 0}">
 							<aon:panelTab id="targetProfile" label="#{marketingBundle.marketing_target_profile}">
-								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" />
+								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" >
+									<ui:param name="removeButtonReRender" value="targetTab" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
@@ -174,10 +165,11 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{aonConfiguration.bean.target.showSupplier}">
+						<c:if test="#{aonConfiguration.bean.target.showSupplier and targetSupplier.model.rowCount > 0}">
 							<aon:panelTab id="targetSupplier" label="#{commercialBundle.commercial_target_supplier_info}">
 								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSupplier/tab_include.xhtml">
 									<ui:param name="controller" value="#{targetSupplier}" />
+									<ui:param name="removeButtonReRender" value="targetTab" />
 								</ui:include>
  							</aon:panelTab>
 						</c:if>
@@ -214,6 +206,9 @@
 				<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 				<aon:lookupButtonPopup lookup="#{bankLookup}" />
 			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showProject}">
+				<aon:lookupButtonPopup lookup="#{targetLookup}" />
+			</c:if>
 			
 			
 			
@@ -230,6 +225,31 @@
 			<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
 				<ui:param name="controller" value="#{target}" />
 				<ui:param name="addInfoController" value="#{targetAddInfo}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
+			<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/newTargetItemModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="targetItemController" value="#{targetItem}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
+			<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/newProjectCommercialModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="projectCommercialController" value="#{targetProjectCommercial}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
+			<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/newTargetProfileModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="targetProfileController" value="#{targetProfile}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
+			<ui:include src="/com/code/aon/ui/commercial/facelet/targetSupplier/newTargetSupplierModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="targetSupplierController" value="#{targetSupplier}" />
+				<ui:param name="modalReRender" value="targetTab" />
+			</ui:include>
+			<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/newTargetSellerModal.xhtml">
+				<ui:param name="controller" value="#{target}" />
+				<ui:param name="targetSellerController" value="#{targetSeller}" />
 				<ui:param name="modalReRender" value="targetTab" />
 			</ui:include>
 			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">

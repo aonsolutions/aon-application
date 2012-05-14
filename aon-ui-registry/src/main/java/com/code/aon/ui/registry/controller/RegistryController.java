@@ -49,6 +49,14 @@ public class RegistryController extends BasicController {
 
 	private boolean showNewDirStaffWindow;
 	
+	private boolean showNewTargetItemWindow;
+	
+	private boolean showNewTargetProfileWindow;
+	
+	private boolean showNewTargetSellerWindow;
+	
+	private boolean showNewTargetSupplierWindow;
+	
 	private boolean showNewDocumentWindow;
 
 	public String getSelectedTab() {
@@ -123,6 +131,38 @@ public class RegistryController extends BasicController {
 		this.showNewProjectWindow = showNewProjectWindow;
 	}
 	
+	public boolean isShowNewTargetItemWindow() {
+		return showNewTargetItemWindow;
+	}
+
+	public void setShowNewTargetItemWindow(boolean showNewTargetItemWindow) {
+		this.showNewTargetItemWindow = showNewTargetItemWindow;
+	}
+
+	public boolean isShowNewTargetProfileWindow() {
+		return showNewTargetProfileWindow;
+	}
+
+	public void setShowNewTargetProfileWindow(boolean showNewTargetProfileWindow) {
+		this.showNewTargetProfileWindow = showNewTargetProfileWindow;
+	}
+
+	public boolean isShowNewTargetSellerWindow() {
+		return showNewTargetSellerWindow;
+	}
+
+	public void setShowNewTargetSellerWindow(boolean showNewTargetSellerWindow) {
+		this.showNewTargetSellerWindow = showNewTargetSellerWindow;
+	}
+
+	public boolean isShowNewTargetSupplierWindow() {
+		return showNewTargetSupplierWindow;
+	}
+
+	public void setShowNewTargetSupplierWindow(boolean showNewTargetSupplierWindow) {
+		this.showNewTargetSupplierWindow = showNewTargetSupplierWindow;
+	}
+
 	public boolean isShowNewDocumentWindow() {
 		return showNewDocumentWindow;
 	}

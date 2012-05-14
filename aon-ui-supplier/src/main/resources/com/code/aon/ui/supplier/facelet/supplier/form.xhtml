@@ -19,24 +19,11 @@
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{supplier}" />
-						<ui:param name="showFeeButton" value="#{false}" />
-						<ui:param name="showProjectButton" value="#{false}" />
-						<ui:param name="showNotesButton" value="#{false}" />
-						<ui:param name="showRelationshipButton" value="#{false}" />
-						<ui:param name="showRecordDataButton" value="#{false}" />
 						<ui:param name="showSegmentButton" value="#{aonConfiguration.bean.supplier.showSegment}" />
 						<ui:param name="showAddInfoButton" value="#{aonConfiguration.bean.supplier.showAddInfo}" />
-						<ui:param name="showDirStaffButton" value="#{false}" />
-						<ui:param name="showDocumentButton" value="#{documentManager.show}" />
 						
-						<ui:param name="feeController" value="#{null}" />
-						<ui:param name="projectController" value="#{null}" />
-						<ui:param name="notesController" value="#{null}" /> 
-						<ui:param name="relationshipController" value="#{null}" /> 
-						<ui:param name="recordDataController" value="#{null}" /> 
 						<ui:param name="segmentController" value="#{supplierSegment}" /> 
 						<ui:param name="addInfoController" value="#{supplierAddInfo}" /> 
-						<ui:param name="dirStaffController" value="#{null}" /> 
 						<ui:param name="rAttachController" value="#{supplierRAttach}" />
 					</ui:include>
 				</ui:define>

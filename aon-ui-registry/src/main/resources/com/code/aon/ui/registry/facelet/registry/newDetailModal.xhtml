@@ -37,28 +37,40 @@
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="#{detailId}-save"
-											value="#{bundle.aon_save}"
-											reRender="showNew#{detailId}Window,#{modalReRender}"
-											actionListener="#{detailController.onAccept}"
-											styleClass="aon-finding-toolbar-item aon-icon-accept"
-											accesskey="#{bundle.aon_key_save}">
-											<rich:componentControl for="new#{detailId}ModalPanel"
-												event="onclick" operation="hide"/>																					
-											<f:setPropertyActionListener
-												target="#{showNewDetailWindow}"
-												value="#{false}" />
-										</aon:commandButton>
-										<aon:commandButton id="#{detailId}-cancel"
-											value="#{bundle.aon_cancel}"
-											reRender="showNew#{detailId}Window"
-											actionListener="#{detailController.onCancel}"
-											immediate="true"
-											styleClass="aon-finding-toolbar-item aon-icon-cancel">
-											<f:setPropertyActionListener
-												target="#{showNewDetailWindow}"
-												value="#{false}" />
-										</aon:commandButton>
+									
+										<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
+											columnClasses="aon-finding-subtitle, aon-finding-toolbar">
+								
+											<aon:div styleClass="aon-finding-subtitle-internal">
+												<aon:outputText value="#{bundle.aon_reset} " />			
+											</aon:div>
+											
+											<aon:div styleClass="aon-finding-toolbar-item-group">
+												<aon:commandButton id="#{detailId}-save"
+													value="#{bundle.aon_save}"
+													reRender="showNew#{detailId}Window,#{modalReRender}"
+													actionListener="#{detailController.onAccept}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													accesskey="#{bundle.aon_key_save}">
+													<rich:componentControl for="new#{detailId}ModalPanel"
+														event="onclick" operation="hide"/>																					
+													<f:setPropertyActionListener
+														target="#{showNewDetailWindow}"
+														value="#{false}" />
+												</aon:commandButton>
+												<aon:commandButton id="#{detailId}-cancel"
+													value="#{bundle.aon_cancel}"
+													reRender="showNew#{detailId}Window"
+													actionListener="#{detailController.onCancel}"
+													immediate="true"
+													styleClass="aon-finding-toolbar-item aon-icon-cancel">
+													<f:setPropertyActionListener
+														target="#{showNewDetailWindow}"
+														value="#{false}" />
+												</aon:commandButton>		
+											</aon:div>
+										</h:panelGrid>
+									
 									</aon:div>
 									<aon:div styleClass="aon-scroll-area">
 										<aon:panelGrid columns="#{(contentColumns!=null)?(contentColumns):('2')}" dir="true" style="width: 100%">
