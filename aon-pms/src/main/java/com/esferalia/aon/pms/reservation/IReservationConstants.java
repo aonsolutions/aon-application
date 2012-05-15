@@ -29,6 +29,8 @@ public interface IReservationConstants {
 	String CRO = "CRO";
 	String AGENCY_REBATE = "S";
 	String RATE_PLAN = "RATEPLAN";
+	String BOOKING_PAYMENT = "BOOKING_PAYMENT";
+	String VOUCHER = "Voucher";
 	String EUR = "EUR";
 
 	String GUEST_HOLDER = "C";
