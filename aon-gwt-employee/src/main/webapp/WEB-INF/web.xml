@@ -272,6 +272,14 @@
     <filter-name>BackDoorAuthenticationFilter</filter-name>
     <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
+  
+	<!-- DOMAIN MANAGER CONFIGURATION  -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.domain.ServletContextDomainListener
+       </listener-class>
+    </listener>
+  
   <listener>
     <listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
   </listener>
