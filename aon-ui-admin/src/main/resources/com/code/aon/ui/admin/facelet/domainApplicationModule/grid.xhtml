@@ -18,15 +18,14 @@
 				<aon:selectOneMenu id="Module_name"
 					rendered="#{formEdit}" required="true"
 					value="#{controller.to.module}">
-					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{domainApplication.modules}" />
+					<f:selectItems value="#{controller.modules}" />
 				</aon:selectOneMenu>		
 				<f:facet name="footer">
 					<aon:selectOneMenu id="Module_name-New"
 						rendered="#{formNew}" required="true"
 						value="#{controller.to.module}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{domainApplication.modules}" />
+						<f:selectItems value="#{controller.modules}" />
 					</aon:selectOneMenu>		
 				</f:facet>
 			</aon:column>

@@ -1,24 +1,18 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.admin.Profile;
-import com.code.aon.audit.DomainApplicationModule;
-import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,8 +26,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -156,34 +148,5 @@ public class DomainApplicationController extends BasicController {
 		}
 		return list;
 	}
-	
-	private Set<Module> getAvalaibleModules() throws ManagerBeanException {
-		Set<Module> modules = new HashSet<Module>();
-		modules.addAll( Arrays.asList(Module.values()) );
-		IController controller = FormUtil.getController(DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME);
-		Criteria criteria = new Criteria();
-		String alias = controller.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
-		criteria.addEqualExpression(alias, getDomainApplication().getId());
-		for( ITransferObject to : controller.getManagerBean().getList(criteria) ) {
-			DomainApplicationModule dam = (DomainApplicationModule) to;
-			modules.remove(dam.getModule());
-		}
-		if (! controller.isNew() ) {
-			DomainApplicationModule dam = (DomainApplicationModule) controller.getTo();
-			modules.add(dam.getModule());
-		}
-		return modules;
-	}
-	
-	public List<SelectItem> getModules() throws ManagerBeanException {
-		List<SelectItem> modules = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		for (Module module : getAvalaibleModules()) {
-			String name = module.getName(locale);		
-			modules.add( new SelectItem(module, name) );
-		}
-		AonUtil.sortSelectItems(modules);
-		return modules;
-	}		
 	
 }
