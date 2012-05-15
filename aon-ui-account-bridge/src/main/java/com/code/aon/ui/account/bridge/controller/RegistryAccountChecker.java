@@ -202,7 +202,7 @@ public abstract class RegistryAccountChecker implements Serializable {
 		String pojo = getPojoName();
 		String stmt = "SELECT new com.code.aon.ui.account.bridge.controller.RegistryAccountCheckerTo(c) "
 				+ " FROM " + pojo + " as c "
-				+ " WHERE " + DomainManager.getSQLWhereClause(pojo + ".domain");
+				+ " WHERE " + DomainManager.getSQLWhereClause("registry.domain");
 		if (getCompanyName() != null) {
 			String c = StringUtils.replaceChars(getCompanyName(), "*", "%");
 			stmt += " AND registry.name LIKE '" + c + "' ";
