@@ -837,7 +837,8 @@
 	</table>
 	
 	<table name="mail_account">
-		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
+		<column name="incoming_security" property="incomingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
+		<column name="outgoing_security" property="outgoingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
 		<column name="replyto_mail" property="replyToMail" />
 		<column name="incoming_port" type="int"/>
 		<column name="outgoing_port" type="int"/>
@@ -1318,7 +1319,6 @@
 	</table>
 	
 	<table name="signature">
-		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
 		<column name="signature" type="text"/>
 		<foreign-key constraint-name="FK_SIGNATURE_USER">
 			<many-to-one property="user"/>
@@ -1457,6 +1457,7 @@
 	<table name="user">
 		<column name="enterprise" exclude="true"/>
 		<column name="registry" exclude="true"/>
+		<column name="toolbar" type="com.code.aon.config.enumeration.Toolbar"/>
 		<foreign-key constraint-name="FK_USER_ENTERPRISE">
 			<many-to-one exclude="true"/>
 		</foreign-key>
