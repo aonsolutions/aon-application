@@ -71,12 +71,6 @@
 			</aon:div>
 			<aon:panelGrid columns="2" style="aon-width-500"
 				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
-				<aon:outputLabel for="MailAccount_host"
-					value="#{webmailBundle.webmail_mailAccount_host}" />
-				<aon:inputText id="MailAccount_host"
-					size="60" maxlength="256"
-					disabled="#{!mailConfig.mailAccountEditable}"
-					value="#{controller.to.host}" />
 
 				<aon:outputLabel for="MailAccount_incomingHost"
 					value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
@@ -92,11 +86,14 @@
 					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.incomingPort}" />
 
-				<aon:outputLabel for="MailAccount_incomingSsl"
-					value="#{webmailBundle.webmail_mailAccount_incomingSsl}" />
-                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
-					disabled="#{!mailConfig.mailAccountEditable}"
-					value="#{controller.to.incomingSsl}"/>
+				<aon:outputLabel for="MailAccount_incomingSecurity"
+					value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
+				<aon:selectOneMenu id="MailAccount_incomingSecurity"
+					disabled="#{!mailConfig.mailAccountEditable}" 
+					value="#{controller.to.incomingSecurity}">
+					<f:selectItems value="#{mailConfig.connectionSecurities}" />
+				</aon:selectOneMenu>						
+					
 			</aon:panelGrid>
 	   </aon:div>
 	   <aon:div styleClass="aon-margin-top aon-margin-bottom">
@@ -127,11 +124,13 @@
 					disabled="#{!mailConfig.mailAccountEditable}"
 					value="#{controller.to.outgoingPort}" />
 
-				<aon:outputLabel for="MailAccount_outgoingSsl"
-					value="#{webmailBundle.webmail_mailAccount_outgoingSsl}" />
-                <aon:selectBooleanCheckbox id="MailAccount_outgoingSsl"
-                 	disabled="#{!mailConfig.mailAccountEditable}"
-					value="#{controller.to.outgoingSsl}"/>
+				<aon:outputLabel for="MailAccount_outgoingSecurity"
+					value="#{webmailBundle.webmail_mailAccount_connectionSecurity}" />
+				<aon:selectOneMenu id="MailAccount_outgoingSecurity"
+					disabled="#{!mailConfig.mailAccountEditable}" 
+					value="#{controller.to.outgoingSecurity}">
+					<f:selectItems value="#{mailConfig.connectionSecurities}" />
+				</aon:selectOneMenu>						
 
 				<aon:outputLabel for="MailAccount_mailUsername"
 					value="#{webmailBundle.webmail_mailAccount_mailUsername}" />

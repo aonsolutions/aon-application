@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.ISignature;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.esferalia.aon.entity.master.MailAccountDB;
 
 @Entity
@@ -19,10 +20,10 @@ public class MailAccount extends MailAccountDB implements IMailAccount {
 	public MailAccount() {
 	    setProtocol("imap");
 	    setIncomingPort(143);
-	    setIncomingSsl(false);
+	    setIncomingSecurity(ConnectionSecurity.NONE);
 	    setOutgoingVerification(true);
 	    setOutgoingPort(25);
-	    setOutgoingSsl(false);
+	    setOutgoingSecurity(ConnectionSecurity.NONE);
 	}
 
 	@Override

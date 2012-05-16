@@ -24,6 +24,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.config.enumeration.WorkGroupStatus;
@@ -42,6 +43,7 @@ public class ConfigCollectionsController {
 	private List<SelectItem> invoiceTransactionTypes;
 	private List<SelectItem> workGroupStatuses;
 	private List<SelectItem> administrations;
+	private List<SelectItem> toolbars;
 
 	public List<SelectItem> getTaxTypes() {
 		if (taxTypes == null) {
@@ -406,5 +408,18 @@ public class ConfigCollectionsController {
 		}
 		return commissionTypes;
 	}
+
+	public List<SelectItem> getToolbars() {
+		if (toolbars == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			toolbars = new LinkedList<SelectItem>();
+			for (Toolbar toolbar : Toolbar.values()) {
+				String name = toolbar.getName(locale);
+				SelectItem item = new SelectItem(toolbar, name);
+				toolbars.add(item);
+			}
+		}
+		return toolbars;
+	}	
 
 }

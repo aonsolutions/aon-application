@@ -11,8 +11,10 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAI
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.FacesException;
+import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -37,6 +39,7 @@ import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 public class MailConfigController {
 
@@ -63,6 +66,8 @@ public class MailConfigController {
 	private List<SelectItem> mailAccounts;
 	
 	private List<SelectItem> signatures;
+	
+	private List<SelectItem> connectionSecurities;
 	
 	public MailConfigController() {
 		if ( AonUtil.isSkipLdap() ) {
@@ -180,21 +185,15 @@ public class MailConfigController {
 		return true;
 	}	
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void resetDefaults() throws ManagerBeanException {
-		List<IMailAccount> list = (List) getMailAccount().getModel().getWrappedData();
-		for (IMailAccount account : list) {
-			account.setDefaultAccount(false);
-			getMailAccount().getManagerBean().update(account);
-		}
-	}
-
 	public void onSetDefault(ActionEvent event) {
 		try {
-			resetDefaults();
-			IMailAccount account = getSelectMailAccount();
-			account.setDefaultAccount(true);
-			getMailAccount().getManagerBean().update(account);
+			IMailAccount currentAccount = getSelectMailAccount();
+			for( SelectItem item : getMailAccounts() ) {
+				IMailAccount account = (IMailAccount) item.getValue();
+				account.setDefaultAccount( ObjectUtils.equals(currentAccount, account) );
+				getMailAccount().getManagerBean().update(account);			
+			}
+			getMailAccount().initializeModel();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSetDefault exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -407,5 +406,18 @@ public class MailConfigController {
 		}
 		getContact().onSearch(event);
 	}
+
+	public List<SelectItem> getConnectionSecurities() {
+		if (connectionSecurities == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			connectionSecurities = new LinkedList<SelectItem>();
+			for (ConnectionSecurity cs : ConnectionSecurity.values()) {
+				String name = cs.getName(locale);
+				SelectItem item = new SelectItem(cs, name);
+				connectionSecurities.add(item);
+			}
+		}
+		return connectionSecurities;
+	}	
 	
 }

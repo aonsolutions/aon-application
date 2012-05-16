@@ -19,6 +19,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 @EntryObject(mainObjectClass=MAIL_ACCOUNT, objectClasses={TOP})
 public class MailAccount implements ILdapTransferObject, IMailAccount {
@@ -406,7 +407,25 @@ public class MailAccount implements ILdapTransferObject, IMailAccount {
 	public void setEnterpriseAccount(boolean enterpriseAccount) {
 		this.enterpriseAccount = enterpriseAccount;
 	}
+	
+	@Override
+	public ConnectionSecurity getIncomingSecurity() {
+		return isIncomingSsl() ? ConnectionSecurity.SSL : ConnectionSecurity.NONE;
+	}
 
+	public void setIncomingSecurity( ConnectionSecurity cs ) {
+		setIncomingSsl( cs == ConnectionSecurity.SSL );
+	}	
+	
+	@Override
+	public ConnectionSecurity getOutgoingSecurity() {
+		return isOutgoingSsl() ? ConnectionSecurity.SSL : ConnectionSecurity.NONE;
+	}
+
+	public void setOutgoingSecurity( ConnectionSecurity cs) {
+		setOutgoingSsl( cs == ConnectionSecurity.SSL );
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

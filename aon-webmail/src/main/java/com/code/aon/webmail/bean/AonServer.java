@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 import com.sun.mail.imap.IMAPStore;
 
 public class AonServer implements IMailConstants {
@@ -100,9 +101,9 @@ public class AonServer implements IMailConstants {
 
     private static Properties calculateProperties( IMailAccount account ) {
         Properties values = System.getProperties();
-        if (account.isIncomingSsl()) {
+        if (account.getIncomingSecurity() == ConnectionSecurity.SSL) {
         	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
-        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_FALLBACK, "false");
+        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_FALLBACK, Boolean.FALSE.toString());
         	values.setProperty(MAIL_IMAP_PORT, String.valueOf(account.getIncomingPort()));
         	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_PORT, String.valueOf(account.getIncomingPort()));
         } else {
@@ -112,9 +113,12 @@ public class AonServer implements IMailConstants {
         	values.remove(MAIL_IMAP_SOCKET_FACTORY_FALLBACK);
         	values.remove(MAIL_IMAP_PORT);
         	values.remove(MAIL_IMAP_SOCKET_FACTORY_PORT);
+        	if (account.getIncomingSecurity() == ConnectionSecurity.TLS) {
+        		values.setProperty(MAIL_IMAP_PREFIX + STARTTLS_ENABLE, Boolean.TRUE.toString());
+        	}
         }
-        if (! StringUtils.isEmpty(account.getHost())) {
-            values.setProperty(MAIL_HOST, account.getHost());	
+        if (! StringUtils.isEmpty(account.getIncomingHost())) {
+            values.setProperty(MAIL_HOST, account.getIncomingHost());	
         }
         Properties override = PropertiesUtil.getProperties(WEBMAIL_PROPERTIES, DEFAULT_PROPERTIES);
         values.putAll(override);
@@ -130,7 +134,7 @@ public class AonServer implements IMailConstants {
 	 * @throws MessagingException 
      */
 	public void connect() throws MessagingException {
-		LOGGER.info( "Connecting {}", account.getHost() );
+		LOGGER.info( "Connecting {}", account.getIncomingHost() );
         store = session.getStore();
         store.connect(account.getMailUsername(),account.getPasswordString());
         quotaAware = calculateQuotaAware();
@@ -211,20 +215,26 @@ public class AonServer implements IMailConstants {
 
     private static Transport getTransport( Session session, IMailAccount account ) throws MessagingException {
         Transport transport;
-        if (account.isOutgoingSsl()) {
+        String prefix = null;
+        if (account.getOutgoingSecurity() == ConnectionSecurity.SSL) {
+        	prefix = MAIL_PREFIX + SMTPS + ".";
             transport = session.getTransport(SMTPS);
         } else {
+        	prefix = MAIL_PREFIX + SMTP + ".";
             transport = session.getTransport(SMTP);
+            if (account.getOutgoingSecurity() == ConnectionSecurity.TLS) {
+            	session.getProperties().put(prefix + STARTTLS_ENABLE, Boolean.TRUE.toString());
+            }
         }
         if (account.isOutgoingVerification()) {
-        	session.getProperties().put(MAIL_SMTP_AUTH, "true");
+        	session.getProperties().put(prefix + AUTH, Boolean.TRUE.toString());
             transport.connect(
             		account.getOutgoingHost(),
             		account.getOutgoingPort(),
             		account.getMailUsername(),
             		account.getPasswordString());
         } else {
-        	session.getProperties().put(MAIL_SMTP_AUTH, "false");
+        	session.getProperties().put(prefix + AUTH, Boolean.FALSE.toString());
             transport.connect(
             		account.getOutgoingHost(),
             		account.getOutgoingPort(),
