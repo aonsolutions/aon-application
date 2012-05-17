@@ -20,21 +20,13 @@ public class GroupwareUtils {
 	
 	public TaskHolder getCurrentTaskHolder() throws ManagerBeanException {
 		if (currentTaskHolder == null) {
-			Integer userId = null;
 	        AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-	        userId = principal.getUserId();
-	        if( userId == null){
-	        	// La siguiente línea es para mantener la compatibilidad con 
-	        	// el principal de LDAP, que trae el id de usuario.
-	        	User user = UserUtils.getInstance().getLoggedUser();
-	        	if(user == null){
-	        		throw new IllegalStateException("No es posible encontrar el usuario actual");
-	        	}
-	        	userId = user.getId();
+	        if( principal.getUserId() == null){
+	        	throw new IllegalStateException("No es posible encontrar el usuario actual");
 	        }
 			IManagerBean bean = BeanManager.getManagerBean(TaskHolder.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), userId);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.TASK_HOLDER_USER_ID), principal.getUserId());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list != null && list.size() > 0) {
 				currentTaskHolder = (TaskHolder) list.get(0);
