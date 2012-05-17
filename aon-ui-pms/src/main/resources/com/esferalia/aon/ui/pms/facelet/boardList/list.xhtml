@@ -48,50 +48,122 @@
  
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom " >
-					
-					<aon:panelGrid columns="8" 
-						columnClasses="aon-panelGrid-even aon-noborder, 
-						aon-panelGrid-even aon-noborder">
-					
-						<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
-							value="#{pmsBundle.pms_hotel}" />
-						<aon:selectOneMenu id="BoardList_hotel_id"
-							value="#{boardList.params.hotel}" >
-							<f:selectItem itemLabel=" - " itemValue="#{null}" />
-							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-							<a4j:support event="onchange" reRender="boardList" />
-						</aon:selectOneMenu>
-					
-						<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
-							value="#{bundle.aon_date}" />
-						<aon:selectInputDate id="BoardList_date"	
-							value="#{boardList.params.date}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-
-						<aon:outputLabel for="BoardList_boardItemFilter_id" styleClass="aon-bold aon-margin-left"
-							value="#{pmsBundle.pms_board}" />
-						<aon:selectOneMenu id="BoardList_boardItemFilter_id"
-							value="#{boardList.params.boardItemFilter}" >
-							<f:selectItem itemLabel=" - " itemValue="null" />
-							<f:selectItems value="#{boardList.boardItemList}" />
-						</aon:selectOneMenu>
+				<aon:panelGrid columns="2" style="width:100%;" styleClass="aon-margin-bottom"
+					columnClasses="aon-panelGrid-even aon-noborder aon-width-auto aon-vertical-align-top, 
+					aon-panelGrid-even aon-noborder aon-width-150 aon-vertical-align-top">
+					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom " >
 						
-						<aon:outputText value="&#160;" />
-						<aon:div >
-							<h:selectBooleanCheckbox id="boardPageBreak" 
-								value="#{boardList.params.boardPageBreak}" />
-							<aon:outputLabel for="boardPageBreak"
-								value="#{pmsBundle.pms_board_page_break}" />
-						</aon:div>
-					</aon:panelGrid>
+						<aon:panelGrid columns="8" 
+							columnClasses="aon-panelGrid-even aon-noborder, 
+							aon-panelGrid-even aon-noborder">
+						
+							<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
+								value="#{pmsBundle.pms_hotel}" />
+							<aon:selectOneMenu id="BoardList_hotel_id"
+								value="#{boardList.params.hotel}" >
+								<f:selectItem itemLabel=" - " itemValue="#{null}" />
+								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+								<a4j:support event="onchange" reRender="boardList" />
+							</aon:selectOneMenu>
+						
+							<aon:outputLabel for="BoardList_date" styleClass="aon-bold aon-margin-left"
+								value="#{bundle.aon_date}" />
+							<aon:selectInputDate id="BoardList_date"	
+								value="#{boardList.params.date}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+							<aon:outputLabel for="BoardList_boardItemFilter_id" styleClass="aon-bold aon-margin-left"
+								value="#{pmsBundle.pms_board}" />
+							<aon:selectOneMenu id="BoardList_boardItemFilter_id"
+								value="#{boardList.params.boardItemFilter}" >
+								<f:selectItem itemLabel=" - " itemValue="null" />
+								<f:selectItems value="#{boardList.boardItemList}" />
+							</aon:selectOneMenu>
+							
+							<aon:outputText value="&#160;" />
+							<aon:div >
+								<h:selectBooleanCheckbox id="boardPageBreak" 
+									value="#{boardList.params.boardPageBreak}" />
+								<aon:outputLabel for="boardPageBreak"
+									value="#{pmsBundle.pms_board_page_break}" />
+							</aon:div>
+						</aon:panelGrid>
+						
+					</aon:div>
 					
-				</aon:div>
-			
+					<aon:div>
+						<aon:dataTable id="boardTotalList" value="#{boardList.boardsTotalList}" style="width:200px;"
+							rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputText value="#{pmsBundle.pms_board}" />
+									</f:facet>
+									<aon:outputText value="#{to.boardName}" />
+								</aon:column>
+		
+								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-auto">
+									<f:facet name="header">
+										<aon:outputText value="TOTAL" />
+									</f:facet>
+									<aon:outputText value="#{to.count}" />
+								</aon:column>
+							</aon:dataTable>
+					</aon:div>
+				</aon:panelGrid>
+				
 				<aon:dataTable id="roomBoardList" value="#{boardList.model}" 
 					rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
 						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_board}" />
+							</f:facet>
+							<aon:outputText value="#{to.boardName}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_room}" />
+							</f:facet>
+							<aon:outputText value="#{to.room}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="PAX" />
+							</f:facet>
+							<aon:outputText value="#{to.quantity}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_guest}" />
+							</f:facet>
+							<aon:outputText value="#{to.guest}" />
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<!--  
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_board}" />
@@ -141,12 +213,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
+						-->
 						
 				</aon:dataTable>
 			
 				<aon:dataScroller2 for="roomBoardList" showNote="true" />
 				
 			</aon:div>
+			
 
 		</aon:form>
 		

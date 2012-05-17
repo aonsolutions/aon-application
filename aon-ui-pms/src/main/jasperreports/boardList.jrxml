@@ -8,15 +8,23 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="boardsTotal">
+		<field name="boardName" class="java.lang.String"/>
+		<field name="count" class="java.lang.Integer"/>
+	</subDataset>
 	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="logoImageFile" class="java.io.InputStream"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<parameter name="hotel" class="com.esferalia.aon.pms.Hotel" isForPrompting="false"/>
 	<parameter name="date" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="boardPageBreak" class="java.lang.Boolean"/>
-	<field name="projectReservationService" class="com.esferalia.aon.pms.ProjectReservationService"/>
-	<field name="item" class="com.code.aon.product.Item"/>
-	<field name="quantity" class="java.lang.Double"/>
+	<parameter name="boardsTotalList" class="java.util.List"/>
+	<field name="boardName" class="java.lang.String"/>
+	<field name="room" class="java.lang.String"/>
+	<field name="guest" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="startDate" class="java.util.Date"/>
+	<field name="endDate" class="java.util.Date"/>
 	<variable name="lastGroup" class="java.lang.Boolean" incrementType="Group" incrementGroup="boards">
 		<variableExpression><![CDATA[$V{groupCount}.equals( $V{PAGE_NUMBER} )]]></variableExpression>
 	</variable>
@@ -24,8 +32,11 @@
 		<variableExpression><![CDATA[$V{groupCount}+1]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
+	<variable name="paxCount" class="java.lang.Integer" resetType="Group" resetGroup="boards" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantity}]]></variableExpression>
+	</variable>
 	<group name="boards">
-		<groupExpression><![CDATA[$F{item}]]></groupExpression>
+		<groupExpression><![CDATA[$F{boardName}]]></groupExpression>
 		<groupHeader>
 			<band height="3">
 				<printWhenExpression><![CDATA[$P{boardPageBreak}]]></printWhenExpression>
@@ -45,13 +56,26 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{item}.getProduct().getName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{boardName}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band>
+			<band height="14">
 				<printWhenExpression><![CDATA[$P{boardPageBreak}]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="boards" isBlankWhenNull="false">
+					<reportElement key="textField-15" x="0" y="0" width="535" height="14"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{report_total} + ": " + $V{paxCount}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
@@ -248,7 +272,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservationService}.getRoomNumber()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="40" y="0" width="40" height="14"/>
@@ -287,7 +311,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservationService}.getProjectReservation().getGuestFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{guest}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="280" y="0" width="60" height="14"/>
@@ -300,7 +324,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservationService}.getProjectReservation().getStartDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{startDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="340" y="0" width="60" height="14"/>
@@ -313,7 +337,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservationService}.getProjectReservation().getEndDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{endDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="400" y="0" width="135" height="14"/>

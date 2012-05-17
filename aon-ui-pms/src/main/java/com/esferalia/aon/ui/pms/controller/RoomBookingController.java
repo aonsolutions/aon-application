@@ -96,8 +96,6 @@ public class RoomBookingController implements ICollectionProvider {
 	private void buildBookingList() throws ManagerBeanException {
 		PmsReportManager reportManager = PmsReportManager.getInstance();
 		
-		setBookingList(new LinkedList<RoomBookingController.DayBooking>());
-		
 		buildEmptyList(getHotel());
 		
 		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
@@ -181,7 +179,7 @@ public class RoomBookingController implements ICollectionProvider {
 	}
 	
 	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{
-		PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		setBookingList(new LinkedList<RoomBookingController.DayBooking>());
 		Calendar fromCal = Calendar.getInstance();
 		Calendar toCal = Calendar.getInstance();
 		if( getHotel() != null && getHotel().getId()!=null ){
@@ -195,6 +193,7 @@ public class RoomBookingController implements ICollectionProvider {
 				fromCal.add(Calendar.DAY_OF_MONTH, 1);
 			}
 		} else {
+			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 			for(ITransferObject to: collections.getCurrentUserHotelList() ){
 				Hotel hotel = (Hotel) to;
 				fromCal.setTime(getFromDate());

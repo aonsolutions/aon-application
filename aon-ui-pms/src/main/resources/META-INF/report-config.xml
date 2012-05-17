@@ -101,6 +101,7 @@
 			<param id="hotel" value="#{boardList.getHotel}" />
 			<param id="date" value="#{boardList.getDate}" />
 			<param id="boardPageBreak" value="#{boardList.isBoardPageBreak}" />
+			<param id="boardsTotal" value="#{boardList.getBoardsTotalList}" />
 		</params>
 	</report>
 
