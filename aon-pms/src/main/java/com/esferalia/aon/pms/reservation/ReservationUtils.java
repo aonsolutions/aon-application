@@ -406,14 +406,16 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public String obtainCustomerCode(Customer customer, String context) throws ManagerBeanException {
-		IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
-		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context);
-		criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
-		for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
-			RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
-			return rAddInfo.getValue();
+		if (customer != null) {
+			IManagerBean rAddInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_REGISTRY_ID), customer.getRegistry().getId());
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_ATTRIBUTE), context);
+			criteria.addEqualExpression(rAddInfoBean.getFieldName(IEntityAlias.REGISTRY_ADD_INFO_DOMAIN), domain);
+			for (ITransferObject ito : rAddInfoBean.getList(criteria)) {
+				RegistryAddInfo rAddInfo = (RegistryAddInfo)ito;
+				return rAddInfo.getValue();
+			}
 		}
 		return null;
 	}
@@ -516,4 +518,9 @@ public class ReservationUtils implements IReservationConstants {
 		return messageId;
 	}
 
+/*
+	public boolean isUserPosOpened() {
+		return false;
+	}
+*/
 }

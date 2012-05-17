@@ -387,7 +387,14 @@ public class ReservationManager implements IReservationConstants {
 						reservationServiceDetail.setQuantity(price.getNumberOfUnits());
 						if (calculateTaxData) {
 							double vatPercent = reservationService.getItem().getProduct().getVat().getPercentage();
-							reservationServiceDetail.setPrice(CommonUtil.round(price.getBase().getAmountBeforeTax().doubleValue() / (1 + vatPercent / 100), 4));
+							double priceBeforeTax = price.getBase().getAmountBeforeTax().doubleValue();
+							if (priceBeforeTax < 1) {
+								String selfBooking = getReservationUtils().obtainCustomerCode(reservation.getAgency(), SELF_BOOKING);
+								if (selfBooking != null && selfBooking.equalsIgnoreCase("YES")) {
+									priceBeforeTax = 0;
+								}
+							}
+							reservationServiceDetail.setPrice(CommonUtil.round(priceBeforeTax / (1 + vatPercent / 100), 4));
 						} else {
 							reservationServiceDetail.setPrice(price.getBase().getAmountBeforeTax().doubleValue());
 						}

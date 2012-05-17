@@ -31,6 +31,7 @@ public interface IReservationConstants {
 	String RATE_PLAN = "RATEPLAN";
 	String BOOKING_PAYMENT = "BOOKING_PAYMENT";
 	String VOUCHER = "Voucher";
+	String SELF_BOOKING = "SELF_BOOKING";
 	String EUR = "EUR";
 
 	String GUEST_HOLDER = "C";
