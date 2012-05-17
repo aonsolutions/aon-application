@@ -18,21 +18,21 @@ public interface IMailConstants {
 		
 	String MAIL_PREFIX = "mail.";
 	
-	String MAIL_IMAP_PREFIX = MAIL_PREFIX + IMAP + ".";
+	String PORT = ".port";
+
+	String SOCKET_FACTORY_PORT = ".socketFactory.port";
 	
-	String MAIL_IMAP_SOCKET_FACTORY_PORT = MAIL_IMAP_PREFIX + "socketFactory.port";
+	String SOCKET_FACTORY_FALLBACK = ".socketFactory.fallback";
 
-	String MAIL_IMAP_PORT = MAIL_IMAP_PREFIX + "port";
-
-	String MAIL_IMAP_SOCKET_FACTORY_FALLBACK = MAIL_IMAP_PREFIX + "socketFactory.fallback";
-
-	String MAIL_IMAP_SOCKET_FACTORY_CLASS = MAIL_IMAP_PREFIX + "socketFactory.class";
+	String SOCKET_FACTORY_CLASS = ".socketFactory.class";
 	
-	String STARTTLS_ENABLE = "starttls.enable";
+	String STARTTLS_ENABLE = ".starttls.enable";
 	
-	String AUTH = "auth";
+	String AUTH = ".auth";
 
-	String MAIL_HOST = "mail.host";
+	String MAIL_HOST = MAIL_PREFIX + "host";
+	
+	String MAIL_STORE_PROTOCOL = MAIL_PREFIX + "store.protocol";
 
 	String X_MAILER = "X-Mailer";
 	

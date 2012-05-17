@@ -8,9 +8,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 		
 	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
-		<ui:param name="toolbarTitle" value="#{webmailBundle.webmail_mailAccount}" />
+		<ui:param name="toolbarTitle" value="#{mailConfig.mailAccountTitle}" />
 		<ui:param name="skipSearchButton" value="true" />
-		<ui:param name="skipRemoveButton" value="#{controller.new or mailConfig.mailAccountRemovable}" />
+		<ui:param name="skipRemoveButton" value="#{controller.new or (!mailConfig.mailAccountRemovable)}" />
 	</ui:include>			
 			
 	<aon:div styleClass="aon-scroll-area">

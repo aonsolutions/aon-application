@@ -40,6 +40,9 @@ public interface IAdminConstants {
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	
+	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
+	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";
+	
 	// Navigation
 	String DOMAIN_LIST = DOMAIN_CONTROLLER_NAME + "_list";
 	String DOMAIN_FORM_TEMPLATE = "/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml";

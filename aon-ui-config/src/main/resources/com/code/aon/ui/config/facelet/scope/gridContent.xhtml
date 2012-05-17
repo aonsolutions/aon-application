@@ -4,9 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
-	 			
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-		<ui:param name="rows" value="15" />
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-editDataTable-textColumn"
@@ -15,15 +14,16 @@
 					<aon:outputLabel for="Scope_description" value="#{bundle.aon_scope}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
-				<aon:inputText id="Scope_description" required="true"
+				<aon:inputText id="Scope_description"
 					rendered="#{formEdit}" size="20" maxlength="16"
-					value="#{controller.to.description}" />
+					value="#{controller.to.description}" required="true" />
 				<f:facet name="footer">
-					<aon:inputText id="Scope_description-New" required="true"
+					<aon:inputText id="Scope_description-New" 
 						rendered="#{formNew}" size="20" maxlength="16"
-						value="#{controller.to.description}" />
+						value="#{controller.to.description}" required="true" />
 				</f:facet>
 			</aon:column>
+
 		</ui:define>
 	</ui:decorate>
 

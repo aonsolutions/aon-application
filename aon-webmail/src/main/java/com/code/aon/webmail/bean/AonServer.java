@@ -99,27 +99,37 @@ public class AonServer implements IMailConstants {
         return store != null && store.isConnected();
     }
 
-    private static Properties calculateProperties( IMailAccount account ) {
-        Properties values = System.getProperties();
+    private static String getStoreProtocol( IMailAccount account ) {
+    	String store = IMAP;
+        if (! StringUtils.isEmpty(account.getProtocol())) {
+        	store = account.getProtocol();
+        }
         if (account.getIncomingSecurity() == ConnectionSecurity.SSL) {
-        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
-        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_FALLBACK, Boolean.FALSE.toString());
-        	values.setProperty(MAIL_IMAP_PORT, String.valueOf(account.getIncomingPort()));
-        	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_PORT, String.valueOf(account.getIncomingPort()));
-        } else {
-            // otherwise log on using http, avoid using incomingSsl properties as
-            // it will botch the connection .
-        	values.remove(MAIL_IMAP_SOCKET_FACTORY_CLASS);
-        	values.remove(MAIL_IMAP_SOCKET_FACTORY_FALLBACK);
-        	values.remove(MAIL_IMAP_PORT);
-        	values.remove(MAIL_IMAP_SOCKET_FACTORY_PORT);
-        	if (account.getIncomingSecurity() == ConnectionSecurity.TLS) {
-        		values.setProperty(MAIL_IMAP_PREFIX + STARTTLS_ENABLE, Boolean.TRUE.toString());
+        	if (! StringUtils.endsWith(store, "s") ) {
+        		store += "s";
         	}
+        }
+        return store;
+    }
+    
+    private static Properties calculateProperties( IMailAccount account ) {
+    	String store = getStoreProtocol(account);
+        String prefix = MAIL_PREFIX + store;
+        Properties values = new Properties();
+        if (account.getIncomingSecurity() == ConnectionSecurity.SSL) {
+        	values.setProperty(prefix + SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
+        	values.setProperty(prefix + SOCKET_FACTORY_FALLBACK, Boolean.FALSE.toString());
+        	values.setProperty(prefix + SOCKET_FACTORY_PORT, String.valueOf(account.getIncomingPort()));
+        } else if (account.getIncomingSecurity() == ConnectionSecurity.TLS) {
+        	values.setProperty(prefix + STARTTLS_ENABLE, Boolean.TRUE.toString());
+        }
+        if ( account.getIncomingPort() > 0 ) {
+        	values.setProperty(prefix + PORT, String.valueOf(account.getIncomingPort()));
         }
         if (! StringUtils.isEmpty(account.getIncomingHost())) {
             values.setProperty(MAIL_HOST, account.getIncomingHost());	
         }
+        values.setProperty(MAIL_STORE_PROTOCOL, store);	
         Properties override = PropertiesUtil.getProperties(WEBMAIL_PROPERTIES, DEFAULT_PROPERTIES);
         values.putAll(override);
     	return values;
@@ -217,10 +227,10 @@ public class AonServer implements IMailConstants {
         Transport transport;
         String prefix = null;
         if (account.getOutgoingSecurity() == ConnectionSecurity.SSL) {
-        	prefix = MAIL_PREFIX + SMTPS + ".";
+        	prefix = MAIL_PREFIX + SMTPS;
             transport = session.getTransport(SMTPS);
         } else {
-        	prefix = MAIL_PREFIX + SMTP + ".";
+        	prefix = MAIL_PREFIX + SMTP;
             transport = session.getTransport(SMTP);
             if (account.getOutgoingSecurity() == ConnectionSecurity.TLS) {
             	session.getProperties().put(prefix + STARTTLS_ENABLE, Boolean.TRUE.toString());
@@ -276,7 +286,7 @@ public class AonServer implements IMailConstants {
 	public void setAccount(IMailAccount account) {
 		this.account = account;
 	}
-
+	
 	public void createBasicFolders() throws MessagingException{
 		if (!getRoot().getFolder(getSentFolderName()).exists()){
 			createAonFolder(null, getSentFolderName(), HOLDS_MESSAGES);

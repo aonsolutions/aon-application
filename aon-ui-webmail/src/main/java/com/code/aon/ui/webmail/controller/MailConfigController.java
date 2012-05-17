@@ -7,7 +7,10 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACC
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_TITLE;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_TITLE;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -68,6 +71,12 @@ public class MailConfigController {
 	private List<SelectItem> signatures;
 	
 	private List<SelectItem> connectionSecurities;
+	
+	private String mailAccountTitle;
+	
+	private String signatureTitle;
+	
+	private boolean skipDefaultAccountColumn;
 	
 	public MailConfigController() {
 		if ( AonUtil.isSkipLdap() ) {
@@ -173,6 +182,9 @@ public class MailConfigController {
 	
 	public boolean isMailAccountRemovable() {
 		IMailAccount account = (IMailAccount) getMailAccount().getTo();
+		if ( account.isEnterpriseAccount() ) {
+			return true;
+		}
 		if ( account.isDefault() ) {
 			return false;
 		}
@@ -384,6 +396,8 @@ public class MailConfigController {
 	}
 	
 	public void onInitMailAccount( ActionEvent event ) throws ManagerBeanException {
+		setSkipDefaultAccountColumn(false);
+		setMailAccountTitle(null);
 		if ( getMailAccount() instanceof MailAccountDBController ) {
 			MailAccountDBController controller = (MailAccountDBController) getMailAccount();
 			controller.updateUser(UserUtils.getInstance().getLoggedUser());
@@ -392,6 +406,7 @@ public class MailConfigController {
 	}
 
 	public void onInitSignature( ActionEvent event ) throws ManagerBeanException {
+		setSignatureTitle(null);
 		if ( getSignature() instanceof SignatureDBController ) {
 			SignatureDBController controller = (SignatureDBController) getSignature();
 			controller.updateUser(UserUtils.getInstance().getLoggedUser());
@@ -418,6 +433,36 @@ public class MailConfigController {
 			}
 		}
 		return connectionSecurities;
+	}
+
+	public String getMailAccountTitle() {
+		if ( mailAccountTitle == null ) {
+			return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_TITLE);
+		}
+		return mailAccountTitle;
+	}
+
+	public void setMailAccountTitle(String mailAccountTitle) {
+		this.mailAccountTitle = mailAccountTitle;
+	}
+
+	public String getSignatureTitle() {
+		if ( signatureTitle == null ) {
+			return AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_TITLE);
+		}
+		return signatureTitle;
+	}
+
+	public void setSignatureTitle(String signatureTitle) {
+		this.signatureTitle = signatureTitle;
+	}
+
+	public boolean isSkipDefaultAccountColumn() {
+		return skipDefaultAccountColumn;
+	}
+
+	public void setSkipDefaultAccountColumn(boolean skipDefaultAccountColumn) {
+		this.skipDefaultAccountColumn = skipDefaultAccountColumn;
 	}	
 	
 }

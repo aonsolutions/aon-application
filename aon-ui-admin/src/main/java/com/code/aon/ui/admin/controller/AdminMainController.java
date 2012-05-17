@@ -9,14 +9,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -31,7 +26,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ui.admin.UserType;
 import com.code.aon.ui.admin.util.ManagerLogger;
@@ -57,8 +51,6 @@ public class AdminMainController implements IAdminConstants {
 	private UserType userType;
 	
 	private Domain currentDomain;
-	
-	private List<SelectItem> workGroupStatuses;
 	
 	private Properties properties;
 	
@@ -192,19 +184,6 @@ public class AdminMainController implements IAdminConstants {
 		}
 		return md5_passwd;
 	} 
-	
-	public List<SelectItem> getWorkGroupStatuses() {
-		if(workGroupStatuses == null){
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			workGroupStatuses = new LinkedList<SelectItem>();
-			for (WorkGroupStatus status : WorkGroupStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				workGroupStatuses.add(item);
-			}
-		}
-		return workGroupStatuses;
-	}	
 	
 	private Domain calculateCurrentDomain() {
 		try {

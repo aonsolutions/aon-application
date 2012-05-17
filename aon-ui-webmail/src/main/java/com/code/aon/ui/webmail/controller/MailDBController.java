@@ -71,7 +71,8 @@ public abstract class MailDBController extends BasicController {
 		if ( user != null ) {
 			criteria.addEqualExpression(getUserAlias(), user.getId());	
 		} else {
-			criteria.addNullExpression(getUserAlias());
+			String alias = StringUtils.removeEnd(getUserAlias(), ".id");
+			criteria.addNullExpression(alias);
 		}		
 	}
 	

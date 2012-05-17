@@ -21,6 +21,8 @@ public interface IMailAccount extends ITransferObject {
 	
 	String getPasswordString();
 	
+	String getProtocol();
+	
 	String getIncomingHost();
 
 	int getIncomingPort();

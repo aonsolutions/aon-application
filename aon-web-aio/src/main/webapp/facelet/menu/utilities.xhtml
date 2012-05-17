@@ -31,10 +31,22 @@
 										value="#{companyBundle.company_data_module}">
 									</aon:commandLink>
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccountEnterprise"
+										action="mailAccount_list"
+										actionListener="#{adminDomain.onInitMailAccount}"
+										value="#{adminBundle.admin_mailAccount_enterprise}" />						
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="signatureEnterprise"
+										action="signature_list"
+										actionListener="#{adminDomain.onInitSignature}"
+										value="#{adminBundle.admin_signature_enterprise}" />
+								</aon:div>								
 							</aon:div>
 						</aon:panelGrid>
 						
-						<c:if test="#{aonRole.admin || aonRole.sysAdmin}">
+						<c:if test="#{aonRole.admin}">
 							<aon:panelGrid id="group_config_security"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-security aon-direct-access-panel">
@@ -42,16 +54,14 @@
 									<aon:outputText value="#{bundle.aon_security}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<c:if test="#{aonRole.admin}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="actionDenied" action="actionDenied"
-												actionListener="#{actionDenied.onInit}"
-												value="#{auditBundle.audit_option_denied_module}" />
-										</aon:div>
-									</c:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="adminDomain"
-											action="#{adminDomain.initialAction}"
+											action="adminDomain_form"
 											actionListener="#{adminMain.onInit}"
 											value="#{adminBundle.admin_domain_management}" />
 									</aon:div>
@@ -63,6 +73,18 @@
 												value="#{adminBundle.admin_new_domain}" />
 										</aon:div>
 									</c:if>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="scope"
+											action="scope_list"
+											actionListener="#{scope.onSearch}"
+											value="#{configBundle.config_scopes}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="workGroup"
+											action="workgroup_list"
+											actionListener="#{workGroup.onSearch}"
+											value="#{configBundle.config_workgroup_module}" />
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
@@ -177,20 +199,20 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-mail">
 							<f:facet name="header">
-								<aon:outputText value="#{webmailBundle.webmail_main}" />
+								<aon:outputText value="#{webmailBundle.webmail_main} (#{loggedUser.loggedUserName})" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mailAccountChange"
+									<aon:commandLink id="mailAccount"
 										action="mailAccount_list"
 										actionListener="#{mailConfig.onInitMailAccount}"
-										value="#{webmailBundle.webmail_mailAccount}" />						
+										value="#{webmailBundle.webmail_mailAccount_full}" />						
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="signature"
 										action="signature_list"
 										actionListener="#{mailConfig.onInitSignature}"
-										value="#{webmailBundle.webmail_signature}" />
+										value="#{webmailBundle.webmail_signature_full}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="contact"

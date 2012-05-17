@@ -14,14 +14,6 @@
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
-				<ui:define name="additionalToolbarContent">				
-					<aon:commandButton id="back"
-						title="#{bundle.aon_key_cancel_accelerator}"
-						value="#{bundle.aon_back}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						action="adminDomain_form" actionListener="#{adminDomain.onBackToDomain}"
-						accesskey="#{bundle.aon_key_cancel}" />
-				</ui:define>				
 			</ui:decorate>
 
 			<!--  aon-region-body -->
