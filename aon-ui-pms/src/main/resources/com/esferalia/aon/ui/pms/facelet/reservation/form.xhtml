@@ -25,7 +25,7 @@
 						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
 							value="#{true}" />
 					</aon:commandButton>
-					<c:if test="#{aonRole.admin}">
+					<c:if test="#{aonRole.saleOperator}">
 						<aon:confirmButton id="reservation-Cancel"
 							value="#{pmsBundle.pms_to_cancel_reservation}"
 							title="#{pmsBundle.pms_to_cancel_reservation}"
