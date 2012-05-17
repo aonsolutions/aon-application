@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ldap</artifactId>
-			<version>6.20</version>
+			<version>6.70.2</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

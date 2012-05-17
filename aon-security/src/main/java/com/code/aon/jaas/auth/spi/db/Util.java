@@ -27,6 +27,8 @@ public class Util {
 
 	private static final String DB_SEP = "`";
 	
+	public static final String MYSQL = "mysql";
+	
 	private final static Logger LOGGER = LoggerFactory.getLogger(Util.class);
 	
 	private Properties properties;
@@ -38,7 +40,10 @@ public class Util {
 	}
 	
 	private String getConnectionURL( String name ) {
-		return properties.getProperty(URL) + "/" + StringUtils.defaultIfEmpty(name, "mysql");
+		if ( StringUtils.isEmpty(name) ) {
+			return properties.getProperty(URL);
+		}
+		return properties.getProperty(URL) + "/" + name;
 	}
 	
 	public Connection createConnection(String name) throws SQLException, ClassNotFoundException {
@@ -58,7 +63,7 @@ public class Util {
 		
 		Connection connection = null;
 		try {
-			connection = createConnection(null);
+			connection = createConnection(MYSQL);
 			Domain domain = getDomain(domainName);
 			if ( domain != null ) {
 				name = domain.getDataBaseName();
@@ -92,7 +97,7 @@ public class Util {
 		}		
 		return false;	
 	}
-	
+
 	private Domain getDomainInfo( String dbName, String domainName ) {
 		QueryRunner run = new QueryRunner();
 		try {
@@ -151,6 +156,49 @@ public class Util {
 		return domain;
 	}
 
+	private long getDomainCount() {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			return (Long) run.query( connection, "SELECT count(id) FROM domain", h); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return 0;
+	}	
+
+	private Integer getDefaultDomainId() {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			return (Integer) run.query( connection, "SELECT id FROM domain", h); 
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}	
+	
+	private Integer findDomainId( String domainName ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			return (Integer) run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;			
+	}	
+	
+	public Integer getDomainId( String domainName ) {
+		Integer domainId = null;
+		if ( getDomainCount() == 1 ) {
+			domainId = getDefaultDomainId();
+		} else {
+			domainId = findDomainId(domainName);
+		}
+		return domainId;
+	}	
+	
 	public User getUser( Integer domainId, String userName ) {
 		QueryRunner run = new QueryRunner();
 		try {

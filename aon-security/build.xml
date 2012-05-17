@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="2.1.3" />
+	<property name="version" value="2.2.0" />
 	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
@@ -49,7 +49,7 @@
 	<property name="org.jboss.slf4j.jar" value="slf4j-jboss-logging-1.0.2.GA.jar" />
 	
 	<!-- AON -->
-	<property name="aon.ldap.version" value="6.20" />
+	<property name="aon.ldap.version" value="6.70.2" />
 	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/${aon.ldap.version}" />
 
 	<!-- The classpath required to build classes. -->

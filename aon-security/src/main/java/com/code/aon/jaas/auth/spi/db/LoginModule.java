@@ -89,7 +89,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		}
 
 		try {
-			mainConnection = dbUtil.createConnection(null);
+			mainConnection = dbUtil.createConnection(Util.MYSQL);
 			String domainName = principal.getDomain();
 			Domain domain = dbUtil.getDomain(domainName);
 			if ( domain == null ) {
