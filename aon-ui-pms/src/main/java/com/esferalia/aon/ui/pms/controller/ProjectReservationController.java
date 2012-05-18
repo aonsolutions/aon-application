@@ -60,6 +60,7 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ProjectReservationController extends BasicController implements IPmsConstants {
 
@@ -516,6 +517,13 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onInvoiceShow(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		try {
+			PmsUtils pmsUtils = new PmsUtils();
+			if (reservation.isGuestHolder() && !pmsUtils.isUserPosOpen()) {
+				setShowInvoiceWindow(false);
+				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			if (!isInvoiceable(reservation)) {
 				setShowInvoiceWindow(false);
 				String msg = "No se puede Facturar. Existen Servicios sin Habitación asignada.";
@@ -707,11 +715,8 @@ public class ProjectReservationController extends BasicController implements IPm
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, false);
 
-				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
-				if (savedReservation.getStatus() != reservation.getStatus()) {
-					reservation.setStatus(savedReservation.getStatus());
-					accept(event);
-				}
+				reservation.setStatus(ReservationStatus.INVOICED);
+				accept(event);
 			} catch (ManagerBeanException ex) {
 				AonUtil.addErrorMessage(ex.getMessage());
 				throw new AbortProcessingException(ex.getMessage(), ex);

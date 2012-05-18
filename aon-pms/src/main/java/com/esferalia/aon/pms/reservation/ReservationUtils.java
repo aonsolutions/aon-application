@@ -518,9 +518,4 @@ public class ReservationUtils implements IReservationConstants {
 		return messageId;
 	}
 
-/*
-	public boolean isUserPosOpened() {
-		return false;
-	}
-*/
 }

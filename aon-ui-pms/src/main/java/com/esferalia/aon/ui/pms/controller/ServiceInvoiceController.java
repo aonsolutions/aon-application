@@ -51,6 +51,7 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
 	
@@ -136,8 +137,14 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	@Override
 	public void onReset(ActionEvent event) {
-		setNew(true);
 		try {
+			PmsUtils pmsUtils = new PmsUtils();
+			if (!pmsUtils.isUserPosOpen()) {
+				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			setNew(true);
 			setProjectReservation((ProjectReservation) BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
 			setReservationInvoiceTo(new ReservationInvoiceTo());
 			fillInvoiceData();
