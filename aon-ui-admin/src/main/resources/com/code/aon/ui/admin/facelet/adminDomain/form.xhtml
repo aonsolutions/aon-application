@@ -20,16 +20,8 @@
 				<ui:param name="skipBackButton" value="#{true}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="domainApplications" rendered="#{!adminDomain.new}"
-						value="#{adminBundle.admin_applications}" immediate="true"
-						action="domainApplication_list" actionListener="#{domainApplication.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-utilities"/>
-					<aon:commandButton id="domainUsers" rendered="#{!adminDomain.new}"
-						value="#{adminBundle.admin_users}" immediate="true"
-						action="domainUser_list" actionListener="#{domainUser.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-user"/>
 					<aon:commandButton id="domainCapabilities"
-						rendered="#{!adminDomain.new and adminMain.config.showDomainCapabilities}"
+						rendered="#{!adminDomain.new}"
 						value="#{adminBundle.admin_capabilities}" immediate="true"
 						action="domainCapabilities" actionListener="#{domainCapabilities.onInit}"
 						styleClass="aon-finding-toolbar-item aon-icon-account-entry-close"/>
@@ -66,27 +58,6 @@
 					<aon:inputText id="Domain_description" required="true"
 						size="95" value="#{adminDomain.to.description}" />
 
-					<c:if test="#{adminDomain.new}">
-						<aon:outputText value="#{adminBundle.admin_domain_administrator}" />
-						<aon:div>
-							<aon:outputLabel for="Domain_userUid"
-								value="#{bundle.aon_login}" styleClass="aon-italic"/>						
-							<aon:inputText id="Domain_userUid" required="true"
-								styleClass="aon-inputText aon-margin-left"
-								size="20" maxlength="16" value="#{adminDomain.to.administrator.uid}" />
-							<aon:outputLabel for="Domain_userName" styleClass="aon-margin-left aon-italic"
-								value="#{bundle.aon_name}" />						
-							<aon:inputText id="Domain_userName" required="true"
-								styleClass="aon-inputText aon-margin-left"
-								size="20" value="#{adminDomain.to.administrator.name}" />
-							<aon:outputLabel for="Domain_userSurname" styleClass="aon-margin-left aon-italic"
-								value="#{bundle.aon_surname}" />						
-							<aon:inputText id="Domain_userSurname" required="true"
-								styleClass="aon-inputText aon-margin-left"
-								size="20" value="#{adminDomain.to.administrator.surname}" />
-						</aon:div>					
-					</c:if>
-
 					<c:if test="#{adminMain.config.showDomainActive}" >
 						<aon:outputLabel for="Domain_active"
 							value="#{bundle.aon_active}" />
@@ -94,20 +65,11 @@
 							value="#{adminDomain.to.active}" />								
 					</c:if>				
 
-					<c:if test="#{aonRole.sysAdmin}">
-						<aon:outputLabel for="Domain_type"
-							value="#{bundle.aon_type}" />
-						<aon:selectOneMenu id="Domain_type" 
-							value="#{adminDomain.to.type}">
-							<f:selectItems value="#{adminCollections.domainTypes}" />
-						</aon:selectOneMenu>		
-					</c:if>
-
 					<c:if test="#{adminDomain.showDomainSubDomainSuffix}" >
 						<aon:outputLabel for="Domain_subDomainSuffix"
 							value="#{adminBundle.admin_domain_subDomainSuffix}" />
 						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
-							required="true" value="#{adminDomain.to.subDomainSuffix}" />
+							disabled="true" value="#{adminDomain.to.subDomainSuffix}" />
 					</c:if>
 
 					<c:if test="#{aonRole.sysAdmin or (adminDomain.to.parent.id != null)}" >

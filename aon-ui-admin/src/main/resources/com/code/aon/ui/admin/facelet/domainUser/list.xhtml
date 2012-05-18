@@ -10,11 +10,11 @@
 
 		<aon:form id="domainUserList">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
-			</ui:decorate>
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

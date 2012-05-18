@@ -60,8 +60,8 @@ public class DomainApplicationController extends BasicController {
 		Expression expr2 = ExpressionUtilities.getNullExpression("Profile.domain");
 		Expression expr3 = ExpressionUtilities.getOrExpression(expr1, expr2);
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_CONTROLLER_NAME);
-		Domain parent = dc.getDomain().getParent();
-		if ( (parent != null) && (parent.getId() != null) ) {
+		Domain parent = dc.getParentDomain();
+		if ( parent != null ) {
 			Expression expr4 = ExpressionUtilities.getEqualExpression("Profile.domain<id", parent.getId());
 			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr3, expr4));
 		} else {

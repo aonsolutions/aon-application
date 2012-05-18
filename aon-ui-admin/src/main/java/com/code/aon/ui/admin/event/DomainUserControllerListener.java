@@ -1,7 +1,6 @@
 package com.code.aon.ui.admin.event;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.config.User;
 import com.code.aon.ui.admin.controller.AdminMainController;
-import com.code.aon.ui.admin.controller.DomainController;
 import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -72,8 +70,8 @@ public class DomainUserControllerListener extends ControllerAdapter {
 
 	private void updateWebmail( User user ) throws ControllerListenerException {
 		try {
-			DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-			dc.initWebmail(user);
+			AdminMainController admin = (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
+			admin.initWebmail(user);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

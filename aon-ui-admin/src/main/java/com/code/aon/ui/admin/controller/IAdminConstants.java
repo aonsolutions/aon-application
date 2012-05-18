@@ -42,10 +42,5 @@ public interface IAdminConstants {
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
 	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";
-	
-	// Navigation
-	String DOMAIN_LIST = DOMAIN_CONTROLLER_NAME + "_list";
-	String DOMAIN_FORM_TEMPLATE = "/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml";
-	String DOMAIN_LIST_TEMPLATE = "/com/code/aon/ui/admin/facelet/adminDomain/list.xhtml";
 		
 }
