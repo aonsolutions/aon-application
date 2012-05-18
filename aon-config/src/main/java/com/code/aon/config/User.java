@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.config.enumeration.Toolbar;
 import com.esferalia.aon.entity.master.UserDB;
 
 @Entity
@@ -14,6 +15,11 @@ public class User extends UserDB {
 
 	private Integer enterprise;
 	private Integer registry;
+	
+	public User() {
+		setActive(true);
+		setToolbar(Toolbar.GOOGLE);
+	}	
 	
     @Column(name="enterprise")
 	public Integer getEnterprise() {
