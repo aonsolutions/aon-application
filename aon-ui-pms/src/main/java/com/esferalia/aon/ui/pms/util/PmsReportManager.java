@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
@@ -63,20 +64,30 @@ public class PmsReportManager {
 		return null;
 	}
 	
-	public String getBoardBookingSQL(Hotel hotel, Product product, boolean searchNoRoomBoard) throws ManagerBeanException{
+	public static final Integer BOARD_HOTEL_NAME = 0;
+	public static final Integer BOARD_DATE = 1;
+	public static final Integer BOARD_NAME = 2;
+	public static final Integer BOARD_CODE = 3;
+	public static final Integer BOARD_ROOM_NAME = 4;
+	public static final Integer BOARD_QUANTITY = 5;
+	public static final Integer BOARD_GUEST_START_DATE = 6;
+	public static final Integer BOARD_GUEST_END_DATE = 7;
+	public static final Integer BOARD_GUEST_NAME = 8;
+	
+	public String getBoardBookingSQL(Hotel hotel, Product product) throws ManagerBeanException{
 		String select = ""
 				+ " (SELECT W.description,  "
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
-				+ " PRSD.quantity,"
+//				+ " PRSD.quantity,"
 				+ " P.name AS Servicio,"
 				+ " P.code,"
-				+ " PRS.extra,"
-				+ " P2.name,"
-				+ " PRR.adults + PRR.children AS Pax,"
-				+ " PR.project,"
-				+ " PRR.id,"
+//				+ " PRS.extra,"
+//				+ " P2.name,"
+//				+ " PRR.adults + PRR.children AS Pax,"
+//				+ " PR.project,"
+//				+ " PRR.id,"
 				+ " A.name as Hab,"
 				+ " PRR.adults+PRR.children AS Cantidad,"
 				+ " PR.start_date AS Inicio,"
@@ -98,11 +109,12 @@ public class PmsReportManager {
 				+ " LEFT JOIN item AS I2 ON I2.id=IC.composition_item"
 				+ " LEFT JOIN product AS P ON I2.product=P.id" 
 				+ " LEFT JOIN product AS P2 ON I.product=P2.id "
-				+ " WHERE" 
-				+ " (PRSD.project_reservation_room_detail=PRRD.id" 
+				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+				+ " AND (PRSD.project_reservation_room_detail=PRRD.id" 
 				+ " OR (PRSD.project_reservation_room_detail is null OR R.hotel=PR.Hotel))"
 				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
 				+ " AND P.category="+getBoardCategory()+" AND PR.status<>"+getReservationCancelStatus()
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " )"
 				+ " UNION"
@@ -110,14 +122,14 @@ public class PmsReportManager {
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
-				+ " PRSD.quantity,"
+//				+ " PRSD.quantity,"
 				+ " P.name AS Servicio,"
 				+ " P.code,"
-				+ " PRS.extra,"
-				+ " '-',"
-				+ " '-'," 
-				+ " PR.project,"
-				+ " PRR.id,"
+//				+ " PRS.extra,"
+//				+ " '-',"
+//				+ " '-'," 
+//				+ " PR.project,"
+//				+ " PRR.id,"
 				+ " A.name as Hab,"
 				+ " PRR.adults+PRR.children AS Cantidad,"
 				+ " PR.start_date AS Inicio,"
@@ -141,11 +153,12 @@ public class PmsReportManager {
 				+ " AND P.composition=0"
 				+ " AND P.category=4 AND PR.status<>2"
 				+ " AND P.category="+getBoardCategory()+" AND PR.status<>"+getReservationCancelStatus()
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND R.hotel=PR.Hotel"
 				+ " AND PRSD.project_reservation_room_detail=PRRD.id"
 				+ " )"
-				+ " ORDER BY 1,2,5,11"
+				+ " ORDER BY 1,2,4,5"
 				;
 		return select;
 	}
@@ -154,8 +167,8 @@ public class PmsReportManager {
 		return product.getCode().equals("001") || product.getCode().equals("001F");
 	}
 
-	public String getBoardBookingSQL(Hotel hotel, boolean searchNoRoomBoard) throws ManagerBeanException{
-		return getBoardBookingSQL(hotel, null, searchNoRoomBoard);
+	public String getBoardBookingSQL(Hotel hotel) throws ManagerBeanException{
+		return getBoardBookingSQL(hotel, null);
 	}
 	
 	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, Integer shortOption){
@@ -191,7 +204,7 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, PR.start_date, count(PR.start_date), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -208,7 +221,7 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, PR.end_date, count(PR.end_date), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -225,7 +238,7 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item, Date fromDate, Date toDate) throws ManagerBeanException{
+	public String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, count(PRR.id), sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
@@ -238,6 +251,21 @@ public class PmsReportManager {
 				+ " AND PR.start_date <= :start "
 				+ " AND PR.end_date > :start "
 				+ " GROUP BY PR.hotel"
+				+ " ORDER BY W.description"
+				;
+		return select;
+	}
+	
+	public String getBlockedRoomsSQL(Hotel hotel, Date fromDate, Date toDate) throws ManagerBeanException{
+		String select = "SELECT W.description As Hotel, AA.date As Fecha, count(R.asset)"
+				+ " FROM room as R"
+				+ " LEFT JOIN asset_activity AS AA ON R.asset=AA.asset"
+				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
+				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
+				+ " WHERE AA.status <> " + ActivityStatus.BUSY.getValue()
+				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
+				+ " AND AA.date between :start AND :end"
+				+ " GROUP BY R.hotel, AA.date"
 				+ " ORDER BY W.description"
 				;
 		return select;

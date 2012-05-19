@@ -50,7 +50,7 @@
 			
 				<aon:panelGrid columns="2" style="width:100%;" styleClass="aon-margin-bottom"
 					columnClasses="aon-panelGrid-even aon-noborder aon-width-auto aon-vertical-align-top, 
-					aon-panelGrid-even aon-noborder aon-width-150 aon-vertical-align-top">
+					aon-panelGrid-even aon-noborder aon-width-200 aon-vertical-align-top">
 					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom " >
 						
 						<aon:panelGrid columns="8" 
@@ -93,7 +93,7 @@
 					</aon:div>
 					
 					<aon:div>
-						<aon:dataTable id="boardTotalList" value="#{boardList.boardsTotalList}" style="width:200px;"
+						<aon:dataTable id="boardTotalList" value="#{boardList.boardsTotalList}" style="width:250px;"
 							rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">

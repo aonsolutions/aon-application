@@ -98,10 +98,11 @@ public class RoomBookingController implements ICollectionProvider {
 		
 		buildEmptyList(getHotel());
 		
-		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
-		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
-		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem(), getFromDate(), getToDate());
+		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem());
+		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem());
+		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem());
 		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel());
+		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel(), getFromDate(), getToDate());
 
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 
@@ -117,16 +118,22 @@ public class RoomBookingController implements ICollectionProvider {
 		occupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
 
 		Query roomsQuery = session.createSQLQuery(roomsSelect);
+		
+		Query blockedRoomsQuery = session.createSQLQuery(blockedRoomsSelect);
+		blockedRoomsQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		blockedRoomsQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
 
 		Iterator checkinIterator = checkinQuery.list().iterator();
 		Iterator checkoutIterator = checkoutQuery.list().iterator();
 		Iterator occupationIterator = occupationQuery.list().iterator();
 		Iterator roomsIterator = roomsQuery.list().iterator();
+		Iterator blockedRoomsIterator = blockedRoomsQuery.list().iterator();
 		
 		Object checkin = checkinIterator.hasNext()?checkinIterator.next():null;
 		Object checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
 		Object occupation = occupationIterator.hasNext()?occupationIterator.next():null;
 		Object rooms = roomsIterator.hasNext()?roomsIterator.next():null;
+		Object blockedRooms = blockedRoomsIterator.hasNext()?blockedRoomsIterator.next():null;
 		
 		int roomBusy = 0;
 		int guestTotal = 0;
@@ -168,6 +175,15 @@ public class RoomBookingController implements ICollectionProvider {
 				booking.setRoomBusy( roomBusy );
 				guestTotal += (booking.getGuestCheckin() - booking.getGuestCheckout());
 				booking.setGuestTotal( guestTotal );
+			}
+			// Se cargan las habitaciones bloqueadas
+			String blockedRoomHotel = blockedRooms!=null?((String) ((Object[])blockedRooms)[0]):null;
+			Date blockedRoomDate = blockedRooms!=null?((Date) ((Object[])blockedRooms)[1]):null;
+			if( booking.getDate().equals(blockedRoomDate) && booking.getHotel().equals(blockedRoomHotel) ){
+				if(blockedRooms!=null){
+					booking.setRoomBlocked( ((BigInteger) (((Object[])blockedRooms)[2])).intValue() );
+				}
+				blockedRooms = blockedRoomsIterator.hasNext()?blockedRoomsIterator.next():null;
 			}
 			// Se carga el total de habitaciones
 			String roomHotel = rooms!=null?((String) ((Object[])rooms)[0]):null;

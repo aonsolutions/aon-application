@@ -24,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
@@ -39,7 +40,6 @@ public class BoardBookingController implements ICollectionProvider {
 	private Hotel hotel;
 	private Date fromDate;
 	private Date toDate;
-	private boolean searchNoRoomBoard;
 	
 	private List<Booking> bookingList;
 	private DataModel model;
@@ -56,19 +56,22 @@ public class BoardBookingController implements ICollectionProvider {
 		return fromDate;
 	}
 	public void setFromDate(Date fromDate) {
+		if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
+			toDate = DateUtils.addDays(fromDate, 15);
+		}
 		this.fromDate = fromDate;
 	}
 	public Date getToDate() {
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-	public boolean isSearchNoRoomBoard() {
-		return searchNoRoomBoard;
-	}
-	public void setSearchNoRoomBoard(boolean searchNoRoomBoard) {
-		this.searchNoRoomBoard = searchNoRoomBoard;
+		if(toDate.before(fromDate)){
+			this.toDate = fromDate;
+		} else if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
+			this.toDate = DateUtils.addDays(fromDate, 15);
+		} else {
+			this.toDate = toDate;
+		}
 	}
 	public List<Booking> getBookingList() {
 		return bookingList;
@@ -90,8 +93,8 @@ public class BoardBookingController implements ICollectionProvider {
 	public void onInit(ActionEvent event) {
 		setHotel(null);
 		setFromDate(new Date());
-		setToDate(new Date());
-		setSearchNoRoomBoard(true);
+		setToDate(DateUtils.addDays(new Date(), 10));
+//		setSearchNoRoomBoard(true);
 	}
 	
 	public void onSearch(ActionEvent event) {
@@ -109,40 +112,86 @@ public class BoardBookingController implements ICollectionProvider {
 	private void buildBookingList() throws ManagerBeanException {
 		buildEmptyList(getHotel());
 		
-		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel(), isSearchNoRoomBoard());
+		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
 
-		List list = query.list();
-		Iterator it = list.iterator();
+//		List list = query.list();
+		Iterator it = query.list().iterator();
 				
 		Object o = it.hasNext()?it.next():null;
-		String hotel = o!=null?(String) (((Object[])o)[0]):null;
-		Date date = o!=null?(Date) (((Object[])o)[1]):null;
-		String code = o!=null?(String) (((Object[])o)[4]):null;
-		Double quantity = o!=null?(Double) (((Object[])o)[11]):null;
+		String hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
+		
+//		for(Booking booking: getBookingList() ){
+//			while( booking.getHotel().equals(hotel) && (booking.getDate().after(date) || booking.getDate().equals(date)) && it.hasNext() ){
+//				if(booking.getDate().equals(date)){
+//					code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+//					quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
+//					booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
+//				}
+//				o = it.next();
+//				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+//				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+//			}
+//			while( getToDate().before(date) && it.hasNext() ){
+//				o = it.next();
+//				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+//				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+//				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
+//				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_NAME]):null;
+//			}
+//		}
+
+		
+//		for(Booking booking: getBookingList() ){
+//			while( booking.getHotel().equals(hotel) ){
+//				while( !booking.getDate().equals(date) && it.hasNext() ){
+//					o = it.next();
+//					date = o!=null?(Date) (((Object[])o)[1]):null;
+//				}
+//				hotel = o!=null?(String) (((Object[])o)[0]):null;
+//				code = o!=null?(String) (((Object[])o)[2]):null;
+//				quantity = o!=null?Double.parseDouble((((Object[])o)[4]).toString()):null;
+//				while( booking.getDate().equals(date) && it.hasNext() ){
+//					code = o!=null?(String) (((Object[])o)[2]):null;
+//					quantity = o!=null?Double.parseDouble((((Object[])o)[4]).toString()):null;
+//					booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
+//				
+//					o = it.next();
+//					hotel = o!=null?(String) (((Object[])o)[0]):null;
+//					date = o!=null?(Date) (((Object[])o)[1]):null;
+//				}
+//			}
+//			
+//		}
+		
 		
 		for(Booking booking: getBookingList() ){
-			while( booking.getHotel().equals(hotel) && (booking.getDate().after(date) || booking.getDate().equals(date)) && it.hasNext() ){
-				if(booking.getHotel().equals(hotel) && booking.getDate().equals(date)){
-					booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
-				}
+			while( booking.getHotel().equals(hotel) && booking.getDate().after(date) && it.hasNext() ){
 				o = it.next();
-				hotel = o!=null?(String) (((Object[])o)[0]):null;
-				date = o!=null?(Date) (((Object[])o)[1]):null;
-				code = o!=null?(String) (((Object[])o)[4]):null;
-				quantity = o!=null?(Double) (((Object[])o)[11]):null;
+				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
-			while( getToDate().before(date) && it.hasNext() ){
+
+			while( booking.getHotel().equals(hotel) && booking.getDate().equals(date) && it.hasNext() ){
+				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
+				booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
+				
 				o = it.next();
-				hotel = o!=null?(String) (((Object[])o)[0]):null;
-				date = o!=null?(Date) (((Object[])o)[1]):null;
-				code = o!=null?(String) (((Object[])o)[4]):null;
-				quantity = o!=null?(Double) (((Object[])o)[11]):null;
+				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 		}
+		
+		
+		
+		
 	}
 	
 	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{

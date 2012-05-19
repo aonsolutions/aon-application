@@ -8,6 +8,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -20,17 +22,39 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestGuest;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationRequestController extends BasicController implements IPmsConstants {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReservationRequestController.class.getName());
 
 	private String selectedTab;
 	private int nights;
 	private ReservationRequestGuest requestGuest;
 	private boolean skipResetAvailabilityMap;
 
+	private ProjectReservation existingReservation;
+	private boolean showConfirmWindow;
+	
+	public ProjectReservation getExistingReservation() {
+		return existingReservation;
+	}
+	public void setExistingReservation(ProjectReservation existingReservation) {
+		this.existingReservation = existingReservation;
+	}
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
+	public boolean isExistReservation() {
+		return getExistingReservation()!=null;
+	}
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -65,11 +89,21 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	@Override
 	public void accept(ActionEvent event) {
-		super.accept(event);
-
-		if (!skipResetAvailabilityMap) {
-			ReservationRequestRoomController requestRoomController = (ReservationRequestRoomController)AonUtil.getRegisteredBean(RESERVATION_REQUEST_ROOM_CONTROLLER_NAME);
-			requestRoomController.setAvailableRoomStayMap(null);
+		try {
+			searchExistingReservationRequest();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al buscar la solicitud de reserva existente.";
+			LOGGER.error(msg, e);
+			setExistingReservation(null);
+		}
+		if(isExistReservation() && !isShowConfirmWindow()){
+			setShowConfirmWindow(true);
+		} else {
+			super.accept(event);
+			if (!skipResetAvailabilityMap) {
+				ReservationRequestRoomController requestRoomController = (ReservationRequestRoomController)AonUtil.getRegisteredBean(RESERVATION_REQUEST_ROOM_CONTROLLER_NAME);
+				requestRoomController.setAvailableRoomStayMap(null);
+			}
 		}
 	}
 
@@ -99,6 +133,18 @@ public class ReservationRequestController extends BasicController implements IPm
 		} else {
 			resetNights();
 		}
+	}
+	
+	public void searchExistingReservationRequest() throws ManagerBeanException {
+		ReservationRequest request = (ReservationRequest)getTo();
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_ID), request.getHotel().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), request.getAgency().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), request.getCode());
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
+		List<ITransferObject> list = bean.getList(criteria);
+		setExistingReservation(list.isEmpty()?null:(ProjectReservation)list.get(0));
 	}
 
 	public void onHolderChanged(ValueChangeEvent event) throws ManagerBeanException {

@@ -44,7 +44,10 @@
 									required="true"	
 									value="#{boardBooking.fromDate}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
+									popupDateFormat="#{bundle.aon_date_pattern}">
+									<a4j:support event="oninputchange" reRender="boardBookingSearch"/>
+									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
+								</aon:selectInputDate>
 									
 								<aon:outputLabel for="BoardBooking_endDate"
 									styleClass="aon-italic aon-margin-right" 
@@ -53,16 +56,10 @@
 									required="true"	
 									value="#{boardBooking.toDate}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
-							</aon:div>
-									
-							<aon:outputText 
-								value="&#160;" />
-							<aon:div>
-								<aon:selectBooleanCheckbox id="BoardBooking_searchNoRoomBoard"
-									value="#{boardBooking.searchNoRoomBoard}" />
-								<aon:outputLabel for="BoardBooking_searchNoRoomBoard"
-									value="#{pmsBundle.pms_board_searchNoRoomBoard}" />
+									popupDateFormat="#{bundle.aon_date_pattern}">
+									<a4j:support event="oninputchange" reRender="boardBookingSearch" />
+									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
+								</aon:selectInputDate>
 							</aon:div>
 									
 							<aon:outputText value="&#160;" />

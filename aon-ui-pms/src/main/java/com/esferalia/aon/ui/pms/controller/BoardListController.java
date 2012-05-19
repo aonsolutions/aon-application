@@ -111,15 +111,6 @@ public class BoardListController implements ICollectionProvider {
 		// TODO: Id de categoria a pinon. Se asume que la categoria de las pensiones es la de id=4
 		return 4;
 	}
-	private boolean isBreakfastBoard(Item item){
-		// TODO: se asume como desayuno la primera pension de la categoria
-		if(boardItems()!=null){
-			if(boardItems().get(0)!=null && ((Item)boardItems().get(0)).getId().equals(item.getId())){
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	public List<ITransferObject> getBoardItems() {
 		if(getParams().getBoardItemFilter()!=null && getParams().getBoardItemFilter().getId()!=null){
@@ -158,7 +149,7 @@ public class BoardListController implements ICollectionProvider {
 	@SuppressWarnings("rawtypes")
 	private void buildBoardList() throws ManagerBeanException {
 		
-		String select = PmsReportManager.getInstance().getBoardBookingSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null, false);
+		String select = PmsReportManager.getInstance().getBoardBookingSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(DateUtils.addDays(getParams().getDate(),-1).getTime()));
@@ -172,14 +163,14 @@ public class BoardListController implements ICollectionProvider {
 		setBoardsTotalList(new LinkedList<BoardListController.BoardTotal>());
 		for(Object o: list ){
 			DayBoard db = new DayBoard();
-			Date date = (Date) (((Object[])o)[1]);
+			Date date = (Date) (((Object[])o)[PmsReportManager.BOARD_DATE]);
 			if(getParams().getDate().equals(date)){
-				db.setBoardName((String) (((Object[])o)[3]));
-				db.setRoom((String) (((Object[])o)[10]));
-				db.setQuantity( Integer.parseInt((((Object[])o)[11]).toString()) );
-				db.setGuest(((String) (((Object[])o)[14])));
-				db.setStartDate(((Date) (((Object[])o)[12])));
-				db.setEndDate(((Date) (((Object[])o)[13])));
+				db.setBoardName((String) (((Object[])o)[PmsReportManager.BOARD_NAME]));
+				db.setRoom((String) (((Object[])o)[PmsReportManager.BOARD_ROOM_NAME]));
+				db.setQuantity( Integer.parseInt((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()) );
+				db.setGuest(((String) (((Object[])o)[PmsReportManager.BOARD_GUEST_NAME])));
+				db.setStartDate(((Date) (((Object[])o)[PmsReportManager.BOARD_GUEST_START_DATE])));
+				db.setEndDate(((Date) (((Object[])o)[PmsReportManager.BOARD_GUEST_END_DATE])));
 				getBoardList().add(db);
 				
 				if(db.getBoardName().equals(total.getBoardName())){
