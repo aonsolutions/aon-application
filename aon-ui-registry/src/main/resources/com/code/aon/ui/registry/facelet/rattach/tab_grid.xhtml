@@ -91,13 +91,13 @@
 				</aon:column>
 			</c:if>
 		</ui:define>
-		<c:if test="#{!skipFreeSpaceMessage}">
-			<ui:define name="additionalDataTableContent" >
+		<ui:define name="additionalDataTableContent" >
+			<c:if test="#{!skipFreeSpaceMessage}">		
 				<aon:div styleClass="aon-margin-top" >
 					<aon:outputText value="#{documentManager.freeSpaceMessage}" />
-				</aon:div>				
-			</ui:define>
-		</c:if>
+				</aon:div>
+			</c:if>								
+		</ui:define>
 	</ui:decorate>
 
 </ui:composition>

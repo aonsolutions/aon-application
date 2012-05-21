@@ -17,7 +17,11 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.Domain;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
@@ -52,11 +56,13 @@ public class DocumentManager {
 		this.maxDocumentSize = DEFAULT_MAX_DOCUMENT_SIZE;
 		this.maxTotalDocumentSize = DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
 		if (! AonUtil.isSkipLdap() ) {
-			init();	
+			initLdap();	
+		} else {
+			initDB();
 		}
 	}
 
-	private void init() {
+	private void initLdap() {
 		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
 		String domainName = domainResolver.getDomain();		
 		Name domainDN = NameResolver.getDomainDN(domainName);
@@ -85,6 +91,19 @@ public class DocumentManager {
 		}
 	}
 
+	private void initDB() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			if ( domain != null ) {
+				maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;
+				maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error init max document szie", th);
+		}		
+	}
+	
 	public boolean isShow() {
 		return show;
 	}
