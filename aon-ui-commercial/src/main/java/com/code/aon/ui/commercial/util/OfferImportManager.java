@@ -3,6 +3,8 @@ package com.code.aon.ui.commercial.util;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
@@ -39,7 +41,11 @@ public class OfferImportManager {
 		int version = 0;
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_SERIES), series);
+		if (StringUtils.isNotEmpty(series)) {
+			criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_SERIES), series);
+		} else {
+			criteria.addNullExpression(offerBean.getFieldName(IEntityAlias.OFFER_SERIES));
+		}
 		criteria.addEqualExpression(offerBean.getFieldName(IEntityAlias.OFFER_NUMBER), number);
 		criteria.addOrder(offerBean.getFieldName(IEntityAlias.OFFER_VERSION), false);
 		Iterator<?> iterator = offerBean.getList(criteria).iterator();
