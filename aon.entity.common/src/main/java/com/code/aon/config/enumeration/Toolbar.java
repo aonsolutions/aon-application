@@ -42,6 +42,9 @@ public enum Toolbar implements IResourceable {
 
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_toolbar_";
+
+    /** Template path. */
+    private static final String TEMPLATE_PATH = "/com/code/aon/ui/resources/facelet/headerToolbar/";
     
 	/**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
@@ -54,6 +57,10 @@ public enum Toolbar implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+    }
+    
+    public String getTemplate() {
+    	return TEMPLATE_PATH + toString().toLowerCase() + ".xhtml";
     }
     
 }
