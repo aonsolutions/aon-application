@@ -1085,6 +1085,13 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
+	<!-- ************* ROOM STATUS ***************** -->
+	<managed-bean>
+		<managed-bean-name>roomStatus</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomStatusController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>				
+	</managed-bean>
+	
 	<!-- ************* DIVERT ***************** -->
 	<managed-bean>
 		<managed-bean-name>divert</managed-bean-name>
@@ -1449,6 +1456,18 @@
 		<navigation-case>
 			<from-outcome>roomBooking_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/roomBooking/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Room Status ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>roomStatus_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/roomStatus/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>roomStatus_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/roomStatus/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

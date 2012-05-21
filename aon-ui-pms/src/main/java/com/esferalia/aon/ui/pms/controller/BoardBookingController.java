@@ -92,9 +92,8 @@ public class BoardBookingController implements ICollectionProvider {
 	
 	public void onInit(ActionEvent event) {
 		setHotel(null);
-		setFromDate(new Date());
-		setToDate(DateUtils.addDays(new Date(), 10));
-//		setSearchNoRoomBoard(true);
+		fromDate = new Date();
+		toDate = DateUtils.addDays(new Date(), 10);
 	}
 	
 	public void onSearch(ActionEvent event) {

@@ -33,5 +33,6 @@ public interface IPmsConstants {
 	String POS_SHIFT_FORM_NAME = "posShift_form";
 	String RACK_LIST_NAME = "rack_list";
 	String RESERVATION_IO_LIST_NAME = "reservationIO_list";
+	String RESERVATION_LIST_NAME = "reservation_list";
 
 }

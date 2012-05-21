@@ -306,7 +306,18 @@
 					<f:facet name="header">
 						<aon:outputText value="#{pmsBundle.pms_reservation} #{pmsBundle.pms_crs}" />
 					</f:facet>
-					<aon:outputText value="#{reservationData.crsCode}" />
+					<aon:div>
+						<aon:outputText value="#{reservationData.crsCode}" />
+						<aon:commandLink id="reservationLink" immediate="true"
+							styleClass="aon-button-goto"
+							style="padding-right: 20px;" 
+							value="&#160;"  
+							rendered="#{!empty reservationData.crsCode}" 
+							actionListener="#{controller.onLoadRoomReservation}"
+							action="reservation_list"
+							reRender="aonContent">
+						</aon:commandLink>
+					</aon:div>  
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">

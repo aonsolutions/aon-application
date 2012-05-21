@@ -17,9 +17,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.Room;
@@ -147,6 +150,14 @@ public class ReservationRequestRoomController extends LinesController {
 				getAvailableRoomStayMap().remove(requestRoom.getId());
 			}
 		}
+	}
+	
+	public void onLoadRoomReservation(ActionEvent event) throws ManagerBeanException {
+		ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservationController.getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), room.getCrsCode());
+		reservationController.onSearch(event);
 	}
 
 }

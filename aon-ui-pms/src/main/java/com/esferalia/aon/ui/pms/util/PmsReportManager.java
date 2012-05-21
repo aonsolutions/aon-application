@@ -300,6 +300,18 @@ public class PmsReportManager {
 	private Integer getReservationCancelStatus(){
 		return ReservationStatus.CANCELLED.ordinal();
 	}
+
+	public String getRoomStatusSQL(Hotel hotel) {
+		String select = "SELECT A.name, AA.status"
+				+ " FROM room as R"
+				+ " LEFT JOIN asset AS A ON R.asset=A.id"
+				+ " LEFT JOIN asset_activity AS AA ON AA.asset=A.id"
+				+ " WHERE R.hotel =  " + hotel.getId()
+				+ " AND AA.date = :date"
+				+ " ORDER BY A.name"
+				;
+		return select;
+	}
 	
 
 }
