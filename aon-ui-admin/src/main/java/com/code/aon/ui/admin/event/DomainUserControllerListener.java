@@ -2,6 +2,7 @@ package com.code.aon.ui.admin.event;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.config.User;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainUserController;
+import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -27,6 +29,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
 		updateWebmail( duc.getDomainUser() );
+		updateDeniedOptions( duc.getDomainUser() );
 		duc.getIdCheck().setOldValue( duc.getDomainUser().getLogin() );
 	}
 	
@@ -58,6 +61,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		}		
 		getAdmin().getLogger().domainUserAddded(user);
 		updateWebmail(user);
+		updateDeniedOptions(user);
 	}
 	
 	@Override
@@ -78,4 +82,14 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		}		
 	}	
 
+	private void updateDeniedOptions( User user ) throws ControllerListenerException {
+		try {
+			ActionDeniedController denied = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+			denied.init(user);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}	
+	
 }

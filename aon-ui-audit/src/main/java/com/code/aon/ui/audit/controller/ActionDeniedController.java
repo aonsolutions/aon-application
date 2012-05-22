@@ -225,17 +225,22 @@ public class ActionDeniedController implements IAuditConstants {
 		if ( event.getNewValue() == null ) {
 			reset();
 		} else {
-			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
-			List<ApplicationOption> deniedList = getOptions( this.deniedActions );
-			this.options = new ArrayList<ApplicationOption>( getOptions(true) );
-			this.selected = new LinkedList<ApplicationOption>();
-			for( ApplicationOption option : this.options ) {
-				if ( deniedList.contains(option) ) {
-					this.selected.add(option);
-				}
-			}
-			this.options.removeAll(deniedList);
+			init( (User) event.getNewValue() );
 		}
+	}
+	
+	public void init( User user ) {
+		setUser(user);
+		this.deniedActions = getDeniedActions( getUser() );
+		List<ApplicationOption> deniedList = getOptions( this.deniedActions );
+		this.options = new ArrayList<ApplicationOption>( getOptions(true) );
+		this.selected = new LinkedList<ApplicationOption>();
+		for( ApplicationOption option : this.options ) {
+			if ( deniedList.contains(option) ) {
+				this.selected.add(option);
+			}
+		}
+		this.options.removeAll(deniedList);		
 	}
 	
 	private String getAction( UICommand command ) {

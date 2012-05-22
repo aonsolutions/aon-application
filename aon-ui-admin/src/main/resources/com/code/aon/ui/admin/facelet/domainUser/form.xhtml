@@ -102,6 +102,13 @@
 						<aon:panelTab name="scopes" label="#{configBundle.config_scopes}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/grid.xhtml" />
 	                    </aon:panelTab>
+	                    
+						<aon:panelTab name="deniedOptions"
+							label="#{auditBundle.audit_option_denied_module}">
+							<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
+								<ui:param name="skipUserLookup" value="#{true}" />
+							</ui:include>
+	                    </aon:panelTab>
 
 						<aon:panelTab name="contacts"
 							label="#{webmailBundle.webmail_email}">						
