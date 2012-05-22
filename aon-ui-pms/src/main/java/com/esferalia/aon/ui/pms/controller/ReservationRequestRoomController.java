@@ -156,6 +156,7 @@ public class ReservationRequestRoomController extends LinesController {
 		ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
 		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservationController.clearCriteria();
 		reservationController.getCriteria().addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), room.getCrsCode());
 		reservationController.onSearch(event);
 	}

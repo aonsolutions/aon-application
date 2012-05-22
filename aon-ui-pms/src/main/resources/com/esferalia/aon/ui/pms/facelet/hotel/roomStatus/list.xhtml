@@ -33,8 +33,6 @@
 						<f:param name="reportKey" value="roomStatusList" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>	
-					<!--  
-					-->
 				</ui:define>
 			</ui:decorate>
 
@@ -47,14 +45,14 @@
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_room}" />
 							</f:facet>
-							<aon:outputText value="#{to.room}" />
+							<aon:outputText value="#{to.room.asset.name}" />
 						</aon:column>
  
 						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
-							<aon:outputText value="#{to.status}" />
+							<aon:outputText value="#{(to.free)?(pmsBundle.pms_free):(pmsBundle.pms_blocked)}" />
 						</aon:column>
 				</aon:dataTable>
 				<aon:dataScroller2 for="roomStatusData" showNote="true" />

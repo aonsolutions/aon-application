@@ -1,8 +1,5 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -13,29 +10,21 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.asset.AssetActivity;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.customer.Customer;
-import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
-import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class RoomStatusController implements ICollectionProvider {
 	
@@ -74,25 +63,55 @@ public class RoomStatusController implements ICollectionProvider {
 	
 	@SuppressWarnings("rawtypes")
 	private void buildRoomStatusList() throws ManagerBeanException {
-		PmsReportManager reportManager = PmsReportManager.getInstance();
+		
+		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getDate());
+		criteria.addInExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAssetIds());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME));
+		List<ITransferObject> list = bean.getList(criteria);
+		
+		Iterator<ITransferObject> activityIt = bean.getList(criteria).iterator();
+		Iterator<ITransferObject> roomIt = getRoomList().iterator();
+		
+		AssetActivity aa = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
 		
 		setRoomStatusList(new LinkedList<RoomStatusController.RoomStatus>());
 		
-		String roomSelect = reportManager.getRoomStatusSQL(getHotel());
-		
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-
-		Query roomQuery = session.createSQLQuery(roomSelect);
-		roomQuery.setDate("date", new java.sql.Date(getDate().getTime()));
-		
-		for(Object o :roomQuery.list()){
-			RoomStatus rs = new RoomStatus();
-			rs.setRoom((String) (((Object[])o)[0]));
-			rs.setStatus(Integer.parseInt((((Object[])o)[1]).toString()));
-			getRoomStatusList().add(rs);
+		while(roomIt.hasNext()){
+			RoomStatus rs = new RoomStatus();;
+			Room room = (Room) roomIt.next();
+			if(aa!=null && room.getAsset().getId().equals(aa.getAsset().getId())){
+				if(aa.getStatus()!=ActivityStatus.BUSY){
+					rs.setRoom(room);
+					rs.setFree(false);
+					getRoomStatusList().add(rs);
+				}
+				aa = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
+			} else {
+				rs.setRoom(room);
+				rs.setFree(true);
+				getRoomStatusList().add(rs);
+			}
 		}
 	}
 	
+	private List<Integer> getAssetIds() throws ManagerBeanException {
+		List<Integer> list = new LinkedList<Integer>();
+		for(ITransferObject to: getRoomList() ){
+			Room r = (Room) to;
+			list.add(r.getAsset().getId());
+		}
+		return list;
+	}
+	private List<ITransferObject> getRoomList() throws ManagerBeanException {
+		setRoomStatusList(new LinkedList<RoomStatusController.RoomStatus>());
+		IManagerBean bean = BeanManager.getManagerBean(Room.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ROOM_ASSET_NAME));
+		return bean.getList(criteria);
+	}
 	public void onInit(ActionEvent event) {
 		setDate(new Date());
 	}
@@ -124,27 +143,19 @@ public class RoomStatusController implements ICollectionProvider {
 	/**************************************************/
 	
 	public class RoomStatus {
-		private String room;
-		private ActivityStatus status;
-		public String getRoom() {
+		private Room room;
+		private boolean free;
+		public Room getRoom() {
 			return room;
 		}
-		public void setRoom(String room) {
+		public void setRoom(Room room) {
 			this.room = room;
 		}
-		public ActivityStatus getStatus() {
-			return status;
+		public boolean isFree() {
+			return free;
 		}
-		public void setStatus(ActivityStatus status) {
-			this.status = status;
-		}
-		public void setStatus(Integer status) {
-			for(ActivityStatus as: ActivityStatus.values()){
-				if(status.equals(as.ordinal())){
-					this.status = as;
-					break;
-				}
-			}
+		public void setFree(boolean free) {
+			this.free = free;
 		}
 		
 	}

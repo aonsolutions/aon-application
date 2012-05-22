@@ -105,6 +105,12 @@
 											action="feature_grid" >
 										</aon:commandLink>
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="roomStatusList"
+											action="roomStatus_search" actionListener="#{roomStatus.onInit}"
+											value="#{pmsBundle.pms_roomStatus_module}">
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>							
