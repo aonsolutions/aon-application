@@ -131,11 +131,6 @@ public class ManagerLogger {
 		sendEmail( subject, getContent() );
 	}	
 	
-	public void multiUser( Domain domain ) {
-		String subject = "Domain " + domain.getName() + " Multiuser: " + domain.isUserManagement();
-		sendEmail( subject, getContent() );
-	}
-	
 	public void multiDomain( Domain domain ) {
 		String subject = "Domain " + domain.getName() + " MultiDomain: " + domain.isDomainManagement();
 		sendEmail( subject, getContent() );		

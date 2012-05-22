@@ -5,6 +5,10 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
@@ -12,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Domain;
-import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -44,6 +47,10 @@ public class DomainController extends BasicController {
 			return parent;
 		}		
 		return null;
+	}
+
+	public void onInit( ActionEvent event ) {
+		getAdmin().resetTermsOfServiceAccepted();
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -80,12 +87,21 @@ public class DomainController extends BasicController {
 	}
 	
 	public boolean isShowDomainSubDomainSuffix() {
-		if ( getDomain().getType() != DomainType.ENTERPRISE ) {
-			if ( getDomain().isDomainManagement() || getAdmin().isSysAdmin() ) {
-				return true;
-			}
+		if ( getDomain().isDomainManagement() || getAdmin().isSysAdmin() ) {
+			return true;
 		}
 		return false;
+	}
+
+	public void numberOfUsersCheck(FacesContext context, UIComponent component, Object value) {
+	}		
+	
+	public void documentManagementChanged( ValueChangeEvent event ) {
+		boolean newValue = (Boolean) event.getNewValue();
+		if (! newValue ) {
+			getDomain().setMaxDocumentSize(DEFAULT_MAX_DOCUMENT_SIZE);
+			getDomain().setMaxTotalDocumentSize(DEFAULT_MAX_TOTAL_DOCUMENT_SIZE);
+		}
 	}
 	
 }
