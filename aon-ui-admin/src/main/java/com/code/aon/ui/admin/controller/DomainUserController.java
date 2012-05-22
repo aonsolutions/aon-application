@@ -1,9 +1,10 @@
 package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.common.util.BeanServerUtil.AON_SECURITY_DOMAIN;
-import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_USER;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ACTIVE_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.MAXIMUM_NUMBER_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME;
@@ -16,11 +17,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -34,6 +37,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.BeanServerUtil;
+import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -66,10 +70,6 @@ public class DomainUserController extends BasicController {
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
 	}
-
-	private AdminMainController getAdmin() {
-		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
-	}
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -97,36 +97,9 @@ public class DomainUserController extends BasicController {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.USER_ACTIVE), Boolean.TRUE);
 		return (List) getManagerBean().getList(criteria);
 	}	
-
-	private boolean isAdmin( User user ) {
-		return StringUtils.equals(ADMIN_USER, user.getLogin());
-	}
-	
-	public void deactiveUsers() throws ManagerBeanException {
-		for ( User user : getUsers() ) {
-			if (! isAdmin(user) ) {
-				user.setActive(false);
-				getManagerBean().update(user);
-			}
-		}
-	}	
 	
 	public User getDomainUser() {
 		return (User) getTo();
-	}	
-	
-	public boolean isUserRemoveable() {
-		if ( getAdmin().isSysAdmin() ) {
-			return true;
-		}
-		return getAdmin().isUserManagement() && (!isAdmin(getDomainUser()));
-	}
-
-	public boolean isUserActivable() {
-		if ( getAdmin().isSysAdmin() ) {
-			return true;
-		}
-		return getAdmin().isUserManagement() && !isAdmin(getDomainUser());
 	}	
 
 	public void onShowChangePasswordWindow( ActionEvent event ) {
@@ -315,6 +288,52 @@ public class DomainUserController extends BasicController {
 			workgroups.add(item);
 		}
 		return workgroups;
+	}	
+	
+	public int getNumberOfActiveUsers() {
+        try {
+			IManagerBean bean = BeanManager.getManagerBean(User.class);
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(IEntityAlias.USER_ACTIVE);
+			criteria.addEqualExpression(alias, Boolean.TRUE);
+			return bean.getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+        return 0;
+	}
+	
+	public String getActiveUsersMessage() {
+		return AonUtil.getMessage(BUNDLE_NAME, ACTIVE_USERS, getNumberOfActiveUsers());		
+	}
+
+	public String getDetailMessage() {
+		String message = getActiveUsersMessage();
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
+			message += ", " + AonUtil.getMessage(BUNDLE_NAME, MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
+		}
+		return message;
+	}
+
+	public int getMinimumUserNumber() {
+		return Math.max(1, getNumberOfActiveUsers());
+	}
+	
+	public boolean isSkipUserReset() {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		Domain domain = dc.getDomain();
+		if ( domain.getMaxDefinedUsers() != null ) {
+			return getNumberOfActiveUsers() >= domain.getMaxDefinedUsers();
+		}
+		return true;
+	}
+	
+	public boolean isUserActivable() {
+		if ( AonUtil.getRoleManager().isSysAdmin() ) {
+			return true;
+		}
+		return getDomainUser().isActive() || (!isSkipUserReset());
 	}	
 	
 }

@@ -76,6 +76,8 @@
 	    		})" />
 	</c:if>
 
+	<ui:insert name="additionalDataTableContent"/>
+
 	<c:if test="#{showDataScroller}">
 		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();" />
 	</c:if>	

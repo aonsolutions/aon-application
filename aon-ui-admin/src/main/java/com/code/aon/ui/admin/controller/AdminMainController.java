@@ -61,7 +61,7 @@ public class AdminMainController implements IAdminConstants {
 	
 	public void onInit( ActionEvent event ) {
 		initDomain(event);
-		if ( isSysAdmin() ) {
+		if ( AonUtil.getRoleManager().isSysAdmin() ) {
 			initSysAdmin(event);			
 		}
 	}
@@ -76,18 +76,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	public ManagerLogger getLogger() {
 		return logger;
-	}
-
-	public boolean isSysAdmin() {		
-		return AonUtil.getRoleManager().isSysAdmin();
-	}
-
-	public boolean isUserManagement() {
-		if ( isSysAdmin() ) {
-			return true;
-		}
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		return dc.getDomain().isUserManagement();
 	}
 	
 	public String getUser() {
@@ -115,7 +103,7 @@ public class AdminMainController implements IAdminConstants {
 	}	
 
 	public void resetTermsOfServiceAccepted() {
-		termsOfServiceAccepted = isSysAdmin();
+		termsOfServiceAccepted = AonUtil.getRoleManager().isSysAdmin();
 	}
 	
 	public void onAccept(ActionEvent event) {
@@ -188,6 +176,5 @@ public class AdminMainController implements IAdminConstants {
 		initMailAccount(user);
 		initContact(user);
 	}
-	
 	
 }

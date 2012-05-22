@@ -42,5 +42,8 @@ public interface IAdminConstants {
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
 	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";
+	
+	String ACTIVE_USERS = "admin_active_users";
+	String MAXIMUM_NUMBER_USERS = "admin_maximum_number_users";
 		
 }

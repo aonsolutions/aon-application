@@ -5,8 +5,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -87,14 +85,11 @@ public class DomainController extends BasicController {
 	}
 	
 	public boolean isShowDomainSubDomainSuffix() {
-		if ( getDomain().isDomainManagement() || getAdmin().isSysAdmin() ) {
+		if ( getDomain().isDomainManagement() || AonUtil.getRoleManager().isSysAdmin() ) {
 			return true;
 		}
 		return false;
 	}
-
-	public void numberOfUsersCheck(FacesContext context, UIComponent component, Object value) {
-	}		
 	
 	public void documentManagementChanged( ValueChangeEvent event ) {
 		boolean newValue = (Boolean) event.getNewValue();

@@ -78,10 +78,14 @@
 						<aon:outputLabel for="Domain_maxDefinedUsers"
 							validator="#{adminDomain.numberOfUsersCheck}"
 							value="#{adminBundle.admin_domain_maxDefinedUsers}" />
-						<aon:inputText id="Domain_maxDefinedUsers" required="true"
-							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
-							<f:validateLongRange minimum="1" />
-						</aon:inputText>									
+						<aon:div>
+							<aon:inputText id="Domain_maxDefinedUsers" required="true"
+								size="10" value="#{adminDomain.to.maxDefinedUsers}" >
+								<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
+							</aon:inputText>
+							<aon:outputText styleClass="aon-margin-left"
+								value="#{domainUser.activeUsersMessage}"/>
+						</aon:div>
 					
 						<aon:outputLabel for="Domain_domainManagement"
 							value="#{adminBundle.admin_domain_domainManagement}" />

@@ -14,8 +14,6 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
-				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
-				<ui:param name="skipRemoveButton" value="#{!domainUser.userRemoveable}" />
 				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_user_remove_confirm}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="resetPassword"

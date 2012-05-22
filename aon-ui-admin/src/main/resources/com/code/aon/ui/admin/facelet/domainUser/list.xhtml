@@ -13,7 +13,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
-				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
+				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
 			</ui:include>
 
 			<!--  aon-region-body -->
@@ -50,6 +50,11 @@
 						</aon:column>
 							
 					</ui:define>
+					<ui:define name="additionalDataTableContent" >
+						<aon:div styleClass="aon-margin-top" >
+							<aon:outputText value="#{controller.detailMessage}" />
+						</aon:div>
+					</ui:define>			
 				</ui:decorate>
 
 			</aon:div>
