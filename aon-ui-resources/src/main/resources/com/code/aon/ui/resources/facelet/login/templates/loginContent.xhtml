@@ -39,23 +39,26 @@
 						
 						<aon:div styleClass="aon-login-info">
 							<aon:div styleClass="aon-login-info-title">
-								<aon:outputText value="#{bundle.aon_login_support}:" />
+								<aon:outputText value="#{bundle.aon_support_title}:" />
 							</aon:div>
 
 							<aon:div styleClass="aon-bold">
-								<aon:outputText value="#{bundle.aon_login_phone}" />
+								<aon:outputText value="#{bundle.aon_support_telephone_number}" />
 							</aon:div>
 							<aon:div>
-								<h:outputLink value="mailto:#{bundle.aon_login_email}" target="_blank" >
-									<aon:outputText value="#{bundle.aon_login_email}" />
+								<h:outputLink value="mailto:#{bundle.aon_support_send_email}" target="_blank" >
+									<aon:outputText value="#{bundle.aon_support_send_email}" />
 								</h:outputLink>
 							</aon:div>
 						</aon:div>							
 
 						<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
-							<aon:div styleClass="aon-login-info2">						
-								 <aon:outputText value="#{bundle.aon_trademark}" />
-								 <aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
+							<aon:div styleClass="aon-login-info2">				
+								<aon:outputLink target="_blank" value="#{bundle.aon_solutions_url}" >
+									<aon:outputText value="#{bundle.aon_solutions}" />
+							    </aon:outputLink>
+								<aon:outputText value="#{bundle.aon_trademark}" />
+								<aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
 								 	styleClass="aon-footer-company-label"/>
 							</aon:div>
 						</c:if>	
