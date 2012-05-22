@@ -453,8 +453,6 @@
 	</table>
 
 	<table name="domain">
-		<meta attribute="extra-import">com.code.aon.common.domain.IDomainPojo</meta>
-		<meta attribute="implements">IDomainPojo&lt;Domain&gt;</meta>
 		<meta attribute="aon-constructor">this.active = true;</meta>
 		<column name="type" type="com.code.aon.config.enumeration.DomainType" />
 		<foreign-key constraint-name="FK_DOMAIN_PARENT">
