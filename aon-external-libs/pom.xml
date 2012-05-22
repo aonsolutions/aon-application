@@ -213,6 +213,11 @@
 			<artifactId>DynamicJasper</artifactId>
 			<version>4.0.0_beta3</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-javaflow</groupId>
+			<artifactId>commons-javaflow</artifactId>
+			<version>20060411</version>
+		</dependency>		
 	</dependencies>
 	<profiles>
 		<profile>
@@ -312,6 +317,7 @@
 											<include>org.slf4j:slf4j-api:1.5.11</include>
 											<include>net.sf.jasperreports:jasperreports:${jasperReportsVersion}</include>
 											<include>ar.com.fdvs:DynamicJasper:4.0.0_beta3</include>
+											<include>commons-javaflow:commons-javaflow:20060411</include>
 											<include>oro:oro:2.0.8</include>
 											<include>javax.mail:mail:1.4.2</include>
 											<include>org.jboss.slf4j:slf4j-jboss-logging:1.0.2.GA</include>
