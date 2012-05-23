@@ -105,12 +105,6 @@
 											action="feature_grid" >
 										</aon:commandLink>
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="roomStatusList"
-											action="roomStatus_search" actionListener="#{roomStatus.onInit}"
-											value="#{pmsBundle.pms_roomStatus_module}">
-										</aon:commandLink>
-									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>							
@@ -220,6 +214,12 @@
 									<aon:commandLink id="roomBooking" 
 										action="roomBooking_search" actionListener="#{roomBooking.onInit}"
 										value="#{pmsBundle.pms_roomBooking_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="emptyRoomList"
+										action="emptyRoom_search" actionListener="#{emptyRoom.onInit}"
+										value="#{pmsBundle.pms_emptyRoom_module}">
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
