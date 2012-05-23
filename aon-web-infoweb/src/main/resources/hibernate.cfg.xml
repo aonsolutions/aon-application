@@ -49,11 +49,8 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.Department"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkplaceDepartment"/>
 		
 		<!-- AON-WEBINFO Mapping files -->
 		<mapping class="com.code.aon.infoweb.WebInfo"/>
