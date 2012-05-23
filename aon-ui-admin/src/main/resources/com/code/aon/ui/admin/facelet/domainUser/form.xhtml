@@ -96,11 +96,11 @@
                     
                     <c:if test="#{!domainUser.new}" >
 						<aon:panelTab name="userWorkGroups" label="#{configBundle.config_workgroup_module}">
-							<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/grid.xhtml" />						
+							<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/form.xhtml" />						
 	                    </aon:panelTab>
 
 						<aon:panelTab name="scopes" label="#{configBundle.config_scopes}">
-							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/grid.xhtml" />
+							<ui:include src="/com/code/aon/ui/admin/facelet/userScope/form.xhtml" />
 	                    </aon:panelTab>
 	                    
 						<aon:panelTab name="deniedOptions"

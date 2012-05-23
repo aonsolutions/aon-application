@@ -1,10 +1,14 @@
 <ui:composition
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" />		
+		<aon:form id="actionDenied">
+			<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" />
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>
 
 </ui:composition>
