@@ -27,6 +27,13 @@ public class CompanyDomainControllerListener extends ControllerAdapter implement
 	private final static Logger LOGGER = LoggerFactory.getLogger(CompanyDomainControllerListener.class);
 
 	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		Company company = (Company) event.getController().getTo();
+		company.setDomain(1);
+	}
+
+	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		Company company = (Company) event.getController().getTo();
