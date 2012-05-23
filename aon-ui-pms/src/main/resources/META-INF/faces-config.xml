@@ -916,8 +916,21 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Pos_name</value>
-		</managed-property>				
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posSearch}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>posSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************* POS OPENING ***************** -->
 	<managed-bean>

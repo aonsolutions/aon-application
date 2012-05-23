@@ -67,6 +67,10 @@
 						value="#{posOpening.posShift.pos}" >
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{posOpening.closedPosList}" />
+						<a4j:support event="onchange" reRender="posOpeningPanel" ignoreDupResponses="true" 
+							actionListener="#{posOpening.onSelectPos}" />
+						<a4j:support event="oninputchanged" reRender="posOpeningPanel" ignoreDupResponses="true" 
+							actionListener="#{posOpening.onSelectPos}" />
 					</aon:selectOneMenu>
 					
 					<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />

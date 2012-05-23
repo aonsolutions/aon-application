@@ -135,5 +135,14 @@ public class PosOpeningController {
 		getPosShift().setInitialAmount(getCalculator().getCalcTotal());
 	}
 	
+	public void onSelectPos( ActionEvent event ){
+		if(getPosShift()!=null && getPosShift().getPos()!=null){
+			getPosShift().setInitialAmount(getPosShift().getPos().getInitialAmount());
+		} else {
+			getPosShift().setInitialAmount(0.0);
+		}
+	}
+	
+	
 	
 }

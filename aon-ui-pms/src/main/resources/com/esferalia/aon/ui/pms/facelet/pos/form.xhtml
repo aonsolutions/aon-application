@@ -45,6 +45,12 @@
 						<ui:param name="lookupRendered" value="#{pos.to.invoiceable}" />
 					</ui:include>
 					
+					<aon:outputLabel for="Pos_initialAmount" value="#{pmsBundle.pms_pos_openingAmount}" />
+					<aon:inputText id="Pos_initialAmount" value="#{pos.to.initialAmount}" 
+						size="17" >
+						<f:validateLength maximum="17" />
+					</aon:inputText>
+					
 				</aon:panelGrid>
 				
 			</aon:div>
