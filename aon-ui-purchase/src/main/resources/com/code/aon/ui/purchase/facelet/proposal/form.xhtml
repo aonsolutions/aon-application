@@ -44,6 +44,9 @@
 
 				<aon:panelGrid id="proposalPanel" columns="2" >
 				
+					<aon:outputText value="#{bundle.aon_id}" />
+					<aon:inputText value="#{proposal.to.id}" size="5" disabled="#{true}" />
+					
 					<aon:outputText 
 						value="#{purchaseBundle.purchase_issueDate}" />
 					<aon:div>
