@@ -138,17 +138,17 @@
 		</params>
 	</report>
 
-	<!--  ********* Room Booking ********* -->
-	<report id="roomStatusList" description="Room Status Report">
-		<template path="/com/esferalia/aon/ui/pms/report/roomStatusList.jasper" />
-		<collection provider="#{roomStatus}" />
+	<!--  ********* Empty Room ********* -->
+	<report id="emptyRoomList" description="Empty Room Report">
+		<template path="/com/esferalia/aon/ui/pms/report/emptyRoomList.jasper" />
+		<collection provider="#{emptyRoom}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="hotel" value="#{roomStatus.getHotel}" />
-			<param id="date" value="#{roomStatus.getDate}" />
+			<param id="hotel" value="#{emptyRoom.getHotel}" />
+			<param id="date" value="#{emptyRoom.getDate}" />
 		</params>
 	</report>
 

@@ -117,7 +117,6 @@ public class BoardBookingController implements ICollectionProvider {
 		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
 
-//		List list = query.list();
 		Iterator it = query.list().iterator();
 				
 		Object o = it.hasNext()?it.next():null;
@@ -125,50 +124,6 @@ public class BoardBookingController implements ICollectionProvider {
 		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
 		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
-		
-//		for(Booking booking: getBookingList() ){
-//			while( booking.getHotel().equals(hotel) && (booking.getDate().after(date) || booking.getDate().equals(date)) && it.hasNext() ){
-//				if(booking.getDate().equals(date)){
-//					code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
-//					quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
-//					booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
-//				}
-//				o = it.next();
-//				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
-//				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-//			}
-//			while( getToDate().before(date) && it.hasNext() ){
-//				o = it.next();
-//				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
-//				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
-//				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
-//				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_NAME]):null;
-//			}
-//		}
-
-		
-//		for(Booking booking: getBookingList() ){
-//			while( booking.getHotel().equals(hotel) ){
-//				while( !booking.getDate().equals(date) && it.hasNext() ){
-//					o = it.next();
-//					date = o!=null?(Date) (((Object[])o)[1]):null;
-//				}
-//				hotel = o!=null?(String) (((Object[])o)[0]):null;
-//				code = o!=null?(String) (((Object[])o)[2]):null;
-//				quantity = o!=null?Double.parseDouble((((Object[])o)[4]).toString()):null;
-//				while( booking.getDate().equals(date) && it.hasNext() ){
-//					code = o!=null?(String) (((Object[])o)[2]):null;
-//					quantity = o!=null?Double.parseDouble((((Object[])o)[4]).toString()):null;
-//					booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
-//				
-//					o = it.next();
-//					hotel = o!=null?(String) (((Object[])o)[0]):null;
-//					date = o!=null?(Date) (((Object[])o)[1]):null;
-//				}
-//			}
-//			
-//		}
-		
 		
 		for(Booking booking: getBookingList() ){
 			while( booking.getHotel().equals(hotel) && booking.getDate().after(date) && it.hasNext() ){
@@ -187,9 +142,6 @@ public class BoardBookingController implements ICollectionProvider {
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 		}
-		
-		
-		
 		
 	}
 	

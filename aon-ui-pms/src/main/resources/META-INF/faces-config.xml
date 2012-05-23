@@ -1085,10 +1085,10 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
-	<!-- ************* ROOM STATUS ***************** -->
+	<!-- ************* EMPTY ROOM ***************** -->
 	<managed-bean>
-		<managed-bean-name>roomStatus</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.RoomStatusController</managed-bean-class>
+		<managed-bean-name>emptyRoom</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EmptyRoomController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
@@ -1459,15 +1459,15 @@
 		</navigation-case>
 	</navigation-rule> 
 	
-	<!-- =================== Room Status ================= -->
+	<!-- =================== Empty Room  ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>roomStatus_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/roomStatus/search.xhtml</to-view-id>
+			<from-outcome>emptyRoom_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/emptyRoom/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>roomStatus_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/roomStatus/list.xhtml</to-view-id>
+			<from-outcome>emptyRoom_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/hotel/emptyRoom/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

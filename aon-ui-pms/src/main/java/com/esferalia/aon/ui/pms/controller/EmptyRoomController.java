@@ -26,9 +26,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 
-public class RoomStatusController implements ICollectionProvider {
+public class EmptyRoomController implements ICollectionProvider {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(RoomStatusController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EmptyRoomController.class.getName());
 	
 	private Hotel hotel;
 	private Date date;
@@ -76,7 +76,7 @@ public class RoomStatusController implements ICollectionProvider {
 		
 		AssetActivity aa = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
 		
-		setRoomStatusList(new LinkedList<RoomStatusController.RoomStatus>());
+		setRoomStatusList(new LinkedList<RoomStatus>());
 		
 		while(roomIt.hasNext()){
 			RoomStatus rs = new RoomStatus();;
@@ -105,7 +105,7 @@ public class RoomStatusController implements ICollectionProvider {
 		return list;
 	}
 	private List<ITransferObject> getRoomList() throws ManagerBeanException {
-		setRoomStatusList(new LinkedList<RoomStatusController.RoomStatus>());
+		setRoomStatusList(new LinkedList<RoomStatus>());
 		IManagerBean bean = BeanManager.getManagerBean(Room.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());

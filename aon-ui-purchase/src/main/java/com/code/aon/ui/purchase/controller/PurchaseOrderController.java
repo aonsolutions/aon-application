@@ -353,21 +353,28 @@ public class PurchaseOrderController {
 			return ((CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME)).getDepartments();
 		} else {
 			List<SelectItem> list = new LinkedList<SelectItem>();
-			IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
-			criteria.addOrder(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID));
-			for (ITransferObject ito : bean.getList(criteria)) {
+			IManagerBean wdBean = BeanManager.getManagerBean(WorkplaceDepartment.class);
+			Criteria wdCriteria = new Criteria();
+			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
+			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
+			wdCriteria.addOrder(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID));
+			IManagerBean dBean = BeanManager.getManagerBean(Department.class);
+			Criteria dCriteria = new Criteria();
+			List<Integer> idList = new LinkedList<Integer>();
+			for (ITransferObject ito : wdBean.getList(wdCriteria)) {
 				WorkplaceDepartment wd = (WorkplaceDepartment)ito;
-				SelectItem item = new SelectItem(wd.getDepartment(), wd.getDepartment().getName());
+				idList.add(wd.getDepartment().getId());
+			}
+			dCriteria.addInExpression(dBean.getFieldName(IEntityAlias.DEPARTMENT_ID), idList);
+			for (ITransferObject ito : dBean.getList(dCriteria)) {
+				Department d = (Department)ito;
+				SelectItem item = new SelectItem(d, d.getName());
 				list.add(item);
 			}
 			return list;
 		}
 	}
 	
-
 	/**************************************************/
 	/**************************************************/
 	

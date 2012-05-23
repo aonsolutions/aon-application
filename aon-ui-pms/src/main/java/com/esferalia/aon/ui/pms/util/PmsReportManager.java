@@ -21,6 +21,16 @@ import com.esferalia.aon.ui.pms.controller.ReservationInOutController.SortType;
 
 public class PmsReportManager {
 	
+	public static final Integer BOARD_HOTEL_NAME = 0;
+	public static final Integer BOARD_DATE = 1;
+	public static final Integer BOARD_NAME = 2;
+	public static final Integer BOARD_CODE = 3;
+	public static final Integer BOARD_ROOM_NAME = 4;
+	public static final Integer BOARD_QUANTITY = 5;
+	public static final Integer BOARD_GUEST_START_DATE = 6;
+	public static final Integer BOARD_GUEST_END_DATE = 7;
+	public static final Integer BOARD_GUEST_NAME = 8;
+	
 	private CompanyCollectionsController companyCollections;
 	private PmsCollectionsController pmsCollections;
 
@@ -64,30 +74,14 @@ public class PmsReportManager {
 		return null;
 	}
 	
-	public static final Integer BOARD_HOTEL_NAME = 0;
-	public static final Integer BOARD_DATE = 1;
-	public static final Integer BOARD_NAME = 2;
-	public static final Integer BOARD_CODE = 3;
-	public static final Integer BOARD_ROOM_NAME = 4;
-	public static final Integer BOARD_QUANTITY = 5;
-	public static final Integer BOARD_GUEST_START_DATE = 6;
-	public static final Integer BOARD_GUEST_END_DATE = 7;
-	public static final Integer BOARD_GUEST_NAME = 8;
-	
 	public String getBoardBookingSQL(Hotel hotel, Product product) throws ManagerBeanException{
 		String select = ""
 				+ " (SELECT W.description,  "
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
-//				+ " PRSD.quantity,"
 				+ " P.name AS Servicio,"
 				+ " P.code,"
-//				+ " PRS.extra,"
-//				+ " P2.name,"
-//				+ " PRR.adults + PRR.children AS Pax,"
-//				+ " PR.project,"
-//				+ " PRR.id,"
 				+ " A.name as Hab,"
 				+ " PRR.adults+PRR.children AS Cantidad,"
 				+ " PR.start_date AS Inicio,"
@@ -122,14 +116,8 @@ public class PmsReportManager {
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
-//				+ " PRSD.quantity,"
 				+ " P.name AS Servicio,"
 				+ " P.code,"
-//				+ " PRS.extra,"
-//				+ " '-',"
-//				+ " '-'," 
-//				+ " PR.project,"
-//				+ " PRR.id,"
 				+ " A.name as Hab,"
 				+ " PRR.adults+PRR.children AS Cantidad,"
 				+ " PR.start_date AS Inicio,"
@@ -300,18 +288,5 @@ public class PmsReportManager {
 	private Integer getReservationCancelStatus(){
 		return ReservationStatus.CANCELLED.ordinal();
 	}
-
-	public String getRoomStatusSQL(Hotel hotel) {
-		String select = "SELECT A.name, AA.status"
-				+ " FROM room as R"
-				+ " LEFT JOIN asset AS A ON R.asset=A.id"
-				+ " LEFT JOIN asset_activity AS AA ON AA.asset=A.id"
-				+ " WHERE R.hotel =  " + hotel.getId()
-				+ " AND AA.date = :date"
-				+ " ORDER BY A.name"
-				;
-		return select;
-	}
-	
 
 }
