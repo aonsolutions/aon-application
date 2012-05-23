@@ -68,6 +68,8 @@
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
+					<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="skipSuggestText" value="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="IncomeDetail_description" />
@@ -98,6 +100,8 @@
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
+							<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipSuggestText" value="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}" />
 							<ui:param name="lookupInputOnFocus" value="IncomeDetail_description-New" />
