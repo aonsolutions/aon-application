@@ -168,9 +168,13 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	
 	public void onSelect(ActionEvent event){
 		Domain domain = (Domain) getModel().getRowData();
-		super.setDomainId(domain.getId());
-		setDomainName(domain.getDescription());
-		LOGGER.info("Domain swicthed. New domain: '{}' - '{}'", getDomainId(),getDomainName());
+		select(domain.getId(), domain.getDescription());
+	}
+
+	public void select(Integer id, String name){
+		super.setDomainId(id);
+		setDomainName(name);
+		LOGGER.info("Domain swicthed. New domain: '{}' - '{}'", id, name);
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ExternalContext ec = ctx.getExternalContext();
 		Map<String,Object> map = ec.getSessionMap();

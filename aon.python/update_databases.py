@@ -10,8 +10,8 @@ import zipfile
 
 class updateDatabases:
     
-#    AON_MASTER_JAR = "/mnt/iNetServer.x86_64/usr/share/java/aon-master.jar" 
-    AON_MASTER_JAR = "/home/ecastellano/.m2/repository/com/code/aon/aon-master/7.0-SNAPSHOT/aon-master-7.0-SNAPSHOT.jar"
+    AON_MASTER_JAR = "/usr/share/java/aon-master.jar" 
+#    AON_MASTER_JAR = "/home/ecastellano/.m2/repository/com/code/aon/aon-master/7.0-SNAPSHOT/aon-master-7.0-SNAPSHOT.jar"
     UPDATE_SCRIPT_PREFIX = "com/code/aon/master/update/update.database."
     UPDATE_SCRIPT_SUFFIX = ".sql"
 
@@ -57,7 +57,9 @@ class updateDatabases:
             rows = databases.fetchall()
             for row in rows:
                 database = row[0]
-                print database,
+                print 
+                print database
+                print "------------------------------------"
                 c = MySQLdb.connect(host=self.__arguments.get_host(),port=self.__arguments.get_port(),user=self.__arguments.get_user(),passwd=self.__arguments.get_passwd(),db=database)
                 table_cur = c.cursor()
                 table_cur.execute("show tables LIKE 'db_version'")
@@ -68,21 +70,19 @@ class updateDatabases:
                     version_cur.execute("SELECT version_number FROM db_version;")
                     version_number = version_cur.fetchone()    
                     version_cur.close()
-                    print " \t\t current Version ..: " + version_number[0],
+                    print "\tCurrent Version ..: " + version_number[0]
                     current_index = -1
                     if self.__versions.count(version_number[0]) > 0:
                         current_index = self.__versions.index(version_number[0])
-                        print "current_index..: ", current_index
-                        print "first index..: ", self.__versions.index("1.0.0")
                     if current_index == -1:
-                        print "    no update is needed!"
+                        print "\tNo update is needed!"
                     else:    
-                        print "    update is needed!",(self.last_index + 1 - current_index),"scripts must be run." 
+                        print "\tUpdate is needed!",(self.last_index + 1 - current_index),"scripts must be run." 
                         self.update_database(database,current_index)
                 else:
-                    print "\t\thas no 'db_version' table" 
+                    print "\tThere is no 'db_version' table" 
             databases.close()
-            
+            print
             if self.__arguments.is_verbose_enabled():
                 print "commit ..... "
             conn.commit()
@@ -108,16 +108,17 @@ class updateDatabases:
     def update_database(self,database, current_index):
         for i in range(current_index,self.last_index + 1):
             name = self.UPDATE_SCRIPT_PREFIX + self.get_versions()[i] + self.UPDATE_SCRIPT_SUFFIX
-            print self.get_versions()[i],name
+            print "\tRunning Script: ",name
             file = self.__zf.open(name)
-
-            process = Popen('mysql -h%s -u%s -p%s %s ' % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),database),
-            stdout=PIPE, stdin=PIPE, shell=True)
+            if self.__arguments.is_verbose_enabled():
+                process = Popen('mysql -v -h%s -u%s -p%s %s ' % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),database),
+                                stdout=PIPE, stdin=PIPE, shell=True)
+            else:
+                process = Popen('mysql -h%s -u%s -p%s %s ' % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),database),
+                                stdout=PIPE, stdin=PIPE, shell=True)
             output = process.communicate(file.read())[0]
-            print "-----"
-            print process.returncode
-            print "-----"
-
+            if (process.returncode != 0):
+                raise AonException(-31,"Error updating '"+database+"' database.")
 
 if __name__ == '__main__':
     arguments = Arguments()

@@ -1058,8 +1058,8 @@ INSERT INTO `balance` (`domain`,`name`,`removable`,`type`) VALUES
 SET @Balance1 = (SELECT min(id) FROM `balance` WHERE `domain`= @Domain AND `type`=0);
 SET @Balance2 = (SELECT min(id) FROM `balance` WHERE `domain`= @Domain AND `type`=1);
 SET @Balance3 = (SELECT max(id) FROM `balance` WHERE `domain`= @Domain AND `type`=0);
-SET @Balance4 = (SELECT max(id) FROM `balance` WHERE `domain`= @Domain AND `type`=0);
-SET @Balance5 = (SELECT id FROM `balance` WHERE `domain`= @Domain AND `type`=2);
+SET @Balance4 = (SELECT max(id) FROM `balance` WHERE `domain`= @Domain AND `type`=1);
+SET @Balance5 = (SELECT min(id) FROM `balance` WHERE `domain`= @Domain AND `type`=2);
 
 INSERT INTO `balance_detail` (`domain`,`balance`,`code`,`description`,`accounts`,`sortKey`,`title`,`internal_calculation`,`visible`,`zeroFlag`,`creditNature`) VALUES 
 	(@Domain,@Balance1,'A0','ACTIVO','',0,1,0,1,0,0),

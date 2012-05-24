@@ -25,7 +25,7 @@ setup(
       author='Euke Castellano',
       author_email='ecastellano@esferalia.com',
       packages= ['aonAdmin',],
-      scripts=['newDomain.py','updateDatabases.py'],
+      scripts=['new_domain.py','update_databases.py','create_database.py'],
       url='http://www.esferalia.com',
       license='LICENSE.txt',
       description='Useful aon admin stuff.',
