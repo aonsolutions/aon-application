@@ -230,13 +230,14 @@ public class ReservationManager implements IReservationConstants {
 			getReservationUtils().verifySellerEntity(reservation, sellerSource);
 			getReservationUtils().verifyAgencyEntity(reservation, agencyInfo);
 			getReservationUtils().verifyCompanyEntity(reservation, companyInfo);
+			getReservationUtils().verifyOperationDate(reservation, operationDate, operationTime);
 
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			if (reservation.getId() == null) {
-				reservation.setCreationDate(getReservationUtils().obtainCreationDate(operationDate, operationTime));
+				reservation.setCreationDate(new Date());
 				reservation = (ProjectReservation)reservationBean.insert(reservation);
 			} else {
-				reservation.setModificationDate(getReservationUtils().obtainCreationDate(operationDate, operationTime));
+				reservation.setModificationDate(new Date());
 				reservation = (ProjectReservation)reservationBean.update(reservation);
 			}
 

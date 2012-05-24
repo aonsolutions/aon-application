@@ -1,7 +1,6 @@
 package com.esferalia.aon.pms.reservation;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -291,15 +290,6 @@ public class ReservationUtils implements IReservationConstants {
 		throw new ReservationException("Invalid Hotel: " + hotelCode, 361);
     }
 
-	public Date obtainCreationDate(String date, String time) {
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd+hh:mm:ss");
-			return dateFormat.parse(date + "+" + time);
-		} catch (ParseException ex) {
-			return new Date();
-		}
-	}
-
 	public Seller obtainSeller(SourceType sellerSource) throws ManagerBeanException {
 		Seller seller = null;
 		if (sellerSource != null) {
@@ -465,6 +455,12 @@ public class ReservationUtils implements IReservationConstants {
 			reservation.setRemarks(remarks);
 			reservation.setStatus(ReservationStatus.BLOCKED);
 		}
+	}
+
+	public void verifyOperationDate(ProjectReservation reservation, String date, String time) {
+		String remarks = reservation.getRemarks();
+		remarks = "FECHA Y HORA DE LA OPERACION [" + date + " " + time + "]\n" + remarks;
+		reservation.setRemarks(remarks);
 	}
 
 	public Item obtainRoomItem(String itemCode) throws ManagerBeanException, ReservationException {
