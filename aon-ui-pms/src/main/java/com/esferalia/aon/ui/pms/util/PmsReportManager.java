@@ -244,17 +244,17 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getBlockedRoomsSQL(Hotel hotel, Date fromDate, Date toDate) throws ManagerBeanException{
-		String select = "SELECT W.description As Hotel, AA.date As Fecha, count(R.asset)"
+	public String getBlockedRoomsSQL(Hotel hotel) throws ManagerBeanException{
+		String select = "SELECT W.description, AA.date, count(R.hotel)"
 				+ " FROM room as R"
-				+ " LEFT JOIN asset_activity AS AA ON R.asset=AA.asset"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
+				+ " LEFT JOIN asset_activity AS AA ON R.asset=AA.asset"
 				+ " WHERE AA.status <> " + ActivityStatus.BUSY.getValue()
 				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
 				+ " AND AA.date between :start AND :end"
 				+ " GROUP BY R.hotel, AA.date"
-				+ " ORDER BY W.description"
+				+ " ORDER BY W.description, AA.date"
 				;
 		return select;
 	}

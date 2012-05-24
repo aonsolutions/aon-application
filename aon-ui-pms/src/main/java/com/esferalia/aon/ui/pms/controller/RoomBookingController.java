@@ -102,7 +102,7 @@ public class RoomBookingController implements ICollectionProvider {
 		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem());
 		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem());
 		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel());
-		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel(), getFromDate(), getToDate());
+		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel());
 
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 
@@ -190,7 +190,9 @@ public class RoomBookingController implements ICollectionProvider {
 			if( !booking.getHotel().equals(roomHotel) ){
 				rooms = roomsIterator.hasNext()?roomsIterator.next():null;
 			}
-			booking.setRoomTotal( ((BigInteger) (((Object[])rooms)[1])).intValue() );
+			if(rooms!=null){
+				booking.setRoomTotal( ((BigInteger) (((Object[])rooms)[1])).intValue() );
+			}
 		}
 	}
 	
