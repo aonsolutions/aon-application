@@ -144,7 +144,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (requestRoom.getChildren() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("12"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("11"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getChildren());
 		}
 		if (requestRoom.getBabies() > 0) {
@@ -347,7 +347,7 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (requestRoom.getChildren() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("12"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("11"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getChildren());
 		}
 		if (requestRoom.getBabies() > 0) {
