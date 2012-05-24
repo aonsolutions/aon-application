@@ -95,6 +95,11 @@
 				<aon:panelTabSet selectedTab="#{domainUser.selectedTab}" >
                     
                     <c:if test="#{!domainUser.new}" >
+                    
+						<aon:panelTab name="applications" label="#{adminBundle.admin_applications}">
+							<ui:include src="/com/code/aon/ui/admin/facelet/domainUser/applications.xhtml" />						
+	                    </aon:panelTab>
+                    
 						<aon:panelTab name="userWorkGroups" label="#{configBundle.config_workgroup_module}">
 							<ui:include src="/com/code/aon/ui/admin/facelet/userWorkgroup/form.xhtml" />						
 	                    </aon:panelTab>

@@ -33,7 +33,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
-		update( duc.getDomainUser() );
+		update( duc );
 		duc.getIdCheck().setOldValue( duc.getDomainUser().getLogin() );
 	}
 	
@@ -64,7 +64,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 		getAdmin().getLogger().domainUserAddded(user);
-		update(user);
+		update(duc);
 	}
 	
 	@Override
@@ -75,8 +75,10 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		getAdmin().getLogger().domainUserdRemoved(user);
 	}
 	
-	private void update( User user ) throws ControllerListenerException {
+	private void update( DomainUserController duc ) throws ControllerListenerException {
+		User user = duc.getDomainUser();
 		try {
+			duc.initApplicationInfos(user);
 			updateWebmail(user);
 			updateDeniedOptions(user);
 			updateScopes(user);

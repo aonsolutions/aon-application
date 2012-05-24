@@ -19,14 +19,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Application;
-import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationController extends BasicController {
@@ -53,29 +50,10 @@ public class DomainApplicationController extends BasicController {
 
 	public List<SelectItem> getProfiles() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		DomainApplication da = getDomainApplication();
-		IManagerBean bean = BeanManager.getManagerBean(Profile.class);
-		Criteria criteria = new Criteria();
-		Expression expr1 = ExpressionUtilities.getEqualExpression("Profile.domain<id", da.getDomain());
-		Expression expr2 = ExpressionUtilities.getNullExpression("Profile.domain");
-		Expression expr3 = ExpressionUtilities.getOrExpression(expr1, expr2);
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_CONTROLLER_NAME);
-		Domain parent = dc.getParentDomain();
-		if ( parent != null ) {
-			Expression expr4 = ExpressionUtilities.getEqualExpression("Profile.domain<id", parent.getId());
-			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr3, expr4));
-		} else {
-			criteria.addExpression(expr3);
-		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROFILE_APPLICATION_ID), da.getApplication().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.PROFILE_NAME));
-		List<ITransferObject> profiles = bean.getList(criteria);
-		if (! profiles.isEmpty() ) {
-			for( ITransferObject to : profiles ) {
-				Profile profile = (Profile) to;
-				SelectItem item = new SelectItem(profile, profile.getName() );
-				list.add(item);
-			}
+		for( ITransferObject to : UserApplicationInfo.getProfiles(getDomainApplication()) ) {
+			Profile profile = (Profile) to;
+			SelectItem item = new SelectItem(profile, profile.getName() );
+			list.add(item);
 		}		
 		return list;
 	}

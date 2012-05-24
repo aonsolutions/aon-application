@@ -37,6 +37,7 @@ import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
 import com.code.aon.ui.config.controller.BasicChangePasswordController;
 import com.code.aon.ui.form.BasicController;
@@ -56,6 +57,8 @@ public class DomainUserController extends BasicController {
 	private String selectedTab;
 	
 	private IdCheckUtil idCheck;
+	
+	private List<UserApplicationInfo> applicationInfos;
 	
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
@@ -261,6 +264,24 @@ public class DomainUserController extends BasicController {
 			return true;
 		}
 		return getDomainUser().isActive() || (!isSkipUserReset());
+	}	
+
+	public void initApplicationInfos( User user ) throws ManagerBeanException {
+		this.applicationInfos = UserApplicationInfo.getApplicationInfos(user);
+	}
+	
+	public List<UserApplicationInfo> getApplicationInfos() {
+		return applicationInfos;
+	}
+
+	public void onSaveApplications( ActionEvent event ) throws ManagerBeanException {
+		for( UserApplicationInfo uai : this.applicationInfos ) {
+			if ( uai.isChecked() ) {
+				uai.register();
+			} else {
+				uai.unregister();
+			}
+		}
 	}	
 	
 }
