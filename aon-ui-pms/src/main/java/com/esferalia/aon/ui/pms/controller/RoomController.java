@@ -144,7 +144,7 @@ public class RoomController extends BasicController {
 	}
 
 	public void onRoomUnblock(ActionEvent event) {
-		if (getCheckedRooms().size() > 0) {
+		if (getCheckedCount() > 0) {
 			try {
 				IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
 				Criteria criteria = new Criteria();
@@ -218,6 +218,10 @@ public class RoomController extends BasicController {
 
 	public void checkNone(ActionEvent event) {
 		clearCheckedRooms();
+	}
+
+	public int getCheckedCount() {
+		return getCheckedRooms().size();
 	}
 
 }

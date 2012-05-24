@@ -20,6 +20,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
+import com.esferalia.aon.ui.pms.controller.RoomController;
 
 public class RoomSearchListener extends ControllerSearchListener {
 
@@ -44,8 +45,10 @@ public class RoomSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setHotel(null);
-		setItem(null);
+		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+
+		((RoomController)getController()).clearCheckedRooms();
 	}
 	
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
