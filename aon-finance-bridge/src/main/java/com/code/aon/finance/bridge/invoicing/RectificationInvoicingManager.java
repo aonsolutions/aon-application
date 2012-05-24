@@ -76,6 +76,7 @@ public class RectificationInvoicingManager {
 		rectifier.setComments(cause);
 		rectifier.setScope(invoice.getScope());
 		rectifier.setService(invoice.isService());
+		rectifier.setAdvance(invoice.isAdvance());
 		rectifier.setRectificationType(rectificationtype);
 		rectifier.setRectificationInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);

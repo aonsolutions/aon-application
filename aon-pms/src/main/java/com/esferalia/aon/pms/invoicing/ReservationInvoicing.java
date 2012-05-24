@@ -29,10 +29,12 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -149,7 +151,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
-		invoice.setScope((!service) ? reservation.getHotel().getScope() : reservationInvoiceTo.getHotel().getScope());
+		invoice.setScope((!service) ? reservation.getHotelReservation().getScope() : reservationInvoiceTo.getHotel().getScope());
 		invoice.setService(service);
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -160,8 +162,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		int line = 0;
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-		double calculatedVatQuota = reservationUtils.getReservationCalculatedVatQuota(reservation);
-		boolean isVatGap = (reservation.getVatQuota() != calculatedVatQuota);
+		boolean isVatGap = (reservation.isAdvanceInvoiced() || reservation.getVatQuota() != reservationUtils.getReservationCalculatedVatQuota(reservation));
 		double vatGap = (isVatGap) ? reservation.getVatQuota() : 0;
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -187,7 +188,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
-			invoiceDetail.setWorkPlace(reservation.getHotel().getWorkPlace());
+			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 			if (isVatGap) {
 				invoiceDetail.setTaxDataInDetail(true);
 				if (reservation.getVatQuota() != 0) {
@@ -205,6 +206,35 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
 			invoiceDetailBean.insert(invoiceDetail);
+		}
+
+		if (reservation.isAdvanceInvoiced()) {
+			criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_PROJECT_ID), reservation.getId());
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ADVANCE), true);
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail advanceDetail = (InvoiceDetail)ito;
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setInvoice(invoice);
+				invoiceDetail.setProject(reservation.getProject());
+				invoiceDetail.setLine(++line);
+				invoiceDetail.setItem(advanceDetail.getItem());
+				invoiceDetail.setDescription(advanceDetail.getDescription());
+				invoiceDetail.setQuantity(-1);
+				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+				invoiceDetail.setPrice(advanceDetail.getPrice());
+				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setTaxableBase(advanceDetail.getTaxableBase() * (-1));
+				invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+				invoiceDetail.setTaxDataInDetail(true);
+				for (TaxBreakDown taxBreakDown : advanceDetail.getTaxBreakDowns()) {
+					invoiceDetail.setVatPercent(taxBreakDown.getTaxPercent());
+					invoiceDetail.setVatQuota(taxBreakDown.getTaxQuota() * (-1));
+				}
+				invoiceDetail.getInvoice().setUpdateEnabled(true);
+				invoiceDetailBean.insert(invoiceDetail);
+			}
 		}
 	}
 

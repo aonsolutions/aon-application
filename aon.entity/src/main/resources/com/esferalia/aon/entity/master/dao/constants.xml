@@ -144,8 +144,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
-		<alias names="description,discountExpression,id,invoice_id,invoice_type,item_id,line,price,project,project_id,quantity,source,sourceId,item_product_type,item_product_code,taxableBase,taxes,warehouse_id,workPlace_id" />
-		<hibernate names="description,discountExpression,id,invoice.id,invoice.type,item.id,line,price,project,project.id,quantity,source,sourceId,item.product.type,item.product.code,taxableBase,taxes,warehouse.id,workPlace.id" />
+		<alias names="description,discountExpression,id,invoice_id,invoice_project_id,invoice_type,invoice_advance,invoice_rectificationType,item_id,line,price,project,project_id,quantity,source,sourceId,item_product_type,item_product_code,taxableBase,taxes,warehouse_id,workPlace_id" />
+		<hibernate names="description,discountExpression,id,invoice.id,invoice.project.id,invoice.type,invoice.advance,invoice.rectificationType,item.id,line,price,project,project.id,quantity,source,sourceId,item.product.type,item.product.code,taxableBase,taxes,warehouse.id,workPlace.id" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">

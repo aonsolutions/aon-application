@@ -12,6 +12,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
@@ -21,6 +23,7 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.enumeration.Shift;
+import com.esferalia.aon.pms.reservation.IReservationConstants;
 
 public class PmsCollectionsController {
 
@@ -64,11 +67,40 @@ public class PmsCollectionsController {
 	
 	public List<Integer> getCurrentUserHotelIds() throws ManagerBeanException {
 		List<Integer> list = new LinkedList<Integer>();
-		for(ITransferObject to: getCurrentUserHotelList() ){
-			Hotel h = (Hotel) to;
-			list.add(h.getId());
+		for (ITransferObject ito: getCurrentUserHotelList()) {
+			Hotel hotel = (Hotel)ito;
+			list.add(hotel.getId());
 		}
 		return list;
+	}
+
+	public List<SelectItem> getAgencies() throws ManagerBeanException {
+		return getCustomerList(true);
+	}
+
+	public List<SelectItem> getCompanies() throws ManagerBeanException {
+		return getCustomerList(false);
+	}
+
+	private List<SelectItem> getCustomerList(boolean agency) throws ManagerBeanException {
+		List<SelectItem> customers = new LinkedList<SelectItem>();
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		if (agency) {
+			criteria.addNotEqualExpression("Customer.registry.segments.segment.name", IReservationConstants.COMPANY);
+		} else {
+			criteria.addEqualExpression("Customer.registry.segments.segment.name", IReservationConstants.COMPANY);
+		}
+		criteria.addEqualExpression("Customer.registry.addInfos.attribute", IReservationConstants.SOLRES.toUpperCase());
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, customerBean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID));
+		criteria.addOrder(customerBean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_NAME));
+		for (ITransferObject ito : customerBean.getList(criteria)) {
+			Customer customer = (Customer)ito;
+			SelectItem customerItem = new SelectItem(customer, customer.getRegistry().getFullName());
+			customers.add(customerItem);
+		}
+		return customers;
 	}
 
 	public List<SelectItem> getReservationStatuses() {
