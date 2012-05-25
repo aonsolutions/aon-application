@@ -191,7 +191,7 @@ public class MailConfigController {
 		if ( WebMailController.isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 			if ( webmail.isLogged() ) {
-				return ObjectUtils.equals(webmail.getServer().getAccount(), account);
+				return ! ObjectUtils.equals(webmail.getServer().getAccount(), account);
 			}
 		}
 		return true;
@@ -363,6 +363,13 @@ public class MailConfigController {
 			updateMailAccountList();
 		}
 		return mailAccounts.size() > 1;
+	}
+	
+	public int getMailAccountCount() {
+		if ( mailAccounts == null ) {
+			updateMailAccountList();
+		}
+		return mailAccounts.size();		
 	}
 
 	public List<SelectItem> getSignatures() {

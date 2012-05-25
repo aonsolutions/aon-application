@@ -1,7 +1,9 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_DUPLICATED;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +16,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.db.MailAccount;
@@ -45,7 +52,15 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 	public List<SelectItem> getMailAccounts() {
 		List<SelectItem> accounts = new LinkedList<SelectItem>();
 		try {		
-			for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
+    		Criteria criteria = new Criteria();
+    		User user = UserUtils.getInstance().getLoggedUser();
+			Expression exp1 = ExpressionUtilities.getEqualExpression("MailAccount.user<id", user.getId());
+			if ( AonUtil.isBeanValue(BEAN_WEBMAIL, SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY) ) {
+				Expression exp2 = getExpression(null);
+				exp1 = ExpressionUtilities.getOrExpression(exp1, exp2); 					
+			}
+			criteria.addExpression(exp1);		
+			for( ITransferObject to : getManagerBean().getList(criteria) ) {
 				MailAccount account = (MailAccount) to;
 				SelectItem item = new SelectItem(account, account.getName());
 				accounts.add(item);				

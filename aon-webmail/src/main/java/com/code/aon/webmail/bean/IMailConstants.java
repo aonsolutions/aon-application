@@ -32,7 +32,7 @@ public interface IMailConstants {
 	
 	String CONNECTION_TIMEOUT = ".connectiontimeout";
 	
-	String DEFAULT_TIMEOUT = "10000";
+	String DEFAULT_TIMEOUT = "30000";
 	
 	String AUTH = ".auth";
 
