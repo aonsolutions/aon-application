@@ -28,11 +28,19 @@ public interface IMailConstants {
 	
 	String STARTTLS_ENABLE = ".starttls.enable";
 	
+	String TIMEOUT = ".timeout";
+	
+	String CONNECTION_TIMEOUT = ".connectiontimeout";
+	
+	String DEFAULT_TIMEOUT = "10000";
+	
 	String AUTH = ".auth";
 
 	String MAIL_HOST = MAIL_PREFIX + "host";
 	
 	String MAIL_STORE_PROTOCOL = MAIL_PREFIX + "store.protocol";
+	
+	String MAIL_TRANSPORT_PROTOCOL = MAIL_PREFIX + "transport.protocol";
 
 	String X_MAILER = "X-Mailer";
 	

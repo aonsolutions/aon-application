@@ -58,9 +58,11 @@
 
 				<aon:outputLabel for="MailAccount_protocol"
 					value="#{webmailBundle.webmail_mailAccount_protocol}" />
-				<aon:inputText id="MailAccount_protocol"
-					size="60" maxlength="64" disabled="true"
-					value="#{controller.to.protocol}" />
+				<aon:selectOneMenu id="MailAccount_protocol"
+					value="#{controller.to.protocol}">
+					<f:selectItem itemLabel="IMAP" itemValue="imap" />
+					<f:selectItem itemLabel="POP3" itemValue="pop3" />
+				</aon:selectOneMenu>
 			</aon:panelGrid>
 		</aon:div>
 		<aon:div styleClass="aon-margin-top aon-margin-bottom">

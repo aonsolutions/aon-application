@@ -433,7 +433,9 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			throw new AbortProcessingException(th);
 		}
     	try {	
-    		storeMessage(server, aonMessage, false);
+    		if ( server.isIMAP() ) {
+    			storeMessage(server, aonMessage, false);
+    		}
 			if (parentMessage!=null){
 		    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
 		    	parentMessage.getParent().getFolder().expunge();

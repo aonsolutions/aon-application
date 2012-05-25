@@ -25,6 +25,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.imageio.ImageIO;
+import javax.mail.Folder;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -71,8 +72,6 @@ public class DesktopController {
     private ListDataModel recentNoteModel;
     
     private List<DesktopNoticeSummary> noticeSummaryList;
-
-    private List<AonFolder> mailSummaryModel;
     
     private List<TaskInfo> taskSummaryModel;
     
@@ -86,7 +85,6 @@ public class DesktopController {
 		try {
 			updateRecentNoteModel();
 			updateNoticeSummaryModel();
-			initWebmail();
 			initTask();
 	    } catch (ManagerBeanException e) {
 	    	LOGGER.error( e.getMessage(), e );
@@ -158,7 +156,6 @@ public class DesktopController {
 		try {
 			updateRecentNoteModel();
 			updateNoticeSummaryModel();
-			updateMailSummaryModel();
 			updateTaskSummaryModel();
 	    } catch (ManagerBeanException e) {
 	    	LOGGER.error( e.getMessage(), e );
@@ -223,36 +220,6 @@ public class DesktopController {
 		}
 		return bigLogo;
 	}	
-
-	private void initWebmail() {
-		try {
-			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			if ( wmc.isLogged() ) {
-				updateMailSummaryModel();				
-			}
-		} catch (Throwable th) {
-			LOGGER.error("Error on Webmail init", th);
-		}
-	}
-
-    private void updateMailSummaryModel() {
-		WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	if ( wmc.isLogged() ) {
-    		AonFolder folder = wmc.getServer().getAonFolder( INBOX_FOLDER_NAME );
-    		if ( folder != null ) {
-    			mailSummaryModel = new LinkedList<AonFolder>();
-    			mailSummaryModel.add(folder);
-    		}    		
-    	}
-    }
-    
-    public List<AonFolder> getMailSummaryModel() {
-		if ( mailSummaryModel != null ) {
-			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			wmc.isReady();
-		}
-		return mailSummaryModel;
-    }
 
 	private void initTask() {
 		try {
@@ -343,5 +310,22 @@ public class DesktopController {
     	return this.taskSummaryModel;
     }
 
+	public int getUnreadMessageCount() {
+		int unreadMessageCount = 0;
+		WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+    	if ( wmc.isLogged() ) {
+			try {
+	    		AonFolder folder = wmc.getServer().getAonFolder( INBOX_FOLDER_NAME );
+	    		if ( folder != null ) {
+	    			folder.open(Folder.READ_ONLY);
+	    			unreadMessageCount = folder.getUnreadMessageCount();
+	    			folder.close(false);
+	    		}    		
+			} catch (Throwable th) {
+				LOGGER.error( "Error getting unread message in INBOX", th);
+			}
+    	}
+		return unreadMessageCount;
+	}
 
 }

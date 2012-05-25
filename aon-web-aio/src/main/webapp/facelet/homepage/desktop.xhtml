@@ -31,21 +31,13 @@
 									</aon:outputLink>
 								</aon:div>
 								<aon:div styleClass="aon-portlet-body">
-									<aon:dataTable id="mailSummaryList"
-										value="#{desktop.mailSummaryModel}" var="to"
-										columnClasses="aon-table-portlet-column"
+ 									<h:panelGrid columns="2"
+										columnClasses="aon-table-portlet-column,aon-table-portlet-column"
 										rowClasses="aon-table-portlet-row"
-										styleClass="aon-width-170 aon-table-portlet">
-	
-										<aon:column styleClass="aon-text-left" >
-											<aon:outputText value="#{to.name}"/>
-										</aon:column>
-	
-										<aon:column styleClass="aon-text-right" >
-											<aon:outputText value="#{to.unreadMessageCount}"/>
-										</aon:column>
-	
-									</aon:dataTable>
+										styleClass="aon-width-170 aon-table-portlet" >
+										<aon:outputText value="INBOX"/>
+										<aon:outputText value="#{desktop.unreadMessageCount}"/>
+									</h:panelGrid>
 								</aon:div>
 							</aon:div>
 						</c:if>
