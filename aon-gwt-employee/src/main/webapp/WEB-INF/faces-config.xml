@@ -56,11 +56,4 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
-	<managed-bean>
-		<managed-bean-name>domainSwitcherListeners</managed-bean-name>
-	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<list-entries />
-	</managed-bean>
-
 </faces-config>
