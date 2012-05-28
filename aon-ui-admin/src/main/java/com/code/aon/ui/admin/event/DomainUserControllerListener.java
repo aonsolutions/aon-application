@@ -6,11 +6,21 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.USER_SCOPE_EX_CON
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_EX_CONTROLLER_NAME;
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.admin.ApplicationUserProfile;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.User;
+import com.code.aon.config.UserScope;
+import com.code.aon.config.UserWorkGroup;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.admin.controller.UserScopeController;
@@ -20,6 +30,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserControllerListener extends ControllerAdapter {
 
@@ -68,6 +79,20 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		User user = (User) event.getController().getTo();
+		try {		
+			removeApplicationUsers( user );
+			removeDependencies(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, user.getId());
+			removeDependencies(UserWorkGroup.class, IEntityAlias.USER_WORK_GROUP_USER_ID, user.getId());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}	
+	}	
+	
+	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
@@ -108,5 +133,29 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		UserWorkGroupController uwgc = (UserWorkGroupController) AonUtil.getRegisteredBean(USER_WORK_GROUP_EX_CONTROLLER_NAME);
 		uwgc.init(user);
 	}	
-	
+
+	private void removeApplicationUsers( User user ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ApplicationUser.class);
+		IManagerBean aupBean = BeanManager.getManagerBean(ApplicationUserProfile.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_USER_USER_ID), user.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			ApplicationUser appUser = (ApplicationUser) to;
+			Criteria aupCriteria = new Criteria();
+			aupCriteria.addEqualExpression(aupBean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID), appUser.getId());
+			for( ITransferObject aup : aupBean.getList(aupCriteria) ) {
+				aupBean.remove(aup);
+			}
+			bean.remove(appUser);
+		}	
+	}
+
+	private void removeDependencies( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(alias), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			bean.remove(to);
+		}	
+	}	
 }

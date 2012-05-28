@@ -96,8 +96,12 @@ public class DocumentManager {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
 			if ( domain != null ) {
-				maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;
-				maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+				if ( domain.getMaxDocumentSize() != null ) {
+					maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;	
+				}
+				if ( domain.getMaxTotalDocumentSize() != null ) {
+					maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+				}
 			}
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error init max document szie", th);
