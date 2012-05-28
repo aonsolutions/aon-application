@@ -1,0 +1,52 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" >
+
+	<aon:div styleClass="aon-scroll-area">
+		<a4j:region>
+
+			<aon:div styleClass="aon-margin-bottom" >
+				<aon:commandButton id="portalFiscal"
+					value="#{adminBundle.admin_fiscal_portal}" reRender="applicationsTable"
+					actionListener="#{adminDomain.onFiscalPortal}" />
+			</aon:div>		
+		
+			<aon:dataTable id="applicationsTable" var="appInfo"
+				value="#{adminDomain.applicationInfos}">
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox value="#{appInfo.checked}" >
+						<a4j:support event="onchange" reRender="applicationsTable" /> 
+					</aon:selectBooleanCheckbox>								
+					<aon:outputText styleClass="aon-bold"
+						value="#{appInfo.description}" />
+				</aon:column>				
+
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_modules}" />
+					</f:facet>
+					<a4j:repeat value="#{appInfo.applicationModules}"
+						rendered="#{appInfo.checked}" var="appModule">
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{appModule.checked}" />								
+							<aon:outputText styleClass="aon-italic"
+								value="#{appModule.module}" />
+						</aon:div>
+					</a4j:repeat>
+				</aon:column>					
+			</aon:dataTable>
+		</a4j:region>
+
+	</aon:div>
+
+</ui:composition>

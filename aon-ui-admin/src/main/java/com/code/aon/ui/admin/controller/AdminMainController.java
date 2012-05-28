@@ -133,6 +133,7 @@ public class AdminMainController implements IAdminConstants {
 			if ( controller.getTo() == null ) {
 				controller.select(event, DomainManager.getCurrentDomain());	
 			}
+			controller.initApplicationInfos();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				

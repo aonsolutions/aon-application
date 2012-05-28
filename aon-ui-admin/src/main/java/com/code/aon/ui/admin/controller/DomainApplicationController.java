@@ -1,7 +1,5 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,10 +40,6 @@ public class DomainApplicationController extends BasicController {
 	
 	public DomainApplication getDomainApplication() {
 		return (DomainApplication) getTo();
-	}
-	
-	public boolean isShowModules() {
-		return AON_AIO_APPLICATION.equals(getDomainApplication().getApplication().getName());
 	}
 
 	public List<SelectItem> getProfiles() throws ManagerBeanException {

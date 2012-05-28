@@ -23,12 +23,17 @@ public class DomainControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 	}
-	
+
 	@Override
-	public void afterEditSearch(ControllerEvent event)
+	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
-		dc.updateParentDomains();
-	}
-	
+		try {		
+			dc.saveApplications();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
+	}	
+
 }

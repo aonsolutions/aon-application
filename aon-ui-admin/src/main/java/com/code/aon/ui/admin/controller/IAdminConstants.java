@@ -23,12 +23,12 @@ public interface IAdminConstants {
 	String ADVANCED_MODE_USER = "advancedMode_user";
 	String ADVANCED_MODE_PASSWORD = "advancedMode_password";
 	String NOTIFICATION_EMAIL = "notification_email";
-	String SHOW_DOMAIN_MANAGEMENT = "showDomainManagement";
 	
 	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	String DEFAULT_SUBDOMAIN_SUFFIX = "aonsolutions.es";
 	String AON_AIO_APPLICATION = "aon-aio";
+	String AON_EMPLOYEE_APPLICATION = "aon-employee";
 	
 	String USER_TABLE = "user";
 	String COMPANY_TABLE = "company";
@@ -40,6 +40,8 @@ public interface IAdminConstants {
 	String NEED_MAIL_ACCOUNT = "admin_need_mail_account";
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
 	String USER_DUPLICATED = "admin_user_duplicated_login";
+	
+	String EMPLOYEE_PORTAL = "admin_employee_portal";
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
 	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";

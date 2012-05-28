@@ -46,7 +46,6 @@
 					<aon:outputLabel for="DomainApplication_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="DomainApplication_active"
-						disabled="#{!adminMain.config.editDomainApplicationActive}"
 						value="#{domainApplication.to.active}" />
 					
 				</aon:panelGrid>
@@ -65,14 +64,6 @@
 							</ui:include>
 	                    </aon:panelTab>
 	                    
-						<aon:panelTab name="modules"
-							rendered="#{domainApplication.showModules}"
-							label="#{adminBundle.admin_modules}">
-							<ui:include src="/com/code/aon/ui/admin/facelet/domainApplicationModule/grid.xhtml" >
-								<ui:param name="controller" value="#{domainApplicationModule}" />
-							</ui:include>
-	                    </aon:panelTab>
-
 						<aon:panelTab name="profiles"
 							label="#{adminBundle.admin_profiles}">
 
