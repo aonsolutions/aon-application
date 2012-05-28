@@ -18,7 +18,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     @Override
     public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
     	Invoice invoice = (Invoice)evt.getTo();
-        if (invoice.isAdvance() && invoice.getProject() != null && invoice.getProject().getId() != null && invoice.getProject().isReservation()) {
+        if (invoice.getProject() != null && invoice.getProject().getId() != null && invoice.getProject().isReservation()) {
         	modifyReservationStatus(invoice);
         }
     }
