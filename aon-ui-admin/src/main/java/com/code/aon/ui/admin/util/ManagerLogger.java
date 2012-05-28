@@ -40,7 +40,7 @@ public class ManagerLogger {
 	
 	private IMailAccount getMailAccount() {
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		IMailAccount account = mailConfig.getDefaultMailAccount();
+		IMailAccount account = mailConfig.getDefaultMailAccount(true);
 		if (account!=null) {
 			if ( AonServer.test(account, false, true) ) {
 				return account;
