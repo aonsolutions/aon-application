@@ -372,6 +372,10 @@ public class MailConfigController {
 		return mailAccounts.size();		
 	}
 
+	public void setMailAccounts(List<SelectItem> mailAccounts) {
+		this.mailAccounts = mailAccounts;
+	}
+
 	public List<SelectItem> getSignatures() {
 		return signatures;
 	}
@@ -380,8 +384,8 @@ public class MailConfigController {
 		this.signatures = getSignature().getSignatures();
 	}
 	
-	public IMailAccount getDefaultMailAccount() {
-		boolean connectDomainAccounts = AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY);
+	public IMailAccount getDefaultMailAccount( boolean skipConnectCheck ) {
+		boolean connectDomainAccounts = skipConnectCheck || AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY);
 		updateMailAccountList();
 		IMailAccount defaultAccount = null;
 		List<IMailAccount> list = new LinkedList<IMailAccount>();

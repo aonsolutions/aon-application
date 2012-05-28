@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:commandButton id="email"
-		value="&#160;" disabled="#{!webmail.logged}"
+		value="&#160;" disabled="#{mailConfig.mailAccountCount == 0}"
 		actionListener="#{irpfResult.onSendByEmail}"
 		styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
 		reRender="showNewMessageWindow">

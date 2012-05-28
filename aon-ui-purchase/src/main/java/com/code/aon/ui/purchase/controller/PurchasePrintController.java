@@ -1,8 +1,8 @@
 package com.code.aon.ui.purchase.controller;
 
 import static com.code.aon.ui.purchase.IPurchaseMessages.BUNDLE_KEY;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 
 import java.util.List;
 
@@ -19,8 +19,8 @@ import com.code.aon.ui.purchase.IPurchaseMessages;
 import com.code.aon.ui.purchase.util.PurchaseEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.IMailAccount;
 
 public class PurchasePrintController extends PurchaseController {
@@ -29,8 +29,8 @@ public class PurchasePrintController extends PurchaseController {
 	
 	public void onInitSendEmail( ActionEvent event ) {
 		try {		
-			WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			if (webmailController.isLogged()) {
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			if (mailConfig.getMailAccountCount() > 0) {
 				MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 				messageController.initNewMessage();
 				messageController.setAppendSignature(true);
@@ -41,7 +41,7 @@ public class PurchasePrintController extends PurchaseController {
 				messageController.updateMessageBody( emailUtil.getEmailContent(body, AonUtil.getMessage(IPurchaseMessages.BUNDLE_KEY, IPurchaseMessages.PURCHASE_EMAIL_BODY_HEADER)) );
 				messageController.setShowNewMessageWindow(true);
 			} else {
-				AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+				AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);

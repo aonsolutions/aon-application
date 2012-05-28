@@ -94,7 +94,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		IMailAccount mailAccount = mailConfig.getDefaultMailAccount();
+		IMailAccount mailAccount = mailConfig.getDefaultMailAccount(false);
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{

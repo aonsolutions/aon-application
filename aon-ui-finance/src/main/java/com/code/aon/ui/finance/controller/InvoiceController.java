@@ -2,6 +2,8 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
 import java.util.Date;
@@ -62,8 +64,8 @@ import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -739,17 +741,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	private void sendInvoiceByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			Invoice invoice = getInvoice();
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 			messageController.initNewMessage();
 			IAttachment attach = getInvoiceData(invoice);
 			emailController.initMessageController(messageController, invoice, attach, facturae);
 			messageController.setShowNewMessageWindow(true);
 			messageController.setSecurityInfo(securyInfo);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 

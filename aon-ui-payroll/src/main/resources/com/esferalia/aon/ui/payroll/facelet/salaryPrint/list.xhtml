@@ -30,7 +30,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-rubber"
 						accesskey="#{bundle.aon_key_new}" />	
 					<aon:commandButton id="email"
-						value="&#160;" disabled="#{!webmail.logged}"
+						value="&#160;" disabled="#{mailConfig.mailAccountCount == 0}"
 						rendered="#{!salaryPrint.selectionEmpty}"
 						actionListener="#{salaryPrint.onSendByEmail}"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"

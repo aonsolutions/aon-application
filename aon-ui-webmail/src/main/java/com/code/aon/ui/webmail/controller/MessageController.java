@@ -576,8 +576,19 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     	return aonMessage;
 	}
 	
+	private IMailAccount resolveMailAccount() {
+		IMailAccount mailAccount = null;
+		if ( getWebMailController().isLogged() ) {
+			mailAccount = getWebMailController().getServer().getAccount();
+		} else {
+			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+			mailAccount = mailConfig.getDefaultMailAccount(true);
+		}
+		return mailAccount;
+	}
+	
 	public void initNewMessage(){
-		senderMailAccount = getWebMailController().getServer().getAccount();
+		senderMailAccount = resolveMailAccount();
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;

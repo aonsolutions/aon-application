@@ -14,11 +14,6 @@ import com.code.aon.webmail.IMailAccount;
 public class MailAccountControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		updateMailAccountList();
-	}
-
-	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		updateSignatureList();
 	}
@@ -32,11 +27,12 @@ public class MailAccountControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		updateFolderTree(event);
+		resetMailAccountList();
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		updateMailAccountList();
+		resetMailAccountList();
 		if ( WebMailController.isConnectable() ) {
 			IMailAccount mailAccount = (IMailAccount) event.getController().getTo();
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
@@ -52,9 +48,9 @@ public class MailAccountControllerListener extends ControllerAdapter {
 		mailConfig.updateSignatureList();
 	}
 
-	private void updateMailAccountList() {
+	private void resetMailAccountList() {
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
-		mailConfig.updateMailAccountList();
+		mailConfig.setMailAccounts(null);
 	}
 	
 	private void updateFolderTree(ControllerEvent event) {
