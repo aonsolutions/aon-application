@@ -1,6 +1,7 @@
 package com.code.aon.ui.admin.event;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_SCOPE_EX_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_WORK_GROUP_EX_CONTROLLER_NAME;
@@ -11,17 +12,17 @@ import java.io.Serializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.admin.ApplicationUserProfile;
+import com.code.aon.audit.ActionDenied;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
+import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
 import com.code.aon.ui.admin.controller.UserScopeController;
 import com.code.aon.ui.admin.controller.UserWorkGroupController;
@@ -30,6 +31,9 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.webmail.db.Contact;
+import com.code.aon.webmail.db.MailAccount;
+import com.code.aon.webmail.db.Signature;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainUserControllerListener extends ControllerAdapter {
@@ -83,9 +87,14 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
 		try {		
-			removeApplicationUsers( user );
+			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
+			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, user.getId() );
 			removeDependencies(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, user.getId());
 			removeDependencies(UserWorkGroup.class, IEntityAlias.USER_WORK_GROUP_USER_ID, user.getId());
+			removeDependencies(ActionDenied.class, IEntityAlias.ACTION_DENIED_USER_ID, user.getId());
+			removeDependencies(Contact.class, IEntityAlias.CONTACT_USER_ID, user.getId());
+			removeDependencies(MailAccount.class, IEntityAlias.MAIL_ACCOUNT_USER_ID, user.getId());
+			removeDependencies(Signature.class, IEntityAlias.SIGNATURE_USER_ID, user.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -134,22 +143,6 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		uwgc.init(user);
 	}	
 
-	private void removeApplicationUsers( User user ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ApplicationUser.class);
-		IManagerBean aupBean = BeanManager.getManagerBean(ApplicationUserProfile.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_USER_USER_ID), user.getId());
-		for( ITransferObject to : bean.getList(criteria) ) {
-			ApplicationUser appUser = (ApplicationUser) to;
-			Criteria aupCriteria = new Criteria();
-			aupCriteria.addEqualExpression(aupBean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID), appUser.getId());
-			for( ITransferObject aup : aupBean.getList(aupCriteria) ) {
-				aupBean.remove(aup);
-			}
-			bean.remove(appUser);
-		}	
-	}
-
 	private void removeDependencies( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(_class);
 		Criteria criteria = new Criteria();
@@ -158,4 +151,5 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			bean.remove(to);
 		}	
 	}	
+	
 }

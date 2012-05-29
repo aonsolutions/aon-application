@@ -1,8 +1,5 @@
 package com.code.aon.aio.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -25,7 +22,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.imageio.ImageIO;
-import javax.mail.Folder;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -58,8 +54,6 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.bean.AonFolder;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
@@ -309,23 +303,5 @@ public class DesktopController {
     public List<TaskInfo> getTaskSummaryModel() {
     	return this.taskSummaryModel;
     }
-
-	public int getUnreadMessageCount() {
-		int unreadMessageCount = 0;
-		WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	if ( wmc.isLogged() ) {
-			try {
-	    		AonFolder folder = wmc.getServer().getAonFolder( INBOX_FOLDER_NAME );
-	    		if ( folder != null ) {
-	    			folder.open(Folder.READ_ONLY);
-	    			unreadMessageCount = folder.getUnreadMessageCount();
-	    			folder.close(false);
-	    		}    		
-			} catch (Throwable th) {
-				LOGGER.error( "Error getting unread message in INBOX", th);
-			}
-    	}
-		return unreadMessageCount;
-	}
 
 }
