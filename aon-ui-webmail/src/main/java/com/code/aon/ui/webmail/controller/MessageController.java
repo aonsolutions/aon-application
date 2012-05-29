@@ -518,7 +518,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	 * @throws MessagingException 
 	 * @throws UnsupportedEncodingException 
 	*/
-	private AonMessage compoundMessage( AonServer server) throws WebmailException, MessagingException, UnsupportedEncodingException {
+	public AonMessage compoundMessage( AonServer server) throws WebmailException, MessagingException, UnsupportedEncodingException {
 		String personal = getPersonal( senderMailAccount );
 		Address from = new InternetAddress(senderMailAccount.getEmail(), personal);
     	AonMessage newMessage = server.createAonMessage( from );

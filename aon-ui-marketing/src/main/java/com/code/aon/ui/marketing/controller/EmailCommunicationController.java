@@ -72,9 +72,9 @@ public class EmailCommunicationController implements IMarketingConstants {
 			MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			String recipientsTo = StringUtils.join(emails, ",");
 			messageController.setRecipientsTo(recipientsTo);
-	    	AonMessage aonMessage = messageController.compoundMessage();
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
 	    	AonServer server = webMailController.getServer();
+	    	AonMessage aonMessage = messageController.compoundMessage(server);
 	   		server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
 			LOGGER.error("Error sending email to " + emails, th );
