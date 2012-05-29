@@ -175,7 +175,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
-			info.append("<p>");
+			//info.append("<p>");
 			info.append(AonUtil.getMessage("salesBundle", "sales_transfered_to"));
 			info.append(" ");
 			info.append(AonUtil.getMessage("salesBundle", "sales_to_delivery"));
@@ -192,7 +192,7 @@ public class SalesDetailController extends LinesController implements ISalesCons
 				info.append(AonUtil.getMessage("salesBundle", "sales_detail_units"));
 				info.append(")");
 			}
-			info.append("</p>");
+			//info.append("</p>");
 		}
 		return info.toString();
 	}
