@@ -13,14 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.ActionDenied;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
@@ -85,16 +81,16 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		User user = (User) event.getController().getTo();
+		Serializable id = ((User) event.getController().getTo()).getId();
 		try {		
 			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
-			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, user.getId() );
-			removeDependencies(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, user.getId());
-			removeDependencies(UserWorkGroup.class, IEntityAlias.USER_WORK_GROUP_USER_ID, user.getId());
-			removeDependencies(ActionDenied.class, IEntityAlias.ACTION_DENIED_USER_ID, user.getId());
-			removeDependencies(Contact.class, IEntityAlias.CONTACT_USER_ID, user.getId());
-			removeDependencies(MailAccount.class, IEntityAlias.MAIL_ACCOUNT_USER_ID, user.getId());
-			removeDependencies(Signature.class, IEntityAlias.SIGNATURE_USER_ID, user.getId());
+			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, id );
+			AdminMainController.removeLines(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, id);
+			AdminMainController.removeLines(UserWorkGroup.class, IEntityAlias.USER_WORK_GROUP_USER_ID, id);
+			AdminMainController.removeLines(ActionDenied.class, IEntityAlias.ACTION_DENIED_USER_ID, id);
+			AdminMainController.removeLines(Contact.class, IEntityAlias.CONTACT_USER_ID, id);
+			AdminMainController.removeLines(MailAccount.class, IEntityAlias.MAIL_ACCOUNT_USER_ID, id);
+			AdminMainController.removeLines(Signature.class, IEntityAlias.SIGNATURE_USER_ID, id);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -141,15 +137,6 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	private void updateWorkGroups( User user ) {
 		UserWorkGroupController uwgc = (UserWorkGroupController) AonUtil.getRegisteredBean(USER_WORK_GROUP_EX_CONTROLLER_NAME);
 		uwgc.init(user);
-	}	
-
-	private void removeDependencies( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(_class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(alias), id);
-		for( ITransferObject to : bean.getList(criteria) ) {
-			bean.remove(to);
-		}	
 	}	
 	
 }

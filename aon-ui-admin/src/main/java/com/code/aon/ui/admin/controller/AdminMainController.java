@@ -7,6 +7,7 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CON
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.faces.event.ActionEvent;
@@ -14,11 +15,15 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.util.ManagerLogger;
 import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
@@ -177,5 +182,14 @@ public class AdminMainController implements IAdminConstants {
 		initMailAccount(user);
 		initContact(user);
 	}
+
+	public static void removeLines( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(alias), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			bean.remove(to);
+		}	
+	}	
 	
 }

@@ -255,10 +255,6 @@
 			<value>appUser</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>domainApplication</value>
 		</managed-property>										
@@ -442,10 +438,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>domainApplicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>

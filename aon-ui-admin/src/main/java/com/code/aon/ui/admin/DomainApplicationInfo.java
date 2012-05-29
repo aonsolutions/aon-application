@@ -82,14 +82,17 @@ public class DomainApplicationInfo {
 
 	public void register() throws ManagerBeanException {
 		DomainApplication da = getDomainApplication();
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 		if ( da == null ) {
-			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 			da = new DomainApplication();
 			da.setActive(true);
 			da.setDomain(domain.getId());
 			da.setApplication(application);
 			bean.insert(da);
 			setDomainApplication(da);
+		} else {
+			da.setActive(true);
+			bean.update(da);
 		}
 		IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
 		for( DomainModuleInfo dmi: getApplicationModules() ) {
@@ -112,15 +115,11 @@ public class DomainApplicationInfo {
 	}
 
 	public void unregister() throws ManagerBeanException {
-		if ( getDomainApplication() != null ) {
-			IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
-			for( DomainModuleInfo dmi: getApplicationModules() ) {
-				if ( dmi.getApplicationModule() != null ) {
-					damBean.remove( dmi.getApplicationModule() );
-				}
-			}
-			IManagerBean daBean = BeanManager.getManagerBean(DomainApplication.class);
-			daBean.remove(getDomainApplication());			
+		DomainApplication da = getDomainApplication();
+		if ( da != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+			da.setActive(false);
+			bean.update(da);			
 		}
 	}
 	
@@ -164,7 +163,7 @@ public class DomainApplicationInfo {
 		DomainApplicationInfo dai = new DomainApplicationInfo(domain, application);
 		DomainApplication da = getDomainApplication(domain, application);
 		dai.setDomainApplication(da);
-		dai.setChecked( da != null );
+		dai.setChecked( (da != null) && da.isActive() );
 		List<DomainModuleInfo> modules = new LinkedList<DomainModuleInfo>();
 		if ( IAdminConstants.AON_AIO_APPLICATION.equals(applicationName) ) {
 			for( Module module : Module.values() ) {
