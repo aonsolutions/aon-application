@@ -26,7 +26,7 @@
 		rendered="#{!reservationRequest.to.active}" />
 	<aon:inputText id="ReservationRequest_code" value="#{reservationRequest.to.code}"
 		size="30" maxlength="20" required="true"
-		rendered="#{reservationRequest.to.active}" />
+		rendered="#{reservationRequest.to.active}" ajaxSingle="true" />
 
 	<aon:outputLabel for="ReservationRequest_startDate" value="#{pmsBundle.pms_checkIn}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">

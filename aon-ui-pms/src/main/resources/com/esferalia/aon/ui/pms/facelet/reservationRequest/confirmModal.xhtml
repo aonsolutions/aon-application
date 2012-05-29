@@ -24,40 +24,37 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
-								
 									<aon:div style="margin-bottom:30px;">
 										<aon:outputFormat styleClass="aon-bold"
 											value="#{pmsBundle.pms_reservation_request_existing_reservation}" >
-											<f:param value="#{controller.existingReservation.hotelReservation.workPlace.description}"/>
-											<f:param value="#{controller.existingReservation.code}"/>
-											<f:param value="#{controller.existingReservation.agency.registry.fullName}"/>
+											<f:param value="#{controller.to.hotel.workPlace.description}"/>
+											<f:param value="#{controller.to.code}"/>
+											<f:param value="#{controller.to.agency.registry.fullName}"/>
 										</aon:outputFormat>
 									</aon:div>
-								
+
 									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
 										columnClasses="aon-panelGrid-even aon-text-right aon-noborder,aon-panelGrid-even aon-text-left aon-noborder">
-										
 										<aon:commandButton id="confirm-accept"
-											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											styleClass="aon-commandButton"
 											value="#{bundle.aon_save}"
-											actionListener="#{controller.accept}">
+											actionListener="#{controller.acceptRequest}">
 											<rich:componentControl for="confirmModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
 												target="#{controller.showConfirmWindow}"
 												value="#{false}" />
 										</aon:commandButton>
+
 										<aon:commandButton id="confirm-back"
-											styleClass="aon-finding-toolbar-item aon-icon-cancel"
-											value="#{bundle.aon_back}" 
+											styleClass="aon-commandButton"
+											value="#{bundle.aon_cancel}" 
 											reRender="showConfirmWindow" immediate="true">
 											<f:setPropertyActionListener
 												target="#{controller.showConfirmWindow}"
 												value="#{false}" />
 										</aon:commandButton>
-											
 									</aon:panelGrid>
-
 								</aon:div>
 							</aon:div>
 						</aon:div>
