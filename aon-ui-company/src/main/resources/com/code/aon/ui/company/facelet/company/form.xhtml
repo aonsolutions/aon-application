@@ -216,7 +216,10 @@
 							</aon:panelTab>
 						</c:if>				
 						<aon:panelTab label="#{companyBundle.company_workplaces}">
+							<!-- 
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" >
+							 -->
+							<ui:include src="/com/code/aon/ui/company/facelet/workplace/gridContent.xhtml">
 								<ui:param name="controller" value="#{companyWorkPlace}" />
 								<ui:param name="showEnterpriseData" value="#{false}" />
 							</ui:include>
