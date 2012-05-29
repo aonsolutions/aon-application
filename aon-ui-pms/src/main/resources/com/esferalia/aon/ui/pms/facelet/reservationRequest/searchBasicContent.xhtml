@@ -73,7 +73,7 @@
 		<aon:selectOneMenu id="ReservationRequest_agency" 
 			value="#{searchController.agency}">
 			<f:selectItem itemLabel="-" value="#{null}" />		
-			<f:selectItems value="#{reservationRequest.agencies}" />
+			<f:selectItems value="#{pmsCollections.agencies}" />
 		</aon:selectOneMenu>
 
 		<aon:outputLabel for="ReservationRequest_company" 
@@ -81,7 +81,7 @@
 		<aon:selectOneMenu id="ReservationRequest_company" 
 			value="#{searchController.company}">
 			<f:selectItem itemLabel="-" value="#{null}" />		
-			<f:selectItems value="#{reservationRequest.companies}" />
+			<f:selectItems value="#{pmsCollections.companies}" />
 		</aon:selectOneMenu>
 	</c:if>
 

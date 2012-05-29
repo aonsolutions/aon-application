@@ -103,14 +103,14 @@
 		<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
 			required="true" styleClass="aon-width-350"
 			rendered="#{reservationRequest.to.active and reservationRequest.to.agencyHolder}">
-			<f:selectItems value="#{reservationRequest.agencies}" />
+			<f:selectItems value="#{pmsCollections.agencies}" />
 		</aon:selectOneMenu>
 		<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
 			rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
 		<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
 			required="true" styleClass="aon-width-350"
 			rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
-			<f:selectItems value="#{reservationRequest.companies}" />
+			<f:selectItems value="#{pmsCollections.companies}" />
 		</aon:selectOneMenu>
 	</c:if>
 
