@@ -884,6 +884,16 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** INVOICE LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>invoiceLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.InvoiceLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
 	<!-- ****************************************** -->
@@ -1099,20 +1109,6 @@
 			<from-outcome>endPeriodEntries_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/endPeriod/form.xhtml</to-view-id>
 		</navigation-case>
-<!-- 
-		<navigation-case>
-			<from-outcome>accountOpeningEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/opening/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountClosingEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/closing/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accountOperatingEntry</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml</to-view-id>
-		</navigation-case>
- -->
 	</navigation-rule>
 	<!-- **************** LOAN ENTRY ********************* -->
 	<navigation-rule>
@@ -1253,6 +1249,14 @@
 		<navigation-case>
 			<from-outcome>reportAttach_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/reports/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!--  **** INVOICE LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>invoiceLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/invoiceLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
