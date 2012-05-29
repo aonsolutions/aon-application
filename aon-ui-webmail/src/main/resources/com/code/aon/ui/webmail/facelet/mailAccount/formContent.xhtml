@@ -150,85 +150,87 @@
 					
 			</aon:panelGrid>
 		</aon:div>
-	   <aon:div styleClass="aon-margin-top">
-			<aon:div styleClass="aon-form-group-title">
-				<aon:div styleClass="aon-form-group-title-internal">
-					<aon:outputText value="#{webmailBundle.webmail_mailAccount_folders}"/>
+		<c:if test="#{controller.to.IMAP}" >
+			<aon:div styleClass="aon-margin-top">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{webmailBundle.webmail_mailAccount_folders}"/>
+					</aon:div>
 				</aon:div>
+				<aon:panelGrid columns="2" style="aon-width-500"
+					columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
+					<aon:outputLabel for="MailAccount_draftFolder"
+						value="#{webmailBundle.webmail_mailAccount_draft_folder}" />
+					<aon:div>
+						<aon:inputText id="MailAccount_draftFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.draftFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="draftFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_sentFolder"
+						value="#{webmailBundle.webmail_mailAccount_sent_folder}" />
+					<aon:div>					
+						<aon:inputText id="MailAccount_sentFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.sentFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="sentFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>						
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_trashFolder"
+						value="#{webmailBundle.webmail_mailAccount_trash_folder}" />
+					<aon:div>
+						<aon:inputText id="MailAccount_trashFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.trashFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="trashFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>												
+					</aon:div>
+	
+					<aon:outputLabel for="MailAccount_spamFolder"
+						value="#{webmailBundle.webmail_mailAccount_spam_folder}" />
+					<aon:div>					
+						<aon:inputText id="MailAccount_spamFolder"
+							size="60" maxlength="64"
+							value="#{controller.to.spamFolder}" />
+						<aon:commandButton reRender="folderWindow"
+							rendered="#{!controller.new and (mailConfig.treeNode != null)}"
+							title="#{webmailBundle.webmail_folder_selection}"
+							value="&#160;" styleClass="aon-lookupButton aon-margin-left">
+							<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
+								value="spamFolder" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>							
+					</aon:div>
+	
+	
+				</aon:panelGrid>
 			</aon:div>
-			<aon:panelGrid columns="2" style="aon-width-500"
-				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
-				<aon:outputLabel for="MailAccount_draftFolder"
-					value="#{webmailBundle.webmail_mailAccount_draft_folder}" />
-				<aon:div>
-					<aon:inputText id="MailAccount_draftFolder"
-						size="60" maxlength="64"
-						value="#{controller.to.draftFolder}" />
-					<aon:commandButton reRender="folderWindow"
-						rendered="#{!controller.new and (mailConfig.treeNode != null)}"
-						title="#{webmailBundle.webmail_folder_selection}"
-						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
-						<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
-							value="draftFolder" />
-						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
-							value="#{true}" />							
-					</aon:commandButton>
-				</aon:div>
-
-				<aon:outputLabel for="MailAccount_sentFolder"
-					value="#{webmailBundle.webmail_mailAccount_sent_folder}" />
-				<aon:div>					
-					<aon:inputText id="MailAccount_sentFolder"
-						size="60" maxlength="64"
-						value="#{controller.to.sentFolder}" />
-					<aon:commandButton reRender="folderWindow"
-						rendered="#{!controller.new and (mailConfig.treeNode != null)}"
-						title="#{webmailBundle.webmail_folder_selection}"
-						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
-						<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
-							value="sentFolder" />
-						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
-							value="#{true}" />							
-					</aon:commandButton>						
-				</aon:div>
-
-				<aon:outputLabel for="MailAccount_trashFolder"
-					value="#{webmailBundle.webmail_mailAccount_trash_folder}" />
-				<aon:div>
-					<aon:inputText id="MailAccount_trashFolder"
-						size="60" maxlength="64"
-						value="#{controller.to.trashFolder}" />
-					<aon:commandButton reRender="folderWindow"
-						rendered="#{!controller.new and (mailConfig.treeNode != null)}"
-						title="#{webmailBundle.webmail_folder_selection}"
-						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
-						<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
-							value="trashFolder" />
-						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
-							value="#{true}" />							
-					</aon:commandButton>												
-				</aon:div>
-
-				<aon:outputLabel for="MailAccount_spamFolder"
-					value="#{webmailBundle.webmail_mailAccount_spam_folder}" />
-				<aon:div>					
-					<aon:inputText id="MailAccount_spamFolder"
-						size="60" maxlength="64"
-						value="#{controller.to.spamFolder}" />
-					<aon:commandButton reRender="folderWindow"
-						rendered="#{!controller.new and (mailConfig.treeNode != null)}"
-						title="#{webmailBundle.webmail_folder_selection}"
-						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
-						<f:setPropertyActionListener target="#{mailConfig.selectedFolder}"
-							value="spamFolder" />
-						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
-							value="#{true}" />							
-					</aon:commandButton>							
-				</aon:div>
-
-
-			</aon:panelGrid>
-		</aon:div>
+		</c:if>
 	</aon:div>
 	
 	<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">

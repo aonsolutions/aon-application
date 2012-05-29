@@ -212,10 +212,6 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		return null;
 	}
 	
-	public static boolean isConnectable() {
-		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
-	}	
-	
 	public void poll( ActionEvent event ) {
 		LOGGER.debug( "Connection ready: ", isReady() );
 	}

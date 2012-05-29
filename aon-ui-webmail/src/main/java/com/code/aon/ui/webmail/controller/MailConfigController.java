@@ -9,6 +9,7 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATUR
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_PROPERTY;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_TITLE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_TITLE;
 
@@ -188,7 +189,7 @@ public class MailConfigController {
 		if ( account.isDefault() ) {
 			return false;
 		}
-		if ( WebMailController.isConnectable() ) {
+		if ( isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 			if ( webmail.isLogged() ) {
 				return ! ObjectUtils.equals(webmail.getServer().getAccount(), account);
@@ -474,6 +475,10 @@ public class MailConfigController {
 
 	public void setSkipDefaultAccountColumn(boolean skipDefaultAccountColumn) {
 		this.skipDefaultAccountColumn = skipDefaultAccountColumn;
+	}	
+
+	public boolean isConnectable() {
+		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
 	}	
 	
 }

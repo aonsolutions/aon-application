@@ -2,6 +2,7 @@ package com.code.aon.webmail;
 
 import static com.code.aon.ldap.IAonObjectClasses.MAIL_ACCOUNT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.webmail.bean.IMailConstants.IMAP;
 
 import javax.naming.Name;
 import javax.persistence.Id;
@@ -424,6 +425,11 @@ public class MailAccount implements ILdapTransferObject, IMailAccount {
 
 	public void setOutgoingSecurity( ConnectionSecurity cs) {
 		setOutgoingSsl( cs == ConnectionSecurity.SSL );
+	}
+
+	@Override
+	public boolean isIMAP() {
+		return StringUtils.equals(IMAP, getProtocol());
 	}
 	
 	@Override

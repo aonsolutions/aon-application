@@ -57,4 +57,6 @@ public interface IMailAccount extends ITransferObject {
 
 	void setISignature(ISignature signature);
 	
+	boolean isIMAP();
+	
 }
