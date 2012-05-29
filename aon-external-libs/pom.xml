@@ -190,7 +190,7 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
+			<artifactId>${jasperReportsArtifact}</artifactId>
 			<version>${jasperReportsVersion}</version>
 		</dependency>
 		<dependency>
@@ -296,7 +296,7 @@
 											<include>commons-validator:commons-validator:1.3.1</include>
 											<include>org.richfaces.ui:richfaces-ui:3.3.3.Final</include>
 											<include>org.richfaces.framework:richfaces-api:3.3.3.Final</include>
-											<include>org.richfaces.framework:richfaces-impl:3.3.3.Final</include>
+											<include>org.richfaces.framework:richfaces-impl:3.3.3.aon</include>
 											<include>org.apache.velocity:velocity:1.6.4</include>
 											<include>velocity-tools:velocity-tools:1.2</include>
 											<include>com.lowagie:itext:2.1.7</include>
@@ -315,7 +315,7 @@
 											<include>com.esendex:Esendex:0.0.1</include>
 											<include>com.code.aon:aon.jsf.bridge:${project.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
-											<include>net.sf.jasperreports:jasperreports:${jasperReportsVersion}</include>
+											<include>net.sf.jasperreports:${jasperReportsArtifact}:${jasperReportsVersion}</include>
 											<include>ar.com.fdvs:DynamicJasper:4.0.0_beta3</include>
 											<include>commons-javaflow:commons-javaflow:20060411</include>
 											<include>oro:oro:2.0.8</include>

@@ -282,7 +282,7 @@
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>jasperreports</groupId>
+					<groupId>net.sf.jasperreports</groupId>
 					<artifactId>jasperreports</artifactId>
 				</exclusion>
 				<exclusion>
@@ -325,7 +325,7 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
+			<artifactId>${jasperReportsArtifact}</artifactId>
 			<version>${jasperReportsVersion}</version>
 			<scope>provided</scope>
 			<exclusions>
