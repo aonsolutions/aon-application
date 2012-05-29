@@ -153,6 +153,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope((!service) ? reservation.getHotelReservation().getScope() : reservationInvoiceTo.getHotel().getScope());
 		invoice.setService(service);
+		invoice.setComments(reservationInvoiceTo.getComments());
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);

@@ -401,6 +401,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
 
+				completeInvoiceComments(getReservationInvoiceTo());
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
 
@@ -412,6 +413,16 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			} catch (ManagerBeanException ex) {
 				AonUtil.addErrorMessage(ex.getMessage());
 				throw new AbortProcessingException(ex.getMessage(), ex);
+			}
+		}
+	}
+
+	private void completeInvoiceComments(ReservationInvoiceTo reservationInvoiceTo) {
+		for(HotelService service: reservationInvoiceTo.getServices()){
+			String comment = service.getItem().getDescription();
+			if( StringUtils.isNotEmpty(comment) ){
+				String [] a = {reservationInvoiceTo.getComments(), " -"+ service.getItem().getProduct().getName() +"- "+ comment};
+				reservationInvoiceTo.setComments(StringUtils.join(a, " "));
 			}
 		}
 	}
