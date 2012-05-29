@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>org.richfaces.framework</groupId>
 			<artifactId>richfaces-impl</artifactId>
-			<version>3.3.3.Final</version>
+			<version>3.3.3.aon</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
