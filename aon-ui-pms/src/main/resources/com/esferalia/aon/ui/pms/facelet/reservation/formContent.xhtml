@@ -107,7 +107,7 @@
 					<aon:commandButton id="crsUnblock" value="&#160;"
 						actionListener="#{reservation.onCrsUnblock}"
 						title="#{pmsBundle.pms_to_unblock}"
-						immediate="true" rendered="#{reservation.to.crs}"
+						immediate="true" rendered="#{reservation.to.crs and reservation.active}"
 						styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 					</aon:commandButton>
 				</c:if>
