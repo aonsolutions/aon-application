@@ -23,7 +23,7 @@
 		<commercial:target
 			showTaxInfoData="true"
 			showEcommerceTab="false"
-			showProfile="true"
+			showProfile="false"
 			showSearchOnlyCustomers="true"
 			showProject="true"
 			showProduct="true"

@@ -88,53 +88,29 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-
-						<aon:panelGrid id="group_treasury_forecast"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-forecast aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_forecast_menu}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cashFlowForecast"
-										value="#{financeBundle.finance_cashflow_forecast_module}"
-										rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
-										actionListener="#{cashFlowForecast.onEditSearch}"
-										action="cashFlowForecast_search" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="cashFlowForecastReport"
-										value="#{financeBundle.finance_cashflow_forecast_report_module}"
-										rendered="#{cashFlowForecast.availableRegistryBanks > 0}"
-										actionListener="#{cashFlowForecastReport.onEditSearch}"
-										action="cashFlowForecastReport_search" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<c:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_treasury_auxiliar"
+						<c:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
+							<aon:panelGrid id="group_treasury_forecast"
 								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-general aon-direct-access-panel">
+								headerClass="aon-icon-forecast aon-direct-access-panel">
 								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_auxiliaries}" />
+									<aon:outputText value="#{financeBundle.finance_forecast_menu}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="payMethod-treasury"
-											action="payMethod-treasury"
-											value="#{configBundle.config_paymethod_module}" />
-									</aon:div>								
+										<aon:commandLink id="cashFlowForecast"
+											value="#{financeBundle.finance_cashflow_forecast_module}"
+											actionListener="#{cashFlowForecast.onEditSearch}"
+											action="cashFlowForecast_search" />
+									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="bank-treasury"
-											action="bank-treasury"
-											value="#{configBundle.config_bank_module}" />
+										<aon:commandLink id="cashFlowForecastReport"
+											value="#{financeBundle.finance_cashflow_forecast_report_module}"
+											actionListener="#{cashFlowForecastReport.onEditSearch}"
+											action="cashFlowForecastReport_search" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
 
 						<aon:panelGrid id="group_treasury_utilities"
 							styleClass="aon-width-all" columnClasses="aon-padding"

@@ -53,6 +53,29 @@
 							</aon:panelGrid>
 						</c:if>
 						
+						<aon:panelGrid id="group_warehouse_inventory"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-warehouse aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.warehouse_inventory_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="inventory_close" 
+										action="inventory_close" actionListener="#{inventory.onStartClosing}"
+										value="#{warehouseBundle.warehouse_inventory_close_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="inventory" 
+										action="inventory_search" actionListener="#{inventory.onEditSearch}"
+										value="#{warehouseBundle.warehouse_inventory_closed_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+					</aon:panelGroup>
+
+					<aon:panelGroup>
 						<aon:panelGrid id="group_warehouse_stock"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-warehouse aon-direct-access-panel">
@@ -104,36 +127,13 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-						
-						<aon:panelGrid id="group_warehouse_inventory"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-warehouse aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{warehouseBundle.warehouse_inventory_module}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="inventory_close" 
-										action="inventory_close" actionListener="#{inventory.onStartClosing}"
-										value="#{warehouseBundle.warehouse_inventory_close_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="inventory" 
-										action="inventory_search" actionListener="#{inventory.onEditSearch}"
-										value="#{warehouseBundle.warehouse_inventory_closed_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 
-					</aon:panelGroup>
-
-					<aon:panelGroup>
 						<c:if test="#{aonRole.productOperator or aonRole.config}">
 							<aon:panelGrid id="group_warehouse_general"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.menu_general}" />
+									<aon:outputText value="#{bundle.aon_masters}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -155,28 +155,6 @@
 												value="#{productBundle.product_module}" />
 										</aon:div>
 									</c:if>
-									<c:if test="#{aonRole.config}">
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="productCategory-warehouse" 
-												action="productCategory-warehouse"
-												value="#{productBundle.product_category_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="brand-warehouse"
-												action="brand"
-												value="#{productBundle.product_brand_module}" />
-										</aon:div>
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="tariff-warehouse" 
-												action="tariff_list-warehouse" actionListener="#{tariff.onSearch}"
-												value="#{productBundle.product_tariff_module}" />
-										</aon:div>									
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="catalogue-warehouse" 
-												action="catalogue_search-warehouse" actionListener="#{catalogue.onEditSearch}"
-												value="#{productBundle.product_catalogue_module}" />
-										</aon:div>
-									</c:if>								
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>

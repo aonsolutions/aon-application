@@ -23,36 +23,6 @@
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div id="desktopDiv1">
-						<c:if test="#{webmail.logged}">
-							<aon:div styleClass="aon-portlet">
-								<aon:div styleClass="aon-portlet-title">
-									<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
-										<aon:outputText value="#{webmailBundle.webmail_main}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
-									</aon:outputLink>
-								</aon:div>
-								<aon:div styleClass="aon-portlet-body">
- 									<h:panelGrid columns="2"
-										columnClasses="aon-table-portlet-column,aon-table-portlet-column"
-										rowClasses="aon-table-portlet-row"
-										styleClass="aon-width-170 aon-table-portlet" >
-										<aon:outputText value="INBOX"/>
-										<aon:outputText value="#{desktop.unreadMessageCount}"/>
-									</h:panelGrid>
-								</aon:div>
-							</aon:div>
-						</c:if>
-
-						<c:if test="#{!webmail.logged}">
-							<aon:div styleClass="aon-portlet">
-								<aon:div styleClass="aon-portlet-title">
-									<aon:outputText value="#{webmailBundle.webmail_main}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
-								</aon:div>
-								<aon:div styleClass="aon-portlet-body">
-									<aon:outputText value="#{webmailBundle.webmail_connect_error}"/>
-								</aon:div>
-							</aon:div>
-						</c:if>
-						
 						<c:if test="#{desktop.taskHolderAvailable}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
@@ -148,8 +118,30 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:div>
-
+					<aon:div styleClass="aon-width-all">
+						<c:if test="#{domainSwitcher.childDomain}">
+							<h:panelGrid columns="2" styleClass="aon-width-all aon-margin-bottom"
+								style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
+								columnClasses="aon-width-50 aon-vertical-align-top
+											,aon-width-auto aon-vertical-align-top">
+								
+								<a4j:mediaOutput
+									mimeType="#{parentDomain.mimeTypeName}"
+									cacheable="false" element="img" 
+									value="aon-parent-logo" 
+									style="height:60px;"
+									createContent="#{parentDomain.createLogoContent}">
+								</a4j:mediaOutput>
+									
+								<h:panelGrid styleClass="aon-padding-left aon-width-all">
+									<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
+									<aon:outputText value="#{parentDomain.phone}"/>								
+									<aon:outputText value="#{parentDomain.email}"/>
+								</h:panelGrid>
+	
+							</h:panelGrid>
+						</c:if>
+						
 						<aon:componentGroup
 							family="javax.faces.Command"
 							rendered="#{aonRole.guest}"
@@ -207,29 +199,6 @@
 							    </aon:outputLink>
 							</aon:div>
 						</aon:div>
-						
-<!-- 						
-						<aon:div styleClass="aon-support">
-							<aon:div styleClass="aon-support-title">
-								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-esferalia-logo.png']}" />
-								<aon:div>
-									<aon:outputText style="text-transform:uppercase;" value="#{bundle.aon_support_title}" />
-								</aon:div>
-							</aon:div>
-							
-							<aon:div styleClass="aon-support-telephone">
-								<aon:div styleClass="aon-support-telephone-internal">
-									<aon:outputText value="#{bundle.aon_support_telephone_number}" />
-								</aon:div>
-							</aon:div>		
-							
-							<aon:div styleClass="aon-support-mail">
-								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html">	
-										<aon:outputText value="#{bundle.aon_support_send_email}" />
-							    </aon:outputLink>
-							</aon:div>
-						</aon:div>
- -->						
 						<!-- fin soporte -->
 					</aon:div>
 					

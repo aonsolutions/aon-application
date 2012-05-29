@@ -82,7 +82,7 @@ public class CompanyController extends CompanyParentController {
 	}
 	
 	public String getLogoMimeType() {
-		if ( getAttach().getMimeType() != null ) {
+		if ( getAttach()!= null && getAttach().getMimeType() != null ) {
 			return getAttach().getMimeType().getName();
 		}
 		return "*";	

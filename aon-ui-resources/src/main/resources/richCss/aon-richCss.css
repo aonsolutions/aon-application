@@ -1611,6 +1611,21 @@ color:#000;
 	text-align:center;
 }
 
+.aon-header-domain-title{
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	clear:both;
+	color:#0072CF;
+	display:inline;
+	font-family:tahoma,arial,sans;
+	font-size:16px;
+	font-weight:bold;
+	height:100%;
+	margin-left:5px;
+	text-align:center;
+}
+
 .aon-logout{
 	background:transparent url(images/aon-header/aon-logout.png) no-repeat scroll center left;
 }

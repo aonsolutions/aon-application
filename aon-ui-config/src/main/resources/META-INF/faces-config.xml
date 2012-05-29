@@ -38,6 +38,15 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!--  *************** PARENT DOMAIN ***************** -->
+	<managed-bean>
+		<managed-bean-name>parentDomain</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ParentDomainController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* USER UTILS ***************** -->
 	<managed-bean>
 		<managed-bean-name>userUtils</managed-bean-name>

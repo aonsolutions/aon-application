@@ -17,8 +17,9 @@
 					onstart="resetStatusError();" />
 				<aon:div id="status_error" style="display: none"
 					styleClass="aon-outputConnectionStatus-failed" />
-				<aon:outputText value="/ #{domainSwitcher.domainName}"
-					styleClass="aon-header-title" />
+				<aon:outputText value="/" styleClass="aon-header-title" />
+				<aon:outputText value="#{domainSwitcher.domainName}"
+					styleClass="aon-header-domain-title"/>
 			</aon:div>
 
 			<aon:div styleClass="aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
@@ -58,8 +59,8 @@
 						<c:if test="#{loggedUser.logged}">		
 							<aon:div styleClass="aon-padding-right" layout="inline">
 								<aon:outputText value="#{loggedUser.loggedUserName}"
-									style="border-right:1px solid;"
-									styleClass="aon-padding-right" />
+									style="border-left:1px solid; border-right:1px solid;"
+									styleClass="aon-padding-left aon-padding-right" />
 							</aon:div>
 							<aon:outputText value="#{loggedUser.companyName}" />
 						</c:if>		

@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -37,11 +38,9 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	
 	public DomainSwitcher() {
 		try {
-
 			super.setDomainId( initializeDomain());
-			
 		} catch (Throwable th) {
-			super.setDomainId(1);	
+			super.setDomainId(1);
 		}
 	}
 	
@@ -49,8 +48,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
 		Integer domain = principal.getDomainId();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.parent FROM domain d"
-				+ " WHERE d.id = " + domain;
+		String q = "SELECT d.parent FROM domain d WHERE d.id = " + domain;
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 		List<?> queryList = query
 				.addScalar("parent", Hibernate.INTEGER)
@@ -90,12 +88,16 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
 	}
+	
 	public Integer getParentDomain() {
 		return parentDomain;
 	}
-
 	public void setParentDomain(Integer parentDomain) {
 		this.parentDomain = parentDomain;
+	}
+	
+	public boolean isChildDomain() {
+		return !ObjectUtils.equals(domainId, parentDomain);
 	}
 	
 	public boolean isDomainCreationAvailable() {
