@@ -400,8 +400,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 				if (getReservationInvoiceTo().getRoom() != null) {
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
+				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
 
-				completeInvoiceComments(getReservationInvoiceTo());
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
 
@@ -417,14 +417,14 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		}
 	}
 
-	private void completeInvoiceComments(ReservationInvoiceTo reservationInvoiceTo) {
-		for(HotelService service: reservationInvoiceTo.getServices()){
-			String comment = service.getItem().getDescription();
-			if( StringUtils.isNotEmpty(comment) ){
-				String [] a = {reservationInvoiceTo.getComments(), " -"+ service.getItem().getProduct().getName() +"- "+ comment};
-				reservationInvoiceTo.setComments(StringUtils.join(a, " "));
+	private String obtainInvoiceComments(List<HotelService> services) {
+		String comments = "";
+		for (HotelService service: services) {
+			if (StringUtils.isNotEmpty(service.getItem().getDescription())) {
+				comments += service.getItem().getProduct().getName() + " - "+ service.getItem().getDescription() + "\n";
 			}
 		}
+		return comments;
 	}
 
 	private boolean validateInvoice() {
