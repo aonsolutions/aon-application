@@ -120,7 +120,6 @@
 								<require>jakarta-commons-lang</require>
 								<require>mysql-connector-java</require>
 								<require>jakarta-commons-logging</require>
-								<require>aon-directory-client &gt;= 5.0.0-4</require>
 							</requires>
 							<mappings>
 								<mapping>
