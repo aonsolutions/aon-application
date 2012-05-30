@@ -1465,11 +1465,11 @@ public class StatEngine {
 		try {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
-			stmt.append(" FROM offer_detail od  ");
-			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
+			stmt.append(" FROM  offer o");
 			stmt.append(" INNER JOIN target t ON (o.target = t.registry)");
 			stmt.append(" INNER JOIN registry r ON (t.registry = r.id)");
-			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
+			stmt.append(" INNER JOIN offer_detail od ON (od.offer = o.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("o.domain"));
 			
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
