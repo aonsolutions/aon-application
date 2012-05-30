@@ -33,8 +33,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainSwitcher.class);
 	private List<IDomainChangeListener> listenerClasses;
 	private DataModel model;
+	private DataModel filteredModel;
 	private Integer parentDomain;
 	private String domainName;
+	private String filter;
+	private String modelFilter;
 	
 	public DomainSwitcher() {
 		try {
@@ -89,6 +92,20 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		this.domainName = domainName;
 	}
 	
+	public String getFilter() {
+		return filter;
+	}
+	public void setFilter(String filter) {
+		this.filter = filter;
+	}
+	
+	public DataModel getFilteredModel() {
+		return filteredModel;
+	}
+	public void setFilteredModel(DataModel filteredModel) {
+		this.filteredModel = filteredModel;
+	}
+
 	public Integer getParentDomain() {
 		return parentDomain;
 	}
@@ -126,7 +143,24 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		if (model == null) {
 			initializeModel();
 		}
-		return model;
+		if (StringUtils.isBlank(getFilter())) {
+			return model;
+		} else {
+			if (!StringUtils.equals(modelFilter, filter) || filteredModel == null) {
+				List<Domain> filteredList = new LinkedList<Domain>();
+				@SuppressWarnings("unchecked")
+				List<Domain> list = (List<Domain>) model.getWrappedData();
+				for (Domain d :  list) {
+					if (StringUtils.containsIgnoreCase(d.getName(), getFilter()) ||
+						StringUtils.containsIgnoreCase(d.getDescription(), getFilter())) {
+						filteredList.add(d);					
+					}
+				}
+				filteredModel = new ListDataModel(filteredList);
+				modelFilter = filter;
+			}
+			return filteredModel;
+		}
 	}
 	private void initializeModel() {
 		List<Domain> domains = new LinkedList<Domain>();
@@ -166,6 +200,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	
 	public void onEditSearch(ActionEvent event){
 		setModel(null);
+		setFilter(null);
+		setFilteredModel(null);
 	}
 	
 	public void onSelect(ActionEvent event){
