@@ -61,33 +61,32 @@ public class EmptyRoomController implements ICollectionProvider {
 		this.model = model;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	private void buildRoomStatusList() throws ManagerBeanException {
-		
 		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), getDate());
 		criteria.addInExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), getAssetIds());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_NAME));
-		List<ITransferObject> list = bean.getList(criteria);
 		
 		Iterator<ITransferObject> activityIt = bean.getList(criteria).iterator();
 		Iterator<ITransferObject> roomIt = getRoomList().iterator();
 		
-		AssetActivity aa = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
+		AssetActivity activity = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
 		
 		setRoomStatusList(new LinkedList<RoomStatus>());
 		
 		while(roomIt.hasNext()){
 			RoomStatus rs = new RoomStatus();;
 			Room room = (Room) roomIt.next();
-			if(aa!=null && room.getAsset().getId().equals(aa.getAsset().getId())){
-				if(aa.getStatus()!=ActivityStatus.BUSY){
+			if(activity!=null && room.getAsset().getId().equals(activity.getAsset().getId())){
+				if(activity.getStatus()!=ActivityStatus.BUSY){
 					rs.setRoom(room);
 					rs.setFree(false);
 					getRoomStatusList().add(rs);
 				}
-				aa = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
+				while( activity!=null && room.getAsset().getId().equals(activity.getAsset().getId()) ){
+					activity = activityIt.hasNext()?(AssetActivity)activityIt.next():null;
+				}
 			} else {
 				rs.setRoom(room);
 				rs.setFree(true);
