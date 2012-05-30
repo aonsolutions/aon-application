@@ -479,7 +479,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservation}.getRemarks()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{projectReservation}.getComments()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="85" y="0" width="64" height="14" isPrintWhenDetailOverflows="true"/>
