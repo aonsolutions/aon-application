@@ -60,6 +60,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainUserController duc = (DomainUserController) event.getController();
 		duc.resetPassword( duc.getDomainUser() );
+		duc.getIdCheck().setOldValue( duc.getDomainUser().getLogin() );
 	}
 
 	@Override

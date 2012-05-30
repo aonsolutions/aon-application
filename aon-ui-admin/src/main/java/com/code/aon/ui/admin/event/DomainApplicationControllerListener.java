@@ -73,6 +73,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter {
 			profile.clearCriteria();
 			String application = profile.getFieldName(IEntityAlias.PROFILE_APPLICATION_ID);
 			profile.getCriteria().addEqualExpression(application, da.getApplication().getId());
+			profile.initializeModel();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

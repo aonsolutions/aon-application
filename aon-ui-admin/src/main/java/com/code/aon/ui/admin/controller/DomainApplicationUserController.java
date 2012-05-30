@@ -1,11 +1,12 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_CONTROLLER_NAME;
+
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.admin.ApplicationUserProfile;
@@ -17,12 +18,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.SelectTransferObject;
+import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationUserController extends LinesController {
 	
-	private Profile[] userProfiles;
+	private List<SelectTransferObject<Profile,ApplicationUserProfile>> userProfiles;
 	
 	private boolean showParentDomainUsers;
 	
@@ -34,51 +38,65 @@ public class DomainApplicationUserController extends LinesController {
 		this.showParentDomainUsers = showParentDomainUsers;
 	}
 
-	public Profile[] getUserProfiles() {
+	public List<SelectTransferObject<Profile, ApplicationUserProfile>> getUserProfiles() {
 		return userProfiles;
 	}
 
-	public void setUserProfiles(Profile[] userProfiles) {
+	public void setUserProfiles(
+			List<SelectTransferObject<Profile, ApplicationUserProfile>> userProfiles) {
 		this.userProfiles = userProfiles;
 	}
-	
+
 	public ApplicationUser getApplicationUser() {
 		return (ApplicationUser) getTo();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<ApplicationUserProfile> getApplicationUserProfiles( ApplicationUser user ) throws ManagerBeanException  {
-		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
-		Criteria criteria = new Criteria();
-		String alias = bean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID);
-		criteria.addEqualExpression(alias, user.getId());
-		return (List) bean.getList(criteria);
+		if ( user != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(IEntityAlias.APPLICATION_USER_PROFILE_APPLICATION_USER_ID);
+			criteria.addEqualExpression(alias, user.getId());
+			return (List) bean.getList(criteria);			
+		}
+		return Collections.emptyList();
 	}
 	
-	private Profile[] getUserProfiles( ApplicationUser user ) throws ManagerBeanException  {
-		List<ApplicationUserProfile> list = getApplicationUserProfiles(user);
-		if (! list.isEmpty() ) {
-			Profile[] profiles = new Profile[list.size()];
-			for( int i = 0; i < profiles.length; i++ ) {
-				profiles[i] = list.get(i).getProfile();
-			}
-			return profiles;
-		}		
+	private ApplicationUserProfile get( List<ApplicationUserProfile> list, Profile profile ) {
+		if ( list != null ) {
+			for( ApplicationUserProfile aup : list ) {
+				if ( profile.equals(aup.getProfile()) ) {
+					return aup;
+				}
+			}			
+		}
 		return null;
 	}
 	
 	public void updateUserProfiles() throws ManagerBeanException {
-		this.userProfiles = getUserProfiles( getApplicationUser() );
+		this.userProfiles = new LinkedList<SelectTransferObject<Profile,ApplicationUserProfile>>();
+		List<ApplicationUserProfile> profiles = null;
+		if (! isNew() ) {
+			profiles = getApplicationUserProfiles(getApplicationUser());
+		}
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);		
+		for( ITransferObject to : UserApplicationInfo.getProfiles(dac.getDomainApplication()) ) {
+			Profile profile = (Profile) to;
+			SelectTransferObject<Profile,ApplicationUserProfile> item = new SelectTransferObject<Profile, ApplicationUserProfile>(profile);
+			item.setTo( get(profiles, profile) );
+			this.userProfiles.add(item);
+		}		
 	}
 	
 	public String getProfileList() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
 			ApplicationUser user = (ApplicationUser) getSelectedTO();
-			Profile[] profiles = getUserProfiles(user);
-			if (! ArrayUtils.isEmpty(profiles) ) {
-				String[] profileNames = new String[profiles.length];
+			List<ApplicationUserProfile> profiles = getApplicationUserProfiles(user);
+			if (! profiles.isEmpty() ) {
+				String[] profileNames = new String[profiles.size()];
 				for( int i = 0; i < profileNames.length; i++ ) {
-					profileNames[i] = profiles[i].getName();
+					profileNames[i] = profiles.get(i).getProfile().getName();
 				}
 				return StringUtils.join(profileNames, ", ");
 			}
@@ -95,28 +113,20 @@ public class DomainApplicationUserController extends LinesController {
 		return null;
 	}
 	
-	public void insertUserProfiles( boolean _new) throws ManagerBeanException {
-		List<Profile> profiles = new LinkedList<Profile>(Arrays.asList(this.userProfiles));
-		ApplicationUser user = getApplicationUser();
+	public void insertUserProfiles() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
-		if (! _new ) {
-			List<ApplicationUserProfile> oldProfiles = getApplicationUserProfiles(user);
-			if (! oldProfiles.isEmpty() ) {
-				for( ApplicationUserProfile aup : oldProfiles ) {
-					if ( profiles.contains(aup.getProfile()) ) {
-						profiles.remove(aup.getProfile());
-					} else {
-						bean.remove(aup);
-					}
+		ApplicationUser user = getApplicationUser();
+		for( SelectTransferObject<Profile,ApplicationUserProfile> item : this.userProfiles ) {
+			if ( item.isChecked() ) {
+				if ( item.getTo() == null ) {
+					ApplicationUserProfile aup = new ApplicationUserProfile();
+					aup.setApplicationUser(user);
+					aup.setProfile(item.getValue());
+					bean.insert(aup);
+					item.setTo(aup);
 				}
-			}
-		}
-		if (! profiles.isEmpty() ) {
-			for( Profile profile : profiles ) {
-				ApplicationUserProfile aup = new ApplicationUserProfile();
-				aup.setApplicationUser(user);
-				aup.setProfile(profile);
-				bean.insert(aup);
+			} else {
+				item.unregister();
 			}			
 		}
 	}

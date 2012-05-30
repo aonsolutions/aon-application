@@ -9,7 +9,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.GENERAL_SCOPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.admin.Profile;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationController;
@@ -33,7 +32,12 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
-		dauc.setUserProfiles(new Profile[0]);
+		try {		
+			dauc.updateUserProfiles();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}		
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		Integer domain = dac.getDomainApplication().getDomain();
 		if ( dauc.isShowParentDomainUsers() ) {
@@ -63,7 +67,7 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 		ApplicationUser user = dauc.getApplicationUser();
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
 		try {		
-			dauc.insertUserProfiles(true);
+			dauc.insertUserProfiles();
 			duc.registerScope(user.getUser(), GENERAL_SCOPE);
 			duc.registerWorkGroup(user.getUser(), GENERAL_SCOPE);		
 		} catch (Throwable e) {
@@ -78,7 +82,7 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		DomainApplicationUserController dauc = (DomainApplicationUserController) event.getController();
 		try {		
-			dauc.insertUserProfiles(false);
+			dauc.insertUserProfiles();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

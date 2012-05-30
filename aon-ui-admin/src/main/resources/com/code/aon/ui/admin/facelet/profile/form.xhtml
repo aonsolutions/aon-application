@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
@@ -23,19 +24,36 @@
 		</aon:panelGrid>
 
 		<c:if test="#{!controller.new}" >
-			<aon:panelTabSet>
+		
+			<aon:div styleClass="aon-margin-top">
+				<aon:dataTable columns="2" value="#{domainApplication.to}">
+					
+					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_roles}" />
+						</f:facet>
+						<a4j:repeat value="#{controller.roles}" var="profileRole">
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
+								<aon:outputText value="#{profileRole.value.role.name}" />
+							</aon:div>
+						</a4j:repeat>
+					</aon:column>				
+	
+					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_modules_denied}" />
+						</f:facet>
+						<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
+								<aon:outputText value="#{profileDeniedModule.value}" />
+							</aon:div>
+						</a4j:repeat>
+					</aon:column>					
+				</aon:dataTable>
+			</aon:div>
 
-				<aon:panelTab name="roles" label="#{adminBundle.admin_roles}">
-					<ui:include src="/com/code/aon/ui/admin/facelet/profile/roleGrid.xhtml" />
-                   </aon:panelTab>
-                
-                <aon:panelTab name="modules" label="#{adminBundle.admin_modules_denied}">   
-					<ui:include src="/com/code/aon/ui/admin/facelet/domainApplicationModule/grid.xhtml" >
-						<ui:param name="controller" value="#{profileModuleDenied}" />
-					</ui:include>
-				</aon:panelTab>
-
-			</aon:panelTabSet>
 		</c:if>		
 
 	</aon:div>
