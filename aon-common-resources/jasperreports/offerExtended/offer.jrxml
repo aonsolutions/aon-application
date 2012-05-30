@@ -132,7 +132,7 @@
 	<pageHeader>
 		<band height="73" splitType="Stretch">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true">
-				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="120" height="73" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="120" height="63" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<graphicElement fill="Solid"/>
@@ -154,7 +154,7 @@
     $F{type}.getName( $P{REPORT_LOCALE}).toUpperCase() )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-73" positionType="Float" x="400" y="37" width="48" height="13"/>
+				<reportElement key="textField-73" x="400" y="37" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -167,7 +167,7 @@
 				<textFieldExpression><![CDATA[$R{aon_number} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-74" positionType="Float" x="400" y="50" width="48" height="13"/>
+				<reportElement key="textField-74" x="400" y="50" width="48" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -180,7 +180,7 @@
 				<textFieldExpression><![CDATA[$R{aon_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-76" positionType="Float" x="448" y="37" width="82" height="13"/>
+				<reportElement key="textField-76" x="448" y="37" width="82" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -193,7 +193,7 @@
 				<textFieldExpression><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField-77" positionType="Float" x="448" y="50" width="82" height="13"/>
+				<reportElement key="textField-77" x="448" y="50" width="82" height="13"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -386,7 +386,7 @@
 				<textFieldExpression><![CDATA[$R{offer_customer_social}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-113" x="65" y="77" width="272" height="23"/>
+				<reportElement key="textField-113" x="65" y="77" width="286" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -442,11 +442,11 @@
 				<textFieldExpression><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="337" y="77" width="44" height="23"/>
+				<reportElement key="textField-118" x="351" y="77" width="30" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{offer_customer_nif}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-119" x="381" y="77" width="155" height="23"/>
@@ -460,8 +460,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
-+ $F{target}.getRegistry().getDocumentCountry() + "-"
+				<textFieldExpression><![CDATA[$F{target}.getRegistry().getDocumentCountry() + "-"
 + $F{target}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
@@ -596,8 +595,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new Double($P{PriceStrategy}.getTotalPrice($V{currentOffer},$V{currentOffer}.getTarget()))+" €"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" positionType="Float" x="1" y="281" width="63" height="15">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-112" positionType="Float" x="1" y="281" width="63" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" bottomPadding="0"/>
@@ -606,8 +605,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_comments}+":"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement key="textField-113" positionType="Float" x="64" y="281" width="471" height="15">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-113" positionType="Float" x="64" y="281" width="471" height="15" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[!$F{comments}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" bottomPadding="0"/>
@@ -673,8 +672,8 @@
 					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
 				</textElement>
 				<textFieldExpression><![CDATA[( $P{defaultPayMethod}.booleanValue() ) ?
-( $R{offer_bank}+" "+ $P{targetPayMethod}.getBank().getName() )
-: ( $R{offer_bank}+" "+$F{bank}.getName() )]]></textFieldExpression>
+( $P{targetPayMethod}.getBank().getName() )
+: ( $F{bank}.getName() )]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-133" positionType="Float" x="170" y="345" width="50" height="15"/>
@@ -1087,6 +1086,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="14">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["base"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="14" rowSpan="1">
 							<textField pattern="#,##0.00##" isBlankWhenNull="true">
@@ -1307,6 +1324,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["description"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<box>
@@ -1432,6 +1467,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["quantity"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<box>
@@ -1470,6 +1523,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_price}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["price"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
@@ -1756,7 +1827,7 @@
 			<frame>
 				<reportElement positionType="Float" x="0" y="65" width="537" height="110"/>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-88" positionType="FixRelativeToBottom" x="283" y="48" width="97" height="27"/>
+					<reportElement key="textField-88" positionType="FixRelativeToBottom" x="283" y="81" width="97" height="27"/>
 					<textElement textAlignment="Center" verticalAlignment="Bottom">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
@@ -1870,7 +1941,7 @@
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="false">
-					<reportElement key="textField-88" positionType="FixRelativeToBottom" x="412" y="53" width="97" height="27"/>
+					<reportElement key="textField-88" positionType="FixRelativeToBottom" x="412" y="87" width="97" height="27"/>
 					<textElement textAlignment="Center" verticalAlignment="Bottom">
 						<font fontName="SansSerif" size="8"/>
 					</textElement>
@@ -1931,7 +2002,7 @@
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement key="textField-100" positionType="FixRelativeToBottom" x="0" y="16" width="536" height="36"/>
+					<reportElement key="textField-100" positionType="FixRelativeToBottom" x="0" y="16" width="537" height="36"/>
 					<box leftPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
