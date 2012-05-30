@@ -19,6 +19,22 @@
 	<build>
 		<finalName>aon-employee</finalName>
 		<plugins>
+			<plugin>
+                          	<groupId>org.codehaus.mojo</groupId>
+                                <artifactId>build-helper-maven-plugin</artifactId>
+                                <version>1.5</version>
+                                <executions>
+                                       	<execution>
+                                                <id>parse-version</id>
+                                               	<goals>
+                                                       	<goal>parse-version</goal>
+                                                </goals>
+                                                <configuration>
+							
+                                               	</configuration>
+                                        </execution>
+                                </executions>
+                        </plugin>
 			<!-- Para construir el RPM -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -32,6 +48,7 @@
                                                                         <require>openoffice.org-draw</require>
                                                                         <require>openoffice.org-writer</require>
                                                                         <require>openoffice.org-impress</require>
+									<require>aon-external-libs &gt;= ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</require>
                                                                 </requires>
 	                                                   </configuration>
 			</plugin>
