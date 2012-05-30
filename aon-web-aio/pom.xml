@@ -37,7 +37,7 @@
 				<version>2.0.1</version>
 				<configuration>
 					<requires>
-						<require>aon-external-libs &gt;= ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}-18113</require>
+						<require>aon-external-libs &gt;= ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-18113</require>
 					</requires>
 				</configuration>
 			</plugin>
