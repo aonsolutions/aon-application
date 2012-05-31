@@ -87,6 +87,7 @@ public class BoardListController implements ICollectionProvider {
 		getParams().setDate(new Date());
 		getParams().setBoardPageBreak(true);
 		getParams().setBoardItemFilter(null);
+		setBoardsTotalList(null);
 		onSearch(event);
 	}
 	

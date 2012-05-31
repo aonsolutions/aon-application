@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.pms.util;
 
-import java.util.Date;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.asset.enumeration.ActivityStatus;
@@ -76,7 +74,8 @@ public class PmsReportManager {
 	
 	public String getBoardBookingSQL(Hotel hotel, Product product) throws ManagerBeanException{
 		String select = ""
-				+ " (SELECT W.description,  "
+				+ " ("
+				+ "SELECT W.description,  "
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
@@ -104,6 +103,8 @@ public class PmsReportManager {
 				+ " LEFT JOIN product AS P ON I2.product=P.id" 
 				+ " LEFT JOIN product AS P2 ON I.product=P2.id "
 				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+				+ " AND (PRSD.effective_date = AA.date OR AA.date is null)"
+				+ " AND (AA.date BETWEEN :start AND :end OR AA.date is null)"
 				+ " AND (PRSD.project_reservation_room_detail=PRRD.id" 
 				+ " OR (PRSD.project_reservation_room_detail is null OR R.hotel=PR.Hotel))"
 				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
@@ -112,7 +113,8 @@ public class PmsReportManager {
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " )"
 				+ " UNION"
-				+ " (SELECT W.description, "
+				+ " ("
+				+ "SELECT W.description, "
 				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
 					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
 				+ " AS Fecha,"
@@ -137,9 +139,10 @@ public class PmsReportManager {
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 				+ " LEFT JOIN product AS P ON I.product=P.id"
 				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+				+ " AND (PRSD.effective_date = AA.date OR AA.date is null)"
+				+ " AND (AA.date BETWEEN :start AND :end OR AA.date is null)"
 				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
 				+ " AND P.composition=0"
-				+ " AND P.category=4 AND PR.status<>2"
 				+ " AND P.category="+getBoardCategory()+" AND PR.status<>"+getReservationCancelStatus()
 				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
