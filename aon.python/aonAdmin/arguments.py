@@ -3,9 +3,12 @@ Created on 16/04/2012
 
 @author: ecastellano
 '''
-from aonAdmin.domain import Domain, DomainTypes
+from aonAdmin.domain import Domain, DomainTypes, ConsoleColors
 from aonAdmin.connection import Connection
 from optparse import OptionParser
+
+def warning(text):
+    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
 
 class Arguments(object):
     '''
@@ -20,6 +23,7 @@ class Arguments(object):
         use = "Usage: command [options]"
         parser = OptionParser(usage = use)
         parser.add_option("-v", "--verbose", action="store_true", default=False, help="Set mode to verbose.")
+        parser.add_option("-q", "--verbose-sql", action="store_true", default=False, help="Set mode to verbose on SQL Scripts.")
         parser.add_option("-o", "--host",  default="127.0.0.1", help="Host to connect.")
         parser.add_option("-u", "--user", default="dbuser", help="User to connect as.")
         parser.add_option("-p", "--passwd", default="serubd2000", help="Password to use.")
@@ -30,7 +34,8 @@ class Arguments(object):
         parser.add_option("-e", "--domain-description",dest="domain_description", help="Description of the domain to be created.")
         parser.add_option("-t", "--domain-type",dest="domain_type", help="Type of the domain to be created. ('Parent'.'Child','Simple','PMS','GT')")
         
-        parser.add_option("-a", "--domain-parent-id",dest="domain_parent_id", help="Parent domain of the domain to be created.")
+        parser.add_option("-a", "--domain-parent-id",dest="domain_parent_id", help="Parent domain ID of the domain to be created.")
+        parser.add_option("-m", "--domain-parent-name",dest="domain_parent_name", help="Parent domain name of the domain to be created.")
         
         parser.add_option("-s", "--domain-user",dest="domain_user", help="Parent domain admin user.")
         parser.add_option("-w", "--domain-password",dest="domain_password", help="Parent domain admin user's password.")
@@ -45,15 +50,14 @@ class Arguments(object):
             print
             print "Mode is set to verbose."
             print
-            print "   DOMAIN OPTIONS" 
-            print "   --------------" 
-            print "   Domain  Name .........: ", self.options.domain_name
-            print "   Domain Description ...: ", self.options.domain_description
-            print "   Domain Type ..........: ", self.options.domain_type
-            print "   Domain parent ID .....: ", self.options.domain_parent_id
-            print "   Domain user ..........: ", self.options.domain_user
-            print
-            print "   eMail ................: ", self.options.user_mail
+            print "DOMAIN OPTIONS" 
+            print "--------------" 
+            print "Domain  Name .........: ", self.options.domain_name
+            print "Domain Description ...: ", self.options.domain_description
+            print "Domain Type ..........: ", self.options.domain_type
+            print "Domain parent ID .....: ", self.options.domain_parent_id
+            print "Domain parent Name ...: ", self.options.domain_parent_name
+            print "Domain user ..........: ", self.options.domain_user
             print
             
     
@@ -63,18 +67,23 @@ class Arguments(object):
         description = self.options.domain_description
         if description == None or description == "":
             description = self.options.domain_name
-            print "WARNING: No se ha indicado la descripcion del dominio. Se utilizara el nombre como descripcion"
+            print warning("WARNING:") +"No se ha indicado la descripcion del dominio. Se utilizara el nombre como descripcion"
         domain.set_domain_description(description)
         domain.set_domain_parent_id(self.options.domain_parent_id)
+        domain.set_domain_parent_name(self.options.domain_parent_name)
         domain.set_domain_user(self.options.domain_user)
         domain.set_user_password(self.options.domain_password)
         domain.set_domain_type( DomainTypes().get_domain_type(self.options.domain_type) )
         domain.set_verbose(self.options.verbose)
         domain.set_load_defaults_from_parent(self.options.load_defaults_from_parent)
+        domain.set_database_name(self.options.db)
         return domain
 
     def is_verbose_enabled(self):
         return self.options.verbose
+
+    def is_verbose_sql_enabled(self):
+        return self.options.verbose_sql
     
     def get_connection(self):
         conn = Connection()

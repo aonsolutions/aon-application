@@ -17,6 +17,26 @@ import subprocess
 import sys
 import zipfile
 
+class ConsoleColors:
+    HEADER = '\033[95m'
+    BOLD = "\033[1m"
+    BLUE = '\033[94m'
+    GREEN = '\033[32m'
+    RED = '\033[91m'
+    ENDC = '\033[0m'
+
+def warning(text):
+    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
+def fail(text):
+    return ConsoleColors.RED + text + ConsoleColors.ENDC 
+def bold(text):
+    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
+def header(text):
+    return ConsoleColors.HEADER + text + ConsoleColors.ENDC 
+def green(text):
+    return ConsoleColors.GREEN + text + ConsoleColors.ENDC 
+
+
 class DomainType:
     
     def __init__(self,name,parent,multidomain):
@@ -67,15 +87,18 @@ class Domain(object):
         Constructor
         '''
         self.__verbose  = False
+        self.__verbose_sql  = False
         self.__domain_name = None
         self.__domain_description = None
         self.__domain_parent_id = None
+        self.__domain_parent_name = None
         self.__domain_type = None
         self.__user_id = None
         self.__domain_user = None
         self.__user_password = None
         self.__encripted_user_password = None
         self.__load_defaults_from_parent = False
+        self.__database_name = None
 
     def get_domain_id(self):
         return self.__domain_id
@@ -88,9 +111,7 @@ class Domain(object):
 
     def get_domain_suffix(self):
         if self.get_domain_type().is_parent():
-            pos =self.get_domain_name().find(".")
-            if pos != -1:
-                return self.get_domain_name()[pos+len("."):]
+            return self.get_domain_name()
         return None
     
     def get_domain_type(self):
@@ -98,6 +119,12 @@ class Domain(object):
 
     def get_domain_parent_id(self):
         return self.__domain_parent_id
+
+    def get_domain_parent_name(self):
+        return self.__domain_parent_name
+
+    def get_database_name(self):
+        return self.__database_name
 
     def get_domain_user(self):
         return self.__domain_user
@@ -126,6 +153,12 @@ class Domain(object):
     def set_domain_parent_id(self, value):
         self.__domain_parent_id = value
 
+    def set_domain_parent_name(self, value):
+        self.__domain_parent_name = value
+
+    def set_database_name(self, value):
+        self.__database_name = value
+
     def set_domain_user(self, value):
         self.__domain_user = value
 
@@ -148,36 +181,73 @@ class Domain(object):
         return self.__verbose
     def set_verbose(self, value):
         self.__verbose = value
+
+    def is_verbose_sql_enabled(self):
+        return self.__verbose_sql
+    def set_verbose_sql(self, value):
+        self.__verbose_sql = value
     
     def insert(self,db):
-
         self.validate(db)
+        if self.is_verbose_enabled():
+            print
+            print "Inserting data"
+
         self.__insert_domain(db)
-        self.__insert_domain_application(db)
         if self.get_domain_type().is_parent():
             self.__insert_user(db)
-            self.__insert_application_user(db)
-            self.__insert_application_user_profile(db)
+
+        # TODO Estos datos se deberian poder pasar como parametros
+        aon_aio_profiles = ("Administrador",) 
+        applications = ("aon-aio",)
+        profiles = (aon_aio_profiles,)
+        # end TODO 
+        
+        x = 0
+        for application in applications:
+            if self.is_verbose_enabled():
+                print "\tRegistering application '"+application+"'"
+            self.__insert_domain_application(db,application)
+            if self.get_domain_type().is_parent():
+                self.__insert_application_user(db)
+                for profile in profiles[x]:
+                    if self.is_verbose_enabled():
+                        print "\t\tRegistering profile '"+profile+"'"
+                    self.__insert_application_user_profile(db,profile)
+                    
+            x = x +1
+                
+        if self.is_verbose_enabled():
+            print "\tInsertions ..... ",green("ok!")
 
     def validate(self,db):
         '''
         Validates the name,description and parentId data.
         '''
+        if self.is_verbose_enabled():
+            print
+            print "Starting input validation"
+
         # validating Domain Type
         domain_type = self.get_domain_type()
         if domain_type == None:
             raise AonException(-31,"Domain Type is required! ("+DomainTypes().print_info()+")")
         
-        if not domain_type.is_parent() and self.get_domain_parent_id() == None:
-            raise AonException(-32,"If you want to create a child domain, you must supply a parent domain ID")
+        if not domain_type.is_parent() and self.get_domain_parent_id() == None and self.get_domain_parent_name() == None:
+            raise AonException(-32,"If you want to create a child domain, you must supply a parent domain ID or parent domain Name")
+        
+        if not domain_type.is_parent() and self.get_domain_parent_name() != None:
+            # Se valida que sea un nombre de host valido
+            if self.is_valid_hostname(self.get_domain_parent_name()) == False:
+                raise AonException(-33,"Parent Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
          
         if domain_type == DomainTypes.GT:
-            raise AonException(-33," Not yet supported!")
+            raise AonException(-34," Not yet supported!")
         if domain_type == DomainTypes.PMS:
-            raise AonException(-33," Not yet supported!")
+            raise AonException(-35," Not yet supported!")
 
         if self.get_domain_user() == None:
-            raise AonException(-34," User domain is required!")
+            raise AonException(-36," User domain is required!")
         
         # Validacion de la creacion de un dominio padre.
         if domain_type.is_parent():
@@ -188,29 +258,66 @@ class Domain(object):
                     
             # validating Domain Parent
             if self.get_domain_parent_id() != None and not self.get_domain_parent_id().isdigit():
-                raise AonException(-35,"Domain parent must be a positive integer!")
+                raise AonException(-37,"Domain parent must be a positive integer!")
          
+            if self.get_domain_parent_name() != None:
+                # Se valida que exista el "parent name" en la base de datos
+                cur = db.cursor()
+                cur.execute("SELECT T.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as T WHERE T.TABLE_NAME = 'domain'")
+                schemas = cur.fetchall()
+                parent_schema = None;
+                for schema in schemas:
+                    dom_cur = db.cursor()
+                    stmt = "SELECT `id` FROM `"+schema[0]+"`.`domain` WHERE name = '" + self.get_domain_parent_name() + "'";
+                    dom_cur.execute(stmt)
+                    if int(dom_cur.rowcount):
+                        parent_schema = schema[0]
+                        parent_domain_id = dom_cur.fetchone()[0]
+                cur.close()
+
+                if parent_schema == None: 
+                    raise AonException(-38,"Parent Domain name '"+self.get_domain_parent_name()+"' not found")
+                
+                # Se valida que exista el schema del "parent name" coincida con la base de datos indicada
+                if parent_schema != None and parent_schema != self.get_database_name():
+                    raise AonException(-39,"Parent Domain '"+self.get_domain_parent_name()+"' is not in Database '"+ self.get_database_name()+"'")
+                
+                # Se valida que se haya encontrado un ID del parent
+                if parent_domain_id == None:
+                    raise AonException(-40,"Parent Domain '"+self.get_domain_parent_name()+"' does not retrieve a valid ID")
+                
+                if self.get_domain_parent_id() == None:
+                    if self.is_verbose_enabled():
+                        print "\t\t Domain Parent ID assigned ",parent_domain_id
+                    self.set_domain_parent_id(str(parent_domain_id))
+                
+                # Se valida que el parant ID suministrado coincida con el real
+                if self.get_domain_parent_id() != str(parent_domain_id):
+                    raise AonException(-41,"Parent Domain name '"+self.get_domain_parent_name()+"' does not match with Parent Domain ID '"+self.get_domain_parent_id()+"'")
+
             # Validacion de la existencias del parent domain y en su caso, de la propiedad multidominio
             cur = db.cursor()
             cur.execute("SELECT domainManagement FROM domain WHERE id = %s",(self.get_domain_parent_id(),))
             if not int(cur.rowcount):
-                raise AonException(-36,"The parent domain '"+self.get_domain_parent_id()+"' can not be found!")
+                raise AonException(-42,"The parent domain '"+self.get_domain_parent_id()+"' can not be found!")
             domain_management = cur.fetchone()[0]
             if not domain_management:
-                raise AonException(-37,"Expected a multi-domain parent domain, but domain '"+self.get_domain_parent_id()+"' has this capability disabled!")
+                raise AonException(-43,"Expected a multi-domain parent domain, but domain '"+self.get_domain_parent_id()+"' has this capability disabled!")
             
             # Validacion del usuario dentro del dominio parent    
             if self.get_domain_user() == None:
-                raise AonException(-38,"If domain-parent-id parameter is provided, domain-user must be a valid admin user, now is empty!")
+                raise AonException(-44,"If domain-parent-id parameter is provided, domain-user must be a valid admin user, now is empty!")
             cur = db.cursor()
             cur.execute("SELECT 1 FROM user WHERE login = %s and password = %s and domain = %s",(self.get_domain_user(),self.__encripted_user_password,self.get_domain_parent_id()))
             if int(cur.rowcount) == False:
-                raise AonException(-39,"User '"+self.get_domain_user()+"' does not exists or can not be autenticated on parent domain '"+self.get_domain_parent_id()+"'")
+                raise AonException(-45,"User '"+self.get_domain_user()+"' does not exists or can not be autenticated on parent domain '"+self.get_domain_parent_id()+"'")
+            
+            
  
 
         # validating Domain Name
         if self.get_domain_name() == None:
-            raise AonException(-30,"Domain name is required!")
+            raise AonException(-46,"Domain name is required!")
         else:
             # Se valida que no exista el "name" en la base de datos
             cur = db.cursor()
@@ -221,21 +328,21 @@ class Domain(object):
                 stmt = "SELECT 1 FROM `"+schema[0]+"`.`domain` WHERE name = '" + self.get_domain_name() + "'";
                 dom_cur.execute(stmt)
                 if int(dom_cur.rowcount):
-                    raise AonException(-31,"Domain name '"+self.get_domain_name()+"' already exists in database '"+schema[0]+"'!")
+                    raise AonException(-47,"Domain name '"+self.get_domain_name()+"' already exists in database '"+schema[0]+"'!")
             cur.close()
             
             # Se valida que sea un nombre de host valido
             if self.is_valid_hostname(self.get_domain_name()) == False:
-                raise AonException(-32,"Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
+                raise AonException(-48,"Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
         
 
         # validating Domain Description
         if self.get_domain_description() == None:
-            raise AonException(-33,"Domain description is required!")
+            raise AonException(-49,"Domain description is required!")
         
         
         if self.is_verbose_enabled():
-            print "validation ..... ok!"
+            print "\tValidation ..... ",green("ok!")
 
     def is_valid_hostname(self,hostname):
         if len(hostname) > 255:
@@ -248,68 +355,68 @@ class Domain(object):
     def __insert_domain(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "    try to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),self.get_domain_suffix(),")"  
-        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix) VALUES (%s,%s,%s,%s,%s,%s)"
+            print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),self.get_domain_suffix(),")",  
+        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers) VALUES (%s,%s,%s,%s,%s,%s,0,0,1)"
                        ,(self.get_domain_name(),self.get_domain_description(),self.get_domain_parent_id(),self.get_domain_type().is_multidomain(),1,self.get_domain_suffix()))
         self.set_domain_id( db.insert_id() )
         
         if self.is_verbose_enabled():
-            print "    domain inserted with id=",self.__domain_id
+            print "....... inserted with id=",self.__domain_id
     
-    def __insert_domain_application(self,db):
+    def __insert_domain_application(self,db,application):
         cur = db.cursor()
-        cur.execute("SELECT id FROM application WHERE name= 'aon-aio'")
+        cur.execute("SELECT id FROM application WHERE name= %s",(application,))
         if not int(cur.rowcount):
-            raise AonException(-25,"The application 'aon-aio' can not be found in application table")
+            raise AonException(-50,"The application '"+ application + "' can not be found in application table")
         self.__application_id = cur.fetchone()[0]
         if self.is_verbose_enabled():
-            print "    application 'aon-aio' found with id ",self.__application_id
+            print "\t\tApplication '"+application+"' found with id ",self.__application_id
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "    try to insert domain application (",self.get_domain_id(),self.__application_id,")",
+            print "\t\tTrying to insert domain application (",self.get_domain_id(),self.__application_id,")",
         stmt.execute("INSERT INTO domain_application (domain,application) VALUES (%s,%s)"
                        ,(self.get_domain_id(),self.__application_id,))
         self.domain_application = db.insert_id()
         if self.is_verbose_enabled():
             print " ...... inserted with id ",self.domain_application
-        
+            
     def __insert_user(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "    try to insert user (",self.get_domain_user(),")"
+            print "\tTrying to insert user (",self.get_domain_user(),")",
         stmt.execute("INSERT INTO user (domain,name,login,password) VALUES (%s,%s,%s,%s)"
                        ,(self.get_domain_id(),self.get_domain_user(),self.get_domain_user(),self.__encripted_user_password))
         self.set_user_id( db.insert_id() )
         if self.is_verbose_enabled():
-            print "    user  inserted with id=",self.get_user_id()
+            print "........... inserted with id=",self.get_user_id()
 
     def __insert_application_user(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "    try to insert application_user (",self.get_user_id(),self.domain_application,")"  
+            print "\t\tTrying to insert application_user (",self.get_user_id(),self.domain_application,")",  
         stmt.execute("INSERT INTO application_user (user_id,domain_application) VALUES (%s,%s)"
                        ,(self.get_user_id(),self.domain_application))
         self.__application_user = db.insert_id()
         if self.is_verbose_enabled():
-            print "    application_user inserted with id=",self.__application_user
+            print "......... inserted with id=",self.__application_user
 
-    def __insert_application_user_profile(self,db):
+    def __insert_application_user_profile(self,db, profile):
         cur = db.cursor()
-        cur.execute("SELECT id FROM profile WHERE name= 'Administrador' and application = %s",(self.__application_id,))
+        cur.execute("SELECT id FROM profile WHERE name= %s and application = %s",(profile,self.__application_id,))
         if not int(cur.rowcount):
-            raise AonException(-24,"The profile 'Administrador' for application 'aon-aio' can not be found in profile table")
+            raise AonException(-51,"The profile '"+profile+"' for application '"+self.__application_id+"' can not be found in profile table")
         self.__admin_profile_id = cur.fetchone()[0]
         if self.is_verbose_enabled():
-            print "    profile 'Administrador' found with id ",self.__admin_profile_id
+            print "\t\t\tProfile '"+profile+"' found with id ",self.__admin_profile_id
             
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "    try to insert application_user_profile (",self.__application_user,self.__admin_profile_id,")"  
+            print "\t\t\tTrying to insert application_user_profile (",self.__application_user,self.__admin_profile_id,")",  
         stmt.execute("INSERT INTO application_user_profile (application_user,profile) VALUES (%s,%s)"
                        ,(self.__application_user,self.__admin_profile_id))
         self.__application_user_profile = db.insert_id()
         if self.is_verbose_enabled():
-            print "    application_user_profile inserted with id=",self.__application_user_profile
+            print " ...... inserted with id=",self.__application_user_profile
             
     # *******************************************
     # ************* TODO ************************
@@ -340,24 +447,28 @@ class newDomain:
             self.__load_default_values(domain)
 
             if self.__arguments.is_verbose_enabled():
-                print "commit ..... "
+                print "Commiting Transaction ..... ",
             conn.commit()
+            if self.__arguments.is_verbose_enabled():
+                print green("ok!")
             self.send_mail()
-            print "Dominio creado satisfactoriamente!"
+            print
+            print green("Dominio creado satisfactoriamente!")
+            print
         except MySQLdb.DatabaseError, e:
             if self.__arguments.is_verbose_enabled():
-                print " rollback ..... "
+                print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print "-20 - Se ha producido un error SQL", e
+            print fail("ERROR:"),"-20 - Se ha producido un error SQL", e
             print "Exit!"
             sys.exit(-20)
         except AonException, e:
             if self.__arguments.is_verbose_enabled():
-                print " rollback ..... "
+                print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print e.errno,e.errmsg
+            print fail("ERROR:"),e.errno,e.errmsg
             print "Exit!"
             sys.exit(e.errno)
 
@@ -385,27 +496,31 @@ class newDomain:
             s.login(me,"<password>")
             s.sendmail(me, to , msg.as_string())
             s.quit()
-
+    
     def __load_default_values(self,domain):
         if self.__arguments.is_verbose_enabled():
-            print " loading default values for domain  ..... ",domain.get_domain_id()
+            print
+            print "Loading default values for domain  ..... ",domain.get_domain_id()
         zf = zipfile.ZipFile(self.AON_MASTER_JAR, 'r')
         
         if not domain.get_domain_type().is_parent() and self.__arguments.is_load_defaults_from_parent():
             sql_script = "com/code/aon/master/defaults/insert.database.aon.domain.from.parent.sql"
         else:
             if self.__arguments.is_load_defaults_from_parent():
-                print "WARNING: Se indico la carga de valores desde el dominio padre, pero el dominio a crear es padre. Se ignora."
+                print  "\t"+warning("WARNING:"),"Se indico la carga de valores desde el dominio padre, pero el dominio a crear es padre. Se ignora."
             sql_script = "com/code/aon/master/defaults/insert.database.aon.domain.sql"
-        if self.__arguments.is_verbose_enabled():
-            print sql_script
+            
         temp_path = "/tmp/__aon.python.insert.database.aon.domain" + datetime.now().strftime("%Y%m%d-%H%M%S")
-        if self.__arguments.is_verbose_enabled():
-            print " SQL Script Temp Path  ..... ",domain.get_domain_id()
         zf.extract(sql_script, temp_path, None)
         sql_script = temp_path + "/" + sql_script
+        __sql_verbose = ""
+        if self.__arguments.is_verbose_sql_enabled():
+            __sql_verbose = " -v "
+        __command = 'mysql '+ __sql_verbose + ' --default-character-set=latin1 -h%s -u%s -p%s %s -e "SET @Domain=%s; source %s;"'
+        
+        ret = subprocess.call(__command % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),self.__arguments.get_db(),domain.get_domain_id(),sql_script),shell=True)
         if self.__arguments.is_verbose_enabled():
-            print " Domain Defaults SQL Script Temp Path  ..... ",sql_script
-        ret = subprocess.call('mysql -v --default-character-set=latin1 -h%s -u%s -p%s %s -e "SET @Domain=%s; source %s;"' % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),self.__arguments.get_db(),domain.get_domain_id(),sql_script),shell=True)
-        if self.__arguments.is_verbose_enabled():
-            print " Defaults script returns code   ..... ",ret
+            print "\tDefaults script returns code   ..... ",ret
+            print "\tDefault data load  ..... ",green("ok!")
+            print
+            

@@ -36,14 +36,17 @@ public class NewDomain extends HttpServlet {
 			while (parameters.hasMoreElements()) {
 				String name = (String) parameters.nextElement();
 				String value = request.getParameter(name);
+				System.out.println( "Parameter: " + name +"="+ value+"#" );
 				if (StringUtils.isNotBlank(value)){
 					buf.append(" --");	
 					buf.append(name);
-					buf.append("=");
-					buf.append(value);
+					if (!StringUtils.equals(name, "verbose")) {
+						buf.append("=");
+						buf.append(value);
+					}
 				}
 			}
-			String command = "newDomain.py " + buf.toString();
+			String command = "new_domain.py " + buf.toString();
 			System.out.println( command);
 			Runtime r = Runtime.getRuntime();
 			Process p = r.exec(command);
@@ -52,17 +55,29 @@ public class NewDomain extends HttpServlet {
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(
 					p.getErrorStream()));
 
+			response.setContentType("text/html");
+			response.getWriter().println("<html><head><head><body>");
 			String line = "";
 			while ((line = stdInput.readLine()) != null) {
-				response.getWriter().println(line);
+				response.getWriter().println(parseLine(line));
 			}
 			while ((line = stdError.readLine()) != null) {
-				response.getWriter().println(line);
+				response.getWriter().println(parseLine(line));
 			}
 			int exitVal = p.waitFor();
+			response.getWriter().println("</body></html>");
+			response.getWriter().flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private String parseLine(String line) {
+		line = StringUtils.replace(line, "[91m", "<p style='color: red;'>");
+		line = StringUtils.replace(line, "[32m", "<p style='color: green;'>");
+		line = StringUtils.replace(line, "[1m", "<p style='font-weight: bold;'>");
+		line = StringUtils.replace(line, "[0m", "</p>");
+		return line;
 	}
 }

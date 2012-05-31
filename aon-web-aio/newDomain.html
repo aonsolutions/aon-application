@@ -1,0 +1,167 @@
+<html>
+<head>
+<style type="text/css">
+  body {
+    font-family: Arial;
+    }
+  table {
+	font-size: 15px;  
+  }
+  th {
+	font-size: 17px;
+	text-decoration: underline;   
+  }
+  label {
+  	font-weight: 600;
+  	margin-right: 20px;
+  }
+  input {
+  	border: solid black 1px;
+  	vertical-align: top;
+  }
+  .help {
+  	font-style: italic; 
+  	font-size: 0.8em; 
+  	margin-left: 15px;
+  }
+  .radio-value {
+  	font-size: 0.9em;
+  	font-weight: bold;
+  }  
+</style>
+</head>
+<body>
+<form action="http://external.aonsolutions.net/aon-aio/newDomain/" method="POST">
+
+<div style="width: 100%; text-align: center;">
+	<table align="center">
+		<th colspan="2">
+			Creaci&oacute;n de Dominios
+		</th>
+		<tr>
+			<td style="width:300px;">&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="db" style="">Usuario</label>
+				<div class="help">
+					Usuario suministrado por AonSolutions
+				</div>
+			</td>
+			<td>
+				<input type="text" name="db" size="32"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-name">Nombre del Dominio</label>
+				<div class="help">
+					Nombre del dominio que desea crear
+				</div>
+			</td>
+			<td>
+				<input type="text" size="32" name="domain-name"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-description">Descripci&oacute;n del Dominio</label>
+				<div class="help">
+					Descripci&oacute;n del dominio que desea crear
+				</div>
+			</td>
+			<td>
+				<input type="text" size="60" name="domain-description"/>
+			</td>
+		</tr>
+		<tr>
+			<td rowspan="4" style="vertical-align: top">
+				<label for="domain-type">Tipo de Dominio</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-type" value="Parent">
+					<span class="radio-value">PARENT</span> 
+					<span class="help">
+						Dominio con capacidad MultiDominio
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-type" value="Child">
+					<span class="radio-value">CHILD</span> 
+					<span class="help">
+						Dominio dependiente de un PARENT
+					</span>
+				</input>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="domain-type" value="Simple">
+					<span  class="radio-value">SIMPLE</span> 
+					<span class="help">
+						Dominio independiente
+					</span>
+				</input>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<label for="domain-parent-name">Nombre Dominio Padre</label>
+				<div class="help">
+					En caso de marcar CHILD, indique el nombre del dominio PARENT bajo el cual desea crear el dominio. 
+				</div>
+			</td>
+			<td>
+				<input type="text" name="domain-parent-name" size="32"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-user">Administrador del Dominio</label>
+				<div class="help">
+					En caso de marcar CHILD, indique el usuario administrador del dominio PARENT. 
+				</div>
+				<div class="help">
+					En otro caso, indique el identificador del usuario administrador con el que acceder&aacute; a la aplicaci&oacute;n. 
+				</div>
+			</td>
+			<td>
+				<input type="text" name="domain-user" size="16"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="domain-password">Password</label>
+				<div class="help">
+					Clave del Administrador del Dominio 
+				</div>
+			</td>
+			<td>
+				<input type="password" name="domain-password" size="16"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="text-align: center;">
+				<input type="submit" value="Enviar" />
+			</td>
+		</tr>
+	</table>
+</div>	
+</form>
+</body>
+</html>
