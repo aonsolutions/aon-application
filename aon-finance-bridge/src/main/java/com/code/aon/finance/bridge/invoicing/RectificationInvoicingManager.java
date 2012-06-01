@@ -167,7 +167,7 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setAmount(CommonUtil.round(0 - finance.getTotalAmount()));
 			rectifierFinance.setExpenses(0);
 			rectifierFinance.setConcept(rectifier.getDocumentNumber()); 
-			rectifierFinance.setDueDate(finance.getDueDate());
+			rectifierFinance.setDueDate(rectifier.getIssueDate());
 			rectifierFinance.setPayMethod(finance.getPayMethod());
 			rectifierFinance.setBank(finance.getBank());
 			rectifierFinance.setBankAccount(finance.getBankAccount());
