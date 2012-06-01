@@ -1164,6 +1164,12 @@
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
 
+	<table name="rattach_tag" class="com.esferalia.aon.entity.master.RegistryAttachmentTag" >
+		<foreign-key constraint-name="FK_RATTACH_TAG_RATTACH">
+			<many-to-one property="attachment" />
+		</foreign-key>
+	</table>	
+
 	<table name="rbank" class="com.esferalia.aon.entity.master.RegistryBank">
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 	</table>

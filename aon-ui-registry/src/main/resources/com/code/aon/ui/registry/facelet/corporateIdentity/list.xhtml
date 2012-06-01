@@ -15,8 +15,20 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<ui:include 
-					src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					<ui:define name="columns">
+			
+						<ui:include 
+							src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+							
+					</ui:define>
+					<ui:define name="additionalDataTableContent" >
+						<aon:div styleClass="aon-margin-top" >
+							<aon:outputText value="#{documentManager.freeSpaceMessage}" />
+						</aon:div>
+					</ui:define>					
+				</ui:decorate>
 			</aon:div>
 
 		</aon:form>

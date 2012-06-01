@@ -466,6 +466,7 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistryAddInfo","com.code.aon.registry.RegistryAddInfo");
 		map.put("RegistryAddress","com.code.aon.registry.RegistryAddress");
 		map.put("RegistryAttachment","com.code.aon.registry.RegistryAttachment");
+		map.put("RegistryAttachmentTag","com.code.aon.registry.RegistryAttachmentTag");
 		map.put("RegistryDirStaff","com.code.aon.registry.RegistryDirStaff");
 		map.put("RegistryBank","com.code.aon.registry.RegistryBank");
 		map.put("RegistryMedia","com.code.aon.registry.RegistryMedia");
@@ -475,6 +476,7 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistrySegment","com.code.aon.registry.RegistrySegment");
 		map.put("Relationship","com.code.aon.registry.Relationship");
 		map.put("Segment","com.code.aon.registry.Segment");
+		map.put("Tag","com.code.aon.registry.Tag");
 
 		//AON-SALES  
 		map.put("Sales","com.code.aon.sales.Sales");

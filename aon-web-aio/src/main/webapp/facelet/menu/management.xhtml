@@ -49,6 +49,14 @@
 										actionListener="#{invoiceRemover.onEditSearch}"
 										action="invoiceRemover_search" />
 								</aon:div>
+								<c:if test="#{aonRole.financeOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_invoicing_group"
+											value="#{financeBundle.finance_invoicing_group_module}"
+											action="invoicingGroup_list" />
+									</aon:div>
+								</c:if>
+								
 <!-- 
 	Se quita esta opcion del menu por su peligrosidad obvia. Ahora mismo genera facturas que no son compatibles con la aplicacion 
 	a la hora de imprimirlas o contabilizarlas. Si sigue adelante este tema habria que revisarlo con MAC para dejarlo bien.
