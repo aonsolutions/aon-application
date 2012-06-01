@@ -12,7 +12,7 @@
 	<aon:outputText	value="#{reservationRequest.to.hotel.workPlace.description}" styleClass="aon-bold"
 		rendered="#{!reservationRequest.new}" />
 	<aon:selectOneMenu id="ReservationRequest_hotel_id" value="#{reservationRequest.to.hotel}" 
-		rendered="#{reservationRequest.new}" required="true">
+		rendered="#{reservationRequest.new}" required="true" ajaxSingle="true">
 		<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 	</aon:selectOneMenu>
 

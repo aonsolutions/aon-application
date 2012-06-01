@@ -15,43 +15,58 @@
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
-				<ui:define name="beforeSpinToolbarContent">
-					<aon:commandButton id="reservation-Invoice"
+				<ui:param name="showMoreMenu" value="#{!reservation.new and !reservation.cancelled}" />
+				<ui:define name="moreMenuContent">
+					<aon:menuItem id="reservation-CheckIn"
+						value="#{pmsBundle.pms_check_in}"
+						immediate="#{true}" rendered="#{reservation.active and reservation.noCheck and reservation.checkInable}"
+						iconClass="aon-icon-check-in"
+						actionListener="#{reservation.onCheckIn}" />
+					<aon:menuItem id="reservation-CheckOut"
+						value="#{pmsBundle.pms_check_out}"
+						immediate="#{true}" rendered="#{reservation.invoiced and reservation.checkIn and reservation.checkOutable}"
+						iconClass="aon-icon-check-out"
+						actionListener="#{reservation.onCheckOut}" />
+					<aon:menuItem id="reservation-Invoice"
 						value="#{pmsBundle.pms_to_invoice}"
 						immediate="#{true}" rendered="#{reservation.active and reservationService.model.rowCount > 0 and reservation.invoiceable}"
-						styleClass="aon-finding-toolbar-item aon-icon-favorite"
+						iconClass="aon-icon-favorite"
 						actionListener="#{reservation.onInvoiceShow}"
 						reRender="showInvoiceWindow">
 						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
 							value="#{true}" />
-					</aon:commandButton>
-					<c:if test="#{aonRole.saleOperator}">
-						<aon:confirmButton id="reservation-Cancel"
-							value="#{pmsBundle.pms_to_cancel_reservation}"
-							title="#{pmsBundle.pms_to_cancel_reservation}"
-							immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-removed"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{pmsBundle.pms_to_cancel_reservation_confirm}"
-							confirmActionListener="#{reservation.onCancelReservation}" />
-					</c:if>
-					<aon:confirmButton id="reservation-NoShow"
+					</aon:menuItem>
+					<aon:menuItem id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}"
-						title="#{pmsBundle.pms_no_show}"
-						immediate="true" rendered="#{!reservation.cancelled and reservation.cancellable and !reservation.new and reservation.noShowable}"
-						styleClass="aon-finding-toolbar-item aon-icon-task-finish"
-						confirmTitle="#{bundle.aon_confirm_title}"
-						confirmMessage="#{pmsBundle.pms_no_show_confirm}"
-						confirmActionListener="#{reservation.onNoShow}" />
-					<aon:commandButton id="reservation-divert"
+						immediate="#{true}" rendered="#{!reservation.cancelled and reservation.noCheck and (aonRole.admin or reservation.noShowable)}"
+						iconClass="aon-icon-no-show"
+						reRender="showConfirmWindow">
+						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+							value="#{true}" />
+						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+							value="#{true}" />
+					</aon:menuItem>
+					<c:if test="#{aonRole.saleOperator}">
+						<aon:menuItem id="reservation-Cancel"
+							value="#{pmsBundle.pms_to_cancel_reservation}"
+							immediate="#{true}" rendered="#{!reservation.cancelled and reservation.noCheck and reservation.cancellable}"
+							iconClass="aon-icon-removed"
+							reRender="showConfirmWindow">
+							<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+								value="#{true}" />
+							<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+								value="#{false}" />
+						</aon:menuItem>
+					</c:if>
+					<aon:menuItem id="reservation-divert"
 						value="#{pmsBundle.pms_divert_reservation}"
-						immediate="true" rendered="#{!reservation.cancelled and !reservation.pendingDivert and !reservation.new}"
-						styleClass="aon-finding-toolbar-item aon-icon-transfer"
+						immediate="true" rendered="#{!reservation.cancelled and reservation.divertable and !reservation.pendingDivert}"
+						iconClass="aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
 						reRender="showDivertWindow">
 						<f:setPropertyActionListener target="#{reservation.showDivertWindow}"
 							value="#{true}" />
-					</aon:commandButton>
+					</aon:menuItem>
 				</ui:define>
 			</ui:decorate>
 
@@ -111,6 +126,9 @@
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/service/modalServiceDetail.xhtml">
 			<ui:param name="controller" value="#{reservationService}" />
 		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/modalConfirm.xhtml">
+			<ui:param name="controller" value="#{reservation}" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{reservation}" />
 			<ui:param name="service" value="#{false}" />
@@ -127,6 +145,5 @@
 			<ui:param name="skipRequestHotel" value="true" />
 			<ui:param name="skipStatus" value="true" />
 		</ui:include>
-		
 	</ui:define>
 </ui:composition>

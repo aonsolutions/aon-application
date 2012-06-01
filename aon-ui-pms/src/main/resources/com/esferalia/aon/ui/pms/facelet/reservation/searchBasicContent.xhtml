@@ -104,20 +104,15 @@
 	</aon:div>
 
 	<c:if test="#{!skipStatus}">
+		<aon:outputText value="#{pmsBundle.pms_check}"/>
+		<aon:selectManyCheckbox value="#{searchController.reservationCheckStatuses}">
+			<f:selectItems value="#{pmsCollections.abbreviatedReservationCheckStatuses}"/>
+		</aon:selectManyCheckbox>
+
 		<aon:outputText value="#{bundle.aon_status}"/>
-		<aon:panelGrid columns="2" columnClasses="aon-width-350, aon-width-auto">
-			<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
-				<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
-			</aon:selectManyCheckbox>
-			<aon:div>
-				<aon:selectBooleanCheckbox id="ProjectReservation_noShow"
-					valueChangeListener="#{controller.addExpression}">
-					<f:selectItem itemValue="1" />
-				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="ProjectReservation_noShow" 
-					value="#{pmsBundle.pms_no_show}"/>
-			</aon:div>
-		</aon:panelGrid>
+		<aon:selectManyCheckbox value="#{searchController.reservationStatuses}">
+			<f:selectItems value="#{pmsCollections.reservationStatuses}"/>
+		</aon:selectManyCheckbox>
 	</c:if>
 
 </ui:composition>

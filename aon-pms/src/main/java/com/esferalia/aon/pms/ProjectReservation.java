@@ -31,6 +31,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.ProjectReservationDB;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 @Entity
@@ -84,6 +85,23 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public boolean isCompanyHolder() {
 		return getBookingHolder() == BookingHolder.COMPANY;
+	}
+
+	@Transient
+	public boolean isNoCheck() {
+		return getCheckStatus() == ReservationCheckStatus.NO_CHECK;
+	}
+	@Transient
+	public boolean isCheckIn() {
+		return getCheckStatus() == ReservationCheckStatus.CHECK_IN;
+	}
+	@Transient
+	public boolean isCheckOut() {
+		return getCheckStatus() == ReservationCheckStatus.CHECK_OUT;
+	}
+	@Transient
+	public boolean isNoShow() {
+		return getCheckStatus() == ReservationCheckStatus.NO_SHOW || getCheckStatus() == ReservationCheckStatus.NO_SHOW_NO_INVOICEABLE;
 	}
 
 	@Transient

@@ -1060,6 +1060,7 @@
 			<key-column name="project" property="id" type="java.lang.Integer"/>
 		</primary-key>
 		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
+		<column name="check_status" type="com.esferalia.aon.pms.enumeration.ReservationCheckStatus"/>
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>

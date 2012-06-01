@@ -139,7 +139,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	public void onReset(ActionEvent event) {
 		try {
 			PmsUtils pmsUtils = new PmsUtils();
-			if (!pmsUtils.isUserPosOpen()) {
+			if (!AonUtil.getRoleManager().isAdmin() && !pmsUtils.isUserPosOpen()) {
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);

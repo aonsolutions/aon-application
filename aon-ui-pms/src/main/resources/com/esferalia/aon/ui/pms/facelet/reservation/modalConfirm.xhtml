@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConfirmWindow">
 		<c:if test="#{controller.showConfirmWindow}">
-			<rich:modalPanel id="confirmModalPanel" minHeight="200" minWidth="300" 
+			<rich:modalPanel id="confirmModalPanel" minHeight="200" height="200" minWidth="240" width="240"
 				rendered="#{controller.showConfirmWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -18,27 +18,23 @@
 						<aon:outputText value="#{bundle.aon_confirm_title}" />
 					</aon:div>
 				</f:facet>
-				<aon:form id="confirmFrom">
+				<aon:form id="confirmForm">
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
 									<aon:div style="margin-bottom:30px;">
-										<aon:outputFormat styleClass="aon-bold"
-											value="#{pmsBundle.pms_reservation_request_existing_reservation}" >
-											<f:param value="#{controller.to.hotel.workPlace.description}"/>
-											<f:param value="#{controller.to.code}"/>
-											<f:param value="#{controller.to.agency.registry.fullName}"/>
-										</aon:outputFormat>
+										<aon:outputText styleClass="aon-bold"
+											value="#{(controller.confirmNoShow) ? (pmsBundle.pms_no_show_confirm) : (pmsBundle.pms_to_cancel_reservation_confirm)}" />
 									</aon:div>
 
 									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
 										columnClasses="aon-panelGrid-even aon-text-right aon-noborder,aon-panelGrid-even aon-text-left aon-noborder">
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
-											value="#{bundle.aon_save}"
-											actionListener="#{controller.acceptRequest}">
+											value="#{bundle.aon_confirm}"
+											actionListener="#{controller.onCancelReservation}">
 											<rich:componentControl for="confirmModalPanel"
 												event="onclick" operation="hide"/>																					
 											<f:setPropertyActionListener
@@ -48,7 +44,7 @@
 
 										<aon:commandButton id="confirm-back"
 											styleClass="aon-commandButton"
-											value="#{bundle.aon_cancel}" 
+											value="#{bundle.aon_back}" 
 											reRender="showConfirmWindow" immediate="true">
 											<f:setPropertyActionListener
 												target="#{controller.showConfirmWindow}"

@@ -498,6 +498,15 @@ color:#000;
  .aon-icon-project-warn{
 	background:transparent url(images/aon-icon/aon-icon-project-warn.png) scroll left center no-repeat;	
  }
+ .aon-icon-check-in{
+	background:transparent url(images/aon-icon/aon-icon-check-in.png) scroll left center no-repeat;	
+ }
+ .aon-icon-check-out{
+	background:transparent url(images/aon-icon/aon-icon-check-out.png) scroll left center no-repeat;	
+ }
+ .aon-icon-no-show{
+	background:transparent url(images/aon-icon/aon-icon-no-show.png) scroll left center no-repeat;	
+ }
 
 /* otros */
 .aon-icon-agenda{
@@ -1096,6 +1105,9 @@ color:#000;
 .aon-message-fatal-error{
 }
 .aon-message-info{
+}
+.aon-label-info {
+	color: blue;
 }
 /****************************/
 /**** FORM ELEMENTS  *****/

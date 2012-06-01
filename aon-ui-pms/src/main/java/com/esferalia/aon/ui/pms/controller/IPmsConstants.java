@@ -4,6 +4,7 @@ public interface IPmsConstants {
 
 	String AVAILABLE_ROOM = "availableRoom";
 	String RACK_RESERVATION = "rackReservation";
+	String INVOICE = "invoice";
 	
 	// ************************************************************
 	// BEAN

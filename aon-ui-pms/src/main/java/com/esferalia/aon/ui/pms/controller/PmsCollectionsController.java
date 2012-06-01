@@ -20,6 +20,7 @@ import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.enumeration.Shift;
@@ -27,8 +28,9 @@ import com.esferalia.aon.pms.reservation.IReservationConstants;
 
 public class PmsCollectionsController {
 
-	private List<SelectItem> reservationDivertStatuses;
+	private List<SelectItem> reservationCheckStatuses;
 	private List<SelectItem> reservationStatuses;
+	private List<SelectItem> reservationDivertStatuses;
 	private List<SelectItem> bookingHolders;
 	private List<SelectItem> shifts;
 
@@ -103,32 +105,6 @@ public class PmsCollectionsController {
 		return customers;
 	}
 
-	public List<SelectItem> getReservationStatuses() {
-		if (reservationStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			reservationStatuses = new LinkedList<SelectItem>();
-			for (ReservationStatus status : ReservationStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				reservationStatuses.add(item);
-			}
-		}
-		return reservationStatuses;
-	}
-	
-	public List<SelectItem> getBookingHolders() {
-		if (bookingHolders == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			bookingHolders = new LinkedList<SelectItem>();
-			for (BookingHolder holder : BookingHolder.values()) {
-				String name = holder.getName(locale);
-				SelectItem item = new SelectItem(holder, name);
-				bookingHolders.add(item);
-			}
-		}
-		return bookingHolders;
-	}
-
 	public List<SelectItem> getRoomItems() throws ManagerBeanException {
 		List<SelectItem> roomItems = new LinkedList<SelectItem>();
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
@@ -156,17 +132,50 @@ public class PmsCollectionsController {
 		return tariffs;
 	}
 	
-	public List<SelectItem> getShifts() {
-		if (shifts == null) {
+	public List<SelectItem> getReservationCheckStatuses() {
+		if (reservationCheckStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			shifts = new LinkedList<SelectItem>();
-			for (Shift shift : Shift.values()) {
-				String name = shift.getName(locale);
-				SelectItem item = new SelectItem(shift, name);
-				shifts.add(item);
+			reservationCheckStatuses = new LinkedList<SelectItem>();
+			for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				reservationCheckStatuses.add(item);
 			}
 		}
-		return shifts;
+		return reservationCheckStatuses;
+	}
+	
+	public List<SelectItem> getAbbreviatedReservationCheckStatuses() {
+		if (reservationCheckStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			reservationCheckStatuses = new LinkedList<SelectItem>();
+			for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
+				String name = status.getName(locale);
+				if (status == ReservationCheckStatus.NO_CHECK) {
+					name = "No";
+				} else if (status == ReservationCheckStatus.CHECK_IN) {
+					name = "In";
+				} else if (status == ReservationCheckStatus.CHECK_OUT) {
+					name = "Out";
+				} 
+				SelectItem item = new SelectItem(status, name);
+				reservationCheckStatuses.add(item);
+			}
+		}
+		return reservationCheckStatuses;
+	}
+	
+	public List<SelectItem> getReservationStatuses() {
+		if (reservationStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			reservationStatuses = new LinkedList<SelectItem>();
+			for (ReservationStatus status : ReservationStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				reservationStatuses.add(item);
+			}
+		}
+		return reservationStatuses;
 	}
 	
 	public List<SelectItem> getReservationDivertStatuses() {
@@ -182,4 +191,30 @@ public class PmsCollectionsController {
 		return reservationDivertStatuses;
 	}
 
+	public List<SelectItem> getBookingHolders() {
+		if (bookingHolders == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			bookingHolders = new LinkedList<SelectItem>();
+			for (BookingHolder holder : BookingHolder.values()) {
+				String name = holder.getName(locale);
+				SelectItem item = new SelectItem(holder, name);
+				bookingHolders.add(item);
+			}
+		}
+		return bookingHolders;
+	}
+
+	public List<SelectItem> getShifts() {
+		if (shifts == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			shifts = new LinkedList<SelectItem>();
+			for (Shift shift : Shift.values()) {
+				String name = shift.getName(locale);
+				SelectItem item = new SelectItem(shift, name);
+				shifts.add(item);
+			}
+		}
+		return shifts;
+	}
+	
 }
