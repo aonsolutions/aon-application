@@ -212,13 +212,19 @@ public class AdvanceInvoicing {
 
 	private Registry obtainRegistry(ProjectReservation reservation) throws ManagerBeanException {
 		if (reservation.isGuestHolder()) {
-			Registry registry = reservation.getHotelReservation().getCustomer().getRegistry();
+			Registry registry = new Registry();
+			registry.setId(reservation.getHotelReservation().getCustomer().getRegistry().getId());
 			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
 			if (reservationGuest != null) {
 				registry.setDocument(reservationGuest.getDocument());
 				registry.setDocumentType(reservationGuest.getDocumentType());
 				registry.setDocumentCountry(reservationGuest.getDocumentCountry());
 				registry.setName(reservationGuest.getFullName());
+			} else {
+				registry.setDocument(reservation.getHotelReservation().getCustomer().getRegistry().getDocument());
+				registry.setDocumentType(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentType());
+				registry.setDocumentCountry(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentCountry());
+				registry.setName(reservation.getHotelReservation().getCustomer().getRegistry().getFullName());
 			}
 			return registry;
 		} else {
