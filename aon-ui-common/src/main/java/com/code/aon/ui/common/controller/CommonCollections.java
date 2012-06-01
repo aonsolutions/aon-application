@@ -114,7 +114,7 @@ public class CommonCollections {
 	 */
 	public List<SelectItem> getConfidentialValues() {
     	if ( confidentialValues == null ) {
-			List<SelectItem> confidentialValues = new LinkedList<SelectItem>();
+			confidentialValues = new LinkedList<SelectItem>();
 			SelectItem item = new SelectItem(SecurityLevel.CONFIDENTIAL, AonUtil.getMessage("aon_yes"));
 			confidentialValues.add(item);
 			item = new SelectItem(SecurityLevel.OFFICIAL, AonUtil.getMessage("aon_no"));
