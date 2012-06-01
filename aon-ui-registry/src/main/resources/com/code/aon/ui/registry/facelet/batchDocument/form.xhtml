@@ -26,10 +26,6 @@
 						action="batchDocument_search"
 						value="#{registryBundle.registry_add_documents}"
 						styleClass="aon-finding-toolbar-item aon-icon-new">
-						<!--
-						<f:setPropertyActionListener value="#{false}"
-							target="#{enterpriseDocumentSearch.showList}"  />
-						-->						
 					</aon:commandButton>								
 					<aon:commandButton id="clear"
 						value="#{bundle.aon_clear}" 
@@ -56,8 +52,9 @@
 								accesskey="#{bundle.aon_key_remove_line}" />
 						</aon:column>
 							
-						<ui:include
-							src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+						<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" >
+							<ui:param name="skipAddToBatch" value="#{true}" />
+						</ui:include>
 
 					</ui:define>
 				</ui:decorate>

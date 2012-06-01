@@ -22,10 +22,6 @@
 						action="batchDocument_search"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}" >
-						<!--
-						<f:setPropertyActionListener value="#{false}"
-							target="#{enterpriseDocumentSearch.showList}"  />
-						-->						
 					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
@@ -61,8 +57,9 @@
 									ajaxSingle="true" />	
 							</aon:column>
 						
-							<ui:include
-								src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+							<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" >
+								<ui:param name="skipAddToBatch" value="#{true}" />
+							</ui:include>
 		
 						</ui:define>
 					</ui:decorate>

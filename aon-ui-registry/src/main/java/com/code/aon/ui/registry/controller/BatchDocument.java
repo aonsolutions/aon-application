@@ -128,8 +128,17 @@ public class BatchDocument {
 		return this.documents.contains(ed);
 	}
 
+	public boolean isCurrentInBatch() throws ManagerBeanException {
+		return this.documents.contains(getCurrentDocument());
+	}
+	
 	private void updateModel() {
 		this.model = new ArrayDataModel(this.documents.toArray());		
+	}
+
+	public void onAddCurrentToBatch(ActionEvent event) throws ManagerBeanException {
+		this.documents.add(getCurrentDocument());
+		updateModel();
 	}
 	
 	public void onAddToBatch(ActionEvent event) {

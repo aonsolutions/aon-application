@@ -64,16 +64,25 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_fileupload_element}" />
 		</f:facet>
-		<aon:htmlCommandLink id="download" target="_blank"
-			onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-			rendered="#{to.data != null}"
-			actionListener="#{controller.downloadAttachment}"
-			styleClass="aon-icon aon-icon-mail-save"
-			style="line-height:16px;margin-right:0;"
-			title="#{bundle.aon_fileupload_download}">
-			<f:param name="index" value="#{to.id}" />
-			<aon:outputText value="&#160;" />
-		</aon:htmlCommandLink>					
+		<aon:div onmouseover="disableRowSelector();"
+			onmouseup="disableRowSelector();"
+			onmouseout="enableRowSelector();" >
+			<aon:htmlCommandLink id="download" target="_blank"
+				rendered="#{to.data != null}"
+				actionListener="#{controller.downloadAttachment}"
+				styleClass="aon-icon aon-icon-mail-save"
+				style="line-height:16px;margin-right:0;"
+				title="#{bundle.aon_fileupload_download}">
+				<f:param name="index" value="#{to.id}" />
+				<aon:outputText value="&#160;" />
+			</aon:htmlCommandLink>
+			<aon:commandLink title="#{registryBundle.registry_add_batch}" 
+				ajaxSingle="true"
+				actionListener="#{batchDocument.onAddCurrentToBatch}" value="&#160;"
+				styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+				rendered="#{!(batchDocument.currentInBatch or skipAddToBatch)}" >
+			</aon:commandLink>			
+		</aon:div>					
 	</aon:column>
 	
 </ui:composition>

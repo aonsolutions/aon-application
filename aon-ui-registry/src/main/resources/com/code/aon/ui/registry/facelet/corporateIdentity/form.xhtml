@@ -9,10 +9,10 @@
 
 	<ui:define name="content">
 		<aon:form id="corporateIdentityAttachForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporate_documents}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
-			</ui:decorate>
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 

@@ -24,7 +24,7 @@
 							
 					</ui:define>
 					<ui:define name="additionalDataTableContent" >
-						<aon:div styleClass="aon-margin-top" >
+						<aon:div styleClass="aon-margin-top" rendered="#{showDataTable}" >
 							<aon:outputText value="#{documentManager.freeSpaceMessage}" />
 						</aon:div>
 					</ui:define>					
