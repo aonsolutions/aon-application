@@ -3,10 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 		<ui:param name="controller" value="#{corporateIdentityAttach}" />
+		<ui:param name="skipAfterSearch" value="#{true}" />
 		<ui:define name="searchContent">
 
 			<aon:outputLabel for="RegistryAttachment_description"
@@ -14,15 +16,41 @@
 			<aon:inputText id="RegistryAttachment_description" size="80"
 				valueChangeListener="#{controller.addExpression}" />
 			
-			<aon:outputLabel for="RegistryAttachment_category_id"
-				value="#{registryBundle.registry_category}" />
-			<aon:selectOneMenu id="RegistryAttachment_category_id"
-				value="#{registryCollections.category}"
-				valueChangeListener="#{controller.addCategoryEqualExpression}">
-				<f:selectItem itemLabel="-" value="#{null}"/>
-				<f:selectItems value="#{registryCollections.categories}" />
-			</aon:selectOneMenu>
+			<aon:outputLabel for="RegistryAttachment_mimeType"
+				value="#{bundle.aon_type}" />
+			<aon:selectOneMenu id="RegistryAttachment_mimeType"
+				converter="aon.EnumConverter"
+				valueChangeListener="#{controller.addEqualExpression}">
+				<f:selectItem itemLabel="-" value="#{null}" />		
+				<f:selectItems value="#{commonCollections.mimeTypes}" />
+			</aon:selectOneMenu>		
 
+			<aon:outputLabel for="RegistryAttachment_category"
+				value="#{registryBundle.registry_category}" />
+			<aon:div id="categoryDiv">
+				<a4j:region>
+					<a4j:repeat value="#{corporateIdentitySearch.categories}" rowKeyVar="index" var="raCategory">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+							<aon:selectOneMenu id="RegistryAttachment_category"
+								value="#{corporateIdentitySearch.categories[index]}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{registryCollections.categories}" />
+								<a4j:support event="onchange" reRender="categoryDiv"/>
+							</aon:selectOneMenu>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="categoryDiv"
+								actionListener="#{corporateIdentitySearch.onRemoveCategory}" value="&#160;" immediate="true"
+								rendered="#{raCategory.id != null}">
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="categoryDiv"
+								actionListener="#{corporateIdentitySearch.onAddCategory}" value="&#160;" immediate="true"
+								rendered="#{(raCategory.id != null) and (index == (corporateIdentitySearch.categoriesSize-1))}"/>
+						</aon:div>						
+					</a4j:repeat>
+				</a4j:region>
+			</aon:div>			
+
+				
 			<aon:outputLabel for="RegistryAttachment_attachDate-From"
 				value="#{bundle.aon_date}" />
 			<aon:div>

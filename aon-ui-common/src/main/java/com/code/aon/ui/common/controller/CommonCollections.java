@@ -1,17 +1,15 @@
 package com.code.aon.ui.common.controller;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -23,120 +21,119 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class CommonCollections {
 	
-	private Map<Locale,List<SelectItem>> countries = new HashMap<Locale,List<SelectItem>>();  
-	private Map<Locale,List<SelectItem>> countryCodes = new HashMap<Locale,List<SelectItem>>();
-	private Map<Locale,List<SelectItem>> provinces = new HashMap<Locale,List<SelectItem>>();
-	private Map<Locale,List<SelectItem>> months = new HashMap<Locale,List<SelectItem>>();  
-	private Map<Locale,List<SelectItem>> levels = new HashMap<Locale,List<SelectItem>>();
-	private Map<Locale,List<SelectItem>> confidentialValues = new HashMap<Locale,List<SelectItem>>();
+	private List<SelectItem> countries;  
+	private List<SelectItem> countryCodes;
+	private List<SelectItem> provinces;
+	private List<SelectItem> months;  
+	private List<SelectItem> levels;
+	private List<SelectItem> confidentialValues;
+	private List<SelectItem> mimeTypes;
 	
 	/**
      * Get year months.
      * 
      * @return the address types
      */
-	public List<SelectItem> getMonths(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (months.get(locale) == null) {
-			List<SelectItem> monthList = new LinkedList<SelectItem>();
-			Month[] m = Month.values();
-			for (int i = 0; i < m.length; i++) {
-				Month month = m[i];
-				String name = month.getName(locale);
-				SelectItem item = new SelectItem(month, name);
-				monthList.add(item);
-			}
-			months.put(locale,monthList);			
-		}
-		return months.get(locale);
+	public List<SelectItem> getMonths() {
+    	if ( months == null ) {
+    		Locale locale = AonUtil.getCurrentLocale();
+    		months = new LinkedList<SelectItem>();
+    		for( Month month : Month.values() ) {
+	            String name = month.getName(locale); 
+	            SelectItem item = new SelectItem(month, name);
+	            months.add( item );
+    		}
+        }
+        return months;
 	}
 
 	/**
 	 * @return s
 	 */
 	public List<SelectItem> getCountries(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (countries.get(locale) == null) {
-			List<SelectItem> countryList = new LinkedList<SelectItem>();
-			Country[] m = Country.values();
-			for (int i = 0; i < m.length; i++) {
-				Country country = m[i];
-				String name = country.getName(locale);
-				SelectItem item = new SelectItem(country, StringUtils.abbreviate(name,25));
-				countryList.add(item);
-			}
-			countries.put(locale,countryList);			
-		}
-		return countries.get(locale);
+    	if ( countries == null ) {
+    		Locale locale = AonUtil.getCurrentLocale();
+    		countries = new LinkedList<SelectItem>();
+    		for( Country country : Country.values() ) {
+	            String name = country.getName(locale); 
+	            SelectItem item = new SelectItem(country, StringUtils.abbreviate(name,25));
+	            countries.add( item );
+    		}
+        }
+        return countries;
 	}
 
 	/**
 	 * @return s
 	 */
-	public List<SelectItem> getCountryCodes(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (countryCodes.get(locale) == null) {
-			List<SelectItem> countryList = new LinkedList<SelectItem>();
-			Country[] m = Country.values();
-			for (int i = 0; i < m.length; i++) {
-				Country country = m[i];
-				SelectItem item = new SelectItem(country, country.getValue());
-				countryList.add(item);
-			}
-			countryCodes.put(locale,countryList);			
-		}
-		return countryCodes.get(locale);
+	public List<SelectItem> getCountryCodes() {
+    	if ( countryCodes == null ) {
+    		countryCodes = new LinkedList<SelectItem>();
+    		for( Country country : Country.values() ) {
+	            SelectItem item = new SelectItem(country, country.getValue());
+	            countryCodes.add( item );
+    		}
+        }
+        return countryCodes;
 	}
 
 	/**
 	 * @return s
 	 */
 	public List<SelectItem> getProvinces(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (provinces.get(locale) == null) {
-			List<SelectItem> provinceList = new LinkedList<SelectItem>();
-			Province[] m = Province.values();
-			for (int i = 0; i < m.length; i++) {
-				Province province = m[i];
-				String name = province.getName(locale);
-				SelectItem item = new SelectItem(province, StringUtils.abbreviate(name,25));
-				provinceList.add(item);
-			}
-			provinces.put(locale,provinceList);			
-		}
-		return provinces.get(locale);
+    	if ( provinces == null ) {
+    		Locale locale = AonUtil.getCurrentLocale();
+    		provinces = new LinkedList<SelectItem>();
+    		for( Province province : Province.values() ) {
+	            String name = province.getName(locale); 
+	            SelectItem item = new SelectItem(province, StringUtils.abbreviate(name,25));
+	            provinces.add( item );
+    		}
+        }
+        return provinces;
 	}
 
 	/**
 	 * @return List<SelectItem>
 	 */
 	public List<SelectItem> getSecurityLevels() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (levels.get(locale) == null) {
-			List<SelectItem> levelList = new LinkedList<SelectItem>();
-			for (SecurityLevel level : SecurityLevel.values()) {
-				String name = level.getName(locale);
-				SelectItem item = new SelectItem(level, name);
-				levelList.add(item);
-			}
-			levels.put(locale,levelList);			
-		}
-		return levels.get(locale);
+    	if ( levels == null ) {
+    		Locale locale = AonUtil.getCurrentLocale();
+    		levels = new LinkedList<SelectItem>();
+    		for( SecurityLevel level : SecurityLevel.values() ) {
+	            String name = level.getName(locale); 
+	            SelectItem item = new SelectItem(level, name);
+	            levels.add( item );
+    		}
+        }
+        return levels;
 	}
 
 	/**
 	 * @return List<SelectItem>
 	 */
 	public List<SelectItem> getConfidentialValues() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		if (confidentialValues.get(locale) == null) {
-			List<SelectItem> confidentialList = new LinkedList<SelectItem>();
+    	if ( confidentialValues == null ) {
+			List<SelectItem> confidentialValues = new LinkedList<SelectItem>();
 			SelectItem item = new SelectItem(SecurityLevel.CONFIDENTIAL, AonUtil.getMessage("aon_yes"));
-			confidentialList.add(item);
+			confidentialValues.add(item);
 			item = new SelectItem(SecurityLevel.OFFICIAL, AonUtil.getMessage("aon_no"));
-			confidentialList.add(item);
-			confidentialValues.put(locale,confidentialList);			
-		}
-		return confidentialValues.get(locale);
+			confidentialValues.add(item);		
+        }
+        return confidentialValues;
 	}
+	
+	public List<SelectItem> getMimeTypes() {
+		if ( mimeTypes == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			mimeTypes = new LinkedList<SelectItem>();
+			for( MimeType mimeType : MimeType.values() ) {
+				String name = mimeType.getName(locale);
+				SelectItem item = new SelectItem(mimeType, name);
+				mimeTypes.add(item);			
+			}
+		}
+		return mimeTypes;
+	}	
+	
 }

@@ -176,7 +176,7 @@
 	<managed-bean>
 		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.CorporateIdentityController
+			com.code.aon.ui.registry.controller.RegistryAttachController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -222,6 +222,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{corporateIdentityAttachControllerListener}</value> 
 				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -242,6 +243,12 @@
 			<property-name>aliasName</property-name>
 			<value>RegistryAttachment_scope_id</value>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>corporateIdentitySearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.CorporateIdentitySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
