@@ -412,8 +412,12 @@
 	<!-- =================== Corporate Identity Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>corporateIdentityAttach_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>corporateIdentityAttach_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/corporate.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>corporateIdentityAttach_search</from-outcome>

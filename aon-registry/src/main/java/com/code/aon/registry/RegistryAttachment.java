@@ -2,7 +2,9 @@ package com.code.aon.registry;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.IAttachment;
@@ -29,6 +31,11 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 
 	public void setSize(Integer size) {
 		this.size = size;
+	}
+	
+	@Transient
+	public String getSizeToDisplay() {
+		return FileUtils.byteCountToDisplaySize(getSize());
 	}
 
 	@Override

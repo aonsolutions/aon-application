@@ -2,20 +2,28 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="corporateIdentityAttachSearch">
-
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+		<aon:form id="corporateIdentityAttachForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporate_documents}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
-			</ui:include>
+			</ui:decorate>
 
-			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" />
+			<aon:div styleClass="aon-scroll-area">
 
+				<aon:panelGrid id="dataTable" columns="2" >
+				
+					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/form_content.xhtml" >
+						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					</ui:include>
+				
+				</aon:panelGrid>
+			</aon:div>
 		</aon:form>
 	</ui:define>
 </ui:composition>

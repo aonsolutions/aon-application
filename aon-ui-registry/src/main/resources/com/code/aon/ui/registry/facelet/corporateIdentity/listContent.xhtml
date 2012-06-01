@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+		<ui:param name="controller" value="#{corporateIdentityAttach}" />
+		<ui:define name="columns">
+
+			<aon:column alias="RegistryAttachment.description"
+				styleClass="aon-editDataTable-textColumn aon-nowrap">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" />
+			</aon:column>
+
+			<aon:column alias="RegistryAttachment.size"
+				styleClass="aon-editDataTable-numberColumn aon-width-60">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_size}" />
+				</f:facet>
+				<aon:outputText value="#{to.sizeToDisplay}" />
+			</aon:column>
+		
+			<c:if test="#{aonRole.confidentiality}">
+				<aon:column styleClass="aon-editDataTable-numberColumn aon-width-20">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+							styleClass="aon-icon-confidential" style="padding-left:15px" />
+					</f:facet>
+					<aon:outputText value="&#160;" style="padding-left:20px"
+						styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" />
+				</aon:column>
+			</c:if>		
+		
+			<aon:column alias="RegistryAttachment.attachDate"
+				styleClass="aon-editDataTable-textColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.attachDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+					
+			<aon:column alias="RegistryAttachment.scope&lt;description"
+				styleClass="aon-editDataTable-textColumn aon-width-130">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_scope}" />
+				</f:facet>
+				<aon:outputText value="#{to.scope.description}" />
+			</aon:column>
+		
+			<aon:column alias="RegistryAttachment.category&lt;name"
+				styleClass="aon-editDataTable-textColumn aon-width-130">
+				<f:facet name="header">
+					<aon:outputText value="#{registryBundle.registry_category}" />
+				</f:facet>
+				<aon:outputText value="#{to.category.name}" />
+			</aon:column>
+		
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-50">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_fileupload_element}" />
+				</f:facet>
+				<aon:htmlCommandLink id="download" target="_blank"
+					onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+					rendered="#{to.data != null}"
+					actionListener="#{controller.downloadAttachment}"
+					styleClass="aon-icon aon-icon-mail-save"
+					style="line-height:16px;margin-right:0;"
+					title="#{bundle.aon_fileupload_download}">
+					<f:param name="index" value="#{to.id}" />
+					<aon:outputText value="&#160;" />
+				</aon:htmlCommandLink>					
+			</aon:column>
+		</ui:define>
+	
+		<ui:define name="additionalDataTableContent" >
+			<aon:div styleClass="aon-margin-top" >
+				<aon:outputText value="#{documentManager.freeSpaceMessage}" />
+			</aon:div>
+		</ui:define>
+	
+	</ui:decorate>
+	
+</ui:composition>

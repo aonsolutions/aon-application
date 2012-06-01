@@ -50,6 +50,19 @@
 				</a4j:region>
 			</aon:div>			
 
+			<aon:outputLabel for="RegistryAttachment_size-From"
+				value="#{bundle.aon_size} (KB)" />
+			<aon:div>
+				<aon:outputLabel for="RegistryAttachment_size-From" styleClass="aon-form-date-label aon-padding-right"
+					value="#{bundle.aon_date_from}:" />
+				<aon:inputText id="RegistryAttachment_size-From" size="10"
+					value="#{corporateIdentitySearch.sizeFrom}" />
+
+				<aon:outputLabel for="RegistryAttachment_size-To" styleClass="aon-form-date-label aon-padding-right"
+					value="#{bundle.aon_date_to}:" />
+				<aon:inputText id="RegistryAttachment_size-To" size="10"
+					value="#{corporateIdentitySearch.sizeTo}" />
+			</aon:div>
 				
 			<aon:outputLabel for="RegistryAttachment_attachDate-From"
 				value="#{bundle.aon_date}" />

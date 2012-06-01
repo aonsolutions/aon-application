@@ -17,7 +17,27 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 
 	private static final Category EMPTY_CATEGORY = new Category();
 	
+	private Integer sizeFrom;
+	
+	private Integer sizeTo;
+	
 	private List<Category> categories;
+	
+	public Integer getSizeFrom() {
+		return sizeFrom;
+	}
+
+	public void setSizeFrom(Integer sizeFrom) {
+		this.sizeFrom = sizeFrom;
+	}
+
+	public Integer getSizeTo() {
+		return sizeTo;
+	}
+
+	public void setSizeTo(Integer sizeTo) {
+		this.sizeTo = sizeTo;
+	}
 
 	public List<Category> getCategories() {
 		return categories;
@@ -49,6 +69,8 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	}
 	
 	private void reset() {
+		setSizeFrom(null);
+		setSizeTo(null);
 		setCategories( new LinkedList<Category>() );
 	}
 	
@@ -59,6 +81,12 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		if ( getSizeFrom() != null ) {
+			criteria.addGreaterThanOrEqualExpression("RegistryAttachment.size", getSizeFrom() * 1024);
+		}
+		if ( getSizeTo() != null ) {
+			criteria.addLessThanOrEqualExpression("RegistryAttachment.size", getSizeTo() * 1024);
+		}
 		if ( getCategoriesSize() > 0 ) {
 			addEnumToCriteria(criteria, "RegistryAttachment.category<id", getCategoriesIds().toArray());	
 		}

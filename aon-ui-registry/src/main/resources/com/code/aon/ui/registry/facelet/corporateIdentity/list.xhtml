@@ -7,14 +7,17 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="corporateIdentityAttachSearch">
+		<aon:form id="corporateIdentityAttachList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporate_documents}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
 			</ui:include>
 
-			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" />
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include 
+					src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+			</aon:div>
 
 		</aon:form>
 	</ui:define>
