@@ -49,7 +49,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	private IConcepts concepts;
 	private DefaultMysqlDB mysqlDB;
 	
-	private AbstractCtsqlDB ctsqlDB;
+	protected AbstractCtsqlDB ctsqlDB;
 
 	private Map<String, Integer>	agreements;
 	private Map<String, Map<String, Integer>>	levels;
@@ -83,11 +83,14 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		this.agreemetExtras = new HashMap<String, List<String>>();
 	}
 	
+	public void init(AbstractCtsqlDB ctsqlDB) throws SQLException {
+		this.ctsqlDB = ctsqlDB;
+	}
 	
 	
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
-		this.ctsqlDB = ctsqlDB;
+		init(ctsqlDB);
 		ctsqlDB.visitConvenio(this);
 	}
 	

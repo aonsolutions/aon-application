@@ -388,15 +388,19 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		return getAfectaExpression(afecta, "(( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE)");
 	}
 	
+	protected void init(AbstractCtsqlDB ctsqlDB)
+			throws SQLException {
+		this.irpfConceptId = 
+				mysqlDB.getDeductionConceptId("IRPF");
+			this.ctsqlDB = ctsqlDB;
+			
+			this.delayCodCmos = getDelaysCodComs();
+		ctsqlDB.visitLinporco(this);
+	}
+	
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
-		this.irpfConceptId = 
-			mysqlDB.getDeductionConceptId("IRPF");
-		this.ctsqlDB = ctsqlDB;
-		
-		this.delayCodCmos = getDelaysCodComs();
-		
-		ctsqlDB.visitLinporco(this);
+		init(ctsqlDB);
 		ctsqlDB.visitEmprper(this);
 		
 	}
