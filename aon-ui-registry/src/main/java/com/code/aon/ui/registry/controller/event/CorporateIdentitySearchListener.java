@@ -11,17 +11,22 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
+import com.code.aon.registry.Tag;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
 public class CorporateIdentitySearchListener extends ControllerSearchListenerEx {
 
 	private static final Category EMPTY_CATEGORY = new Category();
 	
+	private static final Tag EMPTY_TAG = new Tag();
+	
 	private Integer sizeFrom;
 	
 	private Integer sizeTo;
 	
 	private List<Category> categories;
+	
+	private List<Tag> tags;
 	
 	public Integer getSizeFrom() {
 		return sizeFrom;
@@ -63,7 +68,32 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		}
 		return ids;
 	}		
+	
+	public List<Tag> getTags() {
+		return tags;
+	}
 
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+		if (tags.isEmpty()) {
+			tags.add(EMPTY_TAG);
+		}				
+	}
+
+	public int getTagsSize() {
+		return (tags != null) ? tags.size() : 0;
+	}
+	
+	public List<Integer> getTagsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for( Tag tag : tags ) {
+			if ((tag != null) && (tag.getId() != null)) {
+				ids.add(tag.getId());
+			}
+		}
+		return ids;
+	}		
+	
 	public void onClear(ActionEvent event) {
 		reset();
 	}
@@ -72,6 +102,7 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		setSizeFrom(null);
 		setSizeTo(null);
 		setCategories( new LinkedList<Category>() );
+		setTags( new LinkedList<Tag>() );
 	}
 	
 	@Override
@@ -90,6 +121,9 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		if ( getCategoriesSize() > 0 ) {
 			addEnumToCriteria(criteria, "RegistryAttachment.category<id", getCategoriesIds().toArray());	
 		}
+		if ( getTagsSize() > 0 ) {
+			addEnumToCriteria(criteria, "RegistryAttachment.tags.tag.id", getTagsIds().toArray());	
+		}
 	}
 	
 	public void onAddCategory(ActionEvent event) {
@@ -102,6 +136,19 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		getCategories().remove(index);
 		if (getCategories().isEmpty()) {
 			getCategories().add(EMPTY_CATEGORY);
+		}
+	}		
+
+	public void onAddTag(ActionEvent event) {
+		getTags().add(EMPTY_TAG);
+	}
+	
+	public void onRemoveTag(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getTags().remove(index);
+		if (getTags().isEmpty()) {
+			getTags().add(EMPTY_TAG);
 		}
 	}		
 	

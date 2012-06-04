@@ -47,4 +47,6 @@ public interface IRegistryConstants {
 	
 	String CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME = "corporateIdentityAttach";
 	
+	String CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME = "corporateIdentitySearch";
+	
 }

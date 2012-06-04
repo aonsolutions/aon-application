@@ -45,9 +45,16 @@
 									</aon:commandLink>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="tag" 
+										action="tag_form" immediate="true" 
+										actionListener="#{tag.onCancel}"
+										value="#{registryBundle.registry_tag_module}">
+									</aon:commandLink>		
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="category" 
-										action="category_form" immediate="true" 
-										actionListener="#{company.onLoad}"
+										action="category_form" immediate="true"
+										actionListener="#{category.onCancel}" 
 										value="#{registryBundle.registry_category_module}">
 									</aon:commandLink>		
 								</aon:div>

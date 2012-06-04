@@ -23,6 +23,7 @@ import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
+import com.code.aon.registry.Tag;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
@@ -283,5 +284,18 @@ public class RegistryCollectionsController {
     	}
     	return addInfos;
     }
-    
+ 
+    public List<SelectItem> getTags() throws ManagerBeanException {
+    	List<SelectItem> tags = new LinkedList<SelectItem>();
+    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
+    	Iterator<?> iter = tagBean.getList(criteria).iterator();
+    	while(iter.hasNext()){
+    		Tag tag = (Tag) iter.next();
+    		SelectItem item = new SelectItem(tag, tag.getName());
+    		tags.add(item);
+    	}
+    	return tags;
+    }    
 }
