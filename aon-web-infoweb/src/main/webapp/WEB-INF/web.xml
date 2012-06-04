@@ -222,6 +222,13 @@
 		<url-pattern>*.template</url-pattern>
 	</servlet-mapping>
 
+	<!-- DOMAIN MANAGER CONFIGURATION  -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.domain.ServletContextDomainListener
+       </listener-class>
+    </listener>
+
 	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
@@ -252,6 +259,12 @@
 			com.code.aon.bridge.session.ConcurrentSessionListener
 		</listener-class>
 	</listener>
+	<!-- Bean Loader Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.listener.BeanRegisterContextListener
+       </listener-class>
+    </listener>
 	<!-- Listener, that does all the startup work (configuration, init). -->
 	<listener>
 		<listener-class>
