@@ -540,8 +540,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTime(reservation.getStartDate());
+		startCalendar.add(Calendar.DATE, 1);
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(reservation.getStartDate());
+		endCalendar.add(Calendar.DATE, 1);
 		endCalendar.set(Calendar.HOUR, 12);
 		return (startCalendar.getTime().before(new Date()) && endCalendar.getTime().after(new Date()));
 	}
