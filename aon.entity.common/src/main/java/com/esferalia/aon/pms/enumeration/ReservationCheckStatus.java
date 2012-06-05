@@ -19,6 +19,8 @@ public enum ReservationCheckStatus implements IResourceable {
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_reservation_check_status_";
     
+    public static final String SPACE = " ";
+    
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
      * for the locale.
@@ -30,6 +32,23 @@ public enum ReservationCheckStatus implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+    }
+
+    /**
+     * Returns a <code>String</code> with the abbreviate transalation <code>Locale</code>
+     * for the locale.
+     * 
+     * @param locale Required Locale.
+     * 
+     * @return String a <code>String</code>.
+     */
+    public String getAbbreviateName(Locale locale) {
+    	ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+    	String abbr = "";
+    	for(String s: bundle.getString(MSG_KEY_PREFIX + toString()).split(SPACE)){
+    		abbr += s.substring(0,1).toUpperCase();
+    	}
+    	return abbr;
     }
     
 }
