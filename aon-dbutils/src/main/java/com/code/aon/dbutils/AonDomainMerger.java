@@ -1,5 +1,9 @@
 package com.code.aon.dbutils;
 
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -13,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -447,17 +452,54 @@ public class AonDomainMerger {
 
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException {
+		
 		Class.forName("org.gjt.mm.mysql.Driver");
-//		Connection source= DriverManager.getConnection("jdbc:mysql://volga/aon-macayc-aonsolutions-es","dbuser","serubd2000");
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-esferalia-com","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-inelco-mac-asesores-es","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-nabaroa-com","root",null);
-//		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-zapatitos-mac-asesores-es","root",null);
+
+		String targetURL = args[0];
+		String targetUser = args.length > 1 ? args[1] : "dbuser";
+		String targetPassword = args.length > 2 ? args[2] : "serubd2000";
 		
-		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon_master","dbuser","serubd2000");
-		Connection source = DriverManager.getConnection("jdbc:mysql://volga/aon-aonsolutions-es","dbuser","serubd2000");
+		Connection target  = null ;
+		Connection source = null;
+		try {
+			target = DriverManager.getConnection(targetURL,targetUser,targetPassword);
+			
+			LineNumberReader reader = new LineNumberReader(new InputStreamReader (System.in));
+			String line =  reader.readLine();
+			while ( line != null ) {
+				try {
+					String words [] = line.split("\\s+");
+					
+					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com [dbuser] [seurbd2000] demo.esferalia.com
+					String sourceURL = words[0];
+					String domainName = words[words.length-1] ;
+					String sorceUser = words.length > 2 ? words[1] : "dbuser";
+					String sourcePassword = args.length > 3 ? words[2] : "serubd2000";
+					
+					System.out.printf("Merging %s...", domainName);
+
+					source = DriverManager.getConnection(sourceURL,sorceUser,sourcePassword);
+					AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
+					merger.execute();
+					
+					System.out.printf("OK.\r\n");
+				}
+				catch ( Exception e ){
+					System.out.printf("ERROR %s.\r\n", e.getMessage());
+				}
+				finally {
+					if ( source != null ) 
+						source.close();
+					
+				}
+
+		        line =  reader.readLine();
+			}
+	        target.close();
+		} finally {
+			if ( target != null ) 
+				source.close();
+		}
 		
-		AonDomainMerger merger = new AonDomainMerger(source, target);
-		merger.execute();
 	}
 }
