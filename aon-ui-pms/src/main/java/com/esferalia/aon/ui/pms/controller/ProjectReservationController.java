@@ -920,11 +920,4 @@ public class ProjectReservationController extends BasicController implements IPm
 		controller.onAccept(event);
 	}
 
-	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
-		if (invoiceModel.isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME));
-			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
-		}
-	}
-	
 }

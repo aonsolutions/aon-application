@@ -144,16 +144,24 @@ public class RoomBookingController implements ICollectionProvider {
 			Date checkinDate = checkin!=null?(Date) (((Object[])checkin)[1]):null;
 			Date checkoutDate = checkout!=null?(Date) (((Object[])checkout)[1]):null;
 			// Se cargan las entradas de habitaciones y de huespedes
-			if( booking.getDate().equals(checkinDate) && booking.getHotel().equals(checkinHotel) ){
-				booking.setRoomCheckin( ((BigInteger) (((Object[])checkin)[2])).intValue() );
-				booking.setGuestCheckin( ((BigDecimal) (((Object[])checkin)[3])).intValue() );
-				checkin = checkinIterator.hasNext()?checkinIterator.next():null;
+			while ( booking.getDate().equals(checkinDate) && booking.getHotel().equals(checkinHotel) ){
+				if(checkin!=null){
+					booking.setRoomCheckin(booking.getRoomCheckin() + ((BigDecimal) (((Object[])checkin)[2])).intValue() );
+					booking.setGuestCheckin(booking.getGuestCheckin() + ((BigDecimal) (((Object[])checkin)[3])).intValue() );
+					checkin = checkinIterator.hasNext()?checkinIterator.next():null;
+					checkinDate = checkin!=null?(Date) (((Object[])checkin)[1]):null;
+					checkinHotel = checkin!=null?(String) (((Object[])checkin)[0]):null;
+				}
 			}
 			// Se cargan las salidas de habitaciones y de huespedes
-			if( booking.getDate().equals(checkoutDate) && booking.getHotel().equals(checkoutHotel) ){
-				booking.setRoomCheckout( ((BigInteger) (((Object[])checkout)[2])).intValue() );
-				booking.setGuestCheckout( ((BigDecimal) (((Object[])checkout)[3])).intValue() );
-				checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
+			while ( booking.getDate().equals(checkoutDate) && booking.getHotel().equals(checkoutHotel) ){
+				if(checkout!=null){
+					booking.setRoomCheckout(booking.getRoomCheckout() + ((BigDecimal) (((Object[])checkout)[2])).intValue() );
+					booking.setGuestCheckout(booking.getGuestCheckout() + ((BigDecimal) (((Object[])checkout)[3])).intValue() );
+					checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
+					checkoutDate = checkout!=null?(Date) (((Object[])checkout)[1]):null;
+					checkoutHotel = checkout!=null?(String) (((Object[])checkout)[0]):null;
+				}
 			}
 			// Se cargan la ocupacion de habitaciones y el total de huespedes
 			String occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
@@ -307,9 +315,8 @@ public class RoomBookingController implements ICollectionProvider {
 		private Integer roomCheckin;
 		private Integer roomCheckout;
 		private Integer roomBusy;
-		private Integer roomTotal;
 		private Integer roomBlocked;
-		private Integer roomFree;
+		private Integer roomTotal;
 		private Integer guestCheckin;
 		private Integer guestCheckout;
 		private Integer guestTotal;
@@ -320,7 +327,6 @@ public class RoomBookingController implements ICollectionProvider {
 			roomBusy=0;
 			roomTotal=0;
 			roomBlocked=0;
-			roomFree=0;
 			guestCheckin=0;
 			guestCheckout=0;
 			guestTotal=0;
@@ -355,6 +361,10 @@ public class RoomBookingController implements ICollectionProvider {
 		public void setRoomBusy(Integer roomBusy) {
 			this.roomBusy = roomBusy;
 		}
+		public Integer getRoomFree() {
+			
+			return roomTotal - roomBusy - roomBlocked;
+		}
 		public Integer getRoomTotal() {
 			return roomTotal;
 		}
@@ -366,12 +376,6 @@ public class RoomBookingController implements ICollectionProvider {
 		}
 		public void setRoomBlocked(Integer roomBlocked) {
 			this.roomBlocked = roomBlocked;
-		}
-		public Integer getRoomFree() {
-			return roomFree;
-		}
-		public void setRoomFree(Integer roomFree) {
-			this.roomFree = roomFree;
 		}
 		public Integer getGuestCheckin() {
 			return guestCheckin;

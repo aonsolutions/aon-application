@@ -261,16 +261,6 @@
 		</params>
 	</report>
 	
-	<!-- TODO: borrar tanto definicion como los jrxml -->
-	<!--  
-	<report id="incomeDetail" description="income Details">
-		<template path="/com/code/aon/ui/warehouse/report/incomeDetail.jasper" />
-	</report>
-	<report id="incomeTaxBreakDown" description="taxBreakDown">
-		<template path="/com/code/aon/ui/warehouse/report/incomeVatBreakDown.jasper"/>
-	</report>
-	-->
-	
 	<!--  ************* ORDER PROPOSAL ***************************** -->
 	<report id="orderProposal" description="Order Proposal report">
 		<template path="/com/code/aon/ui/warehouse/report/orderProposal.jasper" />
