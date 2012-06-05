@@ -17,6 +17,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
@@ -42,6 +43,7 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		reservation.setStartDate(new Date());
 		reservation.setEndDate(DateUtils.addDays(new Date(), 1));
 		reservation.setCrs(false);
+		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		reservation.setStatus(ReservationStatus.ACTIVE);
 	}
 

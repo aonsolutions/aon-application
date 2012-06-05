@@ -45,6 +45,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	private Set<ProjectReservationRoom> rooms = new HashSet<ProjectReservationRoom>();
 
 	public ProjectReservation() {
+		setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		setStatus(ReservationStatus.ACTIVE);
 	}
 
