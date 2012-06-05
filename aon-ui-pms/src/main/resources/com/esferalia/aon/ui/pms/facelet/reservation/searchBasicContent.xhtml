@@ -19,27 +19,21 @@
 
 	<aon:outputLabel for="ProjectReservation_project_id" 
 		value="#{pmsBundle.pms_reservation_id}" />
-	<aon:div>
-		<aon:inputText id="ProjectReservation_project_id"
-			valueChangeListener="#{controller.addExpression}"
-			size="20" />
-	</aon:div>
+	<aon:inputText id="ProjectReservation_project_id"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
 
 	<aon:outputLabel for="ProjectReservation_crsCode" 
 		value="#{bundle.aon_id} #{pmsBundle.pms_crs}" />
-	<aon:div>
-		<aon:inputText id="ProjectReservation_crsCode"
-			valueChangeListener="#{controller.addExpression}"
-			size="20" />
-	</aon:div>
+	<aon:inputText id="ProjectReservation_crsCode"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
 
 	<aon:outputLabel for="ProjectReservation_code" 
 		value="#{pmsBundle.pms_reservation_code}" />
-	<aon:div>
-		<aon:inputText id="ProjectReservation_code"
-			valueChangeListener="#{controller.addExpression}"
-			size="20" />
-	</aon:div>
+	<aon:inputText id="ProjectReservation_code"
+		valueChangeListener="#{controller.addExpression}"
+		size="20" />
 
 	<aon:outputLabel for="ProjectReservation_startDate" 
 		value="#{pmsBundle.pms_checkIn}" />
@@ -82,25 +76,33 @@
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
-	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{searchController.agency}" />
-		<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-	</ui:include>
+	<aon:outputLabel for="ProjectReservation_remarks" 
+		value="#{bundle.aon_remark}" />
+	<aon:inputText id="ProjectReservation_remarks"
+		valueChangeListener="#{controller.addExpression}"
+		size="64" />
 
-	<aon:outputLabel for="ProjectReservation_guest" 
-		value="#{pmsBundle.pms_guest}" />
+	<aon:outputLabel for="ProjectReservation_agency" 
+		value="#{pmsBundle.pms_agency}" />
+	<aon:selectOneMenu id="ProjectReservation_agency" 
+		value="#{searchController.agency}"
+		styleClass="aon-width-350">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{pmsCollections.agencies}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel value="#{pmsBundle.pms_guest}" />
 	<aon:div>
 		<aon:outputLabel for="ProjectReservation_guestName"
 			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
 		<aon:inputText id="ProjectReservation_guestName"
 			value="#{searchController.guestName}"
-			size="20" />
+			size="14" />
 		<aon:outputLabel for="ProjectReservation_guestSurname"
 			styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
 		<aon:inputText id="ProjectReservation_guestSurname"
 			value="#{searchController.guestSurname}"
-			size="25" />
+			size="20" />
 	</aon:div>
 
 	<c:if test="#{!skipStatus}">
