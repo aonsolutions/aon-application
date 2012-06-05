@@ -3,6 +3,10 @@ package com.code.aon.dbutils;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -467,14 +472,54 @@ public class AonDomainMerger {
 
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
+		
 		Class.forName("org.gjt.mm.mysql.Driver");
-		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/aon_unused","dbuser","serubd2000");
-		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-zapatitos-mac-asesores-es","root",null);
-		String domainName = "test1.esferalia.net";
-		AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
-		merger.execute();
-        source.close();
-        target.close();
+		
+		String targetURL = args[0];
+		String targetUser = args.length > 1 ? args[1] : "dbuser";
+		String targetPassword = args.length > 2 ? args[2] : "serubd2000";
+		
+		Connection target  = null ;
+		Connection source = null;
+		try {
+			target = DriverManager.getConnection(targetURL,targetUser,targetPassword);
+			
+			LineNumberReader reader = new LineNumberReader(new InputStreamReader (System.in));
+			String line =  reader.readLine();
+			while ( line != null ) {
+				try {
+					String words [] = line.split("\\s+");
+					
+					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com [dbuser] [seurbd2000] demo.esferalia.com
+					String sourceURL = words[0];
+					String domainName = words[words.length-1] ;
+					String sorceUser = words.length > 2 ? words[1] : "dbuser";
+					String sourcePassword = args.length > 3 ? words[2] : "serubd2000";
+					
+					System.out.printf("Merging %s...", domainName);
+
+					source = DriverManager.getConnection(sourceURL,sorceUser,sourcePassword);
+					AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
+					merger.execute();
+					
+					System.out.printf("OK.\r\n");
+				}
+				catch ( Exception e ){
+					System.out.printf("ERROR %s.\r\n", e.getMessage());
+				}
+				finally {
+					if ( source != null ) 
+						source.close();
+					
+				}
+
+		        line =  reader.readLine();
+			}
+	        target.close();
+		} finally {
+			if ( target != null ) 
+				source.close();
+		}
 		
 	}
 }
