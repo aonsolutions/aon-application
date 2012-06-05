@@ -135,6 +135,11 @@
 									<aon:commandLink id="checks2" action="invoice_checking"
 										value="#{financeBundle.finance_invoice_checking_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="corporateIdentityReceipt" action="corporateIdentity_receipt"
+										actionListener="#{corporateIdentity.onInit}"
+										value="#{registryBundle.registry_corporateIdentity_receipt}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 

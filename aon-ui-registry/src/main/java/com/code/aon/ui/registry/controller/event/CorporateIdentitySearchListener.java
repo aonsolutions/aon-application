@@ -7,12 +7,15 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.Tag;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentitySearchListener extends ControllerSearchListenerEx {
 
@@ -24,10 +27,20 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 	
 	private Integer sizeTo;
 	
+	private Domain domain;
+	
 	private List<Category> categories;
 	
 	private List<Tag> tags;
 	
+	public Domain getDomain() {
+		return domain;
+	}
+
+	public void setDomain(Domain domain) {
+		this.domain = domain;
+	}
+
 	public Integer getSizeFrom() {
 		return sizeFrom;
 	}
@@ -94,15 +107,16 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		return ids;
 	}		
 	
-	public void onClear(ActionEvent event) {
+	public void onClear(ActionEvent event) throws ManagerBeanException {
 		reset();
 	}
 	
-	private void reset() {
+	private void reset() throws ManagerBeanException {
 		setSizeFrom(null);
 		setSizeTo(null);
 		setCategories( new LinkedList<Category>() );
 		setTags( new LinkedList<Tag>() );
+		setDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());		
 	}
 	
 	@Override
@@ -124,6 +138,9 @@ public class CorporateIdentitySearchListener extends ControllerSearchListenerEx 
 		if ( getTagsSize() > 0 ) {
 			addEnumToCriteria(criteria, "RegistryAttachment.tags.tag.id", getTagsIds().toArray());	
 		}
+		if ((getDomain() != null) && (getDomain().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_DOMAIN), getDomain().getId());			
+		}				
 	}
 	
 	public void onAddCategory(ActionEvent event) {

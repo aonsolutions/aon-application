@@ -205,7 +205,7 @@
 	<managed-bean>
 		<managed-bean-name>corporateIdentityAttach</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.RegistryAttachController
+			com.code.aon.ui.registry.controller.CorporateIdentityController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -470,10 +470,6 @@
 		<navigation-case>
 			<from-outcome>corporateIdentityAttach_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>corporateIdentity_predefined</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/predefined.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>corporateIdentity_fax</from-outcome>

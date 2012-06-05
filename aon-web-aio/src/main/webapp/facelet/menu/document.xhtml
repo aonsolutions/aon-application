@@ -26,16 +26,21 @@
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="predefinedDocuments" 
-										action="corporateIdentity_predefined" immediate="true"
-										value="#{registryBundle.registry_predefined_documents}">
-									</aon:commandLink>
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
 										action="corporateIdentityAttach_list" immediate="true"
 										actionListener="#{corporateIdentityAttach.onCancel}"
-										value="#{registryBundle.registry_corporate_documents}">
+										value="#{bundle.aon_documents}">
+										<f:setPropertyActionListener value="#{false}"
+											target="#{corporateIdentityAttach.massiveUpload}"  />										
+									</aon:commandLink>
+								</aon:div>							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="documentMassiveUpload" 
+										action="corporateIdentityAttach_form" immediate="true"
+										actionListener="#{corporateIdentityAttach.onReset}"
+										value="#{registryBundle.registry_document_massive_upload}">
+										<f:setPropertyActionListener value="#{true}"
+											target="#{corporateIdentityAttach.massiveUpload}"  />										
 									</aon:commandLink>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">

@@ -693,6 +693,34 @@
 			<value>/com/code/aon/ui/config/facelet/lookup/cnae/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ DOMAIN LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>domainLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.Domain</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Domain_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/domain/listContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/domain/searchContent.xhtml</value>
+		</managed-property>		
+	</managed-bean>
+	
   <!-- *************************************** -->
   <!-- ************ NAVIGATION *************** -->
   <!-- *************************************** -->

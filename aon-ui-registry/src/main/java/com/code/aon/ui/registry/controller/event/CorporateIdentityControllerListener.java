@@ -16,6 +16,7 @@ import com.code.aon.registry.RegistryAttachmentTag;
 import com.code.aon.registry.Tag;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.registry.controller.CorporateIdentityController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -26,11 +27,19 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 	}
 	
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		super.afterBeanCreated(event);
-		getSearch().setTags( new LinkedList<Tag>() );
-	}
+	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanCreated(event);
+		CorporateIdentityController cic = (CorporateIdentityController) event.getController();
+		if ( cic.isMassiveUpload() && (cic.getLastAttachment() != null) ) {
+			RegistryAttachment attach = (RegistryAttachment) cic.getTo();
+			attach.setConfidential(cic.getLastAttachment().isConfidential());
+			attach.setAttachDate(cic.getLastAttachment().getAttachDate());
+			attach.setScope(cic.getLastAttachment().getScope());
+			attach.setCategory(cic.getLastAttachment().getCategory());
+		} else {
+			getSearch().setTags( new LinkedList<Tag>() );			
+		}
+	}	
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)

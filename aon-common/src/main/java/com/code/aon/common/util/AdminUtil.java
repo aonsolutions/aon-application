@@ -79,5 +79,11 @@ public class AdminUtil {
 		query.setInteger(0, user);
 		return (String) query.uniqueResult();		
 	}
+
+	public static Integer getParentDomain( Integer domainId ) {
+		Query query = getQuery("SELECT parent.id FROM Domain d WHERE d.id = ?");
+		query.setInteger(0, domainId);
+		return (Integer) query.uniqueResult();
+	}
 	
 }

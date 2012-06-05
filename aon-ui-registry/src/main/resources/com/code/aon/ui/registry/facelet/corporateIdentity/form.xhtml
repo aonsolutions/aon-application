@@ -9,9 +9,14 @@
 
 	<ui:define name="content">
 		<aon:form id="corporateIdentityAttachForm">
+			<c:if test="#{corporateIdentityAttach.massiveUpload}" >
+				<aon:methodParam name="saveActionListener" value="#{corporateIdentityAttach.masiveUpload}" type="actionListener" />
+			</c:if>		
+
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_corporate_documents}" />
+				<ui:param name="toolbarTitle" value="#{(corporateIdentityAttach.massiveUpload)?(registryBundle.registry_document_massive_upload):(bundle.aon_documents)}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="skipCancelButton" value="#{corporateIdentityAttach.massiveUpload}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
@@ -21,6 +26,14 @@
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/form_content.xhtml" >
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
 					</ui:include>
+					
+					<!--
+					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{corporateIdentitySearch.domain}" />
+						<ui:param name="lookupRendered" value="#{corporateIdentityAttach.showDomainLookup}" />
+						<ui:param name="lookupControllerListener" value="#{corporateIdentityAttach.domainLookupListener}" />
+					</ui:include>
+					-->
 				
 					<ui:include 
 						src="/com/code/aon/ui/registry/facelet/corporateIdentity/tags.xhtml" />
@@ -28,5 +41,6 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
 	</ui:define>
 </ui:composition>

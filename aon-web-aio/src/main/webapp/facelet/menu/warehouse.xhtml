@@ -155,6 +155,12 @@
 												value="#{productBundle.product_module}" />
 										</aon:div>
 									</c:if>
+									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="corporateIdentityLabel" action="corporateIdentity_label"
+											actionListener="#{corporateIdentity.onInit}"
+											value="#{registryBundle.registry_corporateIdentity_label}" />
+									</aon:div>									
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>

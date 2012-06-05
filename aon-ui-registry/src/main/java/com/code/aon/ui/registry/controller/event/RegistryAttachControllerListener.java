@@ -36,8 +36,7 @@ public class RegistryAttachControllerListener extends AttachmentControllerListen
 		RegistryAttachment attach = (RegistryAttachment) raController.getTo();
 		if ( raController.getType() != null ) {
 			attach.setRegistryAttachmentType( raController.getType() );
-		}
-		attach.setCategory(null);		
+		}	
 	}
 	
 	

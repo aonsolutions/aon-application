@@ -49,6 +49,8 @@ public class CorporateIdentity implements ICollectionProvider{
 	private final static Logger LOGGER = LoggerFactory.getLogger(CorporateIdentity.class);
 	
 	private IdentityReport identityReport;
+	
+	private boolean showBackButton;
 
 	public IdentityReport getIdentityReport() {
 		return identityReport;
@@ -165,6 +167,8 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setLabel_to_fax("");
     	identityReport.setLabel_to_obs("");
     	identityReport.setLabel_to_bultos("1");
+    	
+    	setShowBackButton(false);
     }
 
 	private Company recoverCompany() throws ManagerBeanException{
@@ -304,4 +308,12 @@ public class CorporateIdentity implements ICollectionProvider{
     	return identityReport.getRecordData();
     }
 
+	public boolean isShowBackButton() {
+		return showBackButton;
+	}
+
+	public void setShowBackButton(boolean showBackButton) {
+		this.showBackButton = showBackButton;
+	}
+    
 }
