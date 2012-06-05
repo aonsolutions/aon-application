@@ -47,6 +47,7 @@ import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
 import com.esferalia.aon.pms.ProjectReservationServiceDetail;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationManager implements IReservationConstants {
@@ -221,6 +222,7 @@ public class ReservationManager implements IReservationConstants {
 			reservation.setRemarks(remarks);
 			reservation.setCrs(true);
 			reservation.setCrsCode(reservationCrsCode);
+			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 			reservation.setStatus(ReservationStatus.ACTIVE);
 
 			getReservationUtils().fillProject(reservation);
