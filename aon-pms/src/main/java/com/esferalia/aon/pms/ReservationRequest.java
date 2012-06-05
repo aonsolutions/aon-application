@@ -1,6 +1,12 @@
 package com.esferalia.aon.pms;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -20,9 +26,19 @@ import com.esferalia.aon.pms.enumeration.BookingHolder;
 public class ReservationRequest extends ReservationRequestDB implements IAuditable {
 
 	private static final long serialVersionUID = 1L;
+	private Set<ReservationRequestRoom> rooms = new HashSet<ReservationRequestRoom>();
 
 	public ReservationRequest() {
 		setActive(true);
+	}
+
+	@OneToMany(mappedBy = "reservationRequest", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<ReservationRequestRoom> getRooms() {
+		return this.rooms;
+	}
+	public void setRooms(Set<ReservationRequestRoom> rooms) {
+		this.rooms = rooms;
 	}
 
 	@Transient

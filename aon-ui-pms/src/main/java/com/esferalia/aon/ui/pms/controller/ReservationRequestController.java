@@ -101,7 +101,11 @@ public class ReservationRequestController extends BasicController implements IPm
 			request.setBookingHolder((BookingHolder)event.getNewValue());
 			if (!request.isAgencyHolder()) {
 				request.setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-			} 
+			} else {
+				if (!AonUtil.getRoleManager().isSaleOperator()) {
+					request.setRemarks("IMPREVISTO AGENCIA");
+				}
+			}
 			if (!request.isCompanyHolder()) {
 				request.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 			}
