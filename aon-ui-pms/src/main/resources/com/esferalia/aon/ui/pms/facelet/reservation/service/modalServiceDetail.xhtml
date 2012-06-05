@@ -50,7 +50,7 @@
 									<aon:commandButton id="serviceDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{bundle.aon_remove} #{pmsBundle.pms_service}"
-										rendered="#{!controller.new and !reservation.to.crs and !controller.to.extra}"
+										rendered="#{aonRole.saleOperator and !controller.new and !reservation.to.crs and !controller.to.extra}"
 										actionListener="#{controller.onRemoveReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					

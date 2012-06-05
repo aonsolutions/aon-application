@@ -60,7 +60,7 @@
 									<aon:commandButton id="roomDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{bundle.aon_remove} #{pmsBundle.pms_stay}"
-										rendered="#{!controller.new and !reservation.to.crs and controller.to.roomNumber == null}"
+										rendered="#{aonRole.saleOperator and !controller.new and !reservation.to.crs and controller.to.roomNumber == null}"
 										actionListener="#{controller.onRemoveReservationRoom}"
 										immediate="true">
 										<rich:componentControl for="roomDetailModalPanel"
