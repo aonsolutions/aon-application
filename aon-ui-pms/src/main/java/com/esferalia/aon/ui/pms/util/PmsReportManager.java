@@ -226,7 +226,8 @@ public class PmsReportManager {
 				+ " WHERE PR.status <> " + ReservationStatus.CANCELLED.ordinal()
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
+				+ " AND ( (H.id is null AND PR.hotel IN (" + getHotelIds(hotel) + "))" 
+				+ " OR H.id IN (" + getHotelIds(hotel) + ") )"
 				+ " AND PR.start_date between :start AND :end"
 				+ " AND (AA.date between :start AND :end OR AA.date is null)"
 				+ " GROUP BY 1, PR.project"
@@ -266,7 +267,8 @@ public class PmsReportManager {
 				+ " WHERE PR.status <> " + ReservationStatus.CANCELLED.ordinal()
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
+				+ " AND ( (H.id is null AND PR.hotel IN (" + getHotelIds(hotel) + "))" 
+				+ " OR H.id IN (" + getHotelIds(hotel) + ") )"
 				+ " AND PR.end_date between :start AND :end"
 				+ " AND (AA.date between :start AND :end OR AA.date is null)"
 				+ " GROUP BY 1, PR.project"

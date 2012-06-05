@@ -132,7 +132,15 @@
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_status}" />
 						</f:facet>
-						<aon:outputText value="#{to.projectReservation.status}"   />
+						<aon:outputText value="#{to.projectReservation.status}" />
+					</aon:column>
+
+					<aon:column id="reservationCheckStatusColumn" label="#{pmsBundle.pms_check}"
+						styleClass="aon-editDataTable-textColumn">
+						<f:facet name="header">
+							<aon:outputLabel value="#{pmsBundle.pms_check}" />
+						</f:facet>
+						<aon:outputText value="#{to.projectReservation.checkStatus}" />
 					</aon:column>
 				
 				</aon:dataTable>
