@@ -146,7 +146,7 @@ public class RoomBookingController implements ICollectionProvider {
 			// Se cargan las entradas de habitaciones y de huespedes
 			while ( booking.getDate().equals(checkinDate) && booking.getHotel().equals(checkinHotel) ){
 				if(checkin!=null){
-					booking.setRoomCheckin(booking.getRoomCheckin() + ((BigDecimal) (((Object[])checkin)[2])).intValue() );
+					booking.setRoomCheckin(booking.getRoomCheckin() + ((BigInteger) (((Object[])checkin)[2])).intValue() );
 					booking.setGuestCheckin(booking.getGuestCheckin() + ((BigDecimal) (((Object[])checkin)[3])).intValue() );
 					checkin = checkinIterator.hasNext()?checkinIterator.next():null;
 					checkinDate = checkin!=null?(Date) (((Object[])checkin)[1]):null;
@@ -156,7 +156,7 @@ public class RoomBookingController implements ICollectionProvider {
 			// Se cargan las salidas de habitaciones y de huespedes
 			while ( booking.getDate().equals(checkoutDate) && booking.getHotel().equals(checkoutHotel) ){
 				if(checkout!=null){
-					booking.setRoomCheckout(booking.getRoomCheckout() + ((BigDecimal) (((Object[])checkout)[2])).intValue() );
+					booking.setRoomCheckout(booking.getRoomCheckout() + ((BigInteger) (((Object[])checkout)[2])).intValue() );
 					booking.setGuestCheckout(booking.getGuestCheckout() + ((BigDecimal) (((Object[])checkout)[3])).intValue() );
 					checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
 					checkoutDate = checkout!=null?(Date) (((Object[])checkout)[1]):null;
