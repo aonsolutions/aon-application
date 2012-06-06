@@ -69,7 +69,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public int getNights() {
-		if (getStartDate() != null && getEndDate() != null) {
+		if (getStartDate() != null && getEndDate() != null && getStartDate().compareTo(getEndDate()) < 0) {
 			return (int)CommonUtil.getDaysBetweenDates(getStartDate(), getEndDate());
 		}
 		return 0;

@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -36,7 +39,7 @@ public class ReservationRequestController extends BasicController implements IPm
 	}
 
 	public int getNights() {
-		if (nights == 0) {
+		if (nights <= 0) {
 			ReservationRequest request = (ReservationRequest)getTo();
 			nights = request.getNights();
 		}
@@ -69,11 +72,10 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	public void onStartDateChanged(ActionEvent event) {
 		ReservationRequest request = (ReservationRequest)getTo();
-		if (request.getStartDate() != null) {
-			request.setEndDate(DateUtils.addDays(request.getStartDate(), getNights()));
-		} else {
-			resetNights();
+		if (request.getStartDate() == null) {
+			request.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
 		}
+		request.setEndDate(DateUtils.addDays(request.getStartDate(), getNights()));
 	}
 
 	public void onNightsChanged(ValueChangeEvent event) {
@@ -88,10 +90,11 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	public void onEndDateChanged(ActionEvent event) {
 		ReservationRequest request = (ReservationRequest)getTo();
-		if (request.getEndDate() != null) {
-			request.setStartDate(DateUtils.addDays(request.getEndDate(), 0-getNights()));
-		} else {
+		if (request.getEndDate() != null && request.getStartDate().compareTo(request.getEndDate()) < 0) {
 			resetNights();
+		} else {
+			setNights(1);
+			request.setEndDate(DateUtils.addDays(request.getStartDate(), getNights()));
 		}
 	}
 	

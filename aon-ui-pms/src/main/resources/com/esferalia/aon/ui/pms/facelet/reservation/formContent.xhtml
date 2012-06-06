@@ -158,7 +158,9 @@
 				rendered="#{!reservation.to.crs and reservation.active and !reservation.to.inUse and aonRole.saleOperator}"
 				valueChangeListener="#{reservation.onNightsChanged}"
 				reRender="ProjectReservation_endDate"
-				focus="ProjectReservation_bookingHolder" />
+				focus="ProjectReservation_bookingHolder">
+				<f:validateDoubleRange minimum="1" />
+			</aon:inputText>
 		</aon:div>
 	</aon:panelGrid>
 
@@ -181,11 +183,11 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 		<a4j:support ajaxSingle="true" event="oninputchange"
 			actionListener="#{reservation.onEndDateChanged}"
-			reRender="ProjectReservation_startDate,ProjectReservation_nights"
+			reRender="ProjectReservation_nights,ProjectReservation_endDate"
 			focus="ProjectReservation_bookingHolder" />
 		<a4j:support ajaxSingle="true" event="onchanged"
 			actionListener="#{reservation.onEndDateChanged}"
-			reRender="ProjectReservation_startDate,ProjectReservation_nights"
+			reRender="ProjectReservation_nights,ProjectReservation_endDate"
 			focus="ProjectReservation_bookingHolder" />
 	</aon:selectInputDate>
 

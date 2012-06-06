@@ -126,7 +126,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public int getNights() {
-		if (nights == 0) {
+		if (nights <= 0) {
 			ProjectReservation reservation = (ProjectReservation)getTo();
 			nights = reservation.getNights();
 		}
@@ -370,11 +370,10 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onStartDateChanged(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (reservation.getStartDate() != null) {
-			reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), getNights()));
-		} else {
-			resetNights();
+		if (reservation.getStartDate() == null) {
+			reservation.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
 		}
+		reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), getNights()));
 	}
 
 	public void onNightsChanged(ValueChangeEvent event) {
@@ -389,10 +388,11 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public void onEndDateChanged(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
-		if (reservation.getEndDate() != null) {
-			reservation.setStartDate(DateUtils.addDays(reservation.getEndDate(), 0-getNights()));
+		if (reservation.getEndDate() != null && reservation.getStartDate().compareTo(reservation.getEndDate()) < 0) {
+			setNights((int)CommonUtil.getDaysBetweenDates(reservation.getStartDate(), reservation.getEndDate()));
 		} else {
-			resetNights();
+			setNights(1);
+			reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), getNights()));
 		}
 	}
 

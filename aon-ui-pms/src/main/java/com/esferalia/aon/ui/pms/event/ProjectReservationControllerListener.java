@@ -40,8 +40,8 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		}
 
 		ProjectReservation reservation = (ProjectReservation)controller.getTo();
-		reservation.setStartDate(new Date());
-		reservation.setEndDate(DateUtils.addDays(new Date(), 1));
+		reservation.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
+		reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), 1));
 		reservation.setCrs(false);
 		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
 		reservation.setStatus(ReservationStatus.ACTIVE);

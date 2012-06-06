@@ -58,7 +58,9 @@
 				rendered="#{reservationRequest.to.active}"
 				valueChangeListener="#{reservationRequest.onNightsChanged}"
 				reRender="ReservationRequest_endDate"
-				focus="ReservationRequest_bookingHolder" />
+				focus="ReservationRequest_bookingHolder">
+				<f:validateDoubleRange minimum="1" />
+			</aon:inputText>
 		</aon:div>
 	</aon:panelGrid>
 
@@ -74,11 +76,11 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 		<a4j:support ajaxSingle="true" event="oninputchange"
 			actionListener="#{reservationRequest.onEndDateChanged}"
-			reRender="ReservationRequest_startDate,ReservationRequest_nights"
+			reRender="ReservationRequest_nights,ReservationRequest_endDate"
 			focus="ReservationRequest_bookingHolder" />
 		<a4j:support ajaxSingle="true" event="onchanged"
 			actionListener="#{reservationRequest.onEndDateChanged}"
-			reRender="ReservationRequest_startDate,ReservationRequest_nights"
+			reRender="ReservationRequest_nights,ReservationRequest_endDate"
 			focus="ReservationRequest_bookingHolder" />
 	</aon:selectInputDate>
 
@@ -92,27 +94,25 @@
 		<f:selectItems value="#{pmsCollections.bookingHolders}" />
 	</aon:selectOneMenu>
 
-	<c:if test="#{aonRole.saleOperator}">
-		<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
-			 rendered="#{reservationRequest.to.agencyHolder}" />
-		<aon:outputLabel for="ReservationRequest_company" value="#{pmsBundle.pms_company}"
-			rendered="#{reservationRequest.to.companyHolder}" />
+	<aon:outputLabel for="ReservationRequest_agency" value="#{pmsBundle.pms_agency}"
+		 rendered="#{reservationRequest.to.agencyHolder}" />
+	<aon:outputLabel for="ReservationRequest_company" value="#{pmsBundle.pms_company}"
+		rendered="#{reservationRequest.to.companyHolder}" />
 
-		<aon:outputText value="#{reservationRequest.to.agency.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{!reservationRequest.to.active and reservationRequest.to.agencyHolder}"  />
-		<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
-			required="true" styleClass="aon-width-350"
-			rendered="#{reservationRequest.to.active and reservationRequest.to.agencyHolder}">
-			<f:selectItems value="#{pmsCollections.agencies}" />
-		</aon:selectOneMenu>
-		<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
-		<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
-			required="true" styleClass="aon-width-350"
-			rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
-			<f:selectItems value="#{pmsCollections.companies}" />
-		</aon:selectOneMenu>
-	</c:if>
+	<aon:outputText value="#{reservationRequest.to.agency.registry.fullName}" styleClass="aon-bold" 
+		rendered="#{!reservationRequest.to.active and reservationRequest.to.agencyHolder}"  />
+	<aon:selectOneMenu id="ReservationRequest_agency" value="#{reservationRequest.to.agency}" 
+		required="true" styleClass="aon-width-350"
+		rendered="#{reservationRequest.to.active and reservationRequest.to.agencyHolder}">
+		<f:selectItems value="#{pmsCollections.agencies}" />
+	</aon:selectOneMenu>
+	<aon:outputText value="#{reservationRequest.to.company.registry.fullName}" styleClass="aon-bold" 
+		rendered="#{!reservationRequest.to.active and reservationRequest.to.companyHolder}"  />
+	<aon:selectOneMenu id="ReservationRequest_company" value="#{reservationRequest.to.company}" 
+		required="true" styleClass="aon-width-350"
+		rendered="#{reservationRequest.to.active and reservationRequest.to.companyHolder}">
+		<f:selectItems value="#{pmsCollections.companies}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ReservationRequest_remarks" value="#{bundle.aon_remark}" />
 	<aon:outputText	value="#{reservationRequest.to.remarks}" styleClass="aon-bold"
