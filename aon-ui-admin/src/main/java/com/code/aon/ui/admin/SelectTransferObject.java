@@ -1,5 +1,7 @@
 package com.code.aon.ui.admin;
 
+import java.util.Comparator;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -13,6 +15,8 @@ public class SelectTransferObject<V,T extends ITransferObject> {
 	private V value;
 	
 	private T to;
+	
+	private String label;
 
 	public SelectTransferObject(V value) {
 		this.value = value;
@@ -24,6 +28,14 @@ public class SelectTransferObject<V,T extends ITransferObject> {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+	
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public V getValue() {
@@ -45,5 +57,15 @@ public class SelectTransferObject<V,T extends ITransferObject> {
 			bean.remove(getTo());			
 		}
 	}	
+	
+	@SuppressWarnings("rawtypes")
+	public static Comparator<SelectTransferObject> getComparator() {
+		return new Comparator<SelectTransferObject>() {
+			@Override
+			public int compare(SelectTransferObject o1, SelectTransferObject o2) {
+				return o1.getLabel().compareTo(o2.getLabel());
+			}	    		
+		};		
+	}
 	
 }

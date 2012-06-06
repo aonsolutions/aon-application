@@ -1,16 +1,22 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_PROFILE_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.admin.Profile;
+import com.code.aon.admin.ProfileRole;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -21,7 +27,10 @@ import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.UserApplicationInfo;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationController extends BasicController {
@@ -119,6 +128,41 @@ public class DomainApplicationController extends BasicController {
 			}			
 		}
 		return list;
+	}
+	
+	private String getRoleList( Profile profile ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ProfileRole.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.PROFILE_ROLE_PROFILE_ID);
+		criteria.addEqualExpression(alias, profile.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			Set<String> roles = new TreeSet<String>();
+			for( ITransferObject to : list ) {
+				String name = ((ProfileRole) to).getApplicationRole().getRole().getName();
+				IAonRole _role = IAonRole.get(name);
+				if ( _role != null ) {
+					name = _role.getDisplayName();
+				}
+				roles.add( name );
+			}
+			return StringUtils.join(roles, ", ");
+		}
+		return null;
+	}	
+
+	public String getRoleList() throws ManagerBeanException {
+		IController controller = null; 
+		if ( "systemProfiles".equals(selectedTab) ) {
+			controller = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
+		} else {
+			controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);			
+		}
+		if ( controller.getModel().isRowAvailable() ) {
+			Profile profile = (Profile) controller.getModel().getRowData();
+			return getRoleList(profile);
+		}
+		return null;
 	}
 	
 }

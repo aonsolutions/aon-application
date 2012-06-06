@@ -32,7 +32,7 @@
 					<f:facet name="header">
 						<aon:outputText value="#{adminBundle.admin_roles}" />
 					</f:facet>
-					<aon:outputText value="#{to.roleList}"/>
+					<aon:outputText value="#{domainApplication.roleList}"/>
 				</aon:column>
 
 
@@ -40,7 +40,7 @@
 					<aon:column styleClass="aon-width-160 aon-editDataTable-textColumn"
 						alias="Profile.domain.name">
 						<f:facet name="header">
-							<aon:outputText value="#{configBundle.config_domain}" />
+							<aon:outputText value="#{companyBundle.company_enterprise}" />
 						</f:facet>
 						<aon:outputText value="#{to.domain.name}"/>
 					</aon:column>

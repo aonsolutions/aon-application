@@ -3,7 +3,6 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_CONTROLLER_NAME;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +23,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Application;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -54,6 +54,15 @@ public class ApplicationProfileController extends LinesController {
 		return null;
 	}	
 	
+	private String getRoleLabel( ApplicationRole appRole) {
+		String roleName = appRole.getRole().getName();
+		IAonRole role = IAonRole.get(roleName);
+		if ( role != null ) {
+			return role.getDisplayName();
+		}
+		return roleName;
+	}
+	
 	private void initRoles() throws ManagerBeanException {
 		this.roles = new LinkedList<SelectTransferObject<ApplicationRole,ProfileRole>>();
 		Profile profile = (Profile) getTo();
@@ -62,13 +71,14 @@ public class ApplicationProfileController extends LinesController {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationRole.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_ROLE_APPLICATION_ID), application.getId());
-		criteria.addOrder("ApplicationRole.role.name");
 		for( ITransferObject to : bean.getList(criteria) ) {
 			ApplicationRole appRole = (ApplicationRole) to;
 			SelectTransferObject<ApplicationRole,ProfileRole> item = new SelectTransferObject<ApplicationRole,ProfileRole>(appRole);
 			item.setTo( getProfileRole(profile, appRole) );
+			item.setLabel( getRoleLabel(appRole) );
 			this.roles.add(item);
 		}
+		Collections.sort( this.roles, SelectTransferObject.getComparator() );
 	}
 
 	private ProfileModuleDenied getProfileModuleDenied( Profile profile, Module module ) throws ManagerBeanException {
@@ -86,19 +96,14 @@ public class ApplicationProfileController extends LinesController {
 	private void initDeniedModules() throws ManagerBeanException {
 		this.deniedModules = new LinkedList<SelectTransferObject<Module,ProfileModuleDenied>>();
 		Profile profile = (Profile) getTo();
+		Locale locale = AonUtil.getCurrentLocale();
 		for( Module module : Module.values() ) {
 			SelectTransferObject<Module,ProfileModuleDenied> item = new SelectTransferObject<Module, ProfileModuleDenied>(module);
 			item.setTo( getProfileModuleDenied(profile, module) );
+			item.setLabel( module.getName(locale) );
 			this.deniedModules.add(item);
 		}
-		final Locale locale = AonUtil.getCurrentLocale();
-    	Comparator<SelectTransferObject<Module,ProfileModuleDenied>> comparator = new Comparator<SelectTransferObject<Module,ProfileModuleDenied>>() {
-			@Override
-			public int compare(SelectTransferObject<Module,ProfileModuleDenied> o1, SelectTransferObject<Module,ProfileModuleDenied> o2) {
-				return o1.getValue().getName(locale).compareTo(o2.getValue().getName(locale));
-			}	    		
-		};
-    	Collections.sort( this.deniedModules, comparator );				
+		Collections.sort( this.deniedModules, SelectTransferObject.getComparator() );
 	}
 	
 	public void initProfileInfos() throws ManagerBeanException {

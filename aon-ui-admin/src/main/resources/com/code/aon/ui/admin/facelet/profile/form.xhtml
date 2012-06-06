@@ -35,7 +35,7 @@
 						<a4j:repeat value="#{controller.roles}" var="profileRole">
 							<aon:div>
 								<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
-								<aon:outputText value="#{profileRole.value.role.name}" />
+								<aon:outputText value="#{profileRole.label}" />
 							</aon:div>
 						</a4j:repeat>
 					</aon:column>				
@@ -47,7 +47,7 @@
 						<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
 							<aon:div>
 								<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
-								<aon:outputText value="#{profileDeniedModule.value}" />
+								<aon:outputText value="#{profileDeniedModule.label}" />
 							</aon:div>
 						</a4j:repeat>
 					</aon:column>					

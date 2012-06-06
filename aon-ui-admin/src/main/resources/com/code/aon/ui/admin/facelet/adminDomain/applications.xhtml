@@ -20,7 +20,7 @@
 			<aon:dataTable id="applicationsTable" var="appInfo"
 				value="#{adminDomain.applicationInfos}">
 				
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
+				<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-vertical-align-top" >
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
@@ -31,7 +31,7 @@
 						value="#{appInfo.description}" />
 				</aon:column>				
 
-				<aon:column styleClass="aon-editDataTable-textColumn" >
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" >
 					<f:facet name="header">
 						<aon:outputText value="#{adminBundle.admin_modules}" />
 					</f:facet>
