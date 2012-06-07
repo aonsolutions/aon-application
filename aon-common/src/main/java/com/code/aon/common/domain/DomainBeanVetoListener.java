@@ -3,6 +3,7 @@ package com.code.aon.common.domain;
 import com.code.aon.common.event.FinderBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.ql.Criteria;
 
 public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -10,9 +11,13 @@ public class DomainBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	@Override
 	public void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException {
-		String className  = evt.getEntityClass().getSimpleName();
-		String alias = className + DOMAIN_PROPERTY;
-		evt.getCriteria().addExpression(DomainManager.getCurrentDomainExpression(alias));
+		Criteria criteria = evt.getCriteria();
+		if (! criteria.isSkipDomainFilter() ) {
+			String className  = evt.getEntityClass().getSimpleName();
+			String alias = className + DOMAIN_PROPERTY;
+			criteria.addExpression(DomainManager.getCurrentDomainExpression(alias));
+			criteria.setSkipDomainFilter(true);
+		}
 	}
 
 }
