@@ -32,7 +32,7 @@
 			<ui:param name="lookupControllerListener" value="#{controller.currentReservationFilter}" />
 			<aon:methodParam name="lookupChangeListener" value="#{controller.onReservationChanged}" type="lookupChangeListener" />
 		</ui:include>
-	
+
 		<aon:outputLabel for="ProjectReservation_invoiceHotel"
 			value="#{pmsBundle.pms_hotel}" />
 		<aon:div id="invoiceHotelDiv">
@@ -152,5 +152,18 @@
 		<aon:outputText value="#{controller.reservationInvoiceTo.address.zip}" styleClass="aon-margin-left aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
 	</aon:div>
+
+	<c:if test="#{service}">
+		<aon:outputLabel for="ProjectReservation_serviceType"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneRadio id="ProjectReservation_serviceType"
+			value="#{controller.reservationInvoiceTo.deposit}" required="true"
+			disabled="#{controller.invoiceServicesCount > 1}"
+			valueChangeListener="#{controller.onInvoiceServiceTypeChanged}"
+			reRender="invoiceServicesDiv,invoiceFinancesDiv">
+			<f:selectItem itemLabel="#{pmsBundle.pms_services}" itemValue="false" />
+			<f:selectItem itemLabel="#{pmsBundle.pms_deposits}" itemValue="true" />
+		</aon:selectOneRadio>				
+	</c:if>
 
 </ui:composition>

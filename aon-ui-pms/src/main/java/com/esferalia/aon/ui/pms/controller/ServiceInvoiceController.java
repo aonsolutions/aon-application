@@ -29,6 +29,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -288,6 +289,14 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
 	}
 
+	public void onInvoiceServiceTypeChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getReservationInvoiceTo().setDeposit((Boolean)event.getNewValue());
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+			onNewService(null);
+		}
+	}
+
 	public void onNewService(ActionEvent event) {
 		try {
 			double quantity = 1;
@@ -335,6 +344,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			Criteria criteria = new Criteria();
 			String alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID);
 			criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getServiceCatalogue().getId());
+			alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_TYPE);
+			criteria.addEqualExpression(alias, getReservationInvoiceTo().isDeposit() ? ProductType.COMMERCIAL_PRODUCT : ProductType.SERVICE);
 			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_NAME));
 			for (ITransferObject ito : catalogueItemBean.getList(criteria)) {
 				CatalogueItem catalogueItem = (CatalogueItem)ito;

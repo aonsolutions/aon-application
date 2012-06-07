@@ -30,6 +30,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private Registry registry;
 	private IAddress address;
 	private String comments;
+	private boolean deposit;
 	private List<HotelService> services;
 	private List<Finance> finances;
 
@@ -38,6 +39,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		setRegistry(new Registry());
 		setAddress(new InvoiceAddress());
 		setComments(null);
+		setDeposit(false);
 		setServices(new LinkedList<HotelService>());
 		setFinances(new LinkedList<Finance>());
 	}
@@ -120,6 +122,14 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public boolean isDeposit() {
+		return deposit;
+	}
+
+	public void setDeposit(boolean deposit) {
+		this.deposit = deposit;
 	}
 
 	public List<HotelService> getServices() {

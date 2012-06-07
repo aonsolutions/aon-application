@@ -337,8 +337,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.CatalogueItem" sqlName="catalogue_item">
-		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name" />
-		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name" />
+		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name,item_product_type" />
+		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name,item.product.type" />
 	</bean>
 
 	<bean class="com.code.aon.product.Item" sqlName="item">

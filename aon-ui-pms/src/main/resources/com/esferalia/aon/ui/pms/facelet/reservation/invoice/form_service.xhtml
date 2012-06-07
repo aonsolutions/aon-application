@@ -104,7 +104,7 @@
 									styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-minus"
 									rendered="#{hotelInvoiceService != controller.reservationInvoiceTo.firstService}"
 									actionListener="#{controller.onRemoveService}"
-									reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv">
+									reRender="invoiceHotelDiv,invoiceRoomDiv,ProjectReservation_serviceType,invoiceServicesDiv,invoiceFinancesDiv">
 									<f:param name="hotelInvoiceServiceIndex" value="#{hotelInvoiceServiceKey}"/>
 								</aon:commandButton>
 								<aon:commandButton
@@ -112,7 +112,7 @@
 									styleClass="aon-editDataTable-button aon-margin-left aon-vertical-align-middle aon-search-add"
 									rendered="#{hotelInvoiceService == controller.reservationInvoiceTo.lastService}"
 									actionListener="#{controller.onNewService}"
-									reRender="invoiceHotelDiv,invoiceRoomDiv,invoiceServicesDiv,invoiceFinancesDiv" />
+									reRender="invoiceHotelDiv,invoiceRoomDiv,ProjectReservation_serviceType,invoiceServicesDiv,invoiceFinancesDiv" />
 							</aon:div>
 						</aon:panelGrid>
 					</aon:column>
