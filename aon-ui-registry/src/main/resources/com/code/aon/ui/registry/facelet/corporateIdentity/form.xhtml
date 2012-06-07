@@ -25,19 +25,30 @@
 				
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/form_content.xhtml" >
 						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+						<ui:param name="skipScopeSelection" value="#{true}" />
 					</ui:include>
-					
-					<!--
-					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{corporateIdentitySearch.domain}" />
-						<ui:param name="lookupRendered" value="#{corporateIdentityAttach.showDomainLookup}" />
-						<ui:param name="lookupControllerListener" value="#{corporateIdentityAttach.domainLookupListener}" />
-					</ui:include>
-					-->
-				
+
 					<ui:include 
 						src="/com/code/aon/ui/registry/facelet/corporateIdentity/tags.xhtml" />
-				
+					
+					<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{corporateIdentityAttach.domain}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{corporateIdentityAttach.showDomainLookup and corporateIdentityAttach.massiveUpload}" />
+						<ui:param name="lookupReRender" value="RegistryAttachment_scope" />
+						<ui:param name="lookupControllerListener" value="#{corporateIdentityAttach.domainLookupListener}" />
+						<aon:methodParam name="lookupChangeListener" value="#{corporateIdentityAttach.onDomainChange}" type="lookupChangeListener" />						
+					</ui:include>
+					
+					<aon:outputLabel for="RegistryAttachment_scope"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="RegistryAttachment_scope" 
+						disabled="#{corporateIdentityAttach.showDomainLookup and (corporateIdentityAttach.domain.id == null)}"
+						value="#{corporateIdentityAttach.to.scope}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
+					</aon:selectOneMenu>
+			
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

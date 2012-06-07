@@ -9,7 +9,11 @@ import javax.persistence.Transient;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.company.Company;
+import com.code.aon.config.Domain;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryAttachmentTag;
@@ -39,21 +43,60 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		} else {
 			getSearch().setTags( new LinkedList<Tag>() );			
 		}
+		try {		
+			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = null;
+			if ( cic.isMassiveUpload() && cic.isShowDomainLookup() ) {
+				domain = (Domain) domainBean.createNewTo();
+			} else {
+				domain = (Domain) domainBean.get(DomainManager.getCurrentDomain());
+			}
+			cic.setDomain( domain );
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
 	}	
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		super.afterBeanSelected(event);
-		RegistryAttachment attachment = (RegistryAttachment) event.getController().getTo();
+		CorporateIdentityController cic = (CorporateIdentityController) event.getController();
+		RegistryAttachment attachment = (RegistryAttachment) cic.getAttachment();
 		try {
 			List<Tag> tags = getTagList( attachment );
 			getSearch().setTags( tags );
+			cic.setDomain((Domain)BeanManager.getManagerBean(Domain.class).get(attachment.getDomain()));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
 	}
 	
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		super.beforeBeanAdded(event);
+		CorporateIdentityController cic = (CorporateIdentityController) event.getController();
+		Integer domainId = DomainManager.getCurrentDomain();
+		if (! domainId.equals(cic.getDomain().getId()) ) {
+			try {			
+				RegistryAttachment attachment = (RegistryAttachment) cic.getAttachment();
+				attachment.setDomain(cic.getDomain().getId());
+				IManagerBean bean = BeanManager.getManagerBean(Company.class);
+				Criteria criteria = new Criteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addEqualExpression("Compay.domain", cic.getDomain().getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				if (! list.isEmpty() ) {
+					Company company = (Company) list.get(0);
+					attachment.setRegistry( company.getRegistry() );
+				}
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
+			}
+		}
+	}
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {

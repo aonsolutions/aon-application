@@ -55,14 +55,16 @@
 		popupDateFormat="#{bundle.aon_date_pattern}"
 		value="#{controller.to.attachDate}" />
 
-	<aon:outputLabel for="#{controller.beanName}_scope"
-		value="#{bundle.aon_scope}" />
-	<aon:selectOneMenu id="#{controller.beanName}_scope" 
-		value="#{controller.to.scope}">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{configCollections.currentUserScopes}" />
-	</aon:selectOneMenu>
-
+	<c:if test="#{!skipScopeSelection}">	
+		<aon:outputLabel for="#{controller.beanName}_scope"
+			value="#{bundle.aon_scope}" />
+		<aon:selectOneMenu id="#{controller.beanName}_scope" 
+			value="#{controller.to.scope}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{configCollections.currentUserScopes}" />
+		</aon:selectOneMenu>
+	</c:if>
+	
 	<aon:outputLabel for="#{controller.beanName}_category"
 		value="#{registryBundle.registry_category}" />
 	<aon:selectOneMenu id="#{controller.beanName}_category" 

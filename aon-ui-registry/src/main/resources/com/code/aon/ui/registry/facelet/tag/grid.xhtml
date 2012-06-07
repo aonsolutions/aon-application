@@ -7,19 +7,7 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:param name="controller" value="#{tag}" />
-		<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
 		<ui:define name="columns">
-			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-40"
-				alias="Tag.id">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_id}" />
-				</f:facet>
-				<aon:outputText value="#{to.id}" />
-				<f:facet name="footer">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-			</aon:column>
-
 			<aon:column styleClass="aon-editDataTable-textColumn"
 				alias="Tag.name">
 				<f:facet name="header">
