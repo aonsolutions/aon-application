@@ -29,7 +29,6 @@ public class PmsReportManager {
 	public static final Integer BOARD_GUEST_END_DATE = 7;
 	public static final Integer BOARD_GUEST_NAME = 8;
 	
-	private CompanyCollectionsController companyCollections;
 	private PmsCollectionsController pmsCollections;
 
 	private static PmsReportManager manager;
@@ -45,32 +44,19 @@ public class PmsReportManager {
 		return manager; 
 	}
 	
-	private CompanyCollectionsController getCompanyCollections() {
-		if(companyCollections==null){
-			companyCollections = (CompanyCollectionsController) AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-		}
-		return companyCollections;
-	}
-	
 	private PmsCollectionsController getPmsCollections() {
 		if(pmsCollections==null){
 			pmsCollections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
 		}
 		return pmsCollections;
 	}
-
 	
-	public String getRoomBookingSQL() {
-		return null;
-	}
 	
-	public String getWorkPlanningSQL() {
-		return null;
-	}
-	
-	public String getBoardListSQL() {
-		return null;
-	}
+	/*
+	 * ************************************
+	 * BOOKING - LISTADO ( de pensiones )
+	 * ************************************
+	 */
 	
 	public String getBoardBookingSQL(Hotel hotel, Product product) throws ManagerBeanException{
 		String select = ""
@@ -162,6 +148,12 @@ public class PmsReportManager {
 		return getBoardBookingSQL(hotel, null);
 	}
 	
+	/* 
+	 * ************************************
+	 * ENTRADA Y SALIDA DE RESERVAS
+	 * ************************************
+	 */
+	
 	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, Integer shortOption){
 		String order = " ORDER BY";
 		
@@ -195,6 +187,12 @@ public class PmsReportManager {
 		return select;
 	}
 	
+	/*
+	 * ************************************
+	 * BOOKING ( de habitaciones )
+	 * ************************************
+	 */
+	
 	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = "(SELECT "
 				+ " W2.description As Nombre,"
@@ -207,6 +205,8 @@ public class PmsReportManager {
 				+ " LEFT JOIN hotel AS H2 ON PR.hotel=H2.id"
 				+ " LEFT JOIN workplace AS W2 ON H2.workplace=W2.id"
 				+ " WHERE PR.status <> 2"
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND isnull(PRRD.asset_activity)"
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND PR.start_date between :start AND :end"
@@ -227,6 +227,8 @@ public class PmsReportManager {
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 				+ " WHERE PR.status <> 2"
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND not isnull(PRRD.asset_activity)"
 				+ " AND H.id IN (" + getHotelIds(hotel) + ")" 
 				+ " GROUP BY 1, PR.project"
@@ -248,6 +250,8 @@ public class PmsReportManager {
 				+ " LEFT JOIN hotel AS H2 ON PR.hotel=H2.id"
 				+ " LEFT JOIN workplace AS W2 ON H2.workplace=W2.id"
 				+ " WHERE PR.status <> 2"
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND isnull(PRRD.asset_activity)"
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND PR.end_date between :start AND :end"
@@ -268,6 +272,8 @@ public class PmsReportManager {
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 				+ " WHERE PR.status <> 2"
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND not isnull(PRRD.asset_activity)"
 				+ " AND H.id IN (" + getHotelIds(hotel) + ")" 
 				+ " GROUP BY 1, PR.project"
@@ -297,13 +303,14 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getBlockedRoomsSQL(Hotel hotel) throws ManagerBeanException{
+	public String getBlockedRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, AA.date, count(R.hotel)"
 				+ " FROM room as R"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 				+ " LEFT JOIN asset_activity AS AA ON R.asset=AA.asset"
 				+ " WHERE AA.status <> " + ActivityStatus.BUSY.getValue()
+				+ ((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):(""))
 				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
 				+ " AND AA.date between :start AND :end"
 				+ " GROUP BY R.hotel, AA.date"
@@ -312,12 +319,13 @@ public class PmsReportManager {
 		return select;
 	}
 	
-	public String getHotelRoomsSQL(Hotel hotel) throws ManagerBeanException{
+	public String getHotelRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, count(R.hotel)"
 				+ " FROM room as R"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
 				+ " WHERE H.id IN (" + getHotelIds(hotel) + ") "
+				+ ((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):(""))
 				+ " GROUP BY R.hotel"
 				+ " ORDER BY W.description"
 				;

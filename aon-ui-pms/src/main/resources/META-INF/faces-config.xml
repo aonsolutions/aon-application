@@ -1192,8 +1192,8 @@
 	</managed-bean>	
 	
 	<managed-bean>
-		<managed-bean-name>reservationInvoice</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.ProjectReservationInvoiceController</managed-bean-class>
+		<managed-bean-name>selectedInvoice</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.SelectedInvoiceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	

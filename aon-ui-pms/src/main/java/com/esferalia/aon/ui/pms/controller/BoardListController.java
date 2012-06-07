@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -29,6 +30,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class BoardListController implements ICollectionProvider {
@@ -83,12 +85,18 @@ public class BoardListController implements ICollectionProvider {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
+		init();
+		onSearch(event);
+	}
+	
+	public void init() throws ManagerBeanException{
 		setParams(new BoardParams());
 		getParams().setDate(new Date());
 		getParams().setBoardPageBreak(true);
 		getParams().setBoardItemFilter(null);
 		setBoardsTotalList(null);
-		onSearch(event);
+		setBoardList(null);
+		setModel(new ListDataModel(getBoardList()));
 	}
 	
 	private List<ITransferObject> boardItems() {
@@ -188,6 +196,22 @@ public class BoardListController implements ICollectionProvider {
 		
 	}
 	
+	public void onHotelChanged(ValueChangeEvent event) throws ManagerBeanException{
+		init();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Collection getCollection() {
+		return getBoardList();
+	}
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		return getCollection();
+	}
+	
 	/**************************************************/
 	/**************************************************/
 	
@@ -285,18 +309,6 @@ public class BoardListController implements ICollectionProvider {
 		public void setCount(Integer count) {
 			this.count = count;
 		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Collection getCollection() {
-		return getBoardList();
-	}
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		return getCollection();
 	}
 	
 }

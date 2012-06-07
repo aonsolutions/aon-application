@@ -528,8 +528,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
-			controller.select(event, ((Invoice)getModel().getRowData()).getId());
+			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean("selectedInvoice");
+			controller.setTo((Invoice)getModel().getRowData());
 		}
 	}
 

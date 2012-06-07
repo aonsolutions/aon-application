@@ -10,15 +10,19 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Invoice;
-import com.code.aon.ui.util.AonUtil;
 
-public class ProjectReservationInvoiceController implements IPmsConstants, ICollectionProvider {
-
-	public ITransferObject getTo(){
-		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(RESERVATION_CONTROLLER_NAME);
-		return (ITransferObject) controller.getInvoiceModel().getRowData();
-	}
+public class SelectedInvoiceController implements IPmsConstants, ICollectionProvider {
 	
+	private ITransferObject to;
+	
+	public ITransferObject getTo() {
+		return to;
+	}
+
+	public void setTo(ITransferObject to) {
+		this.to = to;
+	}
+
 	/**
 	 * Get a collection that contains current <code>ITransferObject</code>
 	 * associated to controller. To use in reports.

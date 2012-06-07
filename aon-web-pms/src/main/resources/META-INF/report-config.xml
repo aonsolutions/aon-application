@@ -8,9 +8,9 @@
 
 
 	<!--  ********* Reservation Sale Invoice ********* -->
-	<report id="reservationSaleInvoice" description="Fee Hotel Invoice's Report Template">
+	<report id="selectedInvoice" description="Fee Hotel Invoice's Report Template">
 		<template path="/com/esferalia/aon/ui/pms/report/saleInvoice.jasper" />
-		<collection provider="#{reservationInvoice}" forceRefresh="true" />
+		<collection provider="#{selectedInvoice}" forceRefresh="true" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />

@@ -141,6 +141,11 @@ public class BoardBookingController implements ICollectionProvider {
 				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
+			while( booking.getHotel().equals(hotel) && getToDate().before(date) && it.hasNext() ){
+				o = it.next();
+				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+			}
 		}
 		
 	}

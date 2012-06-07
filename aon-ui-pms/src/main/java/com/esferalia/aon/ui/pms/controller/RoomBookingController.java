@@ -101,8 +101,8 @@ public class RoomBookingController implements ICollectionProvider {
 		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem());
 		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem());
 		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem());
-		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel());
-		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel());
+		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel(), getItem());
+		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel(), getItem());
 
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 
