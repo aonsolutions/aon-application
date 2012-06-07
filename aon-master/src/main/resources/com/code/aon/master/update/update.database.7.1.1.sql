@@ -51,7 +51,7 @@ FROM domain;
 # 											,'2012-01-01' 	, null 		, 1 		, 'Bases mínimas');
 
 
-# Bases máximas 
+# Bases máximas  
 #
 UPDATE system_data SET end_date='2011-12-31' WHERE start_date='2011-01-01' AND name='BASE_CGC_MAX';
 
@@ -552,6 +552,89 @@ SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=235010.01 AND start_date='20
 INSERT INTO geozone_irpf_descendant (geozone_irpf, descendant, percent ) VALUES
 (@IRPF, 0, 40),(@IRPF, 1, 40),(@IRPF, 2, 40),(@IRPF, 3, 40),(@IRPF, 4, 39),(@IRPF, 5, 39),(@IRPF, 6, 38);
 
+# Trabajadores activos discapacitados
+# 
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=0.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 9),(@IRPF, 1, 12),(@IRPF, 2, 12);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=0.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 9),(@IRPF, 1, 12),(@IRPF, 2, 12);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=0.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 9),(@IRPF, 1, 12),(@IRPF, 2, 12);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=22650.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 7),(@IRPF, 1, 12),(@IRPF, 2, 12);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=22650.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 7),(@IRPF, 1, 12),(@IRPF, 2, 12);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=22650.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 7),(@IRPF, 1, 12),(@IRPF, 2, 12);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=28650.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 6),(@IRPF, 1, 10),(@IRPF, 2, 10);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=28650.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 6),(@IRPF, 1, 10),(@IRPF, 2, 10);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=28650.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 6),(@IRPF, 1, 10),(@IRPF, 2, 10);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=41030.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 5),(@IRPF, 1, 9),(@IRPF, 2, 9);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=41030.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 5),(@IRPF, 1, 9),(@IRPF, 2, 9);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=41030.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 5),(@IRPF, 1, 9),(@IRPF, 2, 9);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=47290.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 4),(@IRPF, 1, 8),(@IRPF, 2, 8);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=47290.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 4),(@IRPF, 1, 8),(@IRPF, 2, 8);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=47290.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 4),(@IRPF, 1, 8),(@IRPF, 2, 8);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=66970.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 3),(@IRPF, 1, 6),(@IRPF, 2, 6);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=66970.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 3),(@IRPF, 1, 6),(@IRPF, 2, 6);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=66970.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 3),(@IRPF, 1, 6),(@IRPF, 2, 6);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=102000.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 2),(@IRPF, 1, 5),(@IRPF, 2, 5);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=102000.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 2),(@IRPF, 1, 5),(@IRPF, 2, 5);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=102000.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 2),(@IRPF, 1, 5),(@IRPF, 2, 5);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=172340.01 AND start_date='2012-01-01' AND geozone_code='01');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 1),(@IRPF, 1, 3),(@IRPF, 2, 3);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=172340.01 AND start_date='2012-01-01' AND geozone_code='20');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 1),(@IRPF, 1, 3),(@IRPF, 2, 3);
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=172340.01 AND start_date='2012-01-01' AND geozone_code='48');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 1),(@IRPF, 1, 3),(@IRPF, 2, 3);
+
+
 # Tablas de retención de IRPF 2012 de Navarra ( Ley Foral 2/2012 )
 #
 INSERT INTO geozone_irpf (geozone_code, start_date, end_date, amount ) VALUES
@@ -668,6 +751,25 @@ INSERT INTO geozone_irpf_descendant (geozone_irpf, descendant, percent ) VALUES
 SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=146000.01 AND start_date='2012-01-01' AND geozone_code='31');
 INSERT INTO geozone_irpf_descendant (geozone_irpf, descendant, percent ) VALUES
 (@IRPF, 0, 36.40),(@IRPF, 1, 36.40),(@IRPF, 2, 36.40),(@IRPF, 3, 35.80),(@IRPF, 4, 35.30),(@IRPF, 5, 34.70),(@IRPF, 6, 34.20),(@IRPF, 7, 33.60),(@IRPF, 8, 33.10),(@IRPF, 9, 32.50),(@IRPF, 10, 31.90);
+
+# trabajadores en activo discapacitados
+#
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=11250.01  AND start_date='2012-01-01' AND geozone_code='31');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 5),(@IRPF, 1, 15),(@IRPF, 2, 15);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=23250.01  AND start_date='2012-01-01' AND geozone_code='31');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 3),(@IRPF, 1, 15),(@IRPF, 2, 15);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=41250.01  AND start_date='2012-01-01' AND geozone_code='31');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 2),(@IRPF, 1, 8),(@IRPF, 2, 8);
+
+SET @IRPF=(SELECT id FROM geozone_irpf WHERE amount=94750.01  AND start_date='2012-01-01' AND geozone_code='31');
+INSERT INTO geozone_irpf_handicap (geozone_irpf, handicap, percent ) VALUES
+(@IRPF, 0, 2),(@IRPF, 1, 2),(@IRPF, 2, 5);
+
 
 UPDATE `db_version` SET `version_number` = '7.1.2';
 
