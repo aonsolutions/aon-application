@@ -164,21 +164,27 @@
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
 		<c:if test="#{!supplier.new}">
-			<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
-				<ui:param name="controller" value="#{supplier}" />
-				<ui:param name="segmentController" value="#{supplierSegment}" />
-				<ui:param name="modalReRender" value="supplierTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
-				<ui:param name="controller" value="#{supplier}" />
-				<ui:param name="addInfoController" value="#{supplierAddInfo}" />
-				<ui:param name="modalReRender" value="supplierTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
-				<ui:param name="controller" value="#{supplier}" />
-				<ui:param name="attachmentController" value="#{supplierRAttach}" />
-				<ui:param name="modalReRender" value="supplierTab" />
-			</ui:include>
+			<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="segmentController" value="#{supplierSegment}" />
+					<ui:param name="modalReRender" value="supplierTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.supplier.showAddInfo}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="addInfoController" value="#{supplierAddInfo}" />
+					<ui:param name="modalReRender" value="supplierTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{documentManager.show}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
+					<ui:param name="controller" value="#{supplier}" />
+					<ui:param name="attachmentController" value="#{supplierRAttach}" />
+					<ui:param name="modalReRender" value="supplierTab" />
+				</ui:include>
+			</c:if>
 		</c:if>
 	</ui:define>
 </ui:composition>

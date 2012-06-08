@@ -211,52 +211,67 @@
 			</c:if>
 			
 			
-			
-			<ui:include src="/com/code/aon/ui/registry/facelet/rnote/newNoteModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="noteController" value="#{targetNote}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
+			<c:if test="#{aonConfiguration.bean.target.showNote}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rnote/newNoteModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="noteController" value="#{targetNote}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
 			<ui:include src="/com/code/aon/ui/registry/facelet/rsegment/newSegmentModal.xhtml">
 				<ui:param name="controller" value="#{target}" />
 				<ui:param name="segmentController" value="#{targetSegment}" />
 				<ui:param name="modalReRender" value="targetTab" />
 			</ui:include>
-			<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="addInfoController" value="#{targetAddInfo}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/newTargetItemModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="targetItemController" value="#{targetItem}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/newProjectCommercialModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="projectCommercialController" value="#{targetProjectCommercial}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/newTargetProfileModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="targetProfileController" value="#{targetProfile}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/commercial/facelet/targetSupplier/newTargetSupplierModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="targetSupplierController" value="#{targetSupplier}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/newTargetSellerModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="targetSellerController" value="#{targetSeller}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
-			<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
-				<ui:param name="controller" value="#{target}" />
-				<ui:param name="attachmentController" value="#{targetRAttach}" />
-				<ui:param name="modalReRender" value="targetTab" />
-			</ui:include>
+			<c:if test="#{aonConfiguration.bean.target.showAddInfo}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/raddinfo/newAddInfoModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="addInfoController" value="#{targetAddInfo}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showProduct}">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/newTargetItemModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="targetItemController" value="#{targetItem}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showProject}">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/newProjectCommercialModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="projectCommercialController" value="#{targetProjectCommercial}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showProfile}">
+				<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/newTargetProfileModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="targetProfileController" value="#{targetProfile}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showSupplier}">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/targetSupplier/newTargetSupplierModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="targetSupplierController" value="#{targetSupplier}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.target.showSeller}">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/newTargetSellerModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="targetSellerController" value="#{targetSeller}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{documentManager.show}">
+				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
+					<ui:param name="controller" value="#{target}" />
+					<ui:param name="attachmentController" value="#{targetRAttach}" />
+					<ui:param name="modalReRender" value="targetTab" />
+				</ui:include>
+			</c:if>
 			
 			
 		</c:if>	
