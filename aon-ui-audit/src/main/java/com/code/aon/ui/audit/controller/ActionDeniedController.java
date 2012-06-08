@@ -32,6 +32,8 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
@@ -158,15 +160,26 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 		return null;		
 	}
-
+	
 	private Map<String,Module> getEnabledModules( User user ) {
 		Map<String,Module> enabledModules = new HashMap<String, Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
-			Integer da = AdminUtil.getDomainApplication(user.getDomain(), getAuditController().getApplication().getId());
-			String filed = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
-			criteria.addEqualExpression( filed, da );
+			Integer appId = getAuditController().getApplication().getId();
+			Integer domainId = DomainManager.getCurrentDomain();
+			Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);
+			String alias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
+			Expression expression = ExpressionUtilities.getEqualExpression(alias, domainApplication);
+	    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+	    	if ( parentDomainId != null ) {
+	    		domainApplication = AdminUtil.getDomainApplication(parentDomainId, appId);
+	    		if ( domainApplication != null ) {
+		    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, domainApplication);
+		    		expression = ExpressionUtilities.getOrExpression(expression, expr2);	    			
+	    		}
+	    	}			
+			criteria.addExpression(expression);
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
 				enabledModules.put( dam.getModule().getName(), dam.getModule() );
