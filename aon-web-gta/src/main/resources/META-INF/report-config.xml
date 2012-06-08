@@ -125,10 +125,6 @@
 			<param id="defaultPayMethod" value="#{offer.getDefaultPayMethod}" />			
 		</params>
 		
-		<nested-report report="offerDetail"/>
-		<nested-report report="offerTaxBreakDown"/>
-		<nested-report report="offerGeneralTerms"/>
-		<nested-report report="offerParticularTerms"/>
 	</report>
 
 </report-config>
