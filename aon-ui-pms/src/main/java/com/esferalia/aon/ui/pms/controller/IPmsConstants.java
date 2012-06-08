@@ -25,7 +25,8 @@ public interface IPmsConstants {
 	String ROOM_AVAILABILITY_CONTROLLER_NAME = "roomAvailability";
 	String ROOM_CONTROLLER_NAME = "room";
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
-	
+	String SELECTED_INVOICE_CONTROLLER_NAME = "selectedInvoice";
+
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************

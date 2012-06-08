@@ -54,7 +54,7 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
+public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
@@ -164,7 +164,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	}
 
 	private Hotel obtainHotel() throws ManagerBeanException {
-		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
 		List<SelectItem> hotelList = collections.getCurrentUserHotels();
 		return (hotelList.size() > 0) ? (Hotel)hotelList.get(0).getValue() : null;
 	}
@@ -528,7 +528,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean("selectedInvoice");
+			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(SELECTED_INVOICE_CONTROLLER_NAME);
 			controller.setTo((Invoice)getModel().getRowData());
 		}
 	}
