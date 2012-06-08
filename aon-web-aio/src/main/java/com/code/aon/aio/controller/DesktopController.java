@@ -52,6 +52,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -304,4 +305,16 @@ public class DesktopController {
     	return this.taskSummaryModel;
     }
 
+	public boolean isHideHeaderContent() {
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		boolean hide = companyController.isHideHeaderContent();
+		if (! hide) {
+			if ( UserUtils.getInstance().isPasswordExpired() ) {
+				companyController.setHideHeaderContent(true);
+				return true;
+			}			
+		}
+		return hide;
+	}
+    
 }

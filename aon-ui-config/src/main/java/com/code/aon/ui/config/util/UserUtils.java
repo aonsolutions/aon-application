@@ -1,5 +1,6 @@
 package com.code.aon.ui.config.util;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class UserUtils {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
+	
+	private Boolean passwordExpired;
 	
 	private User loggedUser;
 	
@@ -106,10 +109,22 @@ public class UserUtils {
 				scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
 			}
 		}
-
 		if (scopeExpression != null) {
 			criteria.addExpression(scopeExpression);
 		}
 	}	
 
+	public boolean isPasswordExpired() {
+		if ( passwordExpired == null ) {
+			passwordExpired = Boolean.FALSE;
+			User user = getLoggedUser();
+			if ( user != null ) {
+				if ( user.getPasswordExpiration() != null ) {
+					passwordExpired = new Date().after(user.getPasswordExpiration());
+				}
+			}		
+		}
+		return passwordExpired;
+	}
+	
 }
