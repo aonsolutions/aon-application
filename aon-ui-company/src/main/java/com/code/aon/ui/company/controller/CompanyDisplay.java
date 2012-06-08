@@ -24,10 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
 import com.code.aon.company.Company;
-import com.code.aon.config.Domain;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
 
@@ -46,11 +44,11 @@ public class CompanyDisplay {
 	private boolean bigLogo;
 	
 	public CompanyDisplay() {
-		this(null);
+		this(AonUtil.getServerName(), AonUtil.isSkipLdap(), null );
 	}
 
-	public CompanyDisplay( Properties dbProperties ) {
-		init(dbProperties);
+	public CompanyDisplay( String host, boolean skipLdap, Properties dbProperties ) {
+		init(host, skipLdap, dbProperties);
 	}
 	
 	public String getCompanyLabel() {
@@ -137,32 +135,29 @@ public class CompanyDisplay {
 		update( (Company) controller.getTo(), controller.getAttach());
 	}
 	
-	private void init( Properties dbProperties ) {
+	private void init( String host, boolean skipLdap, Properties dbProperties ) {
 		SessionFactory factory = null;
 		try {
 			Configuration configuration = getConfiguration(dbProperties);
 			if ( configuration != null ) {
 				factory = configuration.buildSessionFactory();
 				StatelessSession session = factory.openStatelessSession();
-				String domain = DomainResolver.getDomain(AonUtil.getServerName(), AonUtil.isSkipLdap());				
-				Criteria domainCriteria = session.createCriteria(Domain.class);
-				domainCriteria.add(Restrictions.eq("name", domain));
-				List<?> domainList = domainCriteria.list();
-				Domain dom = (!domainList.isEmpty())?(Domain) domainList.get(0):null; 
 				Criteria companyCriteria = session.createCriteria(Company.class);
-				if (dom != null) {
-					companyCriteria.add(Restrictions.eq("domain", dom.getId()));	
-				}
-				List<?> companyList = companyCriteria.list();
-				if (! companyList.isEmpty() ) {
-					Company company = (Company) companyList.get(0); 
-					Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
-					logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
-					logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
-					logoCriteria.add(Restrictions.isNotNull("data"));
-					List<?> logoList = logoCriteria.list();
-					RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
-					update(company, logo);
+				Integer domainId = DataSourceUtil.getDomain(session, host, skipLdap);
+				if (domainId != null) {
+					companyCriteria.add(Restrictions.eq("domain", domainId));	
+					List<?> companyList = companyCriteria.list();
+					if (! companyList.isEmpty() ) {
+						Company company = (Company) companyList.get(0); 
+						Criteria logoCriteria = session.createCriteria(RegistryAttachment.class);
+						logoCriteria.add(Restrictions.eq("domain", domainId));
+						logoCriteria.add(Restrictions.eq("registry.id", company.getId()));
+						logoCriteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
+						logoCriteria.add(Restrictions.isNotNull("data"));
+						List<?> logoList = logoCriteria.list();
+						RegistryAttachment logo = logoList.isEmpty() ? null : (RegistryAttachment) logoList.get(0);
+						update(company, logo);
+					}
 				}
 				session.close();				
 			}
