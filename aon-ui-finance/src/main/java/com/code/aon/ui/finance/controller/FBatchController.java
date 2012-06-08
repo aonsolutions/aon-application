@@ -278,20 +278,22 @@ public class FBatchController extends BasicController implements ICollectionProv
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
         Iterator<?> iterator = financeController.getCheckedFinances().iterator();
         while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-            finance.setFinanceStatus(FinanceStatus.BATCHED);
-            financeBean.update(finance);
-
-            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
-			fBatchDetail.setFinance(finance);
-			fBatchDetail.setFinanceBatch(fBatch);
-            fBatchDetail.setAmount(finance.getTotalAmount());
-            fBatchDetail.setStatus(FinanceStatus.BATCHED);
-			financeBatchDetailBean.insert(fBatchDetail);
-
-			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED);
-			message += " " + fBatch.getId() + " - " + fBatch.getDescription();
-			FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
+			Finance finance = (Finance)financeBean.get(((Finance)iterator.next()).getId());
+			if (finance.getFinanceStatus() == FinanceStatus.PENDING) {
+	            finance.setFinanceStatus(FinanceStatus.BATCHED);
+	            financeBean.update(finance);
+	
+	            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
+				fBatchDetail.setFinance(finance);
+				fBatchDetail.setFinanceBatch(fBatch);
+	            fBatchDetail.setAmount(finance.getTotalAmount());
+	            fBatchDetail.setStatus(FinanceStatus.BATCHED);
+				financeBatchDetailBean.insert(fBatchDetail);
+	
+				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED);
+				message += " " + fBatch.getId() + " - " + fBatch.getDescription();
+				FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
+			}
         }
         financeController.clearCheckedFinances();
         loadDetails();
