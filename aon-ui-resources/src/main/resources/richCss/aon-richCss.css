@@ -240,7 +240,7 @@ color:#000;
 
 /* commanLink que no tienen desplegables */
 .aon-top-menu-item{
-	font-family:arial,verdana, "sans-serif";
+	font-family: arial,verdana, "sans-serif";
 	color:#000;
  	text-transform:uppercase; 	
  	font-size:1em;
@@ -557,6 +557,15 @@ color:#000;
  }
 .aon-icon-signed{
 	background:transparent url(images/aon-icon/aon-icon-signed.png) scroll left center no-repeat;
+ }
+.aon-icon-unsigned{
+	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
+ }
+.aon-icon-domain-change{
+	background:transparent url(images/aon-icon/aon-icon-domain-change.png) scroll left center no-repeat;
+ }
+.aon-icon-logout-blue{
+	background:transparent url(images/aon-icon/aon-icon-logout-blue.png) scroll left center no-repeat;
  }
 .aon-icon-unsigned{
 	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
@@ -1583,9 +1592,23 @@ color:#000;
 	padding:2px 6px 1px 18px;";
 	text-decoration: underline;
 }
+.aon-header-logout-blue{
+	background:transparent url(images/aon-icon/aon-icon-logout-blue.png) no-repeat scroll center left;
+	color: #0069B4;
+	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
+}
 .aon-header-domain{
 	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll left center no-repeat;
 	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
+}
+.aon-header-domain-blue{
+	background:transparent url(images/aon-icon/aon-icon-domain-change.png) scroll left center no-repeat;
+	color: #0069B4;
+cursor:pointer;
 	padding:2px 6px 1px 18px;";
 	text-decoration: underline;
 }
@@ -1690,7 +1713,7 @@ color:#000;
 .aon-dropDownMenu-disabledItem{ 		
   }
  .aon-menuItem-styleClass{
- 	 background-color:#f2f2f2; 	 
+ 	 background-color: #f2f2f2; 	 
  }
  .aon-menuItem-iconClass{
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;

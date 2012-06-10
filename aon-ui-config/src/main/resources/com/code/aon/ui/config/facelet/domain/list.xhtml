@@ -27,13 +27,13 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-			
-				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom" 
+					rendered="#{domainSwitcher.domainCount > domainSwitcherRows}">
 					<aon:div styleClass="aon-panelGrid-search-info">
 						<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
 					</aon:div>
 					<aon:panelGrid columns="1">
-						<aon:inputText id="domainFilter" size="150" value="#{domainSwitcher.filter}">
+						<aon:inputText id="domainFilter" size="80" value="#{domainSwitcher.filter}">
 							<a4j:support 
 								event="onkeyup"
 								reRender="domainSwitcherTableContainer"
@@ -46,28 +46,26 @@
 					</aon:panelGrid>	
 				</aon:div>
 				
-<!-- domainSwitcherData,domainSwitcherDataMessageDataScroller  -->				
-					
-				<aon:div id="domainSwitcherTableContainer">
+				<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
 					<aon:methodParam name="rowSelectorAction" value="index" />
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 						<ui:param name="controller" value="#{domainSwitcher}" />
-						<ui:param name="rows" value="20" />
+						<ui:param name="rows" value="#{domainSwitcherRows}" />
 						<ui:param name="skipFocusFirst" value="true" />
 												
 						<ui:define name="columns">
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
-								<f:facet name="header">
-									<aon:outputLabel value="#{bundle.aon_domain}" />
-								</f:facet>
-								<aon:outputText value="#{to.name}" />
-							</aon:column>
-							
 							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputLabel value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}" />
+							</aon:column>
+			
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+								<f:facet name="header">
+									<aon:outputLabel value="#{bundle.aon_domain}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}" />
 							</aon:column>
 						</ui:define>
 					</ui:decorate>

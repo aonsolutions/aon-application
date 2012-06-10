@@ -25,7 +25,7 @@
 		
 		<ui:define name="logoPanel">
 			<a4j:mediaOutput element="img" cacheable="false"
-				style="width: 100px;" value="#{company.aonFile.key}"
+				style="width: 100px;" value="#{controller.aonFile.key}"
 				rendered="#{controller.aonFile.size > 0}"
 				mimeType="#{controller.aonFile.mimeType}"
 				createContent="#{controller.createCurrentLogoContent}">

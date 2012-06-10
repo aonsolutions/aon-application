@@ -31,6 +31,7 @@ import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -223,6 +224,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}
 	
 	public void initLogo() throws ManagerBeanException {
+		setAonFile(null);
 		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
 		String alias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
@@ -233,6 +235,7 @@ public class EnterpriseController extends RegistryController implements ICompany
 		if (! list.isEmpty() ) {
 			attach = (RegistryAttachment) list.get(0);
 			AonFile f = new AonFile();
+			f.setKey(attach.getId());
 			f.setData(attach.getData());
 			f.setFileName(attach.getDescription());
 			f.setMimeType(attach.getMimeType());
@@ -306,5 +309,17 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public String searchAction() {
 		return isTreeView() ? super.searchAction() + treeTemplateSuffix : super.searchAction();
 	}
+	
+	public void onActivate(ActionEvent event) {
+		Enterprise enterprise = (Enterprise) getTo();
+		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
+		switcher.select(enterprise.getDomain(), null );
+	}
+	
+	public boolean isDomainEnterprise() {
+		DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
+		return (switcher.isParentDomain() && switcher.isDomainManagementAvailable());
+	}
+	
 	
 }

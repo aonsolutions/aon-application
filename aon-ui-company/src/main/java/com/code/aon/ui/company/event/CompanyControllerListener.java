@@ -3,13 +3,17 @@ package com.code.aon.ui.company.event;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -24,6 +28,24 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyControllerListener extends ControllerAdapter {
 
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		try {
+			ICompanyController c = (ICompanyController)event.getController();
+			Company company = (Company) c.getTo();
+
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			company.setName( domain.getDescription() );
+			company.setAlias( StringUtils.upperCase( StringUtils.substringBefore(domain.getName(), ".")) );
+		} catch (ManagerBeanException e) {
+			// Nada, no se inicializan los datos.
+			
+		} 
+		
+	}
+	
+	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {

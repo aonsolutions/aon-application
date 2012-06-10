@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+			
+		
+		<aon:div styleClass="aon-padding-bottom" rendered="#{domainSwitcher.domainCount > domainSwitcherRows}">
+			<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
+			<aon:inputText id="domainFilter" size="80" value="#{domainSwitcher.filter}">
+				<a4j:support 
+					event="onkeyup"
+					reRender="domainSwitcherTableContainer"
+					eventsQueue="domainSwitcherFilterKeyUp"
+					requestDelay="500"
+					ajaxSingle="true"
+					ignoreDupResponses="true"
+					limitToList="true"/>
+			</aon:inputText>
+		</aon:div>
+<!-- 			
+	<aon:div styleClass="aon-panelGrid-search aon-margin-bottom" 
+		rendered="#{domainSwitcher.domainCount > domainSwitcherRows}">
+	</aon:div>
+ -->
+	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
+		<aon:methodParam name="rowSelectorAction" value="start" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+			<ui:param name="controller" value="#{domainSwitcher}" />
+			<ui:param name="rows" value="#{domainSwitcherRows}" />
+			<ui:param name="skipFocusFirst" value="true" />
+			<ui:param name="skipSelectButton" value="true" />
+									
+			<ui:define name="columns">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+<!-- 				
+					<f:facet name="header">
+						<aon:outputLabel value="#{companyBundle.company_enterprise}" />
+					</f:facet>
+ -->
+					<aon:outputText value="#{to.description}" />
+				</aon:column>
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
+
+</ui:composition>

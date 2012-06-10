@@ -1,5 +1,6 @@
 package com.code.aon.aio.controller;
 
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -8,8 +9,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +35,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
@@ -53,7 +53,9 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.GroupwareUtils;
+import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -63,6 +65,8 @@ public class DesktopController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 
 	private static final int UPDATE_CONNECTION_TIMEOUT = 5000;
+
+	private static final String NOTE_CONTROLLER_NAME = "note";
 	
     private ListDataModel recentNoteModel;
     
@@ -94,23 +98,30 @@ public class DesktopController {
             DesktopNoticeSummary summary = new DesktopNoticeSummary(noticeTypes[i]);
             noticeSummaryList.add(summary);
         }
-
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar to = new GregorianCalendar();
         to.set(Calendar.HOUR_OF_DAY, 23);
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
         AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-        String select = "select notice.type, count(*) " +
-                        "from Notice as notice, Alarm as alarm " +
-                        "where notice.id = alarm.sourceId " +
-                        "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
-                        "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
-                        "and alarm.user = " + principal.getUserId() + " " +
-                        "and alarm.alarmDate < '" + formatter.format(to.getTime()) + "' " +
-                        "group by notice.type " +
-                        "order by notice.type";
-        Iterator<?> iterator = this.createQuery(select).iterator();
+        String select = "select notice.type, count(*) " 
+                        +" from Notice as notice, Alarm as alarm " 
+                        +" where notice.id = alarm.sourceId " 
+                        +" and " + DomainManager.getSQLWhereClause("alarm.domain")  
+                        +" and alarm.source = :source "  
+                        +" and alarm.status = :status "  
+                        +" and alarm.user = :user "   
+                        +" and alarm.alarmDate < :alarmDate "
+                        +" group by notice.type " 
+                        +" order by notice.type";
+        
+    	String name = HibernateUtil.getSessionFactoryName();
+        Session session = HibernateUtil.getSession(name);
+        Query query = session.createQuery(select);
+        query.setInteger("source", AlarmSource.NOTICE.ordinal());
+        query.setInteger("status", AlarmStatus.PENDING.ordinal());
+        query.setInteger("user", principal.getUserId());
+        query.setDate("alarmDate", to.getTime());
+        Iterator<?> iterator = query.list().iterator();
         while (iterator.hasNext()) {
             Object[] obj = (Object[])iterator.next();
             NoticeType noticeType = (NoticeType)obj[0];
@@ -124,13 +135,6 @@ public class DesktopController {
 
 	public List<DesktopNoticeSummary> getNoticeSummaryModel() {
         return noticeSummaryList;
-    }
-
-    private List<?> createQuery(String select) {
-    	String name = HibernateUtil.getSessionFactoryName();
-        Session session = HibernateUtil.getSession(name);
-        Query query = session.createQuery(select);
-        return query.list();
     }
 
     private void updateRecentNoteModel() throws ManagerBeanException {
@@ -305,6 +309,20 @@ public class DesktopController {
     	return this.taskSummaryModel;
     }
 
+    public void onSelectNote(ActionEvent event) throws ManagerBeanException{
+        NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
+        Note note = (Note)recentNoteModel.getRowData();
+        Criteria criteria = new Criteria();
+        try {
+            criteria.addEqualExpression(noteController.getFieldName(IEntityAlias.NOTE_ID), note.getId());
+            noteController.setCriteria(criteria);
+            noteController.onSearch(null);
+            noteController.getModel().setRowIndex(0);
+            noteController.onSelect(null);
+        } catch (ManagerBeanException e) {
+            throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
+        }
+    }
 	public boolean isHideHeaderContent() {
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		boolean hide = companyController.isHideHeaderContent();

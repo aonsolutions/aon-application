@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
@@ -86,12 +88,22 @@ public class UserUtils {
 	public List<Scope> getCurrentUserScopes() {
 		List<Scope> scopes = new LinkedList<Scope>();
 		try {
-			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
-			criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
-			for (ITransferObject ito : userScopeBean.getList(criteria)) {
-				scopes.add(((UserScope)ito).getScope());
+			// Si el usuario pertenece a un dominio padre, pero el dominio activo es hijo,
+			// se habilitan todos los scopes del hijo.
+			if (DomainManager.isParentDomainUserInChildDomain()) {
+				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+				Criteria criteria = new Criteria();
+				for (ITransferObject ito : scopeBean.getList(criteria)) {
+					scopes.add((Scope) ito);
+				}
+			} else {
+				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
+				criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
+				for (ITransferObject ito : userScopeBean.getList(criteria)) {
+					scopes.add(((UserScope)ito).getScope());
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
@@ -113,6 +125,35 @@ public class UserUtils {
 			criteria.addExpression(scopeExpression);
 		}
 	}	
+
+	
+	public Expression getNullableScopeExpression( String resolvedAlias ) throws ManagerBeanException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
+		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
+		if (user != null) {
+			List<Scope> list = getCurrentUserScopes();
+			if (! list.isEmpty() ) {
+				String ljAlias = getLeftJoinAlias(resolvedAlias);
+				for( ITransferObject to : list ) {
+					Scope scope = (Scope) to;
+					Expression scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, scope.getId());
+					exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
+				}
+			}
+		}
+		return exp;
+	}
+	
+	private String getLeftJoinAlias( String alias ) {
+		String ljAlias = alias;
+		int index = StringUtils.lastIndexOf(alias, '.');
+		if ( index != -1 ) {
+			ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
+		}
+		return ljAlias;
+	}
+
 
 	public boolean isPasswordExpired() {
 		if ( passwordExpired == null ) {

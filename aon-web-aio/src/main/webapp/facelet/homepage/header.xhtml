@@ -30,17 +30,18 @@
 			 				<aon:commandLink id="DomainSwitch" 
 								title="#{configBundle.config_domain_module}"
 								value="#{configBundle.config_domain_module}"
-								styleClass="aon-header-domain"
-								style="text-decoration: underline;"
+								styleClass="aon-header-domain-blue"
+								style="color: #0066FF;"
 								actionListener="#{domainSwitcher.onEditSearch}"					
 								action="domain_list" />
 						</aon:panelGroup>
 					</c:if>
 					<aon:panelGroup>
-						<h:outputLink id="logout" styleClass="aon-header-logout"
-							style="text-decoration: underline;"
+						<h:outputLink id="logout" styleClass="aon-header-logout-blue"
+							title="#{securityBundle.aon_login_user_logout}"
 							value="http://login.aonsolutions.es/">
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}">
+							<aon:outputText value="#{securityBundle.aon_login_user_logout}"
+								style="color: #0066FF;">
 								<a4j:support event="onclick"
 									onsubmit="disableRFAjax()"
 									ajaxSingle="true" immediate="true" bypassUpdates="true"
@@ -59,7 +60,6 @@
 						<c:if test="#{loggedUser.logged}">		
 							<aon:div styleClass="aon-padding-right" layout="inline">
 								<aon:outputText value="#{loggedUser.loggedUserName}"
-									style="border-left:1px solid; border-right:1px solid;"
 									styleClass="aon-padding-left aon-padding-right" />
 							</aon:div>
 							<aon:outputText value="#{loggedUser.companyName}" />

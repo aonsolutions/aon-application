@@ -51,9 +51,10 @@ public class ActionDeniedController implements IAuditConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
+	private final static String ENTERPRISE_CATEGORY = "enterprise";
 	private final static String UTILITIES_CATEGORY = "utilities";
 	
-	private final static String[] SKIP_CATEGORIES = new String[]{UTILITIES_CATEGORY};
+	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY,UTILITIES_CATEGORY};
 	
 	private Map<String,ApplicationOption> deniedActionsMap;
 	

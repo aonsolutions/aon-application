@@ -221,10 +221,6 @@
 			<value>corporateIdentityAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
-		</managed-property>
-		<managed-property>
 			<property-name>type</property-name>
 			<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
 		</managed-property>
@@ -235,6 +231,10 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>

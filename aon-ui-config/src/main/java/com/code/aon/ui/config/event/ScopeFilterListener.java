@@ -8,6 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.ql.Criteria;
@@ -34,21 +35,23 @@ public class ScopeFilterListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			Expression exp = getExpression( event.getController().getFieldName(this.aliasName) );
-			event.getController().getCriteria().addExpression(exp);
+			if (!DomainManager.isParentDomainUserInChildDomain()) {
+				Expression exp = getExpression( event.getController().getFieldName(this.aliasName) );
+				event.getController().getCriteria().addExpression(exp);
+			} 
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error adding scopeFilter",e);
 		}
 	}
 
-	private static List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
+	private List<ITransferObject> obtainUserScopeList(User user) throws ManagerBeanException {
 		IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), user.getId());
 		return userScopeBean.getList(criteria);
 	}
 	
-	private static String getLeftJoinAlias( String alias ) {
+	private String getLeftJoinAlias( String alias ) {
 		String ljAlias = alias;
 		int index = StringUtils.lastIndexOf(alias, '.');
 		if ( index != -1 ) {
@@ -57,7 +60,7 @@ public class ScopeFilterListener extends ControllerAdapter {
 		return ljAlias;
 	}
 	
-	public static Expression getExpression( String resolvedAlias ) throws ManagerBeanException {
+	private Expression getExpression( String resolvedAlias ) throws ManagerBeanException {
 		User user = UserUtils.getInstance().getLoggedUser();
 		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
 		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);

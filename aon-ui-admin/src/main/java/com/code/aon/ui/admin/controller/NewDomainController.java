@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -209,11 +210,13 @@ public class NewDomainController {
 			buf.append(EQUALS);
 			buf.append(getDomainFinalName());
 
-			buf.append(DOMAIN_DESCRIPTION);
-			buf.append(EQUALS);
-			buf.append('"');
-			buf.append(getDomainDescription());
-			buf.append('"');
+			if (StringUtils.isNotBlank(getDomainDescription())) {
+				buf.append(DOMAIN_DESCRIPTION);
+				buf.append(EQUALS);
+				buf.append('\'');
+				buf.append(getDomainDescription());
+				buf.append('\'');
+			}
 			
 			if (!isLoadDefaultValuesEnabled()) {
 				buf.append(LOAD_DEFAULTS_FROM_PARENT);
@@ -247,6 +250,7 @@ public class NewDomainController {
 			if (exitVal == 0) {
 				success = true;
 				
+				onConfigure(event);
 				// TODO
 				// Ñapa para modificar la descripcion del dominio recien creado
 				// Al llamar al script python se corta por el primer espacio
@@ -257,13 +261,6 @@ public class NewDomainController {
 				//
 				
 				String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-				String q = "UPDATE domain SET description=:description"
-						+ " WHERE name = :name"
-						+ " AND active = 1";
-				SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-				query.setString("description", getDomainDescription());
-				query.setString("name", getDomainFinalName());
-				query.executeUpdate();
 				// fin
 				
 			} else {
@@ -278,16 +275,33 @@ public class NewDomainController {
 	
 	public void onConfigure(ActionEvent event) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.id FROM domain d"
+		String q = "SELECT d.id,d.description FROM domain d"
 				+ " WHERE d.name = '" + getDomainFinalName() + "'"
 				+ " AND d.active = 1";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
 		List<?> queryList = query
 				.addScalar("id", Hibernate.INTEGER)
+				.addScalar("description", Hibernate.STRING)
 				.list();
 		Iterator<?> iterator = queryList.iterator();
 		if (iterator.hasNext()) {
-			Integer id = (Integer) iterator.next();
+			Object[] array = (Object[]) iterator.next(); 
+			Integer id = (Integer) array[0];
+			String description = (String) array[1];
+			
+			// Nos aseguramos de que la descripción este correctamente grabada.
+			if (!StringUtils.equals(description, getDomainDescription())) {
+				Session session = HibernateUtil.getSession(sessionFactoryName); 
+				org.hibernate.Transaction tx = session.beginTransaction();
+				q = "UPDATE domain SET description=:description"
+						+ " WHERE id = :id"
+						+ " AND active = 1";
+				query = session.createSQLQuery(q);
+				query.setString("description", getDomainDescription());
+				query.setInteger("id", id);
+				query.executeUpdate();
+				tx.commit();
+			}
 			DomainSwitcher switcher = (DomainSwitcher) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_SWITCHER_CONTROLLER_NAME);
 			switcher.select(id, getDomainDescription() );
 		}

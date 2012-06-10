@@ -89,6 +89,11 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>start</from-outcome>
+			<to-view-id>/</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>index</from-outcome>
 			<to-view-id>/home.xhtml</to-view-id>
 		</navigation-case>

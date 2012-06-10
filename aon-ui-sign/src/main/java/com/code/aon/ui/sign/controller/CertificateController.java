@@ -32,11 +32,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.event.ScopeFilterListener;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -260,7 +261,10 @@ public class CertificateController {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), id);
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.DIGITAL_CERTIFICATE);
 		String scopeAlias = bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SCOPE_ID);
-		criteria.addExpression( ScopeFilterListener.getExpression(scopeAlias) );
+		Expression exp = UserUtils.getInstance().getNullableScopeExpression(scopeAlias);
+		if  (exp != null) {
+			criteria.addExpression(exp);	
+		}
 		return criteria;
 	}
 	

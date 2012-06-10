@@ -12,7 +12,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.AbstractDomainSwitcher;
 import com.code.aon.common.domain.DomainEvent;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Domain;
@@ -114,29 +114,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}
 	
 	public boolean isChildDomain() {
-		return !ObjectUtils.equals(domainId, parentDomain);
+		return !isParentDomain();
 	}
 	
-	public boolean isDomainCreationAvailable() {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
-		String q = "SELECT d.parent,d.domainManagement FROM domain d"
-				+ " WHERE d.id = " + domainId
-				+ " AND d.active = 1";
-		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		List<?> queryList = query
-				.addScalar("parent", Hibernate.INTEGER)
-				.addScalar("domainManagement", Hibernate.BOOLEAN)
-				.list();
-		Iterator<?> iterator = queryList.iterator();
-		if (iterator.hasNext()) {
-			Object[] arr = (Object[]) iterator.next();
-			Integer parent = (Integer) arr[0]; 
-			Boolean management = (Boolean) arr[1];
-			if (parent == null && management) {
-				return true;
-			}
-		}
-		return false;
+	public boolean isParentDomainUserInChildDomain() {
+		return DomainManager.isParentDomainUserInChildDomain();
 	}
 
 	public DataModel getModel() {
@@ -169,13 +151,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 			String q = "SELECT d FROM Domain d"
 					+ " WHERE (d.parent = " + getParentDomain() 
 					+ " OR d.id = " + getParentDomain() + ")"
-					+ " AND d.active = 1";
+					+ " AND d.active = 1"
+					+ " ORDER BY d.description";
 			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
 			List<?> queryList = query.list();
 			Iterator<?> iterator = queryList.iterator();
 			while (iterator.hasNext()) {
 				Domain dom = (Domain) iterator.next();
-				domains.add(dom);
+				int idActive = getDomainId();
+				int idRead = dom.getId(); 
+				if (idActive  != idRead) {
+					domains.add(dom);	
+				}
 			}
 		} 
 		setModel(new ListDataModel(domains));
@@ -209,6 +196,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		select(domain.getId(), domain.getDescription());
 	}
 
+	public void onParentDomain(ActionEvent event){
+		select(getParentDomain(), null);
+	}
+
 	public void select(Integer id, String name){
 		super.setDomainId(id);
 		setDomainName(name);
@@ -223,6 +214,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 				LOGGER.info("Element removed from session: [ key: {}, value class: {} ]", key, className);
 			}
 		}
+		this.onEditSearch(null);
 		System.gc();
 	}
 

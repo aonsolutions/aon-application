@@ -30,7 +30,6 @@
 										action="task_list"
 										actionListener="#{task.onLaunch}">
 										<aon:outputText value="#{bundle.aon_tasks}" 
-											style="cursor: default;" 
 											styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
 									</aon:commandLink>
 								</aon:div>
@@ -116,6 +115,35 @@
 								</aon:dataTable>
 							</aon:div>
 						</aon:div>
+
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">
+								<aon:div styleClass="aon-portlet-title-buttons">
+									<aon:commandLink id="desktopFavoriteReset" actionListener="#{favorite.onReset}" action="favorite_form">
+ 										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+									</aon:commandLink>
+								</aon:div>
+								<aon:commandLink id="desktopFavoriteSearch" actionListener="#{favorite.onSearch}" action="favorite_list">
+									<aon:outputText value="#{groupwareBundle.aon_favorites}" styleClass="aon-portlet-title-text aon-icon aon-icon-favorite"/>
+								</aon:commandLink>	
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+								<aon:dataTable id="desktopFavoriteList"
+									value="#{favorite.model}" var="to" rows="5"
+									columnClasses="aon-table-portlet-column"
+									rowClasses="aon-table-portlet-row"
+									styleClass="aon-width-170 aon-table-portlet">
+
+									<aon:column>
+										<h:outputLink target="_blank" value="#{to.url}">
+											<aon:outputText value="#{to.description}"/>	
+										</h:outputLink>	
+									</aon:column>			
+
+								</aon:dataTable>
+							</aon:div>
+						</aon:div>
+						
 					</aon:div>
 
 					<aon:div styleClass="aon-width-all">
@@ -124,14 +152,35 @@
 								style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
 								columnClasses="aon-width-50 aon-vertical-align-top
 											,aon-width-auto aon-vertical-align-top">
+											
+								<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+									<h:commandLink action="start" actionListener="#{domainSwitcher.onParentDomain}">
+									
+										<!--
+											a4j:mediaOutput duplicado un poco mas abajo, cuando el link esta deshabilitado 
+										 -->
+										<a4j:mediaOutput
+											mimeType="#{parentDomain.mimeTypeName}"
+											cacheable="false" element="img" 
+											value="aon-parent-logo" 
+											style="height:60px;"
+											createContent="#{parentDomain.createLogoContent}">
+										</a4j:mediaOutput>
+									</h:commandLink>
+								</c:if>
 								
-								<a4j:mediaOutput
-									mimeType="#{parentDomain.mimeTypeName}"
-									cacheable="false" element="img" 
-									value="aon-parent-logo" 
-									style="height:60px;"
-									createContent="#{parentDomain.createLogoContent}">
-								</a4j:mediaOutput>
+								<c:if test="#{!domainSwitcher.parentDomainUserInChildDomain}">
+										<!--
+											a4j:mediaOutput duplicado un poco mas arriba, cuando el link esta habilitado 
+										 -->
+									<a4j:mediaOutput
+										mimeType="#{parentDomain.mimeTypeName}"
+										cacheable="false" element="img" 
+										value="aon-parent-logo" 
+										style="height:60px;"
+										createContent="#{parentDomain.createLogoContent}">
+									</a4j:mediaOutput>
+								</c:if>
 									
 								<h:panelGrid styleClass="aon-padding-left aon-width-all">
 									<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
@@ -140,6 +189,25 @@
 								</h:panelGrid>
 	
 							</h:panelGrid>
+						</c:if>
+
+						<c:if test="#{!domainSwitcher.childDomain and domainSwitcher.domainCount > 0}">
+							<aon:div styleClass="aon-portlet">
+								<aon:div styleClass="aon-portlet-title">
+									<aon:div styleClass="aon-portlet-title-buttons">
+										<aon:commandLink id="newDomainDesktop" actionListener="#{adminNewDomain.onInit}" action="newDomain_form">
+												<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+										</aon:commandLink>
+									</aon:div>
+									<aon:outputText value="#{configBundle.config_domain_module}" styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
+								</aon:div>
+								<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+									<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" >
+										<ui:param name="domainSwitcherRows" value="5" />
+										<aon:methodParam name="rowSelectorAction" default="start" resolve="false" />										
+									</ui:include>
+								</aon:div>
+							</aon:div>
 						</c:if>
 						
 						<aon:componentGroup

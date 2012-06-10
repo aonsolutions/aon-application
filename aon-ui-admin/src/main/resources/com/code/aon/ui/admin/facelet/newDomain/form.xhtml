@@ -17,10 +17,11 @@
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_new_domain}" />
 				<ui:param name="controller" value="#{adminNewDomain}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="newDomainAccept" 
+					<!-- Se utliza un <h:commandButton por la navegacion al action index -->
+					<h:commandButton id="newDomainAccept" 
 						value="#{bundle.aon_accept}" 
 						actionListener="#{adminNewDomain.onSave}"
-						reRender="headerOptionsForm, domainFormContainer" 
+						action="start"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 				</ui:define>
 			</ui:decorate>
@@ -31,53 +32,49 @@
 					styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even aon-width-auto">
 				
-					<aon:outputLabel value="#{securityBundle.aon_security_user_password}" 
-						for="passwd"/>
 					<aon:div>
-						<aon:inputSecret id="passwd" required="true"
-							styleClass="aon-inputText"
-							value="#{adminNewDomain.password}" size="20" maxlength="20" />
-						<aon:outputText value="Por motivos de seguridad, introduzca de nuevo su clave"
-							style="margin-left: 147px;"
-							styleClass="aon-margin-left aon-italic"/>
+						<aon:outputLabel value="#{securityBundle.aon_security_user_password}" for="passwd"/>
+						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
+							<aon:outputText value="#{adminBundle.admin_new_domain_passwd_help}" />
+						</aon:div>
 					</aon:div>
+					<aon:inputSecret id="passwd" required="true" styleClass="aon-inputText"
+						value="#{adminNewDomain.password}" size="20" maxlength="20" />
 					
-					<aon:outputLabel for="Domain_name"
-						value="Nombre del nuevo dominio" />
+					<aon:div>
+						<aon:outputLabel for="Domain_name" value="#{adminBundle.admin_new_domain_name}" />
+						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
+							<aon:outputText value="#{adminBundle.admin_new_domain_name_help}"/>
+						</aon:div>
+					</aon:div>
 					<aon:div id="domainNameContainer">
-						<aon:inputText id="Domain_name" required="true"
-							size="20" maxlength="20" 
+						<aon:inputText id="Domain_name" required="true" size="20" maxlength="20" 
 							value="#{adminNewDomain.domainName}" />
 						<aon:outputText value="#{adminNewDomain.domainSuffix}"
 								styleClass="aon-bold" style="margin-left: 5px;"/>
-						<aon:outputText value="Indique el nombre del dominio mediante el cual se accedera a la aplicacion."
-							style="margin-left: 20px;"
-							styleClass="aon-italic"/>
 					</aon:div>
-
-					<aon:outputLabel for="Domain_description"
-						value="Descripcion del nuevo dominio" />
+ 
 					<aon:div>
-						<aon:inputText id="Domain_description" required="true"
-							size="40" maxlength="64" 
-							value="#{adminNewDomain.domainDescription}" />
-						<aon:outputText value="Indique la descripcion del dominio, normalmente el nombre de la empresa."
-							styleClass="aon-margin-left aon-italic"/>
+						<aon:outputLabel for="Domain_description" value="#{adminBundle.admin_new_domain_description}" />
+						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
+							<aon:outputText value="#{adminBundle.admin_new_domain_description_help}"/>
+						</aon:div>
 					</aon:div>
-					
-					<aon:outputLabel for="Domain_loadDefaults"
-						value="Valores por defecto" />
+					<aon:inputText id="Domain_description" required="true" size="40" maxlength="64" 
+						value="#{adminNewDomain.domainDescription}" />
+ 
 					<aon:div>
-						<aon:selectOneMenu id="Domain_loadDefaults" required="true"
-							 value="#{adminNewDomain.loadDefaultValuesEnabled}">
-							<f:selectItem itemValue="#{true}" itemLabel="Cargar valores del sistema" />
-							<f:selectItem itemValue="#{false}" itemLabel="Cargar valores desde el dominio padre" />
-						</aon:selectOneMenu>
-						<aon:outputText value="Configure la carga de valores por defecto."
-							style="margin-left: 55px;"
-							styleClass="aon-margin-left aon-italic"/>
+						<aon:outputLabel for="Domain_loadDefaults" value="#{adminBundle.admin_new_domain_defaults}" />
+						<aon:div style="padding-left: 10px;" styleClass="aon-italic aon-normal">
+							<aon:outputText value="#{adminBundle.admin_new_domain_defaults_help}"/>
+						</aon:div>
 					</aon:div>
-					
+					<aon:selectOneMenu id="Domain_loadDefaults" required="true"
+						 disabled="true"
+						 value="#{adminNewDomain.loadDefaultValuesEnabled}">
+						<f:selectItem itemValue="#{true}" itemLabel="#{adminBundle.admin_new_domain_defaults_1}" />
+						<f:selectItem itemValue="#{false}" itemLabel="#{adminBundle.admin_new_domain_defaults_2}" />
+					</aon:selectOneMenu>
 				</aon:panelGrid>
 				
 				<aon:div styleClass="aon-margin-top aon-padding aon-text-center aon-width-all" 
@@ -85,7 +82,7 @@
 
 					<!-- Se utliza un <h:commandButton por la navegacion al action index -->
 					<h:commandButton id="configureNewDomain" immediate="true"
-						value="Pulse para configurar el nuevo dominio '#{adminNewDomain.domainDescription}'" 
+						value="{#adminBunlde.admin_new_domain_configure} '#{adminNewDomain.domainDescription}'" 
 						actionListener="#{adminNewDomain.onConfigure}"
 						action="index"
 						styleClass="aon-commandButton aon-icon-commandButton aon-icon-config aon-bold">
