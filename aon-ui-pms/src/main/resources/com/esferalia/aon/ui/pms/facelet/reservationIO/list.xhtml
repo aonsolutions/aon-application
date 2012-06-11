@@ -39,6 +39,38 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
+				<aon:panel>
+					<aon:panelGrid columns="4" 
+						columnClasses="aon-panelGrid-even aon-noborder, 
+						aon-panelGrid-even aon-noborder">
+				
+						<aon:outputText value="#{pmsBundle.pms_hotel}:" styleClass="aon-bold" />
+						<aon:outputText 
+							value="#{(reservationIO.hotel!=null)?(reservationIO.hotel.workPlace.description):('-')}"/>
+						
+						<aon:div>
+							<aon:outputText rendered="#{reservationIO.checkin}" 
+								value="#{pmsBundle.pms_checkIn}:" styleClass="aon-bold" />
+							<aon:outputText rendered="#{!reservationIO.checkin}" 
+								value="#{pmsBundle.pms_checkOut}:" styleClass="aon-bold" />
+						</aon:div>
+						<aon:div>
+							<aon:outputText value="#{bundle.aon_date_from}" styleClass="aon-italic" />
+							<aon:outputText value="#{reservationIO.fromDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText value="#{bundle.aon_date_to}" styleClass="aon-italic aon-margin-left" />
+							<aon:outputText value="#{reservationIO.toDate}" styleClass="aon-margin-left">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+
+					</aon:panelGrid>
+				
+				</aon:panel>
+			
 				<aon:dataTable id="reservationIOData" value="#{reservationIO.model}" sortMode="multi"
 					var="to" rows="20" rendered="#{reservationIO.model.rowCount > 0}">
 					
