@@ -29,6 +29,8 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_CATEGORY = "registry_category";
 	
+	String INVALID_EMAIL = "registry_invalid_email";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
