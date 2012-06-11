@@ -551,9 +551,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	private void nextActionTarget( boolean includeCurrentTarget ) throws ManagerBeanException {
-		List<ActionTarget> targets = getActionTargets(true, includeCurrentTarget);
-		if (! targets.isEmpty() ) {
-			setActionTarget( targets.get(0) );
+		ActionTarget target = getNextActionTarget(includeCurrentTarget);
+		if ( target != null ) {
+			setActionTarget( target );
 			setTarget( getActionTarget().getTarget() );
 			initTarget(this.target);
 			blockActionTarget();
@@ -581,7 +581,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 	}
 
-	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget ) throws ManagerBeanException {
+	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget, boolean onlyPending ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
 		criteria.addOrder( id );
@@ -599,28 +599,42 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
 		String status = bean.getFieldName(IEntityAlias.ACTION_TARGET_STATUS);
-		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
-		criteria.addExpression(expression1);
-		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
-		criteria.addExpression(expression2);
+		if ( onlyPending ) {
+			criteria.addEqualExpression(status, ActionTargetStatus.PENDING);
+		} else {
+			Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
+			criteria.addExpression(expression1);
+			Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
+			criteria.addExpression(expression2);
+		}
 		return criteria;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<ActionTarget> getActionTargets( boolean onlyFirst, boolean includeCurrentTarget ) throws ManagerBeanException {
+	private ActionTarget getNextActionTarget( boolean includeCurrentTarget ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = getPendingTargetsCriteria(bean, false, includeCurrentTarget);
-		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
-		return list;
+		Criteria criteria = getPendingTargetsCriteria(bean, false, includeCurrentTarget, true);
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (ActionTarget) list.get(0);
+		}
+		criteria = getPendingTargetsCriteria(bean, false, includeCurrentTarget, false);
+		list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (ActionTarget) list.get(0);
+		}
+		return null;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<ActionTarget> getActionTargets() throws ManagerBeanException {
-		return getActionTargets(false, false);
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = getPendingTargetsCriteria(bean, false, false, false);
+		return (List) bean.getList(criteria);
 	}
 	
 	private void refreshPendingTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = getPendingTargetsCriteria(bean, true, false);
+		Criteria criteria = getPendingTargetsCriteria(bean, true, false, false);
 		setPendingTargets(bean.getCount(criteria));
 	}
 	
