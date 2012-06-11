@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>7.0-SNAPSHOT</version>
+		<version>6.72</version>
 		<relativePath>../aon-web-parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-ws-gps</artifactId>
 	<packaging>war</packaging>
-	<version>7.0-SNAPSHOT</version>
+	<version>6.72</version>
 	<description>AON WS GPS</description>
 	<name>AON WS GPS</name>
 	<properties>
