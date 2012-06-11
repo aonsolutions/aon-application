@@ -17,7 +17,7 @@ public class SalesEmailUtil extends CompanyEmailUtil implements ISalesMessages {
 	private static final String REPORT_KEY = "sales";
 
 	public void initMessageController( MessageController messageController, Sales sales ) throws ManagerBeanException, IOException, ReportException {
-		String[] emails = getEmails( sales.getCustomer().getRegistry() );
+		String[] emails = getAdministrativeEmails( sales.getCustomer().getRegistry() );
 		initMessageController(messageController, emails, getEmailBody(sales));
 		messageController.setSubject( getEmailSubject(sales) );
 		messageController.addAttachment( getReport(sales, REPORT_KEY) );

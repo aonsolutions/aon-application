@@ -48,7 +48,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 	}		
 	
 	public void initMessageController( MessageController messageController, Invoice invoice, IAttachment attach, boolean facturae ) throws ManagerBeanException, IOException{
-		String[] emails = getEmails(invoice.getRegistry());
+		String[] emails = getAdministrativeEmails(invoice.getRegistry());
 		initMessageController(messageController, emails, getEmailBody(invoice));
 		messageController.setSubject( getEmailSubject(invoice) );
 		messageController.addAttachment( getInvoiceFile(attach, invoice) );
@@ -123,7 +123,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		AonFile file = null;
 		AonFile xml = null;
 		try {
-			String[] emails = getEmails(invoice.getRegistry());
+			String[] emails = getAdministrativeEmails(invoice.getRegistry());
 			if ( ArrayUtils.isEmpty(emails) ) {
 				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				

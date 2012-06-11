@@ -129,7 +129,7 @@
 									<ui:define name="afterLookupContent2">
 										<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
 											ajaxSingle="true" reRender="showNewMessageWindow"
-											actionListener="#{communicationCenter.onSendEmail}" value="&#160;"
+											actionListener="#{communicationCenter.onInitEmail}" value="&#160;"
 											styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />							
 									</ui:define>
 								</ui:decorate>															
@@ -168,7 +168,9 @@
 			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
 		</c:if>
 		<c:if test="#{communicationCenter.targetSelected}">
-			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+				<aon:methodParam name="sendActionListener" value="#{communicationCenter.onSendEmail}" type="actionListener" />
+			</ui:include>
 		</c:if>
 	</ui:define>
 </ui:composition>

@@ -96,6 +96,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	private AonMessage parentMessage;
 	
+	private AonMessage sentMessage;
+	
 	private String messageContent;
 	
 	private Long draftMessageUID;
@@ -213,7 +215,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		initNewMessage();
 		parentMessage = message;
 		try {
-			recipientsTo = getReplyToRecipients(message, false); 
+			recipientsTo = getReplyToRecipients(message, true); 
 	       	subject = "Reply: "+message.getSubject();
 	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
@@ -428,20 +430,19 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	
     public void onSend(ActionEvent event) {
     	AonServer server = new AonServer(this.senderMailAccount);
-    	AonMessage aonMessage = null;
     	try {
-	    	aonMessage = compoundMessage(server);
-    		server.sendMessage(aonMessage);
+	    	sentMessage = compoundMessage(server);
+    		server.sendMessage(sentMessage);
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
-			if ( aonMessage != null ) {
-	    		storeMessage(server, aonMessage, true);
+			if ( sentMessage != null ) {
+	    		storeMessage(server, sentMessage, true);
 				refreshDraftFolder();	    		
 			}
 			throw new AbortProcessingException(th);
 		}
     	try {	
-   			storeMessage(server, aonMessage, false);
+   			storeMessage(server, sentMessage, false);
 			if (parentMessage!=null){
 		    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
 		    	parentMessage.getParent().getFolder().expunge();
@@ -582,6 +583,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		updateContent(senderMailAccount);
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
+		sentMessage = null;
 		parentMessage = null;
 		messageContent = null;
 		loadContacts = true;
@@ -1159,6 +1161,10 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void setSkipSignature(boolean skipSignature) {
 		this.skipSignature = skipSignature;
+	}
+
+	public AonMessage getSentMessage() {
+		return sentMessage;
 	}
 	
 }

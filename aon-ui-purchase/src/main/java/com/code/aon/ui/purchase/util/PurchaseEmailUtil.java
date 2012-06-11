@@ -58,7 +58,7 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 		return addresses;
 	}		
 	private String[] getEmails( Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException {
-		List<String> emails = new ArrayList<String>(Arrays.asList(getEmails(purchase.getSupplier().getRegistry())));  
+		List<String> emails = new ArrayList<String>(Arrays.asList(getAdministrativeEmails(purchase.getSupplier().getRegistry())));  
 		for( String e: moreRecipients ) {
 			if(!StringUtils.isEmpty(e)){
 				emails.add(e);

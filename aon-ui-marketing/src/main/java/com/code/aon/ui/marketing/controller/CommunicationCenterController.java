@@ -15,7 +15,11 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.mail.Address;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +64,8 @@ import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CommunicationCenterController implements IMarketingConstants {
@@ -731,7 +737,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 	}
 
-	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
+	public void onInitEmail( ActionEvent event ) throws ManagerBeanException {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
@@ -740,8 +746,49 @@ public class CommunicationCenterController implements IMarketingConstants {
 			TemplateController.initController(controller, getTemplate());	
 		}
 		if ( isTargetSelected() ) {
-			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
+			String[] emails = CompanyEmailUtil.getCommercialEmails(getTarget().getRegistry());
 			CompanyEmailUtil.initMessageController(controller, emails);
+		}
+	}
+	
+	public void onSendEmail( ActionEvent event ) {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onSend(event);
+		AonMessage message = controller.getSentMessage();
+		try {
+			List<Address> addressList = message.getAllRecipients();
+			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
+			if (! ArrayUtils.isEmpty(emails) ) {
+				for( String email : emails ) {
+					try {
+						InternetAddress[] addresses = InternetAddress.parse(email, true);
+						if (! ArrayUtils.isEmpty(addresses) ) { 
+							for( InternetAddress address : addresses ) {
+								addressList.remove(address);
+							}
+						}
+					} catch (AddressException e) {
+						LOGGER.error( "Error decoding email: " + email, e );
+					}
+				}
+			}
+			if (! addressList.isEmpty() ) {
+				IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
+				for( Address address : addressList ) {
+					RegistryMedia rm = new RegistryMedia();
+					rm.setMediaType(MediaType.EMAIL);
+					rm.setRegistry(getActionTarget().getRegistry());
+					rm.setValue(address.toString());
+					rm.setAdministrative(true);
+					rm.setCommercial(true);
+					rm.setTechnical(true);
+					bean.insert(rm);
+				}				
+			}
+		} catch (WebmailException e) {
+			LOGGER.error( "Error getting all recipient addresses", e );
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error getting target addresses", e );
 		}
 	}
 

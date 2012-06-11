@@ -286,7 +286,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	}
 
 	private void setRecipients( MessageController messageController, Enterprise enterprise ) throws ManagerBeanException {
-		String[] emails = CompanyEmailUtil.getEmails(enterprise.getRegistry());			
+		String[] emails = CompanyEmailUtil.getAdministrativeEmails(enterprise.getRegistry());			
 		CompanyEmailUtil.initMessageController(messageController, emails);
 	}
 	

@@ -17,7 +17,7 @@ public class WarehouseEmailUtil extends CompanyEmailUtil implements IWarehouseMe
 	private static final String REPORT_KEY = "delivery";
 
 	public void initMessageController( MessageController messageController, Delivery delivery ) throws ManagerBeanException, IOException, ReportException {
-		String[] emails = getEmails( delivery.getCustomer().getRegistry() );
+		String[] emails = getAdministrativeEmails( delivery.getCustomer().getRegistry() );
 		initMessageController(messageController, emails, getEmailBody(delivery));
 		messageController.setSubject( getEmailSubject(delivery) );
 		messageController.addAttachment( getReport(delivery, REPORT_KEY) );

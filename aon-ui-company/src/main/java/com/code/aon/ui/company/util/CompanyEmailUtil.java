@@ -102,16 +102,32 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		Address from = new InternetAddress( mailAccount.getEmail(), getPersonal(mailAccount) );
 		this.sender = new EmailSender( from, mailAccount );							
 	}
+	
+	public static String[] getAdministrativeEmails( Registry registry ) throws ManagerBeanException {
+		return getEmails(registry, true, false);
+	}
+
+	public static String[] getCommercialEmails( Registry registry ) throws ManagerBeanException {
+		return getEmails(registry, false, true);
+	}
 
 	public static String[] getEmails( Registry registry ) throws ManagerBeanException {
+		return getEmails(registry, false, false);
+	}
+	
+	private static String[] getEmails( Registry registry, boolean administrative, boolean commercial ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
 		String type = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE );
 		criteria.addEqualExpression( type, MediaType.EMAIL );
 		String registryField = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID );
 		criteria.addEqualExpression( registryField, registry.getId() );		
-		String administrative = bean.getFieldName( IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE );
-		criteria.addEqualExpression( administrative, Boolean.TRUE );
+		if ( administrative ) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_ADMINISTRATIVE), Boolean.TRUE);			
+		}
+		if ( commercial ) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_MEDIA_COMMERCIAL), Boolean.TRUE);			
+		}
 		List<ITransferObject> list = bean.getList(criteria);
 		if (! list.isEmpty() ) {
 			String[] emails = new String[list.size()];
