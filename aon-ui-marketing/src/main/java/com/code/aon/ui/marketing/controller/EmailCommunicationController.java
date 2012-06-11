@@ -28,7 +28,6 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.AonServer;
@@ -66,14 +65,11 @@ public class EmailCommunicationController implements IMarketingConstants {
 		return Collections.emptyList();
 	}
 	
-	private boolean sendEmail( List<String> emails ) {
+	private boolean sendEmail( MessageController messageController, AonServer server, List<String> emails ) {
 		boolean result = true;
 		try {
-			MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			String recipientsTo = StringUtils.join(emails, ",");
 			messageController.setRecipientsTo(recipientsTo);
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-	    	AonServer server = webMailController.getServer();
 	    	AonMessage aonMessage = messageController.compoundMessage(server);
 	   		server.sendMessage(aonMessage);
 		} catch ( Throwable th ) {
@@ -92,6 +88,8 @@ public class EmailCommunicationController implements IMarketingConstants {
 		LogPanelController logger = LogPanelController.getInstance();
     	try {
     		CommunicationCenterController ccc = getCommunicationController();
+    		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+    		AonServer server = new AonServer(messageController.getSenderMailAccount());
     		for( ActionTarget actionTarget : ccc.getActionTargets() ) {    		
 				List<String> emails = getEmails(actionTarget.getTarget());
     			String targetName = actionTarget.getTarget().getRegistry().getFullName();
@@ -100,7 +98,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 					String text = AonUtil.getMessage(BUNDLE_NAME, TARGET_WITHOUT_EMAIL);
 					logger.error( MessageFormat.format(text, targetName) );					
 				} else {
-					if ( sendEmail(emails) ) {
+					if ( sendEmail(messageController, server, emails) ) {
 						String text = AonUtil.getMessage(BUNDLE_NAME, IMarketingConstants.TARGET_EMAIL_SENT);
 						logger.info( MessageFormat.format(text, targetName, emails) );											
 						actionTarget.setStatus(ActionTargetStatus.SENT);
