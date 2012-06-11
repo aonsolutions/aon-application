@@ -11,6 +11,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
@@ -62,48 +63,7 @@ public class PmsReportManager {
 		String select = ""
 				+ " ("
 				+ "SELECT W.description,  "
-				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
-					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
-				+ " AS Fecha,"
-				+ " P.name AS Servicio,"
-				+ " P.code,"
-				+ " A.name as Hab,"
-				+ " PRR.adults+PRR.children AS Cantidad,"
-				+ " PR.start_date AS Inicio,"
-				+ " PR.end_date AS Fin,"
-				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest"
-				+ " FROM project_reservation_service_detail AS PRSD" 
-				+ " LEFT JOIN project_reservation_service AS PRS ON PRSD.project_reservation_service=PRS.id" 
-				+ " LEFT JOIN project_reservation AS PR ON PRS.project_reservation=PR.project" 
-				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
-				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project" 
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id" 
-				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity" 
-				+ " LEFT JOIN asset as A ON A.id=AA.asset" 
-				+ " LEFT JOIN room as R ON R.asset=A.id" 
-				+ " LEFT JOIN item AS I ON PRS.item=I.id "
-				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id" 
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id" 
-				+ " LEFT JOIN item_composition AS IC ON I.id=IC.item" 
-				+ " LEFT JOIN item AS I2 ON I2.id=IC.composition_item"
-				+ " LEFT JOIN product AS P ON I2.product=P.id" 
-				+ " LEFT JOIN product AS P2 ON I.product=P2.id "
-				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
-				+ " AND (PRSD.effective_date = AA.date OR AA.date is null)"
-				+ " AND (AA.date BETWEEN :start AND :end OR AA.date is null)"
-				+ " AND (PRSD.project_reservation_room_detail=PRRD.id" 
-				+ " OR (PRSD.project_reservation_room_detail is null OR R.hotel=PR.Hotel))"
-				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
-				+ " AND P.category="+getBoardCategory()+" AND PR.status<>"+getReservationCancelStatus()
-				+ " AND PRG.guest_index = 1 "
-				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
-				+ " )"
-				+ " UNION"
-				+ " ("
-				+ "SELECT W.description, "
-				+ (product!=null?(isBreakfast(product)?" (date(PRSD.effective_date) + INTERVAL 1 DAY)":" PRSD.effective_date"):
-					" IF ((P.code='001' OR P.code='001F'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)")
-				+ " AS Fecha,"
+				+ " (date(PRSD.effective_date) + INTERVAL 1 DAY) AS Fecha,"
 				+ " P.name AS Servicio,"
 				+ " P.code,"
 				+ " A.name as Hab,"
@@ -112,31 +72,141 @@ public class PmsReportManager {
 				+ " PR.end_date AS Fin,"
 				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest"
 				+ " FROM project_reservation_service_detail AS PRSD"
-				+ " LEFT JOIN project_reservation_service AS PRS ON PRSD.project_reservation_service=PRS.id"
-				+ " LEFT JOIN project_reservation AS PR ON PRS.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_service AS PRS ON PRS.id=PRSD.project_reservation_service"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRS.project_reservation"
 				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
 				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
 				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
 				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
 				+ " LEFT JOIN asset as A ON A.id=AA.asset"
 				+ " LEFT JOIN room as R ON R.asset=A.id"
-				+ " LEFT JOIN item AS I ON PRS.item=I.id"
-				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " LEFT JOIN product AS P ON I.product=P.id"
+				+ " LEFT JOIN item AS I ON I.id=PRS.item"
+				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
+				+ " LEFT JOIN workplace AS W ON W.id=H.workplace"
+				+ " LEFT JOIN item_composition AS IC ON IC.item=I.id"
+				+ " LEFT JOIN item AS I2 ON I2.id=IC.composition_item"
+				+ " LEFT JOIN product AS P ON P.id=I2.product"
 				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
-				+ " AND (PRSD.effective_date = AA.date OR AA.date is null)"
-				+ " AND (AA.date BETWEEN :start AND :end OR AA.date is null)"
-				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
-				+ " AND P.composition=0"
-				+ " AND P.category="+getBoardCategory()+" AND PR.status<>"+getReservationCancelStatus()
-				+ " AND PRG.guest_index = 1 "
+				+ " AND (PRSD.effective_date = AA.date OR isnull(AA.date))"
+				+ " AND (AA.date BETWEEN :start AND :end OR isnull(AA.date))"
+				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
+				+ " AND P.category=4 AND PR.status<> 2"
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
-				+ " AND R.hotel=PR.Hotel"
-				+ " AND PRSD.project_reservation_room_detail=PRRD.id"
+				+ " AND P.code in ('001', '001F')"
+				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
+				+ " GROUP BY 1,2,4"
 				+ " )"
-				+ " ORDER BY 1,2,4,5"
+				+ " UNION"
+				+ " ("
+				+ "SELECT W.description, "
+				+ " PRSD.effective_date AS Fecha,"
+				+ " P.name AS Servicio,"
+				+ " P.code,"
+				+ " A.name as Hab,"
+				+ " PRR.adults+PRR.children AS Cantidad,"
+				+ " PR.start_date AS Inicio,"
+				+ " PR.end_date AS Fin,"
+				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest"
+				+ " FROM project_reservation_service_detail AS PRSD"
+				+ " LEFT JOIN project_reservation_service AS PRS ON PRS.id=PRSD.project_reservation_service"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRS.project_reservation"
+				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
+				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
+				+ " LEFT JOIN asset as A ON A.id=AA.asset"
+				+ " LEFT JOIN room as R ON R.asset=A.id"
+				+ " LEFT JOIN item AS I ON I.id=PRS.item"
+				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
+				+ " LEFT JOIN workplace AS W ON W.id=H.workplace"
+				+ " LEFT JOIN item_composition AS IC ON IC.item=I.id"
+				+ " LEFT JOIN item AS I2 ON I2.id=IC.composition_item"
+				+ " LEFT JOIN product AS P ON P.id=I2.product"
+				+ " WHERE PRSD.effective_date BETWEEN (date(:start) + INTERVAL 1 DAY) AND :end"
+				+ " AND (PRSD.effective_date = AA.date OR isnull(AA.date))"
+				+ " AND (AA.date BETWEEN (date(:start) + INTERVAL 1 DAY) AND :end OR isnull(AA.date))"
+				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
+				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
+				+ " AND P.code not in ('001', '001F')"
+				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
+				+ " GROUP BY 1,2,4"
+				+ " )"
+				+ " UNION"
+				+ " ("
+				+ "SELECT W.description, "
+				+ " (date(PRSD.effective_date) + INTERVAL 1 DAY) AS Fecha,"
+				+ " P.name AS Servicio,"
+				+ " P.code,"
+				+ " A.name as Hab,"
+				+ " PRR.adults+PRR.children AS Cantidad,"
+				+ " PR.start_date AS Inicio,"
+				+ " PR.end_date AS Fin,"
+				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest"
+				+ " FROM project_reservation_service_detail AS PRSD"
+				+ " LEFT JOIN project_reservation_service AS PRS ON PRS.id=PRSD.project_reservation_service"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRS.project_reservation"
+				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
+				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
+				+ " LEFT JOIN asset as A ON A.id=AA.asset"
+				+ " LEFT JOIN room as R ON R.asset=A.id"
+				+ " LEFT JOIN item AS I ON I.id=PRS.item"
+				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
+				+ " LEFT JOIN workplace AS W ON W.id=H.workplace"
+				+ " LEFT JOIN product AS P ON P.id=I.product"
+				+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
+				+ " AND (PRSD.effective_date = AA.date OR isnull(AA.date))"
+				+ " AND (AA.date BETWEEN :start AND :end OR isnull(AA.date))"
+				+ " AND P.composition=0"
+				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
+				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
+				+ " AND P.code in ('001', '001F')"
+				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
+				+ " GROUP BY 1,2,4"
+				+ " )"
+				+ " UNION"
+				+ " ("
+				+ "SELECT W.description, "
+				+ " PRSD.effective_date AS Fecha,"
+				+ " P.name AS Servicio,"
+				+ " P.code,"
+				+ " A.name as Hab,"
+				+ " PRR.adults+PRR.children AS Cantidad,"
+				+ " PR.start_date AS Inicio,"
+				+ " PR.end_date AS Fin,"
+				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest"
+				+ " FROM project_reservation_service_detail AS PRSD"
+				+ " LEFT JOIN project_reservation_service AS PRS ON PRS.id=PRSD.project_reservation_service"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRS.project_reservation"
+				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
+				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
+				+ " LEFT JOIN asset as A ON A.id=AA.asset"
+				+ " LEFT JOIN room as R ON R.asset=A.id"
+				+ " LEFT JOIN item AS I ON I.id=PRS.item"
+				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
+				+ " LEFT JOIN workplace AS W ON W.id=H.workplace"
+				+ " LEFT JOIN product AS P ON P.id=I.product"
+				+ " WHERE PRSD.effective_date BETWEEN (date(:start) + INTERVAL 1 DAY) AND :end"
+				+ " AND (PRSD.effective_date = AA.date OR isnull(AA.date))"
+				+ " AND (AA.date BETWEEN (date(:start) + INTERVAL 1 DAY) AND :end OR isnull(AA.date))"
+				+ " AND P.composition=0"
+				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
+				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
+				 
+				+ " AND P.code not in ('001', '001F')"
+				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
+				+ " GROUP BY 1,2,4"
+				+ " )"               
+				               
+				+ " ORDER BY 1,2,4 ;"
 				;
+
 		return select;
 	}
 	
@@ -154,9 +224,18 @@ public class PmsReportManager {
 	 * ************************************
 	 */
 	
-	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, Integer shortOption){
-		String order = " ORDER BY";
+	public String getReservationInOutSQL(ReservationStatus reservationStatus, Hotel hotel, boolean isCheckin, ReservationCheckStatus[] reservationCheckStatus, Integer shortOption){
+		String statusClause = "";
+		for(ReservationCheckStatus status: reservationCheckStatus){
+			if(StringUtils.isEmpty(statusClause)){
+				statusClause += " AND ( pr.check_status = " + status.ordinal();
+			} else {
+				statusClause += " OR pr.check_status = " + status.ordinal();
+			}
+		}
+		statusClause += StringUtils.isEmpty(statusClause)?"":" ) ";
 		
+		String order = " ORDER BY";
 		if(shortOption.equals(SortType.RESERVATION.ordinal())){
 			order += " pr.project";
 		} else if(shortOption.equals(SortType.GUEST.ordinal())){
@@ -180,6 +259,7 @@ public class PmsReportManager {
 				+ " WHERE pr.status <> " + reservationStatus.ordinal()
 				+ ( hotel != null ? " AND pr.hotel = " + hotel.getId():"" )
 				+ " AND pr."+(isCheckin ?"start_date":"end_date")+" BETWEEN :start AND :end"
+				+ statusClause
 				+ " GROUP BY pr.project, prr.id"
 				+ order
 				;
