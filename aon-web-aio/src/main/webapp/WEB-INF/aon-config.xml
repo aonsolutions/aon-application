@@ -94,6 +94,27 @@
 		/>
 	</finance:config>
 
+	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
+		<payroll:payroll
+			showPaymentEditionTab="true"
+			showDeductionEditionTab="true"
+		/>
+		<payroll:salary
+			showEnterpriseColumn="true"
+			showPersonColumn="true"
+			showIssueDateColumn="true"
+		/>
+		<payroll:salaryDraft
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:paymentUpdate
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true"
+		/>
+	</payroll:config>
+
 	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
 		<fiscal:fiscal
 			model347Enabled="true" 

@@ -2560,7 +2560,7 @@
 	<!-- ************ CNO ************** -->
 	<managed-bean>
 		<managed-bean-name>cno</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.config.controller.FiltrableBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2574,7 +2574,11 @@
 			<property-name>beanName</property-name>
 			<value>cno</value>
 		</managed-property>
-	</managed-bean>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNO_title</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
 	<!--  name max length is 32 -->

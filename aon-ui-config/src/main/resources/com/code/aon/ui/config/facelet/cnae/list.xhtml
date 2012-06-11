@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -21,28 +22,48 @@
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
-
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{cnae}" />
-						<ui:param name="skipSelectButton" value="true" />
-						<ui:define name="columns">
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
-								<f:facet name="header">
-									<aon:outputLabel 
-										value="#{bundle.aon_id}" />
-								</f:facet>
-								<aon:outputText value="#{to.code}"  />
-							</aon:column>
+				
+					<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>
+						<aon:panelGrid columns="1">
+							<aon:inputText id="cnaeFilter" size="150" value="#{cnae.filter}">
+								<a4j:support 
+									event="onkeyup"
+									reRender="cnaeTableContainer"
+									eventsQueue="cnaeFilterKeyUp"
+									requestDelay="500"
+									ajaxSingle="true"
+									ignoreDupResponses="true"
+									limitToList="true"/>
+							</aon:inputText>
+						</aon:panelGrid>	
+					</aon:div>
 	
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputLabel 
-										value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.title}" />
-							</aon:column>
-						</ui:define>
-					</ui:decorate>
+					<aon:div id="cnaeTableContainer">
+						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+							<ui:param name="controller" value="#{cnae}" />
+							<ui:param name="skipSelectButton" value="true" />
+							<ui:define name="columns">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{bundle.aon_id}" />
+									</f:facet>
+									<aon:outputText value="#{to.code}"  />
+								</aon:column>
+		
+								<aon:column styleClass="aon-editDataTable-textColumn">
+									<f:facet name="header">
+										<aon:outputLabel 
+											value="#{bundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{to.title}" />
+								</aon:column>
+							</ui:define>
+						</ui:decorate>
+					</aon:div>
 
 				</aon:div>
 			</aon:div>

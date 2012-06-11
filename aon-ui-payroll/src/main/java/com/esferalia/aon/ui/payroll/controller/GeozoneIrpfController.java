@@ -127,7 +127,7 @@ public class GeozoneIrpfController {
 		setSelectedIrpf((GeoIrpf) getIrpfModel().getRowData());
 		try {
 			initializeDescendantsModel();
-			initializeHasndicapModel();
+			initializeHandicapModel();
 		} catch (ManagerBeanException e) {
 			throw new AbortProcessingException("error on onSelectGeozone");
 		}
@@ -162,6 +162,8 @@ public class GeozoneIrpfController {
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfDescendant.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_START_DATE), getPeriodStartDate(irpf.getYear()));
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_END_DATE), getPeriodEndDate(irpf.getYear()));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_DESCENDANT_DESCENDANT));
 		List<ITransferObject> descList = bean.getList(criteria);
@@ -186,11 +188,13 @@ public class GeozoneIrpfController {
 		
 		setDescendantModel(new ListDataModel(list));
 	}
-	private void initializeHasndicapModel() throws ManagerBeanException {
+	private void initializeHandicapModel() throws ManagerBeanException {
 		GeoIrpf irpf = getSelectedIrpf();
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpfHandicap.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_CODE), irpf.getGeozoneCode());
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_START_DATE), getPeriodStartDate(irpf.getYear()));
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_END_DATE), getPeriodEndDate(irpf.getYear()));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT));
 		criteria.addOrder(bean.getFieldName(IEntityAlias.GEOZONE_IRPF_HANDICAP_HANDICAP));
 		List<ITransferObject> handicapList = bean.getList(criteria);
@@ -215,6 +219,20 @@ public class GeozoneIrpfController {
 		setHandicapModel(new ListDataModel(list));
 	}
 	
+	private Object getPeriodEndDate(Integer year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getMaximum(Calendar.DAY_OF_MONTH));
+		return calendar.getTime();
+	}
+	private Object getPeriodStartDate(Integer year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getMinimum(Calendar.DAY_OF_MONTH));
+		return calendar.getTime();
+	}
 	private void completeCriteria(Criteria criteria) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(GeozoneIrpf.class);
 		if(getYear()!=null){
