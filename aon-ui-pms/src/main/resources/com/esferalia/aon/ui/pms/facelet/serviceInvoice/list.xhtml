@@ -24,6 +24,7 @@
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/tab_gridContent.xhtml">
 							<ui:param name="controller" value="#{serviceInvoice}" />
 							<ui:param name="showReservation" value="#{true}" />
+							<ui:param name="skipRectifyButton" value="#{!aonRole.saleOperator}" />
 						</ui:include>
 
 					</ui:define>
