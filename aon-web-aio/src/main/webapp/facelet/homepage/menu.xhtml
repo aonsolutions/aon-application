@@ -64,11 +64,12 @@
 					action="menu_payroll" immediate="true"
 					styleClass="aon-top-menu-item" />
 			</c:if>
-			<aon:commandLink id="document"
-				value="#{bundle.aon_module_document}"
-				action="menu_document" immediate="true"
-				styleClass="aon-top-menu-item" />
 		</c:if>
+		<aon:commandLink id="document"
+			value="#{bundle.aon_module_document}"
+			action="menu_document" immediate="true"
+			styleClass="aon-top-menu-item" />
+
 		<aon:commandLink id="utilities"
 			value="#{bundle.aon_module_configuration}"
 			action="menu_configuration" immediate="true"

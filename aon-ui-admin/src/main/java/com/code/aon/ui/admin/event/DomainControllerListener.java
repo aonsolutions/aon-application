@@ -13,18 +13,6 @@ public class DomainControllerListener extends ControllerAdapter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainControllerListener.class);
 
 	@Override
-	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainController dc = (DomainController) event.getController();
-		try {		
-			dc.updateParentDomains();
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ControllerListenerException( e.getMessage(), e );
-		}		
-	}
-
-	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();

@@ -79,6 +79,15 @@ public class DomainApplicationInfo {
 	public void setApplicationModules(List<DomainModuleInfo> applicationModules) {
 		this.applicationModules = applicationModules;
 	}
+	
+	public DomainModuleInfo getModuleInfo( Module module ) {
+		for( DomainModuleInfo dmi : this.applicationModules ) {
+			if ( dmi.getModule() == module ) {
+				return dmi;
+			}
+		}
+		return null;
+	}
 
 	public void register() throws ManagerBeanException {
 		DomainApplication da = getDomainApplication();

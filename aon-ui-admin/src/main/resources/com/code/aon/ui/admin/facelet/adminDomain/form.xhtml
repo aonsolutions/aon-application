@@ -43,93 +43,68 @@
 							value="#{adminDomain.to.active}" />								
 					</c:if>				
 
-					<c:if test="#{adminDomain.showDomainSubDomainSuffix}" >
+					<c:if test="#{domainSwitcher.domainManagementAvailable}" >
 						<aon:outputLabel for="Domain_subDomainSuffix"
 							value="#{adminBundle.admin_domain_subDomainSuffix}" />
-						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
-							disabled="true" value="#{adminDomain.to.subDomainSuffix}" />
+						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="64"
+							disabled="#{!aonRole.sysAdmin}" value="#{adminDomain.to.subDomainSuffix}" />
 					</c:if>
 
-					<c:if test="#{aonRole.sysAdmin or (adminDomain.to.parent.id != null)}" >
+					<c:if test="#{domainSwitcher.childDomain}" >
 						<aon:outputLabel for="Domain_parentDomain"
 							value="#{adminBundle.admin_domain_parent}" />
-						<c:if test="#{aonRole.sysAdmin}" >								
-							<aon:selectOneMenu id="Domain_parentDomain"
-								value="#{adminDomain.to.parent}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{adminDomain.parentDomains}" />
-							</aon:selectOneMenu>
-						</c:if>								
-						<c:if test="#{!aonRole.sysAdmin}" >	
-							<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
-								value="#{adminDomain.to.parent.name}" />
-						</c:if>
+						<aon:inputText id="Domain_parentDomain" size="60" disabled="true"
+							value="#{adminDomain.to.parent.name}" />
 					</c:if>								
 					
 				</aon:panelGrid>
 								
-				<h:panelGrid columns="2" styleClass="aon-margin-top"
-					columnClasses="aon-vertical-align-top aon-margin-top, aon-padding-left aon-vertical-align-top aon-margin-top">
-					<aon:panelGroup>
-						<aon:div styleClass="aon-form-group-title">
-							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputText value="#{adminBundle.admin_capabilities}"/>
-							</aon:div>
-						</aon:div>
-						<aon:panelGrid columns="2" >
-							<aon:outputLabel for="Domain_maxDefinedUsers"
-								validator="#{adminDomain.numberOfUsersCheck}"
-								value="#{adminBundle.admin_domain_maxDefinedUsers}" />
-							<aon:div>
-								<aon:inputText id="Domain_maxDefinedUsers" required="true"
-									size="10" value="#{adminDomain.to.maxDefinedUsers}" >
-									<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
-								</aon:inputText>
-								<aon:outputText styleClass="aon-margin-left"
-									value="#{domainUser.activeUsersMessage}"/>
-							</aon:div>
-						
-							<aon:outputLabel for="Domain_domainManagement"
-								value="#{adminBundle.admin_domain_domainManagement}" />
-							<aon:selectBooleanCheckbox id="Domain_domainManagement"
-								value="#{adminDomain.to.domainManagement}" />
-	
-							<aon:outputLabel for="Domain_documentManagement"
-								value="#{bundle.aon_module_document}" />
-							<aon:div id="documentalDiv">
-								<aon:selectBooleanCheckbox id="Domain_documentManagement"
-									reRender="documentalDiv"
-									valueChangeListener="#{adminDomain.documentManagementChanged}"
-									value="#{adminDomain.to.documentManagement}" />						
-								<c:if test="#{adminDomain.to.documentManagement}" >
-									<aon:panelGrid columns="2"
-										styleClass="aon-margin-bottom aon-margin-top">
-										<aon:outputLabel for="Domain_maxDocumentSize"
-											value="#{adminBundle.admin_domain_maxDocumentSize}" />
-										<rich:inputNumberSlider id="Domain_maxDocumentSize"
-											value="#{adminDomain.to.maxDocumentSize}"
-											minValue="1" maxValue="16"/>
-											
-										<aon:outputLabel for="Domain_maxTotalDocumentSize"
-											value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
-										<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
-											value="#{adminDomain.to.maxTotalDocumentSize}"
-											minValue="100" maxValue="1500" step="100"/>
-									</aon:panelGrid>							
-								</c:if>								
-							</aon:div>
-						</aon:panelGrid>								
-					</aon:panelGroup>
+				<aon:div styleClass="aon-form-group-title aon-margin-top">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{adminBundle.admin_capabilities}"/>
+					</aon:div>
+				</aon:div>
+				<aon:panelGrid columns="2" >
+					<aon:outputLabel for="Domain_maxDefinedUsers"
+						validator="#{adminDomain.numberOfUsersCheck}"
+						value="#{adminBundle.admin_domain_maxDefinedUsers}" />
+					<aon:div>
+						<aon:inputText id="Domain_maxDefinedUsers" required="true"
+							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
+							<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
+						</aon:inputText>
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{domainUser.activeUsersMessage}"/>
+					</aon:div>
+				
+					<c:if test="#{!domainSwitcher.childDomain}" >
+						<aon:outputLabel for="Domain_domainManagement"
+							value="#{adminBundle.admin_domain_domainManagement}" />
+						<aon:selectBooleanCheckbox id="Domain_domainManagement"
+							value="#{adminDomain.to.domainManagement}" />
+					</c:if>
 
-					<aon:panelGroup>
-						<aon:div styleClass="aon-form-group-title">
-							<aon:div styleClass="aon-form-group-title-internal">
-								<aon:outputText value="#{adminBundle.admin_applications}"/>
-							</aon:div>
-						</aon:div>
-						<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
-					</aon:panelGroup>
-				</h:panelGrid>
+					<aon:outputLabel for="Domain_maxDocumentSize"
+						value="#{adminBundle.admin_domain_maxDocumentSize}" />
+					<rich:inputNumberSlider id="Domain_maxDocumentSize"
+						value="#{adminDomain.to.maxDocumentSize}"
+						minValue="1" maxValue="16" width="300" />
+									
+					<aon:outputLabel for="Domain_maxTotalDocumentSize"
+						value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
+					<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
+						disabled="#{!adminDomain.documental.checked}"
+						value="#{adminDomain.to.maxTotalDocumentSize}"
+						minValue="100" maxValue="1500" step="100" width="300" />
+
+				</aon:panelGrid>								
+
+				<aon:div styleClass="aon-form-group-title aon-margin-top">
+					<aon:div styleClass="aon-form-group-title-internal">
+						<aon:outputText value="#{adminBundle.admin_applications}"/>
+					</aon:div>
+				</aon:div>
+				<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
 				
 				<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
 					<ui:param name="controller" value="#{adminDomain}" />

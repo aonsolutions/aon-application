@@ -20,7 +20,7 @@
 			<aon:dataTable id="applicationsTable" var="appInfo"
 				value="#{adminDomain.applicationInfos}">
 				
-				<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap aon-vertical-align-top" >
+				<aon:column styleClass=" aon-width-200 aon-editDataTable-textColumn aon-vertical-align-top" >
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
@@ -31,14 +31,19 @@
 						value="#{appInfo.description}" />
 				</aon:column>				
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" >
+				<aon:column styleClass="aon-editDataTable-textColumn" >
 					<f:facet name="header">
 						<aon:outputText value="#{adminBundle.admin_modules}" />
 					</f:facet>
 					<a4j:repeat value="#{appInfo.applicationModules}"
 						rendered="#{appInfo.checked}" var="appModule">
 						<aon:div>
-							<aon:selectBooleanCheckbox value="#{appModule.checked}" />								
+							<aon:selectBooleanCheckbox value="#{appModule.checked}" >
+								<a4j:support event="onchange" ajaxSingle="true"
+									rendered="#{appModule.module == 'DOCUMENT'}"
+									actionListener="#{adminDomain.onDocumentalChanged}"
+									reRender="Domain_maxTotalDocumentSize" />
+							</aon:selectBooleanCheckbox>								
 							<aon:outputText styleClass="aon-italic"
 								value="#{appModule.module}" />
 						</aon:div>
