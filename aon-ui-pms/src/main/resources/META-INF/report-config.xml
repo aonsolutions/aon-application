@@ -152,4 +152,18 @@
 		</params>
 	</report>
 
+	<!--  ********* Hotel Guests ********* -->
+	<report id="hotelGuest" description="Hotel Guests Report">
+		<template path="/com/esferalia/aon/ui/pms/report/hotelGuest.jasper" />
+		<collection provider="#{hotelGuest}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{hotelGuest.getHotel}" />
+			<param id="date" value="#{hotelGuest.getDate}" />
+		</params>
+	</report>
+
 </report-config>

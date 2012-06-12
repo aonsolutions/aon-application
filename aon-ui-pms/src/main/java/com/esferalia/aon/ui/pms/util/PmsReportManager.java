@@ -412,6 +412,34 @@ public class PmsReportManager {
 		return select;
 	}
 	
+	public String getHotelGuestsSQL(Hotel hotel) throws ManagerBeanException{
+		String select = ""
+				+ " SELECT W.description, A.name as Hab," 
+				+ " CONCAT(PRG.name,' ',PRG.surname) AS Guest, PRR.adults+PRR.children AS PAX,"
+				+ " CASE WHEN isnull(PRG.document) OR TRIM(PRG.document) = '' THEN '' ELSE CONCAT(PRG.document_country,'-',PRG.document) END AS Documento,"
+				+ " TRIM(PRG.phone) AS Telefono, TRIM(PRG.email) AS Email, "
+				+ " PR.project AS Reserva, PR.start_date AS Inicio, PR.end_date AS Fin"
+				+ " FROM project_reservation as PR"
+				+ " LEFT JOIN project_reservation_guest AS PRG ON PRG.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room AS PRR ON PRR.project_reservation=PR.project"
+				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
+				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
+				+ " LEFT JOIN asset as A ON A.id=AA.asset"
+				+ " LEFT JOIN room as R ON R.asset=A.id"
+				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
+				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
+				+ " WHERE PR.status!=2" 
+//				+ " AND AA.date = CURRENT_DATE()" 
+				+ " AND AA.date = :date" 
+				+ " AND R.Hotel=" + hotel.getId()
+				+ " AND PR.check_status=1"
+				+ " group by PRR.id"
+				+ " order by 1,2,3"
+				;
+		return select;
+	}
+	
+	
 	private String getHotelIds(Hotel hotel) throws ManagerBeanException{
 		String hotelIds = "";
 		if( hotel != null ){
