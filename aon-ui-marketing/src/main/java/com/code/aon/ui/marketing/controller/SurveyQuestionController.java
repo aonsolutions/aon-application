@@ -37,7 +37,6 @@ public class SurveyQuestionController extends BasicController implements IMarket
 		return questions;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshQuestions( SurveyQuestion sq ) throws ManagerBeanException {
 		questions = new LinkedList<SelectItem>();
 		IManagerBean bean = getManagerBean();

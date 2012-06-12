@@ -122,6 +122,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private User user;
 	
+	private int numberOfTargetsInEmail;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
@@ -300,6 +302,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.surveyResponse = null;
 		setActionTarget(null);
 		setPendingTargets(0);
+		setNumberOfTargetsInEmail(1);
 	}
 	
 	public Question getQuestion() {
@@ -590,8 +593,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget, boolean onlyPending ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String id = bean.getFieldName(IEntityAlias.ACTION_TARGET_ID);
-		criteria.addOrder( id );
 		if ( !onlyCount ) {
+			criteria.addOrder( id );
 			Expression exp1 = ExpressionUtilities.getNullExpression("ActionTarget.user");
 			Expression exp2 = ExpressionUtilities.getEqualExpression("ActionTarget.user<id", user.getId());
 			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));		
@@ -634,9 +637,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<ActionTarget> getActionTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = getPendingTargetsCriteria(bean, false, false, false);
+		Criteria criteria = getPendingTargetsCriteria(bean);
 		return (List) bean.getList(criteria);
 	}
+
+	public Criteria getPendingTargetsCriteria( IManagerBean bean ) throws ManagerBeanException {
+		return getPendingTargetsCriteria(bean, true, false, false);
+	}	
 	
 	private void refreshPendingTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
@@ -807,6 +814,14 @@ public class CommunicationCenterController implements IMarketingConstants {
 	public void onTemplateBackActionListener( ActionEvent event ) throws ManagerBeanException {
 		IController controller = FormUtil.getController(MARKETING_TEMPLATE_CONTROLLER_NAME);
 		setTemplate( (Template) controller.getTo() );
+	}
+
+	public int getNumberOfTargetsInEmail() {
+		return numberOfTargetsInEmail;
+	}
+
+	public void setNumberOfTargetsInEmail(int numberOfTargetsInEmail) {
+		this.numberOfTargetsInEmail = numberOfTargetsInEmail;
 	}
 	
 }

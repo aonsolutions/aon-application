@@ -150,7 +150,19 @@
 									</h:panelGrid>
 								</aon:div>
 							</aon:div>
-						</c:if>
+						</c:if>												
+						<c:if test="#{(communicationCenter.action.mediaType  == 'EMAIL') and (communicationCenter.pendingTargets &gt; 0)}" >
+							<aon:outputLabel for="CommunicationCenter_numberOfTargetsInEmail"
+								value="#{marketingBundle.marketing_target_bulk_email}" />
+							<aon:div>
+								<aon:inputText id="CommunicationCenter_numberOfTargetsInEmail"
+									value="#{communicationCenter.numberOfTargetsInEmail}" size="10" >
+									<f:validateLongRange minimum="1" maximum="#{communicationCenter.pendingTargets}" />
+								</aon:inputText>
+								<aon:outputText styleClass="aon-margin-left aon-italic"
+									value="#{marketingBundle.marketing_action_pending_targets}: #{communicationCenter.pendingTargets}" />
+							</aon:div>
+						</c:if>					
 					</c:if>
 
 				</aon:panelGrid>

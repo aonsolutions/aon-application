@@ -42,11 +42,17 @@ public interface IMarketingConstants {
 	
 	String RESPONSE = "marketing_response";
 	
-	String TARGET_WITHOUT_EMAIL = "marketing_target_without_email";
+	String TARGET_WITHOUT_COMMERCIAL_EMAIL = "marketing_target_without_commercial_email";
 	
 	String TARGET_SEND_EMAIL_ERROR = "marketing_target_send_email_error";
 	
 	String TARGET_EMAIL_SENT = "marketing_target_email_sent";
+	
+	String TARGET_INVALID_EMAIL = "marketing_target_invalid_email";
+
+	String TARGET_SEND_BULK_EMAIL_ERROR = "marketing_target_send_bulk_email_error";
+	
+	String TARGET_BULK_EMAIL_SENT = "marketing_target_bulk_email_sent";
 	
 	// ************************************************************
 	// CONFIGURATION
