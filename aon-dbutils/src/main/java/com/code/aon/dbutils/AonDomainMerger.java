@@ -1,12 +1,10 @@
 package com.code.aon.dbutils;
 
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -19,19 +17,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AonDomainMerger {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AonSQLScript.class.getName());
-		
 	private static final String DOMAIN = "domain";
 	private static final String TABLE = "TABLE";
 	private static final String TABLE_NAME = "TABLE_NAME";
@@ -45,6 +37,75 @@ public class AonDomainMerger {
 			
 	private static final List<String> tables = new LinkedList<String>();
 	private static final Stack<String> stack = new Stack<String>();
+	
+	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
+			"bank_statement_link", "source", "source_id"
+			, new Integer[] {2,3}
+			, new String[] {"bank_concept","account"});
+	private static final AonInternalReference APP_PARAM_REFERENCES = new AonInternalReference( 
+			"app_param", "name", "value"
+			, new String[] {
+				 "ACC_DEFAULT_ALLOWANCE_ACC"
+				,"ACC_DEFAULT_CASH_ACC"
+				,"ACC_DEFAULT_CHARGED_RET_ACC"
+				,"ACC_DEFAULT_CHARGED_VAT_ACC"
+				,"ACC_DEFAULT_COMPANY_SOC_INS_ACC"
+				,"ACC_DEFAULT_COMPENSATION_ACC"
+				,"ACC_DEFAULT_DEBT_INTEREST_ACC"
+				,"ACC_DEFAULT_FINAN_EXPENSES_ACC"
+				,"ACC_DEFAULT_INVOICE_SERIES"
+				,"ACC_DEFAULT_PAID_RET_ACC"
+				,"ACC_DEFAULT_PAID_VAT_ACC"
+				,"ACC_DEFAULT_PENDING_SALARY_ACC"
+				,"ACC_DEFAULT_PURCHASE_ACC"
+				,"ACC_DEFAULT_SALARY_ACC"
+				,"ACC_DEFAULT_SALES_ACC"
+				,"ACC_DEFAULT_SOCIAL_INSURANCE_ACC"
+				,"ACC_SALARY_CHARGED_RET_ACC"
+				,"ACC_DEFAULT_PERIOD"
+				,"ACC_DEFAULT_RETENTION_PERCENT"
+				,"ACC_DEFAULT_VAT_PERCENT"}
+			, new String[] {
+				 "account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account"
+				,"account_period"
+				,"tax"
+				,"tax"});
+	
+	private static final AonInternalReference INVOICE_DETAIL_REFERENCES = new AonInternalReference(
+			"invoice_detail", "source", "source_id"
+			, new Integer[] {1,2,3,4,8}
+			, new String[] {"purchase_detail","sales_detail","delivery_detail","income_detail","offer_deetail"});
+	private static final AonInternalReference ALARM_REFERENCES = new AonInternalReference(
+			"alarm", "source", "source_id"
+			, new Integer[] {0,1,3,4}
+			, new String[] {"notice","task","commercial_tracking","mk_action_target"});
+	
+	private static final Map<String,AonInternalReference> INTERNAL_REFERENCES_TABLES = new HashMap<String, AonInternalReference>();
+
+	static {
+		INTERNAL_REFERENCES_TABLES.put("bank_statement_link",BANK_STATEMENT_LINK_REFERENCE);
+		INTERNAL_REFERENCES_TABLES.put("invoice_detail",INVOICE_DETAIL_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put("alarm",ALARM_REFERENCES);
+		INTERNAL_REFERENCES_TABLES.put("app_param",APP_PARAM_REFERENCES);
+	}
+	
+
 	
 	private Map<String,Map<Integer,Integer>> keys;
 	private Connection source;
@@ -61,6 +122,13 @@ public class AonDomainMerger {
 		this.target = target;
 		this.domainName = domainName;
 		keys = new HashMap<String, Map<Integer,Integer>>();
+	}
+
+	private void clean() {
+		keys = null;
+		insertStmt = null;
+		newDomain = null;
+		insert = null;
 	}
 
 	public Connection getSourceConnection() {
@@ -84,11 +152,11 @@ public class AonDomainMerger {
     		
             ResultSet rs = metaData.getTables(null, null, null, null);
             if (!rs.next()) {
-                LOGGER.warn("No existen tablas en la BD origen!");
+            	System.out.println("No existen tablas en la BD origen!");
                 rs.close();
             } else {
             	if (tables.size() == 0) {
-	            	LOGGER.info("Construyendo el orden de inserción!");
+            		System.out.println("Construyendo el orden de inserción!");
 	            	addTable(metaData,DOMAIN);
 	                do {
 	                	String tableName = rs.getString(TABLE_NAME);
@@ -97,52 +165,87 @@ public class AonDomainMerger {
 		                    if (isMergeableTable(tableName,metaData)) {
 		                    	addTable(metaData,tableName);
 		                    } else {
-		                    	System.out.println("Ignorando la tabla --> " +tableName);    	
+		                    	System.out.printf("Ignorando la tabla --> %s \r\n",tableName);    	
 		                    }
 	            		}
 	                } while (rs.next());
 	                rs.close();
-	                LOGGER.info("Hecho!");
+	                System.out.println("Hecho!");
             	}
             }
             getTargetConnection().setAutoCommit(false);
             
             Statement s = getTargetConnection().createStatement();
             s.execute(SET_FOREIGN_KEY_CHECKS_0);
-            LOGGER.info("Claves refereciales deshabilitadas");
-
+            System.out.println("Claves refereciales deshabilitadas");
+            s.close();
+            
             int i = 0;
             for (String table: tables) {
             	i++;
             	System.out.println();
-    			System.out.println( i + ".- Merging table " + table );
+    			System.out.printf( "%d.- Merging table %s\r\n",i,table );
    				merge(metaData,table);	
             }
+
+            // Para resolver el problema de identificadores cruzados.
+            updateBankStatementLink(metaData);
+            // ------------------------------------------------------
             
             String stmt = "UPDATE domain SET description=name,name = ? where id = ?";
             PreparedStatement ps = getTargetConnection().prepareStatement(stmt);
             ps.setString(1, getDomainName());
             ps.setInt(2, newDomain);
             ps.execute();
+            ps.close();
             
             getTargetConnection().commit();
 			System.out.println( "COMMIT!");
+
 		} catch (Throwable e) {
             try {
 				getTargetConnection().rollback();
 				System.out.println( "ROLLBACK!");
 			} catch (SQLException e1) {
 			}
+            e.printStackTrace();
 			throw new AonSQLException(e.getMessage() , e);
 		} finally {
-            
 			try {
 				Statement s = getTargetConnection().createStatement();
 	            s.execute(SET_FOREIGN_KEY_CHECKS_1);
-	            LOGGER.info("Claves refereciales habilitadas");
+	            System.out.println("Claves refereciales habilitadas");
 			} catch (SQLException e) {
 			}
 		}
+	}
+
+	private void updateBankStatementLink(DatabaseMetaData metaData) throws SQLException {
+		Table t = getTable(metaData, "bank_statement_link"); 
+        String stmt = "UPDATE bank_statement_link SET source_id=? where id = ?";
+        PreparedStatement ups = getTargetConnection().prepareStatement(stmt);
+		
+		String sen = "SELECT id,source,source_id from bank_statement_link WHERE source IN (0,1) AND source_id IS NOT NULL AND domain = " + newDomain; 
+		PreparedStatement ts = getTargetConnection().prepareStatement(sen);
+		ResultSet rs = ts.executeQuery();
+		String fkTable = null;
+		while (rs.next()) {
+			Integer id = rs.getInt(1);
+			Integer source = rs.getInt(2);
+			fkTable = source==0?"finance_tracking":"fbatch";	
+			Integer sourceId = rs.getInt(3);
+			sourceId = getReferenceValue(t, sourceId, "source_id", fkTable, false);
+			if (sourceId == null) {
+				ups.setInt(1, -1);	
+			} else {
+				ups.setInt(1, sourceId);	
+			}
+			ups.setInt(2, id);
+			ups.execute();
+		}
+		ups.close();
+		rs.close();
+		ts.close();
 	}
 
 	private boolean isMergeableTable(String tableName, DatabaseMetaData metaData) throws SQLException {
@@ -161,18 +264,24 @@ public class AonDomainMerger {
 
 	private boolean validateVersion() throws SQLException {
 		String sentence = "SELECT version_number FROM db_version"; 
+		
 		PreparedStatement sourceStmnt = getSourceConnection().prepareStatement(sentence);
 		ResultSet sourceRs = sourceStmnt.executeQuery();
 		sourceRs.next();
 		String sourceVersion = sourceRs.getString(1);
 		sourceRs.close();
+		sourceStmnt.close();
+		
 		PreparedStatement targetStmnt = getTargetConnection().prepareStatement(sentence);
 		ResultSet targetRs = targetStmnt.executeQuery();
 		targetRs.next();
 		String targetVersion = targetRs.getString(1);
 		targetRs.close();
-		System.out.println("Source connection version ..: " + sourceVersion);
-		System.out.println("Target connection version ..: " + targetVersion);
+		targetStmnt.close();
+		
+		System.out.printf("Source connection version ..: %s\r\n",sourceVersion);
+		System.out.printf("Target connection version ..: %s\r\n",targetVersion);
+		
 		return StringUtils.equals(sourceVersion, targetVersion);
 	}
 
@@ -184,6 +293,13 @@ public class AonDomainMerger {
 				String fkTable = ekRs.getString(PKTABLE_NAME);
 				if (isMergeableTable(fkTable,metaData)) {
 					addTable(metaData,fkTable);	
+				}
+			}
+			if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
+				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
+					if (isMergeableTable(referencedTable,metaData)) {
+						addTable(metaData,referencedTable);	
+					}
 				}
 			}
 			ekRs.close();
@@ -204,16 +320,17 @@ public class AonDomainMerger {
 			i++;
 			if (i % 100 == 0) {
 				System.out.print(".");
-				if (i % 5000 == 0) {
+				if (i % 10000 == 0) {
 					System.out.println(".");
 				}
 			}
 			insert(metaData,rs,t);
 		}
 		System.out.println(".");
-		System.out.println("\t" + i +" rows inserted!");
+		System.out.printf("\t%d rows inserted!\r\n",i);
 		rs.close();
 		stmt.close();
+		insert.close();
 		if (t.isRecursive()) {
 			updateReferences(metaData,t);
 		}
@@ -236,7 +353,7 @@ public class AonDomainMerger {
 						update.setInt(1, newValue);	
 						update.setInt(2, id);
 						update.execute();
-						System.out.println( " Recursive "  + fkTable + " id " + id + " ---> " + newValue + " updated!");						
+						System.out.printf( " Recursive %s id %d  ---> %d updated!\r\n",fkTable,id,newValue);
 					}
 				}
 				rs.close();
@@ -249,9 +366,6 @@ public class AonDomainMerger {
 	private Integer insert(DatabaseMetaData metaData, ResultSet rs, Table t) throws SQLException {
 		int id = rs.getInt( t.getPkColumn() );
 		Integer newId = null;
-		if ("action_denied".equals(t.getName())) {
-			System.out.println();
-		}
 		boolean notFound = (keys.get(t.getName()).get(id) == null);
 		if (notFound) {
 			for (int x = 0; x < t.getInsertColumns().length; x++) {
@@ -260,30 +374,28 @@ public class AonDomainMerger {
 				if (value != null) {
 					int z = ArrayUtils.indexOf(t.getFkColumns(), column);
 					if (z != -1 ) {
+						Integer valueInteger = getInteger(value);
 						String fkTable = t.getFkTables()[z];
-						if (!fkTable.equals(t.getName())) {
-							Integer newValue = null;
-							if ( isDirectId(fkTable) ) {
-								newValue = (Integer) value; 
-							} else if ( isNoDomainTable(fkTable) ) {
-								newValue = getNoDomainId(fkTable, (Integer) value );
-							} else {
-								Map<Integer,Integer> map = keys.get(fkTable);
-								if (map == null) {
-									throw new IllegalStateException("Mapa no encontrado para la tabla " + fkTable + ".");	
-								}
-								newValue = map.get(value);	
-							}
-							if (newValue == null ) {
-								throw new IllegalStateException("ID no encontrado, tabla=" + fkTable + ", valor=" + value); 
-							} else {
-								if (t.getPkColumn().equals(column)) {
-									keys.get(t.getName()).put((Integer) value, newValue);
+						value = getReferenceValue(t, valueInteger, column, fkTable, true);
+					} else {
+						if (INTERNAL_REFERENCES_TABLES.containsKey(t.getName())) {
+							AonInternalReference air = INTERNAL_REFERENCES_TABLES.get(t.getName());
+							if (air.getColumn().equals(column)) {
+								Object discriminator = rs.getObject(air.getDiscriminatorColumn());
+								String fkTable = getReferencedTable(t.getName() , discriminator, air );
+								if (fkTable != null) {
+									System.out.println(" looking for " + t.getName()+ "." + column + " =" + value + "('"+discriminator+"') on " + fkTable);
+									Integer valueInteger = getInteger(value);
+									value = getReferenceValue(t, valueInteger, column, fkTable, false);
+									if (value == null) {
+										value = -1;	
+									}
+									
 								}
 							}
-							value = newValue;
-						} 
+						}
 					}
+					
 				}
 				insert.setObject((x + 1),value);
 			}
@@ -295,9 +407,9 @@ public class AonDomainMerger {
 					keys.get(t.getName()).put(id, newId);
 					if (DOMAIN.equals(t.getName())) {
 						newDomain = newId; 
-						System.out.println( " **********************" );
-						System.out.println( "NEW DOMAIN ---> " + newDomain );
-						System.out.println( " **********************" );
+						System.out.println( "--------------------------------" );
+						System.out.println( " NEW DOMAIN ---> " + newDomain );
+						System.out.println( "--------------------------------" );
 					}
 				}
 			}
@@ -306,6 +418,57 @@ public class AonDomainMerger {
 		}
 		return newId;
 	}
+	
+	private Integer getInteger(Object value) {
+		Integer valueInteger = null;
+		if (value != null) {
+			if (value instanceof Integer) {
+				valueInteger = (Integer) value;
+			} else if (value instanceof String) {
+				valueInteger = Integer.parseInt((String) value) ;
+			} else {
+				throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer ");
+			}
+		}
+		return valueInteger;
+	}
+
+	private String getReferencedTable(String table, Object discriminator, AonInternalReference air) {
+		int z = ArrayUtils.indexOf(air.getDiscriminators(), discriminator);
+		if (z != -1) {
+			return air.getFkTables()[z];	
+		}
+		return null; 
+	}
+
+	private Integer getReferenceValue(Table t, Integer value, String column, String fkTable, boolean required ) throws SQLException {
+		if (!fkTable.equals(t.getName())) {
+			Integer newValue = null;
+			if ( isDirectId(fkTable) ) {
+				newValue = (Integer) value; 
+			} else if ( isNoDomainTable(fkTable) ) {
+				newValue = getNoDomainId(fkTable, (Integer) value );
+			} else {
+				Map<Integer,Integer> map = keys.get(fkTable);
+				if (map == null) {
+					throw new IllegalStateException("Insertando " + t.getName() + ". Mapa no encontrado para la tabla " + fkTable + ".");	
+				}
+				newValue = map.get(value);
+			}
+			if (newValue == null) {
+				if (required) {
+					throw new IllegalStateException("ID no encontrado, tabla=" + fkTable + ", valor=" + value);	
+				}
+				System.out.println( "WARNING! ID no encontrado para la tabla "+ t.getName()+", fk tabla=" + fkTable + ", valor=" + value); 
+			} 
+			if (t.getPkColumn().equals(column)) {
+				keys.get(t.getName()).put((Integer) value, newValue);
+			}
+			value = newValue;
+		} 
+		return value;
+	}
+
 	private boolean isDirectId(String fkTable) {
 		return fkTable.equals("application")
 				|| fkTable.equals("action");
@@ -336,6 +499,7 @@ public class AonDomainMerger {
 		targetStmnt.close();
 		targetRs.close();
 		System.out.println( " \t Valor de tabla única: " + table + " --> " + id + " code " + code  + " --> " + returnValue); 
+		System.out.printf( " \t Valor de tabla única: %s --> %d  code %s --> %d \r\n",table,id,code,returnValue);
 		return returnValue; 
 	}
 	
@@ -469,11 +633,19 @@ public class AonDomainMerger {
 			return buf.toString();
 		}
 	}
-
-
+	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
-		
+/*
 		Class.forName("org.gjt.mm.mysql.Driver");
+		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/aon-mac-asesores","dbuser","serubd2000");
+		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-inelco-mac-asesores-es","dbuser","serubd2000");
+		String domainName = "test1.esferalia.net";
+		AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
+		merger.execute();
+        source.close();
+        target.close();
+*/        
+        Class.forName("org.gjt.mm.mysql.Driver");
 		
 		String targetURL = args[0];
 		String targetUser = args.length > 1 ? args[1] : "dbuser";
@@ -483,7 +655,7 @@ public class AonDomainMerger {
 		Connection source = null;
 		try {
 			target = DriverManager.getConnection(targetURL,targetUser,targetPassword);
-			
+			int databases = 0;
 			LineNumberReader reader = new LineNumberReader(new InputStreamReader (System.in));
 			String line =  reader.readLine();
 			while ( line != null ) {
@@ -501,6 +673,8 @@ public class AonDomainMerger {
 					source = DriverManager.getConnection(sourceURL,sorceUser,sourcePassword);
 					AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
 					merger.execute();
+					merger.clean();
+					merger = null;
 					
 					System.out.printf("OK.\r\n");
 				}
@@ -512,14 +686,20 @@ public class AonDomainMerger {
 						source.close();
 					
 				}
-
+				++databases;
+				if (databases % 10 == 0) {
+					System.gc();
+				}
 		        line =  reader.readLine();
 			}
 	        target.close();
+	        
+	        System.out.printf("Unidas: %d bases de datos.\r\n", databases );
 		} finally {
 			if ( target != null ) 
 				source.close();
 		}
-		
 	}
+
 }
+
