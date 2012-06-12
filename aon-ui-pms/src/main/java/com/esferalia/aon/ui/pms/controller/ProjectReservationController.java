@@ -459,7 +459,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public boolean isCheckInable() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
-		return (reservation.getStartDate().before(new Date()) && reservation.getEndDate().after(new Date()));
+		return (reservation.getStartDate().before(new Date()) && reservation.getEndDate().after(new Date())) && !isPendingRoomAssignation();
 	}
 
 	public void onCheckIn(ActionEvent event) {
