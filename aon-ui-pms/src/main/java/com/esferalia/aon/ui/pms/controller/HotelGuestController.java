@@ -53,6 +53,7 @@ public class HotelGuestController implements ICollectionProvider {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
+		setHotel(null);
 		setDate(new Date());
 	}
 	
