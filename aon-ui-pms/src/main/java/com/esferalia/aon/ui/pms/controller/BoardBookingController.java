@@ -114,8 +114,8 @@ public class BoardBookingController implements ICollectionProvider {
 		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
-//		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
+//		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
+		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
 
 		Iterator it = query.list().iterator();
@@ -168,12 +168,14 @@ public class BoardBookingController implements ICollectionProvider {
 			}
 		} else {
 			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+			Hotel hotel = null;
 			for(ITransferObject to: collections.getCurrentUserHotelList() ){
-				Hotel hotel = (Hotel) to;
+				hotel = (Hotel) to;
 				fromCal.setTime(getFromDate());
 				toCal.setTime(getToDate());
+				Booking b = null;
 				while(fromCal.before(toCal) || fromCal.equals(toCal)){
-					Booking b = new Booking();
+					b = new Booking();
 					b.setHotel(hotel.getWorkPlace().getDescription());
 					b.setDate(fromCal.getTime());
 					b.setQuantityList(obtainEmptyQuantityList());
