@@ -36,6 +36,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/reservationList.jasper" />
 		<bean key="com.esferalia.aon.pms.ProjectReservation" />
 		<criteria provider="#{reservation}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
