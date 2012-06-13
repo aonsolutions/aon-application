@@ -36,6 +36,12 @@
 										action="reservation_list" actionListener="#{reservation.onLoad}"
 										value="#{pmsBundle.pms_reservation_module}">
 									</aon:commandLink>
+									<c:if test="#{aonRole.admin}">
+										<aon:commandLink id="reservation-search" styleClass="aon-italic"
+											action="reservation_search" actionListener="#{reservation.onEditSearch}"
+											value="&#160;(#{bundle.aon_search})">
+										</aon:commandLink>
+									</c:if>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservationIO" 
