@@ -182,6 +182,20 @@ public abstract class BasicRoleManager {
 	public boolean isTgc() {
 		return isUserInRole(IAonRole.TGC);
 	}
+
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT role, false otherwise.
+	 */
+	public boolean isDocument() {
+		return isDocumentManager() || isUserInRole(IAonRole.DOCUMENT);
+	}
+	
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT_MANANGER role, false otherwise.
+	 */
+	public boolean isDocumentManager() {
+		return this.admin || isUserInRole(IAonRole.DOCUMENT_MANAGER);
+	}
 	
 	/**
 	 * Rendered command.

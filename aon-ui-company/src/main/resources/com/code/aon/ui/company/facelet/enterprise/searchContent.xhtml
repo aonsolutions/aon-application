@@ -30,7 +30,7 @@
 			</aon:panelGrid>
 		</aon:panelCollapsible>
 		
-		<c:if test="#{documentManager.showSearch}">
+		<c:if test="#{aonRole.document}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />

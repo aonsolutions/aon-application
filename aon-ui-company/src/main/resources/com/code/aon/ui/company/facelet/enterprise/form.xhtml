@@ -100,12 +100,10 @@
 							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{documentManager.show}">
-							<aon:panelTab id="documentManagement"
-								label="#{bundle.aon_documents}">
-								<ui:include src="#{documentManager.formTemplate}">
+						<c:if test="#{aonRole.document}">
+							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 									<ui:param name="controller" value="#{enterpriseRAttach}" />
-									<ui:param name="sortColumns" value="#{true}" />
 								</ui:include>								
 							</aon:panelTab>
 						</c:if>						

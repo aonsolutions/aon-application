@@ -140,12 +140,10 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{documentManager.show and creditorRAttach.model.rowCount > 0}">
-							<aon:panelTab id="documentManagement"
-								label="#{bundle.aon_documents}">
-								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+						<c:if test="#{aonRole.document and creditorRAttach.model.rowCount > 0}">
+							<aon:panelTab id="documentManagement" label="#{bundle.aon_documents}">
+								<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 									<ui:param name="controller" value="#{creditorRAttach}" />
-									<ui:param name="sortColumns" value="#{true}" />
 									<ui:param name="removeButtonReRender" value="creditorTab" />
 								</ui:include>								
 							</aon:panelTab>
@@ -178,7 +176,7 @@
 					<ui:param name="modalReRender" value="creditorTab" />
 				</ui:include>
 			</c:if>
-			<c:if test="#{documentManager.show}">
+			<c:if test="#{aonRole.documentManager}">
 				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
 					<ui:param name="controller" value="#{creditor}" />
 					<ui:param name="attachmentController" value="#{creditorRAttach}" />

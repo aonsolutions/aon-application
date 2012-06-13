@@ -188,10 +188,6 @@
 		<managed-bean-name>documentManager</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.DocumentManager</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>formTemplate</property-name>
-			<value>/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml</value>
-		</managed-property>
 	</managed-bean>
 	
 	<!-- **** CORPORATE IDENTITY **** -->

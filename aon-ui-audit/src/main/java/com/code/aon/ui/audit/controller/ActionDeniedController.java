@@ -39,6 +39,7 @@ import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
@@ -353,6 +354,9 @@ public class ActionDeniedController implements IAuditConstants {
 						this.deniedModulesMap.put(category.getAlias(), category);	
 					}					
 				}
+			}
+			if (! this.deniedModulesMap.containsKey(Module.DOCUMENT.getName()) ) {
+				AonUtil.getRoleManager().setUserInRole(IAonRole.DOCUMENT, true);
 			}
 		}
 	}

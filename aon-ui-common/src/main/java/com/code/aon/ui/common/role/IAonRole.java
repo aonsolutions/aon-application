@@ -101,8 +101,18 @@ public enum IAonRole {
 	/**
 	 * Role de acceso a los informes de nominas.
 	 */
-	TGC( "Tgc", "aon_role_tgc" );
+	TGC( "Tgc", "aon_role_tgc" ),
+
+	/**
+	 * Role de acceso a los documentos.
+	 */
+	DOCUMENT( "Document", "aon_module_document" ),
 	
+	/**
+	 * Role de Adminitrador Documental.
+	 */
+	DOCUMENT_MANAGER( "DocumentManager", "aon_role_document_manager" );
+
 	private String name;
 	
 	private String messageKey;
