@@ -81,6 +81,7 @@
 						<aon:outputLabel for="Domain_domainManagement"
 							value="#{adminBundle.admin_domain_domainManagement}" />
 						<aon:selectBooleanCheckbox id="Domain_domainManagement"
+							disabled="#{!aonRole.sysAdmin}"
 							value="#{adminDomain.to.domainManagement}" />
 					</c:if>
 

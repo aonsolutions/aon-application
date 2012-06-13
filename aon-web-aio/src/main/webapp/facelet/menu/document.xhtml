@@ -49,24 +49,38 @@
 										value="#{registryBundle.registry_batch_document}">
 									</aon:commandLink>
 								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="tag" 
-										action="tag_form" immediate="true" 
-										actionListener="#{tag.onCancel}"
-										value="#{registryBundle.registry_tag_module}">
-									</aon:commandLink>		
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="category" 
-										action="category_form" immediate="true"
-										actionListener="#{category.onCancel}" 
-										value="#{registryBundle.registry_category_module}">
-									</aon:commandLink>		
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					
 					</aon:panelGroup>
+					
+					<aon:panelGroup>
+						<c:if test="#{aonRole.documentManager}">													
+							<aon:panelGrid id="group_treasury_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{registryBundle.registry_qualifier_group}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tag" 
+											action="tag_form" immediate="true" 
+											actionListener="#{tag.onCancel}"
+											value="#{registryBundle.registry_tag_module}">
+										</aon:commandLink>		
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="category" 
+											action="category_form" immediate="true"
+											actionListener="#{category.onCancel}" 
+											value="#{registryBundle.registry_category_module}">
+										</aon:commandLink>		
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>					
 
 				</h:panelGrid>
 			</aon:div>

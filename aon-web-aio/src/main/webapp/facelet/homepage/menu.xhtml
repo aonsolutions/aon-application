@@ -18,52 +18,42 @@
 		</c:if>
 
 		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-			<c:if test="#{aonRole.commercialOperator}">
-				<aon:commandLink id="marketing"
-					value="#{bundle.aon_module_marketing}"
-					action="menu_marketing" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="commercial"
-					value="#{bundle.aon_module_commercial}"
-					action="menu_commercial" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
-	
-			<aon:commandLink id="management" value="#{bundle.aon_module_management}" 
-				action="menu_management" 
-				immediate="true" styleClass="aon-top-menu-item"/>
-			<c:if test="#{aonRole.financeOperator}">
-				<aon:commandLink id="treasury"
-					value="#{bundle.aon_module_finance}"
-					action="menu_treasury" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
-			<c:if test="#{aonRole.warehouseOperator}">
-				<aon:commandLink id="warehouse"
-					value="#{bundle.aon_module_warehouse}"
-					action="menu_warehouse" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
-			<c:if test="#{aonRole.config}">
-				<aon:commandLink id="groupware"
-					value="#{bundle.aon_module_groupware}"
-					action="menu_groupware" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
-			<c:if test="#{aonRole.accountingOperator}">
-				<aon:commandLink id="accounting"
-					value="#{bundle.aon_module_accounting}"
-					action="menu_accounting" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="fiscal"
-					value="#{bundle.aon_module_fiscal}"
-					action="menu_fiscal" immediate="true"
-					styleClass="aon-top-menu-item" />
-				<aon:commandLink id="payroll"
-					value="#{bundle.aon_module_payroll}"
-					action="menu_payroll" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
+			<aon:commandLink id="marketing"
+				value="#{bundle.aon_module_marketing}"
+				action="menu_marketing" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="commercial"
+				value="#{bundle.aon_module_commercial}"
+				action="menu_commercial" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="management"
+				value="#{bundle.aon_module_management}" 
+				action="menu_management" immediate="true"
+				styleClass="aon-top-menu-item"/>
+			<aon:commandLink id="treasury"
+				value="#{bundle.aon_module_finance}"
+				action="menu_treasury" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="warehouse"
+				value="#{bundle.aon_module_warehouse}"
+				action="menu_warehouse" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="groupware"
+				value="#{bundle.aon_module_groupware}"
+				action="menu_groupware" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="accounting"
+				value="#{bundle.aon_module_accounting}"
+				action="menu_accounting" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="fiscal"
+				value="#{bundle.aon_module_fiscal}"
+				action="menu_fiscal" immediate="true"
+				styleClass="aon-top-menu-item" />
+			<aon:commandLink id="payroll"
+				value="#{bundle.aon_module_payroll}"
+				action="menu_payroll" immediate="true"
+				styleClass="aon-top-menu-item" />
 		</c:if>
 		<aon:commandLink id="document"
 			value="#{bundle.aon_module_document}"
