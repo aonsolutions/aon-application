@@ -13,30 +13,10 @@ import com.code.aon.marketing.enumeration.QuestionType;
 
 public class MarketingCollectionsController {
 
-	private List<SelectItem> questionTypes;
-	
 	private List<SelectItem> actionMediaTypes;
 	
 	private List<SelectItem> actionTargetStatuses;
 	
-	/**
-	 * Gets the question types.
-	 * 
-	 * @return the question types.
-	 */
-	public List<SelectItem> getQuestionTypes() {
-		if ( questionTypes == null ) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			questionTypes = new LinkedList<SelectItem>();
-			for (QuestionType auditLevel : QuestionType.values()) {
-				String name = auditLevel.getName(locale);
-				SelectItem item = new SelectItem(auditLevel, name);
-				questionTypes.add(item);
-			}
-		}
-		return questionTypes;
-	}	
-
 	/**
 	 * Gets the action media types.
 	 * 

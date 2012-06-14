@@ -937,7 +937,7 @@
 	
 	<table name="question">
 		<column name="question_text" property="text" />
-		<column name="type" type="com.code.aon.marketing.enumeration.QuestionType"/>
+		<column name="type" type="com.code.aon.commercial.enumeration.QuestionType"/>
 		<column name="argument" type="text"/>
 	</table>
 	

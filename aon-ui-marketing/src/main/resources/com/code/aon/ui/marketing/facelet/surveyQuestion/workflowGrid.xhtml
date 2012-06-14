@@ -42,12 +42,12 @@
 										<aon:outputLabel for="SurveyWorkflow_value" value="#{bundle.aon_value}" />
 									</f:facet>
 									<aon:div layout="none" rendered="#{formList and (to.questionValue.id != null)}">
-										<ui:include src="/com/code/aon/ui/marketing/facelet/util/outputValue.xhtml">
+										<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/outputValue.xhtml">
 											<ui:param name="valueHolder" value="#{to.questionValue}" />
 										</ui:include>
 									</aon:div>
 									<aon:div layout="none" rendered="#{formList and (to.questionValue.id == null)}">
-										<ui:include src="/com/code/aon/ui/marketing/facelet/util/outputValue.xhtml">
+										<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/outputValue.xhtml">
 											<ui:param name="valueHolder" value="#{to}" />
 										</ui:include>
 									</aon:div>
@@ -58,7 +58,7 @@
 										</aon:selectOneMenu>
 									</aon:div>
 									<aon:div layout="none" rendered="#{formEdit and (empty surveyQuestion.questionValues)}">
-										<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml">
+										<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml">
 											<ui:param name="inputId" value="SurveyWorkflow_value" />
 											<ui:param name="valueHolder" value="#{controller.to}" />
 										</ui:include>
@@ -72,7 +72,7 @@
 												</aon:selectOneMenu>
 											</c:if>
 											<c:if test="#{empty surveyQuestion.questionValues}">
-												<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml">
+												<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml">
 													<ui:param name="inputId" value="SurveyWorkflow_value-New" />
 													<ui:param name="valueHolder" value="#{controller.to}" />
 												</ui:include>

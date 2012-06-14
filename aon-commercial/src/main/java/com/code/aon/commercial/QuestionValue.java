@@ -1,4 +1,4 @@
-package com.code.aon.marketing;
+package com.code.aon.commercial;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -6,7 +6,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.marketing.enumeration.QuestionType;
+import com.code.aon.commercial.enumeration.QuestionType;
 import com.esferalia.aon.entity.master.QuestionValueDB;
 
 @Entity

@@ -2,10 +2,10 @@ package com.code.aon.ui.marketing.event;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.commercial.Question;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.Question;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;

@@ -4,14 +4,14 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:outputLabel for="TargetProfile_lastUpdate" value="#{marketingBundle.marketing_target_profile_lastUpdate}" />
+	<aon:outputLabel for="TargetProfile_lastUpdate" value="#{commercialBundle.commercial_target_profile_lastUpdate}" />
 	<aon:selectInputDate id="TargetProfile_lastUpdate" value="#{controller.to.lastUpdate}"
 		timeZone="#{timeZoneController.timeZone}"  required="true"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 	
-	<aon:outputLabel for="Question_id" value="#{marketingBundle.marketing_question}" />
-	<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+	<aon:outputLabel for="Question_id" value="#{commercialBundle.commercial_question}" />
+	<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.question}" />
 		<ui:param name="idRequired" value="#{true}" />
 		<ui:param name="skipLabel" value="#{true}" />
@@ -20,10 +20,10 @@
 	</ui:include>
 
 	<aon:outputLabel for="TargetProfile_value-New"
-		value="#{marketingBundle.marketing_response}" />
+		value="#{commercialBundle.commercial_response}" />
 	<aon:div id="TargetProfile_response-New">
 		<aon:div layout="none">
-			<ui:include src="/com/code/aon/ui/marketing/facelet/util/inputValue.xhtml" >
+			<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml" >
 				<ui:param name="inputId" value="TargetProfile_value-New" />
 				<ui:param name="valueHolder" value="#{controller.to}" />
 			</ui:include>

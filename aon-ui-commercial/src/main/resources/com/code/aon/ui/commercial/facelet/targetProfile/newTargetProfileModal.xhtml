@@ -12,12 +12,12 @@
 		<ui:param name="detailId" value="TargetProfile" />
 		<ui:param name="minWidth" value="700" />
 		<ui:param name="minHeight" value="350" />
-		<ui:param name="modalTitle" value="#{marketingBundle.marketing_target_profile}" />
+		<ui:param name="modalTitle" value="#{commercialBundle.commercial_target_profile}" />
 		<ui:param name="showNewDetailWindow" value="#{controller.showNewTargetProfileWindow}" />
 		<ui:param name="detailController" value="#{targetProfileController}" />
 	
 		<ui:define name="content">
-			<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/form_content.xhtml" >
+			<ui:include src="/com/code/aon/ui/commercial/facelet/targetProfile/form_content.xhtml" >
 				<ui:param name="controller" value="#{targetProfileController}" />
 				<ui:param name="questionReRender" value="newTargetProfileModalPanel" />
 			</ui:include>

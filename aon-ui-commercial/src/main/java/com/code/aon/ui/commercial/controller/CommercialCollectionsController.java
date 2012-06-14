@@ -11,13 +11,14 @@ import javax.faces.model.SelectItem;
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Commission;
 import com.code.aon.commercial.enumeration.Advertising;
-import com.code.aon.commercial.enumeration.ProjectSource;
-import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailCommissionStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.commercial.enumeration.ProjectSource;
+import com.code.aon.commercial.enumeration.ProjectStatus;
+import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.commercial.enumeration.TargetItemStatus;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
@@ -59,6 +60,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> activities;
 	
 	private List<SelectItem> offerDetailCommissionStatuses;
+	
+	private List<SelectItem> questionTypes;
 
 	
 	/**
@@ -300,5 +303,23 @@ public class CommercialCollectionsController {
 		}
 		return commissions;
 	}
+
+	/**
+	 * Gets the question types.
+	 * 
+	 * @return the question types.
+	 */
+	public List<SelectItem> getQuestionTypes() {
+		if ( questionTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			questionTypes = new LinkedList<SelectItem>();
+			for (QuestionType auditLevel : QuestionType.values()) {
+				String name = auditLevel.getName(locale);
+				SelectItem item = new SelectItem(auditLevel, name);
+				questionTypes.add(item);
+			}
+		}
+		return questionTypes;
+	}	
 	
 }

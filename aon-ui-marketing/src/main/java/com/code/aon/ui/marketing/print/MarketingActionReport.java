@@ -10,7 +10,6 @@ import static com.code.aon.ui.common.ICommonConstants.STATUS;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.ACTION_EXPORT;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.QUESTION;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.RESPONSE;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.SURVEY;
 
@@ -63,8 +62,8 @@ public class MarketingActionReport {
 				.addColumn(dyn.getIntegerColumn("surveyResponse.survey.id", AonUtil.getMessage(ID)))
 				.addColumn(dyn.getStringColumn("surveyResponse.survey.description", AonUtil.getMessage(IMarketingConstants.BUNDLE_NAME, SURVEY), 400))
 				.addColumn(dyn.getIntegerColumn("question.id", AonUtil.getMessage(ID)))
-				.addColumn(dyn.getStringColumn("question.text", AonUtil.getMessage(IMarketingConstants.BUNDLE_NAME, QUESTION), 400))
-				.addColumn(dyn.getStringColumn("value", AonUtil.getMessage(IMarketingConstants.BUNDLE_NAME, RESPONSE), 100));
+				.addColumn(dyn.getStringColumn("question.text", AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), 400))
+				.addColumn(dyn.getStringColumn("value", AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.RESPONSE), 100));
 			DynaReportManager drm = new DynaReportManager();
 			String fileName = AonUtil.getMessage(BUNDLE_NAME, ACTION_EXPORT, action.getId());
 			drm.toExcel(report, fileName, getCollection(action));

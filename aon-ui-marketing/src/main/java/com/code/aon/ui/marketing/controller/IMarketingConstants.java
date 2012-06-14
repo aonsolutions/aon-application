@@ -22,8 +22,6 @@ public interface IMarketingConstants {
 	
 	String CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME = "campaignActionTarget";
 	
-	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
-	
 	String COMMUNICATION_CENTER_CONTROLLER_NAME = "communicationCenter";
 	
 	String CAMPAIGN_CONTROLLER_NAME = "marketingCampaign";
@@ -35,12 +33,8 @@ public interface IMarketingConstants {
 	// ************************************************************
 
 	String ACTION_EXPORT = "marketing_action_export";
-
-	String QUESTION = "marketing_question";
 	
 	String SURVEY = "marketing_survey";
-	
-	String RESPONSE = "marketing_response";
 	
 	String TARGET_WITHOUT_COMMERCIAL_EMAIL = "marketing_target_without_commercial_email";
 	

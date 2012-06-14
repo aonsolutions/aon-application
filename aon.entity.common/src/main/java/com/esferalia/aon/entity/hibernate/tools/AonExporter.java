@@ -226,9 +226,12 @@ public class AonExporter extends GenericExporter{
 		map.put("OfferDetail","com.code.aon.commercial.OfferDetail");
 		map.put("OfferDetailCommission","com.code.aon.commercial.OfferDetailCommission");
 		map.put("OfferTerm","com.code.aon.commercial.OfferTerm");
-		map.put("ProjectCommercial","com.code.aon.commercial.ProjectCommercial");		
+		map.put("ProjectCommercial","com.code.aon.commercial.ProjectCommercial");
+		map.put("Question","com.code.aon.commercial.Question");
+		map.put("QuestionValue","com.code.aon.commercial.QuestionValue");		
 		map.put("Target","com.code.aon.commercial.Target");
 		map.put("TargetItem","com.code.aon.commercial.TargetItem");
+		map.put("TargetProfile","com.code.aon.commercial.TargetProfile");
 		map.put("TargetSeller","com.code.aon.commercial.TargetSeller");
 		map.put("TargetSupplier","com.code.aon.commercial.TargetSupplier");
 
@@ -339,14 +342,11 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionTarget","com.code.aon.marketing.ActionTarget");
 		map.put("MarketingCampaign","com.code.aon.marketing.MarketingCampaign");
 		map.put("MarketingAction","com.code.aon.marketing.MarketingAction");
-		map.put("Question","com.code.aon.marketing.Question");
-		map.put("QuestionValue","com.code.aon.marketing.QuestionValue");
 		map.put("Survey","com.code.aon.marketing.Survey");
 		map.put("SurveyQuestion","com.code.aon.marketing.SurveyQuestion");
 		map.put("SurveyResponse","com.code.aon.marketing.SurveyResponse");
 		map.put("SurveyResponseDetail","com.code.aon.marketing.SurveyResponseDetail");
 		map.put("SurveyWorkflow","com.code.aon.marketing.SurveyWorkflow");
-		map.put("TargetProfile","com.code.aon.marketing.TargetProfile");
 		map.put("Template","com.code.aon.marketing.Template");
 		
 		//AON-MESSAGING
