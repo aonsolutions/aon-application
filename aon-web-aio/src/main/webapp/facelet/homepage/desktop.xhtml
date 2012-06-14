@@ -56,11 +56,11 @@
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">								
 								<aon:div styleClass="aon-portlet-title-buttons">
-									<aon:commandLink actionListener="#{notice.onReset}" action="notice_form">
+									<aon:commandLink id="notice-reset" actionListener="#{notice.onReset}" action="notice_form">
  										<aon:outputText value="&#160;" styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
-								<aon:commandLink actionListener="#{notice.onSearch}" action="notice_list">
+								<aon:commandLink id="notice-search" actionListener="#{notice.onSearch}" action="notice_list">
 									<aon:outputText value="#{groupwareBundle.aon_notice}" styleClass="aon-portlet-title-text aon-icon aon-icon-alarms"/>
 								</aon:commandLink>
 							</aon:div>
@@ -91,11 +91,11 @@
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
 								<aon:div styleClass="aon-portlet-title-buttons">
-									<aon:commandLink actionListener="#{note.onReset}" action="note_form">
+									<aon:commandLink id="note-reset" actionListener="#{note.onReset}" action="note_form">
  										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
-								<aon:commandLink actionListener="#{note.onSearch}" action="note_list">
+								<aon:commandLink id="note-search" actionListener="#{note.onSearch}" action="note_list">
 									<aon:outputText value="#{groupwareBundle.aon_note}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
 								</aon:commandLink>	
 							</aon:div>
@@ -119,11 +119,11 @@
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
 								<aon:div styleClass="aon-portlet-title-buttons">
-									<aon:commandLink id="desktopFavoriteReset" actionListener="#{favorite.onReset}" action="favorite_form">
+									<aon:commandLink id="favorite-reset" actionListener="#{favorite.onReset}" action="favorite_form">
  										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
-								<aon:commandLink id="desktopFavoriteSearch" actionListener="#{favorite.onSearch}" action="favorite_list">
+								<aon:commandLink id="favorite-search" actionListener="#{favorite.onSearch}" action="favorite_list">
 									<aon:outputText value="#{groupwareBundle.aon_favorites}" styleClass="aon-portlet-title-text aon-icon aon-icon-favorite"/>
 								</aon:commandLink>	
 							</aon:div>

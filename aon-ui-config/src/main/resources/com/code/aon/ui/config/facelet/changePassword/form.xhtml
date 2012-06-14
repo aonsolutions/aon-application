@@ -11,42 +11,48 @@
 	
 	<ui:define name="content">
 		
-		<aon:form id="userForm">
-
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{securityBundle.aon_security_change_password}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_editing}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_accept}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							reRender="passwordChangedWindow"
-							actionListener="#{changePassword.acceptPassword}"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true"
-							action="home"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-
-			<aon:div styleClass="aon-scroll-area">
-				<ui:include src="/com/code/aon/ui/config/facelet/changePassword/formContent.xhtml" />
-			</aon:div>
-
-		</aon:form>
+		<aon:componentGroup
+			family="javax.faces.Command"
+			method="#{aonRole.doNothing}">
 		
-		<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
+			<aon:form id="userForm">
+	
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+	
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{securityBundle.aon_security_change_password}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText value="#{bundle.aon_editing}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="save" value="#{bundle.aon_accept}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								reRender="passwordChangedWindow"
+								actionListener="#{changePassword.acceptPassword}"
+								accesskey="#{bundle.aon_key_save}" />
+							<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"
+								immediate="true"
+								action="home"
+								accesskey="#{bundle.aon_key_cancel}" />
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
+	
+				<aon:div styleClass="aon-scroll-area">
+					<ui:include src="/com/code/aon/ui/config/facelet/changePassword/formContent.xhtml" />
+				</aon:div>
+	
+			</aon:form>
+			
+			<ui:include src="/com/code/aon/ui/config/facelet/changePassword/passwordChanged.xhtml" />
+			
+		</aon:componentGroup>
 
 	</ui:define>
 </ui:composition>
