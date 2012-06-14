@@ -4,10 +4,10 @@ package com.code.aon.ui.marketing.print;
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.commercial.Question;
+import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
-import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ui.util.AonUtil;
 
 public class QuestionValueReport {

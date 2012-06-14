@@ -10,7 +10,6 @@ import static com.code.aon.ui.common.ICommonConstants.STATUS;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.ACTION_EXPORT;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.BUNDLE_NAME;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.RESPONSE;
 import static com.code.aon.ui.marketing.controller.IMarketingConstants.SURVEY;
 
 import java.util.LinkedList;

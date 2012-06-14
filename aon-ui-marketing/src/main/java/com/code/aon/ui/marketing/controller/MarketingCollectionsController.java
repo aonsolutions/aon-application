@@ -9,7 +9,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
-import com.code.aon.marketing.enumeration.QuestionType;
 
 public class MarketingCollectionsController {
 
