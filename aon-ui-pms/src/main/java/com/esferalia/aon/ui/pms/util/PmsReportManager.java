@@ -7,8 +7,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
-import com.code.aon.ui.company.controller.CompanyCollectionsController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
@@ -91,6 +89,7 @@ public class PmsReportManager {
 				+ " AND (AA.date BETWEEN (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY) OR isnull(AA.date))"
 				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
 				+ " AND P.category=4 AND PR.status<> 2"
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND P.code in ('001', '001F')"
 				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
@@ -127,6 +126,7 @@ public class PmsReportManager {
 				+ " AND (AA.date BETWEEN :start AND :end OR isnull(AA.date))"
 				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
 				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND P.code not in ('001', '001F')"
 				+ (product!=null?" AND P.code='"+product.getCode()+"'":"")
@@ -161,6 +161,7 @@ public class PmsReportManager {
 				+ " AND (AA.date BETWEEN (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY) OR isnull(AA.date))"
 				+ " AND P.composition=0"
 				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
 				+ " AND P.code in ('001', '001F')"
@@ -196,6 +197,7 @@ public class PmsReportManager {
 				+ " AND (AA.date BETWEEN :start AND :end OR isnull(AA.date))"
 				+ " AND P.composition=0"
 				+ " AND P.category=4 AND PR.status<>2"
+				+ " AND PRG.guest_index = 1 "
 				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
 				+ " AND ((PRSD.project_reservation_room_detail=PRRD.id AND R.hotel=PR.Hotel) OR isnull(PRSD.project_reservation_room_detail))"
 				+ " AND P.code not in ('001', '001F')"
