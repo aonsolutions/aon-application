@@ -3,7 +3,9 @@ package com.code.aon.ui.admin.controller;
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_EMPLOYEE_APPLICATION;
+import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.EMPLOYEE_PORTAL;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,11 +75,11 @@ public class DomainController extends BasicController {
 	public void initApplicationInfos() throws ManagerBeanException {
 		this.applicationInfos = new LinkedList<DomainApplicationInfo>();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
+		this.aioInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, AON_PLATFORM));
 		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
 		this.employeeInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_EMPLOYEE_APPLICATION);
-		this.employeeInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, IAdminConstants.EMPLOYEE_PORTAL));
+		this.employeeInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, EMPLOYEE_PORTAL));
 		this.applicationInfos.add(this.aioInfo);
-		this.applicationInfos.add(this.employeeInfo);
 	}
 
 	public void saveApplications() throws ManagerBeanException {
@@ -96,6 +98,10 @@ public class DomainController extends BasicController {
 		for( DomainModuleInfo dmi: this.aioInfo.getApplicationModules() ) {
 			dmi.setChecked( ArrayUtils.contains(FISCAL_MODULES, dmi.getModule()) );
 		}
+	}
+	
+	public boolean isShowApplications() {
+		return this.aioInfo.isChecked();
 	}
 	
 }

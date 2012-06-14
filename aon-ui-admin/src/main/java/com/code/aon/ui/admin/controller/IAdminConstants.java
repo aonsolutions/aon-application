@@ -41,6 +41,7 @@ public interface IAdminConstants {
 	String USER_DUPLICATED = "admin_user_duplicated_login";
 	
 	String EMPLOYEE_PORTAL = "admin_employee_portal";
+	String AON_PLATFORM = "admin_aon_plataform";
 	
 	String MAIL_ACCOUNT_ENTERPRISE_TITLE = "admin_mailAccount_enterprise"; 
 	String SIGNATURE_ENTERPRISE_TITLE = "admin_signature_enterprise";

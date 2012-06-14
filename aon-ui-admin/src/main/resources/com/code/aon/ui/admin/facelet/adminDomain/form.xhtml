@@ -100,17 +100,19 @@
 
 				</aon:panelGrid>								
 
-				<aon:div styleClass="aon-form-group-title aon-margin-top">
-					<aon:div styleClass="aon-form-group-title-internal">
-						<aon:outputText value="#{adminBundle.admin_applications}"/>
+				<c:if test="#{adminDomain.showApplications}" >
+					<aon:div styleClass="aon-form-group-title aon-margin-top">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputText value="#{adminBundle.admin_applications}"/>
+						</aon:div>
 					</aon:div>
-				</aon:div>
-				<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
-				
-				<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
-					<ui:param name="controller" value="#{adminDomain}" />
-					<ui:param name="termsOfServiceURL" value="#{adminMain.properties.updateDomainURL}" />
-				</ui:include>
+					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/applications.xhtml" />
+					
+					<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/termsOfService.xhtml" >
+						<ui:param name="controller" value="#{adminDomain}" />
+						<ui:param name="termsOfServiceURL" value="#{adminMain.properties.updateDomainURL}" />
+					</ui:include>
+				</c:if>
 								
 			</aon:div>
 		</aon:form>
