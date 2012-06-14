@@ -153,7 +153,7 @@
 
 						<c:if test="#{aonConfiguration.bean.target.showProfile and targetProfile.model.rowCount > 0}">
 							<aon:panelTab id="targetProfile" label="#{commercialBundle.commercial_target_profile}">
-								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" >
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetProfile/tab_grid.xhtml" >
 									<ui:param name="removeButtonReRender" value="targetTab" />
 								</ui:include>
 							</aon:panelTab>
@@ -243,7 +243,7 @@
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.target.showProfile}">
-				<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/newTargetProfileModal.xhtml">
+				<ui:include src="/com/code/aon/ui/commercial/facelet/targetProfile/newTargetProfileModal.xhtml">
 					<ui:param name="controller" value="#{target}" />
 					<ui:param name="targetProfileController" value="#{targetProfile}" />
 					<ui:param name="modalReRender" value="targetTab" />

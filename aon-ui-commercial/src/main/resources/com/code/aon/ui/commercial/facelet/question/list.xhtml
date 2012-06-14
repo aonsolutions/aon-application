@@ -27,37 +27,9 @@
 					<ui:param name="controller" value="#{question}" />
 					<ui:define name="columns">
 					
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:outputText value="#{to.type}"/>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{commercialBundle.commercial_question}" />
-							</f:facet>
-							<aon:outputText value="#{to.text}">
-								<aon:abbreviateConverter maxWidth="80" />
-							</aon:outputText>
-						</aon:column>
-	
-	 					<aon:column styleClass="aon-editDataTable-iconColumn">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_active}" />
-							</f:facet>
-							<aon:outputText
-								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
-								value="&#160;" />
-						</aon:column>
+						<ui:include
+							src="/com/code/aon/ui/commercial/facelet/question/listContent.xhtml" />					
+
 					</ui:define>
 				</ui:decorate> 
 

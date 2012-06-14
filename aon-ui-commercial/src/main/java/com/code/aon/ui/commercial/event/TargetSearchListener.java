@@ -5,13 +5,16 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.Question;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -30,6 +33,26 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	private CommercialTrackingStatus[] trackingStatuses;
 	
 	private String userName;
+
+	private Question question;
+
+	private String questionText;
+	
+	public Question getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(Question question) {
+		this.question = question;
+	}
+	
+	public String getQuestionText() {
+		return questionText;
+	}
+
+	public void setQuestionText(String questionText) {
+		this.questionText = questionText;
+	}
 		
 	public TargetStatus[] getTargetStatuses() {
 		return targetStatuses;
@@ -83,6 +106,9 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setSeller( (Seller) sellerBean.createNewTo() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
+		setQuestionText(null);
+		IManagerBean questionBean = BeanManager.getManagerBean(Question.class);
+		setQuestion( (Question) questionBean.createNewTo() );		
 		super.init();
 	}
 	
@@ -104,7 +130,20 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
-		
+		if ( (getQuestion() != null) && (getQuestion().getId() != null) ) {
+			criteria.addEqualExpression("Target.profiles.question.id", getQuestion().getId());			
+		}
+		if (! StringUtils.isEmpty(getQuestionText()) ) {
+			Expression expText = ExpressionUtilities.getExpression(getQuestionText(), "Target.profiles.text");
+			Expression expNumber = null;
+			try {
+				expNumber = ExpressionUtilities.getExpression(getQuestionText(), "Target.profiles.number");
+			} catch (ExpressionException ee ) {
+				criteria.addExpression( expText );
+			}
+			criteria.addExpression( ExpressionUtilities.getOrExpression(expText, expNumber) );
+		}
+
 		
 		// ?????????
 		if (! StringUtils.isEmpty(getUserName()) ){					

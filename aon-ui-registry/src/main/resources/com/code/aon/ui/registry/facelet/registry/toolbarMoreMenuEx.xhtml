@@ -90,7 +90,7 @@
 	</c:if>
 	<c:if test="#{showProfileButton}">
 		<aon:menuItem id="profile-button"
-			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(marketingBundle.marketing_target_profile)}"
+			value="#{(profileButtonLabel!=null)?(profileButtonLabel):(commercialBundle.commercial_target_profile)}"
 			iconClass="aon-icon-reservation"
 			reRender="showNewTargetProfileWindow"
 			actionListener="#{targetProfileController.onReset}">

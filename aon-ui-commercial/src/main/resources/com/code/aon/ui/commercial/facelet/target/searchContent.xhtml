@@ -160,23 +160,24 @@
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 					<aon:outputText value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-From" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Target_profiles_lastUpdate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-From"
+						<aon:selectInputDate id="Target_profiles_lastUpdate-From"
 							valueChangeListener="#{target.addGreaterThanOrEqualExpression}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 			
-						<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-To" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Target_profiles_lastUpdate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-To"
+						<aon:selectInputDate id="Target_profiles_lastUpdate-To"
 							valueChangeListener="#{target.addLessThanOrEqualExpression}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>					
 
-					<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{targetSearch.question}" />
+						<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
 					</ui:include>
 					
 					<aon:div styleClass="aon-padding-top">				
@@ -184,22 +185,22 @@
 					</aon:div>
 					<aon:div>
 						<aon:div styleClass="aon-padding-top">
-							<aon:outputLabel for="MarketingTarget_profiles_date-From" styleClass="aon-form-date-label"
+							<aon:outputLabel for="Target_profiles_date-From" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="MarketingTarget_profiles_date-From"
+							<aon:selectInputDate id="Target_profiles_date-From"
 								valueChangeListener="#{target.addGreaterThanOrEqualExpression}" 
 								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 							</aon:selectInputDate>
 				
-							<aon:outputLabel for="MarketingTarget_profiles_date-To" styleClass="aon-form-date-label"
+							<aon:outputLabel for="Target_profiles_date-To" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_to}:" />
-							<aon:selectInputDate id="MarketingTarget_profiles_date-To"
+							<aon:selectInputDate id="Target_profiles_date-To"
 								valueChangeListener="#{target.addLessThanOrEqualExpression}"
 								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 							</aon:selectInputDate>
 						</aon:div>
 						<aon:div styleClass="aon-padding-top">
-							<aon:inputText id="MarketingTarget_profiles_text" size="60"
+							<aon:inputText id="Target_profiles_text" size="60"
 								value="#{targetSearch.questionText}" />													
 						</aon:div>								
 					</aon:div>

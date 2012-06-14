@@ -53,15 +53,5 @@ public interface IMarketingConstants {
 	// ************************************************************
 
 	String SHOW_PHONE_ACTION_MEDIA_TYPE = "showPhoneActionMediaType";
-
-	// ************************************************************
-	// REPORT
-	// ************************************************************
-	
-	String MARKETING_TARGET_LIST_DETAIL_EXCEL = "marketingTargetListDetailExcel";
-	
-	String MARKETING_TARGET_LIST_DETAIL = "marketingTargetListDetail";
-	
-	String MARKETING_TARGET_LIST = "marketingTargetList";	
 	
 }

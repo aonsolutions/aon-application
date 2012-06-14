@@ -2102,7 +2102,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/commercial/facelet/lookup/question/list.xhtml</value>
+			<value>/com/code/aon/ui/commercial/facelet/question/listContent.xhtml</value>
 		</managed-property>
 	</managed-bean>
 
