@@ -875,9 +875,11 @@ public class ProjectReservationController extends BasicController implements IPm
 
 			ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
 			if (savedReservation.getStatus() != reservation.getStatus()) {
+				reservation.setCheckStatus(savedReservation.isActive() ? ReservationCheckStatus.NO_CHECK : ReservationCheckStatus.CHECK_IN);
 				reservation.setStatus(savedReservation.getStatus());
 				accept(event);
 			}
+
 			if (getInvoiceToRectificate().isService()) {
 				IController reservationServiceController = (IController)AonUtil.getRegisteredBean(RESERVATION_SERVICE_CONTROLLER_NAME);
 				reservationServiceController.onSearch(null);
