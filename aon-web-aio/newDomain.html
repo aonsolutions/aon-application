@@ -44,14 +44,33 @@
 		</tr>
 		<tr>
 			<td>
-				<label for="db" style="">Usuario</label>
+				<label for="user" style="">Usuario</label>
 				<div class="help">
 					Usuario suministrado por AonSolutions
 				</div>
 			</td>
 			<td>
-				<input type="text" name="db" size="32"/>
+				<input type="text" name="user" size="32"/>
 			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="password" style="">Clave</label>
+				<div class="help">
+					Clave del usuario suministrado por AonSolutions 
+				</div>
+			</td>
+			<td>
+				<input type="password" name="password" size="32"/>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
 		</tr>
 		<tr>
 			<td>
@@ -76,7 +95,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td rowspan="4" style="vertical-align: top">
+			<td rowspan="3" style="vertical-align: top">
 				<label for="domain-type">Tipo de Dominio</label>
 			</td>
 		</tr>
@@ -92,16 +111,6 @@
 		</tr>
 		<tr>
 			<td>
-				<input type="radio" name="domain-type" value="Child">
-					<span class="radio-value">CHILD</span> 
-					<span class="help">
-						Dominio dependiente de un PARENT
-					</span>
-				</input>
-			</td>
-		</tr>
-		<tr>
-			<td>
 				<input type="radio" name="domain-type" value="Simple">
 					<span  class="radio-value">SIMPLE</span> 
 					<span class="help">
@@ -110,30 +119,11 @@
 				</input>
 			</td>
 		</tr>
-
-		<tr>
-			<td>
-				<label for="domain-parent-name">Nombre Dominio Padre</label>
-				<div class="help">
-					En caso de marcar CHILD, indique el nombre del dominio PARENT bajo el cual desea crear el dominio. 
-				</div>
-			</td>
-			<td>
-				<input type="text" name="domain-parent-name" size="32"/>
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
 		<tr>
 			<td>
 				<label for="domain-user">Administrador del Dominio</label>
 				<div class="help">
-					En caso de marcar CHILD, indique el usuario administrador del dominio PARENT. 
-				</div>
-				<div class="help">
-					En otro caso, indique el identificador del usuario administrador con el que acceder&aacute; a la aplicaci&oacute;n. 
+					Identificador del usuario administrador con el que acceder&aacute; a la aplicaci&oacute;n. 
 				</div>
 			</td>
 			<td>
@@ -150,10 +140,6 @@
 			<td>
 				<input type="password" name="domain-password" size="16"/>
 			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
 		</tr>
 		<tr>
 			<td colspan="2" style="text-align: center;">
