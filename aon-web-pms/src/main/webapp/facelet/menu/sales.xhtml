@@ -32,6 +32,11 @@
 											value="#{customerBundle.customer_module}">
 										</aon:commandLink>
 									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_invoicing_group"
+											value="#{financeBundle.finance_invoicing_group_module}"
+											action="invoicingGroup_list" />
+									</aon:div>
 								</c:if>
 								<c:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -67,6 +72,14 @@
 											value="#{pmsBundle.pms_advance_invoice_module}">
 										</aon:commandLink>
 									</aon:div>
+<!-- 
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="noShowInvoice" 
+											action="noShowInvoice_search" actionListener="#{noShowInvoice.onEditSearch}"
+											value="#{pmsBundle.pms_noShow_invoice_module}">
+										</aon:commandLink>
+									</aon:div>
+ -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceManagement"
 											action="saleInvoice_search"
@@ -87,6 +100,46 @@
 												action="saleInvoiceRecorder_search" />
 										</aon:div>
 									</c:if>
+								</aon:div>
+							</aon:panelGrid>
+
+							<aon:panelGrid id="group_sales_finance"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-auxiliary aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{financeBundle.finance_fees_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_pre_invoicing"
+											value="#{financeBundle.finance_pre_invoicing_module}"
+											actionListener="#{preInvoicing.onInitialize}"
+											action="feePreInvoicing" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_invoicing"
+											value="#{financeBundle.finance_fee_invoicing_module}"
+											actionListener="#{feeInvoicing.onInitialize}"
+											action="feeInvoicing" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_fee_print"
+											value="#{financeBundle.finance_fee_print_module}"
+											actionListener="#{feePrint.onEditSearch}"
+											action="feePrint_search"  >
+										<f:setPropertyActionListener value="#{false}"
+											target="#{feePrintSearch.anual}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="aon_fee_print_anual"
+											value="#{financeBundle.finance_fee_print_proy_module}"
+											actionListener="#{feePrint.onEditSearch}"
+											action="feePrint_search-anual"  >
+										<f:setPropertyActionListener value="#{true}"
+											target="#{feePrintSearch.anual}" />
+										</aon:commandLink>
+									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
