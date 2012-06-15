@@ -249,6 +249,8 @@
 								<ui:param name="lookupTo" value="#{finance.to.bank}" />
 								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
 								<ui:param name="lookupReRender" value="Finance_bankAccount" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{finance.onBankChanged}" type="lookupChangeListener" />
 							</ui:include>								
 							<aon:inputText id="Finance_bankAccount_office"
 								value="#{finance.to.bankAccount.office}"
