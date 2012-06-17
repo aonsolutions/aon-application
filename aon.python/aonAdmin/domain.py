@@ -76,12 +76,15 @@ class DomainTypes:
                 s += ","    
             s += "'"+k.get_name()+"'"
         return s
-    
+
 class Domain(object):
     '''
     Class to manage Domain object
     '''
 
+    __system_domain_modules = ("marketing","commercial","management","treasury"
+                             ,"warehouse","groupware","accounting","fiscal","payroll","document")
+    
     def __init__(self):
         '''
         Constructor
@@ -99,6 +102,8 @@ class Domain(object):
         self.__encripted_user_password = None
         self.__load_defaults_from_parent = False
         self.__database_name = None
+        self.__domain_max_defined_users = None
+        self.__domain_modules = None
 
     def get_domain_id(self):
         return self.__domain_id
@@ -137,6 +142,12 @@ class Domain(object):
 
     def is_load_defaults_from_parent(self):
         return self.__load_defaults_from_parent
+    
+    def get_domain_max_defined_users(self):
+        return self.__domain_max_defined_users
+    
+    def get_domain_modules(self):
+        return self.__domain_modules
 
     def set_domain_id(self, value):
         self.__domain_id = value
@@ -177,6 +188,14 @@ class Domain(object):
     def set_load_defaults_from_parent(self, value):
         self.__load_defaults_from_parent = value
 
+    def set_domain_max_defined_users(self, value):
+        if (value == None):
+            value = "1"
+        self.__domain_max_defined_users = value
+    
+    def set_domain_modules(self, value):
+        self.__domain_modules = value
+
     def is_verbose_enabled(self):
         return self.__verbose
     def set_verbose(self, value):
@@ -208,6 +227,8 @@ class Domain(object):
             if self.is_verbose_enabled():
                 print "\tRegistering application '"+application+"'"
             self.__insert_domain_application(db,application)
+            if self.get_domain_modules() != None and self.get_domain_modules() != "":
+                self.__insert_domain_application_module(db) 
             if self.get_domain_type().is_parent():
                 self.__insert_application_user(db)
                 for profile in profiles[x]:
@@ -253,6 +274,21 @@ class Domain(object):
         if domain_type.is_parent():
             self.autenticate_user();        
 
+        # Validacion del numero maximo de usuarios
+        if self.get_domain_max_defined_users() != None and not self.get_domain_max_defined_users().isdigit():
+            raise AonException(-37,"Domain max defined users must be a positive integer!")
+            
+        # Validacion de los modulos
+        modules = self.get_domain_modules().split(",")
+        for mod in modules:
+            found = False
+            for system_module  in self.__system_domain_modules:
+                if (system_module == mod):
+                    found = True
+                    break
+            if not found:
+                raise AonException(-38,"Module '"+mod+"' not found in system modules!")    
+            
         # Validacion de la creacion de un dominio hijo.
         if not domain_type.is_parent():
                     
@@ -312,8 +348,6 @@ class Domain(object):
             if int(cur.rowcount) == False:
                 raise AonException(-45,"User '"+self.get_domain_user()+"' does not exists or can not be autenticated on parent domain '"+self.get_domain_parent_id()+"'")
             
-            
- 
 
         # validating Domain Name
         if self.get_domain_name() == None:
@@ -356,8 +390,16 @@ class Domain(object):
         stmt = db.cursor()
         if self.is_verbose_enabled():
             print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),self.get_domain_suffix(),")",  
-        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers) VALUES (%s,%s,%s,%s,%s,%s,0,0,1)"
-                       ,(self.get_domain_name(),self.get_domain_description(),self.get_domain_parent_id(),self.get_domain_type().is_multidomain(),1,self.get_domain_suffix()))
+        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                       ,(self.get_domain_name()
+                         ,self.get_domain_description()
+                         ,self.get_domain_parent_id()
+                         ,self.get_domain_type().is_multidomain()
+                         ,1
+                         ,self.get_domain_suffix()
+                         ,0
+                         ,0
+                         ,self.get_domain_max_defined_users()))
         self.set_domain_id( db.insert_id() )
         
         if self.is_verbose_enabled():
@@ -380,6 +422,22 @@ class Domain(object):
         if self.is_verbose_enabled():
             print " ...... inserted with id ",self.domain_application
             
+    def __insert_domain_application_module(self,db):
+        stmt = db.cursor()
+        modules = self.get_domain_modules().split(",")
+        for mod in modules:
+            x = 0
+            for system_module  in self.__system_domain_modules:
+                if (system_module == mod):
+                    if self.is_verbose_enabled():
+                        print "\t\tTrying to domain_application_module (",mod + "("+str(x)+")",")",
+                    stmt.execute("INSERT INTO domain_application_module (domain_application,module) VALUES (%s,%s)"
+                                   ,(self.domain_application,x))
+                    if self.is_verbose_enabled():
+                        print "........... inserted with id=",db.insert_id()
+                    break
+                x = x + 1
+
     def __insert_user(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():

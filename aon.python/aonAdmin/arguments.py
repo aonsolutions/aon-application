@@ -5,6 +5,7 @@ Created on 16/04/2012
 '''
 from aonAdmin.domain import Domain, DomainTypes, ConsoleColors
 from aonAdmin.connection import Connection
+from aonAdmin.aonException import AonException
 from optparse import OptionParser
 
 def warning(text):
@@ -24,21 +25,26 @@ class Arguments(object):
         parser = OptionParser(usage = use)
         parser.add_option("-v", "--verbose", action="store_true", default=False, help="Set mode to verbose.")
         parser.add_option("-q", "--verbose-sql", action="store_true", default=False, help="Set mode to verbose on SQL Scripts.")
-        parser.add_option("-o", "--host",  default="127.0.0.1", help="Host to connect.")
-        parser.add_option("-u", "--user", default="dbuser", help="User to connect as.")
-        parser.add_option("-p", "--passwd", default="serubd2000", help="Password to use.")
+        parser.add_option("-x", "--no-prompt", action="store_true", default=False, help="Set prompt mode")
+        parser.add_option("-k", "--skip-domain-creation", action="store_true", default=False, help="Skip Domain Creation in database creation")
+        parser.add_option("-o", "--host", help="Host to connect.")
+        parser.add_option("-u", "--user", help="User to connect as.")
+        parser.add_option("-p", "--passwd", help="Password to use.")
         parser.add_option("-r", "--port", default="3306", help="TCP/IP port to connect to.")
         parser.add_option("-d", "--db", default="", help="Database to use.")
         
         parser.add_option("-n", "--domain-name",dest="domain_name", help="Name of the domain to be created.")
         parser.add_option("-e", "--domain-description",dest="domain_description", help="Description of the domain to be created.")
         parser.add_option("-t", "--domain-type",dest="domain_type", help="Type of the domain to be created. ('Parent'.'Child','Simple','PMS','GT')")
+        parser.add_option("-s", "--domain-user",dest="domain_user", help="Parent domain admin user.")
+        parser.add_option("-w", "--domain-password",dest="domain_password", help="Parent domain admin user's password.")
         
         parser.add_option("-a", "--domain-parent-id",dest="domain_parent_id", help="Parent domain ID of the domain to be created.")
         parser.add_option("-m", "--domain-parent-name",dest="domain_parent_name", help="Parent domain name of the domain to be created.")
         
-        parser.add_option("-s", "--domain-user",dest="domain_user", help="Parent domain admin user.")
-        parser.add_option("-w", "--domain-password",dest="domain_password", help="Parent domain admin user's password.")
+        parser.add_option("", "--domain-max-defined-users",dest="domain_max_defined_users", help="Domain Max Defined Users")
+        parser.add_option("", "--domain-modules",dest="domain_modules", help="Domain Modules")
+        
         parser.add_option("-f", "--load-defaults-from-parent",action="store_true", default=False,dest="load_defaults_from_parent", help="true if defaults values are inserted from parent domain, false if SQL script are used.")
     
         parser.add_option("-i", "--user-mail",dest="user_mail",help="eMail to give the response.")
@@ -67,7 +73,6 @@ class Arguments(object):
         description = self.options.domain_description
         if description == None or description == "":
             description = self.options.domain_name
-            print warning("WARNING:") +"No se ha indicado la descripcion del dominio. Se utilizara el nombre como descripcion"
         domain.set_domain_description(description)
         domain.set_domain_parent_id(self.options.domain_parent_id)
         domain.set_domain_parent_name(self.options.domain_parent_name)
@@ -77,6 +82,8 @@ class Arguments(object):
         domain.set_verbose(self.options.verbose)
         domain.set_load_defaults_from_parent(self.options.load_defaults_from_parent)
         domain.set_database_name(self.options.db)
+        domain.set_domain_max_defined_users(self.options.domain_max_defined_users)
+        domain.set_domain_modules(self.options.domain_modules)
         return domain
 
     def is_verbose_enabled(self):
@@ -84,10 +91,23 @@ class Arguments(object):
 
     def is_verbose_sql_enabled(self):
         return self.options.verbose_sql
+
+    def is_skip_domain_creation_enabled(self):
+        return self.options.skip_domain_creation
     
-    def get_connection(self):
+    def get_connection(self,nodatabase=False):
+        if self.options.host == None:
+            raise AonException(-1,"Host is required!") 
+        if self.options.user == None:
+            raise AonException(-2,"User is required!") 
+        if self.options.passwd == None:
+            raise AonException(-3,"Password is required!")
+        if nodatabase == False:
+            if self.options.db == "":
+                raise AonException(-3,"Database is required!")
+            
         conn = Connection()
-        return conn.connect(self)
+        return conn.connect(self,nodatabase)
     
     def get_host(self):
         return self.options.host

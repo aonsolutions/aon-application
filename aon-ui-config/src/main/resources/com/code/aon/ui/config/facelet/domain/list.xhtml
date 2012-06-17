@@ -27,23 +27,19 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom" 
-					rendered="#{domainSwitcher.domainCount > domainSwitcherRows}">
-					<aon:div styleClass="aon-panelGrid-search-info">
-						<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
-					</aon:div>
-					<aon:panelGrid columns="1">
-						<aon:inputText id="domainFilter" size="80" value="#{domainSwitcher.filter}">
-							<a4j:support 
-								event="onkeyup"
-								reRender="domainSwitcherTableContainer"
-								eventsQueue="domainSwitcherFilterKeyUp"
-								requestDelay="500"
-								ajaxSingle="true"
-								ignoreDupResponses="true"
-								limitToList="true"/>
-						</aon:inputText>
-					</aon:panelGrid>	
+			
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom aon-padding-top aon-text-center">
+					<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
+					<aon:inputText id="domainFilter0" size="80" value="#{domainSwitcher.filter}">
+						<a4j:support 
+							event="onkeyup"
+							reRender="domainSwitcherTableContainer"
+							eventsQueue="domainSwitcherFilterKeyUp"
+							requestDelay="500"
+							ajaxSingle="true"
+							ignoreDupResponses="true"
+							limitToList="true"/>
+					</aon:inputText>
 				</aon:div>
 				
 				<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
@@ -54,14 +50,17 @@
 						<ui:param name="skipFocusFirst" value="true" />
 												
 						<ui:define name="columns">
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto"
+								style="#{to.parent==null?'color: #0072CF;':''}">
+							
 								<f:facet name="header">
 									<aon:outputLabel value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}" />
 							</aon:column>
 			
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-200"
+								style="#{to.parent==null?'color: #0072CF;':''}">
 								<f:facet name="header">
 									<aon:outputLabel value="#{bundle.aon_domain}" />
 								</f:facet>

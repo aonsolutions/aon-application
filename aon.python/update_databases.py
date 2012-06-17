@@ -33,7 +33,6 @@ class updateDatabases:
                 self.get_versions().append(version) 
         
         self.get_versions().sort(self.tcmp)
-        print self.get_versions()
 
     def tcmp(self,a, b):
         a = a.split(".")
@@ -48,12 +47,17 @@ class updateDatabases:
     def update(self):
         conn = None
         try:
+            conn = self.__arguments.get_connection(nodatabase=True)
+            #conn = MySQLdb.connect(host=self.__arguments.get_host(),port=self.__arguments.get_port(),user=self.__arguments.get_user(),passwd=self.__arguments.get_passwd())
+            
             print "Databases must be updated to more than ",self.get_versions()[self.last_index],"version"
             print 
-                        
-            conn = MySQLdb.connect(host=self.__arguments.get_host(),port=self.__arguments.get_port(),user=self.__arguments.get_user(),passwd=self.__arguments.get_passwd())
+
             databases = conn.cursor()
-            databases.execute("show databases;")
+            stmt = "SHOW databases"
+            if self.__arguments.get_db() != None and self.__arguments.get_db() != "":
+                stmt = stmt + " LIKE '"+self.__arguments.get_db()+"'"
+            databases.execute(stmt)
             rows = databases.fetchall()
             for row in rows:
                 database = row[0]
@@ -63,9 +67,15 @@ class updateDatabases:
                 c = MySQLdb.connect(host=self.__arguments.get_host(),port=self.__arguments.get_port(),user=self.__arguments.get_user(),passwd=self.__arguments.get_passwd(),db=database)
                 table_cur = c.cursor()
                 table_cur.execute("show tables LIKE 'db_version'")
-                table_row = table_cur.fetchone()
+                db_version_present  = table_cur.fetchone()
                 table_cur.close()
-                if table_row != None:
+                
+                table_cur = c.cursor()
+                table_cur.execute("show tables LIKE 'registry'")
+                registry_present  = table_cur.fetchone()
+                table_cur.close()
+                
+                if db_version_present != None and registry_present != None:
                     version_cur = c.cursor()
                     version_cur.execute("SELECT version_number FROM db_version;")
                     version_number = version_cur.fetchone()    
@@ -80,7 +90,8 @@ class updateDatabases:
                         print "\tUpdate is needed!",(self.last_index + 1 - current_index),"scripts must be run." 
                         self.update_database(database,current_index)
                 else:
-                    print "\tThere is no 'db_version' table" 
+                    print "\tThere is no 'db_version' and 'registry' table"
+                c.close()
             databases.close()
             print
             if self.__arguments.is_verbose_enabled():
@@ -88,6 +99,7 @@ class updateDatabases:
             conn.commit()
             if self.__arguments.is_verbose_enabled():
                 print "    Done!"
+            conn.close()
         except MySQLdb.DatabaseError, e:
             if self.__arguments.is_verbose_enabled():
                 print " rollback ..... "

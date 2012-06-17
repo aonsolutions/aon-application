@@ -152,7 +152,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 					+ " WHERE (d.parent = " + getParentDomain() 
 					+ " OR d.id = " + getParentDomain() + ")"
 					+ " AND d.active = 1"
-					+ " ORDER BY d.description";
+					+ " ORDER BY d.parent ,d.description";
 			Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
 			List<?> queryList = query.list();
 			Iterator<?> iterator = queryList.iterator();

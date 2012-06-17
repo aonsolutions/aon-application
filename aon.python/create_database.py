@@ -29,7 +29,6 @@ def green(text):
 class createDatabase:
     
     AON_MASTER_JAR = "/usr/share/java/aon-master.jar" 
-#    AON_MASTER_JAR = "/home/ecastellano/.m2/repository/com/code/aon/aon-master/7.0-SNAPSHOT/aon-master-7.0-SNAPSHOT.jar"
     CREATE_SCRIPT = "com/code/aon/master/create/create.database.sql"
 
     def __init__(self,arguments):
@@ -37,6 +36,7 @@ class createDatabase:
         self.__zf = zipfile.ZipFile(self.AON_MASTER_JAR, 'r')
 
     def create(self):
+
         conn = None
         try:
             if self.__arguments.is_verbose_enabled():
@@ -48,18 +48,19 @@ class createDatabase:
             if self.__arguments.options.domain_type == None or self.__arguments.options.domain_type=="":
                 self.__arguments.options.domain_type = "Parent"
             
-            connection = Connection()
-            conn = connection.connect(self.__arguments, nodatabase=True )
+            conn = self.__arguments.get_connection(nodatabase=True)
+#            connection = Connection()
+#            conn = connection.connect(self.__arguments, nodatabase=True )
             cur = conn.cursor()
             cur.execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s",(self.__arguments.get_db(),))
             if int(cur.rowcount):
                 raise AonException(-31,"Database '"+self.__arguments.get_db()+"' already exists!")
-        
-            domain = self.__arguments.get_domain()
-            if not domain.get_domain_type().is_parent():
-                raise AonException(-91,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
+            if self.__arguments.is_skip_domain_creation_enabled() == False:
+                domain = self.__arguments.get_domain()
+                if not domain.get_domain_type().is_parent():
+                    raise AonException(-91,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
             
-            domain.validate( conn )
+                domain.validate( conn )
             
             sql_script = self.__zf.open(self.CREATE_SCRIPT)
             file = NamedTemporaryFile(mode="r+")
@@ -83,12 +84,19 @@ class createDatabase:
             if self.__arguments.is_verbose_enabled():
                 print green("\tCreacion de la base de datos satisfactoria.")
 
-            if self.__arguments.is_verbose_enabled():
-                print
-                print "Trying to create default domain"
-                print                
-            nd = newDomain(self.__arguments)
-            nd.create()
+            if self.__arguments.is_skip_domain_creation_enabled() == False:
+                if self.__arguments.is_verbose_enabled():
+                    print
+                    print "Trying to create default domain"
+                    print                
+                nd = newDomain(self.__arguments)
+                nd.create()
+            else:
+                if self.__arguments.is_verbose_enabled():
+                    print
+                    print "Skip domain creation"
+                    print                
+                
             
         except MySQLdb.DatabaseError, e:
             if self.__arguments.is_verbose_enabled():
