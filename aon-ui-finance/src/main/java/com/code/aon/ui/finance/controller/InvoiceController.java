@@ -83,9 +83,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> projects;
 	private boolean showInvoiceAddressWindow;
 	private boolean showProjectWindow;
+	private boolean showNewProjectWindow;
 	private boolean showDetailProjectWindow;
 	private boolean showRectificationWindow;
 	private boolean showDocumentWindow;
+	private boolean showCommentsWindow;
+	private boolean showRemarksWindow;
+	private boolean showAuditInfoWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
@@ -239,6 +243,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
+	public void loadInvoiceProjects(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = (Invoice) this.getTo();
+		loadProjects(invoice.getRegistry().getId());
+	}
+	
 	public boolean isShowInvoiceAddressWindow() {
 		return showInvoiceAddressWindow;
 	}
@@ -261,6 +270,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowProjectWindow(boolean value) {
 		this.showProjectWindow = value;
+	}
+
+	public boolean isShowNewProjectWindow() {
+		return showNewProjectWindow;
+	}
+
+	public void setShowNewProjectWindow(boolean showNewProjectWindow) {
+		this.showNewProjectWindow = showNewProjectWindow;
 	}
 
 	public boolean isShowDetailProjectWindow() {
@@ -320,7 +337,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			invoiceDetailBean.update(invoiceDetail);
 		}
 	}
-
+	
 	public boolean isShowRectificationWindow() {
 		return showRectificationWindow;
 	}
@@ -335,6 +352,30 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowDocumentWindow(boolean showDocumentWindow) {
 		this.showDocumentWindow = showDocumentWindow;
+	}
+
+	public boolean isShowCommentsWindow() {
+		return showCommentsWindow;
+	}
+
+	public void setShowCommentsWindow(boolean showCommentsWindow) {
+		this.showCommentsWindow = showCommentsWindow;
+	}
+
+	public boolean isShowRemarksWindow() {
+		return showRemarksWindow;
+	}
+
+	public void setShowRemarksWindow(boolean showRemarksWindow) {
+		this.showRemarksWindow = showRemarksWindow;
+	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
 	}
 
 	public String getRectificationSeries() {
