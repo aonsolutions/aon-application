@@ -19,7 +19,7 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_entries" styleClass="aon-width-all"
+						<aon:panelGrid id="group_manual_entries" styleClass="aon-width-all"
 							columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
@@ -31,17 +31,9 @@
 										actionListener="#{accountEntry.onEditSearch}"
 										value="#{accountingBundle.accounting_entry_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account" action="account_list"
-										value="#{accountBundle.account_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="autConcept" action="autConcept"
-										value="#{accountingBundle.accounting_aut_concept_module}" />
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-
+						
 						<aon:panelGrid id="group_pred_entries" styleClass="aon-width-all"
 							columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry-predefined aon-direct-access-panel">
@@ -105,26 +97,6 @@
 										actionListener="#{endPeriodEntries.onInit}"
 										value="#{accountingBundle.accounting_en_period_entries_management}" />
 								</aon:div>
-<!-- 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOperatingEntry"
-										action="accountOperatingEntry"
-										actionListener="#{endPeriodEntries.onInitOperatingEntry}"
-										value="#{accountingBundle.accounting_operating_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountClosingEntry"
-										action="accountClosingEntry"
-										actionListener="#{endPeriodEntries.onInitClosingEntry}"
-										value="#{accountingBundle.accounting_closing_entry_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountOpeningEntry"
-										action="accountOpeningEntry"
-										actionListener="#{endPeriodEntries.onInitOpeningEntry}"
-										value="#{accountingBundle.accounting_opening_entry_module}" />
-								</aon:div>
- -->
 							</aon:div>
 						</aon:panelGrid>
 
@@ -155,9 +127,66 @@
 							</aon:div>
 						</aon:panelGrid>
 
+						<aon:panelGrid id="group_fixed_assets" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-fixed-asset aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{accountingBundle.menu_fixed_assets}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="amortization" action="amortization_list"
+										value="#{accountingBundle.accounting_amortization_form_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="periodAmortization"
+										action="periodAmortization_search"
+										value="#{accountingBundle.accounting_period_amortization_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="amortizationType"
+										action="amortizationType_list"
+										value="#{accountingBundle.accounting_amortization_type_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
+
+						<aon:panelGrid id="group_auxiliary" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-auxiliary aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{accountingBundle.menu_auxiliary_tables}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="account" action="account_list"
+										value="#{accountBundle.account_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="autConcept" action="autConcept"
+										value="#{accountingBundle.accounting_aut_concept_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountManager"
+										action="accountManager_list"
+										value="#{accountBridgeBundle.account_relationships_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accounting_balance-accounting" 
+										action="balance_list-accounting"
+										value="#{accountingBundle.accounting_balance_menu}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accPeriod-accounting" 
+										action="accPeriod-accounting"
+										actionListener="#{accPeriod.onSearch}"
+										value="#{accountingBundle.accounting_period_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 
 						<aon:panelGrid id="group_reports" styleClass="aon-width-all"
 							columnClasses="aon-padding"
@@ -256,37 +285,8 @@
 										actionListener="#{balanceSheet.onCustomBalance}"
 										value="#{accountingBundle.accounting_balance_menu_custom}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accounting_balance" action="balance_list"
-										value="#{accountingBundle.accounting_balance_menu}" />
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-
-						<aon:panelGrid id="group_fixed_assets" styleClass="aon-width-all"
-							columnClasses="aon-padding"
-							headerClass="aon-icon-fixed-asset aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{accountingBundle.menu_fixed_assets}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization" action="amortization_list"
-										value="#{accountingBundle.accounting_amortization_form_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="periodAmortization"
-										action="periodAmortization_search"
-										value="#{accountingBundle.accounting_period_amortization_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortizationType"
-										action="amortizationType_list"
-										value="#{accountingBundle.accounting_amortization_type_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
 					</aon:panelGroup>
 
 				</h:panelGrid>

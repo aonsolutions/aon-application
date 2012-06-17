@@ -71,17 +71,17 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bankConcept"
-										action="bankConcept" 
-										value="#{financeBundle.finance_bank_concept_module}" />
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="bankStatement"
 										value="#{financeBundle.finance_bank_statement_module}"
 										rendered="#{bankStatement.availableRegistryBanks > 0}"
 										actionListener="#{bankStatement.onEditSearch}"
 										action="bankStatement_search" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bankConcept"
+										action="bankConcept" 
+										value="#{financeBundle.finance_bank_concept_module}" />
+								</aon:div>							
 							</aon:div>
 						</aon:panelGrid>
 
@@ -119,14 +119,11 @@
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<c:if test="#{aonRole.accountingOperator}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeTrackingEntry"
-											action="account_finance_tracking_entry"
-											actionListener="#{financeTrackingEntry.onReset}"
-											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
-									</aon:div>
-								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="corporateIdentityReceipt" action="corporateIdentity_receipt"
+										actionListener="#{corporateIdentity.onInit}"
+										value="#{registryBundle.registry_corporateIdentity_receipt}" />
+								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="checks" action="util_checking"
 										value="#{financeBundle.finance_checking_module}" />
@@ -134,11 +131,6 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="checks2" action="invoice_checking"
 										value="#{financeBundle.finance_invoice_checking_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="corporateIdentityReceipt" action="corporateIdentity_receipt"
-										actionListener="#{corporateIdentity.onInit}"
-										value="#{registryBundle.registry_corporateIdentity_receipt}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
