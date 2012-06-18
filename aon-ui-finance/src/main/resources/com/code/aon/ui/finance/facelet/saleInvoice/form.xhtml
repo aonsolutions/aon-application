@@ -457,8 +457,6 @@
 							</aon:outputFormat>
 						</aon:div>
 					</aon:div>
-						
-						
 
 					<aon:div rendered="#{!empty saleInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"
@@ -474,34 +472,6 @@
 						value="#{saleInvoice.to.remarks}" />
 
 				</aon:panelGrid>
-
-							<!--  
-				<aon:panelGrid columns="2" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-auto">
-
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
-						rendered="#{!saleInvoice.new}" />
-					<aon:div rendered="#{!saleInvoice.new}">
-						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
-							<aon:outputText styleClass="aon-bold"
-								value="#{saleInvoice.to.documentNumber}" />
-							<aon:div rendered="#{saleInvoice.rectifier}">
-								<aon:outputFormat styleClass="aon-bold aon-label-error"
-									 value="#{financeBundle.finance_invoice_rectifier_message}">
-									<f:param value="#{saleInvoice.to.rectificationInvoice.referenceCode}" />
-								</aon:outputFormat>
-							</aon:div>
-							<aon:div rendered="#{saleInvoice.rectified}">
-								<aon:outputFormat styleClass="aon-bold aon-label-error"
-									 value="#{financeBundle.finance_invoice_rectified_message}">
-									<f:param value="#{saleInvoice.to.rectificationInvoicesString}" />
-								</aon:outputFormat>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:div>
-				</aon:panelGrid>
-							-->
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
