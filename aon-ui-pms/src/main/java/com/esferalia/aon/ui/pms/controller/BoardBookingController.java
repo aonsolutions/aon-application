@@ -114,7 +114,6 @@ public class BoardBookingController implements ICollectionProvider {
 		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
-//		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
 
