@@ -141,7 +141,7 @@
 						
 					</aon:panelGrid>
 				
-					<c:if test="#{!posShift.to.pos.invoiceable}">
+					<c:if test="#{!posShift.new and !posShift.to.pos.invoiceable}">
 						<aon:panel>
 							<f:facet name="header">
 								<aon:outputLabel value="#{pmsBundle.pms_grouped_count}" />
@@ -154,7 +154,7 @@
 				
 				<br />				
 				
-				<aon:div rendered="#{!posShift.new}">
+				<c:if test="#{!posShift.new}">
 					<aon:panelTabSet id="posShiftTab">
 						<aon:panelTab id="cashCount" label="#{pmsBundle.pms_cash_count}">
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
@@ -163,14 +163,14 @@
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{!posShift.to.pos.invoiceable}">
-							<aon:panelTab id="invoice" label="#{financeBundle.finance_invoice_module}">
+							<aon:panelTab id="invoice" label="#{financeBundle.finance_charge_menu}">
 								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" >
 									<ui:param name="skipRectifyButton" value="true" />
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
 					</aon:panelTabSet>
-				</aon:div>
+				</c:if>
 				
 			</aon:div>
 		</aon:form>

@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.invoice.issueDate}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+		</f:facet>
+		<aon:outputText value="#{to.invoice.referenceCode}" />
+	</aon:column>
+
+	<c:if test="#{showReservation}">
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
+			<f:facet name="header">
+				<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
+			</f:facet>
+			<aon:outputText value="#{to.invoice.project.id}" />
+		</aon:column>
+	</c:if>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+		<f:facet name="header">
+			<aon:outputText value="#{customerBundle.customer_customer}" />
+		</f:facet>
+		<aon:outputText value="#{to.invoice.registryName}" />
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_company_document}" />
+		</f:facet>
+		<aon:outputText value="#{to.invoice.registryDocument}" />
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+		<f:facet name="header">
+			<aon:outputText value="#{pmsBundle.pms_source}" />
+		</f:facet>
+		<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.invoice.service and !to.invoice.advance}" />
+		<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.invoice.service}" />
+		<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.invoice.advance}" />
+		<c:if test="#{showGoToReservation}">
+			<aon:commandLink id="reservationLink" immediate="true"
+				styleClass="aon-button-goto"
+				style="padding-right: 20px;" 
+				value="&#160;"  
+				rendered="#{!to.invoice.service}" 
+				actionListener="#{controller.onLoadReservation}"
+				action="reservation_form"
+				reRender="aonContent">
+			</aon:commandLink>
+		</c:if>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_type}" />
+		</f:facet>
+		<aon:outputText value="#{financeBundle.finance_invoice}"
+			rendered="#{!to.invoice.rectifier and !to.invoice.rectified}" />
+		<aon:div rendered="#{to.invoice.rectifier}">
+			<aon:outputText value="#{to.invoice.rectificationType}" />
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+				<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message}" styleClass="aon-bold aon-label-error">
+					<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
+				</aon:outputFormat>
+			</rich:toolTip>
+		</aon:div>
+		<aon:div rendered="#{to.invoice.rectified}">
+			<aon:outputText value="#{to.invoice.rectificationType}" />
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+				<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message}" styleClass="aon-bold">
+					<f:param value="#{to.invoice.rectificationInvoicesString}" />
+				</aon:outputFormat>
+			</rich:toolTip>
+		</aon:div>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{configBundle.config_pay_method}" />
+		</f:facet>
+		<aon:outputText value="#{controller.payMethod}" />
+	</aon:column>
+
+	<c:if test="#{showFinanceStatus}">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+			</f:facet>
+			<aon:outputText value="#{to.financeStatus}"/>
+		</aon:column>
+	</c:if>
+
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_total}" />
+		</f:facet>
+		<aon:outputText value="#{to.totalAmount}">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+	</aon:column>
+
+	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
+		<f:facet name="header">
+			<aon:outputText value="&#160;" />
+		</f:facet>
+		<c:if test="#{!skipRectifyButton}">
+			<aon:commandButton id="reservationInvoice-rectify"
+				value="&#160;" title="#{pmsBundle.pms_to_return}"
+				rendered="#{to.invoice.noRectification and (!to.invoice.advance or !reservation.invoiced) and (aonRole.saleOperator or (to.invoice.service and !to.invoice.itemServicesInDetail))}"
+				actionListener="#{controller.onRectifyInvoiceShow}"
+				reRender="showRectificationWindow"
+				styleClass="aon-finding-toolbar-item aon-icon-removed">
+				<f:setPropertyActionListener target="#{controller.showRectificationWindow}"
+					value="#{true}" />
+			</aon:commandButton>
+		</c:if>
+		<aon:htmlCommandLink id="reservationInvoice-report"
+			value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
+			action="#{report.onExecute}" target="_blank"
+			actionListener="#{controller.onPrintInvoice}"
+			styleClass="aon-icon-pdf">
+			<f:param name="reportKey" value="selectedInvoice" />
+		</aon:htmlCommandLink>
+	</aon:column>
+
+</ui:composition>
