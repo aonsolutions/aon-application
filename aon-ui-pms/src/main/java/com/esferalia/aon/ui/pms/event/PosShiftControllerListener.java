@@ -28,7 +28,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		PosShiftController controller = (PosShiftController) this.getController();
 		controller.setPosShift((PosShift) controller.getTo());
-		controller.setInvoiceModel(null);
+		controller.setInvoiceFinancesModel(null);
 		controller.setComparedCashModel(null);
 		controller.initInvoiceData( );
 		try {
@@ -47,7 +47,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		PosShiftController controller = (PosShiftController) this.getController();
-		controller.setInvoiceModel(null);
+		controller.setInvoiceFinancesModel(null);
 	}
 		
 	@Override

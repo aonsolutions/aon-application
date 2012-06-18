@@ -70,7 +70,9 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for(Object to: sqlQuery.list()){
 			Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
-			SelectItem item = new SelectItem(pos, pos.getName());
+			String name = pos.getName() + ((getHotel()!=null && getHotel().getId()!=null)?"":" ("+pos.getWorkPlace().getDescription()+")");
+			SelectItem item = new SelectItem(pos, name);
+			item.setEscape(false);
 			list.add(item);
 		}
 		return list;
