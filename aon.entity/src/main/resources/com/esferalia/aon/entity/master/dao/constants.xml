@@ -164,8 +164,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
-		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_name,payMethod_type,payment,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
-		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice&lt;id,payMethod.id,payMethod.name,payMethod.type,payment,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate" />
+		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_name,payMethod_type,payment,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id,invoice_creationDate,invoice_creationUser,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
+		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice&lt;id,payMethod.id,payMethod.name,payMethod.type,payment,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id,invoice.creationDate,invoice.creationUser,invoice.series,invoice.number,invoice.referenceCode,invoice&lt;issueDate" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
