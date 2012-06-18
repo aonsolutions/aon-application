@@ -138,13 +138,11 @@ public class ReservationRequestController extends BasicController implements IPm
 			try {
 				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_ID), request.getHotel().getId());
 				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), request.getCode());
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), request.getAgency().getId());
 				criteria.addNotEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
 				return (reservationBean.getCount(criteria) > 0);
 			} catch (ManagerBeanException ex) {
-				String msg = "Se produjo un error buscar si ya existe la Reserva. [" + ex.getMessage() + "]";
+				String msg = "Se produjo un error al buscar si ya existe la Reserva. [" + ex.getMessage() + "]";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg, ex);
 			}
