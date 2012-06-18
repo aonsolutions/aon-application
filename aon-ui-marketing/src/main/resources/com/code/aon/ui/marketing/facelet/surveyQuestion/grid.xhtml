@@ -36,14 +36,14 @@
 						<aon:abbreviateConverter maxWidth="80" />
 					</aon:outputText>					
 					
-					<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{surveyQuestion.to.question}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formEdit}" />
 					</ui:include>
 					<f:facet name="footer" >
-						<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+						<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{surveyQuestion.to.question}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
