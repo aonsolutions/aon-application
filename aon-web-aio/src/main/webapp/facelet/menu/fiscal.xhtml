@@ -272,14 +272,21 @@
 										actionListener="#{amortizationTypeImporter.onInitialize}"
 										value="#{accountingBundle.accounting_amortizationType_importer_module}" />
 								</aon:div>
-<!-- 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="invoiceLoader"
-										action="invoiceLoader_form"
-										actionListener="#{invoiceLoader.onStart}"
-										value="XXX Carga de Facturas XXX" />
-								</aon:div>
- -->
+								
+								<c:if test="#{aonRole.sysAdmin}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceLoader"
+											action="invoiceLoader_form"
+											actionListener="#{invoiceLoader.onStart}"
+											value="XXX Carga de Facturas XXX" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="entryLoader"
+											action="entryLoader_form"
+											actionListener="#{entryLoader.onStart}"
+											value="XXX Carga de Apuntes XXX" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 

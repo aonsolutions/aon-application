@@ -59,7 +59,6 @@ import com.code.aon.registry.Registry;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.enumeration.SupplierStatus;
-import com.code.aon.ui.finance.controller.InvoiceRecorderController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceLoaderManager {

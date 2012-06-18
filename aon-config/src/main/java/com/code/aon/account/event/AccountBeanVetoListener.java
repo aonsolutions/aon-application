@@ -58,7 +58,7 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	private void checkValidLength(Account account) throws ManagerBeanVetoListenerException {
 		int length = account.getCode().length();
 		if (length != 1 && length != 2 && length != 3 && length != 4 && length != 9 ) {
-			throw new ManagerBeanVetoListenerException(ERROR_MSG);
+			throw new ManagerBeanVetoListenerException(ERROR_MSG + "["+account.getCode()+"]");
 		}
 	}
 	private void checkParent(Account account) throws ManagerBeanVetoListenerException {
@@ -71,10 +71,10 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE),parentCode);
 				Iterator<ITransferObject> iterator = accountBean.getList(criteria).iterator();
 				if (!iterator.hasNext()) {
-					throw new ManagerBeanVetoListenerException("Imposible crear cuenta. No existe cuenta correspondiente de nivel inferior.");
+					throw new ManagerBeanVetoListenerException("Imposible crear cuenta. No existe cuenta correspondiente de nivel inferior " + "["+account.getCode()+"]");
 			} 
 			} catch (ManagerBeanException e) {
-				throw new ManagerBeanVetoListenerException("Imposible crear cuenta. " + e.getMessage());
+				throw new ManagerBeanVetoListenerException("Imposible crear cuenta. " + "["+account.getCode()+"] " + e.getMessage());
 			}
 		}
 	}

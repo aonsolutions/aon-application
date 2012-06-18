@@ -893,6 +893,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** ENTRY LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>entryLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.entry.AccountEntryLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
@@ -1257,6 +1266,14 @@
 		<navigation-case>
 			<from-outcome>invoiceLoader_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/invoiceLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!--  **** ENTRY LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>entryLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entryLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
