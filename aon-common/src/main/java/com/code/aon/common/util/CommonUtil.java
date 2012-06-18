@@ -24,7 +24,7 @@ public class CommonUtil {
 	 * @return double el valor redondeado
 	 */
 	public static double round(double value, int precision) {
-		return Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
+		return Math.round(Math.abs(value) * Math.pow(10, precision)) / Math.pow(10, precision) * (value < 0 ? -1 : 1);
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class CommonUtil {
 		System.out.println( "Primer dia del mes ..: " + formatter.format(getMonthFirstDay(date)));
 		System.out.println( "Último dia del mes ..: " + formatter.format(getMonthLastDay(date)));
 
-		
 		getYearLastDay(date);
 	}
+
 }
