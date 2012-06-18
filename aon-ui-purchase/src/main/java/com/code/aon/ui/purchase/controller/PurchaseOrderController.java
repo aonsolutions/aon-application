@@ -1,5 +1,7 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -277,7 +279,7 @@ public class PurchaseOrderController {
 						}
 					}
 				}
-				FormUtil.getController("purchasePrint").setCriteria(purchasePrintcriteria);
+				FormUtil.getController(PURCHASE_PRINT_CONTROLLER_NAME).setCriteria(purchasePrintcriteria);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);

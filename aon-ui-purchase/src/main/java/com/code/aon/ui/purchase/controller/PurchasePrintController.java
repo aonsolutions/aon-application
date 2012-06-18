@@ -51,9 +51,9 @@ public class PurchasePrintController extends PurchaseController {
 	}	
 	
 	public void onSendPurchasesByEmail( ActionEvent event ) {
-		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean("purchaseReport");
+		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(true);
-		PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(IPurchaseConstants.PURCHASE_CONTROLLER_NAME);
+		PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
 		PurchaseEmailUtil emailUtil = controller.getEmailController();
 		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		String subject = messageController.getSubject();
