@@ -297,11 +297,10 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
-		if (this.getInvoiceFinancesModel().isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
-			controller.select(event, ((Finance)getInvoiceFinancesModel().getRowData()).getInvoice().getId());
-		}
+		SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(IPmsConstants.SELECTED_INVOICE_CONTROLLER_NAME);
+		controller.setTo(((Finance)getInvoiceFinancesModel().getRowData()).getInvoice());
 	}
+	
 	
 	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
 		Finance finance = (Finance)this.getInvoiceFinancesModel().getRowData();

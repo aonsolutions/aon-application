@@ -889,10 +889,10 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ********** RESERVATION INVOICE PRINTER ********** -->
+	<!-- ********** PMS INVOICE PRINTER ********** -->
 	<managed-bean>
-		<managed-bean-name>invoicePrinter</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.InvoicePrinter</managed-bean-class>
+		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.print.PmsInvoicePrinter</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
@@ -986,6 +986,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{posShiftSearch}</value>
+				<value>#{posShiftScopeListener}</value>
 				<value>#{posShiftControllerListener}</value>
 				<value>#{posShiftCountListener}</value>
 			</list-entries>
@@ -1002,6 +1003,16 @@
 		<managed-bean-name>posShiftControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosShiftControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>posShiftScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>PosShift_pos_workPlace_scope_id</value>
+		</managed-property>
 	</managed-bean>	
 	
 	<managed-bean>
