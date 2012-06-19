@@ -15,9 +15,9 @@ import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
-public class RegistrySearchListener extends ControllerSearchListener {
+public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	
