@@ -14,6 +14,7 @@ public interface IPurchaseMessages {
 	String PURCHASE_SEND_EMAIL = "purchase_send_email";
 	String PURCHASE_SEND_EMAIL_ERROR = "purchase_send_email_error";
 	String PURCHASE_SEND_EMAIL_FNINISH = "purchase_send_email_finish";
+	String PURCHASE_SEND_EMAIL_NUMBER = "purchase_send_email_number";
 	
 }
 

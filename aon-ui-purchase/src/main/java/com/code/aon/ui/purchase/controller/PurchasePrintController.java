@@ -1,6 +1,8 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.faces.controller.IRichConstants.LOG_PANEL_CONTROLLER_NAME;
 import static com.code.aon.ui.purchase.IPurchaseMessages.BUNDLE_KEY;
+import static com.code.aon.ui.purchase.IPurchaseMessages.PURCHASE_SEND_EMAIL_NUMBER;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -51,6 +53,7 @@ public class PurchasePrintController extends PurchaseController {
 	}	
 	
 	public void onSendPurchasesByEmail( ActionEvent event ) {
+		LogPanelController logger = LogPanelController.getInstance();
 		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(true);
 		PurchaseController controller = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
@@ -62,16 +65,21 @@ public class PurchasePrintController extends PurchaseController {
 		try {
 			emailUtil.changeMailAccount(account);
 			List<ITransferObject> list = getManagerBean().getList(getCriteria());
+			logger.info( AonUtil.getMessage(BUNDLE_KEY, PURCHASE_SEND_EMAIL_NUMBER, list.size()) );
+			LogPanelController logPanel = (LogPanelController) AonUtil.getRegisteredBean(LOG_PANEL_CONTROLLER_NAME);
 			for( ITransferObject to : list ) {
-				super.fireBeforeEmailSend(event, to);
-				emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );
+				if ( logPanel.isActivePoll() ) {
+					super.fireBeforeEmailSend(event, to);
+					emailUtil.sendPurchase( (Purchase) to, getMoreRecipients(), subject, content  );					
+				} else {
+					break;
+				}
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		} finally {
-			LogPanelController logger = LogPanelController.getInstance();
 			logger.info( AonUtil.getMessage(BUNDLE_KEY, IPurchaseMessages.PURCHASE_SEND_EMAIL_FNINISH) );			
 			messageController.setShowNewMessageWindow(false);
 		}
