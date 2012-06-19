@@ -60,10 +60,10 @@ public class AccountEntryLoaderManager {
 	}
 
 	public void validateFormat(ByteArrayInputStream input) throws AonException {
-    	InputStreamReader r = new InputStreamReader(input);
-    	LineNumberReader reader = new LineNumberReader(r);
     	int i = 0;
 		try {
+	    	InputStreamReader r = new InputStreamReader(input,"ISO-8859-1");
+	    	LineNumberReader reader = new LineNumberReader(r);
 	    	while (reader.ready()) {
 	    		String lineInput = reader.readLine();
 	    		i++;

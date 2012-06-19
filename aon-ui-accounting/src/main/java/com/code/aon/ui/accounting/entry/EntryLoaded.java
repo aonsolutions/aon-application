@@ -2,6 +2,7 @@ package com.code.aon.ui.accounting.entry;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +12,14 @@ import org.apache.commons.lang.StringUtils;
 public class EntryLoaded {
 
 	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy"); 
-	private static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,##0.00"); 
+	private static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,##0.00");
+	static {
+		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
+		dfs.setGroupingSeparator('.');
+		dfs.setDecimalSeparator(',');
+		NUMBER_FORMATTER.setDecimalFormatSymbols(dfs);	
+	}
+	
 	
 	private Date date;
 	private Integer id;

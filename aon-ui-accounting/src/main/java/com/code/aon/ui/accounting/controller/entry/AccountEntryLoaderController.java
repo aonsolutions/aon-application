@@ -124,6 +124,7 @@ public class AccountEntryLoaderController {
 			input = new ByteArrayInputStream(getAonFile().getData());
 			m.load(input);
 			HibernateUtil.commitTransaction(sessionName);
+			LOGGER.info("Carga de apuntes finalizada");
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
