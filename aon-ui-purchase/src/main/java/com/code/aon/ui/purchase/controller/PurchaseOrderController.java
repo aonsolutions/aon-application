@@ -35,11 +35,11 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -57,7 +57,6 @@ public class PurchaseOrderController {
 	private List<GroupDetail> proposalDetailList;
 	private int productIndex;
 	private int detailIndex;
-	private Criteria purchasePrintcriteria = new Criteria();
 	
 	private CompanyCollectionsController companyCollections;
 	
@@ -259,6 +258,7 @@ public class PurchaseOrderController {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
+		List<Integer> purchaseIds = new LinkedList<Integer>();
 		try {
 			try {
 				HibernateUtil.setBeginTransaction(false);
@@ -266,11 +266,10 @@ public class PurchaseOrderController {
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				PurchaseUtils utils = new PurchaseUtils();
-				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), pg.getComments());
-						addToPurchaseCriteria(purchase);
+						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
@@ -279,7 +278,6 @@ public class PurchaseOrderController {
 						}
 					}
 				}
-				FormUtil.getController(PURCHASE_PRINT_CONTROLLER_NAME).setCriteria(purchasePrintcriteria);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -298,14 +296,11 @@ public class PurchaseOrderController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-	}
-	
-	private void addToPurchaseCriteria(Purchase purchase) throws ExpressionException {
-		if(purchasePrintcriteria==null){
-			purchasePrintcriteria = new Criteria();
-			purchasePrintcriteria.addEqualExpression("purchase.id", purchase.getId());
-		} else {
-			purchasePrintcriteria.addOrExpression("purchase.id", purchase.getId().toString());
+		IController purchsePrint = FormUtil.getController(PURCHASE_PRINT_CONTROLLER_NAME);
+		purchsePrint.clearCriteria();
+		if (! purchaseIds.isEmpty() ) {
+			String alias = purchsePrint.getFieldName(IEntityAlias.PURCHASE_ID);
+			purchsePrint.getCriteria().addInExpression(alias, purchaseIds);			
 		}
 	}
 	
