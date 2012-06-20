@@ -13,7 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:param name="showMoreMenu" value="#{!reservation.new and !reservation.cancelled}" />
 				<ui:define name="moreMenuContent">

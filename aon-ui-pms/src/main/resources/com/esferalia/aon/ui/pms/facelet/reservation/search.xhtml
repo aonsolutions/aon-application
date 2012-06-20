@@ -11,7 +11,7 @@
 			<ui:include	src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 			</ui:include>
 
 			<ui:decorate
