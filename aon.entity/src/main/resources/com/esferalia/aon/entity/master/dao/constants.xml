@@ -326,8 +326,8 @@
 		<hibernate names="id,domain,reservationRequest.id,reservationRequest.hotel.id,reservationRequest.hotel.scope.id,reservationRequest.active,roomIndex,item.id,adults,children,babies,crsCode,tariffCode,tariffDescription,inventoryCode,roomCode,roomDescription,mealPlan,dailyPrice,totalPrice,cancelPenalty,creationUser,creationDate,modificationUser,modificationDate" />
 	</bean>
 	<bean class="com.esferalia.aon.pms.Room" sqlName="room">
-		<alias names="id,asset_id,asset_name,domain,hotel_id,item_id"/>
-		<hibernate names="id,asset.id,asset.name,domain,hotel.id,item.id"/>
+		<alias names="id,asset_id,asset_name,domain,hotel_id,item_id,item_product_name"/>
+		<hibernate names="id,asset.id,asset.name,domain,hotel.id,item.id,item.product.name"/>
 	</bean> 
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
