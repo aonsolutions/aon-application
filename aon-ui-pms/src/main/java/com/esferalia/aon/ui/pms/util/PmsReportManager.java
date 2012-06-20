@@ -168,7 +168,7 @@ public class PmsReportManager {
 				+ " AND P.code not in ('001', '001F')"
 				+ " GROUP BY 1,2,4,10"+ (roomGroup?",5,9":"") 
 				+ " )"                                             
-				+ " ORDER BY 1,2,4,9"
+				+ " ORDER BY 1,2,4,5,9"
 				; 
 		
 		return select;
