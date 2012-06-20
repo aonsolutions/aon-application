@@ -122,9 +122,10 @@
 											<aon:outputLabel for="ProjectReservationRoom_item"
 												value="#{pmsBundle.pms_room_type}" />
 											<aon:selectOneMenu id="ProjectReservationRoom_item" styleClass="aon-width-350"
-												value="#{roomAvailability.filterParams.item}" required="true"
+												value="#{roomAvailability.filterParams.item}" required="#{controller.new}"
 												valueChangeListener="#{roomAvailability.onItemFilterChanged}"
 												reRender="ProjectReservationRoomAvailability">
+												<f:selectItem itemLabel="-" value="#{null}" />
 												<f:selectItems value="#{reservation.hotelRoomItems}" />
 											</aon:selectOneMenu>
 
@@ -157,7 +158,7 @@
 												<a4j:repeat value="#{roomAvailability.availableRoomList}" var="availableRoom"
 													rendered="#{roomAvailability.availableRoomCount > 0}">
 													<aon:commandLink styleClass="aon-dataTable-link-noicon aon-bold aon-nowrap"
-														value="#{availableRoom.asset.name}"
+														value="#{availableRoom.asset.name}" immediate="true"
 														actionListener="#{controller.onAssignReservationRoom}">
 														<f:param name="availableRoom" value="#{availableRoom.asset.id}"/>
 														<f:setPropertyActionListener

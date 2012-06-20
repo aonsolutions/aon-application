@@ -36,7 +36,6 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
@@ -342,25 +341,17 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
+		List<SelectItem> roomItems = new LinkedList<SelectItem>();
 		List<Integer> items = new LinkedList<Integer>();
 		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), hotel.getId());
+		criteria.addOrder(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_PRODUCT_NAME));
 		for (ITransferObject ito : roomBean.getList(criteria)) {
-			Room room = (Room)ito;
-			if (!items.contains(room.getItem().getId())) {
-				items.add(room.getItem().getId());
-			}
-		}
+			Item item = ((Room)ito).getItem();
+			if (!items.contains(item.getId())) {
+				items.add(item.getId());
 
-		List<SelectItem> roomItems = new LinkedList<SelectItem>();
-		if (items.size() > 0) {
-			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-			criteria = new Criteria();
-			criteria.addExpression(ExpressionUtilities.getInExpression(itemBean.getFieldName(IEntityAlias.ITEM_ID), items));
-			criteria.addOrder(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_NAME));
-			for (ITransferObject ito : itemBean.getList(criteria)) {
-				Item item = (Item)ito;
 				SelectItem roomItem = new SelectItem(item, item.getProduct().getCode() + " - " + item.getProduct().getName());
 				roomItems.add(roomItem);
 			}

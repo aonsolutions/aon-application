@@ -13,11 +13,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Item;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
@@ -58,7 +61,7 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		return getAvailableRoomList().size();
 	}
 	
-	public void onInitializeRoomList(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) {
+	public void onInitializeRoomList(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
 		startDate = (startDate == null) ? reservationRoom.getProjectReservation().getStartDate() : startDate;
 		endDate = (endDate == null) ? reservationRoom.getProjectReservation().getEndDate() : endDate;
 
@@ -74,15 +77,26 @@ public class RoomAvailabilityController extends BasicController implements IPmsC
 		setAvailableRoomList(null);
 	}
 
-	private void resetFilterParams(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) {
+	private void resetFilterParams(ProjectReservationRoom reservationRoom, Date startDate, Date endDate) throws ManagerBeanException {
 		ProjectReservation reservation = reservationRoom.getProjectReservation();
 		setFilterParams(null);
 		getFilterParams().setHotel(reservation.getHotel());
-		getFilterParams().setItem(reservationRoom.getItem());
+		getFilterParams().setItem(obtainAvailableRoomItem(reservationRoom));
 		getFilterParams().setViewerStartDate(startDate);
 		getFilterParams().setViewerEndDate(endDate);
 	}
-	
+
+	private Item obtainAvailableRoomItem(ProjectReservationRoom reservationRoom) throws ManagerBeanException {
+		IManagerBean roomBean = BeanManager.getManagerBean(Room.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_HOTEL_ID), reservationRoom.getProjectReservation().getHotel().getId());
+		criteria.addEqualExpression(roomBean.getFieldName(IEntityAlias.ROOM_ITEM_ID), reservationRoom.getItem().getId());
+		if (roomBean.getCount(criteria) > 0) {
+			return reservationRoom.getItem();
+		}
+		return null;
+	}
+
 	private List<?> obtainAvailableRoomList() {
 		String whereClause = "WHERE " + DomainManager.getSQLWhereClause("Room.domain");
 		if (getFilterParams().getHotel() != null && getFilterParams().getHotel().getId() != null) {
