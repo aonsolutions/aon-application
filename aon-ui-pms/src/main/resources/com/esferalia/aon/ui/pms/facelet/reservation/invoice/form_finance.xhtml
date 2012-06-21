@@ -29,9 +29,10 @@
 								rendered="#{hotelInvoiceFinance.payMethod == null}" />
 						</aon:div>
 						<aon:selectOneMenu id="ProjectReservation_financePayMethod"
-							value="#{hotelInvoiceFinance.payMethod}" required="true"
+							value="#{hotelInvoiceFinance.payMethod}" required="#{hotelInvoiceFinance.amount != 0}"
 							rendered="#{controller.reservationInvoiceTo.directCustomer}"
 							ajaxSingle="true">
+							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{configCollections.directPayMethods}" />
 						</aon:selectOneMenu>
 					</aon:column>

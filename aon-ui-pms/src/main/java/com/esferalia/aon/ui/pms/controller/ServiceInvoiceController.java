@@ -444,7 +444,6 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-
 		return isServicesDatesOk();
 	}
 
