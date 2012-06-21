@@ -7,7 +7,8 @@ Created on 16/04/2012
 from optparse import OptionParser
 from aonAdmin.arguments import Arguments
 from aonAdmin.aonException import AonException
-from aonAdmin.domain import Domain, DomainTypes, ConsoleColors
+from aonAdmin  import aon
+from aonAdmin.domain import Domain, DomainTypes
 import MySQLdb
 import sys
 
@@ -57,7 +58,7 @@ class RemoveDomain(object):
         cur.close()
         
         if self.__is_verbose_enabled():
-            print "\tValidation ..... ",green("ok!")
+            print "\tValidation ..... ",aon.green("ok!")
         return domain
         
     def execute(self):
@@ -77,8 +78,110 @@ class RemoveDomain(object):
 
                 if req == "n":
                     print
-                    print green("Borrado de dominio cancelado.")
+                    print aon.green("Borrado de dominio cancelado.")
                     sys.exit(0)
+            
+            # Borrado de domain_application y sus dependencias
+            cur = conn.cursor()
+            cur.execute("SELECT id FROM domain_application WHERE domain = %s",(domain.get_domain_id(),))
+            domain_applications = cur.fetchall()
+            for domain_application in domain_applications:
+                domain_application_id = domain_application[0]
+                if self.__arguments.options.verbose_sql:
+                    print "\tDomain_application_id --> ", domain_application_id
+                
+                # Borrado de "domain_application_module"
+                delete_stmt = "delete from domain_application_module where domain_application = %s" % domain_application_id 
+                if self.__arguments.options.verbose_sql:
+                    print "\t\t" + delete_stmt,
+                delete = conn.cursor()    
+                ret = delete.execute(delete_stmt)
+                delete.close
+                if self.__arguments.options.verbose_sql:
+                    print aon.green("["+str(ret) + " rows removed!]")    
+
+                # Borrado de "application_user" y sus dependencias
+                cur_au = conn.cursor()
+                cur_au.execute("SELECT id FROM application_user WHERE domain_application = %s",(domain_application_id,))
+                application_users = cur_au.fetchall()
+                for application_user in application_users:
+                    application_user_id = application_user[0]
+                    if self.__arguments.options.verbose_sql:
+                        print
+                        print "\t\tapplication_user id -->",application_user_id
+                    
+                    # Borrado de "application_user_profile"    
+                    delete_stmt = "delete from application_user_profile where application_user = %s" % application_user_id 
+                    if self.__arguments.options.verbose_sql:
+                        print "\t\t\t" + delete_stmt,
+                    delete = conn.cursor()    
+                    ret = delete.execute(delete_stmt)
+                    delete.close
+                    if self.__arguments.options.verbose_sql:
+                        print aon.green("["+str(ret) + " rows removed!]")    
+                        
+                    # Borrado de "application_user"    
+                    delete_stmt = "delete from application_user where id = %s" % application_user_id 
+                    if self.__arguments.options.verbose_sql:
+                        print "\t\t" + delete_stmt,
+                    delete = conn.cursor()    
+                    ret = delete.execute(delete_stmt)
+                    delete.close
+                    if self.__arguments.options.verbose_sql:
+                        print aon.green("["+str(ret) + " rows removed!]")    
+                cur_au.close
+                
+                # Borrado de "profile" y sus dependencias    
+                cur_pr = conn.cursor()
+                cur_pr.execute("SELECT id FROM profile WHERE domain = %s",(domain.get_domain_id(),))
+                profiles = cur_pr.fetchall()
+                for profile in profiles:
+                    profile_id = profile[0]
+                    if self.__arguments.options.verbose_sql:
+                        print
+                        print "\t\tprofile id -->",profile_id
+                
+                    # Borrado de "profile_module_denied"    
+                    delete_stmt = "delete from profile_module_denied where profile = %s" % profile_id 
+                    if self.__arguments.options.verbose_sql:
+                        print "\t\t\t" + delete_stmt,
+                    delete = conn.cursor()    
+                    ret = delete.execute(delete_stmt)
+                    delete.close
+                    if self.__arguments.options.verbose_sql:
+                        print aon.green("["+str(ret) + " rows removed!]")    
+                        
+                    # Borrado de "profile_role"    
+                    delete_stmt = "delete from profile_role where profile = %s" % profile_id 
+                    if self.__arguments.options.verbose_sql:
+                        print "\t\t\t" + delete_stmt,
+                    delete = conn.cursor()    
+                    ret = delete.execute(delete_stmt)
+                    delete.close
+                    if self.__arguments.options.verbose_sql:
+                        print aon.green("["+str(ret) + " rows removed!]")    
+
+                    # Borrado de "profile"    
+                    delete_stmt = "delete from profile where id = %s" % profile_id 
+                    if self.__arguments.options.verbose_sql:
+                        print "\t\t" + delete_stmt,
+                    delete = conn.cursor()    
+                    ret = delete.execute(delete_stmt)
+                    delete.close
+                    if self.__arguments.options.verbose_sql:
+                        print aon.green("["+str(ret) + " rows removed!]")    
+                cur_pr.close
+
+                # Borrado de "domain_application"    
+                delete_stmt = "delete from domain_application where id = %s" % domain_application_id 
+                if self.__arguments.options.verbose_sql:
+                    print "\t" + delete_stmt,
+                delete = conn.cursor()    
+                ret = delete.execute(delete_stmt)
+                delete.close
+                if self.__arguments.options.verbose_sql:
+                    print aon.green("["+str(ret) + " rows removed!]")    
+            cur.close
 
             stmt = conn.cursor()
             s = "SET FOREIGN_KEY_CHECKS=0;"
@@ -87,9 +190,10 @@ class RemoveDomain(object):
             stmt.execute(s)
             stmt.close()
             self.__foreignKeysChanged = True
-    
+            # Fin del borrado de domain_application y sus dependencias
 
             
+            # Se busca y borra todas las tablas que tengan un campo domain y cuyo valor coincida con el dominio a borrar.
             cur = conn.cursor()
             cur.execute("SELECT T.TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS as T WHERE T.TABLE_SCHEMA = %s AND T.COLUMN_NAME = %s",(self.__arguments.get_db(),"domain"))
             tables  = cur.fetchall()
@@ -101,7 +205,7 @@ class RemoveDomain(object):
                 ret = delete.execute(delete_stmt)
                 delete.close()
                 if self.__arguments.options.verbose_sql and ret > 0:
-                    print green("\t" + str(ret) + " rows removed!")
+                    print aon.green("\t" + str(ret) + " rows removed!")
             cur.close()
             
             delete_stmt = "DELETE FROM domain WHERE id = " + str(domain.get_domain_id())
@@ -111,11 +215,11 @@ class RemoveDomain(object):
             ret = delete.execute(delete_stmt)
             delete.close()
             if self.__arguments.options.verbose_sql:
-                print green(" [OK]")
+                print aon.green(" [OK]")
             
             conn.commit()
             print
-            print green("Dominio borrado satisfactoriamente!")
+            print aon.green("Dominio borrado satisfactoriamente!")
             print
             retValue = 0
         except MySQLdb.DatabaseError, e:
@@ -123,7 +227,7 @@ class RemoveDomain(object):
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),"-20 - Se ha producido un error SQL", e
+            print aon.fail("ERROR:"),"-20 - Se ha producido un error SQL", e
             print "Exit!"
             retValue = -20
         except AonException, e:
@@ -131,7 +235,7 @@ class RemoveDomain(object):
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),e.errno,e.errmsg
+            print aon.fail("ERROR:"),e.errno,e.errmsg
             print "Exit!"
             retValue = e.errno
         finally:
@@ -145,33 +249,7 @@ class RemoveDomain(object):
             if conn != None:
                 conn.close()
         return retValue
-#        cur = conn.cursor()
-#        stmt = "SELECT T.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as T WHERE T.TABLE_NAME = 'domain' AND T.TABLE_SCHEMA = '%s'",self.__arguments.get_db()
-#        cur.execute(stmt)
-#        schemas = cur.fetchall()
-#        for schema in schemas:
-#            print schema[0]
-#            dom_cur = conn.cursor()
-#            stmt = "SELECT `name` FROM `"+schema[0]+"`.`domain`";
-#            dom_cur.execute(stmt)
-#            domains = dom_cur.fetchall()
-#            for domain in domains:
-#                domain_name = domain[0]
-#                print schema[0] + " " + domain[0] 
-#            dom_cur.close()
-#        cur.close()
         
-def warning(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def fail(text):
-    return ConsoleColors.RED + text + ConsoleColors.ENDC 
-def bold(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def header(text):
-    return ConsoleColors.HEADER + text + ConsoleColors.ENDC 
-def green(text):
-    return ConsoleColors.GREEN + text + ConsoleColors.ENDC 
-
 if __name__ == '__main__':
     arguments = Arguments()
     list_domain  = RemoveDomain(arguments)

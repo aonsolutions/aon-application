@@ -5,7 +5,7 @@ Created on 16/04/2012
 @author: ecastellano
 '''
 from aonAdmin.aonException import AonException
-from aonAdmin.domain import ConsoleColors
+from aonAdmin import aon
 from optparse import OptionParser
 from aonAdmin.arguments import Arguments
 import MySQLdb
@@ -28,12 +28,12 @@ class ListDomains(object):
             schemas = cur.fetchall()
             for schema in schemas:
                 dom_cur = conn.cursor()
-                stmt = "SELECT `name` FROM `"+schema[0]+"`.`domain`";
+                stmt = "SELECT `id`,`name`,`parent` FROM `"+schema[0]+"`.`domain` ORDER BY `parent`,`name`";
                 dom_cur.execute(stmt)
                 domains = dom_cur.fetchall()
                 for domain in domains:
-                    domain_name = domain[0]
-                    print schema[0] + " " + domain[0] 
+                    domain_name = domain[1]
+                    print schema[0] + " "+ str(domain[0])+ " " + domain[1]
                 dom_cur.close()
             cur.close()
             conn.close()
@@ -42,7 +42,7 @@ class ListDomains(object):
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),"-20 - Se ha producido un error SQL", e
+            print aon.fail("ERROR:"),"-20 - Se ha producido un error SQL", e
             print "Exit!"
             sys.exit(-20)
         except AonException, e:
@@ -50,20 +50,9 @@ class ListDomains(object):
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),e.errno,e.errmsg
+            print aon.fail("ERROR:"),e.errno,e.errmsg
             print "Exit!"
             sys.exit(e.errno)
-
-def warning(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def fail(text):
-    return ConsoleColors.RED + text + ConsoleColors.ENDC 
-def bold(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def header(text):
-    return ConsoleColors.HEADER + text + ConsoleColors.ENDC 
-def green(text):
-    return ConsoleColors.GREEN + text + ConsoleColors.ENDC 
 
 if __name__ == '__main__':
     arguments = Arguments()

@@ -176,6 +176,11 @@
 											value="#{configBundle.config_series_module}" />
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tax-configuration" 
+											action="tax_list-configuration" 
+											value="#{configBundle.config_tax_module}" />
+									</aon:div>	
+									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="geotreeParent_list-configuration" 
 											action="geotreeParent_list-configuration" 
 											actionListener="#{geotreeParent.onSearch}"

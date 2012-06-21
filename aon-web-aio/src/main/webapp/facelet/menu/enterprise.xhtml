@@ -37,6 +37,12 @@
 										actionListener="#{adminNewDomain.onInit}"
 										value="#{adminBundle.admin_new_domain}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="removeDomain-enterprise"
+										action="removeDomain_form-enterprise"
+										actionListener="#{adminRemoveDomain.onInit}"
+										value="#{adminBundle.admin_remove_domain}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>

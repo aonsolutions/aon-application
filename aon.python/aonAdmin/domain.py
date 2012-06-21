@@ -4,10 +4,10 @@ Created on 16/04/2012
 @author: ecastellano
 '''
 from aonAdmin.aonException import AonException
+from aonAdmin import aon
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from subprocess import Popen, PIPE
 import MySQLdb
 import base64
 import hashlib
@@ -16,26 +16,6 @@ import smtplib
 import subprocess
 import sys
 import zipfile
-
-class ConsoleColors:
-    HEADER = '\033[95m'
-    BOLD = "\033[1m"
-    BLUE = '\033[94m'
-    GREEN = '\033[32m'
-    RED = '\033[91m'
-    ENDC = '\033[0m'
-
-def warning(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def fail(text):
-    return ConsoleColors.RED + text + ConsoleColors.ENDC 
-def bold(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def header(text):
-    return ConsoleColors.HEADER + text + ConsoleColors.ENDC 
-def green(text):
-    return ConsoleColors.GREEN + text + ConsoleColors.ENDC 
-
 
 class DomainType:
     
@@ -190,7 +170,7 @@ class Domain(object):
 
     def set_domain_max_defined_users(self, value):
         if (value == None):
-            value = "1"
+            value = 1
         self.__domain_max_defined_users = value
     
     def set_domain_modules(self, value):
@@ -239,7 +219,7 @@ class Domain(object):
             x = x +1
                 
         if self.is_verbose_enabled():
-            print "\tInsertions ..... ",green("ok!")
+            print "\tInsertions ..... ",aon.green("ok!")
 
     def validate(self,db):
         '''
@@ -275,8 +255,8 @@ class Domain(object):
             self.autenticate_user();        
 
         # Validacion del numero maximo de usuarios
-        if self.get_domain_max_defined_users() != None and not self.get_domain_max_defined_users().isdigit():
-            raise AonException(-37,"Domain max defined users must be a positive integer!")
+        if self.get_domain_max_defined_users() != None and not self.get_domain_max_defined_users() > 0:
+            raise AonException(-37,"Domain max defined users must be a non zero positive integer!")
             
         # Validacion de los modulos
         modules = self.get_domain_modules().split(",")
@@ -376,7 +356,7 @@ class Domain(object):
         
         
         if self.is_verbose_enabled():
-            print "\tValidation ..... ",green("ok!")
+            print "\tValidation ..... ",aon.green("ok!")
 
     def is_valid_hostname(self,hostname):
         if len(hostname) > 255:
@@ -389,7 +369,7 @@ class Domain(object):
     def __insert_domain(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():
-            print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),self.get_domain_suffix(),")",  
+            print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),",",self.get_domain_suffix(),")",  
         stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                        ,(self.get_domain_name()
                          ,self.get_domain_description()
@@ -488,7 +468,6 @@ class Domain(object):
 
 class newDomain:
     
-    #AON_MASTER_JAR = "/home/ecastellano/.m2/repository/com/code/aon/aon-master/7.0-SNAPSHOT/aon-master-7.0-SNAPSHOT.jar"
     AON_MASTER_JAR = "/usr/share/java/aon-master.jar"
 
     def __init__(self,arguments):
@@ -502,23 +481,23 @@ class newDomain:
             domain = self.__arguments.get_domain()
             domain.insert(conn)
             conn.commit()
-            self.__load_default_values(domain)
+            self.__load_domain_default_values(domain)
 
             if self.__arguments.is_verbose_enabled():
                 print "Commiting Transaction ..... ",
             conn.commit()
             if self.__arguments.is_verbose_enabled():
-                print green("ok!")
+                print aon.green("ok!")
             self.send_mail()
             print
-            print green("Dominio creado satisfactoriamente!")
+            print aon.green("Dominio creado satisfactoriamente!")
             print
         except MySQLdb.DatabaseError, e:
             if self.__arguments.is_verbose_enabled():
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),"-20 - Se ha producido un error SQL", e
+            print aon.fail("ERROR:"),"-20 - Se ha producido un error SQL", e
             print "Exit!"
             sys.exit(-20)
         except AonException, e:
@@ -526,7 +505,7 @@ class newDomain:
                 print "Rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),e.errno,e.errmsg
+            print aon.fail("ERROR:"),e.errno,e.errmsg
             print "Exit!"
             sys.exit(e.errno)
 
@@ -555,7 +534,7 @@ class newDomain:
             s.sendmail(me, to , msg.as_string())
             s.quit()
     
-    def __load_default_values(self,domain):
+    def __load_domain_default_values(self,domain):
         if self.__arguments.is_verbose_enabled():
             print
             print "Loading default values for domain  ..... ",domain.get_domain_id()
@@ -565,7 +544,7 @@ class newDomain:
             sql_script = "com/code/aon/master/defaults/insert.database.aon.domain.from.parent.sql"
         else:
             if self.__arguments.is_load_defaults_from_parent():
-                print  "\t"+warning("WARNING:"),"Se indico la carga de valores desde el dominio padre, pero el dominio a crear es padre. Se ignora."
+                print  "\t"+aon.warning("WARNING:"),"Se indico la carga de valores desde el dominio padre, pero el dominio a crear es padre. Se ignora."
             sql_script = "com/code/aon/master/defaults/insert.database.aon.domain.sql"
             
         temp_path = "/tmp/__aon.python.insert.database.aon.domain" + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -579,6 +558,6 @@ class newDomain:
         ret = subprocess.call(__command % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),self.__arguments.get_db(),domain.get_domain_id(),sql_script),shell=True)
         if self.__arguments.is_verbose_enabled():
             print "\tDefaults script returns code   ..... ",ret
-            print "\tDefault data load  ..... ",green("ok!")
+            print "\tDefault data load  ..... ",aon.green("ok!")
             print
             

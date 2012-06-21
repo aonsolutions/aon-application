@@ -2,29 +2,16 @@
 
 from aonAdmin.aonException import AonException
 from aonAdmin.arguments import Arguments
+from datetime import datetime
+import subprocess
 from subprocess import Popen, PIPE
 import MySQLdb
 import sys
 import zipfile
-import fileinput
-from tempfile import TemporaryFile, NamedTemporaryFile, mkdtemp
+from tempfile import NamedTemporaryFile
 from datetime import datetime
-from aonAdmin.domain import DomainTypes
+from aonAdmin import aon
 from aonAdmin.domain import newDomain
-from aonAdmin.domain import ConsoleColors
-from aonAdmin.connection import Connection
-
-
-def warning(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def fail(text):
-    return ConsoleColors.RED + text + ConsoleColors.ENDC 
-def bold(text):
-    return ConsoleColors.BOLD + text + ConsoleColors.ENDC 
-def header(text):
-    return ConsoleColors.HEADER + text + ConsoleColors.ENDC 
-def green(text):
-    return ConsoleColors.GREEN + text + ConsoleColors.ENDC 
 
 class createDatabase:
     
@@ -36,26 +23,38 @@ class createDatabase:
         self.__zf = zipfile.ZipFile(self.AON_MASTER_JAR, 'r')
 
     def create(self):
-
         conn = None
         try:
-            if self.__arguments.is_verbose_enabled():
-                print "Database creation"
-
             if self.__arguments.get_db() == "":
                 raise AonException(-90,"No se ha indicado el nombre de la base de datos que se desea crear!")
 
-            if self.__arguments.options.domain_type == None or self.__arguments.options.domain_type=="":
-                self.__arguments.options.domain_type = "Parent"
+            if self.__arguments.is_skip_domain_creation_enabled():
+                print "Skip domain creation is set to true"
+                __domain = self.__arguments.get_domain()
+                if  __domain.get_domain_name() != None or __domain.get_domain_description() != None or __domain.get_domain_type() != None or __domain.get_domain_parent_id() != None or __domain.get_domain_parent_name() != None or __domain.get_domain_user() != None:
+                    print
+                    print aon.warning("WARNING: Se han indicado parametros referentes al dominio, pero no se va a crear un dominio (-k o --skip-domain-creation=true).")
+                    if not self.__arguments.options.no_prompt:
+                        req = None
+                        while req != "y" and req != "n":
+                            req = raw_input( "Continuar (y/n)?")
+                        if req == "n":
+                            print aon.green("Creacion de base de datos cancelada.")
+                            sys.exit(0)
+            
+            if self.__arguments.is_verbose_enabled():
+                print "Database creation"
+            
+            if self.__arguments.is_skip_domain_creation_enabled():
+                if self.__arguments.options.domain_type == None or self.__arguments.options.domain_type=="":
+                    self.__arguments.options.domain_type = "Parent"
             
             conn = self.__arguments.get_connection(nodatabase=True)
-#            connection = Connection()
-#            conn = connection.connect(self.__arguments, nodatabase=True )
             cur = conn.cursor()
             cur.execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s",(self.__arguments.get_db(),))
             if int(cur.rowcount):
                 raise AonException(-31,"Database '"+self.__arguments.get_db()+"' already exists!")
-            if self.__arguments.is_skip_domain_creation_enabled() == False:
+            if not self.__arguments.is_skip_domain_creation_enabled():
                 domain = self.__arguments.get_domain()
                 if not domain.get_domain_type().is_parent():
                     raise AonException(-91,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
@@ -73,16 +72,18 @@ class createDatabase:
                 print
                 print "Running creation tables SQL script ....."
 
-            process = Popen('mysql -v -h%s -u%s -p%s ' % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd()),
-            stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
-            output = process.communicate(file.read())[0]
+            __sql_verbose = ""
+            if self.__arguments.is_verbose_sql_enabled():
+                __sql_verbose = " -v "
+            __command = 'mysql '+ __sql_verbose + ' --default-character-set=latin1 -h%s -u%s -p%s -e "source %s;"'
+            ret = subprocess.call(__command % (self.__arguments.get_host(), self.__arguments.get_user(), self.__arguments.get_passwd(),file.name),shell=True)
             if self.__arguments.is_verbose_enabled():
-                print "\tMySQL returns",process.returncode,"code" 
+                print "\tMySQL returns",ret,"code" 
             
             self.__load_default_values()
             
             if self.__arguments.is_verbose_enabled():
-                print green("\tCreacion de la base de datos satisfactoria.")
+                print aon.green("\tCreacion de la base de datos satisfactoria.")
 
             if self.__arguments.is_skip_domain_creation_enabled() == False:
                 if self.__arguments.is_verbose_enabled():
@@ -96,14 +97,13 @@ class createDatabase:
                     print
                     print "Skip domain creation"
                     print                
-                
             
         except MySQLdb.DatabaseError, e:
             if self.__arguments.is_verbose_enabled():
                 print " rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),"-20 - Se ha producido un error SQL", e
+            print aon.fail("ERROR:"),"-20 - Se ha producido un error SQL", e
             print "Exit!"
             sys.exit(-20)
         except AonException, e:
@@ -111,7 +111,7 @@ class createDatabase:
                 print " rollback ..... "
             if conn != None:
                 conn.rollback();
-            print fail("ERROR:"),e.errno,e.errmsg
+            print aon.fail("ERROR:"),e.errno,e.errmsg
             print "Exit!"
             sys.exit(e.errno)
 
@@ -142,8 +142,10 @@ class createDatabase:
             raise AonException(-90,"Se ha producido un error de SQL!")            
 
 if __name__ == '__main__':
+    start = datetime.now();
     arguments = Arguments()
-    arguments.printInfo() 
     ud = createDatabase(arguments)
     ud.create()
+    if arguments.is_verbose_enabled():
+        print "Script end [",str((datetime.now() - start)),"]"
      
