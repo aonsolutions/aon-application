@@ -25,7 +25,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -112,22 +111,7 @@ public class PosShiftController extends BasicController {
 			criteria.addOrder(financesBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
 			return financesBean.getList(criteria);
 		} catch (ManagerBeanException ex) {
-			String msg = "Error al cargar los datos de Facturas.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, ex);
-		}
-	}
-	
-	private List<ITransferObject> getInvoiceList(PosShift posShift) {
-		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_DATE),posShift.getStartTime(), posShift.getEndTime()!=null?posShift.getEndTime():new Date());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_USER), posShift.getUser().getLogin());
-			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
-			return invoiceBean.getList(criteria);
-		} catch (ManagerBeanException ex) {
-			String msg = "Error al cargar los datos de Facturas.";
+			String msg = "Error al cargar los vencimientos de Facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ex);
 		}

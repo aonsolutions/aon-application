@@ -11,11 +11,19 @@
 
 	<ui:define name="content">
 		<aon:form id="posForm">
+		
+			<ui:param name="readOnly" value="#{aonRole.config}" />
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posShift_module}" />
 				<ui:param name="controller" value="#{posShift}" />
+				
+				<ui:param name="skipSaveButton" value="#{readOnly}" />
+				<ui:param name="skipRemoveButton" value="#{readOnly}" />
+				<ui:param name="skipResetButton" value="#{readOnly}" />
+				
+				
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="posShift_report"
@@ -81,14 +89,14 @@
 						</aon:div>
 						
 						<aon:outputLabel value="#{pmsBundle.pms_shift}" />
-						<aon:selectOneMenu 
+						<aon:selectOneMenu disabled="#{readOnly}"
 							value="#{posShift.to.shift}" >
 							<f:selectItems value="#{pmsCollections.shifts}" />
 						</aon:selectOneMenu>
 					
 						<aon:outputLabel 
 							value="#{pmsBundle.pms_opening}" />
-						<aon:selectInputDate  
+						<aon:selectInputDate  disabled="#{readOnly}"
 							value="#{posShift.to.startTime}" size="20"
 							inputSize="16" renderAsPopup="true" enableManualInput="true"
 							timeZone="#{timeZoneController.timeZone}"
@@ -97,7 +105,7 @@
 						
 						<aon:outputLabel 
 							value="#{pmsBundle.pms_closing}" />
-						<aon:selectInputDate  
+						<aon:selectInputDate  disabled="#{readOnly}"
 							value="#{posShift.to.endTime}" size="20"
 							inputSize="16" renderAsPopup="true" enableManualInput="true"
 							timeZone="#{timeZoneController.timeZone}"
@@ -106,17 +114,18 @@
 						
 						<aon:outputLabel for="PosShift_remarks"
 							value="#{bundle.aon_remark}" />
-						<aon:inputTextarea id="PosShift_remarks" cols="80" rows="3"
+						<aon:inputTextarea id="PosShift_remarks" 
+							cols="80" rows="3" disabled="#{readOnly}"
 							value="#{posShift.to.remarks}" />
 						
 						<aon:outputLabel value="#{pmsBundle.pms_initial_amount}" />
 						<aon:div>
-							<aon:inputText value="#{posShift.to.initialAmount}" >
+							<aon:inputText value="#{posShift.to.initialAmount}" disabled="#{readOnly}" >
 								<f:validateDoubleRange minimum="0.0" />
 								<a4j:support event="onchange" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
 								<a4j:support event="oninputchanged" reRender="posShiftPanel" ignoreDupResponses="true" ajaxSingle="true" />
 							</aon:inputText>
-							<aon:commandButton 
+							<aon:commandButton rendered="#{!readOnly}"
 								reRender="showCalculatorWindow"
 								styleClass="aon-editDataTable-button aon-icon-calc aon-margin-left"
 								actionListener="#{posShift.onShowCalculatorWindow}" >
@@ -160,12 +169,14 @@
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
 								<ui:param name="controller" value="#{posShiftCount}" />
 								<ui:param name="modalController" value="#{posShift}" />
+								<ui:param name="disabledGrid" value="#{readOnly}" />
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{!posShift.to.pos.invoiceable}">
 							<aon:panelTab id="invoice" label="#{financeBundle.finance_charge_menu}">
 								<ui:include	src="/com/esferalia/aon/ui/pms/facelet/posShift/invoice/tab_grid.xhtml" >
 									<ui:param name="skipRectifyButton" value="true" />
+									<ui:param name="showGoToReservation" value="#{!readOnly}" />
 								</ui:include>
 							</aon:panelTab>
 						</c:if>

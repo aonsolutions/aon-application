@@ -149,6 +149,8 @@
 											value="#{pmsBundle.pms_pos_module}">
 										</aon:commandLink>
 									</aon:div>
+								</c:if>
+								<c:if test="#{aonRole.admin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift" 
 											action="posShift_search" actionListener="#{posShift.onEditSearch}"
@@ -170,6 +172,17 @@
 										<aon:actionListener method="#{posClosing.onInit}" />
 									</aon:commandLink>
 								</aon:div>
+								<!--
+								<c:if test="#{aonRole.financeOperator}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="pos_finance_bath" 
+											action="posFinanceBatch_search" 
+											value="#{pmsBundle.pms_posFinanceBatch_module}">
+											<aon:actionListener method="#{posFinanceBatch.onInit}" />
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
+								-->
 							</aon:div>
 						</aon:panelGrid>
 
