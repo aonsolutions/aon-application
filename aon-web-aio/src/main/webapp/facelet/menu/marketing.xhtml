@@ -37,35 +37,37 @@
 						</aon:div>
 					</aon:panelGrid>
 					
-					<aon:panelGrid id="group_marketing_general"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-direct-access-panel aon-icon-reservation">
-						<f:facet name="header">
-							<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="question"
-									action="question_list" actionListener="#{question.onSearch}"
-									value="#{commercialBundle.commercial_question_module}" />
+					<c:if test="#{aonRole.config}">
+						<aon:panelGrid id="group_marketing_general"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-reservation">
+							<f:facet name="header">
+								<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="question"
+										action="question_list" actionListener="#{question.onSearch}"
+										value="#{commercialBundle.commercial_question_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="surveyResponse"
+										action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}"
+										value="#{marketingBundle.marketing_survey_response_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="survey"
+										action="survey_list" actionListener="#{survey.onSearch}" 
+										value="#{marketingBundle.marketing_survey_module}" />
+								</aon:div>								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketingTemplate"
+										action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
+										value="#{marketingBundle.marketing_template_module}" />
+								</aon:div>								
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="surveyResponse"
-									action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}"
-									value="#{marketingBundle.marketing_survey_response_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="survey"
-									action="survey_list" actionListener="#{survey.onSearch}" 
-									value="#{marketingBundle.marketing_survey_module}" />
-							</aon:div>								
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="marketingTemplate"
-									action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
-									value="#{marketingBundle.marketing_template_module}" />
-							</aon:div>								
-						</aon:div>
-					</aon:panelGrid>							
+						</aon:panelGrid>
+					</c:if>							
 					
 				</h:panelGrid>
 			</aon:div>

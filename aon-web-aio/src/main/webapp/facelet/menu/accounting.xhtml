@@ -143,11 +143,13 @@
 										action="periodAmortization_search"
 										value="#{accountingBundle.accounting_period_amortization_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortizationType"
-										action="amortizationType_list"
-										value="#{accountingBundle.accounting_amortization_type_module}" />
-								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortizationType"
+											action="amortizationType_list"
+											value="#{accountingBundle.accounting_amortization_type_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -165,26 +167,30 @@
 									<aon:commandLink id="account" action="account_list"
 										value="#{accountBundle.account_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="autConcept" action="autConcept"
-										value="#{accountingBundle.accounting_aut_concept_module}" />
-								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="autConcept" action="autConcept"
+											value="#{accountingBundle.accounting_aut_concept_module}" />
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountManager"
 										action="accountManager_list"
 										value="#{accountBridgeBundle.account_relationships_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accounting_balance-accounting" 
-										action="balance_list-accounting"
-										value="#{accountingBundle.accounting_balance_menu}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accPeriod-accounting" 
-										action="accPeriod-accounting"
-										actionListener="#{accPeriod.onSearch}"
-										value="#{accountingBundle.accounting_period_module}" />
-								</aon:div>
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accounting_balance-accounting" 
+											action="balance_list-accounting"
+											value="#{accountingBundle.accounting_balance_menu}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod-accounting" 
+											action="accPeriod-accounting"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{accountingBundle.accounting_period_module}" />
+									</aon:div>
+								</c:if>
 							</aon:div>
 						</aon:panelGrid>
 
