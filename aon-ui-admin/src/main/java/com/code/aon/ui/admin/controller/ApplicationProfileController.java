@@ -9,6 +9,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.admin.ApplicationRole;
@@ -20,7 +22,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AdminUtil;
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
 import com.code.aon.ui.common.role.IAonRole;
@@ -172,5 +177,12 @@ public class ApplicationProfileController extends LinesController {
 		}
 		return null;
 	}	
+
+	public void onInit( ActionEvent event ) throws ManagerBeanException {
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
+		Integer domainApplication = AdminUtil.getDomainApplication(user.getDomainId(), user.getApplicationId());
+		dac.select(event, domainApplication);
+	}
 	
 }

@@ -25,7 +25,6 @@ import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.util.ManagerLogger;
-import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
@@ -126,7 +125,7 @@ public class AdminMainController implements IAdminConstants {
 	}
 	
 	private void initSysAdmin( ActionEvent event ) {
-		AonUtil.getRoleManager().setUserInRole(IAonRole.SYS_ADMIN, true);
+		AonUtil.getRoleManager().setSysAdmin();
 		this.config = PropertiesUtil.loadProperties(SYS_ADMIN_PROPERTIES);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);

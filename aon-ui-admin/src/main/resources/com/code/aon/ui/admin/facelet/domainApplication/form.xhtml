@@ -78,12 +78,7 @@
 						<aon:panelTab name="systemProfiles"
 							label="#{adminBundle.admin_systemProfiles}">
 
-							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
-								<ui:param name="controller" value="#{applicationProfile}" />
-								<ui:param name="skipProfileEdit" value="#{true}" />
-								<ui:param name="skipDomainColumn" value="#{true}" />
-								<ui:param name="skipDeniedModulesColumn" value="#{true}" />
-							</ui:include>								
+							<ui:include src="/com/code/aon/ui/admin/facelet/applicationProfile/grid.xhtml" />
 
 	                    </aon:panelTab>	                    
 

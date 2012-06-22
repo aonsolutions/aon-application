@@ -422,6 +422,22 @@
 		</navigation-case>
 	</navigation-rule>			
 
+	<!-- =================== Profiles ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domainApplicationProfile_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/profile/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainApplicationProfile_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/profile/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>applicationProfile_list</from-outcome>
+			<to-view-id>com/code/aon/ui/admin/facelet/applicationProfile/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>			
+
 	<!-- =================== New Domain  ================= -->
 	<navigation-rule>
 		<navigation-case>

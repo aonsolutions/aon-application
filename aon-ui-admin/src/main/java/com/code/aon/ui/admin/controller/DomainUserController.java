@@ -273,7 +273,18 @@ public class DomainUserController extends BasicController {
 	public List<UserApplicationInfo> getApplicationInfos() {
 		return applicationInfos;
 	}
+	
+	public boolean isShowOnlyProfiles() {
+		return applicationInfos.size() == 1;
+	}
 
+	public void registerAllApplications() throws ManagerBeanException {
+		for( UserApplicationInfo uai : this.applicationInfos ) {
+			uai.setChecked(true);
+			uai.register();
+		}
+	}	
+	
 	public void onSaveApplications( ActionEvent event ) throws ManagerBeanException {
 		for( UserApplicationInfo uai : this.applicationInfos ) {
 			if ( uai.isChecked() ) {

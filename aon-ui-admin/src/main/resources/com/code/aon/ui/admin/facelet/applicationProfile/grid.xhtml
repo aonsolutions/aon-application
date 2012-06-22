@@ -5,14 +5,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:div id="#{controller.beanName}Div" >
-		<ui:param name="innerToolbar" value="#{true}" />	
-		<c:if test="#{controller.to == null}">
-			<ui:include src="/com/code/aon/ui/admin/facelet/profile/gridList.xhtml" />
-		</c:if>
-		<c:if test="#{controller.to != null}">
-			<ui:include src="/com/code/aon/ui/admin/facelet/profile/gridForm.xhtml" />
-		</c:if>
-	</aon:div>
+	<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
+		<ui:param name="controller" value="#{applicationProfile}" />
+		<ui:param name="skipProfileEdit" value="#{true}" />
+		<ui:param name="skipDomainColumn" value="#{true}" />
+		<ui:param name="skipDeniedModulesColumn" value="#{true}" />
+	</ui:include>								
 
 </ui:composition>

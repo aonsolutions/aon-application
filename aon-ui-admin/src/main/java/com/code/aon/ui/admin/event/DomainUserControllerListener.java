@@ -110,6 +110,7 @@ public class DomainUserControllerListener extends ControllerAdapter {
 		User user = duc.getDomainUser();
 		try {
 			duc.initApplicationInfos(user);
+			duc.registerAllApplications();
 			updateWebmail(user);
 			updateDeniedOptions(user);
 			updateScopes(user);

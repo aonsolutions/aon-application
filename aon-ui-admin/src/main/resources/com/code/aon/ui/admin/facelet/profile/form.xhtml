@@ -4,58 +4,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
-		<ui:param name="skipSearchButton" value="#{true}" />
-		<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_application_profile_remove_confirm}" />
-	</ui:include>	
+	<ui:define name="content">
+		<aon:form id="profilesForm">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{adminBundle.admin_profiles}" />
+				<ui:param name="controller" value="#{domainApplicationProfile}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_application_profile_remove_confirm}" />
+			</ui:include>
 
-	<aon:div styleClass="aon-scroll-area">
-
-		<aon:panelGrid columns="2">
-
-			<aon:outputLabel for="Profile_name"
-				value="#{bundle.aon_name}" />
-			<aon:inputText id="Profile_name"
-				size="80" required="true"
-				value="#{controller.to.name}" />
-					
-		</aon:panelGrid>
-
-		<c:if test="#{!controller.new}" >
-		
-			<aon:div styleClass="aon-margin-top">
-				<aon:dataTable columns="2" value="#{domainApplication.to}">
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_roles}" />
-						</f:facet>
-						<a4j:repeat value="#{controller.roles}" var="profileRole">
-							<aon:div>
-								<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
-								<aon:outputText value="#{profileRole.label}" />
-							</aon:div>
-						</a4j:repeat>
-					</aon:column>				
-	
-					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_modules_denied}" />
-						</f:facet>
-						<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
-							<aon:div>
-								<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
-								<aon:outputText value="#{profileDeniedModule.label}" />
-							</aon:div>
-						</a4j:repeat>
-					</aon:column>					
-				</aon:dataTable>
-			</aon:div>
-
-		</c:if>		
-
-	</aon:div>
+			<ui:include src="/com/code/aon/ui/admin/facelet/profile/formContent.xhtml" >
+				<ui:param name="controller" value="#{domainApplicationProfile}" />
+			</ui:include>
+			
+		</aon:form>
+	</ui:define>
 
 </ui:composition>

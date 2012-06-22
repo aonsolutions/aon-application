@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:panelGrid columns="2">
+
+			<aon:outputLabel for="Profile_name"
+				value="#{bundle.aon_name}" />
+			<aon:inputText id="Profile_name"
+				size="80" required="true"
+				value="#{controller.to.name}" />
+					
+		</aon:panelGrid>
+
+		<c:if test="#{!controller.new}" >
+		
+			<aon:div styleClass="aon-margin-top">
+				<aon:dataTable columns="2" value="#{domainApplication.to}">
+					
+					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_roles}" />
+						</f:facet>
+						<a4j:repeat value="#{controller.roles}" var="profileRole">
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
+								<aon:outputText value="#{profileRole.label}" />
+							</aon:div>
+						</a4j:repeat>
+					</aon:column>				
+	
+					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
+						<f:facet name="header">
+							<aon:outputText value="#{adminBundle.admin_modules_denied}" />
+						</f:facet>
+						<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
+								<aon:outputText value="#{profileDeniedModule.label}" />
+							</aon:div>
+						</a4j:repeat>
+					</aon:column>					
+				</aon:dataTable>
+			</aon:div>
+
+		</c:if>		
+
+	</aon:div>
+
+</ui:composition>

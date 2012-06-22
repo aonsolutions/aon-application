@@ -48,6 +48,11 @@ public abstract class BasicRoleManager {
 		this.roles[role.ordinal()] = value;
 	}
 	
+	public void setSysAdmin() {
+		this.admin = true;
+		setUserInRole(IAonRole.SYS_ADMIN, true);
+	}
+	
 	/**
 	 * @param role
 	 *            The Role
@@ -75,7 +80,7 @@ public abstract class BasicRoleManager {
 	 * @return TRUE if user has IAonRole.ADMIN role, false otherwise.
 	 */
 	public boolean isAdmin() {
-		return isUserInRole(IAonRole.ADMIN);
+		return this.admin;
 	}
 
 	/**

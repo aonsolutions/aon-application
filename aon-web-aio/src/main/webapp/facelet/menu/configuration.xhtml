@@ -104,55 +104,67 @@
 							</aon:panelGrid>
 						</c:if>
 
-						<aon:panelGrid id="group_configuration_security"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-security aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_security}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="adminDomain"
-										action="adminDomain_form"
-										actionListener="#{adminMain.onInit}"
-										value="#{adminBundle.admin_domain_management}" >
-										<aon:actionListener method="#{adminDomain.onInit}" />
-									</aon:commandLink>
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="domainUsers"
-										action="domainUser_list"
-										actionListener="#{adminMain.onInit}"
-										value="#{adminBundle.admin_users}" >
-										<aon:actionListener method="#{domainUser.onSearch}" />
-									</aon:commandLink>						
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_configuration_security"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-security aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="adminDomain"
+											action="adminDomain_form"
+											actionListener="#{adminMain.onInit}"
+											value="#{adminBundle.admin_domain_management}" >
+											<aon:actionListener method="#{adminDomain.onInit}" />
+										</aon:commandLink>
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="domainUsers"
+											action="domainUser_list"
+											actionListener="#{adminMain.onInit}"
+											value="#{adminBundle.admin_users}" >
+											<aon:actionListener method="#{domainUser.onSearch}" />
+										</aon:commandLink>						
+									</aon:div>
+									<c:if test="#{aonRole.sysAdmin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="domainApplications"
+												action="domainApplication_list"
+												actionListener="#{adminMain.onInit}"
+												value="#{adminBundle.admin_applications}" >
+												<aon:actionListener method="#{domainApplication.onSearch}" />
+											</aon:commandLink>						
+										</aon:div>
+									</c:if>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="profiles"
+											action="domainApplicationProfile_list"
+											actionListener="#{adminMain.onInit}"
+											value="#{adminBundle.admin_profiles}" >
+											<aon:actionListener method="#{domainApplicationProfile.onInit}" />
+										</aon:commandLink>						
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="scope"
+											action="scope_list"
+											actionListener="#{scope.onSearch}"
+											value="#{configBundle.config_scopes}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="workGroup"
+											action="workgroup_list-utilities"
+											actionListener="#{workGroup.onSearch}"
+											value="#{configBundle.config_workgroup_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="domainApplications"
-										action="domainApplication_list"
-										actionListener="#{adminMain.onInit}"
-										value="#{adminBundle.admin_applications}" >
-										<aon:actionListener method="#{domainApplication.onSearch}" />
-									</aon:commandLink>						
-								</aon:div>									
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="scope"
-										action="scope_list"
-										actionListener="#{scope.onSearch}"
-										value="#{configBundle.config_scopes}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="workGroup"
-										action="workgroup_list-utilities"
-										actionListener="#{workGroup.onSearch}"
-										value="#{configBundle.config_workgroup_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">					
+						<c:if test="#{aonRole.config and (!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable)}">					
 							<aon:panelGrid id="group_management_tables"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-config">
@@ -256,7 +268,9 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
+						</c:if>
 	
+						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_general_email"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-mail">

@@ -130,39 +130,38 @@ public class DomainApplicationController extends BasicController {
 		return list;
 	}
 	
-	private String getRoleList( Profile profile ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ProfileRole.class);
-		Criteria criteria = new Criteria();
-		String alias = bean.getFieldName(IEntityAlias.PROFILE_ROLE_PROFILE_ID);
-		criteria.addEqualExpression(alias, profile.getId());
-		List<ITransferObject> list = bean.getList(criteria);
-		if (! list.isEmpty() ) {
-			Set<String> roles = new TreeSet<String>();
-			for( ITransferObject to : list ) {
-				String name = ((ProfileRole) to).getApplicationRole().getRole().getName();
-				IAonRole _role = IAonRole.get(name);
-				if ( _role != null ) {
-					name = _role.getDisplayName();
+	private String getRoleList( IController controller ) throws ManagerBeanException {
+		if ( controller.getModel().isRowAvailable() ) {
+			Profile profile = (Profile) controller.getModel().getRowData();
+			IManagerBean bean = BeanManager.getManagerBean(ProfileRole.class);
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(IEntityAlias.PROFILE_ROLE_PROFILE_ID);
+			criteria.addEqualExpression(alias, profile.getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				Set<String> roles = new TreeSet<String>();
+				for( ITransferObject to : list ) {
+					String name = ((ProfileRole) to).getApplicationRole().getRole().getName();
+					IAonRole _role = IAonRole.get(name);
+					if ( _role != null ) {
+						name = _role.getDisplayName();
+					}
+					roles.add( name );
 				}
-				roles.add( name );
+				return StringUtils.join(roles, ", ");
 			}
-			return StringUtils.join(roles, ", ");
 		}
 		return null;
 	}	
 
+	public String getSystemRoleList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getRoleList(controller);
+	}
+	
 	public String getRoleList() throws ManagerBeanException {
-		IController controller = null; 
-		if ( "systemProfiles".equals(selectedTab) ) {
-			controller = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
-		} else {
-			controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);			
-		}
-		if ( controller.getModel().isRowAvailable() ) {
-			Profile profile = (Profile) controller.getModel().getRowData();
-			return getRoleList(profile);
-		}
-		return null;
+		IController controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getRoleList(controller);
 	}
 	
 }
