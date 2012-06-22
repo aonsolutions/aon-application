@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -45,18 +46,24 @@
 								<aon:outputText value="#{controller.checkedCount}" />
 							</f:facet>
 							<aon:selectBooleanCheckbox id="ProjectReservation_check"
-								rendered="#{to.total != 0}"
+								rendered="#{to.hotelReservation.itemAdvance != null and to.hotelReservation.itemAdvance.id != null}"
 								value="#{controller.rowChecked}"
 								valueChangeListener="#{controller.rowSelected}"
 								reRender="aonContent" />	
+							<aon:div style="display:inline;cursor:pointer;">
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon-exception" style="padding-left:20px"
+									rendered="#{to.hotelReservation.itemAdvance == null or to.hotelReservation.itemAdvance.id == null}" />
+								<rich:toolTip value="#{pmsBundle.pms_advance_item_not_defined_msg}" />
+							</aon:div>
 						</aon:column>
 
-						<aon:column alias="ProjectReservation.hotel.workPlace.description"
+						<aon:column alias="ProjectReservation.hotelReservation.workPlace.description"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_hotel}" />
 							</f:facet>
-							<aon:outputText value="#{to.hotel.workPlace.description}" />
+							<aon:outputText value="#{to.hotelReservation.workPlace.description}" />
 						</aon:column>
 
 						<aon:column alias="ProjectReservation.project.id"

@@ -55,12 +55,14 @@ public class AdvanceInvoicing {
 			int count = 0;
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-				double total = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent());
-				createInvoiceAddress(invoice, reservation);
-				createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, total);
-				recordInvoice(invoice);
-				++count;
+				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
+					Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
+					double total = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent());
+					createInvoiceAddress(invoice, reservation);
+					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, total);
+					recordInvoice(invoice);
+					++count;
+				}
 			}
 
 			HibernateUtil.getSession(sessionName).flush();

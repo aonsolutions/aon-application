@@ -16,7 +16,7 @@ import com.esferalia.aon.ui.pms.controller.AdvanceInvoiceController;
 public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 
 	private boolean guestReservationSearch;
-	private Hotel hotel;
+	private Hotel hotelReservation;
 	private Customer agency;
 	private Tariff tariff;
 
@@ -27,11 +27,11 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 		this.guestReservationSearch = guestReservationSearch;
 	}
 	
-	public Hotel getHotel() {
-		return hotel;
+	public Hotel getHotelReservation() {
+		return hotelReservation;
 	}
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
+	public void setHotelReservation(Hotel hotelReservation) {
+		this.hotelReservation = hotelReservation;
 	}
 
 	public Customer getAgency() {
@@ -51,7 +51,7 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setGuestReservationSearch(true);
-		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setHotelReservation((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
 
@@ -63,8 +63,8 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ADVANCE_INVOICED), false);
 		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_TOTAL), 0.0);
-		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
+		if (getHotelReservation() != null && getHotelReservation().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_ID), getHotelReservation().getId());			
 		}
 		if (isGuestReservationSearch()) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);

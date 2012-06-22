@@ -36,10 +36,10 @@
 					<aon:outputText value="&#160;"/>
 
 					<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
-						<aon:outputLabel for="ProjectReservation_hotel_id"
+						<aon:outputLabel for="ProjectReservation_hotelReservation_id"
 							value="#{pmsBundle.pms_hotel}" />
-						<aon:selectOneMenu id="ProjectReservation_hotel_id"
-							value="#{advanceInvoiceSearch.hotel}">
+						<aon:selectOneMenu id="ProjectReservation_hotelReservation_id"
+							value="#{advanceInvoiceSearch.hotelReservation}">
 							<f:selectItem itemLabel="-" value="#{null}" />		
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 						</aon:selectOneMenu>
