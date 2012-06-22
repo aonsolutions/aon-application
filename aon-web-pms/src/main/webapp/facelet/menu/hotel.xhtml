@@ -37,14 +37,12 @@
 										value="#{pmsBundle.pms_reservation_module}">
 									</aon:commandLink>
 								</aon:div>
-								<c:if test="#{aonRole.admin}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="reservation-search"
-											action="reservation_search" actionListener="#{reservation.onEditSearch}"
-											value="#{pmsBundle.pms_reservation_search_module}">
-										</aon:commandLink>
-									</aon:div>
-								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="reservation-search"
+										action="reservation_search" actionListener="#{reservation.onEditSearch}"
+										value="#{pmsBundle.pms_reservation_search_module}">
+									</aon:commandLink>
+								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reservationIO" 
 										value="#{pmsBundle.pms_reservationIO_module}"
