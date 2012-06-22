@@ -10,12 +10,12 @@
 		<aon:form id="corporateIdentityAttachSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
-				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="toolbarTitle" value="#{registryBundle.registry_document_advanced_search}" />
+				<ui:param name="controller" value="#{documentAdvancedSearch}" />
 			</ui:include>
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
-				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="controller" value="#{documentAdvancedSearch}" />
 			</ui:include>
 
 		</aon:form>

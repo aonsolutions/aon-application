@@ -29,8 +29,8 @@
 			<aon:div styleClass="aon-scroll-area">
 			
 				<aon:methodParam name="searchAction" value="batchDocument_list" />
-				<ui:decorate 
-					template="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
+				<ui:decorate template="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
+					<ui:param name="controller" value="#{corporateIdentityAttach}" />
 					<ui:define name="searchButtonContent">
 						<aon:actionListener method="#{batchDocument.checkNone}" />
 					</ui:define>			

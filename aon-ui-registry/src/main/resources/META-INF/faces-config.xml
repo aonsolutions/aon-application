@@ -308,6 +308,47 @@
 		</managed-property>		
 	</managed-bean>	
 
+	<!-- **** DOCUMENT ADVANCED SEARCH **** --> 
+	<managed-bean>
+		<managed-bean-name>documentAdvancedSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.DocumentSearchController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentAdvancedSearch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registryAttachmentType</key>
+					<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
@@ -498,6 +539,18 @@
 		<navigation-case>
 			<from-outcome>batchDocument_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Advanced Search ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>documentAdvancedSearch_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentAdvancedSearch/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>documentAdvancedSearch_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentAdvancedSearch/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 		

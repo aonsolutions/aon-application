@@ -35,20 +35,29 @@
 									</aon:commandLink>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="documentMassiveUpload" 
-										action="corporateIdentityAttach_form" immediate="true"
-										value="#{registryBundle.registry_document_massive_upload}">
-										<f:setPropertyActionListener value="#{true}"
-											target="#{corporateIdentityAttach.massiveUpload}"  />
-										<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
-									</aon:commandLink>
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="batchDocument" 
 										action="batchDocument_form" immediate="true"
 										value="#{registryBundle.registry_batch_document}">
 									</aon:commandLink>
-								</aon:div>							
+								</aon:div>					
+								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="documentMassiveUpload" 
+											action="corporateIdentityAttach_form" immediate="true"
+											value="#{registryBundle.registry_document_massive_upload}">
+											<f:setPropertyActionListener value="#{true}"
+												target="#{corporateIdentityAttach.massiveUpload}"  />
+											<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
+										</aon:commandLink>
+									</aon:div>							
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="documentAdvancedSearch" 
+											action="documentAdvancedSearch_search" immediate="true"
+											actionListener="#{documentAdvancedSearch.onEditSearch}"
+											value="#{registryBundle.registry_document_advanced_search}">
+										</aon:commandLink>
+									</aon:div>					
+								</c:if>								
 							</aon:div>
 						</aon:panelGrid>
 					
