@@ -258,9 +258,9 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 		</params>
-		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceDetailDefault"/>
 		<nested-report report="invoiceTaxBreakDown"/>
-		<nested-report report="invoiceFinances"/>
+		<nested-report report="invoiceFinancesDefault"/>
 	</report>
 
 	<!--  *********  Listado de Facturas de Compras  ********* -->

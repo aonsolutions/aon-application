@@ -189,8 +189,7 @@
 				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
-				<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotal"/>
-				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetailDefault")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-35" positionType="Float" x="3" y="31" width="246" height="15"/>
@@ -237,7 +236,7 @@
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{finances})]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceFinances")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceFinancesDefault")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-38" positionType="Float" x="1" y="195" width="246" height="12">
