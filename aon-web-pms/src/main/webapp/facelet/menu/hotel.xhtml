@@ -50,12 +50,14 @@
 										<aon:actionListener method="#{reservationIO.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="serviceInvoice" 
-										action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
-										value="#{pmsBundle.pms_service_invoice_module}">
-									</aon:commandLink>
-								</aon:div>
+								<c:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="serviceInvoice" 
+											action="serviceInvoice_list" actionListener="#{serviceInvoice.onLoad}"
+											value="#{pmsBundle.pms_service_invoice_module}">
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="rack"
 										action="rack_search" actionListener="#{rack.onEditSearch}"

@@ -38,13 +38,13 @@
 		<aon:div id="invoiceHotelDiv">
 			<aon:selectOneMenu id="ProjectReservation_invoiceHotel"
 				value="#{controller.reservationInvoiceTo.hotel}" required="true"
-				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1 and pmsCollections.currentUserHotelsCount > 1 and controller.projectReservation.id == null}"
+				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1 and pmsCollections.currentUserServiceHotelsCount > 1 and controller.projectReservation.id == null}"
 				valueChangeListener="#{controller.onInvoiceHotelChanged}" 
 				reRender="ProjectReservation_invoiceRoom,ProjectReservation_invoiceGuest,invoiceServicesDiv,invoiceFinancesDiv">
-				<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+				<f:selectItems value="#{pmsCollections.currentUserServiceHotels}" />
 			</aon:selectOneMenu>
 			<aon:outputText value="#{controller.reservationInvoiceTo.hotel.workPlace.description}" styleClass="aon-bold"
-				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserHotelsCount == 1 or controller.projectReservation.id != null}" />
+				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserServiceHotelsCount == 1 or controller.projectReservation.id != null}" />
 		</aon:div>
 
 		<aon:outputLabel for="ProjectReservation_invoiceRoom"

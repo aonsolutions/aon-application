@@ -76,6 +76,35 @@ public class PmsCollectionsController {
 		return list;
 	}
 
+	public List<SelectItem> getCurrentUserServiceHotels() throws ManagerBeanException {
+		List<SelectItem> currentUserServiceHotels = new LinkedList<SelectItem>();
+		for (ITransferObject ito : getCurrentUserServiceHotelList()) {
+			Hotel hotel = (Hotel)ito;
+			SelectItem item = new SelectItem(hotel, hotel.getWorkPlace().getDescription());
+			currentUserServiceHotels.add(item);
+		}
+		return currentUserServiceHotels;
+	}
+	
+	public int getCurrentUserServiceHotelsCount() throws ManagerBeanException {
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addNotNullExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SERVICE_CATALOGUE_ID));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+		return hotelBean.getCount(criteria);
+	}
+	
+	public List<ITransferObject> getCurrentUserServiceHotelList() throws ManagerBeanException {
+		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addNotNullExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SERVICE_CATALOGUE_ID));
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
+		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
+		return hotelBean.getList(criteria);
+	}
+	
 	public List<SelectItem> getAgencies() throws ManagerBeanException {
 		return getCustomerList(true);
 	}
