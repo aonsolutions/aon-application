@@ -31,6 +31,7 @@
 				<aon:methodParam name="searchAction" value="batchDocument_list" />
 				<ui:decorate template="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					<ui:param name="searchController" value="#{corporateIdentitySearch}" />
 					<ui:define name="searchButtonContent">
 						<aon:actionListener method="#{batchDocument.checkNone}" />
 					</ui:define>			

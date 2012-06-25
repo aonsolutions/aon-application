@@ -23,6 +23,7 @@ import javax.faces.model.ListDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
@@ -39,7 +40,7 @@ public class BatchDocument {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BatchDocument.class);
 	
-	private Set<RegistryAttachment> documents;
+	private Set<IAttachment> documents;
 	
 	private int pageLimit = BasicController.LIMIT;
 	
@@ -48,12 +49,12 @@ public class BatchDocument {
 	private DataModel model;
 	
 	/** A list that contains the selected objects of the model. */
-	private Set<RegistryAttachment> checkList;
+	private Set<IAttachment> checkList;
 
 	public BatchDocument() {
-		this.documents = new HashSet<RegistryAttachment>();
+		this.documents = new HashSet<IAttachment>();
 		this.model = new ListDataModel();
-		this.checkList = new HashSet<RegistryAttachment>();
+		this.checkList = new HashSet<IAttachment>();
 	}
 
 	public int getPageLimit() {
@@ -80,7 +81,7 @@ public class BatchDocument {
     	File file = File.createTempFile( "documents", "." + MimeType.MIME_ZIP.getExtension());
 		OutputStream fileOut = new BufferedOutputStream( new FileOutputStream(file) );
 		ZipOutputStream zipOut = new ZipOutputStream(fileOut);
-		for (RegistryAttachment ra : documents) {
+		for (IAttachment ra : documents) {
             zipOut.putNextEntry(new ZipEntry(ra.getDescription()));
             zipOut.write(ra.getData());
         	zipOut.closeEntry();
@@ -122,52 +123,46 @@ public class BatchDocument {
 		this.model = new ListDataModel();
 	}
 	
-	public boolean isInBatch() {
-		IController controller = FormUtil.getController(CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME);
-		RegistryAttachment ed = (RegistryAttachment) controller.getTo();
-		return this.documents.contains(ed);
-	}
-
-	public boolean isCurrentInBatch() throws ManagerBeanException {
-		return this.documents.contains(getCurrentDocument());
+	public boolean isInBatch( IAttachment attachment ) {
+		return this.documents.contains(attachment);
 	}
 	
 	private void updateModel() {
 		this.model = new ArrayDataModel(this.documents.toArray());		
 	}
 
-	public void onAddCurrentToBatch(ActionEvent event) throws ManagerBeanException {
-		this.documents.add(getCurrentDocument());
+	public void addToBatch(IAttachment attachment) {
+		this.documents.add(attachment);
 		updateModel();
 	}
 	
 	public void onAddToBatch(ActionEvent event) {
 		IController controller = FormUtil.getController(CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME);
-		RegistryAttachment ed = (RegistryAttachment) controller.getTo();
+		IAttachment ed = (IAttachment) controller.getTo();
 		this.documents.add(ed);
 		updateModel();
 	}
 
 	public void onRemoveFromtBatch(ActionEvent event) {
 		if ( model.isRowAvailable() ) {
-			RegistryAttachment ed = (RegistryAttachment) this.model.getRowData();
+			IAttachment ed = (IAttachment) this.model.getRowData();
 			this.documents.remove(ed);
 			updateModel();		
 		}
 	}
 	
 	public void onAddDocuments(ActionEvent event) {
-		for( RegistryAttachment ed : checkList ) {
+		for( IAttachment ed : checkList ) {
 			this.documents.add(ed);
 		}
 		updateModel();
 	}	
 
-	private RegistryAttachment getCurrentDocument() throws ManagerBeanException {
+	private IAttachment getCurrentDocument() throws ManagerBeanException {
 		IController controller = FormUtil.getController(CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME);
 		DataModel model = controller.getModel();
 		if ( model.isRowAvailable() ) {
-			return (RegistryAttachment) model.getRowData();			
+			return (IAttachment) model.getRowData();			
 		}
 		return null;
 	}
@@ -190,7 +185,7 @@ public class BatchDocument {
 	 * @throws ManagerBeanException 
 	 */
 	public void setRowChecked(boolean rowChecked) throws ManagerBeanException {
-		RegistryAttachment ed = getCurrentDocument();
+		IAttachment ed = getCurrentDocument();
 		if (rowChecked) {
 			if (!checkList.contains(ed)) {
 				checkList.add(ed);

@@ -11,15 +11,26 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
-				<ui:param name="controller" value="#{documentAdvancedSearch}" />
+				<ui:param name="controller" value="#{documentGlobal}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{documentAdvancedSearch}" />
+					<ui:param name="controller" value="#{documentGlobal}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					<ui:define name="columns">
-						<ui:include 
-							src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" />
+						<ui:decorate template="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" >
+							<ui:define name="attachmentAdditonalContent">
+								<aon:column styleClass="aon-editDataTable-textColumn aon-nowrap">
+									<f:facet name="header">
+										<aon:outputText value="#{companyBundle.company_enterprise}" />
+									</f:facet>
+									<aon:outputText value="#{documentGlobal.domainDescription}" />
+								</aon:column>							
+							
+							</ui:define>
+						</ui:decorate>
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

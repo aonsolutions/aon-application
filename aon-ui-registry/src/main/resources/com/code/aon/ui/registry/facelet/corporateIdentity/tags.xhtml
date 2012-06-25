@@ -10,22 +10,22 @@
 		value="#{registryBundle.registry_tag_module}" />
 	<aon:div id="tagDiv">
 		<a4j:region>
-			<a4j:repeat value="#{corporateIdentitySearch.tags}" rowKeyVar="index" var="raTag">
+			<a4j:repeat value="#{searchController.tags}" rowKeyVar="index" var="raTag">
 				<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
 					<aon:selectOneMenu id="RegistryAttachment_tag"
-						value="#{corporateIdentitySearch.tags[index]}">
+						value="#{searchController.tags[index]}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{registryCollections.tags}" />
 						<a4j:support event="onchange" reRender="tagDiv"/>
 					</aon:selectOneMenu>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="tagDiv"
-						actionListener="#{corporateIdentitySearch.onRemoveTag}" value="&#160;" immediate="true"
+						actionListener="#{searchController.onRemoveTag}" value="&#160;" immediate="true"
 						rendered="#{raTag.id != null}">
 						<f:param name="index" value="#{index}" />
 					</aon:commandButton>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="tagDiv"
-						actionListener="#{corporateIdentitySearch.onAddTag}" value="&#160;" immediate="true"
-						rendered="#{(raTag.id != null) and (index == (corporateIdentitySearch.tagsSize-1))}"/>
+						actionListener="#{searchController.onAddTag}" value="&#160;" immediate="true"
+						rendered="#{(raTag.id != null) and (index == (searchController.tagsSize-1))}"/>
 				</aon:div>						
 			</a4j:repeat>
 		</a4j:region>

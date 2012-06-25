@@ -51,4 +51,6 @@ public interface IRegistryConstants {
 	
 	String CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME = "corporateIdentitySearch";
 	
+	String BATCH_DOCUMENT_CONTROLLER_NAME = "batchDocument";
+	
 }

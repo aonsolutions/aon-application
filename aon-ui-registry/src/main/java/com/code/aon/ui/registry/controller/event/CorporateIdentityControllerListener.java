@@ -46,7 +46,7 @@ public class CorporateIdentityControllerListener extends RegistryAttachControlle
 		try {		
 			IManagerBean domainBean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = null;
-			if ( cic.isMassiveUpload() && cic.isShowDomainLookup() ) {
+			if ( cic.isMassiveUpload() ) {
 				domain = (Domain) domainBean.createNewTo();
 			} else {
 				domain = (Domain) domainBean.get(DomainManager.getCurrentDomain());

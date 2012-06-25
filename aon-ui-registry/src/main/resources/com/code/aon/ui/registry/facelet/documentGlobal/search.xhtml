@@ -10,14 +10,18 @@
 		<aon:form id="corporateIdentityAttachSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{registryBundle.registry_document_advanced_search}" />
-				<ui:param name="controller" value="#{documentAdvancedSearch}" />
+				<ui:param name="toolbarTitle" value="#{registryBundle.registry_document_global_search}" />
+				<ui:param name="controller" value="#{documentGlobal}" />
 			</ui:include>
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
-				<ui:param name="controller" value="#{documentAdvancedSearch}" />
+				<ui:param name="controller" value="#{documentGlobal}" />
+				<ui:param name="searchController" value="#{documentGlobalSearch}" />
+				<ui:param name="showDomainLookup" value="#{true}" />
+				<ui:param name="lookupControllerListener" value="#{corporateIdentityAttach.domainLookupListener}" />
 			</ui:include>
 
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
 	</ui:define>
 </ui:composition>

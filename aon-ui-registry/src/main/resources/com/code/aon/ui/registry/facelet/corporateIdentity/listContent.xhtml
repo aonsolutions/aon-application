@@ -14,6 +14,8 @@
 		<aon:outputText value="#{to.description}" />
 	</aon:column>
 
+	<ui:insert name="attachmentAdditonalContent"/>
+
 	<aon:column alias="RegistryAttachment.size"
 		styleClass="aon-editDataTable-numberColumn aon-width-60">
 		<f:facet name="header">
@@ -83,12 +85,14 @@
 				<f:param name="index" value="#{to.id}" />
 				<aon:outputText value="&#160;" />
 			</aon:htmlCommandLink>
-			<aon:commandLink title="#{registryBundle.registry_add_batch}" 
-				ajaxSingle="true"
-				actionListener="#{batchDocument.onAddCurrentToBatch}" value="&#160;"
-				styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-				rendered="#{!(batchDocument.currentInBatch or skipAddToBatch)}" >
-			</aon:commandLink>			
+			<c:if test="#{!skipAddToBatch}">
+				<aon:commandLink title="#{registryBundle.registry_add_batch}" 
+					ajaxSingle="true"
+					actionListener="#{controller.onAddCurrentToBatch}" value="&#160;"
+					styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+					rendered="#{!controller.currentInBatch}" >
+				</aon:commandLink>			
+			</c:if>
 		</aon:div>					
 	</aon:column>
 	

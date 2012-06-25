@@ -1,6 +1,7 @@
 package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.config.controller.ConfigConstants.CONFIG_COLLECTIONS;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUMENT_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,11 +10,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.ql.Criteria;
@@ -27,8 +28,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CorporateIdentityController extends RegistryAttachController {
 
-	private boolean showDomainLookup;
-	
 	private boolean massiveUpload;
 	
 	private RegistryAttachment lastAttachment;
@@ -39,12 +38,6 @@ public class CorporateIdentityController extends RegistryAttachController {
 
 	public CorporateIdentityController() {
 		this.domainLookupListener = new DomainLoookupListener();
-		Integer parentDomainId = AdminUtil.getParentDomain(DomainManager.getCurrentDomain());
-		this.showDomainLookup = (parentDomainId == null);
-	}
-	
-	public boolean isShowDomainLookup() {
-		return showDomainLookup;
 	}
 
 	public IControllerListener getDomainLookupListener() {
@@ -105,4 +98,15 @@ public class CorporateIdentityController extends RegistryAttachController {
 		}
 		return scopes;			
 	}	
+
+	public boolean isCurrentInBatch() throws ManagerBeanException {
+		BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
+		return bd.isInBatch( (IAttachment) getSelectedTO() );
+	}
+
+	public void onAddCurrentToBatch(ActionEvent event) throws ManagerBeanException {
+		BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
+		bd.addToBatch( (IAttachment) getSelectedTO() );
+	}
+	
 }
