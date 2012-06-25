@@ -805,12 +805,28 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+
+		if (!isPayMethodOk()) {
+			String msg = "La Forma de Pago es obligatoria.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 		return true;
 	}
 
 	public boolean isFinancesAmountOk() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		return CommonUtil.round(reservation.getTotal() - getAdvancedAmount() - getFinancesAmount()) == 0;
+	}
+
+	public boolean isPayMethodOk() {
+		for (Finance finance : getReservationInvoiceTo().getFinances()) {
+			if (finance.getPayMethod() == null && finance.getTotalAmount() != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private List<ITransferObject> getReservationInvoiceList(ProjectReservation reservation) {

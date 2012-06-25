@@ -444,7 +444,27 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+
+		if (!isPayMethodOk()) {
+			String msg = "La Forma de Pago es obligatoria.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 		return isServicesDatesOk();
+	}
+
+	public boolean isFinancesAmountOk() {
+		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
+	}
+
+	public boolean isPayMethodOk() {
+		for (Finance finance : getReservationInvoiceTo().getFinances()) {
+			if (finance.getPayMethod() == null && finance.getTotalAmount() != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean isServicesDatesOk() {
@@ -471,10 +491,6 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			}
 		}
 		return true;
-	}
-
-	public boolean isFinancesAmountOk() {
-		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
 	}
 
 	public void onRectifyInvoiceShow(ActionEvent event) {
