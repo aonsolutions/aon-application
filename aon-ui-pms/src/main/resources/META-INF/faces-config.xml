@@ -1074,6 +1074,29 @@
 		</managed-property>	
 	</managed-bean>
 	
+	<!-- ************* POS FINANCES BATCH ***************** -->
+	<managed-bean>
+		<managed-bean-name>posFinanceBatch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosFinanceBatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>posFinanceBatch</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate</value>
+		</managed-property>			
+	</managed-bean>
+	
 	<!-- ************* RESERVATION INPUT OUTPUT ***************** -->
 	<managed-bean>
 		<managed-bean-name>reservationIO</managed-bean-name>
@@ -1433,6 +1456,22 @@
 		<navigation-case>
 			<from-outcome>posClosing_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posShift/closing/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>  
+	
+  	<!-- =================== Pos Finance Batch ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>posFinanceBatch_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posFinanceBatch_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>posFinanceBatch_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
 	
