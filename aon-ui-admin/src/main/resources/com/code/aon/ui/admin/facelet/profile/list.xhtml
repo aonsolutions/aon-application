@@ -24,6 +24,7 @@
 
 			<ui:include src="/com/code/aon/ui/admin/facelet/profile/listContent.xhtml" >
 				<ui:param name="controller" value="#{domainApplicationProfile}" />
+				<ui:param name="skipDomainColumn" value="#{domainSwitcher.parentDomain}" />
 			</ui:include>
 
 		</aon:form>

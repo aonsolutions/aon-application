@@ -17,25 +17,45 @@
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-					<aon:panelGrid id="group_marketing_marketing"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-marketing aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_module_marketing}" />
-						</f:facet>							
-						<aon:div styleClass="aon-direct-access-list">	
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="marketingCampaign"
-									action="marketingCampaign_list" actionListener="#{marketingCampaign.onSearch}"
-									value="#{marketingBundle.marketing_campaign_module}" />
+					<aon:panelGroup>
+						<c:if test="#{aonRole.commercialOperator}">
+							<aon:panelGrid id="group_marketing_masters"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_master_tables}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="target-marketing" 
+											action="target_search-marketing" 
+											actionListener="#{target.onEditSearch}"
+											value="#{commercialBundle.commercial_target_module}" />
+									</aon:div>
+								</aon:div>							
+							</aon:panelGrid>
+						</c:if>
+					
+						<aon:panelGrid id="group_marketing_marketing"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-marketing aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_module_marketing}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="marketingCampaign"
+										action="marketingCampaign_list" actionListener="#{marketingCampaign.onSearch}"
+										value="#{marketingBundle.marketing_campaign_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="communicationCenter"
+										action="communicationCenter" actionListener="#{communicationCenter.onInit}"
+										value="#{commercialBundle.commercial_communication_center_module}" />										
+								</aon:div>
 							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="communicationCenter"
-									action="communicationCenter" actionListener="#{communicationCenter.onInit}"
-									value="#{commercialBundle.commercial_communication_center_module}" />										
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+						</aon:panelGrid>
+					</aon:panelGroup>
 					
 					<c:if test="#{aonRole.config}">
 						<aon:panelGrid id="group_marketing_general"

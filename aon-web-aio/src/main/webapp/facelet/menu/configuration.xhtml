@@ -173,34 +173,6 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-						
-						<aon:panelGrid id="group_general_email"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-mail">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_mail_configuration} (#{loggedUser.loggedUserName})" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mailAccount"
-										action="mailAccount_list"
-										actionListener="#{mailConfig.onInitMailAccount}"
-										value="#{webmailBundle.webmail_mailAccount_full}" />						
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="signature"
-										action="signature_list"
-										actionListener="#{mailConfig.onInitSignature}"
-										value="#{webmailBundle.webmail_signature_full}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="contact"
-										action="contact_list"
-										actionListener="#{mailConfig.onInitContact}"
-										value="#{webmailBundle.webmail_email}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
@@ -311,6 +283,34 @@
 								</aon:panelGrid>
 							</c:if>
 						</c:if>
+											
+						<aon:panelGrid id="group_general_email"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-mail">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_mail_configuration} (#{loggedUser.loggedUserName})" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mailAccount"
+										action="mailAccount_list"
+										actionListener="#{mailConfig.onInitMailAccount}"
+										value="#{webmailBundle.webmail_mailAccount_full}" />						
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="signature"
+										action="signature_list"
+										actionListener="#{mailConfig.onInitSignature}"
+										value="#{webmailBundle.webmail_signature_full}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contact"
+										action="contact_list"
+										actionListener="#{mailConfig.onInitContact}"
+										value="#{webmailBundle.webmail_email}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
 				</h:panelGrid>
 			</aon:div>

@@ -74,37 +74,30 @@
 							</aon:div>
 						</aon:panelGrid>
 						
-						<c:if test="#{aonRole.admin}">
-							<aon:panelGrid id="group_agent_comisiones"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-warehouse aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="comisiones" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">			
+						<aon:panelGrid id="group_commercial_masters"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_master_tables}" />
+							</f:facet>
+							<c:if test="#{aonRole.commercialOperator}">
+								<aon:div styleClass="aon-direct-access-list">							
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="commercial-commision-calculation"
-											action="commissionCalculation" actionListener="#{commissionCalculation.onInitialize}" 
-											value="#{commercialBundle.commercial_commission_calculation_module}" />
+										<aon:commandLink id="target-commercial" 
+											action="target_search-commercial" 
+											actionListener="#{target.onEditSearch}"
+											value="#{commercialBundle.commercial_target_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="offer-detail-commision" 
-											action="offerDetailCommission_search" actionListener="#{offerDetailCommission.onEditSearch}"
-											value="#{commercialBundle.commercial_commission_control_module}" />
+										<aon:commandLink id="seller-commercial" 
+											action="seller_search-commercial" 
+											actionListener="#{seller.onEditSearch}"
+											value="#{sellerBundle.seller_module}" />
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="commission-type" 
-											action="commissionType_list" actionListener="#{commissionType.onSearch}"
-											value="#{commercialBundle.commercial_commission_type_module}" />
-									</aon:div>									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="commission" 
-											action="commission_search" actionListener="#{commission.onEditSearch}"
-											value="#{commercialBundle.commercial_commission_module}" />
-									</aon:div>
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>								
+								</aon:div>								
+							</c:if>							
+						</aon:panelGrid>						
+
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
@@ -205,6 +198,39 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
+						
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_agent_comisiones"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-warehouse aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="comisiones" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">			
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commercial-commision-calculation"
+											action="commissionCalculation" actionListener="#{commissionCalculation.onInitialize}" 
+											value="#{commercialBundle.commercial_commission_calculation_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="offer-detail-commision" 
+											action="offerDetailCommission_search" actionListener="#{offerDetailCommission.onEditSearch}"
+											value="#{commercialBundle.commercial_commission_control_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commission-type" 
+											action="commissionType_list" actionListener="#{commissionType.onSearch}"
+											value="#{commercialBundle.commercial_commission_type_module}" />
+									</aon:div>									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="commission" 
+											action="commission_search" actionListener="#{commission.onEditSearch}"
+											value="#{commercialBundle.commercial_commission_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>								
+						
 					</aon:panelGroup>					
 					
 				</h:panelGrid>

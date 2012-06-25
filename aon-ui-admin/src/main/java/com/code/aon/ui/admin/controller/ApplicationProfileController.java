@@ -22,6 +22,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
@@ -29,6 +30,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
 import com.code.aon.ui.common.role.IAonRole;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -181,7 +183,7 @@ public class ApplicationProfileController extends LinesController {
 	public void onInit( ActionEvent event ) throws ManagerBeanException {
 		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
 		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
-		Integer domainApplication = AdminUtil.getDomainApplication(user.getDomainId(), user.getApplicationId());
+		Integer domainApplication = AdminUtil.getDomainApplication(DomainManager.getCurrentDomain(), user.getApplicationId());
 		dac.select(event, domainApplication);
 	}
 	
