@@ -107,12 +107,14 @@
 											value="#{pmsBundle.pms_room_module}">
 										</aon:commandLink>
 									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="feature" 
-											value="#{assetBundle.asset_feature_module}"
-											action="feature_grid" >
-										</aon:commandLink>
-									</aon:div>
+									<c:if test="#{aonRole.admin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="feature" 
+												value="#{assetBundle.asset_feature_module}"
+												action="feature_grid" >
+											</aon:commandLink>
+										</aon:div>
+									</c:if>
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>							

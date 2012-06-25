@@ -10,6 +10,7 @@
 		<aon:form id="roomList">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 				<ui:param name="controller" value="#{room}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="room-selectAll"
@@ -44,19 +45,8 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
 					<ui:param name="controller" value="#{room}" />
+					<ui:param name="skipSelectButton" value="#{!aonRole.admin}" />
 					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
-					<ui:define name="beginFormListContent">
-						<aon:commandLink id="Room-selectButton"
-							styleClass="aon-table-row-link" value="&#160;"
-							immediate="true" ajaxSingle="true" requestDelay="100"
-							actionListener="#{controller.onSelect}"
-							reRender="aonContent"
-							onkeyup="#{dataTableId}KeyUp(this)"
-							onfocus="#{dataTableId}SelectRow(this)"
-							onblur="#{dataTableId}DeselectRow(this)"
-							focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
-						</aon:commandLink>
-					</ui:define>
  					<ui:define name="columns">
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/list_content.xhtml" />
 					</ui:define>
