@@ -26,18 +26,18 @@
 			
 					<ui:define name="columns">
 						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputLabel for="Department_name" value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.name}" rendered="#{formList}" />
-							<aon:inputText value="#{to.name}" rendered="#{formEdit}" size="40" >
-								<f:validateLength maximum="32" />
-							</aon:inputText>
+							<aon:inputText id="Department_name" 
+								value="#{to.name}" required="true"
+								rendered="#{formEdit}" size="40" maxlength="32" />
 							<f:facet name="footer">
-								<aon:inputText value="#{controller.to.name}" rendered="#{formNew}" >
-									<f:validateLength maximum="32" />
-								</aon:inputText>
+								<aon:inputText id="Department_name-New" 
+									value="#{controller.to.name}" required="true"
+									rendered="#{formNew}" size="40" maxlength="32" />
 							</f:facet>
 						</aon:column>
 			
