@@ -1,13 +1,11 @@
 package com.esferalia.aon.ui.pms.event;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -18,7 +16,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Pos;
@@ -79,20 +76,25 @@ public class PosShiftSearchListener extends ControllerSearchListener {
 	public void setEndTimeTo(Date endTimeTo) {
 		this.endTimeTo = endTimeTo;
 	}
+	
+	private boolean skipBeforeYesterdayTimeLimit;
+	
+	public boolean isSkipBeforeYesterdayTimeLimit() {
+		return skipBeforeYesterdayTimeLimit;
+	}
+
+	public void setSkipBeforeYesterdayTimeLimit(boolean skipBeforeYesterdayTimeLimit) {
+		this.skipBeforeYesterdayTimeLimit = skipBeforeYesterdayTimeLimit;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
 		setHotel(null);
 		setPos(null);
-		if(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin()){
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
-			cal.set(Calendar.HOUR_OF_DAY, 23);
-			cal.set(Calendar.MINUTE, 59);
-			cal.set(Calendar.SECOND, 59);
-			setStartTimeTo(DateUtils.addDays(cal.getTime(), -1));
-			setEndTimeTo(DateUtils.addDays(cal.getTime(), -1));
-		}
+		setStartTimeFrom(null);
+		setStartTimeTo(null);
+		setEndTimeFrom(null);
+		setEndTimeTo(null);
 	}
 	
 	@Override

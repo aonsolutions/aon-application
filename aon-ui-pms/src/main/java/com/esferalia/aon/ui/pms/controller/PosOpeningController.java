@@ -89,7 +89,7 @@ public class PosOpeningController {
 	}
 
 	public void onInit( ActionEvent event ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setClosedPosList(null);

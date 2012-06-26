@@ -45,9 +45,9 @@
 								value="#{posClosing.hotel}" >
 								<f:selectItem itemLabel=" - " itemValue="#{null}" />
 								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
-								<a4j:support event="onchange" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+								<a4j:support event="onchange" reRender="posClosingForm" ignoreDupResponses="true" ajaxSingle="true"
 									actionListener="#{posClosing.onHotelChange}" />
-								<a4j:support event="oninputchanged" reRender="posClosingPanel" ignoreDupResponses="true" ajaxSingle="true"
+								<a4j:support event="oninputchanged" reRender="posClosingForm" ignoreDupResponses="true" ajaxSingle="true"
 									actionListener="#{posClosing.onHotelChange}" />
 							</aon:selectOneMenu>
 						

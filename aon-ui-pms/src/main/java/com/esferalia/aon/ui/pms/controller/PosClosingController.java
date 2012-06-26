@@ -21,7 +21,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -118,7 +117,7 @@ public class PosClosingController {
 	
 	
 	public void onInit( ActionEvent event ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setHotel(null);
@@ -143,7 +142,7 @@ public class PosClosingController {
 	
 	public void onPosChange( ActionEvent event ){
 		try {
-			BasicController controller = (BasicController) FormUtil.getController("posShift");
+			PosShiftController controller = (PosShiftController) FormUtil.getController(IPmsConstants.POS_SHIFT_CONTROLLER_NAME);
 			controller.select(event, getPosShift().getId());
 		} catch (ManagerBeanException e) {
 			String msg = "Error al seleccionar el turno";

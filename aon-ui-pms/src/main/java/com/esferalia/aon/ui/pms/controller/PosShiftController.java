@@ -39,10 +39,6 @@ import com.esferalia.aon.pms.PosShiftCount;
 
 public class PosShiftController extends BasicController {
 	
-	private final String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
-	private final String POS_SHIFT_COUNT_CONTROLLER_NAME = "posShiftCount";
-	private final String POS_SHIFT_CONTROLLER_NAME = "posShift";
-	
 	private PosShift posShift;
 	private Hotel hotel;
 	private CashCalculatorController calculator;
@@ -234,7 +230,7 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void init( ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(CASH_CALCULATOR_CONTROLLER_NAME);
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setHotel(null);
@@ -262,13 +258,12 @@ public class PosShiftController extends BasicController {
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){
 		if( isCashCalculator() ){
-			IController controller = FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME);
+			IController controller = FormUtil.getController(IPmsConstants.POS_SHIFT_COUNT_CONTROLLER_NAME);
 			getCalculator().setCashAmount(getCalculator().getCalcTotal());
 			((PosShiftCount)controller.getTo()).setAmount(getCalculator().getCalcTotal());
 		} else {
-			IController controller = FormUtil.getController(POS_SHIFT_CONTROLLER_NAME);
-			PosShift c = (PosShift) controller.getTo();
-			c.setInitialAmount(getCalculator().getCalcTotal());
+			PosShift posShift = (PosShift) this.getTo();
+			posShift.setInitialAmount(getCalculator().getCalcTotal());
 		} 
 	}
 	

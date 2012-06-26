@@ -12,8 +12,10 @@ public interface IPmsConstants {
 	String COLLECTIONS_CONTROLLER_NAME = "pmsCollections";
 	String ADVANCE_INVOICE_CONTROLLER_NAME = "advanceInvoice";
 	String ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER = "advanceInvoiceSearch";
+	String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
 	String DIVERT_CONTROLLER_NAME = "divert";
 	String POS_SHIFT_CONTROLLER_NAME = "posShift";
+	String POS_SHIFT_COUNT_CONTROLLER_NAME = "posShiftCount";
 	String RACK_CONTROLLER_NAME = "rack";
 	String RACK_SEARCH_LISTENER_NAME = "rackSearch";
 	String RESERVATION_REQUEST_CONTROLLER_NAME = "reservationRequest";
