@@ -132,6 +132,7 @@ public class PosClosingController {
 	
 	public void onHotelChange( ActionEvent event ){
 		try {
+			setPosShift(null);
 			setOpenedPosList(null);
 			buildOpenedPosList();
 		} catch (ManagerBeanException e) {

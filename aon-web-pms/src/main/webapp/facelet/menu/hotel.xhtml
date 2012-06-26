@@ -47,7 +47,7 @@
 									<aon:commandLink id="reservationIO" 
 										value="#{pmsBundle.pms_reservationIO_module}"
 										action="reservationIO_search" >
-										<aon:actionListener method="#{reservationIO.onEditSearch}" />
+										<aon:actionListener method="#{reservationIO.onInit}" />
 									</aon:commandLink>
 								</aon:div>
 								<c:if test="#{pmsCollections.currentUserServiceHotelsCount > 0}">
@@ -78,16 +78,12 @@
 									<aon:commandLink id="divert" 
 										value="#{pmsBundle.pms_divert_module}"
 										action="divert_grid" >
-										<aon:actionListener method="#{divert.onEditSearch}" />
-										<aon:actionListener method="#{divert.onSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="divertReception" 
 										value="#{pmsBundle.pms_divertReception_module}"
 										action="divertReception_list" >
-										<aon:actionListener method="#{divertReception.onEditSearch}" />
-										<aon:actionListener method="#{divertReception.onSearch}" />
 									</aon:commandLink>
 								</aon:div>
 							</aon:div>
@@ -174,7 +170,6 @@
 										<aon:actionListener method="#{posClosing.onInit}" />
 									</aon:commandLink>
 								</aon:div>
-								<!--  
 								<c:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_bath" 
@@ -184,7 +179,6 @@
 										</aon:commandLink>
 									</aon:div>
 								</c:if>
-								-->
 							</aon:div>
 						</aon:panelGrid>
 

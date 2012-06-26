@@ -902,10 +902,6 @@
 		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.Pos</value>
 		</managed-property>
@@ -965,10 +961,6 @@
 		<managed-bean-name>posShift</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosShiftController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.PosShift</value>
@@ -1040,10 +1032,6 @@
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.PosShiftCount</value>
 		</managed-property>
@@ -1079,10 +1067,6 @@
 		<managed-bean-name>posFinanceBatch</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosFinanceBatchController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Finance</value>

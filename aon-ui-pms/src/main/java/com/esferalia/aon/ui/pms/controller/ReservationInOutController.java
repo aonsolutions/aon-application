@@ -1,8 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,10 +92,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	public void onEditSearch(ActionEvent event) {
-		onInit(event);
-	}
-
+	
 	public void onSelect(ActionEvent event) {
 		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		controller.setBackAction(IPmsConstants.RESERVATION_IO_LIST_NAME);
