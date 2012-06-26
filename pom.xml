@@ -14,9 +14,6 @@
 		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>4.5.1</jasperReportsVersion>
 		<jasperreportsMavenPluginVersion>1.0-beta-3</jasperreportsMavenPluginVersion>
-<!-- 
-		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJdtCompiler</jasperreportsMavenPluginCompiler>
- -->
 		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
 	</properties>
 
