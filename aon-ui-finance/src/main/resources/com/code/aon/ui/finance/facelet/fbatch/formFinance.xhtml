@@ -7,19 +7,18 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<aon:div id="financeToolBarDiv" styleClass="aon-toolbar">
-	
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
 			rendered="#{financeList.model.rowCount > 0}"
-			actionListener="#{financeList.checkAll}" reRender="financeDataDiv"
+			actionListener="#{financeList.checkAll}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:commandButton title="#{bundle.aon_uncheck_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 			value="#{bundle.aon_uncheck_all}"
 			rendered="#{financeList.model.rowCount > 0}"
-			actionListener="#{financeList.checkNone}" reRender="financeDataDiv"
+			actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:commandButton title="#{financeBundle.finance_refine_search}"
@@ -33,7 +32,7 @@
 		<aon:commandButton title="#{financeBundle.finance_add_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{financeBundle.finance_add_batch}"
-			rendered="#{financeList.model.rowCount > 0}"
+			rendered="#{financeList.checkedCount > 0}"
 			actionListener="#{fbatch.onBatchSelected}" reRender="financeBatchForm,fbatchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
