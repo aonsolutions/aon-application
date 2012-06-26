@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -16,7 +17,21 @@
 			</ui:include>
  
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div styleClass="aon-scroll-area" rendered="#{!posFinanceBatch.saved}">
+			
+				<aon:panel>
+					<aon:outputText value="#{pmsBundle.pms_hotel}:" styleClass="aon-bold" />
+					<aon:outputText styleClass="aon-margin-left"
+						value="#{posFinanceBatch.hotel.workPlace.description}"/>
+					
+					<aon:outputText value="#{configBundle.config_pay_method}:" styleClass="aon-bold aon-margin-left" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{posFinanceBatch.payMethod.name}"/>
+					
+					<aon:outputText value="#{pmsBundle.pms_shift}:" styleClass="aon-bold aon-margin-left" />
+					<aon:outputText styleClass="aon-margin-left" 
+						value="#{posFinanceBatch.shift}" />
+				</aon:panel>
 			
 				<aon:div styleClass="aon-toolbar" rendered="#{posFinanceBatch.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
@@ -139,6 +154,67 @@
 					<aon:dataScroller2 for="financeData" showNote="true" />
 				</aon:div>
 				
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area" rendered="#{posFinanceBatch.saved}">
+			
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					rendered="#{!(posFinanceBatch.financeBatchModel.rowCount > 0)}"
+					columnClasses="aon-panelGrid-odd aon-width-150
+						,aon-panelGrid-even aon-width-auto
+						,aon-panelGrid-odd aon-width-150
+						,aon-panelGrid-even aon-width-150">
+
+					<aon:outputLabel for="FinanceBatch_id"
+						value="#{bundle.aon_id}" />
+					<aon:div> 
+						<aon:outputText value="#{posFinanceBatch.financeBatch.id}" />
+						
+						<aon:commandLink id="finance_batch_link" immediate="true"
+							styleClass="aon-button-goto" style="padding-right: 20px;"
+							value="&#160;" title="#{bundle.aon_go}"
+							actionListener="#{posFinanceBatch.onLoadFinanceBatch}"
+							action="fbatch_form" />
+					
+						<c:if test="#{aonRole.confidentiality}">
+							<aon:outputText styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_confidential}"
+								rendered="#{posFinanceBatch.financeBatch.confidential}" />
+						</c:if>
+
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{posFinanceBatch.financeBatch.financeBatchStatus}" />
+					</aon:div>
+
+					<aon:outputText value="#{bundle.aon_date}" />
+					<aon:outputText value="#{posFinanceBatch.financeBatch.issueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputText value="#{bundle.aon_description}" />
+					<aon:outputText value="#{posFinanceBatch.financeBatch.description}" />
+
+					<aon:outputText value="#{financeBundle.finance_disk_type}" />
+					<aon:outputText value="#{posFinanceBatch.financeBatch.financeBatchType}"/>
+
+					<aon:outputText value="#{configBundle.config_bank}" />
+					<aon:outputText value="#{posFinanceBatch.financeBatch.registryBank.fullName}" />
+					
+					<aon:outputText value="#{financeBundle.finance_total_amount}" />
+					<aon:div>
+						<aon:outputText styleClass="aon-bold"
+							value="#{posFinanceBatch.financeBatch.financeBatchTotalAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputText styleClass="aon-margin-left"
+							value="(#{posFinanceBatch.financeBatch.financeBatchTotalDetails} #{financeBundle.finance_regs})" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:div>
+
+				</aon:panelGrid>
+
 			</aon:div>
 
 		</aon:form>

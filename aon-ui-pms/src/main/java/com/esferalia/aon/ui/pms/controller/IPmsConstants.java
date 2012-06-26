@@ -32,11 +32,13 @@ public interface IPmsConstants {
 	// ************************************************************
 	String ADVANCE_INVOICE_CONTROLLER_LIST = "advanceInvoice_list";
 	String ADVANCE_INVOICE_CONTROLLER_SEARCH = "advanceInvoice_search";
+	String POS_FINANCE_BATCH_LIST_NAME = "posFinanceBatch_list";
 	String POS_SHIFT_FORM_NAME = "posShift_form";
 	String RACK_LIST_NAME = "rack_list";
 	String RESERVATION_IO_LIST_NAME = "reservationIO_list";
 	String RESERVATION_LIST_NAME = "reservation_list";
 	String RESERVATION_FORM_NAME = "reservation_form";
 	String RESERVATION_REQUEST_FORM_NAME = "reservationRequest_form";
+	
 
 }

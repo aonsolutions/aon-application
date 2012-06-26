@@ -34,6 +34,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.PosShift;
@@ -60,6 +61,8 @@ public class PosFinanceBatchController extends BasicController {
 	
 	private boolean showFinanceBatchWindow;
 	
+	private boolean saved;
+	
 	private DataModel financeBatchModel;
 	
 	public DataModel getFinanceBatchModel() {
@@ -76,6 +79,14 @@ public class PosFinanceBatchController extends BasicController {
 
 	public void setShowFinanceBatchWindow(boolean showFinanceBatchWindow) {
 		this.showFinanceBatchWindow = showFinanceBatchWindow;
+	}
+	
+	public boolean isSaved() {
+		return saved;
+	}
+
+	public void setSaved(boolean saved) {
+		this.saved = saved;
 	}
 
 	public FinanceBatch getFinanceBatch() {
@@ -145,6 +156,7 @@ public class PosFinanceBatchController extends BasicController {
 	}
 	
 	public void onSearch(ActionEvent event) {
+		setSaved(false);
 		clearCheckedFinances();
 		try {
 			completeCriteria();
@@ -234,6 +246,7 @@ public class PosFinanceBatchController extends BasicController {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException {
+		setSaved(false);
 		setHotel(null);
 		setStartDate(new Date());
 		setEndDate(new Date());
@@ -282,7 +295,7 @@ public class PosFinanceBatchController extends BasicController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		this.onSearch(event);
+		setSaved(true);
 	}
 
 	private void loadBatchModel() throws ManagerBeanException {
@@ -308,6 +321,13 @@ public class PosFinanceBatchController extends BasicController {
 	public void onResetBatch(ActionEvent event) throws ManagerBeanException {
 		createNewBatch();
 		setFinanceBatchModel(null);
+	}
+	
+	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
+		if (getFinanceBatch()!=null && getFinanceBatch().getId()!=null) {
+			BasicController controller = (BasicController) AonUtil.getRegisteredBean("fbatch");
+			controller.onLoad(event, getFinanceBatch().getId(), IPmsConstants.POS_FINANCE_BATCH_LIST_NAME, null);
+		}
 	}
 	
 	private void createNewBatch() {
