@@ -48,7 +48,7 @@
 			
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{financeList.checkedCount}" />
+					<aon:outputText value="#{!fbatch.readOnly ? financeList.checkedCount : ''}" />
 				</f:facet>
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
 					value="#{financeList.rowChecked}"
