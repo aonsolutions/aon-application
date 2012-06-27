@@ -33,6 +33,8 @@ import com.code.aon.jaas.vendor.jboss.JBossSessionManagerMBean;
 
 public class LoginModule extends UsernamePasswordLoginModule {
 
+	private static final String DEFAULT_ROLE = "User";
+	
 	/** Whether to suspend resume transactions during database operations */
 	private boolean suspendResume = true;
 	/** Tells the MBean SessionManager ObjectName . */
@@ -170,25 +172,26 @@ public class LoginModule extends UsernamePasswordLoginModule {
 
 		try {
 			connection = dbUtil.createConnection(this.dataBaseName);
+			Set<String> roles = new HashSet<String>();
+			roles.add(DEFAULT_ROLE);
 			List<Integer> profiles = dbUtil.getProfiles(this.appplicationUser.getId());
 			if ( (profiles != null) && (!profiles.isEmpty()) ) {
-				Set<String> roles = new HashSet<String>();
 				for( Integer profile : profiles ) {
 					List<String> list = dbUtil.getRoles(profile);
 					if ( (list != null) && (!list.isEmpty()) ) {
 						roles.addAll(list);
 					}
 				}
-				for( String role : roles ) {
-					try {
-						Principal p = createIdentity(role);
-						if( trace ) {
-			                  log.trace("Assign user to role " + role);	
-						}
-						group.addMember(p);
-					} catch(Exception e) {
-						log.debug("Failed to create principal: "+role, e);
+			}
+			for( String role : roles ) {
+				try {
+					Principal p = createIdentity(role);
+					if( trace ) {
+		                  log.trace("Assign user to role " + role);	
 					}
+					group.addMember(p);
+				} catch(Exception e) {
+					log.debug("Failed to create principal: "+role, e);
 				}
 			}
 			return new Group[]{group};
