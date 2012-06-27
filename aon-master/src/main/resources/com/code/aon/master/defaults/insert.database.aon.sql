@@ -3658,7 +3658,6 @@ INSERT INTO `application` VALUES
   (28,'aon-aio','AIO',1);
 
 INSERT INTO `role` VALUES 
-  (1,'User'),
   (2,'Guest'),
   (3,'Admin'),
   (4,'Config'),
@@ -3676,6 +3675,9 @@ INSERT INTO `role` VALUES
   (16,'eSignature'),
   (17,'SisAdmin'),
   (18,'Tgc'),
+  (19,'DocumentManager'),
+  (20,'Payroll'),
+  (21,'Fiscal'),
   (101,'Administrador'),
   (102,'Invitado'),
   (103,'Manager'),
@@ -3812,9 +3814,8 @@ INSERT INTO `application_role` VALUES
   (57,1,1057),
   (58,1,1058),
 /*
-   aon-account User, Guest, Admin, Auditor, Confidentiality, Accounting, Finance
+   aon-account Guest, Admin, Auditor, Confidentiality, Accounting, Finance
 */
-  (59,2,1),
   (60,2,2),
   (61,2,3),
   (62,2,5),
@@ -3832,8 +3833,7 @@ INSERT INTO `application_role` VALUES
   (71,5,105),
   (72,5,106),
   (73,5,107),  
-/* aon-commercial User, Guest, Admin, Auditor, Confidentiality, Statistics */
-  (74,6,1),
+/* aon-commercial Guest, Admin, Auditor, Confidentiality, Statistics */
   (75,6,2),
   (76,6,3),
   (77,6,5),  
@@ -3842,8 +3842,7 @@ INSERT INTO `application_role` VALUES
 /* aon-communicator Invitado, Manager */
   (80,7,102),
   (81,7,103),
-/* aon-consultant  User, Guest, Admin, Config, Auditor, Confidentiality, Product, Accounting Finance, Statistics, TaskMonitoring, eSignature */
-  (82,8,1),
+/* aon-consultant  Guest, Admin, Config, Auditor, Confidentiality, Product, Accounting Finance, Statistics, TaskMonitoring, eSignature */
   (83,8,2),  
   (84,8,3),
   (85,8,4),    
@@ -3855,12 +3854,10 @@ INSERT INTO `application_role` VALUES
   (91,8,14),       
   (92,8,15),
   (93,8,16),      
-/* aon-document User, Guest, Admin */   
-  (94,9,1),
+/* aon-document Guest, Admin */   
   (95,9,2),       
   (96,9,3),
-/* aon-desktop User, Guest, Admin, Confidentiality SMSSender, FAXSender, DocumentsVisible, PredefinedDocumentsExecutable CorporativeDocumentsManager */   
-  (97,10,1),       
+/* aon-desktop Guest, Admin, Confidentiality SMSSender, FAXSender, DocumentsVisible, PredefinedDocumentsExecutable CorporativeDocumentsManager */   
   (98,10,2),
   (99,10,3),       
   (100,10,6),
@@ -3869,8 +3866,7 @@ INSERT INTO `application_role` VALUES
   (103,10,110),       
   (104,10,111),
   (105,10,112),
-/* aon-ebackoffice User, Guest, Admin */
-  (106,11,1),
+/* aon-ebackoffice Guest, Admin */
   (107,11,2),       
   (108,11,3),
 /* aon-ecm Manager, Administrator, ContentManagement, Consultant, Anonymous */ 
@@ -3879,16 +3875,13 @@ INSERT INTO `application_role` VALUES
   (111,12,114),
   (112,12,115),
   (113,12,116),
-/* aon-ecommerce  User, Guest, Admin */
-  (114,13,1),  
+/* aon-ecommerce Guest, Admin */
   (115,13,2),
   (116,13,3),
-/* aon-employee User, Guest, Admin */
-  (117,14,1),
+/* aon-employee Guest, Admin */
   (118,14,2),  
   (119,14,3),
-/* aon-enterprise User, Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, eSignature */
-  (120,15,1),
+/* aon-enterprise Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, eSignature */
   (121,15,2),        
   (122,15,3),
   (123,15,4),        
@@ -3903,8 +3896,7 @@ INSERT INTO `application_role` VALUES
   (132,15,13),
   (133,15,14),        
   (134,15,16),
- /* aon-finance User, Guest, Admin, Config, Auditor, Confidentiality, Product Accounting, Finance */
-  (135,16,1),
+ /* aon-finance Guest, Admin, Config, Auditor, Confidentiality, Product Accounting, Finance */
   (136,16,2),        
   (137,16,3),
   (138,16,4),        
@@ -3913,8 +3905,7 @@ INSERT INTO `application_role` VALUES
   (141,16,7),
   (142,16,12),  
   (143,16,13),  
- /* aon-fiscal User, Guest, Admin, Config, Auditor, Confidentiality, Product Accounting, Finance */
-  (144,17,1),
+ /* aon-fiscal Guest, Admin, Config, Auditor, Confidentiality, Product Accounting, Finance */
   (145,17,2),        
   (146,17,3),
   (147,17,4),        
@@ -3923,8 +3914,7 @@ INSERT INTO `application_role` VALUES
   (150,17,7),
   (151,17,12),  
   (152,17,13),  
- /* aon-gt User, Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, eSignature */
-  (153,18,1),
+ /* aon-gt Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, eSignature */
   (154,18,2),        
   (155,18,3),
   (156,18,4),        
@@ -3939,17 +3929,14 @@ INSERT INTO `application_role` VALUES
   (165,18,13),
   (166,18,14),        
   (167,18,16),
-/* aon-manager User, Guest, Admin */
-  (168,19,1),        
+/* aon-manager Guest, Admin */
   (169,19,2),
   (170,19,3),        
-/* aon-payroll User, Guest, Admin, SisAdmin */
-  (171,20,1),        
+/* aon-payroll Guest, Admin, SisAdmin */
   (172,20,2),
   (173,20,3),
   (174,20,17),        
-/* aon-pms User, Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Accounting, Finance, Statistics, eSignature */
-  (175,21,1),
+/* aon-pms Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Accounting, Finance, Statistics, eSignature */
   (176,21,2),        
   (177,21,3),
   (178,21,4),        
@@ -3961,18 +3948,15 @@ INSERT INTO `application_role` VALUES
   (184,21,13),
   (185,21,14),        
   (186,21,16),
-/* aon-project User, Guest, Admin, Confidentiality, TaskMonitoring */ 
-  (187,22,1),
+/* aon-project Guest, Admin, Confidentiality, TaskMonitoring */ 
   (188,22,2),        
   (189,22,3),
   (190,22,6),        
   (191,22,15),
-/* aon-publisher User, Guest, Admin */ 
-  (192,23,1),        
+/* aon-publisher Guest, Admin */
   (193,23,2),
   (194,23,3),        
-/* aon-smb User, Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Accounting, Finance, Statistics, eSignature */
-  (195,24,1),
+/* aon-smb Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Accounting, Finance, Statistics, eSignature */
   (196,24,2),        
   (197,24,3),
   (198,24,4),        
@@ -3984,21 +3968,17 @@ INSERT INTO `application_role` VALUES
   (204,24,13),
   (205,24,14),        
   (206,24,16),
-/* aon-task User, Guest, Admin, Confidentiality, TaskMonitoring */ 
-  (207,25,1),
+/* aon-task Guest, Admin, Confidentiality, TaskMonitoring */ 
   (208,25,2),        
   (209,25,3),
   (210,25,6),        
   (211,25,15),
-/* aon-webinfo User, Manager */ 
-  (212,26,1),        
+/* aon-webinfo Manager */
   (213,26,103),
-/* aon-webmail User, Guest, Admin */ 
-  (214,27,1),        
+/* aon-webmail Guest, Admin */
   (215,27,2),
   (216,27,3),
-/* aon-aio User, Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, TaskMonitoring, eSignature */
-  (217,28,1),
+/* aon-aio Guest, Admin, Config, Auditor, Confidentiality, Product, Commercial Sale, Purchase, Warehouse, Accounting, Finance, Statistics, TaskMonitoring, eSignature, DocumentManager, Payroll, Fiscal */
   (218,28,2),        
   (219,28,3),
   (220,28,4),        
@@ -4013,7 +3993,10 @@ INSERT INTO `application_role` VALUES
   (229,28,13),
   (230,28,14),        
   (231,28,15),
-  (232,28,16);  
+  (232,28,16),  
+  (233,28,19),
+  (234,28,20),
+  (235,28,21);
 
   /*  
  Con esta deberíamos hacer igual que la anterior pero prefiero esperar hasta
@@ -4130,14 +4113,12 @@ INSERT INTO `profile` VALUES
 */
 INSERT INTO `profile_role` VALUES
 /*
- aon-aio (Administrador): User, Admin
+ aon-aio (Administrador): Admin
 */
-  (1,71,217),
   (2,71,219),
 /*  
- aon-aio (Gestion): User, Config, Auditor, Product, Commercial, Sale, Purchase, Warehouse, Finance, Statistics, eSignature
+ aon-aio (Gestion): Config, Auditor, Product, Commercial, Sale, Purchase, Warehouse, Finance, Statistics, eSignature
 */
-  (3,72,217),
   (4,72,220),
   (5,72,221),
   (6,72,223),
@@ -4149,9 +4130,8 @@ INSERT INTO `profile_role` VALUES
   (12,72,230),  
   (13,72,232),  
 /*
-  aon-aio (Invitado): User, Guest
+  aon-aio (Invitado): Guest
 */
-  (14,73,217),
   (15,73,218);      
   
 COMMIT;
