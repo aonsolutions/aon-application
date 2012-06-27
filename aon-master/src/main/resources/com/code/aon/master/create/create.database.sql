@@ -1,7 +1,7 @@
 # Database : aon_master
 # Version: 7.1.3
 # Created by: girazu
-# Creation Date: 27/06/2012 17:45
+# Creation Date: 27/06/2012 18:10
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -909,8 +909,8 @@ CREATE TABLE `action_denied` (
   KEY `IDX_ACTION_DENIED_ACTION` (`action_id`),
   KEY `IDX_ACTION_DENIED_USER` (`user_id`),
   KEY `IDX_ACTION_DENIED_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACTION_DENIED_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_DENIED_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_ACTION_DENIED_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`),
   CONSTRAINT `FK_ACTION_DENIED_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Accion no permitida para el Usuario';
 
@@ -932,8 +932,8 @@ CREATE TABLE `session` (
   KEY `IDX_SESSION_APPLICATION` (`application`),
   KEY `IDX_SESSION_USER` (`user_id`),
   KEY `IDX_SESSION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_SESSION_APPLICATION` FOREIGN KEY (`application`) REFERENCES `application` (`id`),
   CONSTRAINT `FK_SESSION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_SESSION_APPLICATION` FOREIGN KEY (`application`) REFERENCES `application` (`id`),
   CONSTRAINT `FK_SESSION_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Sesion web';
 
@@ -2508,8 +2508,8 @@ CREATE TABLE `contact` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTACT_CONTACT_DATA` (`contact_data`),
   KEY `IDX_CONTACT_USER` (`user_id`),
-  CONSTRAINT `FK_CONTACT_CONTACT_DATA` FOREIGN KEY (`contact_data`) REFERENCES `contact_data` (`id`),
-  CONSTRAINT `FK_CONTACT_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_CONTACT_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK_CONTACT_CONTACT_DATA` FOREIGN KEY (`contact_data`) REFERENCES `contact_data` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupo de Contactos';
 
 #
@@ -2523,8 +2523,8 @@ CREATE TABLE `contact_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTACT_DETAIL_CONTACT` (`contact`),
   KEY `IDX_CONTACT_DETAIL_CONTACT_GROUP` (`contact_group`),
-  CONSTRAINT `FK_CONTACT_DETAIL_CONTACT` FOREIGN KEY (`contact`) REFERENCES `contact` (`id`),
-  CONSTRAINT `FK_CONTACT_DETAIL_CONTACT_GROUP` FOREIGN KEY (`contact_group`) REFERENCES `contact` (`id`)
+  CONSTRAINT `FK_CONTACT_DETAIL_CONTACT_GROUP` FOREIGN KEY (`contact_group`) REFERENCES `contact` (`id`),
+  CONSTRAINT `FK_CONTACT_DETAIL_CONTACT` FOREIGN KEY (`contact`) REFERENCES `contact` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Grupo de Contactos';
 
 #
@@ -3630,6 +3630,33 @@ CREATE TABLE `fbatch_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Remesa';
 
 #
+# Structure for the `pos` table : 
+#
+
+CREATE TABLE `pos` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
+  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
+  `invoiceable` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es facturable',
+  `item` int(4) default NULL COMMENT 'Identificador del Producto',
+  `initial_amount` double(15,2) default '0.00' COMMENT 'Importe inicial de apertura por defecto',
+  `pin_pad` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es un Pin Pad',
+  `commerce` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Clave de firma del comercio',
+  `signature_password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Clave de firma del comercio',
+  `terminal` varchar(4) collate latin1_spanish_ci default NULL COMMENT 'Numero de terminal',
+  `port_configuration` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Configuracion de puerto',
+  `pos_version` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Version actual',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_POS_WORKPLACE` (`workplace`),
+  KEY `IDX_POS_DOMAIN` (`domain`),
+  KEY `IDX_POS_ITEM` (`item`),
+  CONSTRAINT `FK_POS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_POS_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  CONSTRAINT `FK_POS_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='TPV';
+
+#
 # Structure for the `finance_pos` table : 
 #
 
@@ -3637,13 +3664,16 @@ CREATE TABLE `finance_pos` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `finance` int(4) NOT NULL COMMENT 'Identificador de Vencimiento',
+  `pos` int(4) NOT NULL COMMENT 'Identificador del TPV',
   `code` char(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de autorizacion',
   `xml_response` text collate latin1_spanish_ci COMMENT 'XML de respuesta',
   PRIMARY KEY  (`id`),
   KEY `IDX_FINANCE_POS_DOMAIN` (`domain`),
   KEY `IDX_FINANCE_POS_FINANCE` (`finance`),
+  KEY `IDX_FINANCE_POS_POS` (`pos`),
   CONSTRAINT `FK_FINANCE_POS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FINANCE_POS_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+  CONSTRAINT `FK_FINANCE_POS_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_FINANCE_POS_POS` FOREIGN KEY (`pos`) REFERENCES `pos` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos de TPV';
 
 #
@@ -3995,10 +4025,10 @@ CREATE TABLE `hotel` (
   KEY `IDX_HOTEL_SERVICE_CATALOGUE` (`service_catalogue`),
   KEY `IDX_HOTEL_ITEM_ADVANCE` (`item_advance`),
   KEY `IDX_HOTEL_ITEM_NO_SHOW` (`item_no_show`),
+  CONSTRAINT `FK_HOTEL_ITEM_NO_SHOW` FOREIGN KEY (`item_no_show`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_HOTEL_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`),
   CONSTRAINT `FK_HOTEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_HOTEL_ITEM_ADVANCE` FOREIGN KEY (`item_advance`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_HOTEL_ITEM_NO_SHOW` FOREIGN KEY (`item_no_show`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_HOTEL_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_HOTEL_SERVICE_CATALOGUE` FOREIGN KEY (`service_catalogue`) REFERENCES `catalogue` (`id`),
   CONSTRAINT `FK_HOTEL_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
@@ -4113,10 +4143,10 @@ CREATE TABLE `proposal_detail` (
   KEY `IDX_PROPOSAL_DETAIL_PROPOSAL` (`proposal`),
   KEY `IDX_PROPOSAL_DETAIL_ITEM` (`item`),
   KEY `IDX_PROPOSAL_DETAIL_SUPPLIER` (`supplier`),
+  CONSTRAINT `FK_PROPOSAL_DETAIL_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`),
   CONSTRAINT `FK_PROPOSAL_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROPOSAL_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_PROPOSAL_DETAIL_PROPOSAL` FOREIGN KEY (`proposal`) REFERENCES `proposal` (`id`),
-  CONSTRAINT `FK_PROPOSAL_DETAIL_SUPPLIER` FOREIGN KEY (`supplier`) REFERENCES `supplier` (`registry`)
+  CONSTRAINT `FK_PROPOSAL_DETAIL_PROPOSAL` FOREIGN KEY (`proposal`) REFERENCES `proposal` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles de la Propuesta de Compra';
 
 #
@@ -4191,10 +4221,10 @@ CREATE TABLE `purchase_detail` (
   KEY `IDX_PURCHASE_DETAIL_ITEM` (`item`),
   KEY `IDX_PURCHASE_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_PURCHASE_DETAIL_PROPOSAL_DETAIL` (`proposal_detail`),
+  CONSTRAINT `FK_PURCHASE_DETAIL_PROPOSAL_DETAIL` FOREIGN KEY (`proposal_detail`) REFERENCES `proposal_detail` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
-  CONSTRAINT `FK_PURCHASE_DETAIL_PROPOSAL_DETAIL` FOREIGN KEY (`proposal_detail`) REFERENCES `proposal_detail` (`id`),
   CONSTRAINT `FK_PURCHASE_DETAIL_PURCHASE` FOREIGN KEY (`purchase`) REFERENCES `purchase` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Pedido de Compra';
 
@@ -4829,8 +4859,8 @@ CREATE TABLE `signature` (
   PRIMARY KEY  (`id`),
   KEY `IDX_SIGNATURE_DOMAIN` (`domain`),
   KEY `IDX_SIGNATURE_USER` (`user_id`),
-  CONSTRAINT `FK_SIGNATURE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SIGNATURE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_SIGNATURE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FK_SIGNATURE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Firmas de Cuentas de Correo Electronico';
 
 #
@@ -5249,33 +5279,6 @@ CREATE TABLE `pm_type_detail_account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Entidades Bancarias';
 
 #
-# Structure for the `pos` table : 
-#
-
-CREATE TABLE `pos` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `workplace` int(4) NOT NULL COMMENT 'Identificador del Centro de Trabajo',
-  `name` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Nombre',
-  `invoiceable` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es facturable',
-  `item` int(4) default NULL COMMENT 'Identificador del Producto',
-  `initial_amount` double(15,2) default '0.00' COMMENT 'Importe inicial de apertura por defecto',
-  `pin_pad` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es un Pin Pad',
-  `commerce` varchar(20) collate latin1_spanish_ci default NULL COMMENT 'Clave de firma del comercio',
-  `signature_password` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Clave de firma del comercio',
-  `terminal` varchar(4) collate latin1_spanish_ci default NULL COMMENT 'Numero de terminal',
-  `port_configuration` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Configuracion de puerto',
-  `pos_version` varchar(8) collate latin1_spanish_ci default NULL COMMENT 'Version actual',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_POS_WORKPLACE` (`workplace`),
-  KEY `IDX_POS_DOMAIN` (`domain`),
-  KEY `IDX_POS_ITEM` (`item`),
-  CONSTRAINT `FK_POS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_POS_ITEM` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
-  CONSTRAINT `FK_POS_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='TPV';
-
-#
 # Structure for the `pos_shift` table : 
 #
 
@@ -5295,8 +5298,8 @@ CREATE TABLE `pos_shift` (
   KEY `IDX_POS_SHIFT_USER` (`user`),
   KEY `IDX_POS_SHIFT_DOMAIN` (`domain`),
   KEY `IDX_POS_SHIFT_INVOICE` (`invoice`),
-  CONSTRAINT `FK_POS_SHIFT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_POS_SHIFT_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
+  CONSTRAINT `FK_POS_SHIFT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_POS_SHIFT_POS` FOREIGN KEY (`pos`) REFERENCES `pos` (`id`),
   CONSTRAINT `FK_POS_SHIFT_USER` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Turno de trabajo del TPV';
@@ -5448,8 +5451,8 @@ CREATE TABLE `profile_role` (
   PRIMARY KEY  (`id`),
   KEY `IDX_PROFILE_ROLE_PROFILE` (`profile`),
   KEY `IDX_PROFILE_ROLE_APPLICATION_ROLE` (`application_role`),
-  CONSTRAINT `FK_PROFILE_ROLE_APPLICATION_ROLE` FOREIGN KEY (`application_role`) REFERENCES `application_role` (`id`),
-  CONSTRAINT `FK_PROFILE_ROLE_PROFILE` FOREIGN KEY (`profile`) REFERENCES `profile` (`id`)
+  CONSTRAINT `FK_PROFILE_ROLE_PROFILE` FOREIGN KEY (`profile`) REFERENCES `profile` (`id`),
+  CONSTRAINT `FK_PROFILE_ROLE_APPLICATION_ROLE` FOREIGN KEY (`application_role`) REFERENCES `application_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Roles del Perfil';
 
 #
@@ -5585,12 +5588,12 @@ CREATE TABLE `project_reservation_divert` (
   KEY `IDX_PROJECT_RESERVATION_DIVERT_DIVERT_HOTEL` (`divert_hotel`),
   KEY `IDX_PROJECT_RESERVATION_DIVERT_REQUEST_USER` (`request_user`),
   KEY `IDX_PROJECT_RESERVATION_DIVERT_RESPONSE_USER` (`response_user`),
+  CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_RESPONSE_USER` FOREIGN KEY (`response_user`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_DIVERT_HOTEL` FOREIGN KEY (`divert_hotel`) REFERENCES `hotel` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_PROJECT_RESERVATION` FOREIGN KEY (`project_reservation`) REFERENCES `project_reservation` (`project`),
   CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_REQUEST_HOTEL` FOREIGN KEY (`request_hotel`) REFERENCES `hotel` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_REQUEST_USER` FOREIGN KEY (`request_user`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_RESPONSE_USER` FOREIGN KEY (`response_user`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK_PROJECT_RESERVATION_DIVERT_REQUEST_USER` FOREIGN KEY (`request_user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Desvio de Reservas';
 
 #
@@ -6393,8 +6396,8 @@ CREATE TABLE `series` (
   PRIMARY KEY  (`id`),
   KEY `IDX_SERIES_DOMAIN` (`domain`),
   KEY `IDX_SERIES_SCOPE` (`scope`),
-  CONSTRAINT `FK_SERIES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_SERIES_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`)
+  CONSTRAINT `FK_SERIES_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
+  CONSTRAINT `FK_SERIES_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Series';
 
 #
@@ -6953,10 +6956,10 @@ CREATE TABLE `workplace_department` (
   KEY `IDX_WORKPLACE_DEPARTMENT_WORKPLACE` (`workplace`),
   KEY `IDX_WORKPLACE_DEPARTMENT_DEPARTMENT` (`department`),
   KEY `IDX_WORKPLACE_DEPARTMENT_CATALOGUE` (`catalogue`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`),
+  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_DEPARTMENT` FOREIGN KEY (`department`) REFERENCES `department` (`id`),
+  CONSTRAINT `FK_WORKPLACE_DEPARTMENT_CATALOGUE` FOREIGN KEY (`catalogue`) REFERENCES `catalogue` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 

@@ -27,13 +27,16 @@ CREATE TABLE `finance_pos` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `finance` int(4) NOT NULL COMMENT 'Identificador de Vencimiento',
+  `pos` int(4) NOT NULL COMMENT 'Identificador del TPV',
   `code` char(16) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de autorizacion',
   `xml_response` text collate latin1_spanish_ci COMMENT 'XML de respuesta',
   PRIMARY KEY  (`id`),
   KEY `IDX_FINANCE_POS_DOMAIN` (`domain`),
   KEY `IDX_FINANCE_POS_FINANCE` (`finance`),
+  KEY `IDX_FINANCE_POS_POS` (`pos`),
   CONSTRAINT `FK_FINANCE_POS_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_FINANCE_POS_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
+  CONSTRAINT `FK_FINANCE_POS_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`),
+  CONSTRAINT `FK_FINANCE_POS_POS` FOREIGN KEY (`pos`) REFERENCES `pos` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vencimientos de TPV';
 
 ALTER TABLE `pos` ADD `pin_pad` tinyint(1) NOT NULL default '0' COMMENT 'Indicador de si es un Pin Pad';  
