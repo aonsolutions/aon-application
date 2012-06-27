@@ -48,10 +48,10 @@ ALTER TABLE `pos` ADD `pos_version` varchar(8) collate latin1_spanish_ci default
 
 ALTER TABLE `mk_action` ADD `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Accion';
 
-ALTER TABLE `campaign` ADD `scope` int(4) NOT NULL default 1 COMMENT 'Identificador del Ambito';
-ALTER TABLE `campaign` MODIFY `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito';
-ALTER TABLE `campaign` ADD KEY `IDX_CAMPAIGN_SCOPE` (`scope`);
-ALTER TABLE `campaign` ADD CONSTRAINT `FK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`);
+ALTER TABLE `mk_campaign` ADD `scope` int(4) NOT NULL default 1 COMMENT 'Identificador del Ambito';
+ALTER TABLE `mk_campaign` MODIFY `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito';
+ALTER TABLE `mk_campaign` ADD KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`);
+ALTER TABLE `mk_campaign` ADD CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`);
 
 ALTER TABLE `action_entry` ADD `domain` int(4) NOT NULL default 1 COMMENT 'Identificador del Dominio' AFTER `id`;
 UPDATE `action_entry`, `session` SET `action_entry`.`domain` = `session`.`domain` WHERE `action_entry`.`session_id` = `session`.`id`;

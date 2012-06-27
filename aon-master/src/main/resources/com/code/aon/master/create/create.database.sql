@@ -1658,14 +1658,11 @@ CREATE TABLE `campaign` (
   `workgroup` int(4) NOT NULL COMMENT 'Grupo de Trabajo supervisor de la Campaña',
   `manual` tinyint(1) NOT NULL default '0' COMMENT 'Tipo de Campaña',
   `status` tinyint(2) default NULL COMMENT 'Estado de la Campaña',
-  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`id`),
   KEY `IDX_CAMPAIGN_CAMPAIGN_TYPE` (`campaign_type`),
   KEY `IDX_CAMPAIGN_PROCESS` (`process`),
   KEY `IDX_CAMPAIGN_WORKGROUP` (`workgroup`),
   KEY `IDX_CAMPAIGN_DOMAIN` (`domain`),
-  KEY `IDX_CAMPAIGN_SCOPE` (`scope`),
-  CONSTRAINT `FK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_CAMPAIGN_CAMPAIGN_TYPE` FOREIGN KEY (`campaign_type`) REFERENCES `campaign_type` (`id`),
   CONSTRAINT `FK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CAMPAIGN_PROCESS` FOREIGN KEY (`process`) REFERENCES `process` (`id`),
@@ -4974,8 +4971,11 @@ CREATE TABLE `mk_campaign` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o no',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Campaña',
+  `scope` int(4) NOT NULL COMMENT 'Identificador del Ambito',
   PRIMARY KEY  (`id`),
   KEY `IDX_MK_CAMPAIGN_DOMAIN` (`domain`),
+  KEY `IDX_MK_CAMPAIGN_SCOPE` (`scope`),
+  CONSTRAINT `FK_MK_CAMPAIGN_SCOPE` FOREIGN KEY (`scope`) REFERENCES `scope` (`id`),
   CONSTRAINT `FK_MK_CAMPAIGN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Campañas de Marketing';
 
