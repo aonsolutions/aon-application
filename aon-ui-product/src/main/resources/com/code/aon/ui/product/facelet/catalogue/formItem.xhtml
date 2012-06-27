@@ -5,115 +5,139 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+		<ui:param name="showTitle" value="#{false}" />
+		<ui:param name="showDescription" value="#{false}" />
+		<ui:param name="innerToolbar" value="#{true}" />
+		<ui:define name="toolbarActions">
+			<aon:htmlCommandLink id="catalogueItem-excel-report"
+				value="&#160;" target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+				<f:param name="reportKey" value="catalogueItemList" />
+				<f:param name="outputFormat" value="MS Excel" />
+			</aon:htmlCommandLink>
+			<aon:htmlCommandLink id="catalogueItem_report"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+				value="#{bundle.aon_listing}"
+				action="#{report.onExecute}">
+				<f:param name="reportKey" value="catalogueItemList" />
+				<f:param name="outputFormat" value="PDF" />
+			</aon:htmlCommandLink>	
+		</ui:define>
+	</ui:decorate>
+	
+	<aon:div >
 
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="controller" value="#{catalogueItem}" />
-		<ui:param name="columnClasses"
-			value="aon-editDataTable-textColumn,
-					aon-editDataTable-numberColumn aon-width-100,
-					aon-editDataTable-numberColumn aon-width-80,
-					aon-editDataTable-numberColumn aon-width-80" />
-		<ui:define name="columns">
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
-				</f:facet>
-				<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
-				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
-					<ui:param name="lookupTo" value="#{catalogueItem.to.item}" />
-					<ui:param name="idRequired" value="#{true}" />
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupReRender" 
-						value="CatalogueItem_price" />
-					<aon:methodParam name="lookupChangeListener"
-						value="#{catalogueItem.itemData}" type="lookupChangeListener" />
-				</ui:include>						
-				<f:facet name="footer">
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+			<ui:param name="controller" value="#{catalogueItem}" />
+			<ui:param name="columnClasses"
+				value="aon-editDataTable-textColumn,
+						aon-editDataTable-numberColumn aon-width-100,
+						aon-editDataTable-numberColumn aon-width-80,
+						aon-editDataTable-numberColumn aon-width-80" />
+			<ui:define name="columns">
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+					</f:facet>
+					<aon:outputText value="#{to.item.product.code} - #{to.item.product.name}" rendered="#{formList}" />
 					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{catalogueItem.to.item}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupSuffix" value="-New" />
-						<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity-New" />
-						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity" />
+						<ui:param name="lookupRendered" value="#{formEdit}" />
 						<ui:param name="lookupReRender" 
-							value="CatalogueItem_price-New" />
+							value="CatalogueItem_price" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{catalogueItem.itemData}" type="lookupChangeListener" />
 					</ui:include>						
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="CatalogueItem_quantity" value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
-				</f:facet>
-				<aon:outputText value="#{to.quantity}"
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="CatalogueItem_quantity" 
-					value="#{catalogueItem.to.quantity}" 
-					rendered="#{formEdit}" required="#{true}" size="7">
-					<f:validateDoubleRange />
-				</aon:inputText>
-				<f:facet name="footer">
-					<aon:inputText id="CatalogueItem_quantity-New" 
-						value="#{catalogueItem.to.quantity}"
-						rendered="#{formNew}" required="#{true}" size="7">
+					<f:facet name="footer">
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{catalogueItem.to.item}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupInputOnFocus" value="CatalogueItem_quantity-New" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" 
+								value="CatalogueItem_price-New" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{catalogueItem.itemData}" type="lookupChangeListener" />
+						</ui:include>						
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="CatalogueItem_quantity" value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
+					</f:facet>
+					<aon:outputText value="#{to.quantity}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="CatalogueItem_quantity" 
+						value="#{catalogueItem.to.quantity}" 
+						rendered="#{formEdit}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="CatalogueItem_price" value="#{bundle.aon_price}" />
-				</f:facet>
-				<aon:outputText value="#{to.price}"
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="CatalogueItem_price" 
-					value="#{catalogueItem.to.price}"
-					rendered="#{formEdit}" required="#{true}" size="7">
-					<f:validateDoubleRange />
-				</aon:inputText>
-				<f:facet name="footer">
-					<aon:inputText id="CatalogueItem_price-New" 
+					<f:facet name="footer">
+						<aon:inputText id="CatalogueItem_quantity-New" 
+							value="#{catalogueItem.to.quantity}"
+							rendered="#{formNew}" required="#{true}" size="7">
+							<f:validateDoubleRange />
+						</aon:inputText>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="CatalogueItem_price" value="#{bundle.aon_price}" />
+					</f:facet>
+					<aon:outputText value="#{to.price}"
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="CatalogueItem_price" 
 						value="#{catalogueItem.to.price}"
-						rendered="#{formNew}" required="#{true}" size="7">
+						rendered="#{formEdit}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputLabel for="CatalogueItem_discount" value="#{bundle.aon_discount}" />
-				</f:facet>
-				<aon:outputText value="#{to.discount}" 
-					rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-				<aon:inputText id="CatalogueItem_discount"
-					value="#{catalogueItem.to.discount}"
-					rendered="#{formEdit}" required="#{true}" size="7">
-					<f:validateDoubleRange />
-				</aon:inputText>
-				<f:facet name="footer">
-					<aon:inputText id="CatalogueItem_discount-New"
+					<f:facet name="footer">
+						<aon:inputText id="CatalogueItem_price-New" 
+							value="#{catalogueItem.to.price}"
+							rendered="#{formNew}" required="#{true}" size="7">
+							<f:validateDoubleRange />
+						</aon:inputText>
+					</f:facet>
+				</aon:column>
+	
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputLabel for="CatalogueItem_discount" value="#{bundle.aon_discount}" />
+					</f:facet>
+					<aon:outputText value="#{to.discount}" 
+						rendered="#{formList}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:inputText id="CatalogueItem_discount"
 						value="#{catalogueItem.to.discount}"
-						rendered="#{formNew}" required="#{true}" size="7">
+						rendered="#{formEdit}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
-				</f:facet>
-			</aon:column>
-
-		</ui:define>
-	</ui:decorate>
+					<f:facet name="footer">
+						<aon:inputText id="CatalogueItem_discount-New"
+							value="#{catalogueItem.to.discount}"
+							rendered="#{formNew}" required="#{true}" size="7">
+							<f:validateDoubleRange />
+						</aon:inputText>
+					</f:facet>
+				</aon:column>
+	
+			</ui:define>
+		</ui:decorate>
+	</aon:div>
 </ui:composition>

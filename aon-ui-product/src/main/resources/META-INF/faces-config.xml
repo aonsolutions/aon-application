@@ -915,7 +915,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CatalogueItem_item_product_name,CatalogueItem_quantity</value>
+			<value>CatalogueItem_item_product_code,CatalogueItem_quantity</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
