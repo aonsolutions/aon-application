@@ -528,6 +528,10 @@
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
 	</table>
 
+	<table name="finance_pos">
+		<column name="xml_response" type="text"/>
+	</table>
+
 	<table name="finance_tracking">
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
 	</table>

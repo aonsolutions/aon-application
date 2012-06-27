@@ -252,6 +252,7 @@
 		<mapping class="com.code.aon.audit.Session"/>								
 				
 		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.FinancePos"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>
 		<mapping class="com.esferalia.aon.pms.Pos"/>
 		<mapping class="com.esferalia.aon.pms.PosShift"/>

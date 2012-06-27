@@ -436,6 +436,7 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS
+        map.put("FinancePos","com.esferalia.aon.pms.FinancePos");		
         map.put("Hotel","com.esferalia.aon.pms.Hotel");
         map.put("Pos","com.esferalia.aon.pms.Pos");
         map.put("PosShift","com.esferalia.aon.pms.PosShift");
