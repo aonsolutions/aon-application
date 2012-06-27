@@ -61,19 +61,12 @@ public abstract class BasicRoleManager {
 	public boolean isUserInRole(IAonRole role) {
 		return this.roles[role.ordinal()];
 	}
-	
-	/**
-	 * @return TRUE if user has IAonRole.USER role, false otherwise.
-	 */
-	public boolean isUser() {
-		return isUserInRole(IAonRole.USER);
-	}
 
 	/**
 	 * @return TRUE if user has IAonRole.GUEST role, false otherwise.
 	 */
 	public boolean isGuest() {
-		return isUserInRole(IAonRole.GUEST);
+		return (!this.admin) && isUserInRole(IAonRole.GUEST);
 	}
 
 	/**
@@ -200,6 +193,20 @@ public abstract class BasicRoleManager {
 	 */
 	public boolean isDocumentManager() {
 		return this.admin || isUserInRole(IAonRole.DOCUMENT_MANAGER);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.PAYROLL role, false otherwise.
+	 */
+	public boolean isPayroll() {
+		return this.admin || isUserInRole(IAonRole.PAYROLL);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.FISCAL role, false otherwise.
+	 */
+	public boolean isFiscal() {
+		return this.admin || isUserInRole(IAonRole.FISCAL);
 	}
 	
 	/**

@@ -14,11 +14,6 @@ import com.code.aon.ui.util.AonUtil;
 public enum IAonRole {
 
 	/**
-	 * Role de Operador
-	 */
-	USER( "User", "aon_login_user" ),
-
-	/**
 	 * Role de Invitado
 	 */
 	GUEST( "Guest", "aon_role_guest" ),
@@ -26,7 +21,7 @@ public enum IAonRole {
 	/**
 	 * Role de Administrador
 	 */
-	ADMIN( "Admin", "aon_administration" ),
+	ADMIN( "Admin", "aon_role_admin" ),
 
 	/**
 	 * Role de Configuración
@@ -111,7 +106,17 @@ public enum IAonRole {
 	/**
 	 * Role de Adminitrador Documental.
 	 */
-	DOCUMENT_MANAGER( "DocumentManager", "aon_role_document_manager" );
+	DOCUMENT_MANAGER( "DocumentManager", "aon_role_document_manager" ),
+	
+	/**
+	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
+	 */
+	PAYROLL( "Payroll", "aon_role_payroll" ),
+	
+	/**
+	 * Role de acceso a los informes de nominas.
+	 */
+	FISCAL( "Fiscal", "aon_role_fiscal" );
 
 	private String name;
 	
