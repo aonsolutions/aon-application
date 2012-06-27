@@ -1136,10 +1136,6 @@
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.ProjectReservationDivert</value>
 		</managed-property>
@@ -1178,10 +1174,6 @@
 		<managed-bean-name>divertReception</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.controller.DivertReceptionController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.pms.ProjectReservationDivert</value>
