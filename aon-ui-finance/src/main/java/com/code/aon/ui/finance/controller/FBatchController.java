@@ -40,8 +40,6 @@ import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.FinanceTrackingType;
-import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -276,23 +274,16 @@ public class FBatchController extends BasicController implements ICollectionProv
         IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
         FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-        Iterator<?> iterator = financeController.getCheckedFinances().iterator();
+        Iterator<Finance> iterator = financeController.getCheckedFinances().iterator();
         while (iterator.hasNext()) {
-			Finance finance = (Finance)financeBean.get(((Finance)iterator.next()).getId());
-			if (finance.getFinanceStatus() == FinanceStatus.PENDING) {
-	            finance.setFinanceStatus(FinanceStatus.BATCHED);
-	            financeBean.update(finance);
-	
+			Finance finance = (Finance)financeBean.get(iterator.next().getId());
+			if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
 	            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
 				fBatchDetail.setFinance(finance);
 				fBatchDetail.setFinanceBatch(fBatch);
 	            fBatchDetail.setAmount(finance.getTotalAmount());
 	            fBatchDetail.setStatus(FinanceStatus.BATCHED);
 				financeBatchDetailBean.insert(fBatchDetail);
-	
-				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_BATCHED);
-				message += " " + fBatch.getId() + " - " + fBatch.getDescription();
-				FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
 			}
         }
         financeController.clearCheckedFinances();

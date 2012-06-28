@@ -44,9 +44,9 @@
 	
 	<bean description="">
 		<pojo>com.code.aon.finance.FinanceBatchDetail</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.FinanceBatchDetailBeanVetoListener</vetoListener>
-		</vetoListeners>
+		<listeners>
+	        <listener>com.code.aon.finance.event.FinanceBatchDetailBeanListener</listener>
+		</listeners>
 	</bean>
 	
 	<bean description="Evita que se borre un cliente con facturas">
