@@ -87,9 +87,9 @@
 			</aon:htmlCommandLink>
 			<c:if test="#{!skipAddToBatch}">
 				<aon:commandLink title="#{registryBundle.registry_add_batch}" 
-					ajaxSingle="true"
+					ajaxSingle="true" style="background-position-y: top;"
 					actionListener="#{controller.onAddCurrentToBatch}" value="&#160;"
-					styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+					styleClass="aon-finding-toolbar-item aon-icon-version aon-finding-toolbar-item-no-border"
 					rendered="#{!controller.currentInBatch}" >
 				</aon:commandLink>			
 			</c:if>
