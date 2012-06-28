@@ -11,64 +11,60 @@
 		<aon:form id="posFinanceSearch">
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posFinanceBatch_module}" />
-				<ui:param name="controller" value="#{posFinanceBatch}" />
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posFinance_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
+				<ui:param name="controller" value="#{posFinance}" />
 			</ui:include>
 				
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{posFinanceBatch}" />
+				<ui:param name="skipAfterSearch" value="#{true}" />
+				<ui:param name="controller" value="#{posFinance}" />
+				<ui:param name="searchController" value="#{posFinanceSearch}" />
 
 				<ui:define name="searchContent">
 				
-					<aon:outputLabel for="PosShift_hotel" 
+					<aon:outputLabel for="PosFinance_hotel" 
 						value="#{pmsBundle.pms_hotel}" />
-					<aon:selectOneMenu id="PosShift_hotel" required="true" 
-						value="#{posFinanceBatch.hotel}" >
+					<aon:selectOneMenu id="PosFinance_hotel" 
+						value="#{searchController.hotel}" required="true">
 						<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 					</aon:selectOneMenu>
-					
+
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="Finance_dueTime-From"
+						<aon:outputLabel for="PosFinance_dueDate_from"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="Finance_dueTime-From"
-							required="true"
-							size="16" inputSize="10" renderAsPopup="true" enableManualInput="true"
-							value="#{posFinanceBatch.startDate}"
+						<aon:selectInputDate id="PosFinance_dueDate_from"
+							value="#{searchController.startDate}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"
-							/>
-						<aon:outputLabel for="Finance_dueTime-To"
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
+						<aon:outputLabel for="PosFinance_dueDate_to"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="Finance_dueTime-To"
-							required="true"
-							size="16" inputSize="10" renderAsPopup="true" enableManualInput="true"
-							value="#{posFinanceBatch.endDate}"
+						<aon:selectInputDate id="PosFinance_dueDate_to"
+							value="#{searchController.endDate}" required="true"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"
-							/>
+							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
-					
-					<aon:outputLabel for="Finance_PayMethod" value="#{configBundle.config_pay_method}" />
-					<aon:selectOneMenu id="Finance_PayMethod" 
-						required="true"
-						value="#{posFinanceBatch.payMethod}">
-						<f:selectItems value="#{configCollections.payMethods}" />
+
+					<aon:outputLabel for="PosFinance_payMethod" 
+						value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="PosFinance_payMethod"
+						value="#{searchController.payMethod}" required="true">
+						<f:selectItems value="#{configCollections.directPayMethods}" />
 					</aon:selectOneMenu>
-					
+
 					<aon:outputLabel value="#{pmsBundle.pms_shift}" />
 					<aon:selectOneMenu  
-						value="#{posFinanceBatch.shift}" >
+						value="#{searchController.shift}">
 						<f:selectItem itemLabel=" - " itemValue="#{null}" />
 						<f:selectItems value="#{pmsCollections.shifts}" />
 					</aon:selectOneMenu>
-						
+
 				</ui:define>
 			</ui:decorate>				
 		</aon:form>
-		
+
 	</ui:define>
 </ui:composition>

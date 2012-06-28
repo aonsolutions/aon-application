@@ -176,10 +176,8 @@
 								<c:if test="#{aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="pos_finance_bath" 
-											action="posFinanceBatch_search" 
-											value="#{pmsBundle.pms_posFinanceBatch_module}">
-											<aon:actionListener method="#{posFinanceBatch.onInit}" />
-										</aon:commandLink>
+											action="posFinance_search" actionListener="#{posFinance.onEditSearch}"
+											value="#{pmsBundle.pms_posFinance_module}" />
 									</aon:div>
 								</c:if>
 							</aon:div>

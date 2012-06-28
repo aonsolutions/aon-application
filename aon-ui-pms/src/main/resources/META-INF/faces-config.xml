@@ -808,38 +808,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************* ADVANCE INVOICE ***************** -->
-	<managed-bean>
-		<managed-bean-name>advanceInvoice</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AdvanceInvoiceController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.pms.ProjectReservation</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>advanceInvoice</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProjectReservation_startDate desc</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{advanceInvoiceSearch}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>advanceInvoiceSearch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-
 	<!-- ************* SERVICE INVOICE ***************** -->
 	<managed-bean>
 		<managed-bean-name>serviceInvoice</managed-bean-name>
@@ -889,6 +857,70 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* ADVANCE INVOICE ***************** -->
+	<managed-bean>
+		<managed-bean-name>advanceInvoice</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.AdvanceInvoiceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>advanceInvoice</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectReservation_startDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{advanceInvoiceSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>advanceInvoiceSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************* NOSHOW INVOICE ***************** -->
+	<managed-bean>
+		<managed-bean-name>noShowInvoice</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.NoShowInvoiceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.pms.ProjectReservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>noShowInvoice</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectReservation_startDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{noShowInvoiceSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>noShowInvoiceSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.NoShowInvoiceSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ********** PMS INVOICE PRINTER ********** -->
 	<managed-bean>
 		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>
@@ -1062,10 +1094,10 @@
 		</managed-property>	
 	</managed-bean>
 	
-	<!-- ************* POS FINANCES BATCH ***************** -->
+	<!-- ************* POS FINANCE ***************** -->
 	<managed-bean>
-		<managed-bean-name>posFinanceBatch</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosFinanceBatchController</managed-bean-class>
+		<managed-bean-name>posFinance</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PosFinanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1073,14 +1105,27 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>posFinanceBatch</value>
+			<value>posFinance</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Finance_dueDate</value>
+			<value>Finance_dueDate,Finance_invoice_creationUser,Finance_invoice_creationDate</value>
 		</managed-property>			
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{posFinanceSearch}</value>
+			</list-entries>
+		</managed-property>				
 	</managed-bean>
-	
+
+	<managed-bean>
+		<managed-bean-name>posFinanceSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PosFinanceSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************* RESERVATION INPUT OUTPUT ***************** -->
 	<managed-bean>
 		<managed-bean-name>reservationIO</managed-bean-name>
@@ -1359,18 +1404,6 @@
 		</navigation-case>
 	</navigation-rule>
 
-  	<!-- =================== Advance Invoice ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>advanceInvoice_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/advanceInvoice/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>advanceInvoice_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/advanceInvoice/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
   	<!-- =================== Service Invoice ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -1386,6 +1419,30 @@
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/serviceInvoice/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
+
+  	<!-- =================== Advance Invoice ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>advanceInvoice_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/advanceInvoice/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>advanceInvoice_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/advanceInvoice/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+  	<!-- =================== NoShow Invoice ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>noShowInvoice_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/noShowInvoice/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>noShowInvoice_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/noShowInvoice/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
   	<!-- =================== Pos ================= -->
 	<navigation-rule>
@@ -1435,19 +1492,19 @@
 		</navigation-case>
 	</navigation-rule>  
 	
-  	<!-- =================== Pos Finance Batch ================= -->
+  	<!-- =================== Pos Finance ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>posFinanceBatch_search</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/search.xhtml</to-view-id>
+			<from-outcome>posFinance_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinance/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>posFinanceBatch_list</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/list.xhtml</to-view-id>
+			<from-outcome>posFinance_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinance/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>posFinanceBatch_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinanceBatch/form.xhtml</to-view-id>
+			<from-outcome>posFinance_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/posFinance/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>  
 	
