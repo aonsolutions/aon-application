@@ -9,6 +9,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -29,6 +30,8 @@ public class CampaignActionLookupListener extends ControllerAdapter {
 			Expression expr1 = ExpressionUtilities.getNullExpression(endDate);
 			Expression expr2 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, date);
 			criteria.addExpression( ExpressionUtilities.getOrExpression(expr1, expr2) );
+			String scope = controller.getFieldName(IEntityAlias.MARKETING_ACTION_CAMPAIGN_SCOPE_ID);
+			criteria.addExpression( UserUtils.getInstance().getNullableScopeExpression(scope) );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}

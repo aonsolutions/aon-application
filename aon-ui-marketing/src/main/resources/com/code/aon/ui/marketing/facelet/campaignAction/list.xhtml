@@ -22,12 +22,19 @@
 
 				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}" />
+				</aon:column>
+
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-140">
+					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_action_media_type}" />
 					</f:facet>
 					<aon:outputText value="#{to.mediaType}"/>
 				</aon:column>
 		
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_action_start_date}" />
 					</f:facet>
@@ -37,7 +44,7 @@
 					</aon:outputText>					
 				</aon:column>
 	
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_action_end_date}" />
 					</f:facet>
@@ -47,7 +54,7 @@
 					</aon:outputText>					
 				</aon:column>
 		
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-160">
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.marketing_survey}" />
 					</f:facet>

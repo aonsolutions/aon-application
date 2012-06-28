@@ -364,10 +364,21 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
+				<value>#{marketingCampaignScopeListener}</value>
 				<value>#{marketingCampaignActionListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>marketingCampaignScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>MarketingCampaign_scope_id</value>
+		</managed-property>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>marketingCampaignActionListener</managed-bean-name>

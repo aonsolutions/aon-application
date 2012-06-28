@@ -35,6 +35,11 @@
 						rendered="#{!campaignAction.new}" value="#{bundle.aon_id}" />
 					<aon:inputText id="Action_id" value="#{campaignAction.to.id}"
 						rendered="#{!campaignAction.new}" size="15" disabled="true" />
+						
+					<aon:outputLabel for="Action_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Action_description" value="#{campaignAction.to.description}"
+						required="true" size="32" maxLength="64" />		
 
 					<aon:outputLabel for="Action_mediaType"
 						value="#{marketingBundle.marketing_action_media_type}" />

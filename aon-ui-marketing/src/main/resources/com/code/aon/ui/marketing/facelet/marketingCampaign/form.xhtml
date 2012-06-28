@@ -36,6 +36,12 @@
 						<f:validateLength  maximum="64"/>
 					</aon:inputTextarea>
 					
+					<aon:outputLabel for="Campaign_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Campaign_scope_id" value="#{marketingCampaign.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Campaign_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Campaign_active" 

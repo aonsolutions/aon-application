@@ -234,7 +234,7 @@
 	<!-- ** AON MARKETING **************************************************** -->
 	<bean class="com.code.aon.marketing.MarketingAction" sqlName="mk_action">
 		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active,campaign_scope_id"/>
-		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active,campaign.active.id"/>
+		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active,campaign.scope.id"/>
 	</bean>
 	<!-- 
 	<bean class="com.code.aon.entity.master.MarketingTarget" sqlName="target">
