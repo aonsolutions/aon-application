@@ -158,10 +158,10 @@ public class BoardListController implements ICollectionProvider {
 	@SuppressWarnings("rawtypes")
 	private void buildBoardList() throws ManagerBeanException {
 		
-		String select = PmsReportManager.getInstance().getBoardBookingSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null, true);
+		String select = PmsReportManager.getInstance().getBoardListSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null, true);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(getParams().getDate().getTime()));
+		query.setDate("start", new java.sql.Date(DateUtils.addDays(getParams().getDate(), -1).getTime()));
 		query.setDate("end", new java.sql.Date(getParams().getDate().getTime()));
 
 		List list = query.list();
@@ -176,7 +176,7 @@ public class BoardListController implements ICollectionProvider {
 			if(getParams().getDate().equals(date)){
 				db.setBoardName((String) (((Object[])o)[PmsReportManager.BOARD_NAME]));
 				db.setRoom((String) (((Object[])o)[PmsReportManager.BOARD_ROOM_NAME]));
-				db.setQuantity( Integer.parseInt((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()) );
+				db.setQuantity( Double.valueOf(((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString())).intValue() );
 				db.setGuest(((String) (((Object[])o)[PmsReportManager.BOARD_GUEST_NAME])));
 				db.setStartDate(((Date) (((Object[])o)[PmsReportManager.BOARD_GUEST_START_DATE])));
 				db.setEndDate(((Date) (((Object[])o)[PmsReportManager.BOARD_GUEST_END_DATE])));

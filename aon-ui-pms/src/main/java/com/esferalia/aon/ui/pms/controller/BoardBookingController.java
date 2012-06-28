@@ -114,13 +114,13 @@ public class BoardBookingController implements ICollectionProvider {
 		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(), -1).getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
 
 		Iterator it = query.list().iterator();
 				
 		Object o = it.hasNext()?it.next():null;
-		String hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+		String hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
 		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
 		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
@@ -128,7 +128,7 @@ public class BoardBookingController implements ICollectionProvider {
 		for(Booking booking: getBookingList() ){
 			while( booking.getHotel().equals(hotel) && booking.getDate().after(date) && it.hasNext() ){
 				o = it.next();
-				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 
@@ -138,12 +138,12 @@ public class BoardBookingController implements ICollectionProvider {
 				booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
 				
 				o = it.next();
-				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 			while( booking.getHotel().equals(hotel) && getToDate().before(date) && it.hasNext() ){
 				o = it.next();
-				hotel = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 		}
@@ -159,7 +159,8 @@ public class BoardBookingController implements ICollectionProvider {
 			toCal.setTime(getToDate());
 			while(fromCal.before(toCal) || fromCal.equals(toCal)){
 				Booking b = new Booking();
-				b.setHotel(getHotel().getWorkPlace().getDescription());
+//				b.setHotel(getHotel().getWorkPlace().getDescription());
+				b.setHotel(getHotel().getId().toString());
 				b.setDate(fromCal.getTime());
 				b.setQuantityList(obtainEmptyQuantityList());
 				getBookingList().add(b);
