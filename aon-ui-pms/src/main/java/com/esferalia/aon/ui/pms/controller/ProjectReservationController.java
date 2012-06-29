@@ -59,7 +59,6 @@ import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
-import com.esferalia.aon.ui.pms.event.ProjectReservationSearchListener;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ProjectReservationController extends BasicController implements IPmsConstants {
@@ -264,8 +263,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
-		ProjectReservationSearchListener searchController = (ProjectReservationSearchListener)AonUtil.getRegisteredBean(RESERVATION_SEARCH_LISTENER_NAME);
-		searchController.setReservationStatuses(null);
 		onSearch(event);
 	}
 

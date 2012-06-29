@@ -11,6 +11,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.seller.Seller;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -22,6 +23,7 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 	private Hotel hotel;
 	private Date insideDate;
 	private Customer agency;
+	private Seller seller;
 	private ReservationCheckStatus[] reservationCheckStatuses;
 	private ReservationStatus[] reservationStatuses;
 	private String guestName;
@@ -49,6 +51,14 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 
 	public void setAgency(Customer agency) {
 		this.agency = agency;
+	}
+
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
 	}
 
 	public ReservationCheckStatus[] getReservationCheckStatuses() {
@@ -88,9 +98,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setInsideDate(null);
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 		setReservationCheckStatuses(null);
-		ReservationStatus[] defaultReservationStatus = {ReservationStatus.ACTIVE, ReservationStatus.INVOICED};
-		setReservationStatuses(defaultReservationStatus);
+		setReservationStatuses(null);
 		setGuestName(null);
 		setGuestSurname(null);
 	}
@@ -106,6 +116,9 @@ public class ProjectReservationSearchListener extends ControllerSearchListener {
 		}
 		if (getAgency() != null && getAgency().getId() != null) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
+		}
+		if (getSeller() != null && getSeller().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_SELLER_ID), getSeller().getId());			
 		}
 		if (!ArrayUtils.isEmpty(getReservationCheckStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.PROJECT_RESERVATION_CHECK_STATUS);

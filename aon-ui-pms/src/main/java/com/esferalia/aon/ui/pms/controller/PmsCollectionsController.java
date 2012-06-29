@@ -16,6 +16,8 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.seller.Seller;
+import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.config.util.UserUtils;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -132,6 +134,20 @@ public class PmsCollectionsController {
 			customers.add(customerItem);
 		}
 		return customers;
+	}
+
+	public List<SelectItem> getSellers() throws ManagerBeanException {
+		List<SelectItem> sellers = new LinkedList<SelectItem>();
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(sellerBean.getFieldName(IEntityAlias.SELLER_STATUS), SellerStatus.ACTIVE);
+		criteria.addOrder(sellerBean.getFieldName(IEntityAlias.SELLER_REGISTRY_NAME));
+		for (ITransferObject ito : sellerBean.getList(criteria)) {
+			Seller seller = (Seller)ito;
+			SelectItem sellerItem = new SelectItem(seller, seller.getRegistry().getFullName());
+			sellers.add(sellerItem);
+		}
+		return sellers;
 	}
 
 	public List<SelectItem> getRoomItems() throws ManagerBeanException {

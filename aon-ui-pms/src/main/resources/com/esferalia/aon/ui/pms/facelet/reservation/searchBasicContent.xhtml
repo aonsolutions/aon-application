@@ -35,6 +35,23 @@
 		valueChangeListener="#{controller.addExpression}"
 		size="20" />
 
+	<aon:outputLabel for="ProjectReservation_creationDate" 
+		value="#{pmsBundle.pms_reservation_creationDate}" />
+	<aon:div>
+		<aon:outputLabel for="ProjectReservation_creationDate-From"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+		<aon:selectInputDate id="ProjectReservation_creationDate-From"
+			valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<aon:outputLabel for="ProjectReservation_creationDate-To"
+			styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+		<aon:selectInputDate id="ProjectReservation_creationDate-To"
+			valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+	</aon:div>
+
 	<aon:outputLabel for="ProjectReservation_startDate" 
 		value="#{pmsBundle.pms_checkIn}" />
 	<aon:div>
@@ -89,6 +106,15 @@
 		styleClass="aon-width-350">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{pmsCollections.agencies}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ProjectReservation_seller" 
+		value="#{pmsBundle.pms_seller}" />
+	<aon:selectOneMenu id="ProjectReservation_seller" 
+		value="#{searchController.seller}"
+		styleClass="aon-width-350">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{pmsCollections.sellers}" />
 	</aon:selectOneMenu>
 
 	<aon:outputLabel value="#{pmsBundle.pms_guest}" />
