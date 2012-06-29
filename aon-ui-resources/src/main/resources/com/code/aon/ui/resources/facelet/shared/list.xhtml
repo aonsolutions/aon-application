@@ -18,6 +18,8 @@
 		<aon:valueParam name="rowSelectorImmediate" default="#{true}" />
 		<aon:methodParam name="rowSelectorAction" default="#{controller.beanName}_form" resolve="true" />
 		<aon:methodParam name="rowSelectorActionListener" default="#{controller.onSelect}" type="actionListener" />
+		
+		<aon:valueParam name="selectButtonRendered" default="#{true}" />
 	</ui:include>
 	
 </ui:composition>

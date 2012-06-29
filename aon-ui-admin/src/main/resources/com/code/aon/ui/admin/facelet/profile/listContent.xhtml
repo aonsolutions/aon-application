@@ -6,10 +6,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div styleClass="aon-scroll-area">
+		<aon:valueParam name="rowSelectorToggleOnClick" default="#{!skipProfileEdit}" />
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="showNote" value="#{false}" />
 			<ui:param name="skipSelectButton" value="#{skipProfileEdit}" />
-			<ui:param name="rowSelectorToggleOnClick" value="#{!skipProfileEdit}" />
 			<ui:param name="showDataScroller" value="#{!skipProfileEdit}" />
 			<ui:define name="columns">
 		

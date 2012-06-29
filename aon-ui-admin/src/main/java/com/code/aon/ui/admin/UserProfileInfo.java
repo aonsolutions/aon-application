@@ -1,18 +1,36 @@
 package com.code.aon.ui.admin;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.SYSTEM;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.admin.ApplicationUserProfile;
 import com.code.aon.admin.Profile;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.ui.admin.controller.ApplicationProfileController;
+import com.code.aon.ui.util.AonUtil;
 
 public class UserProfileInfo {
 
 	private boolean checked;
 	
+	private String name;
+	
+	private String roleList;
+	
+	private String moduleDeniedList;
+	
 	private Profile profile;
 	
 	private ApplicationUserProfile userProfile;
 
-	public UserProfileInfo(Profile profile) {
+	public UserProfileInfo(Profile profile) throws ManagerBeanException {
 		this.profile = profile;
+		updateName();
+		this.roleList = ApplicationProfileController.getRoleList(profile);
+		this.moduleDeniedList = ApplicationProfileController.getModuleDeniedList(profile);
 	}
 	
 	public boolean isChecked() {
@@ -33,6 +51,31 @@ public class UserProfileInfo {
 
 	public void setUserProfile(ApplicationUserProfile userProfile) {
 		this.userProfile = userProfile;
+	}
+
+	private void updateName() {
+		String suffix = null;
+		this.name = profile.getName();
+		if ( profile.getDomain() == null ) {
+			suffix = AonUtil.getMessage(BUNDLE_NAME, SYSTEM); 
+		} else if (! DomainManager.getCurrentDomain().equals(profile.getDomain().getId()) ) {
+			suffix = profile.getDomain().getDescription();
+		}
+		if (! StringUtils.isEmpty(suffix) ) {
+			this.name += " (" + suffix + ")";
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getRoleList() {
+		return roleList;
+	}
+
+	public String getModuleDeniedList() {
+		return moduleDeniedList;
 	}
 	
 }

@@ -23,48 +23,58 @@
 
 	<aon:div styleClass="aon-scroll-area">
 		<c:if test="#{domainUser.showOnlyProfiles}" >
-			<aon:panelGrid columns="2">
-				<aon:outputLabel for="User_profiles"
-					value="#{adminBundle.admin_profiles}" />
-				<h:panelGrid>
-					<a4j:repeat value="#{domainUser.applicationInfos[0].profileInfos}" var="appProfile">
+			<aon:dataTable var="appProfile"
+				value="#{domainUser.applicationInfos[0].profileInfos}">
+				
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-100 aon-nowrap aon-vertical-align-top" >
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>
+					<aon:selectBooleanCheckbox value="#{appProfile.checked}" />								
+					<aon:outputText styleClass="aon-bold"
+						value="#{appProfile.name}" />
+				</aon:column>				
+
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_roles}" />
+					</f:facet>
+					<aon:outputText value="#{appProfile.roleList}" />
+				</aon:column>					
+
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_modules_denied}" />
+					</f:facet>
+					<aon:outputText value="#{appProfile.moduleDeniedList}" />
+				</aon:column>					
+
+			</aon:dataTable>
+		</c:if>
+		<c:if test="#{!domainUser.showOnlyProfiles}" >
+			<aon:dataTable var="appInfo" value="#{domainUser.applicationInfos}">
+					
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_applications}" />
+					</f:facet>
+					<aon:outputText styleClass="aon-bold"
+						value="#{appInfo.domainApplication.application.description}" />
+				</aon:column>				
+	
+				<aon:column styleClass="aon-editDataTable-textColumn" >
+					<f:facet name="header">
+						<aon:outputText value="#{adminBundle.admin_profiles}" />
+					</f:facet>
+					<a4j:repeat value="#{appInfo.profileInfos}" var="appProfile">
 						<aon:div>
 							<aon:selectBooleanCheckbox value="#{appProfile.checked}" />								
 							<aon:outputText styleClass="aon-italic"
-								value="#{appProfile.profile.name}" />
+								value="#{appProfile.name}" />
 						</aon:div>
 					</a4j:repeat>
-				</h:panelGrid>
-			</aon:panelGrid>		
-		</c:if>
-		<c:if test="#{!domainUser.showOnlyProfiles}" >
-			<a4j:region>
-				<aon:dataTable id="applicationsTable" var="appInfo"
-					value="#{domainUser.applicationInfos}">
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-width-250 aon-vertical-align-top" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_applications}" />
-						</f:facet>
-						<aon:outputText styleClass="aon-bold"
-							value="#{appInfo.domainApplication.application.description}" />
-					</aon:column>				
-	
-					<aon:column styleClass="aon-editDataTable-textColumn" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_profiles}" />
-						</f:facet>
-						<a4j:repeat value="#{appInfo.profileInfos}"
-							rendered="#{appInfo.checked}" var="appProfile">
-							<aon:div>
-								<aon:selectBooleanCheckbox value="#{appProfile.checked}" />								
-								<aon:outputText styleClass="aon-italic"
-									value="#{appProfile.profile.name}" />
-							</aon:div>
-						</a4j:repeat>
-					</aon:column>					
-				</aon:dataTable>
-			</a4j:region>
+				</aon:column>					
+			</aon:dataTable>
 		</c:if>
 	</aon:div>
 

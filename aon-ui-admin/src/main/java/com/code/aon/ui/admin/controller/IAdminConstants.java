@@ -48,5 +48,7 @@ public interface IAdminConstants {
 	
 	String ACTIVE_USERS = "admin_active_users";
 	String MAXIMUM_NUMBER_USERS = "admin_maximum_number_users";
+	
+	String SYSTEM = "admin_system";
 		
 }

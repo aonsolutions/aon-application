@@ -30,7 +30,6 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
 import com.code.aon.ui.common.role.IAonRole;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -159,23 +158,49 @@ public class ApplicationProfileController extends LinesController {
 		saveDeniedModules();
 	}		
 	
+	public static String getRoleList( Profile profile ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ProfileRole.class);
+		Criteria criteria = new Criteria();
+		String alias = bean.getFieldName(IEntityAlias.PROFILE_ROLE_PROFILE_ID);
+		criteria.addEqualExpression(alias, profile.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			Set<String> roles = new TreeSet<String>();
+			for( ITransferObject to : list ) {
+				String name = ((ProfileRole) to).getApplicationRole().getRole().getName();
+				IAonRole _role = IAonRole.get(name);
+				if ( _role != null ) {
+					name = _role.getDisplayName();
+				}
+				roles.add( name );
+			}
+			return StringUtils.join(roles, ", ");
+		}
+		return null;
+	}	
+
+	public static String getModuleDeniedList( Profile profile ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ProfileModuleDenied.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		String alias = bean.getFieldName(IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID);
+		criteria.addEqualExpression(alias, profile.getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			Set<String> modules = new TreeSet<String>();
+			Locale locale = AonUtil.getCurrentLocale();
+			for( ITransferObject to : list ) {
+				ProfileModuleDenied pmd = (ProfileModuleDenied) to;
+				modules.add( pmd.getModule().getName(locale) );
+			}
+			return StringUtils.join(modules, ", ");
+		}
+		return null;
+	}	
+	
 	public String getModuleDeniedList() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
-			Profile profile = (Profile) getSelectedTO();
-			IManagerBean bean = BeanManager.getManagerBean(ProfileModuleDenied.class);
-			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName(IEntityAlias.PROFILE_MODULE_DENIED_PROFILE_ID);
-			criteria.addEqualExpression(alias, profile.getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if (! list.isEmpty() ) {
-				Set<String> modules = new TreeSet<String>();
-				Locale locale = AonUtil.getCurrentLocale();
-				for( ITransferObject to : list ) {
-					ProfileModuleDenied pmd = (ProfileModuleDenied) to;
-					modules.add( pmd.getModule().getName(locale) );
-				}
-				return StringUtils.join(modules, ", ");
-			}
+			return getModuleDeniedList( (Profile) getSelectedTO() );
 		}
 		return null;
 	}	

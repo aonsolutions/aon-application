@@ -25,6 +25,8 @@
 			<ui:include src="/com/code/aon/ui/admin/facelet/profile/listContent.xhtml" >
 				<ui:param name="controller" value="#{domainApplicationProfile}" />
 				<ui:param name="skipDomainColumn" value="#{domainSwitcher.parentDomain}" />
+				<ui:param name="selectButtonRendered" value="#{to.domain.id == domainSwitcher.domainId}" />
+				<ui:param name="rowSelectorToggleOnClick" value="#{to.domain.id == domainSwitcher.domainId}" />
 			</ui:include>
 
 		</aon:form>
