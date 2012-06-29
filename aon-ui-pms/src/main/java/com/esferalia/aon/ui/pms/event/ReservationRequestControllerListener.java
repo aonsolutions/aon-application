@@ -34,7 +34,7 @@ public class ReservationRequestControllerListener extends ControllerAdapter impl
 
 		request.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
 		request.setEndDate(DateUtils.addDays(request.getStartDate(), 1));
-		request.setBookingHolder(BookingHolder.GUEST);
+		request.setBookingHolder(BookingHolder.AGENCY);
 		request.setRequestCounter(0);
 		request.setActive(true);
 
