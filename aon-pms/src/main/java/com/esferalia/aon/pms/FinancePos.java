@@ -3,12 +3,11 @@ package com.esferalia.aon.pms;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import com.code.aon.config.IScopable;
-import com.esferalia.aon.entity.master.HotelDB;
+import com.esferalia.aon.entity.master.FinancePosDB;
 
 @Entity
-@Table(name="hotel")
-public class Hotel extends HotelDB implements IScopable {
+@Table(name="finance_pos")
+public class FinancePos extends FinancePosDB {
 
 	private static final long serialVersionUID = 1L;
 
