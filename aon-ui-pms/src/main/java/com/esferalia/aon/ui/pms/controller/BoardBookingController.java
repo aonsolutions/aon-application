@@ -120,30 +120,30 @@ public class BoardBookingController implements ICollectionProvider {
 		Iterator it = query.list().iterator();
 				
 		Object o = it.hasNext()?it.next():null;
-		String hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
+		Integer hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
 		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
 		
 		for(Booking booking: getBookingList() ){
-			while( booking.getHotel().equals(hotel) && booking.getDate().after(date) && it.hasNext() ){
+			while( booking.getHotelId().equals(hotelId) && booking.getDate().after(date) && it.hasNext() ){
 				o = it.next();
-				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 
-			while( booking.getHotel().equals(hotel) && booking.getDate().equals(date) && it.hasNext() ){
+			while( booking.getHotelId().equals(hotelId) && booking.getDate().equals(date) && it.hasNext() ){
 				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
 				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
 				booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
 				
 				o = it.next();
-				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
-			while( booking.getHotel().equals(hotel) && getToDate().before(date) && it.hasNext() ){
+			while( booking.getHotelId().equals(hotelId) && getToDate().before(date) && it.hasNext() ){
 				o = it.next();
-				hotel = o!=null?(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]).toString():null;
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
 				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
 			}
 		}
@@ -159,8 +159,7 @@ public class BoardBookingController implements ICollectionProvider {
 			toCal.setTime(getToDate());
 			while(fromCal.before(toCal) || fromCal.equals(toCal)){
 				Booking b = new Booking();
-//				b.setHotel(getHotel().getWorkPlace().getDescription());
-				b.setHotel(getHotel().getId().toString());
+				b.setHotelId(getHotel().getId());
 				b.setDate(fromCal.getTime());
 				b.setQuantityList(obtainEmptyQuantityList());
 				getBookingList().add(b);
@@ -176,7 +175,7 @@ public class BoardBookingController implements ICollectionProvider {
 				Booking b = null;
 				while(fromCal.before(toCal) || fromCal.equals(toCal)){
 					b = new Booking();
-					b.setHotel(hotel.getWorkPlace().getDescription());
+					b.setHotelId(hotel.getId());
 					b.setDate(fromCal.getTime());
 					b.setQuantityList(obtainEmptyQuantityList());
 					getBookingList().add(b);
@@ -267,18 +266,20 @@ public class BoardBookingController implements ICollectionProvider {
 	}
 	
 	public class Booking {
-		private String hotel;
+		private Integer hotelId;
+		private String hotelName;
 		private Date date;
 		private List<Integer> quantityList;
 		
 		public Booking (){
 			
 		}
-		public String getHotel() {
-			return hotel;
+		public Integer getHotelId() {
+			return hotelId;
 		}
-		public void setHotel(String hotel) {
-			this.hotel = hotel;
+		public void setHotelId(Integer hotelId) throws ManagerBeanException {
+			this.hotelId = hotelId;
+			hotelName = ((Hotel)BeanManager.getManagerBean(Hotel.class).get(hotelId)).getWorkPlace().getDescription();
 		}
 		public Date getDate() {
 			return date;
@@ -291,6 +292,9 @@ public class BoardBookingController implements ICollectionProvider {
 		}
 		public void setQuantityList(List<Integer> quantityList) {
 			this.quantityList = quantityList;
+		}
+		public String getHotelName() {
+			return hotelName;
 		}
 	
 	}

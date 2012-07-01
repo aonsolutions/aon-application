@@ -158,7 +158,7 @@ public class BoardListController implements ICollectionProvider {
 	@SuppressWarnings("rawtypes")
 	private void buildBoardList() throws ManagerBeanException {
 		
-		String select = PmsReportManager.getInstance().getBoardListSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null, true);
+		String select = PmsReportManager.getInstance().getBoardListSQL(getParams().getHotel(), getParams().getBoardItemFilter()!=null?getParams().getBoardItemFilter().getProduct():null);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(DateUtils.addDays(getParams().getDate(), -1).getTime()));
