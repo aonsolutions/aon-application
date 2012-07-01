@@ -21,7 +21,7 @@
 	<field name="company" class="com.code.aon.customer.Customer"/>
 	<field name="status" class="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 	<field name="roomCount" class="java.lang.Integer"/>
-	<field name="guestCount" class="java.lang.Integer"/>
+	<field name="personCount" class="java.lang.Integer"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -323,7 +323,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{guestCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{personCount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="190" y="0" width="30" height="14"/>
