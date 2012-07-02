@@ -75,12 +75,10 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
-		<c:if test="#{aonRole.document}">
-			<aon:commandLink id="document"
-				value="#{bundle.aon_module_document}"
-				action="menu_document" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
+		<aon:commandLink id="document"
+			value="#{bundle.aon_module_document}"
+			action="menu_document" immediate="true"
+			styleClass="aon-top-menu-item" />
 		
 		<aon:commandLink id="configuration"
 			value="#{bundle.aon_module_configuration}"

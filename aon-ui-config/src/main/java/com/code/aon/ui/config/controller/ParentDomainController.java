@@ -1,5 +1,7 @@
 package com.code.aon.ui.config.controller;
 
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
@@ -26,7 +28,7 @@ public class ParentDomainController {
 	private MimeType mimeType;
 
 	public void resolve() {
-		DomainSwitcher dm = (DomainSwitcher) AonUtil.getRegisteredBean("domainSwitcher");
+		DomainSwitcher dm = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		domain = dm.getDomainId();
 		
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());

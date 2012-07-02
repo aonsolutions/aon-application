@@ -40,7 +40,7 @@
 										value="#{registryBundle.registry_batch_document}">
 									</aon:commandLink>
 								</aon:div>					
-								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+								<c:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentMassiveUpload" 
 											action="corporateIdentityAttach_form" immediate="true"
@@ -49,7 +49,9 @@
 												target="#{corporateIdentityAttach.massiveUpload}"  />
 											<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
 										</aon:commandLink>
-									</aon:div>							
+									</aon:div>
+								</c:if>							
+								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="documentGlobal" 
 											action="documentGlobal_search" immediate="true"

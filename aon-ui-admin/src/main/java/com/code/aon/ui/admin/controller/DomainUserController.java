@@ -62,6 +62,7 @@ public class DomainUserController extends BasicController {
 	
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
+		this.idCheck.setDomainAlias(IEntityAlias.USER_DOMAIN);
 	}
 	
 	public String getSelectedTab() {
