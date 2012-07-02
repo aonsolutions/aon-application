@@ -18,7 +18,7 @@
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="resetPassword"
 						value="#{adminBundle.admin_reset_password}"
-						actionListener="#{domainUser.onResetPassword}"
+						actionListener="#{domainUser.onResetPassword}" immediate="true"
 						rendered="#{!domainUser.new}" reRender="passwordChangedWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 						<aon:actionListener method="#{saveActionListener}" />
@@ -26,7 +26,7 @@
 					<aon:commandButton id="changePassword"
 						value="#{adminBundle.admin_change_password}"
 						actionListener="#{domainUser.onShowChangePasswordWindow}"
-						reRender="showChangePasswordWindow"
+						reRender="showChangePasswordWindow"  immediate="true"
 						rendered="#{(!domainUser.new) and adminMain.config.showDomainUserChangePassword}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities">
 					</aon:commandButton>

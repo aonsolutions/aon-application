@@ -168,6 +168,7 @@ public class ActionDeniedController implements IAuditConstants {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
 			Integer appId = getAuditController().getApplication().getId();
 			Integer domainId = DomainManager.getCurrentDomain();
 			Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);

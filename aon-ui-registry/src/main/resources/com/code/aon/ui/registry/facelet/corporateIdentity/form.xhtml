@@ -16,6 +16,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(corporateIdentityAttach.massiveUpload)?(registryBundle.registry_document_massive_upload):(bundle.aon_documents)}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.documentManager}" />
 				<ui:param name="skipCancelButton" value="#{corporateIdentityAttach.massiveUpload}" />
 			</ui:include>
 

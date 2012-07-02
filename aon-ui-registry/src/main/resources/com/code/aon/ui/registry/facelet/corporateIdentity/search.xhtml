@@ -12,6 +12,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
 				<ui:param name="controller" value="#{corporateIdentityAttach}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.documentManager}" />
 			</ui:include>
 
 			<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/searchContent.xhtml" >
