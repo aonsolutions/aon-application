@@ -259,15 +259,16 @@ class Domain(object):
             raise AonException(-37,"Domain max defined users must be a non zero positive integer!")
             
         # Validacion de los modulos
-        modules = self.get_domain_modules().split(",")
-        for mod in modules:
-            found = False
-            for system_module  in self.__system_domain_modules:
-                if (system_module == mod):
-                    found = True
-                    break
-            if not found:
-                raise AonException(-38,"Module '"+mod+"' not found in system modules!")    
+        if self.get_domain_modules() != None: 
+            modules = self.get_domain_modules().split(",")
+            for mod in modules:
+                found = False
+                for system_module  in self.__system_domain_modules:
+                    if (system_module == mod):
+                        found = True
+                        break
+                if not found:
+                    raise AonException(-38,"Module '"+mod+"' not found in system modules!")    
             
         # Validacion de la creacion de un dominio hijo.
         if not domain_type.is_parent():
@@ -411,8 +412,8 @@ class Domain(object):
                 if (system_module == mod):
                     if self.is_verbose_enabled():
                         print "\t\tTrying to domain_application_module (",mod + "("+str(x)+")",")",
-                    stmt.execute("INSERT INTO domain_application_module (domain_application,module) VALUES (%s,%s)"
-                                   ,(self.domain_application,x))
+                    stmt.execute("INSERT INTO domain_application_module (domain,domain_application,module) VALUES (%s,%s,%s)"
+                                   ,(self.get_domain_id(),self.domain_application,x))
                     if self.is_verbose_enabled():
                         print "........... inserted with id=",db.insert_id()
                     break
@@ -432,8 +433,8 @@ class Domain(object):
         stmt = db.cursor()
         if self.is_verbose_enabled():
             print "\t\tTrying to insert application_user (",self.get_user_id(),self.domain_application,")",  
-        stmt.execute("INSERT INTO application_user (user_id,domain_application) VALUES (%s,%s)"
-                       ,(self.get_user_id(),self.domain_application))
+        stmt.execute("INSERT INTO application_user (user_id,domain_application,domain) VALUES (%s,%s,%s)"
+                       ,(self.get_user_id(),self.domain_application,self.get_domain_id()))
         self.__application_user = db.insert_id()
         if self.is_verbose_enabled():
             print "......... inserted with id=",self.__application_user
@@ -450,8 +451,8 @@ class Domain(object):
         stmt = db.cursor()
         if self.is_verbose_enabled():
             print "\t\t\tTrying to insert application_user_profile (",self.__application_user,self.__admin_profile_id,")",  
-        stmt.execute("INSERT INTO application_user_profile (application_user,profile) VALUES (%s,%s)"
-                       ,(self.__application_user,self.__admin_profile_id))
+        stmt.execute("INSERT INTO application_user_profile (application_user,profile,domain) VALUES (%s,%s,%s)"
+                       ,(self.__application_user,self.__admin_profile_id,self.get_domain_id()))
         self.__application_user_profile = db.insert_id()
         if self.is_verbose_enabled():
             print " ...... inserted with id=",self.__application_user_profile

@@ -319,19 +319,27 @@ public class DomainServletUtil implements IDomainServletConstants{
 			setDomainMaxDefinedUsers(definedUsers);
 		}
 		
-		String modules = request.getParameter(DOMAIN_MODULES);
-		if (StringUtils.isNotBlank(definedUsers)) {
-			parseModules(modules);
-			setDomainModules(modules);
+		String modules_parsed = "";
+		String[] modules = request.getParameterValues(DOMAIN_MODULES);
+		if (modules != null && modules.length > 0) {
+			for (String module : modules) {
+				if (StringUtils.isNotBlank(module)) {
+					if (StringUtils.isNotBlank(modules_parsed)) {
+						modules_parsed=modules_parsed+",";	
+					}
+					String[] mods = StringUtils.split(module,',');
+					parseModules(mods);
+					modules_parsed=modules_parsed+module;
+				}
+			}
 		}
-		
+		setDomainModules(modules_parsed);		
 	}
 	
-	private void parseModules(String modules) throws AonException {
-		String[] mods = StringUtils.split(modules,',');
-		for (String mod : mods) {
+	private void parseModules(String[] modules) throws AonException {
+		for (String mod : modules) {
 			try {
-				Module.valueOf(mod);
+				Module.valueOf(mod.toUpperCase());
 			} catch (IllegalArgumentException e) {
 				StringBuilder buf = new StringBuilder();
 				buf.append("El módulo '");
@@ -421,8 +429,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 	
 	public static void main(String[] args) throws AonException {
 		DomainServletUtil d = new DomainServletUtil();
-		d.parseModules("dddd");
-		
+		d.parseModules(new String[]{"MARKETING"});
 	}
 	
 	

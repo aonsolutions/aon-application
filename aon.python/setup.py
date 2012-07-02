@@ -30,6 +30,7 @@ setup(
                ,'update_databases.py'
                ,'create_database.py'
                ,'list_domains.py'
+               ,'report_domains.py'
                ,'domain_merge.py'
                ,'dump_domain.py'],
       url='http://www.esferalia.com',

@@ -12,13 +12,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SQLQuery;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
@@ -174,22 +170,22 @@ public class RemoveDomainController {
 			buf.append(EQUALS);
 			buf.append(getDomainName());
 
-			String command = "remove_domain.py -v --no-prompt " + buf.toString();
+			String command = "remove_domain.py --no-prompt " + buf.toString();
 			System.out.println( command);
 			Runtime r = Runtime.getRuntime();
 			Process process = r.exec(command);
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//			BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 			String line = "";
 			StringWriter sw = new StringWriter();
 			String bef = "<div>";
 			String aft = "</div>";
-			while ((line = stdError.readLine()) != null) {
-				System.out.println(line);
-				sw.append(bef);
-				sw.append(parseLine(line));
-				sw.append(aft);
-			}
+//			while ((line = stdError.readLine()) != null) {
+//				System.out.println(line);
+//				sw.append(bef);
+//				sw.append(parseLine(line));
+//				sw.append(aft);
+//			}
 			while ((line = stdInput.readLine()) != null) {
 				System.out.println(line);
 				sw.append(bef);

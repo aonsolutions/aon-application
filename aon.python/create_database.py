@@ -56,10 +56,9 @@ class createDatabase:
                 raise AonException(-31,"Database '"+self.__arguments.get_db()+"' already exists!")
             if not self.__arguments.is_skip_domain_creation_enabled():
                 domain = self.__arguments.get_domain()
+                domain.validate( conn )
                 if not domain.get_domain_type().is_parent():
                     raise AonException(-91,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
-            
-                domain.validate( conn )
             
             sql_script = self.__zf.open(self.CREATE_SCRIPT)
             file = NamedTemporaryFile(mode="r+")

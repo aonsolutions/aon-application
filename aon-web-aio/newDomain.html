@@ -32,9 +32,9 @@
 </head>
 <body>
 <!-- 
-<form action="https://aonsolutions.net/aon/aon-aio/newDomain/" method="POST">
- -->
 <form action="http://external.aonsolutions.net/aon-aio/newDomain/" method="POST">
+ -->
+<form action="http://aon.aonsolutions.net/aon-aio/newDomain/" method="POST">
 
 
 <div style="width: 100%; text-align: center;">
@@ -145,6 +145,124 @@
 				<input type="password" name="domain-password" size="16"/>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<label for="domain-max-defined-users">N&uacute;mero de usuarios</label>
+				<div class="help">
+					 N&uacute;mero m&aacute;ximo de usuarios que se podr&aacute;n crear 
+				</div>
+			</td>
+			<td>
+				<input type="text" size="5" name="domain-max-defined-users" default="1"/>
+			</td>
+		</tr>
+		<tr>
+			<td rowspan="10" style="vertical-align: top">
+				<label for="domain-modules">Extensiones</label>
+				<div class="help">
+					 Extensiones de la aplicaci&oacute;n a contratar 
+				</div>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="marketing">
+					<span  class="radio-value">Marketing</span> 
+					<span class="help">
+						Campa&ntilde;as de marketing, Communication center, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="commercial">
+					<span  class="radio-value">Comercial</span> 
+					<span class="help">
+						Presupuestos, pedidos, comerciales, comisiones, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="management">
+					<span  class="radio-value">Gesti&oacute;n</span> 
+					<span class="help">
+						Compras, ventas, gastos, estad&iacute;sticas, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="treasury">
+					<span  class="radio-value">Tesorer&iacute;a</span> 
+					<span class="help">
+						Vencimientos, remesas, previsiones, extracto bancario, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="warehouse">
+					<span  class="radio-value">Almac&eacute;n</span> 
+					<span class="help">
+						Albaranes, inventarios, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="groupware">
+					<span  class="radio-value">Expedientes</span> 
+					<span class="help">
+						Procesos, tareas, partes de trabajo, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="accounting">
+					<span  class="radio-value">Contabilidad</span> 
+					<span class="help">
+						Asientos, extractos, balances, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="fiscal">
+					<span  class="radio-value">Fiscal</span> 
+					<span class="help">
+						Declaraciones de IVA, IRPF, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="payroll">
+					<span  class="radio-value">Laboral</span> 
+					<span class="help">
+						N&oacute;minas, atrasos, bajas, pagas extras, RED, Contrat@, ...
+					</span>
+				</input>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<input type="checkbox" name="domain-modules" value="document">
+					<span  class="radio-value">Documental</span> 
+					<span class="help">
+					</span>
+				</input>
+			</td>
+		</tr>		
 		<tr>
 			<td colspan="2" style="text-align: center;">
 				<input type="submit" value="Enviar" />
