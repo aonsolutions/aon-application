@@ -12,6 +12,19 @@ public interface IDomainServletConstants {
 	String DEPLOYED_USER_PROPERTY = "hibernate.connection.username"; 
 	String DEPLOYED_PASSWORD_PROPERTY = "hibernate.connection.password"; 
 	
+	// DATABASE CONSTANTS
+	String AON_SOLUTIONS_NET_DOMAIN = "aon.aonsolutions.net";
+	
+	String TEST_DATABASE = "test-aonsolutions-net";
+	String DEMO_DATABASE = "demo-aonsolutions-net";
+	String PRODUCTION_DATABASE = "pro-aonsolutions-net";
+	
+	String TEST_DATABASE_PARAM = "test";
+	String DEMO_DATABASE_PARAM = "demo";
+	String PRODUCTION_DATABASE_PARAM = "pro";
+	
+	String DOMAIN_SUFFIX = ".aonsolutions.net";
+	
 	// REQUEST PARAMETERS
 	String USER_PARAM = "user";
 	String PASSWORD_PARAM = "password";
@@ -22,6 +35,7 @@ public interface IDomainServletConstants {
     String DOMAIN_PASSWORD_PARAM = "domain-password";
     String DOMAIN_MODULES = "domain-modules";
     String DOMAIN_MAX_DEFINED_USERS = "domain-max-defined-users";
+    String DOMAIN_TARGET = "domain-target";
     
 	// PYTHON SCRIPTS CONSTANTS
 	String NEW_SCRIPT = "new_domain.py";

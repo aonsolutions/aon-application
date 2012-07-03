@@ -39,7 +39,6 @@ public class DomainServletUtil implements IDomainServletConstants{
 	private String user;
 	private String domain;
 	private String password;
-	private String suffix;
 	
 	private String domainName;
 	private String domainDescription;
@@ -128,13 +127,6 @@ public class DomainServletUtil implements IDomainServletConstants{
 		this.password = password;
 	}
 	
-	public String getSuffix() {
-		return suffix;
-	}
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
-	
 	public String getDomainName() {
 		return domainName;
 	}
@@ -214,7 +206,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 		return host;
 	}
 	
-	private void initializeDatabaseInfo() throws ClassNotFoundException, SQLException, AonException {
+	private void validateUser() throws ClassNotFoundException, SQLException, AonException {
 		Class.forName("org.gjt.mm.mysql.Driver");
 		Connection c = null;
 		PreparedStatement stmt = null;
@@ -229,10 +221,9 @@ public class DomainServletUtil implements IDomainServletConstants{
 			stmt = c.prepareStatement(TABLE_SCHEMA_SENTENCE);
 			rs = stmt.executeQuery();
 			setDbName( null );
-			setSuffix( null ); 
 			while (rs.next()) {
 				String db = rs.getString(1);
-				String domainSql = "SELECT id,subDomainSuffix FROM `"+db+"`.`domain` WHERE name = '" + getDomain() + "'";
+				String domainSql = "SELECT id FROM `"+db+"`.`domain` WHERE name = '" + getDomain() + "'";
 				domainStmt = c.prepareStatement(domainSql);
 				domainRs = domainStmt.executeQuery();
 				if (domainRs.next()) {
@@ -250,15 +241,10 @@ public class DomainServletUtil implements IDomainServletConstants{
 					} else {
 						throw new AonException("Usuario no registrado");
 					}
-					setDbName( db );
-					setSuffix( domainRs.getString(2) ); 
 					break;
 				} 
 				domainRs.close();
 				domainStmt.close();
-			}
-			if (getDbName() == null) {
-				throw new AonException("Usuario@Dominio no registrado");
 			}
 		} finally {
 			if (userStmt != null) {try {userStmt.close();} catch (SQLException e) {}}
@@ -285,16 +271,30 @@ public class DomainServletUtil implements IDomainServletConstants{
 		}
 		setUser(tok[0]);
 		setDomain(tok[1]);
+		if (!StringUtils.equals(AON_SOLUTIONS_NET_DOMAIN, getDomain())) {
+			throw new AonException("Usuario inválido en " + AON_SOLUTIONS_NET_DOMAIN);
+		}
 		setPassword( request.getParameter(PASSWORD_PARAM) );
+		validateUser();
 		
-		initializeDatabaseInfo();
-		
+		String db_target = request.getParameter(DOMAIN_TARGET);
+		if (StringUtils.isBlank(db_target)) {
+			throw new AonException("El objeto del dominio es un dato requerido (test,demo,pro)");	
+		}
+		if (DEMO_DATABASE_PARAM.equals(db_target)) {
+			setDbName(DEMO_DATABASE);
+		} else if (TEST_DATABASE_PARAM.equals(db_target)) {
+			setDbName(TEST_DATABASE);
+		} else if (PRODUCTION_DATABASE_PARAM.equals(db_target)) {
+			setDbName(PRODUCTION_DATABASE);
+		}
+
 		setDomainName( request.getParameter(DOMAIN_NAME_PARAM) );
 		if (StringUtils.isBlank(getDomainName())) {
 			throw new AonException("Nombre del dominio es un dato requerido.");
 		}
-		if (!StringUtils.endsWith(getDomainName(), getSuffix())) {
-			throw new AonException("Su usuario solo puede crear subdominios de '"+ getSuffix() +"'.");
+		if (!StringUtils.endsWith(getDomainName(), DOMAIN_SUFFIX)) {
+			throw new AonException("Actualmente sólo se pueden crear subdominios de '"+ DOMAIN_SUFFIX +"'.");
 		}
 		
 		setDomainUser( request.getParameter(DOMAIN_USER_PARAM));
