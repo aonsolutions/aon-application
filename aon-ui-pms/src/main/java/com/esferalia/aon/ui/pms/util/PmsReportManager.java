@@ -67,7 +67,7 @@ public class PmsReportManager {
 				" IF ((P.code like '001%' OR P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)," +
 				" IF (P.composition=0, P.name, P2.name)," +
 				" IF (P.composition=0, P.code, P2.code)," +
-				" sum(IF(PRS.extra=0, PRR.adults+PRR.children, PRSD.quantity))" +
+				" IF(PRS.extra=0, sum(PRR.adults+PRR.children)/count(distinct(PRS.id)), sum(PRSD.quantity))," +
 				" FROM project_reservation_service AS PRS," + 
 				" project_reservation_service_detail AS PRSD," +
 				" project_reservation AS PR," +
@@ -143,7 +143,7 @@ public class PmsReportManager {
 				" IF ((P.code like '001%' OR P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
 				" IF (P.composition=0, P.name, P2.name)," +
 				" IF (P.composition=0, P.code, P2.code)," +
-				" sum(IF(PRS.extra=0, PRR.adults+PRR.children, PRSD.quantity))," +
+				" IF(PRS.extra=0, sum(PRR.adults+PRR.children)/count(distinct(PRS.id)), sum(PRSD.quantity))," +
 				" ' '," +
 				" PR.start_date AS Inicio," +
 				" PR.end_date AS Fin," +
