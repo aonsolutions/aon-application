@@ -6,6 +6,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>NewDomain</servlet-name>
@@ -36,6 +37,28 @@
 		<url-pattern>/company.logo</url-pattern>
 	</servlet-mapping>	
 
+	<!-- GWT RPC Servlets-->
+	<servlet>
+		<servlet-name>Resource Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.ResourceServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Resource Servlet</servlet-name>
+		<url-pattern>/aon_gwt_payroll/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Employees Servlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Employees Servlet</servlet-name>
+		<url-pattern>/aon_gwt_payroll/employees</url-pattern>
+	</servlet-mapping>
+
 	<!-- JSF STANDARD CONFIGURATION -->
     <context-param>
 		<description>State saving method: "client" or "server" (= default) See JSF Specification 2.5.2</description>
@@ -63,6 +86,8 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.jspx</url-pattern>
     </servlet-mapping>
+
+
 
 	<!-- JSF SUN-RI CONFIGURATION -->
 	<context-param>

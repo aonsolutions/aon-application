@@ -33,6 +33,7 @@
 										<aon:actionListener method="#{enterprise.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>							
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryDraft" action="salaryDraft_search"
 										actionListener="#{salaryDraft.onEditSearch}"
@@ -61,7 +62,20 @@
 										value="#{payrollBundle.payroll_contractLeave_module}">
 									</aon:commandLink>
 								</aon:div>		
+
+								<aon:div styleClass="aon-direct-access-list-element" rendered="#{gwt.enabled}" >
+									<aon:commandLink id="gwt_integral" 
+										action="gwt_enterprise_formTree" 
+										value="#{payrollBundle.menu_integral}">
+										<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+										<aon:actionListener method="#{enterprise.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>							
+
 							</aon:div>
+
+												
+
 						</aon:panelGrid>
 						
 						
