@@ -37,6 +37,8 @@ public class AonDomainMerger {
 			
 	private static final List<String> tables = new LinkedList<String>();
 	private static final Stack<String> stack = new Stack<String>();
+
+	private static final String ACCOUNT = "account";
 	
 	private static final AonInternalReference BANK_STATEMENT_LINK_REFERENCE = new AonInternalReference(
 			"bank_statement_link", "source", "source_id"
@@ -53,7 +55,6 @@ public class AonDomainMerger {
 				,"ACC_DEFAULT_COMPENSATION_ACC"
 				,"ACC_DEFAULT_DEBT_INTEREST_ACC"
 				,"ACC_DEFAULT_FINAN_EXPENSES_ACC"
-				,"ACC_DEFAULT_INVOICE_SERIES"
 				,"ACC_DEFAULT_PAID_RET_ACC"
 				,"ACC_DEFAULT_PAID_VAT_ACC"
 				,"ACC_DEFAULT_PENDING_SALARY_ACC"
@@ -62,27 +63,28 @@ public class AonDomainMerger {
 				,"ACC_DEFAULT_SALES_ACC"
 				,"ACC_DEFAULT_SOCIAL_INSURANCE_ACC"
 				,"ACC_SALARY_CHARGED_RET_ACC"
+				,"ACC_DEFAULT_INVOICE_SERIES"
 				,"ACC_DEFAULT_PERIOD"
 				,"ACC_DEFAULT_RETENTION_PERCENT"
 				,"ACC_DEFAULT_VAT_PERCENT"}
 			, new String[] {
-				 "account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
-				,"account"
+				 ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,ACCOUNT
+				,"series"
 				,"account_period"
 				,"tax"
 				,"tax"});
@@ -111,12 +113,10 @@ public class AonDomainMerger {
 	private Connection source;
 	private Connection target;
 	private String domainName;
+	private DatabaseMetaData metaData; 
 	
-	private String insertStmt;
 	private Integer newDomain;
 
-	private PreparedStatement insert;
-	
 	public AonDomainMerger(Connection source,Connection target, String domainName) {
 		this.source = source;
 		this.target = target;
@@ -125,10 +125,9 @@ public class AonDomainMerger {
 	}
 
 	private void clean() {
-		keys = null;
-		insertStmt = null;
-		newDomain = null;
-		insert = null;
+		this.keys = null;
+		this.newDomain = null;
+		this.metaData = null;
 	}
 
 	public Connection getSourceConnection() {
@@ -148,22 +147,22 @@ public class AonDomainMerger {
 			if (!validateVersion()) {
 				throw new AonSQLException("Las versiones no coinciden!.");
 			}
-            DatabaseMetaData metaData = getSourceConnection().getMetaData();
+			this.metaData = getSourceConnection().getMetaData();
     		
-            ResultSet rs = metaData.getTables(null, null, null, null);
+            ResultSet rs = this.metaData.getTables(null, null, null, null);
             if (!rs.next()) {
             	System.out.println("No existen tablas en la BD origen!");
                 rs.close();
             } else {
             	if (tables.size() == 0) {
             		System.out.println("Construyendo el orden de inserción!");
-	            	addTable(metaData,DOMAIN);
+	            	addTable(DOMAIN);
 	                do {
 	                	String tableName = rs.getString(TABLE_NAME);
 	                    String tableType = rs.getString(TABLE_TYPE);
 	            		if (TABLE.equalsIgnoreCase(tableType)) {
-		                    if (isMergeableTable(tableName,metaData)) {
-		                    	addTable(metaData,tableName);
+		                    if (isMergeableTable(tableName)) {
+		                    	addTable(tableName);
 		                    } else {
 		                    	System.out.printf("Ignorando la tabla --> %s \r\n",tableName);    	
 		                    }
@@ -185,11 +184,12 @@ public class AonDomainMerger {
             	i++;
             	System.out.println();
     			System.out.printf( "%d.- Merging table %s\r\n",i,table );
-   				merge(metaData,table);	
+   				merge(table);	
             }
 
             // Para resolver el problema de identificadores cruzados.
-            updateBankStatementLink(metaData);
+            // entre las tablas bank_statement_link y finance_tracking y fbatch 
+            updateBankStatementLink();
             // ------------------------------------------------------
             
             String stmt = "UPDATE domain SET description=name,name = ? where id = ?";
@@ -220,8 +220,8 @@ public class AonDomainMerger {
 		}
 	}
 
-	private void updateBankStatementLink(DatabaseMetaData metaData) throws SQLException {
-		Table t = getTable(metaData, "bank_statement_link"); 
+	private void updateBankStatementLink() throws SQLException {
+		Table t = getTable("bank_statement_link"); 
         String stmt = "UPDATE bank_statement_link SET source_id=? where id = ?";
         PreparedStatement ups = getTargetConnection().prepareStatement(stmt);
 		
@@ -248,8 +248,11 @@ public class AonDomainMerger {
 		ts.close();
 	}
 
-	private boolean isMergeableTable(String tableName, DatabaseMetaData metaData) throws SQLException {
-		ResultSet columnRs = metaData.getColumns(null, null, tableName, null);
+	private boolean isMergeableTable(String tableName) throws SQLException {
+		if ("session".equals(tableName)) return false;
+		if ("action_entry".equals(tableName)) return false;
+
+		ResultSet columnRs = this.metaData.getColumns(null, null, tableName, null);
 		boolean mergeable = false;
 		while (columnRs.next()) {
 			String columnName = columnRs.getString(COLUMN_NAME);
@@ -285,20 +288,20 @@ public class AonDomainMerger {
 		return StringUtils.equals(sourceVersion, targetVersion);
 	}
 
-	private void addTable(DatabaseMetaData metaData,String table) throws SQLException {
+	private void addTable(String table) throws SQLException {
 		if (!tables.contains(table) && !stack.contains(table)) {
 			stack.push(table);
-			ResultSet ekRs = metaData.getImportedKeys(null, null, table);
+			ResultSet ekRs = this.metaData.getImportedKeys(null, null, table);
 			while (ekRs.next()) {
 				String fkTable = ekRs.getString(PKTABLE_NAME);
-				if (isMergeableTable(fkTable,metaData)) {
-					addTable(metaData,fkTable);	
+				if (isMergeableTable(fkTable)) {
+					addTable(fkTable);	
 				}
 			}
 			if (INTERNAL_REFERENCES_TABLES.containsKey(table)) {
 				for (String referencedTable : INTERNAL_REFERENCES_TABLES.get(table).getFkTables() ) {
-					if (isMergeableTable(referencedTable,metaData)) {
-						addTable(metaData,referencedTable);	
+					if (isMergeableTable(referencedTable)) {
+						addTable(referencedTable);	
 					}
 				}
 			}
@@ -308,12 +311,17 @@ public class AonDomainMerger {
 		}
 	}
 
-	private void merge(DatabaseMetaData metaData,String table) throws SQLException {
-		Table t = getTable(metaData,table);
+	private void merge(String table) throws SQLException {
+		Table t = getTable(table);
 		keys.put(t.getName(), new HashMap<Integer, Integer>());
-		PreparedStatement stmt = getSourceConnection().prepareStatement("SELECT * FROM " + table,t.getSelectColumns());
-		insertStmt = t.getInsertStatement( t );
-		insert = getTargetConnection().prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS); 
+		String sentence = "SELECT * FROM " + table;
+		if ( "profile".equals(table) ) {
+			// Skip system profiles
+			sentence += " WHERE domain IS NOT NULL"; 
+		}
+		PreparedStatement stmt = getSourceConnection().prepareStatement(sentence,t.getSelectColumns());
+		String insertStmt = t.getInsertStatement();
+		PreparedStatement insert = getTargetConnection().prepareStatement(insertStmt,t.isAutoincrementPK()?Statement.RETURN_GENERATED_KEYS:Statement.NO_GENERATED_KEYS); 
 		ResultSet rs = 	stmt.executeQuery();
 		int i = 0;
 		while (rs.next()) {
@@ -324,7 +332,7 @@ public class AonDomainMerger {
 					System.out.println(".");
 				}
 			}
-			insert(metaData,rs,t);
+			insert(insert,rs,t);
 		}
 		System.out.println(".");
 		System.out.printf("\t%d rows inserted!\r\n",i);
@@ -332,11 +340,11 @@ public class AonDomainMerger {
 		stmt.close();
 		insert.close();
 		if (t.isRecursive()) {
-			updateReferences(metaData,t);
+			updateReferences(t);
 		}
 	}
 	
-	private void updateReferences(DatabaseMetaData metaData,Table t) throws SQLException {
+	private void updateReferences(Table t) throws SQLException {
 		PreparedStatement stmt = getTargetConnection().prepareStatement("SELECT * FROM " + t.getName() + " WHERE domain = " + newDomain,t.getSelectColumns());
 		for (int i = 0 ;i < t.getFkTables().length; i++  ) {
 			String fkTable = t.getFkTables()[i];
@@ -363,7 +371,7 @@ public class AonDomainMerger {
 		}
 	}
 
-	private Integer insert(DatabaseMetaData metaData, ResultSet rs, Table t) throws SQLException {
+	private Integer insert(PreparedStatement insert,ResultSet rs, Table t) throws SQLException {
 		int id = rs.getInt( t.getPkColumn() );
 		Integer newId = null;
 		boolean notFound = (keys.get(t.getName()).get(id) == null);
@@ -384,6 +392,9 @@ public class AonDomainMerger {
 								Object discriminator = rs.getObject(air.getDiscriminatorColumn());
 								String fkTable = getReferencedTable(t.getName() , discriminator, air );
 								if (fkTable != null) {
+									if ("ACC_DEFAULT_INVOICE_SERIES".equals(discriminator)) {
+										value = ensureAccountSeries( value );
+									}
 									System.out.println(" looking for " + t.getName()+ "." + column + " =" + value + "('"+discriminator+"') on " + fkTable);
 									Integer valueInteger = getInteger(value);
 									value = getReferenceValue(t, valueInteger, column, fkTable, false);
@@ -419,13 +430,54 @@ public class AonDomainMerger {
 		return newId;
 	}
 	
+	private Object ensureAccountSeries(Object value) throws SQLException {
+		Integer valueInteger = null;
+		if (value != null) {
+			if (value instanceof String) {
+				 // Se comprueba que el valor del parámetro sea el codigo de la series y en 
+				 //	ese caso se devuelve el id de la serie en caso contrario se devuelve el dato original.
+				 // ATENCION! Puede haber un error en el caso de que el id de la serie coincida con el code.
+				 // poco probable porque el code de la serie suele ser el año.
+				String sentence = "SELECT id FROM series WHERE code = '" + value + "'"; 
+				Statement s = null;
+				ResultSet rs = null;
+				try {
+					s = getSourceConnection().createStatement();
+					rs = s.executeQuery(sentence);
+					if (rs.next()) {
+						return getInteger(1);
+					}
+				} finally {
+					if (rs != null) {
+						try {
+							rs.close();
+						} catch (SQLException e) {
+						}
+					}
+					if (s != null) {
+						try {
+							s.close();
+						} catch (SQLException e) {
+						}
+					}
+				}
+				 
+			} 
+		}
+		return valueInteger;
+	}
+
 	private Integer getInteger(Object value) {
 		Integer valueInteger = null;
 		if (value != null) {
 			if (value instanceof Integer) {
 				valueInteger = (Integer) value;
 			} else if (value instanceof String) {
-				valueInteger = Integer.parseInt((String) value) ;
+				try {
+					valueInteger = Integer.parseInt((String) value) ;
+				} catch (NumberFormatException e) {
+					throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer "); 
+				} 
 			} else {
 				throw new IllegalStateException( "El valor " + value + " no se puede convertir a Integer ");
 			}
@@ -444,10 +496,11 @@ public class AonDomainMerger {
 	private Integer getReferenceValue(Table t, Integer value, String column, String fkTable, boolean required ) throws SQLException {
 		if (!fkTable.equals(t.getName())) {
 			Integer newValue = null;
-			if ( isDirectId(fkTable) ) {
+			if ( isSystemTableById(fkTable) ) {
+				ensureSystemTableById(fkTable, value);
 				newValue = (Integer) value; 
-			} else if ( isNoDomainTable(fkTable) ) {
-				newValue = getNoDomainId(fkTable, (Integer) value );
+			} else if ( isSystemTableByCode(fkTable) ) {
+				newValue = getIdFromSystemTableByCode(fkTable, (Integer) value );
 			} else {
 				Map<Integer,Integer> map = keys.get(fkTable);
 				if (map == null) {
@@ -469,12 +522,36 @@ public class AonDomainMerger {
 		return value;
 	}
 
-	private boolean isDirectId(String fkTable) {
+	private void ensureSystemTableById(String fkTable, Integer value) throws SQLException {
+		String sentence = "SELECT id FROM "  +fkTable+ " WHERE id = " + value; 
+		Statement targetStmnt = getTargetConnection().createStatement();
+		ResultSet targetRs = targetStmnt.executeQuery(sentence);
+		if (!targetRs.next()) {
+			Table table = getTable(fkTable);
+			PreparedStatement sourceStmt = getSourceConnection().prepareStatement("SELECT * FROM "+fkTable+ " WHERE id = " + value,table.getSelectColumns());
+			ResultSet sourceRs = sourceStmt.executeQuery();
+			String insStmt = table.getInsertStatement();
+			PreparedStatement ins = getTargetConnection().prepareStatement(insStmt,Statement.NO_GENERATED_KEYS);
+			while (sourceRs.next()) {
+				insert(ins,sourceRs, table);
+				System.out.printf( " \t Insertado valor en table de sistema: %s --> %d  code %s --> %d \r\n",table,value);
+			}
+			ins.close();
+			sourceRs.close();
+			sourceStmt.close();
+		}
+		targetRs.close();
+		targetStmnt.close();
+	}
+
+	private boolean isSystemTableById(String fkTable) {
 		return fkTable.equals("application")
-				|| fkTable.equals("action");
+			|| fkTable.equals("role")
+			|| fkTable.equals("application_role")
+			|| fkTable.equals("action");
 				
 	}
-	private boolean isNoDomainTable(String fkTable) {
+	private boolean isSystemTableByCode(String fkTable) {
 		return fkTable.equals("cno")
 			|| fkTable.equals("cnae")
 			|| fkTable.equals("cnae2009")
@@ -483,7 +560,7 @@ public class AonDomainMerger {
 			|| fkTable.equals("geozone_irpf_descendant")
 			|| fkTable.equals("geozone_irpf_handicap");
 	}
-	private Integer getNoDomainId(String table, Integer id) throws SQLException {
+	private Integer getIdFromSystemTableByCode(String table, Integer id) throws SQLException {
 		String sentence = "SELECT code FROM "  +table + " WHERE id = " + id; 
 		Statement sourceStmnt = getSourceConnection().createStatement();
 		ResultSet sourceRs = sourceStmnt.executeQuery(sentence);
@@ -498,15 +575,14 @@ public class AonDomainMerger {
 		sourceRs.close();
 		targetStmnt.close();
 		targetRs.close();
-		System.out.println( " \t Valor de tabla única: " + table + " --> " + id + " code " + code  + " --> " + returnValue); 
 		System.out.printf( " \t Valor de tabla única: %s --> %d  code %s --> %d \r\n",table,id,code,returnValue);
 		return returnValue; 
 	}
 	
 
-	private Table getTable(DatabaseMetaData metaData, String table) throws SQLException {
+	private Table getTable(String table) throws SQLException {
 		Table t = new Table(table); 
-		ResultSet columnRs = metaData.getColumns(null, null, table, null);
+		ResultSet columnRs = this.metaData.getColumns(null, null, table, null);
 		List<String> insertColumns = new LinkedList<String>();
 		List<String> selectColumns = new LinkedList<String>();		
 		while (columnRs.next()) {
@@ -522,7 +598,7 @@ public class AonDomainMerger {
 		t.setInsertColumns(Arrays.asList(insertColumns.toArray()).toArray(new String[insertColumns.toArray().length]));
 		t.setSelectColumns(Arrays.asList(selectColumns.toArray()).toArray(new String[selectColumns.toArray().length]));
 		
-		ResultSet pkColumnsRs = metaData.getPrimaryKeys(null, null, table);
+		ResultSet pkColumnsRs = this.metaData.getPrimaryKeys(null, null, table);
 		if (pkColumnsRs.next()) {
 			t.setPkColumn( pkColumnsRs.getString(COLUMN_NAME) );	
 		} 
@@ -530,7 +606,7 @@ public class AonDomainMerger {
 		
 		List<String> fkTables = new LinkedList<String>();
 		List<String> fkColumns = new LinkedList<String>();		
-		ResultSet ekRs = metaData.getImportedKeys(null, null, table);
+		ResultSet ekRs = this.metaData.getImportedKeys(null, null, table);
 		while (ekRs.next()) {
 			fkTables.add(ekRs.getString(PKTABLE_NAME));
 			String b = ekRs.getString(FKCOLUMN_NAME);
@@ -621,14 +697,14 @@ public class AonDomainMerger {
 			return buf.toString();
 		}
 		
-		public String getInsertStatement(Table t) {
+		public String getInsertStatement() {
 			StringBuffer buf = new StringBuffer();
 			buf.append("INSERT INTO ");
-			buf.append(t.getName());
+			buf.append(getName());
 			buf.append(" (");
-			buf.append(t.getInsertColumnsToString());
+			buf.append(getInsertColumnsToString());
 			buf.append(") VALUES (");
-			buf.append(t.getInsertColumnsToHostVariables());
+			buf.append(getInsertColumnsToHostVariables());
 			buf.append(")");
 			return buf.toString();
 		}
@@ -687,9 +763,7 @@ public class AonDomainMerger {
 					
 				}
 				++databases;
-				if (databases % 10 == 0) {
-					System.gc();
-				}
+				System.gc();
 		        line =  reader.readLine();
 			}
 	        target.close();
