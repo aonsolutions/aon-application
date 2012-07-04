@@ -21,6 +21,7 @@ import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -56,6 +57,7 @@ public class ProjectReservationRoomController extends LinesController {
 
 	@Override
 	public void onReset(ActionEvent event) {
+		((BasicController)getMasterController()).accept(event);
 		try {
 			ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 			reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
@@ -81,10 +83,13 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 	}
 
+	@Override
 	public void onSelect(ActionEvent event) {
+		((BasicController)getMasterController()).accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
 				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getModel().getRowData();
+				reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
 				setTo(reservationRoom);
 
 				Date startDate = reservationRoom.getProjectReservation().getStartDate();

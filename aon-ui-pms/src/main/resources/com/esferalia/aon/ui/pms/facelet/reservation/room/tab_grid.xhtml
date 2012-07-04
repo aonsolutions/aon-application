@@ -22,19 +22,15 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:commandLink id="Room-selectButton"
-					styleClass="aon-table-row-link" value="&#160;"
-					immediate="true" ajaxSingle="true" requestDelay="100"
+				<aon:commandButton id="Room-selectButton"
+					styleClass="aon-editDataTable-button aon-table-row-link"
 					rendered="#{reservation.active or reservation.invoiced}"
 					actionListener="#{controller.onSelect}"
 					reRender="showRoomDetailWindow"
-					onkeyup="#{dataTableId}KeyUp(this)"
-					onfocus="#{dataTableId}SelectRow(this)"
-					onblur="#{dataTableId}DeselectRow(this)"
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
 					<f:setPropertyActionListener target="#{controller.showRoomDetailWindow}"
 						value="#{true}" />
-				</aon:commandLink>
+				</aon:commandButton>
 				<f:facet name="footer">
 					<aon:div>
 						<aon:commandButton

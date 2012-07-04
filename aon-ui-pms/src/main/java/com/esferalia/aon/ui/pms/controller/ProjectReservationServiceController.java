@@ -21,6 +21,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -104,7 +105,8 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	@Override
-	public void onReset(ActionEvent arg0) {
+	public void onReset(ActionEvent event) {
+		((BasicController)getMasterController()).accept(event);
 		try {
 			ProjectReservationService reservationService = new ProjectReservationService();
 			reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
@@ -121,9 +123,11 @@ public class ProjectReservationServiceController extends LinesController {
 
 	@Override
 	public void onSelect(ActionEvent event) {
+		((BasicController)getMasterController()).accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
 				ProjectReservationService reservationService = (ProjectReservationService)getModel().getRowData();
+				reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
 				setTo(reservationService);
 
 				fillReservationServiceValues(reservationService);
