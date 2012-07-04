@@ -61,8 +61,8 @@
 				<aon:div id="financeDataDiv">
 					<aon:dataTable id="financeData" value="#{posFinance.model}"
 						var="to" rows="20" rendered="#{posFinance.model.rowCount > 0}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-							aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+							aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 						<aon:column>
 							<f:facet name="header">
@@ -72,6 +72,39 @@
 								value="#{posFinance.rowChecked}"
 								reRender="posFinanceList"
 								valueChangeListener="#{posFinance.rowSelected}" />	
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_shift_date}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.startTime}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_pos}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.pos.name}"/>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_shift}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.shift}"/>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.totalAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
 						</aon:column>
 						
 						<aon:column>
@@ -99,29 +132,6 @@
 							<aon:outputText value="#{to.registryName}" />
 						</aon:column>
 				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_pos}" />
-							</f:facet>
-							<aon:outputText value="#{posFinance.financePosShift.pos.name}"/>
-						</aon:column>
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_shift}" />
-							</f:facet>
-							<aon:outputText value="#{posFinance.financePosShift.shift}"/>
-						</aon:column>
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_amount}" />
-							</f:facet>
-							<aon:outputText value="#{to.totalAmount}" >
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:column>
-						
 					</aon:dataTable>
 					
 					<aon:dataScroller2 for="financeData" showNote="true" />
