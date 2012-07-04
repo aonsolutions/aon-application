@@ -133,6 +133,9 @@
 		<module>aon-ui-document</module>
 		<module>aon-ui-pms</module>
 
+		<!-- GWT MODULES -->
+		<module>aon-gwt-payroll</module>
+
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
 	  	<module>aon-pms-api</module>
