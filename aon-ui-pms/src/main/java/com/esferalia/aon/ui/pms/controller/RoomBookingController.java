@@ -74,6 +74,9 @@ public class RoomBookingController implements ICollectionProvider {
 		this.fromDate = fromDate;
 	}
 	public Date getToDate() {
+		if(toDate.before(this.fromDate)){
+			this.toDate = fromDate;
+		}
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
@@ -172,11 +175,14 @@ public class RoomBookingController implements ICollectionProvider {
 					roomBusy = 0;
 					guestTotal = 0;
 				} else {
-					booking.setRoomBusy( ((BigInteger) (((Object[])occupation)[1])).intValue() );
-					roomBusy = ((BigInteger) (((Object[])occupation)[1])).intValue();
-					booking.setGuestTotal( ((BigDecimal) (((Object[])occupation)[2])).intValue() );
-					guestTotal = ((BigDecimal) (((Object[])occupation)[2])).intValue();
-					occupation = occupationIterator.hasNext()?occupationIterator.next():null;
+					while(booking.getHotel().equals(occupationHotel) && occupation!=null){
+						roomBusy = booking.getRoomBusy() + ((BigInteger) (((Object[])occupation)[1])).intValue();
+						booking.setRoomBusy( roomBusy );
+						guestTotal = booking.getGuestTotal() + ((BigDecimal) (((Object[])occupation)[2])).intValue();
+						booking.setGuestTotal( guestTotal );
+						occupation = occupationIterator.hasNext()?occupationIterator.next():null;
+						occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
+					}
 				}
 			} else {
 				roomBusy += (booking.getRoomCheckin() - booking.getRoomCheckout());

@@ -67,7 +67,7 @@ public class PmsReportManager {
 				" IF ((P.code like '001%' OR P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)," +
 				" IF (P.composition=0, P.name, P2.name)," +
 				" IF (P.composition=0, P.code, P2.code)," +
-				" IF(PRS.extra=0, sum(PRR.adults+PRR.children)/count(distinct(PRS.id)), sum(PRSD.quantity))," +
+				" IF(PRS.extra=0, sum(PRR.adults+PRR.children)/count(distinct(PRS.id)), sum(PRSD.quantity))" +
 				" FROM project_reservation_service AS PRS," + 
 				" project_reservation_service_detail AS PRSD," +
 				" project_reservation AS PR," +
@@ -88,41 +88,119 @@ public class PmsReportManager {
 				" AND ( P.category=4 OR P2.category=4)" + 
 				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
 				" GROUP BY 1,2,3)" +
-				" UNION" +
 //				******************************************* 
 //				servicios (directos y compuestos) con habitacion asignada, teniendo en cuenta las desviadas 
 //				********************************************
-				" (SELECT PR.hotel," +
-				" IF ((P.code like '001%' OR P2.code like '001%'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)," +
-				" IF (P.composition=0, P.name, P2.name)," +
-				" IF (P.composition=0, P.code, P2.code)," +
-				" sum(PRR.adults+PRR.children)" +
-				" FROM project_reservation_service_detail AS PRSD," +
-				" project_reservation_service AS PRS," +
-				" project_reservation AS PR," +
-				" project_reservation_room AS PRR," +
-				" project_reservation_room_detail AS PRRD," +
-				" asset_activity AS AA," +
-				" room as R," +
-				" item AS I," +
-				" product AS P," +
-				" item_composition AS IC," +
-				" item AS I2," +
-				" product AS P2" +
-				" WHERE not isnull(PRSD.project_reservation_room_detail)" +
-				" AND PRSD.effective_date BETWEEN :start AND :end" +
-				" AND PRSD.project_reservation_room_detail=PRRD.id" + 
-				" AND PRS.id=PRSD.project_reservation_service" +
-				" AND PR.project=PRS.project_reservation" +
-				" AND PR.start_date <= :end AND PR.end_date >= :start" + 
-				" AND PRR.project_reservation=PR.project" +
-				" AND PRRD.project_reservation_room=PRR.id" +
-				" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
-				" AND R.asset=AA.asset AND R.hotel=PR.Hotel AND I.id=PRS.item AND P.id=I.product" +
-				" AND ( I.id=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
-				" AND ( P.category=4 OR P2.category=4)" + 
-				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
-				" GROUP BY 1,2,3 )" +
+//				" (SELECT PR.hotel," +
+//				" IF ((P.code like '001%' OR P2.code like '001%'),date(PRSD.effective_date) + INTERVAL 1 DAY,PRSD.effective_date)," +
+//				" IF (P.composition=0, P.name, P2.name)," +
+//				" IF (P.composition=0, P.code, P2.code)," +
+//				" sum(PRR.adults+PRR.children)" +
+//				" FROM project_reservation_service_detail AS PRSD," +
+//				" project_reservation_service AS PRS," +
+//				" project_reservation AS PR," +
+//				" project_reservation_room AS PRR," +
+//				" project_reservation_room_detail AS PRRD," +
+//				" asset_activity AS AA," +
+//				" room as R," +
+//				" item AS I," +
+//				" product AS P," +
+//				" item_composition AS IC," +
+//				" item AS I2," +
+//				" product AS P2" +
+//				" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+//				" AND PRSD.effective_date BETWEEN :start AND :end" +
+//				" AND PRSD.project_reservation_room_detail=PRRD.id" + 
+//				" AND PRS.id=PRSD.project_reservation_service" +
+//				" AND PR.project=PRS.project_reservation" +
+//				" AND PR.start_date <= :end AND PR.end_date >= :start" + 
+//				" AND PRR.project_reservation=PR.project" +
+//				" AND PRRD.project_reservation_room=PRR.id" +
+//				" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
+//				" AND R.asset=AA.asset AND R.hotel=PR.Hotel AND I.id=PRS.item AND P.id=I.product" +
+//				" AND ( I.id=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
+//				" AND ( P.category=4 OR P2.category=4)" + 
+//				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
+//				" GROUP BY 1,2,3 )" +
+
+//********************************************
+//servicios directos con habitacion asignada, teniendo en cuenta las desviadas 
+//********************************************
+" UNION" +
+" (SELECT PR.hotel," +
+" IF ((P.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+" P.name," +
+" P.code," +
+" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))" +
+" FROM project_reservation_service_detail AS PRSD," +
+" project_reservation_service AS PRS," +
+" project_reservation AS PR," +
+" project_reservation_room AS PRR," +
+" project_reservation_room_detail AS PRRD," +
+" asset_activity AS AA," +
+" asset AS A," +
+" room as R," +
+" item AS I," +
+" product AS P" +
+" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+" AND PR.project=PRS.project_reservation" +
+" AND PRS.id=PRSD.project_reservation_service" +
+" AND PRSD.effective_date BETWEEN :start AND :end" +
+" AND PRSD.project_reservation_room_detail=PRRD.id" +
+" AND PR.start_date <= :end AND PR.end_date >= :start" +
+" AND PRR.project_reservation=PR.project" +
+" AND PRRD.project_reservation_room=PRR.id" +
+" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
+" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel" +
+" AND PRS.item=I.id AND I.product=P.id AND P.composition=0" +
+" AND P.category=4" +
+" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
+" GROUP BY 1,2,3" +
+" )" +
+//		********************************************
+//		servicios compuestos con habitacion asignada, teniendo en cuenta las desviadas 
+//		********************************************		
+" UNION" +
+" (SELECT PR.hotel," +
+" IF ((P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+" P2.name," +
+" P2.code," +
+" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))" +
+" FROM project_reservation_service_detail AS PRSD," +
+" project_reservation_service AS PRS," +
+" project_reservation AS PR," +
+" project_reservation_room AS PRR," +
+" project_reservation_room_detail AS PRRD," +
+" asset_activity AS AA," +
+" asset AS A," +
+" room as R," +
+" item AS I," +
+" product AS P," +
+" item_composition AS IC," +
+" item AS I2," +
+" product AS P2" +
+" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+" AND PR.project=PRS.project_reservation" +
+" AND PRS.id=PRSD.project_reservation_service" +
+" AND PRSD.effective_date BETWEEN :start AND :end" +
+" AND PRSD.project_reservation_room_detail=PRRD.id" +
+" AND PR.start_date <= :end AND PR.end_date >= :start" +
+" AND PRR.project_reservation=PR.project" +
+" AND PRRD.project_reservation_room=PRR.id" +
+" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
+" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel" + 
+" AND (PRS.item=I.id AND I.product=P.id AND P.composition=1)" +
+" AND ( PRS.item=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
+" AND ( P2.category=4)" +
+" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
+" GROUP BY 1,2,3" +
+" )" +
+				
+				
+				
+				
+				
+				
 				" ORDER BY 1,2,4"
 				;
 		
@@ -170,15 +248,100 @@ public class PmsReportManager {
 				" AND ( P.category=4 OR P2.category=4)" +
 				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
 				" GROUP BY 1,2,3,9 )" +
-				" UNION" +
+				
 //				********************************************
 //				servicios (directos y compuestos) con habitacion asignada, teniendo en cuenta las desviadas 
 //				********************************************
+//				" (SELECT PR.hotel," +
+//				" IF ((P.code like '001%' OR P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+//				" IF (P.composition=0, P.name, P2.name)," +
+//				" IF (P.composition=0, P.code, P2.code)," +
+//				" sum(PRR.adults+PRR.children)," +
+//				" A.name," +
+//				" PR.start_date AS Inicio," +
+//				" PR.end_date AS Fin," +
+//				" CONCAT(PRG.name,' ',PRG.surname) AS Guest" +
+//				" FROM project_reservation_service_detail AS PRSD," +
+//				" project_reservation_service AS PRS," +
+//				" project_reservation AS PR," +
+//				" project_reservation_room AS PRR," +
+//				" project_reservation_room_detail AS PRRD," +
+//				" asset_activity AS AA," +
+//				" asset AS A," +
+//				" room as R," +
+//				" item AS I," +
+//				" product AS P," +
+//				" item_composition AS IC," +
+//				" item AS I2," +
+//				" product AS P2," +
+//				" project_reservation_guest AS PRG" +
+//				" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+//				" AND PRSD.effective_date BETWEEN :start AND :end" +
+//				" AND PRSD.project_reservation_room_detail=PRRD.id" +
+//				" AND PRS.id=PRSD.project_reservation_service" +
+//				" AND PR.project=PRS.project_reservation" +
+//				" AND PR.start_date <= :end AND PR.end_date >= :start" +
+//				" AND PRR.project_reservation=PR.project" +
+//				" AND PRRD.project_reservation_room=PRR.id" +
+//				" AND PRG.project_reservation=PR.project AND PRG.guest_index = 1 " +
+//				" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
+//				" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel AND I.id=PRS.item AND P.id=I.product" +
+//				" AND ( I.id=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
+//				" AND ( P.category=4 OR P2.category=4)" +
+//				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
+//				" GROUP BY 1,2,3,6 )" +
+//				" ORDER BY 1,2,4,6,9"
+
+
+//				********************************************
+//				servicios directos con habitacion asignada, teniendo en cuenta las desviadas 
+//				********************************************
+				" UNION" +
 				" (SELECT PR.hotel," +
-				" IF ((P.code like '001%' OR P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
-				" IF (P.composition=0, P.name, P2.name)," +
-				" IF (P.composition=0, P.code, P2.code)," +
-				" sum(PRR.adults+PRR.children)," +
+				" IF ((P.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+				" P.name," +
+				" P.code," +
+				" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))," +
+				" A.name," +
+				" PR.start_date AS Inicio," +
+				" PR.end_date AS Fin," +
+				" CONCAT(PRG.name,' ',PRG.surname) AS Guest" +
+				" FROM project_reservation_service_detail AS PRSD," +
+				" project_reservation_service AS PRS," +
+				" project_reservation AS PR," +
+				" project_reservation_room AS PRR," +
+				" project_reservation_room_detail AS PRRD," +
+				" asset_activity AS AA," +
+				" asset AS A," +
+				" room as R," +
+				" item AS I," +
+				" product AS P," +
+				" project_reservation_guest AS PRG" +
+				" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+				" AND PR.project=PRS.project_reservation" +
+				" AND PRS.id=PRSD.project_reservation_service" +
+				" AND PRSD.effective_date BETWEEN :start AND :end" +
+				" AND PRSD.project_reservation_room_detail=PRRD.id" +
+				" AND PR.start_date <= :end AND PR.end_date >= :start" +
+				" AND PRR.project_reservation=PR.project" +
+				" AND PRRD.project_reservation_room=PRR.id" +
+				" AND PRG.project_reservation=PR.project AND PRG.guest_index = 1" + 
+				" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
+				" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel" +
+				" AND PRS.item=I.id AND I.product=P.id AND P.composition=0" +
+				" AND P.category=4" +
+				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
+				" GROUP BY 1,2,3,6" +
+				" )" +
+		//		********************************************
+		//		servicios compuestos con habitacion asignada, teniendo en cuenta las desviadas 
+		//		********************************************		
+				" UNION" +
+				" (SELECT PR.hotel," +
+				" IF ((P2.code like '001%'), date(PRSD.effective_date) + INTERVAL 1 DAY, PRSD.effective_date)," +
+				" P2.name," +
+				" P2.code," +
+				" sum(IF(PRS.extra=0, (PRR.adults+PRR.children), PRSD.quantity))," +
 				" A.name," +
 				" PR.start_date AS Inicio," +
 				" PR.end_date AS Fin," +
@@ -198,21 +361,24 @@ public class PmsReportManager {
 				" product AS P2," +
 				" project_reservation_guest AS PRG" +
 				" WHERE not isnull(PRSD.project_reservation_room_detail)" +
+				" AND PR.project=PRS.project_reservation" +
+				" AND PRS.id=PRSD.project_reservation_service" +
 				" AND PRSD.effective_date BETWEEN :start AND :end" +
 				" AND PRSD.project_reservation_room_detail=PRRD.id" +
-				" AND PRS.id=PRSD.project_reservation_service" +
-				" AND PR.project=PRS.project_reservation" +
 				" AND PR.start_date <= :end AND PR.end_date >= :start" +
 				" AND PRR.project_reservation=PR.project" +
 				" AND PRRD.project_reservation_room=PRR.id" +
-				" AND PRG.project_reservation=PR.project AND PRG.guest_index = 1 " +
+				" AND PRG.project_reservation=PR.project AND PRG.guest_index = 1" + 
 				" AND AA.id=PRRD.asset_activity AND AA.date BETWEEN :start AND :end" +
-				" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel AND I.id=PRS.item AND P.id=I.product" +
-				" AND ( I.id=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
-				" AND ( P.category=4 OR P2.category=4)" +
+				" AND AA.asset=A.id AND A.id=R.asset AND R.hotel=PR.Hotel" + 
+				" AND (PRS.item=I.id AND I.product=P.id AND P.composition=1)" +
+				" AND ( PRS.item=IC.item AND IC.composition_item=I2.id AND I2.product=P2.id )" +
+				" AND ( P2.category=4)" +
 				" AND PR.status<>2 AND PR.hotel IN ( "+ getHotelIds(hotel) +" )" +
-				" GROUP BY 1,2,3,6 )" +
-				" ORDER BY 1,2,4,6,9"
+				" GROUP BY 1,2,3,6" +
+				" )" +
+				" ORDER BY 1,2,4,6,9" 
+				
 				;
 		return select;
 	}
@@ -283,7 +449,7 @@ public class PmsReportManager {
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
 				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2"
+				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND isnull(PRRD.asset_activity)"
@@ -293,7 +459,7 @@ public class PmsReportManager {
 				+ " UNION"
 				+ " ( SELECT" 
 				+ " W.description As Nombre,"
-				+ " min(AA.date) As Fecha,"
+				+ " AA.date As Fecha,"
 				+ " Count(distinct PRR.id) As Cantidad,"
 				+ " sum(PRR.adults+PRR.children)/count(distinct AA.date)  As Pax, PR.project"
 				+ " FROM project_reservation_room as PRR"
@@ -304,15 +470,24 @@ public class PmsReportManager {
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2"
+				+ " WHERE "
+				+ "     PR.start_date <= :end "
+				+ " AND PR.end_date >= :start "
+				+ " AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND not isnull(PRRD.asset_activity)"
-				+ " AND H.id IN (" + getHotelIds(hotel) + ")" 
-				+ " GROUP BY 1, PR.project"
-				+ " HAVING min(AA.date) between :start AND :end )"
+				+ " AND R.hotel IN (" + getHotelIds(hotel) + ")" 
+				+ " AND AA.date between :start AND :end"	
+				+ " AND R.Hotel NOT IN (SELECT R2.hotel FROM room AS R2 "
+				+ "                     LEFT JOIN asset as A2 ON A2.id=R2.asset "
+				+ "                     LEFT JOIN asset_activity AS AA2 ON AA2.asset=A2.id "
+				+ "                     LEFT JOIN project_reservation_room_detail AS PRRD2 ON PRRD2.asset_activity=AA2.id "
+				+ "                     WHERE AA2.date = date(AA.date + INTERVAL -1 DAY) AND PRRD2.project_reservation_room=PRRD.project_reservation_room)"	
+				+ " GROUP BY PR.project,AA.date"
+				+ " )"
 				+ " ORDER BY 1, 2";
-		return select;
+	return select;
 	}
 	
 	public String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
@@ -326,7 +501,7 @@ public class PmsReportManager {
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
 				+ " LEFT JOIN hotel AS H2 ON PR.hotel=H2.id"
 				+ " LEFT JOIN workplace AS W2 ON H2.workplace=W2.id"
-				+ " WHERE PR.status <> 2"
+				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND isnull(PRRD.asset_activity)"
@@ -337,7 +512,7 @@ public class PmsReportManager {
 				+ " UNION"
 				+ " (SELECT" 
 				+ " W.description As Nombre,"
-				+ " date(max(AA.date) + INTERVAL 1 DAY) As Fecha,"
+				+ " date(AA.date + INTERVAL 1 DAY) As Fecha,"
 				+ " Count(distinct PRR.id) As Cantidad,"
 				+ " sum(PRR.adults+PRR.children)/count(distinct AA.date)  As Pax, PR.project, 'AA.date'"
 				+ " FROM project_reservation_room as PRR"
@@ -348,13 +523,21 @@ public class PmsReportManager {
 				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
 				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2"
+				+ " WHERE "
+				+ "     PR.start_date <= :end "
+				+ " AND PR.end_date >= :start "
+				+ " AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
 				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
 				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
 				+ " AND not isnull(PRRD.asset_activity)"
-				+ " AND H.id IN (" + getHotelIds(hotel) + ")" 
-				+ " GROUP BY 1, PR.project"
-				+ " HAVING max(AA.date) between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)"
+				+ " AND R.hotel IN (" + getHotelIds(hotel) + ")" 
+				+ " AND AA.date between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)"
+				+ " AND R.Hotel NOT IN (SELECT R2.hotel FROM room AS R2 "
+				+ "                     LEFT JOIN asset as A2 ON A2.id=R2.asset "
+				+ "                     LEFT JOIN asset_activity AS AA2 ON AA2.asset=A2.id "
+				+ "                     LEFT JOIN project_reservation_room_detail AS PRRD2 ON PRRD2.asset_activity=AA2.id "
+				+ "                     WHERE AA2.date = date(AA.date + INTERVAL 1 DAY) AND PRRD2.project_reservation_room=PRRD.project_reservation_room)"	
+				+ " GROUP BY PR.project,AA.date"
 				+ " )"
 				+ " ORDER BY 1, 2"
 
@@ -363,28 +546,47 @@ public class PmsReportManager {
 	}
 	
 	public String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
-		String select = "SELECT W.description," 
+		
+		String select = "" 
+				+ " (SELECT W.description," 
 				+ " count(PRR.id)," 
 				+ " sum(PRR.adults)+sum(PRR.children)"
 				+ " FROM project_reservation_room as PRR"
 				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRR.id=PRRD.project_reservation_room"
-				+ " LEFT JOIN asset_activity AS AA ON PRRD.asset_activity=AA.id"
-				+ " LEFT JOIN room AS R ON AA.asset=R.asset"
-				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRR.project_reservation"
+				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
 				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2"
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND PR.hotel IN ( " + getHotelIds(hotel) + " )" 
-				+ " AND ( AA.id = null OR (AA.date=:start AND PR.hotel=R.hotel) )"
+				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
 				+ " AND PR.start_date <= :start "
 				+ " AND PR.end_date > :start "
-				+ " GROUP BY PR.hotel"
-				+ " ORDER BY W.description"
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) 
+				+ " AND isnull(PRRD.asset_activity) AND PR.hotel IN ( " + getHotelIds(hotel) + " ) "
+				+ " GROUP BY 1)"
+				+ " UNION"
+				+ " (SELECT W.description," 
+				+ " count(PRR.id)," 
+				+ " sum(PRR.adults)+sum(PRR.children)"
+				+ " FROM project_reservation_room as PRR"
+				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRR.id=PRRD.project_reservation_room"
+				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
+				+ " LEFT JOIN room AS R ON R.asset=AA.asset"
+				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRR.project_reservation"
+				+ " LEFT JOIN hotel AS H ON H.id=R.hotel"
+				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
+				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
+				+ " AND PR.start_date <= :start "
+				+ " AND PR.end_date >= :start "
+				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
+				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) 
+				+ " AND not isnull(PRRD.asset_activity) "
+				+ " AND AA.date=:start AND AA.status = " + ActivityStatus.BUSY.getValue()+" AND R.hotel IN (" + getHotelIds(hotel) + ") "
+				+ " GROUP BY 1)"
+				+ " ORDER BY 1"
 				;
 		return select;
 	}
+	
 	
 	public String getBlockedRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, AA.date, count(R.hotel)"
