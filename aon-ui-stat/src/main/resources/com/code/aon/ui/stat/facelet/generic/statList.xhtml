@@ -72,6 +72,11 @@
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 								<aon:outputText value=")" />
+								<c:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
+									<aon:outputText value="&#160;(" />
+									<aon:outputText value="#{stat.params.workPlace.description}" />
+									<aon:outputText value=")" />
+								</c:if>
 							</aon:div>
 							<ui:insert name="extendedHeader" />
 						</h:panelGrid>

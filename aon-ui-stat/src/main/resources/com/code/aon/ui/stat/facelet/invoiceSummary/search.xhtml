@@ -27,19 +27,29 @@
 						value="#{stat.onSummaryStats}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="summary_stats_year" />
 
+					<aon:outputText value="#{bundle.aon_period}" />
 			 		<h:panelGrid columns="4">
-						<aon:outputLabel value="#{statBundle.stat_month}" />
-
+						<aon:outputLabel
+						styleClass="aon-italic aon-margin-right" 
+							value="#{statBundle.stat_month}" />
 						<rich:inputNumberSpinner id="spin1" inputSize="2"
 							value="#{stat.summaryMonth}" maxValue="12" minValue="1" />
 
-
-						<aon:outputLabel value="#{statBundle.stat_year}" />
-
+						<aon:outputLabel
+							styleClass="aon-italic aon-margin-right aon-margin-left" 
+							value="#{statBundle.stat_year}" />
 						<rich:inputNumberSpinner inputSize="4" value="#{stat.currentYear}"
 							maxValue="3000" />
 
 					</h:panelGrid>
+					
+					<aon:outputLabel for="stat_WorkPlace"
+						value="#{companyBundle.company_workplace}" />
+					<aon:selectOneMenu id="stat_WorkPlace"
+						value="#{stat.params.workPlace}">
+						<f:selectItem itemLabel="-" itemValue="#{null}" />
+						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
+					</aon:selectOneMenu>
 					
 				</ui:define>
 			</ui:decorate>
