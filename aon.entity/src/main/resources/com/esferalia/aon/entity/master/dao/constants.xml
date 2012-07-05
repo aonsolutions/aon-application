@@ -306,8 +306,8 @@
 		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.item.product.code,projectReservationService.projectReservation.id,projectReservationService.projectReservation.hotel.id,projectReservationService.extra,projectReservationRoomDetail,projectReservationRoomDetail.assetActivity.asset.name,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
-		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id"/>
-		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id"/>
+		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
+		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>
 	</bean> 
 	<bean class="com.esferalia.aon.pms.PosShiftCount" sqlName="pos_shift_count">
 		<alias names="id,domain,posShift_id,payMethod_id,payMethod_name,amount"/>
