@@ -38,7 +38,7 @@
 											action="invoicingGroup_list" />
 									</aon:div>
 								</c:if>
-								<c:if test="#{aonRole.config}">
+								<c:if test="#{aonRole.config and aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-sales" 
 											action="payMethod-sales" 

@@ -34,7 +34,7 @@
 											</aon:commandLink>
 										</aon:div>
 									</c:if>
-									<c:if test="#{aonRole.config}">
+									<c:if test="#{aonRole.config and aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="payMethod-purchase" 
 												action="payMethod-purchase" 
