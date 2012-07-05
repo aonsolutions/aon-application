@@ -5,9 +5,10 @@
 
 
 
-	<g:DockLayoutPanel unit='EM' >
+	<g:DockLayoutPanel unit='EM' ui:field="panel">
 	    <g:center >
-	      <employee:Reports ui:field="reports"></employee:Reports>
+	      <!--  employee:Reports ui:field="reports"></employee:Reports-->
+	      <g:HTML />
 	    </g:center>
 	</g:DockLayoutPanel>
 

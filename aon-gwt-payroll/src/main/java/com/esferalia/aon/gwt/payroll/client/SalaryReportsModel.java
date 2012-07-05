@@ -50,7 +50,7 @@ class SalaryReportsModel extends AbstractReportsModel<IDocument>
 	@Override
 	public void download(String format) {
 		Salary salary = salaries.get(currentIndex());
-		String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/" + salary.getId() + "." + format );
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/" + salary.getId() + "." + format );
 		Window.open(printURL, "_blank", null);
 	}
 	

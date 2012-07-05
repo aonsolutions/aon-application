@@ -138,7 +138,7 @@ public class ResourceServlet extends HttpServlet {
 			resp.setContentLength(contentLength);
 
 		long lastModified = connection.getLastModified();
-		if (lastModified >= 0)
+		if (lastModified > 0)
 			resp.setDateHeader("Last-Modified", lastModified);
 
 		// If we're not in debug mode, set cache headers
@@ -154,6 +154,9 @@ public class ResourceServlet extends HttpServlet {
 			long currentTime = System.currentTimeMillis();
 
 			resp.setDateHeader("Expires", currentTime + ONE_YEAR_MILLIS);
+		} else {
+			// Set Cache-Control to "Public".
+			resp.setHeader("Cache-Control", "no-cache");
 		}
 	}
 

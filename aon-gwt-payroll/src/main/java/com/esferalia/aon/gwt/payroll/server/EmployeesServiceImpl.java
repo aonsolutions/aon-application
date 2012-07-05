@@ -488,23 +488,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " + " FROM " + REGISTRY + ", " + ENTERPRISE
-					+ ", " + WORKPLACE + ", " + RADDRESS + ", " + CONTRACT
-					+ ", " + PERSON + " WHERE " + REGISTRY + "."
-					+ RegistryColumns.ID + " = ?" + " AND " + REGISTRY + "."
-					+ RegistryColumns.ID + " = " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " AND " + ENTERPRISE + "."
-					+ EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "."
-					+ WorkplaceColumns.ENTERPRISE + " AND " + WORKPLACE + "."
-					+ WorkplaceColumns.ADDRESS + " = " + RADDRESS + "."
-					+ RaddressColumns.ID + " AND " + WORKPLACE + "."
-					+ WorkplaceColumns.ID + " = " + CONTRACT + "."
-					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "."
-					+ ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY
+			String sql = "SELECT * " 
+					+ " FROM " 
 					
+					+ REGISTRY 
+					+ ", " + ENTERPRISE 
+					//+ ", " + WORKPLACE 
+					+ " LEFT JOIN " + WORKPLACE  + " ON ( " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " )"
+					//+ ", " + RADDRESS 
+					+ " LEFT JOIN " + RADDRESS  + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID + ")"
+					//+ ", " + CONTRACT 
+					+ " LEFT JOIN " + CONTRACT  + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE + ")"
+					//+ ", " + PERSON 
+					+ " LEFT JOIN " + PERSON  + " ON ( " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY + ")"
+					
+					+ " WHERE " + REGISTRY + "."
+					+ RegistryColumns.ID + " = ?" 
+					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY 
+					
+					//+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE 
+					//+ " AND " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID 
+					//+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
+					//+ " AND " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY
+
 					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
 					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )"
-					
 					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID 
 					+ " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
 

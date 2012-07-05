@@ -50,8 +50,11 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 	private EmployeeDetail employeeDetail;
 
+	private Reports reports;
+
 	public Employees() {
 		
+		reports = new Reports();
 
 		images = GWT.create(Images.class);
 		tree = new Tree(images);
@@ -179,9 +182,12 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 					}
 				});
 	}
+	
 
 	private void onReportsSelected(IReportsModel<IDocument> documents) {
-		employeeDetail.getSalaryReceipt().setReports(documents);
+		employeeDetail.setWidget(reports);
+		reports.setReports(documents);
+		//employeeDetail.getSalaryReceipt().setReports(documents);
 	}
 
 	/**
@@ -238,7 +244,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		@Override
 		public void download(String format) {
 			Cost cost = costs.get(currentIndex());
-			String printURL = URL.encode(GWT.getHostPageBaseURL() + "cost/"
+			String printURL = URL.encode(GWT.getModuleBaseURL() + "cost/"
 					+ cost.getMonth() + "_" + cost.getYear() + "_"
 					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
 					+ "." + format);
@@ -290,7 +296,7 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		@Override
 		public void download(String format) {
 			Cost cost = costs.get(currentIndex());
-			String printURL = URL.encode(GWT.getHostPageBaseURL() + "salary/"
+			String printURL = URL.encode(GWT.getModuleBaseURL() + "salary/"
 					+ cost.getMonth() + "_" + cost.getYear() + "_"
 					+ cost.getEnterpriseId() + "_" + cost.getWorkplaceId()
 					+ "." + format);
