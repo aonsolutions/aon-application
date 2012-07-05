@@ -40,6 +40,7 @@
 						<aon:inputText id="ProjectReservation_serviceQuantity"
 							value="#{hotelInvoiceService.quantity}"
 							required="true" size="1">
+							<f:validateDoubleRange minimum="0" />
 							<a4j:support event="onchange" 
 								actionListener="#{controller.onInvoiceServiceChanged}"
 								reRender="invoiceServicesDiv,invoiceFinancesDiv" />
