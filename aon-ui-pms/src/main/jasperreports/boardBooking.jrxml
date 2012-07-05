@@ -22,7 +22,7 @@
 	<parameter name="fromDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="toDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="boardItems" class="java.util.List" isForPrompting="false"/>
-	<field name="hotel" class="java.lang.String"/>
+	<field name="hotelName" class="java.lang.String"/>
 	<field name="date" class="java.util.Date"/>
 	<field name="quantityList" class="java.util.List"/>
 	<background>
@@ -176,9 +176,7 @@
 					<font fontName="SansSerif" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[((com.code.aon.product.Item)$P{boardItems}.get( 0 )).getProduct().getName()
-
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((com.code.aon.product.Item)$P{boardItems}.get( 0 )).getProduct().getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-44" mode="Opaque" x="200" y="0" width="65" height="15" isPrintWhenDetailOverflows="true" forecolor="#FFFFFF" backcolor="#999999"/>
@@ -278,7 +276,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{hotel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{hotelName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
 				<reportElement key="textField-53" x="135" y="0" width="65" height="14" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true"/>
