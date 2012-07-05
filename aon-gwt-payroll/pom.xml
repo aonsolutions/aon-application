@@ -19,7 +19,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>2.4.0</version>
 				<configuration>
-					<webappDirectory>${project.build.outputDirectory}/richCss</webappDirectory>					
+					<webappDirectory>${project.build.outputDirectory}</webappDirectory>					
 				</configuration>
 				<executions>
 					<execution>
