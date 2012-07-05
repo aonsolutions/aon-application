@@ -148,11 +148,13 @@
 
 					<aon:panelGroup>
 
-						<ui:include src="/facelet/menu/generalProduct.xhtml">
-							<ui:param name="category" value="sales" />
-						</ui:include>
+						<c:if test="#{aonRole.config and aonRole.saleOperator}">
+							<ui:include src="/facelet/menu/generalProduct.xhtml">
+								<ui:param name="category" value="sales" />
+							</ui:include>
+						</c:if>
 
-						<c:if test="#{aonRole.statisticsOperator}">
+						<c:if test="#{aonRole.statisticsOperator or aonRole.saleOperator}">
 							<aon:panelGrid id="group_sales_reports"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
