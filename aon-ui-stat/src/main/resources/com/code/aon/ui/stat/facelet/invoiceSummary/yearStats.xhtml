@@ -16,9 +16,9 @@
 				<ui:param name="categoryLabel" value="#{statBundle.stat_year}" />
 				<ui:param name="windowTitle" value="#{statBundle.stat_menu_summary}" />
 				<aon:methodParam name="backAction" value="summary_stats_search" />
+				<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />
 				<aon:methodParam name="goAction" value="summary_stats_year"/>
 				<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
-				<aon:methodParam name="backMethod" value="" type="actionListener" />
 				<ui:param name="paramName" value="year" />
 				<ui:param name="showLastColumn" value="false" />
 				<ui:param name="reportKeyParam" value="monthStatsList" />

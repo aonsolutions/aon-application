@@ -20,7 +20,7 @@
 				<ui:param name="reportKeyParam" value="yearStatsList" />
 				<ui:param name="reportGraphKeyParam" value="yearStatsGraph" />
 				<aon:methodParam name="backAction" value="category_stats_search"/>	
-				<aon:methodParam name="backMethod" value="" type="actionListener" />			
+				<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />			
 				<aon:methodParam name="goAction" value="category_product_stats"/>
 				<aon:methodParam name="goMethod" value="#{stat.onCategorySelect}" type="actionListener" />
 				<aon:methodParam name="lastColumnAction" value="#{stat.onCategoryRegistryStats}" type="actionListener" />

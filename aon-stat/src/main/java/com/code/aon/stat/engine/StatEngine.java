@@ -43,7 +43,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY YEAR(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date) DESC");
@@ -62,6 +62,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -127,6 +130,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY MONTH(i.issue_date)");
 
@@ -143,6 +149,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 
@@ -205,6 +214,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY DAY(i.issue_date)");
 			stmt.append(" ORDER BY DAY(i.issue_date)");
 
@@ -221,6 +233,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 			SimpleDateFormat format = new SimpleDateFormat();
 			format.applyPattern("dd - MM - yyyy");
@@ -284,6 +299,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
 
@@ -298,6 +316,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -356,7 +377,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY c.id");
 			stmt.append(" ORDER BY c.name");
@@ -374,6 +395,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -437,6 +461,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
@@ -456,6 +483,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -521,6 +551,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
@@ -540,6 +573,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -602,6 +638,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
@@ -621,6 +660,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -683,7 +725,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
@@ -701,6 +743,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 
@@ -765,6 +810,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
@@ -785,6 +833,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -840,7 +891,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
@@ -858,6 +909,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -921,6 +975,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
@@ -940,6 +997,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -996,7 +1056,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
@@ -1014,6 +1074,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -1073,7 +1136,7 @@ public class StatEngine {
 				stmt.append(" AND i.type = ?");
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
-				stmt.append(" AND id.workplace = " + params.getWorkPlace().getId());
+				stmt.append(" AND id.workplace = ?");
 			}
 			stmt.append(" GROUP BY c.id,c.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,c.id,c.name");
@@ -1091,6 +1154,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();

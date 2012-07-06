@@ -515,7 +515,6 @@ public class StatEngineController {
 				&& fin.get(Calendar.YEAR) == currentYear.intValue()) {
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
-			params.setInvoiceType(invoiceType);
 			list.addAll(se.getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
@@ -564,8 +563,8 @@ public class StatEngineController {
 			Calendar fecfin = new GregorianCalendar(currentYear, 11, 31);
 			params.setFromDate(fec.getTime());
 			params.setToDate(fecfin.getTime());
-			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
+			List<Stat> list = new LinkedList<Stat>();
 			list.addAll(se.getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
@@ -597,19 +596,16 @@ public class StatEngineController {
 		try {
 			Calendar cal = new GregorianCalendar();
 			StatParams params = new StatParams();
-			params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale());
+			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
-			cal.set(Calendar.MONTH, currentMonth - 1);
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMinimum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.MONTH, currentMonth);
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 			params.setFromDate(cal.getTime());
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			params.setToDate(cal.getTime());
 			params.setInvoiceType(invoiceType);
-			params.setInvoiceType(invoiceType);
+			params.setWorkPlace(this.getParams().getWorkPlace());
 			List<Stat> list = new LinkedList<Stat>();
 			list.addAll(se.getDaysStats(params));
 			setDayStats(list);
@@ -657,6 +653,7 @@ public class StatEngineController {
 			params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
 					.getLocale());
 			refreshControllerDates(params);
+			params.setWorkPlace(this.getParams().getWorkPlace());
 			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
@@ -1183,22 +1180,20 @@ public class StatEngineController {
 			this.currentYear = year;
 		}
 		if (params.get("month") != null) {
-			month = Integer.parseInt(params.get("month")) - 1;
+			month = Integer.parseInt(params.get("month"));
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
 			cal.set(Calendar.MONTH, month);
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMinimum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 			statParams.setFromDate(cal.getTime());
-			cal.set(Calendar.DAY_OF_MONTH, cal
-					.getActualMaximum(Calendar.DAY_OF_MONTH));
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			statParams.setToDate(cal.getTime());
 		}
 		if (params.get("day") != null) {
 			day = Integer.parseInt(params.get("day"));
 			cal = new GregorianCalendar();
 			cal.set(Calendar.YEAR, currentYear);
-			cal.set(Calendar.MONTH, currentMonth - 1);
+			cal.set(Calendar.MONTH, currentMonth);
 			cal.set(Calendar.DAY_OF_MONTH, day);
 			statParams.setFromDate(cal.getTime());
 			statParams.setToDate(cal.getTime());
