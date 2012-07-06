@@ -2,39 +2,40 @@ package com.code.aon.ui.admin.controller;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
-import static com.code.aon.ui.admin.controller.IAdminConstants.AON_EMPLOYEE_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.EMPLOYEE_PORTAL;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.ArrayUtils;
-
+import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
+import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
-	
-	private final static Module[] FISCAL_MODULES = new Module[] {
-		Module.ACCOUNTING, Module.FISCAL, Module.TREASURY, Module.MANAGEMENT
-	};
 	
 	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	
 	
 	private DomainApplicationInfo aioInfo;
 	
 	private DomainModuleInfo documental;
-	
-	private DomainApplicationInfo employeeInfo;
 
 	private List<DomainApplicationInfo> applicationInfos;
 	
@@ -71,15 +72,37 @@ public class DomainController extends BasicController {
 	public List<DomainApplicationInfo> getApplicationInfos() {
 		return applicationInfos;
 	}
+	
+	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
+		if (! DomainManager.isParentDomain() ) {
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			Integer parentDomainId = AdminUtil.getParentDomain(DomainManager.getCurrentDomain());
+			Application application = appInfo.getDomainApplication().getApplication();
+			Integer da = AdminUtil.getDomainApplication(parentDomainId, application.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN), parentDomainId);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID), da);
+			for( ITransferObject to : bean.getList(criteria) ) {
+				DomainApplicationModule dam = (DomainApplicationModule) to;
+				DomainModuleInfo info = appInfo.getModuleInfo(dam.getModule());
+				if ( info != null ) {
+					info.setApplicationModule(dam);
+					info.setChecked(true);
+					info.setDisabled(true);
+				}
+			}			
+		}
+	}
 
 	public void initApplicationInfos() throws ManagerBeanException {
 		this.applicationInfos = new LinkedList<DomainApplicationInfo>();
 		this.aioInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_AIO_APPLICATION);
 		this.aioInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, AON_PLATFORM));
 		this.documental = this.aioInfo.getModuleInfo(Module.DOCUMENT);
-		this.employeeInfo = DomainApplicationInfo.getApplicationInfos(getDomain(), AON_EMPLOYEE_APPLICATION);
-		this.employeeInfo.setDescription(AonUtil.getMessage(BUNDLE_NAME, EMPLOYEE_PORTAL));
 		this.applicationInfos.add(this.aioInfo);
+		updateModules(this.aioInfo);
 	}
 
 	public void saveApplications() throws ManagerBeanException {
@@ -91,14 +114,6 @@ public class DomainController extends BasicController {
 			}
 		}
 	}	
-
-	public void onFiscalPortal( ActionEvent event ) {
-		this.employeeInfo.setChecked(false);
-		this.aioInfo.setChecked(true);
-		for( DomainModuleInfo dmi: this.aioInfo.getApplicationModules() ) {
-			dmi.setChecked( ArrayUtils.contains(FISCAL_MODULES, dmi.getModule()) );
-		}
-	}
 	
 	public boolean isShowApplications() {
 		return this.aioInfo.isChecked();

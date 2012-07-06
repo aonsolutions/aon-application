@@ -10,6 +10,8 @@ public class DomainModuleInfo {
 	private Module module;
 	
 	private DomainApplicationModule applicationModule;
+	
+	private boolean disabled;
 
 	public DomainModuleInfo(Module module) {
 		this.module = module;
@@ -21,6 +23,14 @@ public class DomainModuleInfo {
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+	
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 	public DomainApplicationModule getApplicationModule() {
