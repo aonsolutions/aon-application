@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -117,11 +119,31 @@ public class ReservationRequestController extends BasicController implements IPm
 
 	@Override
 	public void accept(ActionEvent event) {
-		if (isNew() && reservationExists()) {
-			setShowConfirmWindow(true);
-		} else {
-			acceptRequest(event);
+		ReservationRequest request = (ReservationRequest)getTo();
+		if (validateRequest(request)) {
+			if (isNew() && reservationExists(request)) {
+				setShowConfirmWindow(true);
+			} else {
+				acceptRequest(event);
+			}
 		}
+	}
+
+	private boolean validateRequest(ReservationRequest request) {
+		Date yesterday = DateUtils.truncate(DateUtils.addDays(new Date(), -1), Calendar.DATE);
+		String yesterdayStr = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(yesterday);
+		if (request.getStartDate().before(yesterday)) {
+			String msg = "La Fecha de Entrada no puede ser anterior a " + yesterdayStr + ".";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		if (!request.getEndDate().after(request.getStartDate())) {
+			String msg = "La Fecha de Salida deber ser posterior a la de Entrada.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return true;
 	}
 
 	public void acceptRequest(ActionEvent event) {
@@ -132,8 +154,7 @@ public class ReservationRequestController extends BasicController implements IPm
 		}
 	}
 
-	private boolean reservationExists() {
-		ReservationRequest request = (ReservationRequest)getTo();
+	private boolean reservationExists(ReservationRequest request) {
 		if (request.isAgencyHolder()) {
 			try {
 				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
