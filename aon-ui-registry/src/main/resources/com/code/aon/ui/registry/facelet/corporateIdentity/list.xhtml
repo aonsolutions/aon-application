@@ -18,6 +18,8 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
+					<ui:param name="skipSelectButton" value="#{!aonRole.documentManager}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{aonRole.documentManager}" />
 					<ui:define name="columns">
 			
 						<ui:include 
