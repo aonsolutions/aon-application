@@ -12,9 +12,7 @@
 	<ui:define name="content">
 		<aon:form>
 
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<c:if test="#{stat.invoiceType==1}">
 					<ui:param name="toolbarTitle" value="#{statBundle.stat_abc_customer}" />
 				</c:if>
@@ -24,6 +22,7 @@
 				<c:if test="#{stat.invoiceType==2}">
 					<ui:param name="toolbarTitle" value="#{statBundle.stat_abc_creditor}" />
 				</c:if>
+				<ui:param name="toolbarDescription" value="#{bundle.aon_search}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
