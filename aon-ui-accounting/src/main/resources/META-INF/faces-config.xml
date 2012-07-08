@@ -929,6 +929,15 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** FINANCE LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>financeLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.FinanceLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
 	<!-- ****************************************** -->
@@ -1324,6 +1333,14 @@
 		<navigation-case>
 			<from-outcome>creditorLoader_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/creditorLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!--  **** FINANCE LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>financeLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/financeLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

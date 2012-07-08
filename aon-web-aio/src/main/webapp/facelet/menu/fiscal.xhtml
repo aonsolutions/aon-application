@@ -298,6 +298,12 @@
 											actionListener="#{creditorLoader.onStart}"
 											value="XXX Carga de Acreedores XXX" />
 									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeLoader"
+											action="financeLoader_form"
+											actionListener="#{financeLoader.onStart}"
+											value="XXX Carga de Vencimientos XXX" />
+									</aon:div>
 								</c:if>
 							</aon:div>
 						</aon:panelGrid>
