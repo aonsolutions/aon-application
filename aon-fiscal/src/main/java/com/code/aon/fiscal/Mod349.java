@@ -4,36 +4,25 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.code.aon.fiscal.enumeration.Mod347Status;
-import com.esferalia.aon.entity.master.Mod347DB;
+import com.code.aon.fiscal.enumeration.Mod349Status;
+import com.esferalia.aon.entity.master.Mod349DB;
 
 @Entity
-@Table(name="fs_mod347")
-public class Mod347 extends Mod347DB {
+@Table(name="fs_mod349")
+public class Mod349 extends Mod349DB {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final Double MINIMUM_AMOUNT = 3005.06;
-	
-	private Double minimumAmount;
 	private boolean generateLines;
 	
     @Transient
 	public boolean isFinished() {
-		return getStatus() == Mod347Status.FINISHED;
+		return getStatus() == Mod349Status.FINISHED;
 	}
 	
 	@Transient
 	public boolean isExtraDeclaration() {
 		return (isComplementary() || isReplacement() );
-	}
-
-    @Transient
-    public Double getMinimumAmount() {
-		return minimumAmount;
-	}
-	public void setMinimumAmount(Double minimumAmount) {
-		this.minimumAmount = minimumAmount;
 	}
 
     @Transient

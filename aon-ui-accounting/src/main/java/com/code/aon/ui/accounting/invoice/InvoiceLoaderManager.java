@@ -85,7 +85,7 @@ public class InvoiceLoaderManager {
 			 new Column(FRA,"id"			,0,6	,true	,null)
 			,new Column(FRA,"serie"			,2,5	,true	,null)
 			,new Column(FRA,"numero"		,0,6	,true	,null)
-			,new Column(FRA,"referencia"	,2,16	,true	,null)
+			,new Column(FRA,"referencia"	,2,32	,true	,null)
 			,new Column(FRA,"cuenta"		,2,9	,true	,null)
 			,new Column(FRA,"documento"		,2,16	,true	,null)
 			,new Column(FRA,"tipoDocumento"	,4,1	,true	,new int[] {0,1,2,3,4,5})
@@ -135,6 +135,7 @@ public class InvoiceLoaderManager {
 	private String sep = "|";
 	private Map<String, Column[]> columns;
 	private Map<Integer, Invoice> invoices;
+	private Map<String, Series> series;
 	
 	public InvoiceLoaderManager(Scope scope, SecurityLevel securityLevel,WorkPlace workPlace,ProductCategory category,PrintWriter log) {
 		this.log = log;
@@ -184,7 +185,14 @@ public class InvoiceLoaderManager {
 		}
 		return invoices;
 	}
-	
+
+	public Map<String, Series> getSeries() {
+		if (series == null) {
+			series= new HashMap<String, Series>();
+		}
+		return series;
+	}
+
 	public void loadMetadata(InputStream input) throws AonException {
 		log("Meta: Start loading Metadata.");
 		columns = new HashMap<String, Column[]>();
@@ -524,20 +532,22 @@ public class InvoiceLoaderManager {
 		// No actualiza la linea.
 		detail.setUpdateEnabled(false);
 		// No actualiza los totales. 
-		//detail.getInvoice().setUpdateEnabled(false);
+		detail.getInvoice().setUpdateEnabled(false);
 		//
 		detail = (InvoiceDetail) bean.insert(detail);
 
 		if (detail.getSource() == InvoiceSource.ACCOUNT) {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			InvoiceTax invoiceTax = new InvoiceTax();
-			
+			boolean invoiceTouched = false;
 			invoiceTax.setInvoiceDetail(detail);
 			invoiceTax.setPercentage(loaded.getPorcentajeIva());
 			invoiceTax.setQuota(loaded.getCuotaIva());
 			if (!invoice.isSurcharge() && loaded.getRe() > 0) {
 				invoice.setDefaultTaxInfo(false);
+				boolean surcharge = invoice.isSurcharge(); 
 				invoice.setSurcharge(true);
+				invoiceTouched = !surcharge;
 			}
 			invoiceTax.setSurcharge(loaded.getRe());
 			invoiceTax.setSurchargeQuota(loaded.getCuotaRe());
@@ -548,7 +558,9 @@ public class InvoiceLoaderManager {
 			if (loaded.getPorcentajeIrpf() > 0) {
 				if (!invoice.isWithholding()) {
 					invoice.setDefaultTaxInfo(false);
-					invoice.setWithholding(true);	
+					boolean withholding = invoice.isWithholding();
+					invoice.setWithholding(true);
+					invoiceTouched = !withholding;
 				}
 				invoiceTax = new InvoiceTax();
 				invoiceTax.setInvoiceDetail(detail);
@@ -559,12 +571,14 @@ public class InvoiceLoaderManager {
 				invoiceTax.setWithholdingType(loaded.getWithholdingType());
 				invoiceTaxBean.insert(invoiceTax);
 			}
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			invoice = (Invoice) invoiceBean.update(invoice);
-			detail.setInvoice(invoice);
-			getInvoices().put(loaded.getFactura(), invoice);
+			if (invoiceTouched) {
+				IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+				invoice = (Invoice) invoiceBean.update(invoice);
+				detail.setInvoice(invoice);
+				getInvoices().put(loaded.getFactura(), invoice);
+			}
 		}
-
+		
 	}
 
 	private Item obtainItem(LoadedInvoiceDetail loaded) throws ManagerBeanException {
@@ -638,7 +652,7 @@ public class InvoiceLoaderManager {
 			invoice.setSeries( series.getCode() );
 			invoice.setNumber( loaded.getNumero() );
 		} else {
-			invoice.setReferenceCode(loaded.getReferencia());
+			invoice.setReferenceCode(StringUtils.abbreviate(loaded.getReferencia(),16));
 		}
 		invoice.setType(type);
 		Registry registry = obtainRegistry( type , loaded);
@@ -839,15 +853,20 @@ public class InvoiceLoaderManager {
 	}
 
 	private Series lookForSeries(String serie) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Series.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_CODE), serie);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
-		List<ITransferObject> list = bean.getList(criteria);
-		if ( list.size() > 0 ) {
-			Series series = (Series) list.get(0);
-			return series;
+		if (getSeries().containsKey(serie)) {
+			return getSeries().get(serie);	
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(Series.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_CODE), serie);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
+			List<ITransferObject> list = bean.getList(criteria);
+			if ( list.size() > 0 ) {
+				Series series = (Series) list.get(0);
+				getSeries().put(serie, series);
+				return series;
+			}
 		}
 		throw new ManagerBeanException("La serie de factura " + serie + " no está definida, no está activa o no es de facturas");
 	}

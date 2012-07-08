@@ -902,6 +902,32 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!--  **** CUSTOMER LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>customerLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.CustomerLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** SUPPLIER LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>supplierLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.SupplierLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** CREDITOR LOADER **** -->
+	<managed-bean>
+		<managed-bean-name>creditorLoader</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.CreditorLoaderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!-- ****************************************** -->
 	<!-- ******** Navigation Rules **************** -->
@@ -1274,6 +1300,30 @@
 		<navigation-case>
 			<from-outcome>entryLoader_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/entryLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!--  **** CUSTOMER LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>customerLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/customerLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!--  **** SUPPLIER LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplierLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/supplierLoader/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!--  **** CREDITOR LOADER **** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>creditorLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/creditorLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

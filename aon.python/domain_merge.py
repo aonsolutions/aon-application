@@ -10,8 +10,7 @@ def main():
     
     # Add jars to classpath
     jars = [
-#            "/usr/share/java/aon-dbutils.jar",
-            "/home/ecastellano/.m2/repository/com/code/aon/aon-dbutils/7.0-SNAPSHOT/aon-dbutils-7.0-SNAPSHOT.jar",
+            "/usr/share/java/aon-dbutils.jar",
             "/usr/share/java/mysql-connector-java.jar",
             "/usr/share/java/commons-lang.jar",
     ]

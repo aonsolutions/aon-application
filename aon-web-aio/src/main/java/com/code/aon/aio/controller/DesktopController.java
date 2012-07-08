@@ -86,6 +86,7 @@ public class DesktopController {
 			updateNoticeSummaryModel();
 			initTask();
 	    } catch (ManagerBeanException e) {
+	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
 	        throw new AbortProcessingException("Error initing desktop models", e);
 		}

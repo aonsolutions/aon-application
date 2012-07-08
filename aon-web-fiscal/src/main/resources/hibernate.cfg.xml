@@ -120,6 +120,8 @@
 		<!-- AON-FISCAL Mapping files -->	
 		<mapping class="com.code.aon.fiscal.Mod347"/>
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
+		<mapping class="com.code.aon.fiscal.Mod349"/>
+		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
 		<mapping class="com.code.aon.fiscal.ProfessionalRetention"/>
 		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.RentingDetail"/>

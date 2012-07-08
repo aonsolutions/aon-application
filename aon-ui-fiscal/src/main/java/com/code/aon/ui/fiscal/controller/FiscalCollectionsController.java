@@ -1,6 +1,7 @@
 package com.code.aon.ui.fiscal.controller;
 
 
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,8 @@ import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Mod347Type;
+import com.code.aon.fiscal.enumeration.Mod349Type;
+import com.code.aon.fiscal.enumeration.Mod349Status;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
@@ -37,6 +40,9 @@ public class FiscalCollectionsController {
 	
 	private List<SelectItem> mod347Formats;
 	private List<SelectItem> mod347Types;
+
+	private List<SelectItem> mod349Statuses;
+	private List<SelectItem> mod349Types;	
 
 	private List<SelectItem> mod340Formats;
 	
@@ -90,6 +96,19 @@ public class FiscalCollectionsController {
 			}
 		}
 		return vatTaxStatuses;
+	}
+
+	public List<SelectItem> getMod349Statuses() {
+		if (mod349Statuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			mod349Statuses = new LinkedList<SelectItem>();
+			for (Mod349Status  status:Mod349Status.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				mod349Statuses.add(item);
+			}
+		}
+		return mod349Statuses;
 	}
 
 	public List<SelectItem> getVatTaxDeclarationStatuses() {
@@ -180,5 +199,18 @@ public class FiscalCollectionsController {
 		}
 		return mod347Types;
 	}
-	
+
+	public List<SelectItem> getMod349Types() {
+		if (mod349Types == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			mod349Types = new LinkedList<SelectItem>();
+			for (Mod349Type type : Mod349Type.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				mod349Types.add(item);
+			}
+		}
+		return mod349Types;
+	}
+
 }

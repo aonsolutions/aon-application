@@ -22,6 +22,7 @@ import com.code.aon.ui.util.AonUtil;
 public class CommonCollections {
 	
 	private List<SelectItem> countries;  
+	private List<SelectItem> europeanUnionCountries;
 	private List<SelectItem> countryCodes;
 	private List<SelectItem> provinces;
 	private List<SelectItem> months;  
@@ -47,9 +48,6 @@ public class CommonCollections {
         return months;
 	}
 
-	/**
-	 * @return s
-	 */
 	public List<SelectItem> getCountries(){
     	if ( countries == null ) {
     		Locale locale = AonUtil.getCurrentLocale();
@@ -61,6 +59,27 @@ public class CommonCollections {
     		}
         }
         return countries;
+	}
+
+	public List<SelectItem> getEuropeanUnionCountries(){
+    	if ( europeanUnionCountries == null ) {
+    		Locale locale = AonUtil.getCurrentLocale();
+    		europeanUnionCountries = new LinkedList<SelectItem>();
+    		Country[] europeanUnion = new Country[] {
+    				Country.DE,Country.AT,Country.BE,Country.BG,Country.CY,
+    				Country.DK,Country.SI,Country.EE,Country.FI,Country.FR,
+    				Country.GR,Country.GB,Country.NL,Country.HU,Country.IT,
+    				Country.IE,Country.LV,Country.LT,Country.LU,Country.MT,
+    				Country.PL,Country.PT,Country.CZ,Country.SK,Country.RO,
+    				Country.SE
+    		};
+    		for( Country country : europeanUnion ) {
+	            String name = country.getName(locale); 
+	            SelectItem item = new SelectItem(country, StringUtils.abbreviate(name,25));
+	            europeanUnionCountries.add( item );
+    		}
+        }
+        return europeanUnionCountries;
 	}
 
 	/**

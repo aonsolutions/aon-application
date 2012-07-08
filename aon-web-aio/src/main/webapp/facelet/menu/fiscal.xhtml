@@ -86,8 +86,8 @@
 										value="#{fiscalBundle.fiscal_mod347_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+									<aon:commandLink id="mod349_report" 
+										action="mod349_list" actionListener="#{mod349.onEditSearch}" 
 										value="#{fiscalBundle.fiscal_model_349_module}" />
 								</aon:div>																
 							</aon:div>
@@ -279,6 +279,24 @@
 											action="entryLoader_form"
 											actionListener="#{entryLoader.onStart}"
 											value="XXX Carga de Apuntes XXX" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="customerLoader"
+											action="customerLoader_form"
+											actionListener="#{customerLoader.onStart}"
+											value="XXX Carga de Clientes XXX" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="supplierLoader"
+											action="supplierLoader_form"
+											actionListener="#{supplierLoader.onStart}"
+											value="XXX Carga de Proveedores XXX" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="creditorLoader"
+											action="creditorLoader_form"
+											actionListener="#{creditorLoader.onStart}"
+											value="XXX Carga de Acreedores XXX" />
 									</aon:div>
 								</c:if>
 							</aon:div>
