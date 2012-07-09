@@ -165,7 +165,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	private Hotel obtainHotel() throws ManagerBeanException {
 		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
-		List<SelectItem> hotelList = collections.getCurrentUserHotels();
+		List<SelectItem> hotelList = collections.getCurrentUserServiceHotels();
 		return (hotelList.size() > 0) ? (Hotel)hotelList.get(0).getValue() : null;
 	}
 
