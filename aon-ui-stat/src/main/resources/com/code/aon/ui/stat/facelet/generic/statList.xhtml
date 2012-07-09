@@ -6,9 +6,12 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
-	<aon:form id="monthStat">
+	<ui:define name="content">
+	
+	<aon:form id="statForm">
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 			<ui:param name="skipResetButton" value="true" />
@@ -21,9 +24,6 @@
 					accesskey="#{bundle.aon_key_cancel}">
 					<aon:actionListener method="#{backMethod}" />
 				</aon:commandButton>
-					<!--  
-					actionListener="#{stat.onReset}" action="#{backAction}"
-					-->
 				<aon:htmlCommandLink id="export2pdf" value="PDF" title="listado PDF"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf aon-finding-toolbar-item-no-border"
 					action="#{report.onExecute}" target="_blank">
@@ -53,45 +53,36 @@
 		</ui:decorate>
 		<rich:spacer />
 		<aon:div id="statContainer" styleClass="aon-scroll-area">
-			<aon:editDataTable id="yearsStats" value="#{statModel}" rows="20"
+		
+			<aon:panel>
+				<aon:outputText value="#{bundle.aon_period}:" styleClass="aon-bold" />
+				<aon:outputText value="#{stat.params.fromDate}" styleClass="aon-margin-left">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				<aon:outputText value=" - " />
+				<aon:outputText value="#{stat.params.toDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+				
+				<c:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
+					<aon:outputText value="#{companyBundle.company_workplace}: " styleClass="aon-bold aon-margin-left" />
+					<aon:outputText value="#{stat.params.workPlace.description}" styleClass="aon-margin-left" />
+				</c:if>
+			</aon:panel>
+
+			<aon:editDataTable id="statsDataTable" value="#{statModel}" rows="20"
 				columnClasses="aon-editDataTable-textColumn, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn"
 				var="to">
 
-				<f:facet name="header">
-					<aon:div>
-						<h:panelGrid columns="3" style="align:center">
-							<aon:div>
-								<aon:outputText value="#{windowTitle}" />
-							</aon:div>
-							<aon:div>
-								<aon:outputText value="(" />
-								<aon:outputText value="#{stat.params.fromDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-								<aon:outputText value="-" />
-								<aon:outputText value="#{stat.params.toDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-								<aon:outputText value=")" />
-								<c:if test="#{stat.params.workPlace!=null and stat.params.workPlace.id!=null}">
-									<aon:outputText value="&#160;(" />
-									<aon:outputText value="#{stat.params.workPlace.description}" />
-									<aon:outputText value=")" />
-								</c:if>
-							</aon:div>
-							<ui:insert name="extendedHeader" />
-						</h:panelGrid>
-					</aon:div>
-				</f:facet>
 				<aon:column>
 					<f:facet name="header">
 						<aon:outputText value="#{categoryLabel}" />
 					</f:facet>
 
 					<c:if test="#{clickable}">
-						<aon:commandLink styleClass="aon-dataTable-link"
+						<aon:commandLink styleClass="aon-dataTable-link" 
 							value="#{to.name}" action="#{goAction}"
 							actionListener="#{goMethod}"
 							reRender="aonContent">
@@ -177,7 +168,9 @@
 				</aon:column>
 
 			</aon:editDataTable>
-			<aon:dataScroller2 for="yearsStats" showNote="true" />
+			<aon:dataScroller2 for="statsDataTable" showNote="true" />
 		</aon:div>
 	</aon:form>
+	
+	</ui:define>
 </ui:composition>

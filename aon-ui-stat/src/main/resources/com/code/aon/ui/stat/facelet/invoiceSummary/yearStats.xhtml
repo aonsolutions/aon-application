@@ -6,24 +6,21 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j">
 
-	<ui:define name="content">
-			<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
-				<ui:param name="statController" value="#{stat}" />
-				<ui:param name="statModel" value="#{stat.monthStatModel}" />
-				<ui:param name="categoryLabel" value="#{statBundle.stat_year}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_summary}" />
-				<aon:methodParam name="backAction" value="summary_stats_search" />
-				<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />
-				<aon:methodParam name="goAction" value="summary_stats_year"/>
-				<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
-				<ui:param name="paramName" value="year" />
-				<ui:param name="showLastColumn" value="false" />
-				<ui:param name="reportKeyParam" value="monthStatsList" />
-				<ui:param name="reportGraphKeyParam" value="monthStatsGraph" />
-			</ui:include>
+	<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
+		<ui:param name="statController" value="#{stat}" />
+		<ui:param name="statModel" value="#{stat.monthStatModel}" />
+		<ui:param name="categoryLabel" value="#{statBundle.stat_year}" />
+		<ui:param name="windowTitle" value="#{statBundle.stat_menu_summary}" />
+		<aon:methodParam name="backAction" value="summary_stats_search" />
+		<aon:methodParam name="backMethod" value="#{stat.onReset}" type="actionListener" />
+		<aon:methodParam name="goAction" value="summary_stats_year"/>
+		<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
+		<ui:param name="paramName" value="year" />
+		<ui:param name="showLastColumn" value="false" />
+		<ui:param name="reportKeyParam" value="monthStatsList" />
+		<ui:param name="reportGraphKeyParam" value="monthStatsGraph" />
+	</ui:include>
 			
-	</ui:define>
 </ui:composition>

@@ -49,13 +49,12 @@ public class StatEngine {
 			stmt.append(" ORDER BY YEAR(i.issue_date) DESC");
 
 			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
+					stmt.toString(), 
+					ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -71,11 +70,10 @@ public class StatEngine {
 			List<Stat> stats = new LinkedList<Stat>();
 			while (rs.next()) {
 				Stat stat = new Stat();
-				// stat.setExtra(rs.getInt(1));
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(1));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -107,8 +105,7 @@ public class StatEngine {
 		for (int i = 0; i < 12; i++) {
 			stats.add(i, new Stat());
 			stats.get(i).setKey(i);
-			stats.get(i).setName(
-					Month.getMonthByValue(i).getName(params.getLocale()));
+			stats.get(i).setName(Month.getMonthByValue(i).getName(params.getLocale()));
 		}
 
 		PreparedStatement ps = null;
@@ -157,19 +154,15 @@ public class StatEngine {
 
 			while (rs.next()) {
 
-				Stat stat = stats.get((Month.getMonthByValue(rs.getInt(1) - 1))
-						.getValue());
-				stat.setKey(rs.getInt(1));
-				stat.setName(Month.getMonthByValue(rs.getInt(1) - 1).getName(
-						params.getLocale()));
+				Stat stat = stats.get((Month.getMonthByValue(rs.getInt(1) - 1)).getValue());
+				stat.setKey(rs.getInt(1)-1);
+				stat.setName(Month.getMonthByValue(rs.getInt(1) - 1).getName(params.getLocale()));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(stat.getNumInvoice() + count);
 				stat.setAmount(stat.getAmount() + amount);
-				stat.setAverageAmount(CommonUtil.round(stat.getAmount()
-						/ stat.getNumInvoice()));
-				stats.set(Month.getMonthByValue(rs.getInt(1) - 1).getValue(),
-						stat);
+				stat.setAverageAmount(CommonUtil.round(stat.getAmount() / stat.getNumInvoice()));
+				stats.set(Month.getMonthByValue(rs.getInt(1) - 1).getValue(), stat);
 
 			}
 			return stats;
@@ -250,7 +243,7 @@ public class StatEngine {
 				// stat.setExtra(rs.getInt(1));
 				stat.setName(format.format(date));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -326,7 +319,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -386,8 +379,7 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
+				ps.setDate(1, new java.sql.Date(params.getFromDate()
 								.getTime()));
 			}
 			if (params.getToDate() != null) {
@@ -407,7 +399,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(2));
 				stat.setName(rs.getString(3));
 				int count = rs.getInt(4);
-				double amount = rs.getInt(5);
+				double amount = rs.getDouble(5);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -495,7 +487,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -583,7 +575,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -670,7 +662,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -734,9 +726,7 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -757,7 +747,7 @@ public class StatEngine {
 						params.getLocale())
 						+ " " + rs.getInt(4));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -844,7 +834,7 @@ public class StatEngine {
 						params.getLocale())
 						+ " " + rs.getInt(4));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -921,7 +911,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1007,7 +997,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1086,7 +1076,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1166,7 +1156,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1255,7 +1245,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1338,7 +1328,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1422,7 +1412,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1515,7 +1505,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1600,7 +1590,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));

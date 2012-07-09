@@ -6,12 +6,14 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -293,7 +296,6 @@ public class StatEngineController {
 	}
 
 	public DataModel getInvoicesModel() {
-		setInvoicesModel(null);
 		if (invoicesModel == null) {
 			invoicesModel = new ListDataModel(getInvoices());
 		}
@@ -582,8 +584,7 @@ public class StatEngineController {
 	}
 
 	public void onMonthSelect(ActionEvent event) {
-		ExternalContext ec = FacesContext.getCurrentInstance()
-				.getExternalContext();
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();
 		String month = params.get("month");
 		currentMonth = Integer.parseInt(month);
@@ -634,8 +635,7 @@ public class StatEngineController {
 
 	public void onCustomerStats(ActionEvent event) {
 		try {
-			ExternalContext ec = FacesContext.getCurrentInstance()
-					.getExternalContext();
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			Map<String, String> paramss = ec.getRequestParameterMap();
 			if (paramss.get("year") != null) {
 				Integer year = Integer.parseInt(paramss.get("year"));
@@ -650,8 +650,7 @@ public class StatEngineController {
 				setCurrentDay(day);
 			}
 			StatParams params = new StatParams();
-			params.setLocale(FacesContext.getCurrentInstance().getViewRoot()
-					.getLocale());
+			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			refreshControllerDates(params);
 			params.setWorkPlace(this.getParams().getWorkPlace());
 			StatEngine se = new StatEngine();
@@ -684,8 +683,7 @@ public class StatEngineController {
 	public void onInvoiceList(ActionEvent event) {
 		try {
 			invoices = new LinkedList<Invoice>();
-			ExternalContext ec = FacesContext.getCurrentInstance()
-					.getExternalContext();
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			Map<String, String> params = ec.getRequestParameterMap();
 			String cus = params.get("customer");
 			Integer customer = Integer.parseInt(cus);
@@ -700,20 +698,15 @@ public class StatEngineController {
 
 			} else if (currentMonth != null && currentDay == null) {
 
-				fecini = new GregorianCalendar(currentYear, currentMonth - 1, 1);
-				fecfin = new GregorianCalendar(currentYear, currentMonth - 1,
-						31);
-				fecfin.set(Calendar.DAY_OF_MONTH, fecfin
-						.getActualMaximum(Calendar.DAY_OF_MONTH));
+				fecini = new GregorianCalendar(currentYear, currentMonth , 1);
+				fecfin = new GregorianCalendar(currentYear, currentMonth , 31);
+				fecfin.set(Calendar.DAY_OF_MONTH, fecfin.getActualMaximum(Calendar.DAY_OF_MONTH));
 				setInvoiceBackAction("customer_stat_list_month");
 
-			} else if (currentYear != null && currentMonth != null
-					&& currentDay != null) {
+			} else if (currentYear != null && currentMonth != null && currentDay != null) {
 
-				fecini = new GregorianCalendar(currentYear, currentMonth - 1,
-						currentDay);
-				fecfin = new GregorianCalendar(currentYear, currentMonth - 1,
-						currentDay);
+				fecini = new GregorianCalendar(currentYear, currentMonth , currentDay);
+				fecfin = new GregorianCalendar(currentYear, currentMonth , currentDay);
 				setInvoiceBackAction("customer_stat_list_day");
 
 			}
@@ -721,23 +714,24 @@ public class StatEngineController {
 			StatParams parameters = new StatParams();
 			parameters.setFromDate(fecini.getTime());
 			parameters.setToDate(fecfin.getTime());
-			IManagerBean invoiceBean = BeanManager
-					.getManagerBean(Invoice.class);
+			
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), customer);
-			criteria.addBetweenExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), parameters
-					.getFromDate(), parameters.getToDate());
-			criteria.addEqualExpression(invoiceBean
-					.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
-
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_REGISTRY_ID),customer);
+			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE),parameters.getFromDate(), parameters.getToDate());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
+			
+			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
+				criteria.addEqualExpression("Invoice.lines.workPlace.id",this.params.getWorkPlace().getId());
+			}
+					
 			List<ITransferObject> list;
 			list = invoiceBean.getList(criteria);
 			for (ITransferObject to : list) {
 				Invoice inv = (Invoice) to;
 				invoices.add(inv);
 			}
+			setInvoicesModel(null);
 
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -792,6 +786,10 @@ public class StatEngineController {
 			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), params.getFromDate(), params.getToDate());
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 			
+			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
+				criteria.addEqualExpression("Invoice.lines.workPlace.id",this.params.getWorkPlace().getId());
+			}
+			
 			if(checkLevel==0){
 				criteria.addEqualExpression("Invoice.lines.item.product.category.id",this.params.getCategory());
 				setBackAction("category_stats_year");
@@ -807,6 +805,7 @@ public class StatEngineController {
 				Invoice inv = (Invoice) to;
 				invoices.add(inv);
 			}
+			setInvoicesModel(null);
 			
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -829,6 +828,10 @@ public class StatEngineController {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), iType);
 			criteria.addEqualExpression("Invoice.lines.item.product.id",this.getProduct());
 			
+			if(this.params.getWorkPlace()!=null && this.params.getWorkPlace().getId()!=null){
+				criteria.addEqualExpression("Invoice.lines.workPlace.id",this.params.getWorkPlace().getId());
+			}
+			
 			setInvoiceBackAction("abc_product_stats");
 							
 			List<ITransferObject> list;
@@ -837,7 +840,7 @@ public class StatEngineController {
 				Invoice inv = (Invoice) to;
 				invoices.add(inv);
 			}
-			
+			setInvoicesModel(null);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -846,7 +849,9 @@ public class StatEngineController {
 	
 	public double getInvoiceTotalPrice() throws ManagerBeanException {
 		Invoice invoice = (Invoice) this.invoicesModel.getRowData();
-		return getPriceStrategy().getTotalPrice(invoice, invoice);
+		// TODO: si se muestra con iva, que se muestre siempre en todas las pantallas 
+//		return getPriceStrategy().getTotalPrice(invoice, invoice);
+		return invoice.getTaxableBase();
 	}
 
 	public void onCategoryStats(ActionEvent event) {
@@ -1200,15 +1205,16 @@ public class StatEngineController {
 		}
 	}
 
-	public void onYearChanged(ActionEvent event) {
-		try {
-			getMonthStatistics();
-		} catch (ManagerBeanException e) {
-			String msg = "Error al obtener los datos. " + e.getMessage();
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-	}
+	
+//	public void onYearChanged(ActionEvent event) {
+//		try {
+//			getMonthStatistics();
+//		} catch (ManagerBeanException e) {
+//			String msg = "Error al obtener los datos. " + e.getMessage();
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg);
+//		}
+//	}
 
 	public void onDayBackAction(ActionEvent event) throws ManagerBeanException {
 		setCurrentYear(daysYear);
@@ -1258,10 +1264,8 @@ public class StatEngineController {
 	}
 	
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ID), ((Invoice) this.getInvoicesModel().getRowData()).getId());
-		FormUtil.getController("invoicePrint").setCriteria(criteria);
-}
-
+		BasicController controller = (BasicController) FormUtil.getController("saleInvoice");
+		controller.select(event, ((Invoice) this.getInvoicesModel().getRowData()).getId());
+	}
+	
 }
