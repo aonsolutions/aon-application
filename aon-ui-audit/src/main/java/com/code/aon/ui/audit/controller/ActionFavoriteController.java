@@ -3,6 +3,7 @@ package com.code.aon.ui.audit.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.controller.ActionMoreUsedController.ActionMoreUsed;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -31,17 +33,22 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class ActionFavoriteController implements IAuditConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionFavoriteController.class);
+	
+	private final static int FAVORITE_SIZE = 20;
 
 	private List<ApplicationOption> options;
 	
 	private List<ApplicationOption> favorites;
+	
+	private List<ApplicationOption> favoriteAndMoreUsedOptions;
 	
 	private String template;
 	
 	private String menuTemplate;
 	
 	public ActionFavoriteController() {
-		this.favorites = loadFavorites();
+		initFavorites();
+		initFavoriteAndMoreUsedOptions();
 	}
 
 	private AuditController getAuditController() {
@@ -99,6 +106,7 @@ public class ActionFavoriteController implements IAuditConstants {
 					bean.insertOrUpdate(af);
 				}
 			}
+			initFavoriteAndMoreUsedOptions();
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error updating favorite action list", e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -116,6 +124,10 @@ public class ActionFavoriteController implements IAuditConstants {
 		return this.favorites;
 	}
 	
+	public List<ApplicationOption> getFavoriteAndMoreUsedOptions() {
+		return favoriteAndMoreUsedOptions;
+	}
+
 	public List<ApplicationOption> getOptions() {
 		return options;
 	}
@@ -124,8 +136,8 @@ public class ActionFavoriteController implements IAuditConstants {
 		this.options = options;
 	}
 
-	private List<ApplicationOption> loadFavorites() {
-		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
+	private void initFavorites() {
+		this.favorites = new ArrayList<ApplicationOption>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionFavorite.class);
 			Criteria criteria = new Criteria();
@@ -141,7 +153,7 @@ public class ActionFavoriteController implements IAuditConstants {
 					String action = ((ActionFavorite) to).getAction().getName();
 					ApplicationOption option = options.get(action);
 					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
-						list.add(option);
+						this.favorites.add(option);
 					} else {
 						bean.remove(to);
 						LOGGER.warn( "{} favorite removed", action );
@@ -151,14 +163,13 @@ public class ActionFavoriteController implements IAuditConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading favorites", e);
 		}
-		return list;		
 	}
 
 	public String getTemplate() throws IOException {
 		if ( this.template == null ) {
 			this.template = getOptionController().getTemplate(OPTIONS_TEMPLATE,
 					PREFFIX_VM, FAVORITE_PREFFIX,
-					OPTIONS_VM, getFavorites());
+					OPTIONS_VM, getFavoriteAndMoreUsedOptions());
 		}
 		return this.template;
 	}
@@ -167,9 +178,24 @@ public class ActionFavoriteController implements IAuditConstants {
 		if ( this.menuTemplate == null ) {
 			this.menuTemplate = getOptionController().getTemplate(MENU_ITEM_TEMPLATE,
 					PREFFIX_VM, FAVORITE_PREFFIX,
-					OPTIONS_VM, getFavorites());
+					OPTIONS_VM, getFavoriteAndMoreUsedOptions());
 		}
 		return this.menuTemplate;
 	}
+	
+	private void initFavoriteAndMoreUsedOptions() {
+		this.favoriteAndMoreUsedOptions = new LinkedList<ApplicationOption>(this.favorites);
+		ActionMoreUsedController amuc =  (ActionMoreUsedController) AonUtil.getRegisteredBean(ACTION_MORE_USED_CONTROLLER_NAME);
+		List<ActionMoreUsed> actions = amuc.getMoreUsed(-1);
+		for (ActionMoreUsed amu : actions) {
+			ApplicationOption appOption = amu.getOption();
+			if (! this.favoriteAndMoreUsedOptions.contains(appOption) ) {
+				this.favoriteAndMoreUsedOptions.add(appOption);	
+				if ( this.favoriteAndMoreUsedOptions.size() >= FAVORITE_SIZE ) {
+					break;
+				}
+			}
+		}
+	}	
 
 }

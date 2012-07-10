@@ -7,7 +7,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml" >
 		<ui:define name="beforeRightMenuContent">
 			<ui:insert name="beforeRightMenuContentEx" />
-			<c:if test="#{not empty actionFavorite.favorites}">
+			<c:if test="#{not empty actionFavorite.favoriteAndMoreUsedOptions}">
 				<aon:dropDownMenu>
 					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
 	                <f:facet name="label"> 
