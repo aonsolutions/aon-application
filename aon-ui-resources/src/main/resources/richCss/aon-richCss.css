@@ -2662,3 +2662,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	color: #285E9C; 
 	text-decoration: underline;
 }
+
+.aon-icon-flag-es{
+	background:transparent url(images/aon-header/aon-icon-flag-es.png) no-repeat scroll center left;
+}
+.aon-icon-flag-en{
+	background:transparent url(images/aon-header/aon-icon-flag-en.png) no-repeat scroll center left;
+}

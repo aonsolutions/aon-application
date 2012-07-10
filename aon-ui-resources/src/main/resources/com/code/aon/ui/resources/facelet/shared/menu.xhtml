@@ -51,6 +51,17 @@
 								iconClass="aon-icon-alarm" />
 						</c:if>	
 		                <ui:insert name="beforeHelpMenuContent"/>
+		                <aon:menuGroup
+		                	value="#{bundle.aon_chooseLocale}">
+	                		<aon:menuItem reRender="aonHeader,aonContent"
+	                			value="#{aonConfiguration.locales[0].displayName}"
+								iconClass="#{aonConfiguration.locales[0].iconClass}" 
+								actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
+	                		<aon:menuItem reRender="aonHeader,aonContent"
+	                			value="#{aonConfiguration.locales[1].displayName}"
+								iconClass="#{aonConfiguration.locales[1].iconClass}" 
+								actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
+		                </aon:menuGroup>		                
 						<aon:menuItem submitMode="none" reRender="aonStatus"
 							iconClass="aon-icon-menu-help">
 							<h:outputLink style="font-size:1em;"

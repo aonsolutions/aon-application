@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -41,6 +42,7 @@ import com.code.aon.common.util.Classpath;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
 
@@ -51,6 +53,8 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
 public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants, ILdapConstants, IAonObjectClasses {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
+	
+	private static final Locale SPANISH = new Locale("es");
 
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
@@ -82,6 +86,8 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private String application;
 	
+	private LocaleElement[] locales;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -93,6 +99,9 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 			bean = loadBeanConfiguration( document );
 		}		
 		initApplicationVersion();
+		this.locales = new LocaleElement[] {
+			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
+		};
 	}
 
 	/**
@@ -359,6 +368,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 */
 	public String getHelpURL() {
 		return getURL(this.application, this.currentAction);
+	}
+	
+	public LocaleElement[] getLocales() {
+		return locales;
 	}
 	
 	private class LogErrorHandler implements ErrorHandler {
