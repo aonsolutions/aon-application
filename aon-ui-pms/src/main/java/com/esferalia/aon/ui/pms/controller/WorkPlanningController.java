@@ -11,6 +11,8 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -76,6 +78,9 @@ public class WorkPlanningController implements ICollectionProvider {
 	}
 	
 	private RoomWorkPlanning obtainRoomOperation(ProjectReservationRoomDetail reservationRoomDetail, Room room) throws ManagerBeanException {
+		if(isBlockedRoom(room, getDate())){
+			return RoomWorkPlanning.BLOCKED;
+		}
 		if(reservationRoomDetail!=null){
 			if(reservationRoomDetail.isFirstNight()){
 				return RoomWorkPlanning.CHECKIN;
@@ -91,6 +96,15 @@ public class WorkPlanningController implements ICollectionProvider {
 			}
 		}
 		return RoomWorkPlanning.FREE;
+	}
+	
+	private boolean isBlockedRoom(Room room, Date date) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), date);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BLOCKED);
+		return bean.getCount(criteria)>0;
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{

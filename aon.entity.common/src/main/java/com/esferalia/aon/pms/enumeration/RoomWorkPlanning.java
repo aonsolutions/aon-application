@@ -12,7 +12,8 @@ public enum RoomWorkPlanning implements IResourceable {
 	CHECKOUT,
 	SHEET_CHANGE,
 	CLEANING,
-	FREE;
+	FREE,
+	BLOCKED;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.pms.i18n.messages";
