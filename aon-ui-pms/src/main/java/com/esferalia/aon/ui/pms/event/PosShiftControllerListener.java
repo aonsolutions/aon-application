@@ -62,7 +62,7 @@ public class PosShiftControllerListener extends ControllerAdapter {
 	public void afterEditSearch(ControllerEvent event)
 			throws ControllerListenerException {
 		PosShiftSearchListener searchListener = (PosShiftSearchListener) AonUtil.getRegisteredBean("posShiftSearch");
-		if(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin()){
+		if(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin() && !AonUtil.getRoleManager().isSaleOperator()){
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date());
 			cal.set(Calendar.HOUR_OF_DAY, 23);

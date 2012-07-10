@@ -152,7 +152,7 @@
 										</aon:commandLink>
 									</aon:div>
 								</c:if>
-								<c:if test="#{aonRole.admin or aonRole.saleOperator}">
+								<c:if test="#{aonRole.admin or aonRole.config or aonRole.saleOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="posShift" 
 											action="posShift_search" actionListener="#{posShift.onEditSearch}"

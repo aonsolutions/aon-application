@@ -44,6 +44,7 @@
 						<aon:selectInputDate id="PosShift_startTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							value="#{posShiftSearch.startTimeFrom}"
+							resetTimeOnDateSelect="true"
 							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -51,9 +52,9 @@
 						<aon:outputLabel for="PosShift_startTime-To"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_startTime-To"
-							disabled="#{aonRole.config and !aonRole.admin}"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							value="#{posShiftSearch.startTimeTo}"
+							resetTimeOnDateSelect="true"
 							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -67,6 +68,7 @@
 						<aon:selectInputDate id="PosShift_endTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							value="#{posShiftSearch.endTimeFrom}"
+							resetTimeOnDateSelect="true"
 							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -74,12 +76,12 @@
 						<aon:outputLabel for="PosShift_endTime-To"
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_endTime-To"
-							disabled="#{aonRole.config and !aonRole.admin}"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
 							value="#{posShiftSearch.endTimeTo}"
+							resetTimeOnDateSelect="true"
 							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}" 
 							/>
 					</aon:div>
 						
