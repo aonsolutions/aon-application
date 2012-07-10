@@ -618,7 +618,11 @@ public class BankStatementController extends BasicController implements IFinance
 			} else if (stk.hasMoreTokens()) {
 				description += token;
 			} else {
-				amount = Double.parseDouble(token.replace(",", "."));
+				token = token.replace(",", ".");
+				while (token.indexOf('.') != token.lastIndexOf('.')) {
+					token = token.replaceFirst("[.]", "");
+				}
+				amount = Double.parseDouble(token);
 				if (amount < 0) {
 					payment = true;
 					amount = amount * (-1);
