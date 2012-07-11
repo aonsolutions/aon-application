@@ -13,9 +13,9 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.calendar.Calendar;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.ui.payroll.controller.enterprise.PayrollWorkPlaceController;
 
 /**
@@ -111,10 +111,12 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 		if(controller.getPayrollWorkPlace().getId()==null){
 			controller.getPayrollWorkPlace().setWorkPlace((WorkPlace) controller.getTo());
 		}
-		if(controller.getPayrollWorkPlace().getCalendar().getId()==null){
+		if(controller.getPayrollWorkPlace().getCalendar() != null && 
+				controller.getPayrollWorkPlace().getCalendar().getId()==null){
 			controller.getPayrollWorkPlace().setCalendar(null);
 		}
-		if(controller.getPayrollWorkPlace().getAgreement().getId()==null){
+		if(controller.getPayrollWorkPlace().getAgreement() != null && 
+				controller.getPayrollWorkPlace().getAgreement().getId()==null){
 			controller.getPayrollWorkPlace().setAgreement(null);
 		}
 		try {
