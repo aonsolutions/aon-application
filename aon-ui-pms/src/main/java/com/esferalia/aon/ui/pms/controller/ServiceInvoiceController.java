@@ -118,18 +118,6 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		return this.currentReservationFilter;
 	}
 
-	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
-		setReservationInvoiceTo(new ReservationInvoiceTo());
-		fillInvoiceData();
-		ProjectReservation reservation = (ProjectReservation)event.getNewValue();
-		if( reservation != null && reservation.getId() != null ){
-			getReservationInvoiceTo().setHotel(reservation.getHotel());
-			fillHotelData();
-			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
-			onNewService(null);
-		}
-	}
-	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
@@ -146,21 +134,15 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 				throw new AbortProcessingException(msg);
 			}
 			setNew(true);
-			setProjectReservation((ProjectReservation) BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
-			setReservationInvoiceTo(new ReservationInvoiceTo());
-			fillInvoiceData();
+			setProjectReservation((ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
+			getReservationInvoiceTo().setHotel(obtainHotel());
+			fillHotelData();
+			onNewService(null);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
-	}
-
-	private void fillInvoiceData() throws ManagerBeanException {
-		getReservationInvoiceTo().setHotel(obtainHotel());
-		fillHotelData();
-		getReservationInvoiceTo().setDirectCustomer(true);
-		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
-		onNewService(null);
 	}
 
 	private Hotel obtainHotel() throws ManagerBeanException {
@@ -169,6 +151,18 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		return (hotelList.size() > 0) ? (Hotel)hotelList.get(0).getValue() : null;
 	}
 
+	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
+		ProjectReservation reservation = (ProjectReservation)event.getNewValue();
+		if (reservation != null && reservation.getId() != null) {
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
+			getReservationInvoiceTo().setHotel(reservation.getHotel());
+			fillHotelData();
+
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+			onNewService(null);
+		}
+	}
+	
 	public void onInvoiceHotelChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			getReservationInvoiceTo().setHotel((Hotel)event.getNewValue());
@@ -182,6 +176,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	private void fillHotelData() throws ManagerBeanException {
 		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRoom(null);
 		getReservationInvoiceTo().setGuest(null);
 	}
@@ -502,7 +497,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		}
 		try {
 			setInvoiceToRectificate((Invoice)getModel().getRowData());
-			setReservationInvoiceTo(new ReservationInvoiceTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));

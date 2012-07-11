@@ -44,6 +44,11 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		setFinances(new LinkedList<Finance>());
 	}
 
+	public ReservationInvoiceTo(boolean directCustomer) {
+		this();
+		setDirectCustomer(directCustomer);
+	}
+
 	public Date getIssueDate() {
 		return issueDate;
 	}
