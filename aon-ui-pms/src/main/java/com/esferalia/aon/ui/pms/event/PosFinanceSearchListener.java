@@ -85,6 +85,7 @@ public class PosFinanceSearchListener extends ControllerSearchListener {
 		if (userList.size() > 0) {
 			criteria.addInExpression(getFieldName(IEntityAlias.FINANCE_INVOICE_CREATION_USER), userList);
 		}
+		criteria.addEqualExpression("Finance.invoice<lines.workPlace.id", getHotel().getWorkPlace().getId());
 	}
 
 	private List<String> getUserList() throws ManagerBeanException {
