@@ -27,6 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
+import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -75,6 +76,15 @@ public class StatEngineController {
 	private Integer summaryMonth;
 	private Integer checkLevel;
 	
+	private StatEngine statEngine;
+	
+	public StatEngine getStatEngine() throws ManagerBeanException{
+		if(statEngine == null){
+			CompanyCollectionsController companyCollections = (CompanyCollectionsController) AonUtil.getRegisteredBean(IStatConstants.COMPANY_COLLECTIONS_CONTROLLER_NAME);
+			statEngine = new StatEngine( companyCollections.getCurrentUserWorkPlacesIds() );
+		}
+		return statEngine;
+	}
 	
 	
 	public DataModel getProductModel() {
@@ -462,11 +472,10 @@ public class StatEngineController {
 
 	public void onAnualStats(ActionEvent event) {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
 			setParamsBackUp(params);
-			list.addAll(se.getYearStats(params));
+			list.addAll(getStatEngine().getYearStats(params));
 			setYearStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -506,8 +515,7 @@ public class StatEngineController {
 	}
 
 	private void getMonthStatistics() throws ManagerBeanException {
-
-		StatEngine se = new StatEngine();
+		
 		Calendar init = new GregorianCalendar();
 		Calendar fin = new GregorianCalendar();
 		init.setTime(params.getFromDate());
@@ -517,7 +525,7 @@ public class StatEngineController {
 				&& fin.get(Calendar.YEAR) == currentYear.intValue()) {
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getMonthsStats(params));
+			list.addAll(getStatEngine().getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -567,7 +575,7 @@ public class StatEngineController {
 			params.setToDate(fecfin.getTime());
 			params.setInvoiceType(invoiceType);
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getMonthsStats(params));
+			list.addAll(getStatEngine().getMonthsStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -593,7 +601,6 @@ public class StatEngineController {
 	}
 
 	private void getDayStatititics() {
-		StatEngine se = new StatEngine();
 		try {
 			Calendar cal = new GregorianCalendar();
 			StatParams params = new StatParams();
@@ -608,7 +615,7 @@ public class StatEngineController {
 			params.setInvoiceType(invoiceType);
 			params.setWorkPlace(this.getParams().getWorkPlace());
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getDaysStats(params));
+			list.addAll(getStatEngine().getDaysStats(params));
 			setDayStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -653,11 +660,10 @@ public class StatEngineController {
 			params.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			refreshControllerDates(params);
 			params.setWorkPlace(this.getParams().getWorkPlace());
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
 			setDaysYear(currentYear);
-			list.addAll(se.getCustomerStats(params));
+			list.addAll(getStatEngine().getCustomerStats(params));
 			setCustomerStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -856,10 +862,9 @@ public class StatEngineController {
 
 	public void onCategoryStats(ActionEvent event) {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			list.addAll(se.getCategoryStats(params));
+			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
@@ -895,9 +900,8 @@ public class StatEngineController {
 					.getExternalContext();
 			Map<String, String> params = ec.getRequestParameterMap();
 			this.params.setCategory(Integer.parseInt(params.get("category")));
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getCategoryCustomerStats(this.params));
+			list.addAll(getStatEngine().getCategoryCustomerStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
@@ -922,9 +926,8 @@ public class StatEngineController {
 					.getExternalContext();
 			Map<String, String> params = ec.getRequestParameterMap();
 			this.params.setProduct(Integer.parseInt(params.get("product")));
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getProductRegistryStats(this.params));
+			list.addAll(getStatEngine().getProductRegistryStats(this.params));
 			setCustomerStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
@@ -957,9 +960,8 @@ public class StatEngineController {
 			c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 			params.setToDate(c.getTime());
 			params.setInvoiceType(invoiceType);
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
-			list.addAll(se.getSummaryStats(params));
+			list.addAll(getStatEngine().getSummaryStats(params));
 			setMonthStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_summary"));
@@ -974,10 +976,9 @@ public class StatEngineController {
 
 	public void onRegistryAbcStats(ActionEvent event) {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			list.addAll(se.getABCStatsByCustomer(params));
+			list.addAll(getStatEngine().getABCStatsByCustomer(params));
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -1002,10 +1003,9 @@ public class StatEngineController {
 
 	public void onProductAbcStats(ActionEvent event) {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			list.addAll(se.getABCStatsByProduct(params));
+			list.addAll(getStatEngine().getABCStatsByProduct(params));
 			setAbcStats(list);
 			calculateTotals(list);
 			if (invoiceType == 1) {
@@ -1032,10 +1032,9 @@ public class StatEngineController {
 
 	public void onCategoryAbcStats(ActionEvent event) {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			list.addAll(se.getABCStatsByCategory(params));
+			list.addAll(getStatEngine().getABCStatsByCategory(params));
 			setAbcStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_abcCategory"));
@@ -1095,12 +1094,10 @@ public class StatEngineController {
 	
 
 	private void getRegistryProductStatistics() throws ManagerBeanException {
-
-		StatEngine se = new StatEngine();
 		params.setCustomer(customer);
 		params.setInvoiceType(invoiceType);
 		List<Stat> list = new LinkedList<Stat>();
-		list.addAll(se.getRegistryProductStats(params));
+		list.addAll(getStatEngine().getRegistryProductStats(params));
 		setProductStats(list);
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(bundle, "stat_report_abcProduct"));
@@ -1110,12 +1107,10 @@ public class StatEngineController {
 
 	
 	private void getCustomerStatistics() throws ManagerBeanException {
-
-		StatEngine se = new StatEngine();
 		params.setCustomer(customer);
 		params.setInvoiceType(invoiceType);
 		List<Stat> list = new LinkedList<Stat>();
-		list.addAll(se.getAbcCustomerStats(params));
+		list.addAll(getStatEngine().getAbcCustomerStats(params));
 		setAbcStats(list);
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(bundle, "stat_report_abcCategory"));
@@ -1124,11 +1119,10 @@ public class StatEngineController {
 	}
 
 	private void getCategoryProductStatistics() throws ManagerBeanException {
-		StatEngine se = new StatEngine();
 		params.setCategory(category);
 		List<Stat> list = new LinkedList<Stat>();
 		params.setInvoiceType(invoiceType);
-		list.addAll(se.getCategoryProductsStats(params));
+		list.addAll(getStatEngine().getCategoryProductsStats(params));
 		setMonthStats(list);
 		calculateTotals(list);
 		if (invoiceType == 1) {
@@ -1232,10 +1226,9 @@ public class StatEngineController {
 	public void onProductBackAction(ActionEvent event)
 			throws ManagerBeanException {
 		try {
-			StatEngine se = new StatEngine();
 			List<Stat> list = new LinkedList<Stat>();
 			params.setInvoiceType(invoiceType);
-			list.addAll(se.getCategoryStats(params));
+			list.addAll(getStatEngine().getCategoryStats(params));
 			setYearStats(list);
 			calculateTotals(list);
 			setReportName(AonUtil.getMessage(bundle, "stat_report_category"));
@@ -1251,9 +1244,8 @@ public class StatEngineController {
 	public void onRegistryYearBackAction(ActionEvent event)
 			throws ManagerBeanException {
 		setParams(paramsBackUp);
-		StatEngine se = new StatEngine();
 		List<Stat> list = new LinkedList<Stat>();
-		list.addAll(se.getYearStats(params));
+		list.addAll(getStatEngine().getYearStats(params));
 		calculateTotals(list);
 		setReportName(AonUtil.getMessage(bundle, "stat_menu_acumulado"));
 		setItemTitle(AonUtil.getMessage(bundle, "stat_year"));

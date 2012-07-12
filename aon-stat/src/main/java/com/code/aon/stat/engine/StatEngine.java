@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -20,6 +22,24 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
 public class StatEngine {
+	
+	private List<Integer> currentUserWorkPlacesIds;
+
+	public StatEngine() {
+	}
+	public StatEngine(List<Integer> currentUserWorkPlacesIds) {
+		this.currentUserWorkPlacesIds = currentUserWorkPlacesIds;
+	}
+
+	private String getCurrentUserWorkPlacesIdsList() {
+		String ids = "";
+		ids = StringUtils.join(currentUserWorkPlacesIds, ",");
+		return ids;
+	}
+
+	private void addCurrentUserWorkPlacesSQLClause(StringBuffer stmt) {
+		stmt.append( " AND id.workplace IN ("+getCurrentUserWorkPlacesIdsList() + ")" );
+	}
 
 	public Collection<Stat> getYearStats(StatParams params)
 			throws ManagerBeanException {
@@ -44,6 +64,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY YEAR(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date) DESC");
@@ -129,6 +151,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY MONTH(i.issue_date)");
@@ -209,6 +233,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY DAY(i.issue_date)");
 			stmt.append(" ORDER BY DAY(i.issue_date)");
@@ -294,6 +320,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
@@ -371,6 +399,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY c.id");
 			stmt.append(" ORDER BY c.name");
@@ -455,6 +485,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
@@ -545,6 +577,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
@@ -632,6 +666,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
@@ -718,6 +754,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
@@ -802,6 +840,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
@@ -882,6 +922,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
@@ -967,6 +1009,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
@@ -1047,6 +1091,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
@@ -1127,6 +1173,8 @@ public class StatEngine {
 			}
 			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
 				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
 			}
 			stmt.append(" GROUP BY c.id,c.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,c.id,c.name");
@@ -1614,5 +1662,5 @@ public class StatEngine {
 			}
 		}
 	}
-
+	
 }
