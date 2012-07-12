@@ -25,6 +25,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -32,6 +33,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
@@ -663,16 +665,19 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public List<SelectItem> getHotelSeries(boolean rectification) throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		Scope scope = (!rectification) ? reservation.getHotelReservation().getScope() : obtainRectifiedInvoiceScope();
+
 		List<SelectItem> seriesList = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), ((ProjectReservation)this.getTo()).getHotelReservation().getScope().getId());
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), scope.getId());
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		if (rectification) {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), true);
 		} else {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
 		}
 		for (ITransferObject ito : seriesBean.getList(criteria)) {
 			Series series = (Series)ito;
@@ -680,6 +685,20 @@ public class ProjectReservationController extends BasicController implements IPm
 			seriesList.add(selectItem);
 		}
 		return seriesList;
+	}
+
+	private Scope obtainRectifiedInvoiceScope() throws ManagerBeanException {
+		for (ITransferObject ito : getInvoiceToRectificate().getDetailList()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), invoiceDetail.getWorkPlace());
+			for (ITransferObject itr : hotelBean.getList(criteria)) {
+				return ((Hotel)itr).getScope();
+			}
+			return invoiceDetail.getWorkPlace().getScope();
+		}
+		return getInvoiceToRectificate().getScope();
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
