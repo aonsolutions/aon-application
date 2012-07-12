@@ -692,7 +692,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), invoiceDetail.getWorkPlace());
+			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), invoiceDetail.getWorkPlace().getId());
 			for (ITransferObject itr : hotelBean.getList(criteria)) {
 				return ((Hotel)itr).getScope();
 			}
