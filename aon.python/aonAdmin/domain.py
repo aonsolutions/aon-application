@@ -170,7 +170,10 @@ class Domain(object):
 
     def set_domain_max_defined_users(self, value):
         if (value == None):
-            value = 1
+            if domain_type == DomainTypes.CHILD:
+                value = 0
+            else:
+                value = 1
         self.__domain_max_defined_users = value
     
     def set_domain_modules(self, value):
@@ -429,6 +432,24 @@ class Domain(object):
         if self.is_verbose_enabled():
             print "........... inserted with id=",self.get_user_id()
 
+    def insert_user_scope(self,db):
+        cur = db.cursor()
+        cur.execute("SELECT id,description FROM scope WHERE domain= %s",(self.get_domain_id(),))
+        if not int(cur.rowcount):
+            raise AonException(-50,"A suitable 'scope' can not be found.")
+        rows = cur.fetchall()
+        __scope_id = rows[0][0]
+        __scope_name = rows[0][1]
+        if self.is_verbose_enabled():
+            print "\tScope '"+__scope_name+"' found with id ",__scope_id
+        stmt = db.cursor()
+        if self.is_verbose_enabled():
+            print "\tTrying to insert user_scope (",self.get_user_id(),__scope_id,")",
+        stmt.execute("INSERT INTO user_scope (domain,user_id,scope) VALUES (%s,%s,%s)"
+                       ,(self.get_domain_id(),self.get_user_id(),__scope_id))
+        if self.is_verbose_enabled():
+            print "........... inserted with id=",db.insert_id()
+
     def __insert_application_user(self,db):
         stmt = db.cursor()
         if self.is_verbose_enabled():
@@ -483,7 +504,7 @@ class newDomain:
             domain.insert(conn)
             conn.commit()
             self.__load_domain_default_values(domain)
-
+            domain.insert_user_scope(conn)
             if self.__arguments.is_verbose_enabled():
                 print "Commiting Transaction ..... ",
             conn.commit()
