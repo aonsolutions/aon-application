@@ -18,6 +18,9 @@
 		<aon:valueParam name="lookupInputSuggestFrequency" default="0.6"/>
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
 		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.name} (#{lto.id})"/>
+
+		<aon:valueParam name="skipGoToButtonEx" default="#{skipGoToButton}"/>
+		<aon:valueParam name="skipNewButtonEx" default="#{skipNewButton}"/>
 		
 		<c:if test="#{!skipGoToButton}">		
 			<aon:valueParam name="goToBackActionListener" default="#{controller.beanName}#{'.onBack'}"/>

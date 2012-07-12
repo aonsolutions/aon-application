@@ -1852,6 +1852,10 @@ cursor:pointer;
 	}
 .aon-lookupInputText{
 	border:#808080 1px solid;
+	margin-right:0.2em;
+	}
+.aon-lookupSuggestText{
+	border:#808080 1px solid;
 	}
 .aon-lookupButton, .aon-lookupButtonPopup{
 	background:transparent url(images/aon-icon/aon-icon-lookup.png) scroll left center no-repeat;

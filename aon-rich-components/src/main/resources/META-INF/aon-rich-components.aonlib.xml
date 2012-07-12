@@ -6,7 +6,7 @@
 	</component>
 
 	<component localName="lookupSuggestText">
-    	<attribute name="styleClass" value="aon-lookupInputText" />
+    	<attribute name="styleClass" value="aon-lookupSuggestText" />
 	</component>
 	
 	<component localName="lookupButton">

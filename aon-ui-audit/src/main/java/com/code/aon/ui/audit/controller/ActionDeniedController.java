@@ -1,12 +1,15 @@
 package com.code.aon.ui.audit.controller;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
@@ -15,6 +18,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +75,10 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	private IControllerListener listener;
 	
+	private FakeMap skipManagedBean;
+	
+	private Set<String> enabledManagedBeans;
+	
 	public ActionDeniedController() {
 		User user = UserUtils.getInstance().getLoggedUser();
 		initDeniedModules(user);
@@ -81,6 +89,7 @@ public class ActionDeniedController implements IAuditConstants {
 		if ( AonUtil.isSkipLdap() ) {
 			this.listener = new UserLoookupListener();	
 		}
+		initEnabledManagedBeans();
 	}
 
 	private AuditController getAuditController() {
@@ -388,6 +397,36 @@ public class ActionDeniedController implements IAuditConstants {
 			}				
 		}
 		return list;
-	}		
+	}
+	
+	public void initEnabledManagedBeans() {
+		this.skipManagedBean = new FakeMap();
+		this.enabledManagedBeans = new HashSet<String>();
+		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(false) );
+		options.removeAll(this.deniedActionsMap.values());		
+		for( ApplicationOption option : options ) {
+			String managedBean = StringUtils.substringBefore(option.getAction(), "-");
+			this.enabledManagedBeans.add(StringUtils.substringBefore(managedBean, "_"));
+		}
+	}
+
+	public FakeMap getSkip() {
+		return skipManagedBean;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public class FakeMap extends AbstractMap<String,Boolean> {
+		
+		@Override
+		public Boolean get(Object key) {
+			return ! enabledManagedBeans.contains(key);
+		}
+
+		@Override
+		public Set entrySet() {
+			return null;
+		}
+		
+	}
 	
 }

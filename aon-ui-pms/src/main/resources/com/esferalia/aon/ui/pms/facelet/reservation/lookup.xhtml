@@ -8,7 +8,7 @@
 	<ui:param name="lookupInputSuggestValue" value="#{lookupTo.code}"/>
 	<ui:param name="lookupInputSuggestExpression" value="#{lto.code} (#{lto.hotel.workPlace.description}) (#{lto.startDate} - #{lto.endDate}) #{lto.guestFullName}"/>
 		
-	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookupAudit.xhtml" >
 		<ui:param name="lookupBean" value="#{reservationLookup}" />
 		<ui:param name="controller" value="#{reservation}" />
 		<ui:param name="lookupInputSuggestWidth" value="700"/>
