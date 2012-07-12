@@ -25,6 +25,8 @@ import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -135,9 +137,12 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 			IManagerBean posShiftBean = BeanManager.getManagerBean(PosShift.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_POS_WORK_PLACE_ID), searchListener.getHotel().getWorkPlace().getId());
-			criteria.addLessThanOrEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME), finance.getInvoice().getCreationDate());
-			criteria.addGreaterThanOrEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME), finance.getInvoice().getCreationDate());
 			criteria.addEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_USER_LOGIN), finance.getInvoice().getCreationUser());
+			criteria.addLessThanOrEqualExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_START_TIME), finance.getInvoice().getCreationDate());
+			String alias = posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME);
+			Expression exp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, finance.getInvoice().getCreationDate());
+			Expression exp2 = ExpressionUtilities.getNullExpression(alias);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
 			for (ITransferObject ito : posShiftBean.getList(criteria)) {
 				return (PosShift)ito;
 			}
@@ -161,8 +166,10 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 		String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(searchListener.getEndDate());
 		String hotel = searchListener.getHotel().getWorkPlace().getDescription();
 		String payMethod = searchListener.getPayMethod().getName();
-		if ((hotel+ payMethod).length() > 20) {
-			payMethod = payMethod.substring(0, 8);
+		if ((hotel+payMethod).length() > 20) {
+			if (payMethod.length() > 8) {
+				payMethod = payMethod.substring(0, 8);
+			}
 			hotel = hotel.substring(0, 20 - payMethod.length());
 		}
 
