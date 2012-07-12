@@ -302,7 +302,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Series_id</value>
+			<value>Series_code</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
