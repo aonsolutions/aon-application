@@ -240,4 +240,10 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 		}
 	}
 
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		Finance finance = (Finance)this.getModel().getRowData();
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, finance.getInvoice().getProject().getId(), IPmsConstants.POS_FINANCE_LIST_NAME, null);
+	}
+
 }

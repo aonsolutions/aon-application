@@ -110,6 +110,14 @@
 						
 						<aon:column>
 							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+							</f:facet>
+							<aon:outputText styleClass="aon-nowrap" 
+								value="#{to.documentNumber}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
 								<aon:outputText value="#{financeBundle.finance_finance_date}" />
 							</f:facet>
 							<aon:outputText value="#{to.dueDate}">
@@ -120,19 +128,20 @@
 				
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
-							</f:facet>
-							<aon:outputText styleClass="aon-nowrap" 
-								value="#{to.documentNumber}" />
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_source}" />
 							</f:facet>
 							<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.invoice.service and !to.invoice.advance}" />
 							<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.invoice.service}" />
 							<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.invoice.advance}" />
+							<aon:commandLink id="reservationLink" immediate="true"
+								styleClass="aon-button-goto"
+								style="padding-right: 20px;" 
+								value="&#160;"  
+								rendered="#{!to.invoice.service}" 
+								actionListener="#{posFinance.onLoadReservation}"
+								action="reservation_form"
+								reRender="aonContent">
+							</aon:commandLink>
 						</aon:column>
 
 						<aon:column>
