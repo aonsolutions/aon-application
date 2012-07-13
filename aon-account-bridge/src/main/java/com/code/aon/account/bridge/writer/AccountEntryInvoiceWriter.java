@@ -79,6 +79,7 @@ public class AccountEntryInvoiceWriter {
 		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
 			invoice.setRegistryAddress(null);
 		}
+		invoice.setUpdateEnabled(false);
 		invoice = (Invoice) invoiceBean.update(invoice);
 		unrecordInvoice(invoice);
 		return invoice;
@@ -113,7 +114,8 @@ public class AccountEntryInvoiceWriter {
 		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
 			invoice.setRegistryAddress(null);
 		}
-		invoice = (Invoice) invoiceBean.update(invoice);
+		invoice.setUpdateEnabled(false);
+		invoice = (Invoice)invoiceBean.update(invoice);
 		recordInvoice(invoice);
 		return invoice;
 	}
