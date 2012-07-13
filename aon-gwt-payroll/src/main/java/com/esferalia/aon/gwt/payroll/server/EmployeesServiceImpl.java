@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,11 +37,16 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.gwt.payroll.client.EmployeesService;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
@@ -48,8 +54,14 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RaddressColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
+import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * The server side implementation of the RPC service.
@@ -57,12 +69,12 @@ import com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController;
 @SuppressWarnings("serial")
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService {
-	
-	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = 
-			new HashMap<Object, Object>() {
+
+	private static final Map<Object, Object> JR_HTML_EXPORTER_PARAMS = new HashMap<Object, Object>() {
 		{
 			put(JRHtmlExporterParameter.HTML_HEADER, "<div class='page' >");
-			put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "</div><div class='page' >");
+			put(JRHtmlExporterParameter.BETWEEN_PAGES_HTML,
+					"</div><div class='page' >");
 			put(JRHtmlExporterParameter.HTML_FOOTER, "</div>");
 		}
 	};
@@ -84,75 +96,81 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throws IllegalArgumentException {
 		try {
 			Connection connection = getConnection();
-			if ( employee != null ) {
+			if (employee != null) {
 				return getSalaries(connection, employee.getId());
-			}
-			else {
+			} else {
 				Integer personId = getPersonID();
 				Integer enterpriseId = getEnterpriseID();
 				Date maxChargeDate = Calendar.getInstance().getTime();
-				return getSalaries(connection, enterpriseId, personId, maxChargeDate);
+				return getSalaries(connection, enterpriseId, personId,
+						maxChargeDate);
 			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
-	
 	public String getSalaryReceiptHTML(Salary salary, int zoom)
 			throws IllegalArgumentException {
 
-			Map<Object, Object> parameters = 
-					new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not roud to int*/);
-			
-			
-			Map<Object, Object> images = new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images );
-			String imagesUri = String.format( "jasper_image/salary/%d/", salary.getId());  
-			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri );
+		Map<Object, Object> parameters = new HashMap<Object, Object>(
+				JR_HTML_EXPORTER_PARAMS);
+		parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																		 * not
+																		 * roud
+																		 * to
+																		 * int
+																		 */);
 
-			String html  = getSalaryReceiptHTML(salary, parameters);
-			
-			for (Entry<Object, Object> image : images.entrySet()) {
-				String name = String.format("%s%s", imagesUri, image.getKey());
-				JasperImageServlet.saveImage(name,  ( byte [] )image.getValue());
-			}
-			
-			return html;
+		Map<Object, Object> images = new HashMap<Object, Object>();
+		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
+		String imagesUri = String.format("jasper_image/salary/%d/",
+				salary.getId());
+		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+
+		String html = getSalaryReceiptHTML(salary, parameters);
+
+		for (Entry<Object, Object> image : images.entrySet()) {
+			String name = String.format("%s%s", imagesUri, image.getKey());
+			JasperImageServlet.saveImage(name, (byte[]) image.getValue());
+		}
+
+		return html;
 	}
 
 	public String getSalaryReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 
-			Map<Object, Object> parameters = 
-					new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not roud to int*/);
-			
-			
-			Map<Object, Object> images = new HashMap<Object, Object>();
-			parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images );
-			
-			String imagesUri = String.format( "jasper_image/salary/%d/%d/%d/%d/",
-					cost.getMonth(),
-					cost.getYear(),
-					cost.getWorkplaceId(),
-					cost.getEnterpriseId() );  
-			
-			parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri );
+		Map<Object, Object> parameters = new HashMap<Object, Object>(
+				JR_HTML_EXPORTER_PARAMS);
+		parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																		 * not
+																		 * roud
+																		 * to
+																		 * int
+																		 */);
 
-			String html  = getSalaryReceiptHTML(cost, parameters);
-			
-			for (Entry<Object, Object> image : images.entrySet()) {
-				String name = String.format("%s%s", imagesUri, image.getKey());
-				JasperImageServlet.saveImage(name,  ( byte [] )image.getValue());
-			}
-			
-			return html;
+		Map<Object, Object> images = new HashMap<Object, Object>();
+		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
+
+		String imagesUri = String.format("jasper_image/salary/%d/%d/%d/%d/",
+				cost.getMonth(), cost.getYear(), cost.getWorkplaceId(),
+				cost.getEnterpriseId());
+
+		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+
+		String html = getSalaryReceiptHTML(cost, parameters);
+
+		for (Entry<Object, Object> image : images.entrySet()) {
+			String name = String.format("%s%s", imagesUri, image.getKey());
+			JasperImageServlet.saveImage(name, (byte[]) image.getValue());
+		}
+
+		return html;
 	}
 
-	public String getSalaryReceiptHTML(Salary salary, Map<Object, Object> parameters )
-			throws IllegalArgumentException {
+	public String getSalaryReceiptHTML(Salary salary,
+			Map<Object, Object> parameters) throws IllegalArgumentException {
 
 		try {
 
@@ -169,10 +187,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			reportManager.setCollectionProvider(new AonServletUtils.SalaryProvider(criteria));
+			reportManager
+					.setCollectionProvider(new AonServletUtils.SalaryProvider(
+							criteria));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
+
 			reportManager.execute(out, salaryReport, parameters);
 
 			return out.toString();
@@ -184,12 +204,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
-			releaseFacesContext();			
+			releaseFacesContext();
 		}
 
 	}
-	
-	public String getSalaryReceiptHTML(Cost cost, Map<Object, Object> parameters )
+
+	public String getSalaryReceiptHTML(Cost cost, Map<Object, Object> parameters)
 			throws IllegalArgumentException {
 		try {
 
@@ -200,7 +220,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			reportManager.setCollectionProvider(getSalariesProvider(cost));
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
+
 			String salaryReport = getSalaryReport();
 			reportManager.execute(out, salaryReport, parameters);
 
@@ -213,10 +233,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
-			releaseFacesContext();			
+			releaseFacesContext();
 		}
 	}
-	
+
 	public String getCostReceiptHTML(Cost cost, int zoom)
 			throws IllegalArgumentException {
 		try {
@@ -224,24 +244,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			ReportManager reportManager = new ReportManager();
 			reportManager.setOutputFormat(OutputFormat.HTML);
-			
-			reportManager.setCollectionProvider(getSalariesProvider(cost) );
-			
-			// Really I hate this spaghetti piece of code. 
-			// For pass 'month' & 'year' to a report, we 
-			// must put it in a controller ?????. 
-			SalaryExpenseController controller = 
-					(SalaryExpenseController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
+
+			reportManager.setCollectionProvider(getSalariesProvider(cost));
+
+			// Really I hate this spaghetti piece of code.
+			// For pass 'month' & 'year' to a report, we
+			// must put it in a controller ?????.
+			SalaryExpenseController controller = (SalaryExpenseController) AonUtil
+					.getRegisteredBean(IPayrollConstants.SALARY_EXPENSE_CONTROLLER_NAME);
 			controller.setShowSalaryExpenseWindow(false);
 			controller.setYear(cost.getYear());
-			Month month = Month.getMonthByValue(cost.getMonth() );
+			Month month = Month.getMonthByValue(cost.getMonth());
 			controller.setMonth(month);
-			
+
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
-			Map<Object, Object> parameters = new HashMap<Object, Object>(JR_HTML_EXPORTER_PARAMS);
-			parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /* not round to int*/);
-			reportManager.execute(out, IPayrollConstants.COST_REPORT, parameters);
+
+			Map<Object, Object> parameters = new HashMap<Object, Object>(
+					JR_HTML_EXPORTER_PARAMS);
+			parameters
+					.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																			 * not
+																			 * round
+																			 * to
+																			 * int
+																			 */);
+			reportManager.execute(out, IPayrollConstants.COST_REPORT,
+					parameters);
 
 			return out.toString();
 
@@ -252,7 +280,55 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			// TODO Auto-generated catch block
 			throw new IllegalArgumentException(e);
 		} finally {
-			releaseFacesContext();			
+			releaseFacesContext();
+		}
+
+	}
+
+	public String getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom)
+			throws IllegalArgumentException {
+		Map<Object, Object> parameters = new HashMap<Object, Object>(
+				JR_HTML_EXPORTER_PARAMS);
+		parameters.put(JRHtmlExporterParameter.ZOOM_RATIO, zoom / 100.00f /*
+																		 * not
+																		 * roud
+																		 * to
+																		 * int
+																		 */);
+		String html = getSalaryDraftReceiptHTML(salaryDraft, parameters);
+
+		return html;
+	}
+	
+	public String getSalaryDraftReceiptHTML(SalaryDraft draft, Map<Object, Object> parameters)
+			throws IllegalArgumentException {
+
+		try {
+
+			initFacesContext();
+
+			ReportManager reportManager = new ReportManager();
+			reportManager.setOutputFormat(OutputFormat.HTML);
+			
+			ISalary salary = getSalary(draft);
+			
+			ICollectionProvider provider = 
+					new CollectionProvider(salary);
+			
+			reportManager.setCollectionProvider(provider);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+			String salaryReport = getSalaryReport();
+			reportManager.execute(out, salaryReport, parameters);
+
+			return out.toString();
+
+		} catch (ReportException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();
 		}
 
 	}
@@ -266,66 +342,63 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			throw new ReportException(e.getLocalizedMessage());
 		}
 	}
-	
-	
-	private static ICollectionProvider getSalariesProvider(Cost cost) throws ManagerBeanException{
+
+	private static ICollectionProvider getSalariesProvider(Cost cost)
+			throws ManagerBeanException {
 		IManagerBean beanManager = BeanManager
 				.getManagerBean(com.esferalia.aon.payroll.Salary.class);
 		Criteria criteria = new Criteria();
-		
+
 		Calendar calendar = Calendar.getInstance();
-		calendar.set( Calendar.YEAR, cost.getYear());
-		calendar.set( Calendar.MONTH, cost.getMonth());
-		calendar.set( Calendar.DAY_OF_MONTH, 1); // The first day of the month has value 1.
-		calendar.set( Calendar.HOUR, 0);
-		calendar.set( Calendar.MINUTE, 0);
-		calendar.set( Calendar.SECOND, 0);
-				
+		calendar.set(Calendar.YEAR, cost.getYear());
+		calendar.set(Calendar.MONTH, cost.getMonth());
+		calendar.set(Calendar.DAY_OF_MONTH, 1); // The first day of the month
+												// has value 1.
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+
 		Date startDate = calendar.getTime();
-		
-		calendar.set(Calendar.DAY_OF_MONTH, 
+
+		calendar.set(Calendar.DAY_OF_MONTH,
 				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		Date endDate = calendar.getTime();
-		
-		if ( cost.getWorkplaceId() != 0  ){
+
+		if (cost.getWorkplaceId() != 0) {
+			criteria.addEqualExpression(beanManager
+					.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID),
+					cost.getWorkplaceId());
+		} else {
 			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID ),
-					cost.getWorkplaceId() );
+					beanManager
+							.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID),
+					cost.getEnterpriseId());
 		}
-		else {
-			criteria.addEqualExpression(
-					beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID ),
-					cost.getEnterpriseId() );
-		}
-		
+
 		criteria.addBetweenExpression(
 				beanManager.getFieldName(IEntityAlias.SALARY_END_DATE),
-				startDate, 
-				endDate );
-		
-		criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
-		criteria.addOrder(beanManager.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
-		
-		
+				startDate, endDate);
+
+		criteria.addOrder(beanManager
+				.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
+		criteria.addOrder(beanManager
+				.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
+
 		return new AonServletUtils.SalaryProvider(criteria);
 	}
 
-
-	private static List<Salary> getSalaries(Connection connection, Integer contractId)
-			throws SQLException {
+	private static List<Salary> getSalaries(Connection connection,
+			Integer contractId) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
 		try {
-			
-			
-			String sql = "SELECT * " 
-					+ " FROM " + SALARY 
-					+ " WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = ?"
-					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC" ;
-			
-			
+
+			String sql = "SELECT * " + " FROM " + SALARY + " WHERE " + SALARY
+					+ "." + SalaryColumns.CONTRACT + " = ?" + " ORDER BY "
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC";
+
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, contractId);
 			rs = stmt.executeQuery();
@@ -334,14 +407,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			while (rs.next()) {
 				Salary salary = new Salary();
 				salary.setId(rs.getInt(SalaryColumns.ID));
-				
+
 				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
 				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
 				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
 				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
-				
-				salary.setType(getSalaryType((Integer) rs.getObject(SalaryColumns.TYPE)));
-				
+
+				salary.setType(getSalaryType((Integer) rs
+						.getObject(SalaryColumns.TYPE)));
+
 				salaries.add(salary);
 			}
 
@@ -355,9 +429,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
-	private static List<Cost> getEnterpriseCosts(Connection connection, Integer enterpriseId)
-			throws SQLException {
+
+	private static List<Cost> getEnterpriseCosts(Connection connection,
+			Integer enterpriseId) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -365,22 +439,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
-			
-			String sql = "SELECT"
-					+" MONTH("+ SALARY +"."+SalaryColumns.CHARGE_DATE+") " + monthCol
-					+", YEAR("+ SALARY +"."+SalaryColumns.CHARGE_DATE+") " + yearCol
-					+" FROM "+ENTERPRISE
-					+", "+WORKPLACE
-					+", "+CONTRACT
-					+", "+SALARY
-					+" WHERE"
-					+" "+ENTERPRISE+"."+ EnterpriseColumns.REGISTRY +" = "+WORKPLACE+"."+WorkplaceColumns.ENTERPRISE
-					+" AND "+WORKPLACE+"." + WorkplaceColumns.ID + " = "+CONTRACT+"." + ContractColumns.WORKPLACE
-					+" AND "+CONTRACT+"."+ ContractColumns.ID +" = "+ SALARY +"." + SalaryColumns.CONTRACT
-					+" AND "+ENTERPRISE+"."+EnterpriseColumns.REGISTRY+" = ?" 
-					+" GROUP BY 1, 2"
-					+" ORDER BY 2 DESC , 1 DESC";
 
+			String sql = "SELECT" + " MONTH(" + SALARY + "."
+					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ " FROM " + ENTERPRISE + ", " + WORKPLACE + ", "
+					+ CONTRACT + ", " + SALARY + " WHERE" + " " + ENTERPRISE
+					+ "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE
+					+ "." + WorkplaceColumns.ENTERPRISE + " AND " + WORKPLACE
+					+ "." + WorkplaceColumns.ID + " = " + CONTRACT + "."
+					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "."
+					+ ContractColumns.ID + " = " + SALARY + "."
+					+ SalaryColumns.CONTRACT + " AND " + ENTERPRISE + "."
+					+ EnterpriseColumns.REGISTRY + " = ?" + " GROUP BY 1, 2"
+					+ " ORDER BY 2 DESC , 1 DESC";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, enterpriseId);
@@ -388,23 +460,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			List<Cost> costs = new LinkedList<Cost>();
 			while (rs.next()) {
-				
+
 				int month = rs.getInt(monthCol);
-				// MySQL MONTH(date) function returns the month for date, 
-				// in the range 1 to 12 for January to December, or 0 for 
-				// dates such as '0000-00-00' or '2008-00-00' that have a zero month part.
-				if ( month == 0 ) {
+				// MySQL MONTH(date) function returns the month for date,
+				// in the range 1 to 12 for January to December, or 0 for
+				// dates such as '0000-00-00' or '2008-00-00' that have a zero
+				// month part.
+				if (month == 0) {
 					continue;
-				} 
-				
-				
+				}
+
 				Cost cost = new Cost();
 				int year = rs.getInt(yearCol);
-				
+
 				cost.setYear(year);
-				cost.setMonth(month -1 ); 
+				cost.setMonth(month - 1);
 				cost.setEnterpriseId(enterpriseId);
-				
+
 				costs.add(cost);
 			}
 
@@ -418,9 +490,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
-	private static List<Cost> getWorkplaceCosts(Connection connection, Integer workplaceId)
-			throws SQLException {
+
+	private static List<Cost> getWorkplaceCosts(Connection connection,
+			Integer workplaceId) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
@@ -428,20 +500,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			String yearCol = "YEAR";
 			String monthCol = "MONTH";
-			
-			String sql = "SELECT"
-					+" MONTH("+ SALARY +"."+SalaryColumns.CHARGE_DATE+") " + monthCol
-					+", YEAR("+ SALARY +"."+SalaryColumns.CHARGE_DATE+") " + yearCol
-					+" FROM "+WORKPLACE
-					+", "+CONTRACT
-					+", "+SALARY
-					+" WHERE"
-					+" "+WORKPLACE+"." + WorkplaceColumns.ID + " = "+CONTRACT+"." + ContractColumns.WORKPLACE
-					+" AND "+CONTRACT+"."+ ContractColumns.ID +" = "+ SALARY +"." + SalaryColumns.CONTRACT
-					+" AND "+WORKPLACE+"."+WorkplaceColumns.ID+" = ?" 
-					+" GROUP BY 1, 2"
-					+" ORDER BY 2 DESC , 1 DESC";
 
+			String sql = "SELECT" + " MONTH(" + SALARY + "."
+					+ SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol
+					+ " FROM " + WORKPLACE + ", " + CONTRACT + ", " + SALARY
+					+ " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID
+					+ " = " + CONTRACT + "." + ContractColumns.WORKPLACE
+					+ " AND " + CONTRACT + "." + ContractColumns.ID + " = "
+					+ SALARY + "." + SalaryColumns.CONTRACT + " AND "
+					+ WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " GROUP BY 1, 2" + " ORDER BY 2 DESC , 1 DESC";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
@@ -449,23 +518,23 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			List<Cost> costs = new LinkedList<Cost>();
 			while (rs.next()) {
-				
+
 				int month = rs.getInt(monthCol);
-				// MySQL MONTH(date) function returns the month for date, 
-				// in the range 1 to 12 for January to December, or 0 for 
-				// dates such as '0000-00-00' or '2008-00-00' that have a zero month part.
-				if ( month == 0 ) {
+				// MySQL MONTH(date) function returns the month for date,
+				// in the range 1 to 12 for January to December, or 0 for
+				// dates such as '0000-00-00' or '2008-00-00' that have a zero
+				// month part.
+				if (month == 0) {
 					continue;
-				} 
-				
-				
+				}
+
 				Cost cost = new Cost();
 				int year = rs.getInt(yearCol);
-				
+
 				cost.setYear(year);
-				cost.setMonth(month -1 ); 
+				cost.setMonth(month - 1);
 				cost.setWorkplaceId(workplaceId);
-				
+
 				costs.add(cost);
 			}
 
@@ -479,46 +548,95 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
 
-	private static Enterprise getEnterprise(Integer registryID, Connection connection)
-			throws SQLException {
+	private static Enterprise getEnterprise(Integer registryID,
+			Connection connection) throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
 		try {
-			String sql = "SELECT * " 
-					+ " FROM " 
-					
-					+ REGISTRY 
-					+ ", " + ENTERPRISE 
-					//+ ", " + WORKPLACE 
-					+ " LEFT JOIN " + WORKPLACE  + " ON ( " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " )"
-					//+ ", " + RADDRESS 
-					+ " LEFT JOIN " + RADDRESS  + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID + ")"
-					//+ ", " + CONTRACT 
-					+ " LEFT JOIN " + CONTRACT  + " ON ( " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE + ")"
-					//+ ", " + PERSON 
-					+ " LEFT JOIN " + PERSON  + " ON ( " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY + ")"
-					
-					+ " WHERE " + REGISTRY + "."
-					+ RegistryColumns.ID + " = ?" 
-					+ " AND " + REGISTRY + "." + RegistryColumns.ID + " = " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY 
-					
-					//+ " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE 
-					//+ " AND " + WORKPLACE + "." + WorkplaceColumns.ADDRESS + " = " + RADDRESS + "." + RaddressColumns.ID 
-					//+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = " + CONTRACT + "." + ContractColumns.WORKPLACE 
-					//+ " AND " + CONTRACT + "." + ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY
+			String sql = "SELECT * " + " FROM "
 
-					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
-					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )"
-					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID 
-					+ " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
+					+ REGISTRY
+					+ ", "
+					+ ENTERPRISE
+					// + ", " + WORKPLACE
+					+ " LEFT JOIN "
+					+ WORKPLACE
+					+ " ON ( "
+					+ ENTERPRISE
+					+ "."
+					+ EnterpriseColumns.REGISTRY
+					+ " = "
+					+ WORKPLACE
+					+ "."
+					+ WorkplaceColumns.ENTERPRISE
+					+ " )"
+					// + ", " + RADDRESS
+					+ " LEFT JOIN "
+					+ RADDRESS
+					+ " ON ( "
+					+ WORKPLACE
+					+ "."
+					+ WorkplaceColumns.ADDRESS
+					+ " = "
+					+ RADDRESS
+					+ "."
+					+ RaddressColumns.ID
+					+ ")"
+					// + ", " + CONTRACT
+					+ " LEFT JOIN " + CONTRACT
+					+ " ON ( "
+					+ WORKPLACE
+					+ "."
+					+ WorkplaceColumns.ID
+					+ " = "
+					+ CONTRACT
+					+ "."
+					+ ContractColumns.WORKPLACE
+					+ ")"
+					// + ", " + PERSON
+					+ " LEFT JOIN " + PERSON + " ON ( " + CONTRACT + "."
+					+ ContractColumns.PERSON
+					+ " = "
+					+ PERSON
+					+ "."
+					+ PersonColumns.REGISTRY
+					+ ")"
+
+					+ " WHERE "
+					+ REGISTRY
+					+ "."
+					+ RegistryColumns.ID
+					+ " = ?"
+					+ " AND "
+					+ REGISTRY
+					+ "."
+					+ RegistryColumns.ID
+					+ " = "
+					+ ENTERPRISE
+					+ "."
+					+ EnterpriseColumns.REGISTRY
+
+					// + " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY
+					// + " = " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE
+					// + " AND " + WORKPLACE + "." + WorkplaceColumns.ADDRESS +
+					// " = " + RADDRESS + "." + RaddressColumns.ID
+					// + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
+					// + CONTRACT + "." + ContractColumns.WORKPLACE
+					// + " AND " + CONTRACT + "." + ContractColumns.PERSON +
+					// " = " + PERSON + "."+ PersonColumns.REGISTRY
+
+					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE
+					+ " IS NULL" + " OR " + CONTRACT + "."
+					+ ContractColumns.END_DATE + " >= ? )" + " ORDER BY "
+					+ WORKPLACE + "." + WorkplaceColumns.ID + " ," + PERSON
+					+ "." + PersonColumns.FIRST_SURNAME;
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
-			
+
 			stmt.setDate(2, getMonthStartDate());
 			rs = stmt.executeQuery();
 
@@ -531,19 +649,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					workplaceHandler);
 
 			groups(rs, enterpriseHandler, workplaceHandler, employeeHandler);
-			
+
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
-			
-			List<Cost> enterpriseCosts = getEnterpriseCosts(connection, enterprise.getId());
+
+			List<Cost> enterpriseCosts = getEnterpriseCosts(connection,
+					enterprise.getId());
 			enterprise.setCosts(enterpriseCosts);
-			
+
 			List<Workplace> workplaces = enterprise.getWorkplaces();
 			for (Workplace workplace : workplaces) {
-				List<Cost> workplaceCosts = 
-						getWorkplaceCosts(connection, workplace.getId());
+				List<Cost> workplaceCosts = getWorkplaceCosts(connection,
+						workplace.getId());
 				workplace.setCosts(workplaceCosts);
 			}
-			
 
 			return enterprise;
 		} finally {
@@ -555,27 +673,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
-	
-	
-	private static List<Salary> getSalaries(Connection connection, Integer enterpriseID, Integer personId, Date toDate)
+
+	private static List<Salary> getSalaries(Connection connection,
+			Integer enterpriseID, Integer personId, Date toDate)
 			throws SQLException {
 
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 
 		try {
-			
-			
-			String sql = "SELECT " + SALARY + ".* "  
-					+" FROM " + SALARY 
-					+", " + CONTRACT 
-					+", " + WORKPLACE 
-					+" WHERE " + SALARY + "." + SalaryColumns.CONTRACT + " = " + CONTRACT + "." +  ContractColumns.ID
-					+" AND " + CONTRACT + "." +  ContractColumns.WORKPLACE + " = " + WORKPLACE + "." + WorkplaceColumns.ID  
-					+" AND " + CONTRACT + "." + ContractColumns.PERSON + " = ? "
-					+" AND " + WORKPLACE + "." + WorkplaceColumns.ENTERPRISE + " = ? "
-					+" AND " + SALARY + "." + SalaryColumns.CHARGE_DATE + " <= ? "
-					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE + " DESC" ;
+
+			String sql = "SELECT " + SALARY + ".* " + " FROM " + SALARY + ", "
+					+ CONTRACT + ", " + WORKPLACE + " WHERE " + SALARY + "."
+					+ SalaryColumns.CONTRACT + " = " + CONTRACT + "."
+					+ ContractColumns.ID + " AND " + CONTRACT + "."
+					+ ContractColumns.WORKPLACE + " = " + WORKPLACE + "."
+					+ WorkplaceColumns.ID + " AND " + CONTRACT + "."
+					+ ContractColumns.PERSON + " = ? " + " AND " + WORKPLACE
+					+ "." + WorkplaceColumns.ENTERPRISE + " = ? " + " AND "
+					+ SALARY + "." + SalaryColumns.CHARGE_DATE + " <= ? "
+					+ " ORDER BY " + SALARY + "." + SalaryColumns.CHARGE_DATE
+					+ " DESC";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, personId);
@@ -583,19 +701,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt.setDate(3, new java.sql.Date(toDate.getTime()));
 			rs = stmt.executeQuery();
 
-
 			List<Salary> salaries = new LinkedList<Salary>();
 			while (rs.next()) {
 				Salary salary = new Salary();
 				salary.setId(rs.getInt(SalaryColumns.ID));
-				
+
 				salary.setStartDate(rs.getDate(SalaryColumns.START_DATE));
 				salary.setEndDate(rs.getDate(SalaryColumns.END_DATE));
 				salary.setIssueDate(rs.getDate(SalaryColumns.ISSUE_DATE));
 				salary.setChargeDate(rs.getDate(SalaryColumns.CHARGE_DATE));
-				
-				salary.setType(getSalaryType((Integer) rs.getObject(SalaryColumns.TYPE)));
-				
+
+				salary.setType(getSalaryType((Integer) rs
+						.getObject(SalaryColumns.TYPE)));
+
 				salaries.add(salary);
 			}
 
@@ -609,8 +727,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	
+	private static ISalary getSalary ( SalaryDraft draft ) {
+		SalaryBuilder salaryBuilder = new SalaryBuilder();
 
+		ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 
+		calculator.setSalaryBuilder(salaryBuilder);
+		
+		ISalaryCalculatorContext ctx;
+		try {
+			ctx = getSalaryCalculatorContext(draft);
+			return calculator.calculate(ctx);
+		} catch (ExpressionException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException e) {
+			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		}
+		
+	}
+
+	private static ISalaryCalculatorContext getSalaryCalculatorContext(SalaryDraft draft) 
+			throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+		
+		Date startDate = draft.getStartDate(); 
+		Date endDate = draft.getEndDate(); 
+		Date issueDate = draft.getIssueDate(); 
+
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, criteria);
+		ctx.next();
+		return ctx;
+	}
 
 	private static void groups(ResultSet rs, GroupHandler... handlers)
 			throws SQLException {
@@ -641,26 +801,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 		return one.equals(another);
 	}
-	
-	
+
 	private static Salary.Type getSalaryType(Integer ordinal) {
-		if ( ordinal == null || ordinal < 0 ) { 
+		if (ordinal == null || ordinal < 0) {
 			return null;
 		}
-		
-		Salary.Type types [] = Salary.Type.values();
-		
-		if ( ordinal >= types.length ) {
+
+		Salary.Type types[] = Salary.Type.values();
+
+		if (ordinal >= types.length) {
 			return null;
 		}
-		
+
 		return types[ordinal];
 	}
 
 	private static String tableCol(String table, String col) {
 		return String.format("%1$s.%2$s", table, col);
 	}
-
 
 	private static interface GroupHandler {
 
@@ -702,11 +860,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		@Override
 		public void beginGroup(ResultSet rs) throws SQLException {
 			enterprise = new Enterprise();
-			enterprise.setId(rs.getInt(tableCol(REGISTRY,
-					RegistryColumns.ID)));
+			enterprise.setId(rs.getInt(tableCol(REGISTRY, RegistryColumns.ID)));
 			enterprise.setName(rs.getString(tableCol(REGISTRY,
 					RegistryColumns.NAME)));
-			
+
 		}
 
 	}
@@ -732,8 +889,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		@Override
 		public void beginGroup(ResultSet rs) throws SQLException {
 			workplace = new Workplace();
-			workplace.setId(rs.getInt(tableCol(WORKPLACE,
-					WorkplaceColumns.ID)));
+			workplace
+					.setId(rs.getInt(tableCol(WORKPLACE, WorkplaceColumns.ID)));
 			workplace.setAddress(rs.getString(tableCol(RADDRESS,
 					RaddressColumns.ADDRESS)));
 			workplace.setDescription(rs.getString(tableCol(WORKPLACE,
@@ -757,6 +914,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		public void beginGroup(ResultSet rs) throws SQLException {
 			Employee employee = new Employee();
 			employee.setId(rs.getInt(tableCol(CONTRACT, ContractColumns.ID)));
+			employee.setPerson(rs.getInt(tableCol(PERSON,
+					PersonColumns.REGISTRY)));
 			employee.setName(rs.getString(tableCol(PERSON, PersonColumns.NAME)));
 			employee.setFirstSurname(rs.getString(tableCol(PERSON,
 					PersonColumns.FIRST_SURNAME)));
@@ -765,12 +924,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			workplaceHandler.getWorkplace().addEmployee(employee);
 		}
 	}
-	
+
 	private static java.sql.Date getMonthStartDate() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set( Calendar.DAY_OF_MONTH, 1);
-		
-		return new java.sql.Date ( calendar.getTimeInMillis());
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+		return new java.sql.Date(calendar.getTimeInMillis());
 	}
 
 }

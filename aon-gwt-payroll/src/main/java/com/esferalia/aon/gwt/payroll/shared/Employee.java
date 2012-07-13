@@ -12,6 +12,8 @@ public class Employee implements Serializable {
 	
 	private int id;
 	
+	private int person;
+
 	private String name ;
 	private String firstSurname;
 	private String secondSurname;
@@ -22,6 +24,14 @@ public class Employee implements Serializable {
 	
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public int getPerson() {
+		return person;
+	}
+	
+	public void setPerson(int personId) {
+		this.person = personId;
 	}
 	
 	public String getName() {

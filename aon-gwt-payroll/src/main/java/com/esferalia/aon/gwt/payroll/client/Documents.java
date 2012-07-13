@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Reports extends ResizeComposite {
+public class Documents extends ResizeComposite {
 	
 	
 	private static final int ZOOM_STEP = 20;
@@ -32,7 +32,7 @@ public class Reports extends ResizeComposite {
 
 	private static final int DEFAULT_ZOOM = 135;
 	
-	interface Binder extends UiBinder<Widget, Reports> { }
+	interface Binder extends UiBinder<Widget, Documents> { }
 	private static final Binder binder = GWT.create(Binder.class);
 
 	@UiField Label 	text;
@@ -55,37 +55,37 @@ public class Reports extends ResizeComposite {
 	
 	private int zoom = DEFAULT_ZOOM;
 
-	private	IReportsModel<IDocument> 		documents;
+	private	ISpinnable<IDocument> 		documents;
 	
-	public Reports() {
+	public Documents() {
 		initWidget(binder.createAndBindUi(this));
 		
 		firstButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				documents.first();
-				onReportChanged();
+				onDocumentChanged();
 			}
 		});
 		previousButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				documents.previous();
-				onReportChanged();
+				onDocumentChanged();
 			}
 		});
 		nextButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				documents.next();
-				onReportChanged();
+				onDocumentChanged();
 			}
 		});
 		lastButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent arg0) {
 				documents.last();
-				onReportChanged();
+				onDocumentChanged();
 			}
 		});
 		printButton.addClickHandler(new ClickHandler() {
@@ -143,13 +143,13 @@ public class Reports extends ResizeComposite {
 	}
 	
 	
-	public void setReports ( IReportsModel<IDocument> documents){
+	public void setDocuments ( ISpinnable<IDocument> documents){
 		this.documents = documents;
-		onReportChanged();
+		onDocumentChanged();
 	}
 	
 
-	private void onReportChanged(){
+	private void onDocumentChanged(){
 		
 		
 		setEnabled(firstButton, documents.hasPrevious());

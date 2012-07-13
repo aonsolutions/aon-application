@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -21,5 +22,7 @@ public interface EmployeesServiceAsync {
 	void getSalaryReceiptHTML(Cost cost, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 	void getSalaryReceiptHTML(Salary salary, int zoom, AsyncCallback<String> callback)
+			throws IllegalArgumentException;
+	void getSalaryDraftReceiptHTML(SalaryDraft salaryDraft, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 }

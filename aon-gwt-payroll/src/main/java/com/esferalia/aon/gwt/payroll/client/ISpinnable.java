@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-public interface IReportsModel<E> {
+public interface ISpinnable<E> {
 	
 	E current();
 	int currentIndex();

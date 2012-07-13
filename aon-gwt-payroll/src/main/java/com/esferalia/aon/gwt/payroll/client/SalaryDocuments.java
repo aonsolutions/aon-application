@@ -10,18 +10,18 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-class SalaryReportsModel extends AbstractReportsModel<IDocument>
+class SalaryDocuments extends AbstractSpinnable<IDocument>
 		implements IDocument {
 
 	private List<Salary> salaries;
 	
 	private EmployeesServiceAsync employeesService;
 
-	public SalaryReportsModel(Salary salary, EmployeesServiceAsync employeesService) {
+	public SalaryDocuments(Salary salary, EmployeesServiceAsync employeesService) {
 		this(Arrays.asList(salary),employeesService);
 	}
 
-	public SalaryReportsModel(List<Salary> salaries, EmployeesServiceAsync employeesService) {
+	public SalaryDocuments(List<Salary> salaries, EmployeesServiceAsync employeesService) {
 		this.salaries = salaries;
 		this.employeesService = employeesService;
 		first();

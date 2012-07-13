@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 
-public abstract class AbstractReportsModel<E  extends IDocument> implements IReportsModel<E> {
+public abstract class AbstractSpinnable<E  extends IDocument> implements ISpinnable<E> {
 	
 	private int current ;
 	

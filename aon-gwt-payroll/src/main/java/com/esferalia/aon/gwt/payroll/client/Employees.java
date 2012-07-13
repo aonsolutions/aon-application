@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.List;
 
+import com.code.aon.ui.registry.controller.PersonController;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 
@@ -32,9 +35,15 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 	public interface Images extends ClientBundle, Tree.Resources {
 		ImageResource draft();
 
+		ImageResource data();
+
+		ImageResource calendar();
+
 		ImageResource enterprise();
 
 		ImageResource workplace();
+
+		ImageResource costs();
 
 		ImageResource salaries();
 
@@ -50,11 +59,15 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 	private EmployeeDetail employeeDetail;
 
-	private Reports reports;
+	private JSF jsf;
+	private Documents documents;
+	private SalaryDraft salaryDraft;
 
 	public Employees() {
-		
-		reports = new Reports();
+
+		jsf = new JSF();
+		documents = new Documents();
+		salaryDraft = new SalaryDraft();
 
 		images = GWT.create(Images.class);
 		tree = new Tree(images);
@@ -88,11 +101,14 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(
 				images.enterprise(), enterprise.getName(), workplaces.size()));
 
-		List<Cost> enterpriseCosts = enterprise.getCosts();
-		IReportsModel<IDocument> documents = new CostReportsModel(enterpriseCosts);
-		enterpriseItem.setUserObject(documents);
-
+		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
+
+		List<Cost> enterpriseCosts = enterprise.getCosts();
+		ISpinnable<IDocument> documents = new CostDocuments(enterpriseCosts);
+		TreeItem enterpriseCostsItem = addImageItem(enterpriseItem, "Costos",
+				enterpriseCosts.size(), images.costs());
+		enterpriseCostsItem.setUserObject(documents);
 
 		for (Workplace workplace : workplaces) {
 
@@ -102,16 +118,21 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 
 			TreeItem workplaceItem = addImageItem(enterpriseItem, description,
 					employees.size(), images.workplace());
+			workplaceItem.setUserObject(workplace);
 
 			List<Cost> workplaceCosts = workplace.getCosts();
-			IReportsModel<IDocument> workplaceReports = new CostReportsModel(
+			ISpinnable<IDocument> workplaceReports = new CostDocuments(
 					workplaceCosts);
-			workplaceItem.setUserObject(workplaceReports);
+
+			TreeItem workplaceCostsItem = addImageItem(workplaceItem, "Costos",
+					enterpriseCosts.size(), images.costs());
+			workplaceCostsItem.setUserObject(workplaceReports);
 
 			TreeItem workplaceSalariesItem = addImageItem(workplaceItem,
 					"Nominas", workplaceCosts.size(), images.salaries());
-			workplaceSalariesItem.setUserObject(new SalaryCostReportsModel(workplaceCosts));
-			
+			workplaceSalariesItem.setUserObject(new SalaryCostDocuments(
+					workplaceCosts));
+
 			for (Employee employee : employees) {
 				String fullName = employee.getFullname();
 				// fullName = StringUtils.capitalizeFully(fullName, DELIMITERS);
@@ -121,6 +142,21 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 				employeeItem.setUserObject(employee);
 
 				addImageItem(employeeItem, "Nominas", 0, images.salaries());
+
+				TreeItem salaryDraftItem = addImageItem(employeeItem,
+						"Borrador", 0, images.draft());
+
+				com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft = 
+						new com.esferalia.aon.gwt.payroll.shared.SalaryDraft();
+				salaryDraft.setEmployee(employee);
+				salaryDraft.setType(Salary.Type.SALARY);
+
+				salaryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+				salaryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+				salaryDraft.setIssueDate(salaryDraft.getEndDate());
+
+				salaryDraftItem.setUserObject(new SalaryDraftDocument(
+						salaryDraft));
 
 			}
 		}
@@ -145,9 +181,30 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 	public void onSelection(SelectionEvent<TreeItem> event) {
 		TreeItem item = event.getSelectedItem();
 		Object userObject = item.getUserObject();
-		if (userObject instanceof IReportsModel<?>) {
-			onReportsSelected((IReportsModel<IDocument>) userObject);
+		// TODO : I know that's so ugly and not Object oriented. But
+		// it's much more clear than anything else. I promise
+		// to change ( even improve ) it soon.
+		if (userObject instanceof Enterprise) {
+			onEnterpriseSelected((Enterprise) userObject);
+			return;
 		}
+		if (userObject instanceof Workplace) {
+			onWorkplaceSelected((Workplace) userObject);
+			return;
+		}
+		if (userObject instanceof Employee) {
+			onEmployeeSelected((Employee) userObject);
+			return;
+		}
+		if (userObject instanceof ISpinnable<?>) {
+			onDocumentsSelected((ISpinnable<IDocument>) userObject);
+			return;
+		}
+		if (userObject instanceof SalaryDraftDocument) {
+			onSalaryDraftSelected((SalaryDraftDocument) userObject);
+			return;
+		}
+
 	}
 
 	private void onEmployeeOpen(TreeItem employeeItem) {
@@ -176,18 +233,43 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 									images.salaries(), "Nominas",
 									salaries.size()));
 						}
-						IReportsModel<IDocument> documents = new SalaryReportsModel(
+						ISpinnable<IDocument> documents = new SalaryDocuments(
 								salaries, employeesService);
 						salariesItem.setUserObject(documents);
 					}
 				});
 	}
-	
 
-	private void onReportsSelected(IReportsModel<IDocument> documents) {
-		employeeDetail.setWidget(reports);
-		reports.setReports(documents);
-		//employeeDetail.getSalaryReceipt().setReports(documents);
+	private void onEnterpriseSelected(Enterprise enterprise) {
+		jsf.setUrl(GWT.getHostPageBaseURL()
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/enterprise.jsf");
+		employeeDetail.setWidget(jsf);
+	}
+
+	private void onWorkplaceSelected(Workplace workplace) {
+		jsf.setUrl(GWT.getHostPageBaseURL()
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/workplace.jsf"
+				+ "?controller=payrollWorkPlace&payrollWorkPlace_id="
+				+ workplace.getId());
+		employeeDetail.setWidget(jsf);
+	}
+
+	private void onEmployeeSelected(Employee employee) {
+		jsf.setUrl(GWT.getHostPageBaseURL()
+				+ "/com/esferalia/aon/gwt/payroll/facelet/employee/contract.jsf"
+				+ "?controller=contract&contract_id=" + employee.getId()
+				+ "&controller=person&person_id=" + employee.getPerson());
+		employeeDetail.setWidget(jsf);
+	}
+
+	private void onDocumentsSelected(ISpinnable<IDocument> docs) {
+		employeeDetail.setWidget(documents);
+		documents.setDocuments(docs);
+	}
+
+	private void onSalaryDraftSelected(SalaryDraftDocument draft) {
+		employeeDetail.setWidget(salaryDraft);
+		salaryDraft.setSalaryDraft(draft);
 	}
 
 	/**
@@ -211,12 +293,12 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 				+ title + (childs > 0 ? " (" + childs + ")" : "");
 	}
 
-	private class CostReportsModel extends AbstractReportsModel<IDocument>
-			implements IDocument {
+	private class CostDocuments extends AbstractSpinnable<IDocument> implements
+			IDocument {
 
 		private List<Cost> costs;
 
-		public CostReportsModel(List<Cost> costs) {
+		public CostDocuments(List<Cost> costs) {
 			this.costs = costs;
 			first();
 		}
@@ -263,12 +345,12 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		}
 	}
 
-	private class SalaryCostReportsModel extends AbstractReportsModel<IDocument>
+	private class SalaryCostDocuments extends AbstractSpinnable<IDocument>
 			implements IDocument {
 
 		private List<Cost> costs;
 
-		public SalaryCostReportsModel(List<Cost> costs) {
+		public SalaryCostDocuments(List<Cost> costs) {
 			this.costs = costs;
 			first();
 		}
@@ -313,5 +395,46 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 		public String[] getSupportedFormats() {
 			return new String[] {};
 		}
+	}
+
+	private class SalaryDraftDocument implements ISalaryDraft {
+
+		private com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft;
+
+		public SalaryDraftDocument(
+				com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft) {
+			this.salaryDraft = salaryDraft;
+		}
+
+		@Override
+		public void print() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void download() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void download(String format) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public String[] getSupportedFormats() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void getAsHTML(int zoom, AsyncCallback<String> callback) {
+			employeesService.getSalaryDraftReceiptHTML(salaryDraft, zoom,
+					callback);
+		}
+
 	}
 }

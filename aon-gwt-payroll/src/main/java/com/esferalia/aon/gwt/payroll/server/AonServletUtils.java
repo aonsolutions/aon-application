@@ -45,7 +45,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RattachColumns;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-class AonServletUtils {
+public class AonServletUtils {
 
 	protected static class RAttach {
 		
@@ -84,6 +84,7 @@ class AonServletUtils {
 		}
 	}
 
+
 	protected static Connection getConnection() {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Connection connection = HibernateUtil.getSQLConnection(sessionName);
@@ -99,7 +100,7 @@ class AonServletUtils {
 		return fileName.substring(0, fileName.lastIndexOf('.'));
 	}
 
-	protected static void initFacesContext(ServletContext context, HttpServletRequest request, HttpServletResponse response ) {
+	public static void initFacesContext(ServletContext context, HttpServletRequest request, HttpServletResponse response ) {
 		try {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			if (facesContext != null) {
@@ -129,7 +130,7 @@ class AonServletUtils {
 		}
 	}
 
-	protected static void releaseFacesContext() {
+	public static void releaseFacesContext() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (facesContext != null) {
 			facesContext.release();
