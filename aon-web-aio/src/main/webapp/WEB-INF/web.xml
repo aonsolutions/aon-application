@@ -305,7 +305,8 @@
 	<!-- DOMAIN MANAGER CONFIGURATION -->
 	<listener>
 		<listener-class>
-			com.code.aon.ui.common.domain.ServletContextDomainListener</listener-class>
+			com.code.aon.ui.common.domain.ServletContextDomainListener
+		</listener-class>
 	</listener>
 
 	<!-- Sessions Filter -->
@@ -331,6 +332,16 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>aonBeanSelectorFilter</filter-name>
+		<filter-class>com.esferalia.aon.gwt.payroll.filter.AonBeanSelectorFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>aonBeanSelectorFilter</filter-name>
+		<url-pattern>/com/esferalia/aon/gwt/payroll/facelet/*</url-pattern>
+	</filter-mapping>
+
 
 	<!-- Audit Filter <filter> <filter-name>AuditFilter</filter-name> <filter-class>com.code.aon.ui.audit.session.AuditSessionFilter</filter-class> 
 		</filter> <filter-mapping> <filter-name>AuditFilter</filter-name> <url-pattern>/index.jsp</url-pattern> 
@@ -348,7 +359,8 @@
 	<!-- Bean Loader Listener -->
 	<listener>
 		<listener-class>
-			com.code.aon.ui.common.listener.BeanRegisterContextListener</listener-class>
+			com.code.aon.ui.common.listener.BeanRegisterContextListener
+		</listener-class>
 	</listener>
 
 	<!-- Listener, that does all the startup work (configuration, init). -->
