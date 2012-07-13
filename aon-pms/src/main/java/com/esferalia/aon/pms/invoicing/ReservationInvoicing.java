@@ -231,7 +231,11 @@ public class ReservationInvoicing implements IReservationConstants {
 				invoiceDetail.setTaxDataInDetail(true);
 				for (TaxBreakDown taxBreakDown : advanceDetail.getTaxBreakDowns()) {
 					invoiceDetail.setVatPercent(taxBreakDown.getTaxPercent());
-					invoiceDetail.setVatQuota(taxBreakDown.getTaxQuota() * (-1));
+					if (taxBreakDown.getTaxQuota() != 0) {
+						invoiceDetail.setVatQuota(taxBreakDown.getTaxQuota() * (-1));
+					} else {
+						invoiceDetail.setVatQuota(CommonUtil.round(invoiceDetail.getTaxableBase() * taxBreakDown.getTaxPercent() / 100));
+					}
 				}
 				invoiceDetail.getInvoice().setUpdateEnabled(true);
 				invoiceDetailBean.insert(invoiceDetail);
