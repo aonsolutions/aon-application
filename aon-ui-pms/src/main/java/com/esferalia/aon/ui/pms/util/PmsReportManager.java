@@ -364,154 +364,129 @@ public class PmsReportManager {
 	 */
 	
 	public String getRoomBookingCheckInSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
-		String select = "( SELECT "
-				+ " W.description As Nombre,"
-				+ " PR.start_date  As Fecha,"
-				+ " Count(PRR.id) As Cantidad,"
-				+ " sum(PRR.adults)+sum(PRR.children) As Pax, PR.project"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
-				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND isnull(PRRD.asset_activity)"
-				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
-				+ " AND PR.start_date between :start AND :end"
-				+ " GROUP BY 1, PR.project )"
-				+ " UNION"
-				+ " ( SELECT" 
-				+ " W.description As Nombre,"
-				+ " AA.date As Fecha,"
-				+ " Count(distinct PRR.id) As Cantidad,"
-				+ " sum(PRR.adults+PRR.children)/count(distinct AA.date)  As Pax, PR.project"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
-				+ " LEFT JOIN asset_activity AS AA ON PRRD.asset_activity=AA.id"
-				+ " LEFT JOIN asset as A ON AA.asset=A.id"
-				+ " LEFT JOIN room AS R ON A.id=R.asset"
-				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE "
-				+ "     PR.start_date <= :end "
-				+ " AND PR.end_date >= :start "
-				+ " AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND not isnull(PRRD.asset_activity)"
-				+ " AND R.hotel IN (" + getHotelIds(hotel) + ")" 
-				+ " AND AA.date between :start AND :end"	
-				+ " AND R.Hotel NOT IN (SELECT R2.hotel FROM room AS R2 "
-				+ "                     LEFT JOIN asset as A2 ON A2.id=R2.asset "
-				+ "                     LEFT JOIN asset_activity AS AA2 ON AA2.asset=A2.id "
-				+ "                     LEFT JOIN project_reservation_room_detail AS PRRD2 ON PRRD2.asset_activity=AA2.id "
-				+ "                     WHERE AA2.date = date(AA.date + INTERVAL -1 DAY) AND PRRD2.project_reservation_room=PRRD.project_reservation_room)"	
-				+ " GROUP BY PR.project,AA.date"
-				+ " )"
-				+ " ORDER BY 1, 2";
+		String select = " " +
+				"(SELECT W.description As Nombre, PR.start_date  As Fecha, Count(PRR.id) As Cantidad," +
+				" sum(PRR.adults)+sum(PRR.children) As Pax, PR.project" +
+				" FROM project_reservation_room as PRR" +
+				" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id" +
+				" LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project" +
+				" LEFT JOIN hotel AS H ON PR.hotel=H.id" +
+				" LEFT JOIN workplace AS W ON H.workplace=W.id" +
+				" WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
+				" AND isnull(PRRD.asset_activity)" +
+				" AND PR.hotel IN ( " + getHotelIds(hotel) + " )" +
+				" AND PR.start_date between :start AND :end" +
+				" GROUP BY 1, PR.project )" +
+				" UNION" +
+				" (SELECT W.description As Nombre, AA.date As Fecha, Count(distinct PRR.id) As Cantidad," +
+				" sum(PRR.adults+PRR.children)  As Pax, PR.project" +
+				" FROM project_reservation_room as PRR, project_reservation_room_detail AS PRRD," +
+				" asset_activity AS AA, room AS R, project_reservation AS PR," +
+				" hotel AS H, workplace AS W" +
+				" WHERE PRRD.project_reservation_room=PRR.id" +
+				" AND PRRD.asset_activity=AA.id" +
+				" AND AA.asset=R.asset" +
+				" AND PRR.project_reservation=PR.project" +
+				" AND R.hotel=H.id AND H.workplace=W.id" +
+				" AND PR.start_date <= :end AND PR.end_date >= :start" +
+				" AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
+				" AND R.hotel IN ( " + getHotelIds(hotel) + " )" +
+				" AND AA.date between :start AND :end" +
+				" AND (AA.date > PR.start_date " +
+				" AND R.Hotel NOT IN (SELECT distinct R2.hotel " +
+				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2 " +
+				"				,project_reservation_room AS PRR2, project_reservation AS PR2 " +
+				"               WHERE PR2.project=PR.project " +
+				"				AND PRR2.project_reservation=PRR.project_reservation " +
+				"               AND PRRD2.project_reservation_room=PRRD.project_reservation_room " +
+				"				AND PRRD2.asset_activity=AA2.id " +
+				"               AND AA2.date = date(AA.date + INTERVAL -1 DAY) " + 
+				"               AND AA2.asset=R.asset )) " +
+				" GROUP BY 1,AA.date)" +
+				" ORDER BY 1,2"
+				;
 	return select;
 	}
 	
 	public String getRoomBookingCheckOutSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
-		String select = "(SELECT "
-				+ " W2.description As Nombre,"
-				+ " PR.end_date  As Fecha,"
-				+ " Count(PRR.id) As Cantidad,"
-				+ " sum(PRR.adults)+sum(PRR.children) As Pax, PR.project, 'PR.date'"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
-				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN hotel AS H2 ON PR.hotel=H2.id"
-				+ " LEFT JOIN workplace AS W2 ON H2.workplace=W2.id"
-				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND isnull(PRRD.asset_activity)"
-				+ " AND PR.hotel IN (" + getHotelIds(hotel) + ")"
-				+ " AND PR.end_date between :start AND :end"
-				+ " GROUP BY 1, PR.project"
-				+ " )"
-				+ " UNION"
-				+ " (SELECT" 
-				+ " W.description As Nombre,"
-				+ " date(AA.date + INTERVAL 1 DAY) As Fecha,"
-				+ " Count(distinct PRR.id) As Cantidad,"
-				+ " sum(PRR.adults+PRR.children)/count(distinct AA.date)  As Pax, PR.project, 'AA.date'"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id"
-				+ " LEFT JOIN asset_activity AS AA ON PRRD.asset_activity=AA.id"
-				+ " LEFT JOIN asset as A ON AA.asset=A.id"
-				+ " LEFT JOIN room AS R ON A.id=R.asset"
-				+ " LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project"
-				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE "
-				+ "     PR.start_date <= :end "
-				+ " AND PR.end_date >= :start "
-				+ " AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):(""))
-				+ " AND not isnull(PRRD.asset_activity)"
-				+ " AND R.hotel IN (" + getHotelIds(hotel) + ")" 
-				+ " AND AA.date between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)"
-				+ " AND R.Hotel NOT IN (SELECT R2.hotel FROM room AS R2 "
-				+ "                     LEFT JOIN asset as A2 ON A2.id=R2.asset "
-				+ "                     LEFT JOIN asset_activity AS AA2 ON AA2.asset=A2.id "
-				+ "                     LEFT JOIN project_reservation_room_detail AS PRRD2 ON PRRD2.asset_activity=AA2.id "
-				+ "                     WHERE AA2.date = date(AA.date + INTERVAL 1 DAY) AND PRRD2.project_reservation_room=PRRD.project_reservation_room)"	
-				+ " GROUP BY PR.project,AA.date"
-				+ " )"
-				+ " ORDER BY 1, 2"
-
+		String select = " " +
+				"(SELECT W.description As Nombre, PR.end_date  As Fecha, Count(PRR.id) As Cantidad," +
+				" sum(PRR.adults)+sum(PRR.children) As Pax, PR.project" +
+				" FROM project_reservation_room as PRR" +
+				" LEFT JOIN project_reservation_room_detail AS PRRD ON PRRD.project_reservation_room=PRR.id" +
+				" LEFT JOIN project_reservation AS PR ON PRR.project_reservation=PR.project" +
+				" LEFT JOIN hotel AS H ON PR.hotel=H.id" +
+				" LEFT JOIN workplace AS W ON H.workplace=W.id" +
+				" WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
+				" AND isnull(PRRD.asset_activity)" +
+				" AND PR.hotel IN ( " + getHotelIds(hotel) + " )" +
+				" AND PR.end_date between :start AND :end" +
+				" GROUP BY 1, PR.project )" +
+				" UNION" +
+				" (SELECT W.description As Nombre, date(AA.date + INTERVAL 1 DAY) As Fecha, Count(distinct PRR.id) As Cantidad," +
+				" sum(PRR.adults+PRR.children)  As Pax, PR.project" +
+				" FROM project_reservation_room as PRR, project_reservation_room_detail AS PRRD," +
+				" asset_activity AS AA, room AS R, project_reservation AS PR," +
+				" hotel AS H, workplace AS W" +
+				" WHERE PRRD.project_reservation_room=PRR.id" +
+				" AND PRRD.asset_activity=AA.id" +
+				" AND AA.asset=R.asset" +
+				" AND PRR.project_reservation=PR.project" +
+				" AND R.hotel=H.id AND H.workplace=W.id" +
+				" AND PR.start_date <= :end AND PR.end_date >= :start" +
+				" AND PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4" +
+				" AND R.hotel IN ( " + getHotelIds(hotel) + " )" +
+				" AND AA.date between (date(:start) + INTERVAL -1 DAY) AND (date(:end) + INTERVAL -1 DAY)" +
+				" AND (AA.date < date(PR.end_date + INTERVAL -1 DAY) " +
+				" AND R.Hotel NOT IN (SELECT R2.hotel" +
+				"               FROM room AS R2, asset_activity AS AA2, project_reservation_room_detail AS PRRD2" +
+				"				,project_reservation_room AS PRR2, project_reservation AS PR2 " +
+				"               WHERE PR2.project=PR.project " +
+				"				AND PRR2.project_reservation=PRR.project_reservation " +
+				"               AND PRRD2.project_reservation_room=PRRD.project_reservation_room " +
+				"				AND PRRD2.asset_activity=AA2.id " +
+				"               AND AA2.date = date(AA.date + INTERVAL 1 DAY)" +   
+				"               AND AA2.asset=R.asset ))" +
+				" GROUP BY 1,AA.date)" +
+				" ORDER BY 1,2"
 				;
 		return select;
 	}
 	
-	public String getRoomBookingFirstDayOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
-		
-		String select = "" 
-				+ " (SELECT W.description," 
-				+ " count(PRR.id)," 
-				+ " sum(PRR.adults)+sum(PRR.children)"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRR.id=PRRD.project_reservation_room"
-				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRR.project_reservation"
-				+ " LEFT JOIN hotel AS H ON H.id=PR.hotel"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ " AND PR.start_date <= :start "
-				+ " AND PR.end_date > :start "
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) 
-				+ " AND isnull(PRRD.asset_activity) AND PR.hotel IN ( " + getHotelIds(hotel) + " ) "
-				+ " GROUP BY 1)"
-				+ " UNION"
-				+ " (SELECT W.description," 
-				+ " count(PRR.id)," 
-				+ " sum(PRR.adults)+sum(PRR.children)"
-				+ " FROM project_reservation_room as PRR"
-				+ " LEFT JOIN project_reservation_room_detail AS PRRD ON PRR.id=PRRD.project_reservation_room"
-				+ " LEFT JOIN asset_activity AS AA ON AA.id=PRRD.asset_activity"
-				+ " LEFT JOIN room AS R ON R.asset=AA.asset"
-				+ " LEFT JOIN project_reservation AS PR ON PR.project=PRR.project_reservation"
-				+ " LEFT JOIN hotel AS H ON H.id=R.hotel"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE PR.status <> 2 AND PR.check_status <> 3 AND PR.check_status <> 4"
-				+ " AND PR.start_date <= :start "
-				+ " AND PR.end_date >= :start "
-				+ ((agency!=null && agency.getId()!=null)?(" AND PR.agency = " + agency.getId()):(""))
-				+ ((item!=null && item.getId()!=null)?(" AND PRR.item = " + item.getId()):("")) 
-				+ " AND not isnull(PRRD.asset_activity) "
-				+ " AND AA.date=:start AND AA.status = " + ActivityStatus.BUSY.getValue()+" AND R.hotel IN (" + getHotelIds(hotel) + ") "
-				+ " GROUP BY 1)"
-				+ " ORDER BY 1"
+	public String getRoomBookingAssignedOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
+		String select = " " +
+				" (SELECT W.description d, AA.date, count(PRR.id) c, sum(PRR.adults)+sum(PRR.children) s" +
+				" FROM asset_activity as AA, room as R, hotel as H, workplace as W" +
+				" ,project_reservation_room as PRR, project_reservation_room_detail as PRRD" +
+				" WHERE AA.id = PRRD.asset_activity AND PRRD.project_reservation_room = PRR.id " +
+				" AND AA.asset = R.asset AND R.hotel = H.id AND H.workplace = W.id" +
+				" AND AA.status = 0" +
+				" AND W.id in ( " + getHotelIds(hotel) + " )" +
+				" AND AA.date BETWEEN :start AND :end" +
+				" GROUP BY 1, AA.date)" +
+				" ORDER BY 1,2"
 				;
 		return select;
 	}
 	
+	public String getRoomBookingNotAssignedOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
+		String select = " " +
+				"select w.description, count(prr.id), prr.adults + prr.children, pr.start_date, pr.end_date " +
+				"from project_reservation_room as prr " + 
+				"left join project_reservation_room_detail as prrd on prr.id=prrd.project_reservation_room, " +
+				"project_reservation as pr, hotel as h, workplace as w " +
+				"where prrd.id is null " +
+				"AND pr.status <> 2 AND pr.check_status <> 3 AND pr.check_status <> 4 "+
+				"and prr.project_reservation=pr.project " +
+				"and pr.hotel=h.id and h.workplace=w.id " +
+				"and pr.hotel IN ( " + getHotelIds(hotel) + " ) " +
+				"and pr.start_date <= :end " +
+				"and pr.end_date >= :start " +
+				"group by pr.project " +
+				"order by w.description, pr.start_date " 
+				;
+		return select;
+	}
 	
 	public String getBlockedRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
 		String select = "SELECT W.description, AA.date, count(R.hotel)"

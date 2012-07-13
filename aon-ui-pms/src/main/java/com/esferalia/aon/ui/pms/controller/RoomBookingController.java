@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -15,6 +18,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -103,7 +107,8 @@ public class RoomBookingController implements ICollectionProvider {
 		
 		String checkinSelect = reportManager.getRoomBookingCheckInSQL(getHotel(), getAgency(), getItem());
 		String checkoutSelect = reportManager.getRoomBookingCheckOutSQL(getHotel(), getAgency(), getItem());
-		String occupationSelect = reportManager.getRoomBookingFirstDayOccupationSQL(getHotel(), getAgency(), getItem());
+		String notAssignedOccupationSelect = reportManager.getRoomBookingNotAssignedOccupationSQL(getHotel(), getAgency(), getItem());
+		String assignedOccupationSelect = reportManager.getRoomBookingAssignedOccupationSQL(getHotel(), getAgency(), getItem());
 		String roomsSelect = reportManager.getHotelRoomsSQL(getHotel(), getItem());
 		String blockedRoomsSelect = reportManager.getBlockedRoomsSQL(getHotel(), getItem());
 
@@ -117,8 +122,12 @@ public class RoomBookingController implements ICollectionProvider {
 		checkoutQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
 		checkoutQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
 		
-		Query occupationQuery = session.createSQLQuery(occupationSelect);
-		occupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		Query notAssignedOccupationQuery = session.createSQLQuery(notAssignedOccupationSelect);
+		notAssignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		
+		Query assignedOccupationQuery = session.createSQLQuery(assignedOccupationSelect);
+		assignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		assignedOccupationQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
 
 		Query roomsQuery = session.createSQLQuery(roomsSelect);
 		
@@ -128,13 +137,16 @@ public class RoomBookingController implements ICollectionProvider {
 
 		Iterator checkinIterator = checkinQuery.list().iterator();
 		Iterator checkoutIterator = checkoutQuery.list().iterator();
-		Iterator occupationIterator = occupationQuery.list().iterator();
+		Iterator notAssignedOccupationIterator = getNotAssignedOccupationList(session, getHotel(), getAgency(), getItem()).iterator();
+//		Iterator notAssignedOccupationIterator = notAssignedOccupationQuery.list().iterator();
+		Iterator assignedOccupationIterator = assignedOccupationQuery.list().iterator();
 		Iterator roomsIterator = roomsQuery.list().iterator();
 		Iterator blockedRoomsIterator = blockedRoomsQuery.list().iterator();
 		
 		Object checkin = checkinIterator.hasNext()?checkinIterator.next():null;
 		Object checkout = checkoutIterator.hasNext()?checkoutIterator.next():null;
-		Object occupation = occupationIterator.hasNext()?occupationIterator.next():null;
+		Object notAssignedOccupation = notAssignedOccupationIterator.hasNext()?notAssignedOccupationIterator.next():null;
+		Object assignedOccupation = assignedOccupationIterator.hasNext()?assignedOccupationIterator.next():null;
 		Object rooms = roomsIterator.hasNext()?roomsIterator.next():null;
 		Object blockedRooms = blockedRoomsIterator.hasNext()?blockedRoomsIterator.next():null;
 		
@@ -166,30 +178,40 @@ public class RoomBookingController implements ICollectionProvider {
 					checkoutHotel = checkout!=null?(String) (((Object[])checkout)[0]):null;
 				}
 			}
-			// Se cargan la ocupacion de habitaciones y el total de huespedes
-			String occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
-			if( booking.getDate().equals(getFromDate()) ){
-				if( !booking.getHotel().equals(occupationHotel) ){
-					booking.setRoomBusy( 0 );
-					booking.setGuestTotal( 0 );
-					roomBusy = 0;
-					guestTotal = 0;
-				} else {
-					while(booking.getHotel().equals(occupationHotel) && occupation!=null){
-						roomBusy = booking.getRoomBusy() + ((BigInteger) (((Object[])occupation)[1])).intValue();
-						booking.setRoomBusy( roomBusy );
-						guestTotal = booking.getGuestTotal() + ((BigDecimal) (((Object[])occupation)[2])).intValue();
-						booking.setGuestTotal( guestTotal );
-						occupation = occupationIterator.hasNext()?occupationIterator.next():null;
-						occupationHotel = occupation!=null?((String) ((Object[])occupation)[0]):null;
-					}
+						
+			String occupationHotel = null;
+			Date occupationDate = null;
+			
+			// Se cargan la ocupacion de habitaciones asignadas y el total de huespedes
+			occupationHotel = assignedOccupation!=null?((String) ((Object[])assignedOccupation)[0]):null;
+			occupationDate = assignedOccupation!=null?((Date) ((Object[])assignedOccupation)[1]):null;
+			while ( booking.getDate().equals(occupationDate) && booking.getHotel().equals(occupationHotel) ){
+				if(assignedOccupation!=null){
+					roomBusy = ((BigInteger) (((Object[])assignedOccupation)[2])).intValue();
+					guestTotal = ((BigDecimal) (((Object[])assignedOccupation)[3])).intValue();
+					booking.setRoomBusy( booking.getRoomBusy() + roomBusy );
+					booking.setGuestTotal( booking.getGuestTotal() + guestTotal );
+					assignedOccupation = assignedOccupationIterator.hasNext()?assignedOccupationIterator.next():null;
+					occupationHotel = assignedOccupation!=null?((String) ((Object[])assignedOccupation)[0]):null;
+					occupationDate = assignedOccupation!=null?((Date) ((Object[])assignedOccupation)[1]):null;
 				}
-			} else {
-				roomBusy += (booking.getRoomCheckin() - booking.getRoomCheckout());
-				booking.setRoomBusy( roomBusy );
-				guestTotal += (booking.getGuestCheckin() - booking.getGuestCheckout());
-				booking.setGuestTotal( guestTotal );
 			}
+
+			// Se cargan la ocupacion de habitaciones no asignadas y el total de huespedes
+			occupationHotel = notAssignedOccupation!=null?((String) ((Object[])notAssignedOccupation)[0]):null;
+			occupationDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[1]):null;
+			while ( booking.getDate().equals(occupationDate) && booking.getHotel().equals(occupationHotel) ){
+				if(notAssignedOccupation!=null){
+					roomBusy = ((Integer) (((Object[])notAssignedOccupation)[2])).intValue();
+					guestTotal = ((Integer) (((Object[])notAssignedOccupation)[3])).intValue();
+					booking.setRoomBusy( booking.getRoomBusy() + roomBusy );
+					booking.setGuestTotal( booking.getGuestTotal() + guestTotal );
+					notAssignedOccupation = notAssignedOccupationIterator.hasNext()?notAssignedOccupationIterator.next():null;
+					occupationHotel = notAssignedOccupation!=null?((String) ((Object[])notAssignedOccupation)[0]):null;
+					occupationDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[1]):null;
+				}
+			}
+			
 			// Se cargan las habitaciones bloqueadas
 			String blockedRoomHotel = blockedRooms!=null?((String) ((Object[])blockedRooms)[0]):null;
 			Date blockedRoomDate = blockedRooms!=null?((Date) ((Object[])blockedRooms)[1]):null;
@@ -208,6 +230,55 @@ public class RoomBookingController implements ICollectionProvider {
 				booking.setRoomTotal( ((BigInteger) (((Object[])rooms)[1])).intValue() );
 			}
 		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private List getNotAssignedOccupationList(Session session, Hotel hotel, Customer customer, Item item) throws ManagerBeanException {
+		PmsReportManager reportManager = PmsReportManager.getInstance();
+		String notAssignedOccupationSelect = reportManager.getRoomBookingNotAssignedOccupationSQL(hotel, customer, item);
+		Query notAssignedOccupationQuery = session.createSQLQuery(notAssignedOccupationSelect);
+		notAssignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		notAssignedOccupationQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
+		Iterator notAssignedOccupationIterator = notAssignedOccupationQuery.list().iterator();
+		
+		List<Object[]> list = new LinkedList<Object[]>();
+		ListIterator listIt = list.listIterator();
+		while(notAssignedOccupationIterator.hasNext()){
+			Object notAssignedOccupation = notAssignedOccupationIterator.hasNext()?notAssignedOccupationIterator.next():null;
+			list.addAll(getReservationOccupationList(notAssignedOccupation));
+		}
+		
+		Collections.sort(list, new Comparator() {  
+	        public int compare(Object o1, Object o2) {  
+	            String hotel1 = (String)((Object[]) o1)[0];  
+	            Date date1 = (Date)((Object[]) o1)[1];  
+	            String hotel2 = (String)((Object[]) o2)[0];  
+	            Date date2 = (Date)((Object[]) o2)[1];
+	            if(hotel2.equals(hotel1)){
+	            	return date1.compareTo(date2);
+	            } else {
+	            	return 1;
+	            }  
+	        }  
+	    });  
+		return list;
+	}
+	
+	private List<Object[]> getReservationOccupationList(Object notAssignedOccupation){
+		List<Object[]> list = new LinkedList<Object[]>();
+		String hotelName = notAssignedOccupation!=null?((String) ((Object[])notAssignedOccupation)[0]):null;
+		Integer roomCount = notAssignedOccupation!=null?((BigInteger) ((Object[])notAssignedOccupation)[1]).intValue():null;
+		Integer guestCount = notAssignedOccupation!=null?((Integer) ((Object[])notAssignedOccupation)[2]).intValue():null;
+		Date startDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[3]):null;
+		Date endDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[4]):null;
+		while(startDate.before(endDate) || startDate.equals(endDate)){
+			if(startDate.compareTo(getFromDate()) >= 0 && startDate.compareTo(getToDate()) <= 0){
+				Object[] o = {hotelName, startDate, roomCount, guestCount};
+				list.add(o);	
+			}
+			startDate = DateUtils.addDays(startDate, 1);
+		}
+		return list;
 	}
 	
 	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{
