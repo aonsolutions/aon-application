@@ -57,4 +57,9 @@ public interface IReservationConstants {
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";
 	String SOAP_SERVER_URL = "PMS_SOAP_SERVER_URL";
+
+	String UNDEFINED_TARIFF = "PMS_UNDEFINED_TARIFF";
+	String UNDEFINED_ROOM_ITEM = "PMS_UNDEFINED_ROOM_ITEM";
+	String UNDEFINED_SERVICE_ITEM = "PMS_UNDEFINED_SERVICE_ITEM";
+
 }

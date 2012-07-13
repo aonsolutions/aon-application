@@ -330,9 +330,9 @@ public class ReservationManager implements IReservationConstants {
 					reservationRoom.setProjectReservation(reservation);
 					reservationRoom.setDomain(getReservationUtils().getDomain());
 					reservationRoom.setRoomIndex(stay.getIndexNumber());
-					reservationRoom.setItem(getReservationUtils().obtainRoomItem(stay.getRoomTypes().getRoomTypeArray(0).getRoomTypeCode()));
+					reservationRoom.setItem(getReservationUtils().obtainRoomItem(reservation, stay.getRoomTypes().getRoomTypeArray(0)));
 					if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
-						reservationRoom.setTariff(getReservationUtils().obtainTariff(stay.getRatePlans().getRatePlanArray(0).getRatePlanCode()));
+						reservationRoom.setTariff(getReservationUtils().obtainRoomTariff(reservation, stay.getRatePlans().getRatePlanArray(0)));
 					}
 					if (j == 0 && stay.getGuestCounts() != null && stay.getGuestCounts().sizeOfGuestCountArray() > 0) {
 						for (int k=0; k<stay.getGuestCounts().sizeOfGuestCountArray(); k++) {
@@ -365,7 +365,7 @@ public class ReservationManager implements IReservationConstants {
 			reservationService.setProjectReservation(reservation);
 			reservationService.setDomain(getReservationUtils().getDomain());
 			reservationService.setServiceIndex(Integer.parseInt(service.getServiceRPH()));
-			reservationService.setItem(getReservationUtils().obtainServiceItem(service.getServiceInventoryCode()));
+			reservationService.setItem(getReservationUtils().obtainServiceItem(reservation, service));
 			reservationService.setDescription(reservationService.getItem().getProduct().getName());
 			reservationService = (ProjectReservationService)reservationServiceBean.insert(reservationService);
 
@@ -415,10 +415,9 @@ public class ReservationManager implements IReservationConstants {
 			servicesTaxableBase = CommonUtil.round(servicesTaxableBase);
 			reservation.setTaxableBase(servicesTaxableBase);
 			reservation.setVatQuota(CommonUtil.round(reservation.getTotal() - reservation.getTaxableBase() - reservation.getOtherTaxQuota()));
-
-			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-			reservation = (ProjectReservation)reservationBean.update(reservation);
 		}
+		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+		reservation = (ProjectReservation)reservationBean.update(reservation);
 
 		if (reservation.getTaxableBase() != servicesTaxableBase) {
 			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);

@@ -8,6 +8,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
+import org.opentravel.ota.x2003.x05.RatePlanType;
+import org.opentravel.ota.x2003.x05.RoomTypeType;
+import org.opentravel.ota.x2003.x05.ServicesType.Service;
 import org.opentravel.ota.x2003.x05.SourceType;
 
 import com.code.aon.asset.AssetActivity;
@@ -16,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
@@ -463,23 +467,49 @@ public class ReservationUtils implements IReservationConstants {
 		reservation.setRemarks(remarks);
 	}
 
-	public Item obtainRoomItem(String itemCode) throws ManagerBeanException, ReservationException {
-		Item item = obtainItem(itemCode);
+	public Item obtainRoomItem(ProjectReservation reservation, RoomTypeType roomType) throws ManagerBeanException, ReservationException {
+		Item item = obtainItem(roomType.getRoomTypeCode());
 		if (item != null) {
 			return item;
+		} else {
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
+			for (ITransferObject ito : appParamBean.getList(criteria)) {
+				item = obtainItem(((ApplicationParameter)ito).getValue());
+				if (item != null) {
+					reservation.setRemarks("TIPO HABITACION DESCONOCIDO [" + roomType.getRoomTypeCode() + "]\n" + reservation.getRemarks());
+					reservation.setStatus(ReservationStatus.BLOCKED);
+
+					return item;
+				}
+			}
 		}
-		throw new ReservationException("Invalid Room Type: " + itemCode, 131);
+		throw new ReservationException("Invalid Room Type: " + roomType.getRoomTypeCode(), 131);
 	}
 
-	public Item obtainServiceItem(String itemCode) throws ManagerBeanException, ReservationException {
-		Item item = obtainItem(itemCode);
+	public Item obtainServiceItem(ProjectReservation reservation, Service service) throws ManagerBeanException, ReservationException {
+		Item item = obtainItem(service.getServiceInventoryCode());
 		if (item != null) {
 			return item;
+		} else {
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
+			for (ITransferObject ito : appParamBean.getList(criteria)) {
+				item = obtainItem(((ApplicationParameter)ito).getValue());
+				if (item != null) {
+					reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + "]\n" + reservation.getRemarks());
+					reservation.setStatus(ReservationStatus.BLOCKED);
+
+					return item;
+				}
+			}
 		}
-		throw new ReservationException("Invalid Service: " + itemCode, 146);
+		throw new ReservationException("Invalid Service: " + service.getServiceInventoryCode(), 146);
 	}
 
-	public Item obtainItem(String itemCode) throws ManagerBeanException{
+	private Item obtainItem(String itemCode) throws ManagerBeanException {
 		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(itemBean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE), itemCode);
@@ -489,7 +519,28 @@ public class ReservationUtils implements IReservationConstants {
 		return null;
 	}
 
-	public Tariff obtainTariff(String tariffCode) throws ManagerBeanException, ReservationException {
+	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
+		Tariff tariff = obtainTariff(ratePlan.getRatePlanCode());
+		if (tariff != null) {
+			return tariff;
+		} else {
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_TARIFF);
+			for (ITransferObject ito : appParamBean.getList(criteria)) {
+				tariff = obtainTariff(((ApplicationParameter)ito).getValue());
+				if (tariff != null) {
+					reservation.setRemarks("TARIFA DESCONOCIDA [" + ratePlan.getRatePlanCode() + "]\n" + reservation.getRemarks());
+					reservation.setStatus(ReservationStatus.BLOCKED);
+
+					return tariff;
+				}
+			}
+		}
+		throw new ReservationException("Invalid Rate Code: " + ratePlan.getRatePlanCode(), 249);
+	}
+
+	private Tariff obtainTariff(String tariffCode) throws ManagerBeanException {
 		IManagerBean tariffBean = BeanManager.getManagerBean(Tariff.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(tariffBean.getFieldName(IEntityAlias.TARIFF_CODE), tariffCode);
@@ -497,7 +548,7 @@ public class ReservationUtils implements IReservationConstants {
 			return (Tariff)ito;
 		}
 
-		throw new ReservationException("Invalid Rate Code: " + tariffCode, 249);
+		return null;
 	}
 
 	public String getRequestMessageId(ReservationRequest request) {
