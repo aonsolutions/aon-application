@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.RatePlanType;
 import org.opentravel.ota.x2003.x05.RoomTypeType;
@@ -499,7 +500,8 @@ public class ReservationUtils implements IReservationConstants {
 			for (ITransferObject ito : appParamBean.getList(criteria)) {
 				item = obtainItem(((ApplicationParameter)ito).getValue());
 				if (item != null) {
-					reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + "]\n" + reservation.getRemarks());
+					String serviceName = obtainServiceName(service);
+					reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + " - " + serviceName + "]\n" + reservation.getRemarks());
 					reservation.setStatus(ReservationStatus.BLOCKED);
 
 					return item;
@@ -517,6 +519,19 @@ public class ReservationUtils implements IReservationConstants {
 			return (Item)ito;
 		}
 		return null;
+	}
+
+	private String obtainServiceName(Service service) {
+		String comments = "";
+		if (service.getServiceDetails() != null && service.getServiceDetails().getComments() != null) {
+			for (int i=0; i<service.getServiceDetails().getComments().sizeOfCommentArray(); i++) {
+				Comment comment = service.getServiceDetails().getComments().getCommentArray(i);
+				if (comment.getName().equals(DESCRIPTION) && comment.sizeOfTextArray() > 0) {
+					comments += comment.getTextArray(0).getStringValue();
+				}
+			}
+		}
+		return comments;
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {

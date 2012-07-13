@@ -7,6 +7,7 @@ public interface IReservationConstants {
 	String OPERATION_TIME_STAMP = "OperationTimeStamp";
 	String DATE = "Date";
 	String TIME = "Time";
+	String DESCRIPTION = "Description";
 	String DISCOUNT_MODE = "DiscountMode";
 	String DISCOUNT = "Discount";
 	String PERCENT = "Percent";
