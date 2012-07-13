@@ -13,10 +13,10 @@
 		}
 		
 	</ui:style>
-	<g:DockLayoutPanel unit="EM">
-		<g:north size="6">
+	<g:DockLayoutPanel unit="PX" >
+		<g:north size="72"  >
 
-			<g:FlowPanel>
+			<g:FlowPanel >
 
 				<g:MenuBar >
 					<g:MenuItem text="Archivo">

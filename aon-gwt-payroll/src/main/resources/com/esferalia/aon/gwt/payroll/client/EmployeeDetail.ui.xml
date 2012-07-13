@@ -3,13 +3,8 @@
   xmlns:g='urn:import:com.google.gwt.user.client.ui'
   xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
-
-
-	<g:DockLayoutPanel unit='EM' ui:field="panel">
-	    <g:center >
-	      <!--  employee:Reports ui:field="reports"></employee:Reports-->
-	      <g:HTML />
-	    </g:center>
-	</g:DockLayoutPanel>
-
+	
+	<g:SimpleLayoutPanel ui:field="panel" >
+	</g:SimpleLayoutPanel>
+	
 </ui:UiBinder>
