@@ -76,10 +76,8 @@ public class AccountEntryInvoiceWriter {
 	public Invoice unrecordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.PENDING);
-		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
-			invoice.setRegistryAddress(null);
-		}
 		invoice.setUpdateEnabled(false);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		invoice = (Invoice) invoiceBean.update(invoice);
 		unrecordInvoice(invoice);
 		return invoice;
@@ -111,11 +109,10 @@ public class AccountEntryInvoiceWriter {
 	public Invoice recordAndUpdateInvoice(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
-		if (invoice.getRegistryAddress() != null && invoice.getRegistryAddress().getId() == null) {
-			invoice.setRegistryAddress(null);
-		}
 		invoice.setUpdateEnabled(false);
+		invoiceBean.restoreNullSubPOJOs(invoice);
 		invoice = (Invoice)invoiceBean.update(invoice);
+
 		recordInvoice(invoice);
 		return invoice;
 	}
