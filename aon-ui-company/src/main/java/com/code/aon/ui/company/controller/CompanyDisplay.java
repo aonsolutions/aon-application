@@ -33,7 +33,7 @@ public class CompanyDisplay {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDisplay.class.getName());
 	
-	private static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.company.cfg.xml";
+	public static final String HIBERNATE_CONFIGURATION_FILE = "/hibernate.company.cfg.xml";
 	
 	private String companyLabel;
 	
