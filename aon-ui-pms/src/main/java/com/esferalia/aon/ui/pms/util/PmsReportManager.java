@@ -501,30 +501,28 @@ public class PmsReportManager {
 	}
 	
 	public String getBlockedRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
-		String select = "SELECT W.description, AA.date, count(R.hotel)"
-				+ " FROM room as R"
-				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " LEFT JOIN asset_activity AS AA ON R.asset=AA.asset"
-				+ " WHERE AA.status <> " + ActivityStatus.BUSY.getValue()
-				+ ((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):(""))
-				+ " AND H.id IN (" + getHotelIds(hotel) + ") "
-				+ " AND AA.date between :start AND :end"
-				+ " GROUP BY R.hotel, AA.date"
-				+ " ORDER BY W.description, AA.date"
+		String select = "SELECT W.description, AA.date, count(R.hotel)" +
+				" FROM hotel as H LEFT JOIN room AS R ON H.id=R.hotel, workplace AS W, asset_activity AS AA" +
+				" WHERE AA.status <> " + ActivityStatus.BUSY.getValue() +
+				" AND H.workplace=W.id" +
+				" AND R.asset=AA.asset" +
+				" AND H.id IN (" + getHotelIds(hotel) + ") " +
+				((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):("")) +
+				" AND AA.date between :start AND :end" +
+				" GROUP BY H.id, AA.date" +
+				" ORDER BY W.description, AA.date"
 				;
 		return select;
 	}
 	
 	public String getHotelRoomsSQL(Hotel hotel, Item item) throws ManagerBeanException{
-		String select = "SELECT W.description, count(R.hotel)"
-				+ " FROM room as R"
-				+ " LEFT JOIN hotel AS H ON R.hotel=H.id"
-				+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-				+ " WHERE H.id IN (" + getHotelIds(hotel) + ") "
-				+ ((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):(""))
-				+ " GROUP BY R.hotel"
-				+ " ORDER BY W.description"
+		String select = "SELECT W.description, count(R.hotel)" +
+				" FROM hotel as H LEFT JOIN room AS R ON H.id=R.hotel, workplace AS W " +
+				" WHERE H.workplace=W.id" +
+				" AND H.id IN (" + getHotelIds(hotel) + ") " +
+				((item!=null && item.getId()!=null)?(" AND R.item = " + item.getId()):("")) +
+				" GROUP BY H.id" +
+				" ORDER BY W.description"
 				;
 		return select;
 	}
