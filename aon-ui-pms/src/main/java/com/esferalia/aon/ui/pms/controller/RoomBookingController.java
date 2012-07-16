@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -124,6 +123,7 @@ public class RoomBookingController implements ICollectionProvider {
 		
 		Query notAssignedOccupationQuery = session.createSQLQuery(notAssignedOccupationSelect);
 		notAssignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
+		notAssignedOccupationQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
 		
 		Query assignedOccupationQuery = session.createSQLQuery(assignedOccupationSelect);
 		assignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
@@ -137,8 +137,7 @@ public class RoomBookingController implements ICollectionProvider {
 
 		Iterator checkinIterator = checkinQuery.list().iterator();
 		Iterator checkoutIterator = checkoutQuery.list().iterator();
-		Iterator notAssignedOccupationIterator = getNotAssignedOccupationList(session, getHotel(), getAgency(), getItem()).iterator();
-//		Iterator notAssignedOccupationIterator = notAssignedOccupationQuery.list().iterator();
+		Iterator notAssignedOccupationIterator = getNotAssignedOccupationList(notAssignedOccupationQuery.list().iterator()).iterator();
 		Iterator assignedOccupationIterator = assignedOccupationQuery.list().iterator();
 		Iterator roomsIterator = roomsQuery.list().iterator();
 		Iterator blockedRoomsIterator = blockedRoomsQuery.list().iterator();
@@ -233,21 +232,12 @@ public class RoomBookingController implements ICollectionProvider {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List getNotAssignedOccupationList(Session session, Hotel hotel, Customer customer, Item item) throws ManagerBeanException {
-		PmsReportManager reportManager = PmsReportManager.getInstance();
-		String notAssignedOccupationSelect = reportManager.getRoomBookingNotAssignedOccupationSQL(hotel, customer, item);
-		Query notAssignedOccupationQuery = session.createSQLQuery(notAssignedOccupationSelect);
-		notAssignedOccupationQuery.setDate("start", new java.sql.Date(getFromDate().getTime()));
-		notAssignedOccupationQuery.setDate("end", new java.sql.Date(getToDate().getTime()));
-		Iterator notAssignedOccupationIterator = notAssignedOccupationQuery.list().iterator();
-		
+	private List getNotAssignedOccupationList(Iterator notAssignedOccupationIterator) throws ManagerBeanException {
 		List<Object[]> list = new LinkedList<Object[]>();
-		ListIterator listIt = list.listIterator();
 		while(notAssignedOccupationIterator.hasNext()){
 			Object notAssignedOccupation = notAssignedOccupationIterator.hasNext()?notAssignedOccupationIterator.next():null;
 			list.addAll(getReservationOccupationList(notAssignedOccupation));
 		}
-		
 		Collections.sort(list, new Comparator() {  
 	        public int compare(Object o1, Object o2) {  
 	            String hotel1 = (String)((Object[]) o1)[0];  
