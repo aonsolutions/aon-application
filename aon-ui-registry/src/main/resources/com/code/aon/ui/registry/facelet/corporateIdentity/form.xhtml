@@ -50,6 +50,11 @@
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
 					</aon:selectOneMenu>
+
+					<aon:outputText value="#{bundle.aon_document_download_url}" />
+					<aon:outputLink target="_blank" value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
+						<aon:outputText value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
+				    </aon:outputLink>				
 			
 				</aon:panelGrid>
 			</aon:div>

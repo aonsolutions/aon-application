@@ -29,11 +29,11 @@
 	<!-- Logo Servlet -->
 	<servlet>
 		<servlet-name>LogoServlet</servlet-name>
-		<servlet-class>com.code.aon.ui.company.servlet.CompanyLogoServlet</servlet-class>
+		<servlet-class>com.code.aon.ui.company.servlet.CompanyDocumentServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>LogoServlet</servlet-name>
-		<url-pattern>/company.logo</url-pattern>
+		<url-pattern>/aonDocuments/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- GWT RPC Servlets -->

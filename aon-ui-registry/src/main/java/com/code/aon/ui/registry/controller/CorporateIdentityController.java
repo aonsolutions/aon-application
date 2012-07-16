@@ -6,6 +6,7 @@ import static com.code.aon.ui.registry.controller.IRegistryConstants.BATCH_DOCUM
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -35,6 +36,8 @@ public class CorporateIdentityController extends RegistryAttachController {
 	private IControllerListener domainLookupListener;
 	
 	private Domain domain;
+	
+	private String domainURL;
 
 	public CorporateIdentityController() {
 		this.domainLookupListener = new DomainLoookupListener();
@@ -107,6 +110,16 @@ public class CorporateIdentityController extends RegistryAttachController {
 	public void onAddCurrentToBatch(ActionEvent event) throws ManagerBeanException {
 		BatchDocument bd = (BatchDocument) AonUtil.getRegisteredBean(BATCH_DOCUMENT_CONTROLLER_NAME);
 		bd.addToBatch( (IAttachment) getSelectedTO() );
+	}
+
+	public String getDomainURL() throws ManagerBeanException {
+		if ( domainURL == null ) {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			String path = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+			domainURL = "http://" + domain.getName() + path;
+		}
+		return domainURL;
 	}
 	
 }

@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Formula;
@@ -84,6 +85,19 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 
 	public void setTags( Set<RegistryAttachmentTag> tags ) {
 		this.tags = tags;
+	}
+	
+	@Transient
+	public String getMD5() {
+		if ( getData() != null ) {
+			return DigestUtils.md5Hex(getData());	
+		}
+		return null;
+	}
+
+	@Transient
+	public String getDownloadURL() {
+		return "/aonDocuments/" + getId() + "-" + getMD5();
 	}
 	
 }
