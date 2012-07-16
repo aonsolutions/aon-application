@@ -461,7 +461,7 @@ public class PmsReportManager {
 	
 	public String getRoomBookingAssignedOccupationSQL(Hotel hotel, Customer agency, Item item) throws ManagerBeanException{
 		String select = " " +
-				" SELECT W.description d, AA.date, count(PRR.id) c, sum(PRR.adults)+sum(PRR.children) s" +
+				" SELECT W.description, AA.date, count(PRR.id), sum(PRR.adults)+sum(PRR.children)" +
 				" FROM asset_activity as AA, room as R, hotel as H, workplace as W," +
 				" project_reservation_room as PRR, project_reservation_room_detail as PRRD," +
 				" project_reservation as PR" +

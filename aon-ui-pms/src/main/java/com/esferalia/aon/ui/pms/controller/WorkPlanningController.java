@@ -103,7 +103,7 @@ public class WorkPlanningController implements ICollectionProvider {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), date);
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BLOCKED);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
 		return bean.getCount(criteria)>0;
 	}
 	
