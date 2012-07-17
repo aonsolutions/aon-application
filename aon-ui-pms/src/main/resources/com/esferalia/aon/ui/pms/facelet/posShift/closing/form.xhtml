@@ -30,6 +30,14 @@
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{posClosing.onAccept}"
 						accesskey="#{bundle.aon_key_save}" />
+					<aon:htmlCommandLink id="posShift_report"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+						value="#{pmsBundle.pms_count}"
+						rendered="#{posClosing.posShift!=null and posClosing.posShift.endTime!=null}"
+						action="#{report.onExecute}">
+						<f:param name="reportKey" value="posShift" />
+						<f:param name="outputFormat" value="PDF" />
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 

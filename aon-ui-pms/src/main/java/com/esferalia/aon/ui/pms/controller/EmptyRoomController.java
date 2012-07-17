@@ -79,6 +79,7 @@ public class EmptyRoomController implements ICollectionProvider {
 			RoomStatus rs = new RoomStatus();;
 			Room room = (Room) roomIt.next();
 			if(activity!=null && room.getAsset().getId().equals(activity.getAsset().getId())){
+				// solo se tiene en cuenta que el estado no sea acupado, esto es, que se encuentre vacia (libre, bloqueado, mnto, ...)
 				if(activity.getStatus()!=ActivityStatus.BUSY){
 					rs.setRoom(room);
 					rs.setFree(false);

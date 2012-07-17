@@ -141,6 +141,10 @@ public class PosClosingController {
 	}
 	
 	public void onPosChange( ActionEvent event ){
+		selectPosShift( event );
+	}
+	
+	public void selectPosShift( ActionEvent event ){
 		try {
 			PosShiftController controller = (PosShiftController) FormUtil.getController(IPmsConstants.POS_SHIFT_CONTROLLER_NAME);
 			controller.select(event, getPosShift().getId());
@@ -160,6 +164,7 @@ public class PosClosingController {
 				PosInvoicing posInvoicing = new PosInvoicing();
 				posInvoicing.completeInvoice(ps);
 			}
+			selectPosShift( event );
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar el cierre de caja";
 			AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
@@ -179,7 +184,7 @@ public class PosClosingController {
 	}
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){
-		IController controller = FormUtil.getController("posShiftCount");
+		IController controller = FormUtil.getController(IPmsConstants.POS_SHIFT_COUNT_CONTROLLER_NAME);
 		PosShiftCount c = (PosShiftCount) controller.getTo();
 		if(c!=null){
 			c.setAmount(getCalculator().getCalcTotal());
