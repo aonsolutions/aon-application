@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -120,16 +121,7 @@ public class PosShiftController extends BasicController {
 			if(!financeList.isEmpty()){
 				for(ITransferObject to: financeList){
 					Finance finance = (Finance) to;
-					if(finance.getPayMethod().getType()==PayMethodType.CASH_BASIS){
-						if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-							map.get(PayMethodType.CASH_BASIS.name()).setInvoiceAmount(map.get(PayMethodType.CASH_BASIS.name()).getInvoiceAmount()+finance.getAmount());
-						} else {
-							PaymethodCount pc = new PaymethodCount();
-							pc.setPayMethod(finance.getPayMethod());
-							pc.setInvoiceAmount(finance.getAmount());
-							map.put(PayMethodType.CASH_BASIS.name(), pc);
-						}
-					} else if(map.containsKey(finance.getPayMethod().getName())){
+					if(map.containsKey(finance.getPayMethod().getName())){
 						map.get(finance.getPayMethod().getName()).setInvoiceAmount(map.get(finance.getPayMethod().getName()).getInvoiceAmount()+finance.getAmount());
 					} else {
 						PaymethodCount pc = new PaymethodCount();
@@ -145,16 +137,7 @@ public class PosShiftController extends BasicController {
 			countCriteria.addOrder(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_NAME));
 			for(ITransferObject to: countBean.getList(countCriteria)){
 				PosShiftCount psc = (PosShiftCount) to;
-				if(psc.getPayMethod().getType()==PayMethodType.CASH_BASIS){
-					if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-						map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()+psc.getAmount());
-					} else {
-						PaymethodCount pc = new PaymethodCount();
-						pc.setPayMethod(psc.getPayMethod());
-						pc.setPosAmount(psc.getAmount());
-						map.put(PayMethodType.CASH_BASIS.name(), pc);
-					}
-				} else if(map.containsKey(psc.getPayMethod().getName())){
+				if(map.containsKey(psc.getPayMethod().getName())){
 					map.get(psc.getPayMethod().getName()).setPosAmount(map.get(psc.getPayMethod().getName()).getPosAmount()+psc.getAmount());
 				} else {
 					PaymethodCount pc = new PaymethodCount();
@@ -163,11 +146,15 @@ public class PosShiftController extends BasicController {
 					map.put(psc.getPayMethod().getName(), pc);
 				}
 			}
-			if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-				// se resta al metalico el importe inicial de la caja
-				map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()-getPosShift().getInitialAmount());
-			}
-			return new ArrayList<PaymethodCount>(map.values());
+			
+			List<PaymethodCount> list = new LinkedList<PosShiftController.PaymethodCount>(map.values());
+			Collections.sort(list, new Comparator<PaymethodCount>() {  
+				@Override
+				public int compare(PaymethodCount o1, PaymethodCount o2) {
+					return o1.getPayMethod().getName().compareToIgnoreCase(o2.getPayMethod().getName());
+				}  
+		    });  
+			return list;
 		} catch (ManagerBeanException ex) {
 			String msg = "Error al cargar los datos de Facturas.";
 			AonUtil.addErrorMessage(msg);

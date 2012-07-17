@@ -1073,7 +1073,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>PosShiftCount_id</value>
+			<value>PosShiftCount_payMethod_name</value>
 		</managed-property>			
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

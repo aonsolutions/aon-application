@@ -147,7 +147,7 @@ public class PosClosingController {
 	public void selectPosShift( ActionEvent event ){
 		try {
 			PosShiftController controller = (PosShiftController) FormUtil.getController(IPmsConstants.POS_SHIFT_CONTROLLER_NAME);
-			controller.select(event, getPosShift().getId());
+			controller.load(event, getPosShift().getId());
 		} catch (ManagerBeanException e) {
 			String msg = "Error al seleccionar el turno";
 			throw new AbortProcessingException(msg, e);
