@@ -247,7 +247,7 @@ public class RoomBookingController implements ICollectionProvider {
 	            if(hotel2.equals(hotel1)){
 	            	return date1.compareTo(date2);
 	            } else {
-	            	return 1;
+	            	return -1;
 	            }  
 	        }  
 	    });  
