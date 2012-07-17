@@ -886,54 +886,9 @@
 
 	<!--  **** INVOICE LOADER **** -->
 	<managed-bean>
-		<managed-bean-name>invoiceLoader</managed-bean-name>
+		<managed-bean-name>aonLoader</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.InvoiceLoaderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** ENTRY LOADER **** -->
-	<managed-bean>
-		<managed-bean-name>entryLoader</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.AccountEntryLoaderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** CUSTOMER LOADER **** -->
-	<managed-bean>
-		<managed-bean-name>customerLoader</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.CustomerLoaderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** SUPPLIER LOADER **** -->
-	<managed-bean>
-		<managed-bean-name>supplierLoader</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.SupplierLoaderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** CREDITOR LOADER **** -->
-	<managed-bean>
-		<managed-bean-name>creditorLoader</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.CreditorLoaderController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!--  **** FINANCE LOADER **** -->
-	<managed-bean>
-		<managed-bean-name>financeLoader</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.FinanceLoaderController
+			com.code.aon.ui.loader.controller.AonLoaderController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1299,48 +1254,8 @@
 	<!--  **** INVOICE LOADER **** -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>invoiceLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/invoiceLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!--  **** ENTRY LOADER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>entryLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/entryLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<!--  **** CUSTOMER LOADER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>customerLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/customerLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<!--  **** SUPPLIER LOADER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>supplierLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/supplierLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<!--  **** CREDITOR LOADER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>creditorLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/creditorLoader/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	<!--  **** FINANCE LOADER **** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>financeLoader_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/accounting/facelet/financeLoader/form.xhtml</to-view-id>
+			<from-outcome>aonLoader_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/aonLoader/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
