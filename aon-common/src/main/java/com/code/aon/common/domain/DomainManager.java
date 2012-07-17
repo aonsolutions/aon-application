@@ -41,6 +41,12 @@ public class DomainManager {
 	public static void addDomainProvider(IDomainProvider domainProvider) {
 		getDomainManager().getDomainProviders().add(domainProvider);
 	}
+	public static void removeDomainProvider(IDomainProvider domainProvider) {
+		boolean removed = getDomainManager().getDomainProviders().remove(domainProvider);
+		if (removed) {
+			System.out.println(" DomianProvider removed.");	
+		}
+	}
 	
 	public synchronized static IDomainProvider getDomainProvider() {
 		for (IDomainProvider domainProvider : getDomainManager().getDomainProviders()) {
