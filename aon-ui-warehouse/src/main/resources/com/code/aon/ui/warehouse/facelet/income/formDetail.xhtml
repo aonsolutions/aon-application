@@ -15,7 +15,7 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!income.pending}" />
+		<ui:param name="skipResetButton" value="#{!income.pending or (aonRole.warehouseOperator and !aonRole.admin)}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
