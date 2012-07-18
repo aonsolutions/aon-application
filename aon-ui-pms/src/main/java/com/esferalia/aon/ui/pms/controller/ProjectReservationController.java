@@ -39,7 +39,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryPayMethod;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -399,7 +398,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-	public void onAgencyChanged(LookupChangeEvent event) {
+	public void onAgencyChanged(ValueChangeEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setAgency((Customer)event.getNewValue());
@@ -407,7 +406,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-	public void onCompanyChanged(LookupChangeEvent event) {
+	public void onCompanyChanged(ValueChangeEvent event) {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			reservation.setCompany((Customer)event.getNewValue());

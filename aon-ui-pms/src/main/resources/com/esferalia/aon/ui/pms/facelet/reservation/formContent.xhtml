@@ -103,7 +103,7 @@
 			<aon:outputLabel for="ProjectReservation_crsCode" value="#{pmsBundle.pms_crs}:"
 				styleClass="aon-margin-right aon-italic" rendered="#{!empty reservation.to.crsCode}" />
 			<aon:div rendered="#{!empty reservation.to.crsCode}" style="display:inline;">
-				<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}"  
+				<aon:outputText id="ProjectReservation_crsCode" value="#{reservation.to.crsCode}" 
 					styleClass="aon-bold" />
 				<c:if test="#{aonRole.admin}">
 					<aon:commandButton id="crsBlock" value="&#160;"
@@ -202,7 +202,7 @@
 	<aon:panelGrid columns="3" columnClasses="aon-width-130, aon-width-130, aon-width-auto">
 		<aon:div>
 			<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
-				rendered="#{!reservation.active or !aonRole.saleOperator}"  />
+				rendered="#{!reservation.active or !aonRole.saleOperator}" />
 			<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
 				required="true" rendered="#{reservation.active and aonRole.saleOperator}"
 				valueChangeListener="#{reservation.onHolderChanged}"
@@ -221,39 +221,33 @@
 	</aon:panelGrid>
 
 	<aon:div id="BookingHolderLabelDiv">
-		<aon:outputLabel for="Customer_id-Agency" value="#{pmsBundle.pms_agency}"
+		<aon:outputLabel for="ProjectReservation_agency" value="#{pmsBundle.pms_agency}"
 			 rendered="#{!reservation.to.companyHolder}" />
-		<aon:outputLabel for="Customer_id-Company" value="#{pmsBundle.pms_company}"
+		<aon:outputLabel for="ProjectReservation_company" value="#{pmsBundle.pms_company}"
 			rendered="#{reservation.to.companyHolder}" />
 	</aon:div>
 
 	<aon:div id="BookingHolderValueDiv">
 		<aon:outputText value="#{reservation.to.agency.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{!reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}"  />
-		<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-			<ui:param name="lookupTo" value="#{reservation.to.agency}" />
-			<ui:param name="lookupSuffix" value="-Agency" />
-			<ui:param name="lookupRendered" value="#{!reservation.to.companyHolder and reservation.active and aonRole.saleOperator}" />
-			<ui:param name="skipLabel" value="#{true}" />
-			<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator or !aonRole.financeOperator}" />
-			<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
-			<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
-			<aon:methodParam name="lookupChangeListener"
-				value="#{reservation.onAgencyChanged}" type="lookupChangeListener" />
-		</ui:include>
+			rendered="#{!reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}" />
+		<aon:selectOneMenu id="ProjectReservation_agency" 
+			value="#{reservation.to.agency}" styleClass="aon-width-350"
+			rendered="#{!reservation.to.companyHolder and reservation.active and aonRole.saleOperator}"
+			valueChangeListener="#{reservation.onAgencyChanged}"
+			reRender="ProjectReservation_roomTariff">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{pmsCollections.agencies}" />
+		</aon:selectOneMenu>
 		<aon:outputText value="#{reservation.to.company.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}"  />
-		<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-			<ui:param name="lookupTo" value="#{reservation.to.company}" />
-			<ui:param name="lookupSuffix" value="-Company" />
-			<ui:param name="lookupRendered" value="#{reservation.to.companyHolder and reservation.active and aonRole.saleOperator}" />
-			<ui:param name="skipLabel" value="#{true}" />
-			<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator or !aonRole.financeOperator}" />
-			<ui:param name="skipGoToButton" value="#{!aonRole.financeOperator}" />
-			<ui:param name="lookupReRender" value="ProjectReservation_roomTariff" />
-			<aon:methodParam name="lookupChangeListener"
-				value="#{reservation.onCompanyChanged}" type="lookupChangeListener" />
-		</ui:include>
+			rendered="#{reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}" />
+		<aon:selectOneMenu id="ProjectReservation_company" 
+			value="#{reservation.to.company}" styleClass="aon-width-350"
+			rendered="#{reservation.to.companyHolder and reservation.active and aonRole.saleOperator}"
+			valueChangeListener="#{reservation.onCompanyChanged}"
+			reRender="ProjectReservation_roomTariff">
+			<f:selectItem itemLabel="-" value="#{null}" />		
+			<f:selectItems value="#{pmsCollections.companies}" />
+		</aon:selectOneMenu>
 	</aon:div>
 
 	<aon:outputLabel value="#{bundle.aon_amount} #{bundle.aon_total}" rendered="#{!reservation.new}" />
@@ -290,7 +284,7 @@
 		<aon:div>
 			<aon:outputLabel value="#{pmsBundle.pms_advance}:" 
 				styleClass="aon-margin-right aon-italic" />
-			<aon:outputText value="#{reservation.to.advance}"  
+			<aon:outputText value="#{reservation.to.advance}" 
 				rendered="#{!aonRole.saleOperator or !reservation.active or reservation.to.advanceInvoiced}"	
 				styleClass="aon-bold" >
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
@@ -301,16 +295,17 @@
 		</aon:div>
 	</aon:panelGrid>
 
-	<aon:outputLabel for="Seller_id" value="#{pmsBundle.pms_seller}" />
+	<aon:outputLabel for="ProjectReservation_seller" 
+		value="#{pmsBundle.pms_seller}"
+		rendered="#{!reservation.new}" />
 	<aon:outputText value="#{reservation.to.seller.registry.fullName}" styleClass="aon-bold" 
-		rendered="#{!reservation.active or !aonRole.saleOperator}"  />
-	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
-		<ui:param name="lookupTo" value="#{reservation.to.seller}" />
-		<ui:param name="lookupRendered" value="#{reservation.active and aonRole.saleOperator}" />
-		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="skipNewButton" value="#{!reservation.active or !aonRole.saleOperator}" />
-		<ui:param name="skipGoToButton" value="#{!aonRole.saleOperator}" />
-	</ui:include>
+		rendered="#{!reservation.new and (!reservation.active or !reservation.to.crs or !aonRole.saleOperator)}" />
+	<aon:selectOneMenu id="ProjectReservation_seller" 
+		value="#{reservation.to.seller}" styleClass="aon-width-350"
+		rendered="#{!reservation.new and reservation.active and reservation.to.crs and aonRole.saleOperator}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{pmsCollections.sellers}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ProjectReservation_roomItem" value="#{pmsBundle.pms_room_type}" 
 		rendered="#{reservation.new}" />
