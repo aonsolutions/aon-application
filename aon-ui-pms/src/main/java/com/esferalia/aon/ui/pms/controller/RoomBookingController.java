@@ -261,8 +261,8 @@ public class RoomBookingController implements ICollectionProvider {
 		Integer guestCount = notAssignedOccupation!=null?((Integer) ((Object[])notAssignedOccupation)[2]).intValue():null;
 		Date startDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[3]):null;
 		Date endDate = notAssignedOccupation!=null?((Date) ((Object[])notAssignedOccupation)[4]):null;
-		while(startDate.before(endDate) || startDate.equals(endDate)){
-			if(startDate.compareTo(getFromDate()) >= 0 && startDate.compareTo(getToDate()) <= 0){
+		while(startDate.before(endDate) ){
+			if(startDate.compareTo(getFromDate()) >= 0 && startDate.compareTo(getToDate()) <= 0 ){
 				Object[] o = {hotelName, startDate, roomCount, guestCount};
 				list.add(o);	
 			}
