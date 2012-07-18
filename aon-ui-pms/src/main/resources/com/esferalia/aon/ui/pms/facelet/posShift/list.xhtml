@@ -81,7 +81,7 @@
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column alias="PosShift.initialAmount"
+						<aon:column 
 							styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_initial_amount}" />
@@ -91,28 +91,37 @@
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column alias="PosShift.initialAmount"
+						<aon:column 
 							styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
-								<aon:outputText value="#{pmsBundle.pms_final_amount}" />
+								<aon:outputText value="#{pmsBundle.pms_pos_cash}" />
 							</f:facet>
-							<aon:outputText value="#{to.finalAmount}" >
+							<aon:outputText value="#{to.totalCashAmount}" >
 								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column alias="PosShift.initialAmount"
+						<aon:column 
+							styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_invoices_cash}" />
+							</f:facet>
+							<aon:outputText value="#{to.totalInvoiceAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column 
 							styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_amount_difference}" />
 							</f:facet>
-							<aon:outputText rendered="#{to.endTime!=null}" 
-								value="#{to.finalAmount - to.initialAmount}" >
+							<aon:outputText rendered="#{to.endTime!=null and !to.pos.invoiceable}" 
+								value="#{to.totalCashAmount - to.totalInvoiceAmount}" >
 								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 						</aon:column>
-	
-	
+						
 					</ui:define>
 				</ui:decorate>
 				

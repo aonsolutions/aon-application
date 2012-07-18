@@ -134,17 +134,17 @@
 							</aon:commandButton>
 						</aon:div>
 	
-						<aon:outputText rendered="#{posShift.totalCashAmount>0}"
+						<aon:outputText rendered="#{posShift.to.totalCashAmount>0}"
 							value="#{pmsBundle.pms_cash_payMethod_name}" />
-						<aon:outputText rendered="#{posShift.totalCashAmount>0}"
-							value="#{posShift.totalCashAmount}" >
+						<aon:outputText rendered="#{posShift.to.totalCashAmount>0}"
+							value="#{posShift.to.totalCashAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						
-						<aon:outputLabel rendered="#{posShift.totalCashAmount > 0}"	
+						<aon:outputLabel rendered="#{posShift.to.totalCashAmount > 0}"	
 							value="#{pmsBundle.pms_bank_income}" />
-						<aon:outputText rendered="#{posShift.totalCashAmount > 0}"
-							value="#{posShift.totalCashAmount - posShift.to.initialAmount}" >
+						<aon:outputText rendered="#{posShift.to.totalCashAmount > 0}"
+							value="#{posShift.to.totalCashAmount - posShift.to.initialAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						
@@ -166,6 +166,9 @@
 				<c:if test="#{!posShift.new}">
 					<aon:panelTabSet id="posShiftTab">
 						<aon:panelTab id="cashCount" label="#{pmsBundle.pms_cash_count}">
+							<aon:methodParam name="saveActionListener" value="#{posShift.onAcceptPosShiftCount}" type="actionListener" />
+							<aon:methodParam name="newSaveActionListener" value="#{posShift.onAcceptPosShiftCount}" type="actionListener" />
+							<aon:methodParam name="removeActionListener" value="#{posShift.onRemovePosShiftCount}" type="actionListener" />
 							<ui:include src="/com/esferalia/aon/ui/pms/facelet/posShift/count_grid.xhtml">
 								<ui:param name="controller" value="#{posShiftCount}" />
 								<ui:param name="modalController" value="#{posShift}" />
