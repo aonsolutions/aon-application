@@ -45,6 +45,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -63,15 +64,35 @@ public class MarketingActionReport {
 	
 	private File file;
 	
+	private List<MarketingQuestionValue> questionValueList;
+	
 	public File getFile() {
 		return file;
 	}
 	
-	public List<MarketingQuestionValue> getQuestionValueList() {
-		if(getQuestionValueReport()!=null && getQuestionValueReport().get(0)!=null){
-			return getQuestionValueReport().get(0).getQuestionList();
+	public List<MarketingQuestionValue> getQuestionValueList() throws ManagerBeanException {
+		return questionValueList;
+	}
+
+	public void buildQuestionValueList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+		MarketingAction action = (MarketingAction) controller.getTo();
+		questionValueList = new LinkedList<MarketingQuestionValue>();
+		for(ITransferObject to: getQuestions(action)){
+			SurveyQuestion sq = (SurveyQuestion) to;
+			MarketingQuestionValue mqv = new MarketingQuestionValue();
+			mqv.setId(sq.getQuestion().getId());
+			mqv.setDescription(sq.getQuestion().getDescription());
+			questionValueList.add(mqv);
 		}
-		return null;
+	}
+	
+	private List<ITransferObject> getQuestions(MarketingAction action) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), action.getSurvey().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID));
+		return bean.getList(criteria);
 	}
 	
 	public List<QuestionValueReport> getQuestionValueReport() {
@@ -82,10 +103,11 @@ public class MarketingActionReport {
 		this.questionValueReport = questionValueReport;
 	}
 	
-	public void escribirExcel() throws ManagerBeanException {
+	public void createExcel() throws ManagerBeanException {
 		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
 		MarketingAction action = (MarketingAction) controller.getTo();
 		buildQuestionValueReport(action);
+		buildQuestionValueList();
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("Cuestionario");
@@ -194,7 +216,7 @@ public class MarketingActionReport {
 			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
 			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
 
-			escribirExcel();
+			createExcel();
 			ServletOutputStream output = response.getOutputStream();
 			InputStream input = new FileInputStream(getFile());
 			int size = IOUtils.copy(input, output);
@@ -216,7 +238,7 @@ public class MarketingActionReport {
 		IManagerBean bean = BeanManager.getManagerBean(SurveyResponseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("SurveyResponseDetail.surveyResponse.action.id", action.getId());
-		criteria.addOrder("SurveyResponseDetail.surveyResponse.target.id");
+		criteria.addOrder("SurveyResponseDetail.surveyResponse.target.registry.name");
 		
 		setQuestionValueReport(new LinkedList<QuestionValueReport>());
 		
