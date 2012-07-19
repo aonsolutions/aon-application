@@ -162,6 +162,12 @@
 						<ui:param name="skipLabel" value="#{true}" />
 					</ui:include>
 
+					<aon:outputLabel for="Hotel_sheetChanging"
+						value="#{pmsBundle.pms_hotel_sheet_changing}" />
+					<aon:inputText id="Hotel_sheetChanging"
+						value="#{hotel.to.sheetChanging}"
+						size="2" maxlength="2" />
+
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
 					<aon:selectOneRadio id="Hotel_active"
