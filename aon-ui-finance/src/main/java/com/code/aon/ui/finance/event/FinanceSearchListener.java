@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
@@ -23,7 +25,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	
 	private Registry registry;
 	private RegistryBank registryBank;
-	private List<PayMethod> payMethods;
+	private PayMethod[] payMethods;
 	
 	public Registry getRegistry() {
 		return registry;
@@ -41,16 +43,19 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		this.registryBank = registryBank;
 	}
 
-	public List<PayMethod> getPayMethods() {
+	public PayMethod[] getPayMethods() {
+		if (payMethods == null) {
+			payMethods = new PayMethod[]{EMPTY_PAYMETHOD};
+		}	
 		return payMethods;
 	}
 
-	public void setPayMethods(List<PayMethod> payMethods) {
+	public void setPayMethods(PayMethod[] payMethods) {
 		this.payMethods = payMethods;
 	}
 	
 	public int getPayMethodsSize() {
-		return this.payMethods.size();
+		return ArrayUtils.getLength(payMethods);
 	}	
 
 	public List<Integer> getPayMethodsIds() {
@@ -74,8 +79,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 		setRegistryBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).createNewTo());
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
-		setPayMethods(new LinkedList<PayMethod>());
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
 	
 	@Override
@@ -95,15 +99,15 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	}
 
 	public void onAddPayMethod(ActionEvent event) {
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
 	}
 
 	public void onRemovePayMethod(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));
-		getPayMethods().remove(index);
-		if (getPayMethods().isEmpty()) {
-			getPayMethods().add(EMPTY_PAYMETHOD);
+		this.payMethods = (PayMethod[]) ArrayUtils.remove(this.payMethods, index);
+		if ( ArrayUtils.isEmpty(this.payMethods) ) {
+			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		}
 	}
 
