@@ -54,7 +54,7 @@ public class PosShift extends PosShiftDB {
 		criteria.addEqualExpression("posShiftCount.payMethod.type", PayMethodType.CASH_BASIS);
 		Projection projection = Projection.sum(bean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_AMOUNT));
 		Double cashAmount = ((Double) bean.getUniqueResult(projection, criteria));
-		return cashAmount!=null?cashAmount-this.getInitialAmount():null;
+		return cashAmount!=null?cashAmount:0;
 	}
 	
 	@Transient

@@ -144,7 +144,7 @@
 						<aon:outputLabel rendered="#{posShift.to.totalCashAmount > 0}"	
 							value="#{pmsBundle.pms_bank_income}" />
 						<aon:outputText rendered="#{posShift.to.totalCashAmount > 0}"
-							value="#{posShift.to.totalCashAmount}" >
+							value="#{posShift.to.totalCashAmount - posShift.to.initialAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						
