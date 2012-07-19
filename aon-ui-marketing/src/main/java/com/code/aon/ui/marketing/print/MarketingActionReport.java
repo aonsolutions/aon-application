@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.commercial.Question;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.BeanManager;
@@ -46,6 +48,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.SurveyQuestion;
+import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -64,35 +67,30 @@ public class MarketingActionReport {
 	
 	private File file;
 	
-	private List<MarketingQuestionValue> questionValueList;
+	private List<Question> surveyQuestionList;
 	
 	public File getFile() {
 		return file;
 	}
 	
-	public List<MarketingQuestionValue> getQuestionValueList() throws ManagerBeanException {
-		return questionValueList;
+	public List<Question> getSurveyQuestionList() throws ManagerBeanException {
+		return surveyQuestionList;
 	}
 
 	public void buildQuestionValueList() throws ManagerBeanException {
 		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
 		MarketingAction action = (MarketingAction) controller.getTo();
-		questionValueList = new LinkedList<MarketingQuestionValue>();
-		for(ITransferObject to: getQuestions(action)){
-			SurveyQuestion sq = (SurveyQuestion) to;
-			MarketingQuestionValue mqv = new MarketingQuestionValue();
-			mqv.setId(sq.getQuestion().getId());
-			mqv.setDescription(sq.getQuestion().getDescription());
-			questionValueList.add(mqv);
-		}
-	}
-	
-	private List<ITransferObject> getQuestions(MarketingAction action) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID), action.getSurvey().getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.SURVEY_QUESTION_SURVEY_ID));
-		return bean.getList(criteria);
+		surveyQuestionList = new LinkedList<Question>();
+		for(ITransferObject to: bean.getList(criteria)){
+			SurveyQuestion sq = (SurveyQuestion) to;
+			if(sq.getQuestion().getType()!=QuestionType.INFO){
+				surveyQuestionList.add(sq.getQuestion());
+			}
+		}
 	}
 	
 	public List<QuestionValueReport> getQuestionValueReport() {
@@ -136,8 +134,8 @@ public class MarketingActionReport {
             HSSFCellUtil.createCell(row, 6, "", headerCellStyle);
             HSSFCellUtil.createCell(row, 7, "", headerCellStyle);
             int cellIdx = 8;
-            for (MarketingQuestionValue qv : getQuestionValueList()) {
-            	HSSFCellUtil.createCell(row, cellIdx, qv.getId().toString(), headerCellStyle);
+            for (Question q : getSurveyQuestionList()) {
+            	HSSFCellUtil.createCell(row, cellIdx, q.getId().toString(), headerCellStyle);
             	cellIdx++;
             }
             
@@ -152,8 +150,8 @@ public class MarketingActionReport {
             HSSFCellUtil.createCell(row, 7, AonUtil.getMessage(IMarketingConstants.BUNDLE_NAME, SURVEY), headerCellStyle);
 
 			cellIdx = 8;
-			for (MarketingQuestionValue qv : getQuestionValueList()) {
-				HSSFCellUtil.createCell(row, cellIdx, qv.getDescription(), headerCellStyle);
+			for (Question q : getSurveyQuestionList()) {
+				HSSFCellUtil.createCell(row, cellIdx, q.getDescription(), headerCellStyle);
 				cellIdx++;
 			}
 			
@@ -169,9 +167,9 @@ public class MarketingActionReport {
 				row.createCell(6).setCellValue(qvr.getSurveyResponse().getSurvey().getId());
 				row.createCell(7).setCellValue(qvr.getSurveyResponse().getSurvey().getDescription());
 				cellIdx = 8;
-				for (MarketingQuestionValue qv : qvr.getQuestionList()) {
+				for (Question q : getSurveyQuestionList()) {
 					row = sheet.getRow(rowIdx);
-					row.createCell(cellIdx).setCellValue(qv.getValue());
+					row.createCell(cellIdx).setCellValue(qvr.getResponses().get(q.getId()));
 					cellIdx++;
 				}
 				rowIdx++;
@@ -182,14 +180,20 @@ public class MarketingActionReport {
             sheet.setDefaultColumnWidth(50);
             sheet.setColumnWidth(0, 8*256);
             sheet.setColumnWidth(1, 100*256);
+            sheet.setColumnWidth(2, 50*256);
+            sheet.setColumnWidth(3, 200*256);
             row = sheet.createRow(0);
             HSSFCellUtil.createCell(row, 0, AonUtil.getMessage(ID), headerCellStyle);
             HSSFCellUtil.createCell(row, 1, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 2, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
+            HSSFCellUtil.createCell(row, 3, AonUtil.getMessage(ICommercialConstants.BUNDLE_NAME, ICommercialConstants.QUESTION), headerCellStyle);
             rowIdx = 1;
-			for (MarketingQuestionValue qv : getQuestionValueList()) {
+			for (Question q : getSurveyQuestionList()) {
 				row = sheet.createRow(rowIdx);
-				row.createCell(0).setCellValue(qv.getId());
-				row.createCell(1).setCellValue(qv.getDescription());
+				row.createCell(0).setCellValue(q.getId());
+				row.createCell(1).setCellValue(q.getDescription());
+				row.createCell(2).setCellValue(q.getAlias());
+				row.createCell(3).setCellValue(q.getArgument());
 				rowIdx++;
 			}
  
@@ -243,30 +247,28 @@ public class MarketingActionReport {
 		setQuestionValueReport(new LinkedList<QuestionValueReport>());
 		
 		ActionTarget at = null;
+		SurveyResponse sr = null;
 		QuestionValueReport qvr = null;
 		IManagerBean atBean = BeanManager.getManagerBean(ActionTarget.class);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			SurveyResponseDetail srd = (SurveyResponseDetail) to;
 			Target target = srd.getSurveyResponse().getTarget();
-			if ( (at == null) || (! at.getTarget().equals(target)) ) {
+			if ( (at == null) || (! at.getTarget().equals(target)) || (! srd.getSurveyResponse().equals(sr)) ) {
 				Criteria _criteria = new Criteria();
 				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID), target.getId());
 				_criteria.addEqualExpression(atBean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), action.getId());
 				List<ITransferObject> atList = atBean.getList(_criteria);
 				if (! atList.isEmpty() ) {
 					at = (ActionTarget) atList.get(0);
-					qvr = new QuestionValueReport(srd, at);
-					qvr.setQuestionList(new LinkedList<MarketingQuestionValue>());
+					sr = srd.getSurveyResponse();
+					qvr = new QuestionValueReport(srd, sr, at);
+					qvr.setResponses(new HashMap<Integer,String>());
 					getQuestionValueReport().add(qvr);
 				}
 			}
-			MarketingQuestionValue mqv = new MarketingQuestionValue();
-			mqv.setId(srd.getQuestion().getId());
-			mqv.setDescription(srd.getQuestion().getText());
 			QuestionType type = srd.getQuestion().getType();
 			Object object = srd.getValue(type);
-			mqv.setValue(ObjectUtils.toString(object));
-			qvr.getQuestionList().add(mqv);
+			qvr.getResponses().put(srd.getQuestion().getId(),ObjectUtils.toString(object));
 		}
 	}
 

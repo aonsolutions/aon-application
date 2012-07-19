@@ -1,7 +1,7 @@
 
 package com.code.aon.ui.marketing.print;
 
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 
@@ -16,27 +16,34 @@ public class QuestionValueReport {
 	
 	private SurveyResponseDetail to;
 	
+	private SurveyResponse master;
+	
 	private ActionTarget actionTarget;
 	
-	private List<MarketingQuestionValue> questionList;
+	private Map<Integer,String> responses;
 	
-	public QuestionValueReport(SurveyResponseDetail to, ActionTarget actionTarget ) {
+	public QuestionValueReport(SurveyResponseDetail to, SurveyResponse master, ActionTarget actionTarget ) {
 		this.to = to;
 		this.actionTarget = actionTarget;
+		this.master = master;
 	}
 	
-	public List<MarketingQuestionValue> getQuestionList() {
-		return questionList;
+	public Map<Integer, String> getResponses() {
+		return responses;
 	}
 
-	public void setQuestionList(List<MarketingQuestionValue> questionList) {
-		this.questionList = questionList;
+	public void setResponses(Map<Integer, String> responses) {
+		this.responses = responses;
 	}
 
 	public SurveyResponseDetail getTo() {
 		return to;
 	}
 	
+	public SurveyResponse getMaster() {
+		return master;
+	}
+
 	public Question getQuestion() {
 		return to.getQuestion();
 	}
