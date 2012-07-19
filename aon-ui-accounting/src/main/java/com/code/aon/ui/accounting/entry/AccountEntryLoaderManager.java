@@ -60,87 +60,87 @@ public class AccountEntryLoaderManager {
 	}
 
 	public void validateFormat(ByteArrayInputStream input) throws AonException {
-    	int i = 0;
-		try {
-	    	InputStreamReader r = new InputStreamReader(input,"ISO-8859-1");
-	    	LineNumberReader reader = new LineNumberReader(r);
-	    	while (reader.ready()) {
-	    		String lineInput = reader.readLine();
-	    		i++;
-	    		if (StringUtils.isNotBlank( StringUtils.trim(lineInput))) {
-	    			CSVParser csvParser = new CSVParser();
-	    			String[] fields = csvParser.parse(lineInput);
-	    			EntryLoaded loaded = new EntryLoaded( );
-	    			loaded.populate(fields);
-	    		}
-	    	}
-		} catch (Throwable e) {
-			throw new AonException("Línea "+ i +". "+e.getMessage());
-		}
+//    	int i = 0;
+//		try {
+//	    	InputStreamReader r = new InputStreamReader(input,"ISO-8859-1");
+//	    	LineNumberReader reader = new LineNumberReader(r);
+//	    	while (reader.ready()) {
+//	    		String lineInput = reader.readLine();
+//	    		i++;
+//	    		if (StringUtils.isNotBlank( StringUtils.trim(lineInput))) {
+//	    			CSVParser csvParser = new CSVParser();
+//	    			String[] fields = csvParser.parse(lineInput);
+//	    			EntryLoaded loaded = new EntryLoaded( );
+//	    			loaded.populate(fields);
+//	    		}
+//	    	}
+//		} catch (Throwable e) {
+//			throw new AonException("Línea "+ i +". "+e.getMessage());
+//		}
 	}
 
 	public void load(ByteArrayInputStream input) throws AonException {
-		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
-		IManagerBean detailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		
-    	InputStreamReader r = new InputStreamReader(input);
-    	LineNumberReader reader = new LineNumberReader(r);
-    	int i = 0;
-		try {
-			Date date = null;
-			Integer id = null;
-			AccountEntry entry = null;
-			int line = 0;
-	    	while (reader.ready()) {
-	    		String lineInput = reader.readLine();
-	    		i++;
-	    		if (StringUtils.isNotBlank( StringUtils.trim(lineInput))) {
-	    			CSVParser csvParser = new CSVParser();
-	    			String[] fields = csvParser.parse(lineInput);
-	    			EntryLoaded loaded = new EntryLoaded( );
-	    			loaded.populate(fields);
-	    			if (date == null || (loaded.getDate() != null && !date.equals(loaded.getDate())) ) {
-	    				date = loaded.getDate();
-	    			}
-	    			if (id == null || (loaded.getId() != null && !id.equals(loaded.getId()))) {
-	    				id = loaded.getId();
-	    				entry = insertEntry(entryBean, loaded);
-	    				line = 0;
-	    			}
-	    			insertEntryDetail(detailBean, entry, loaded, line);
-	    		}
-	    	}
-		} catch (Throwable e) {
-			throw new AonException("Línea "+ i +". "+e.getMessage());
-		}
+//		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+//		IManagerBean detailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+//		
+//    	InputStreamReader r = new InputStreamReader(input);
+//    	LineNumberReader reader = new LineNumberReader(r);
+//    	int i = 0;
+//		try {
+//			Date date = null;
+//			Integer id = null;
+//			AccountEntry entry = null;
+//			int line = 0;
+//	    	while (reader.ready()) {
+//	    		String lineInput = reader.readLine();
+//	    		i++;
+//	    		if (StringUtils.isNotBlank( StringUtils.trim(lineInput))) {
+//	    			CSVParser csvParser = new CSVParser();
+//	    			String[] fields = csvParser.parse(lineInput);
+//	    			EntryLoaded loaded = new EntryLoaded( );
+//	    			loaded.populate(fields);
+//	    			if (date == null || (loaded.getDate() != null && !date.equals(loaded.getDate())) ) {
+//	    				date = loaded.getDate();
+//	    			}
+//	    			if (id == null || (loaded.getId() != null && !id.equals(loaded.getId()))) {
+//	    				id = loaded.getId();
+//	    				entry = insertEntry(entryBean, loaded);
+//	    				line = 0;
+//	    			}
+//	    			insertEntryDetail(detailBean, entry, loaded, line);
+//	    		}
+//	    	}
+//		} catch (Throwable e) {
+//			throw new AonException("Línea "+ i +". "+e.getMessage());
+//		}
 	}
 
-	private AccountEntry insertEntry(IManagerBean entryBean, EntryLoaded loaded) throws ManagerBeanException {
-		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod( getPeriod() );
-		entry.setEntryDate( loaded.getDate() );
-		entry.setSecurityLevel(getSecurityLevel());
-		entry.setType(AccountEntryType.MANUAL);
-		return (AccountEntry) entryBean.insert(entry);
-	}
+//	private AccountEntry insertEntry(IManagerBean entryBean, EntryLoaded loaded) throws ManagerBeanException {
+//		AccountEntry entry = new AccountEntry();
+//		entry.setAccountPeriod( getPeriod() );
+//		entry.setEntryDate( loaded.getDate() );
+//		entry.setSecurityLevel(getSecurityLevel());
+//		entry.setType(AccountEntryType.MANUAL);
+//		return (AccountEntry) entryBean.insert(entry);
+//	}
 
-	private void insertEntryDetail(IManagerBean detailBean, AccountEntry entry, EntryLoaded loaded, int line) throws ManagerBeanException {
-		AccountEntryDetail detail = new AccountEntryDetail();
-		detail.setAccountEntry(entry);
-		detail.setConcept(StringUtils.abbreviate( loaded.getConcept(), 32));
-		detail.setDocumentNumber(StringUtils.join( new String[] {loaded.getDocument(), loaded.getInvoice()}));
-		detail.setBalancingAccount(null);
-		if (loaded.getDebit() != 0.0) {
-			detail.setDebit(loaded.getDebit());	
-		}
-		if (loaded.getCredit() != 0.0) {
-			detail.setCredit(loaded.getCredit());
-		}
-		detail.setLine(++line);
-		Account account = getAccount( loaded.getAccount(), loaded.getDescription() );
-		detail.setAccount(account);
-		detailBean.insert(detail);		
-	}
+//	private void insertEntryDetail(IManagerBean detailBean, AccountEntry entry, EntryLoaded loaded, int line) throws ManagerBeanException {
+//		AccountEntryDetail detail = new AccountEntryDetail();
+//		detail.setAccountEntry(entry);
+//		detail.setConcept(StringUtils.abbreviate( loaded.getConcept(), 32));
+//		detail.setDocumentNumber(StringUtils.join( new String[] {loaded.getDocument(), loaded.getInvoice()}));
+//		detail.setBalancingAccount(null);
+//		if (loaded.getDebit() != 0.0) {
+//			detail.setDebit(loaded.getDebit());	
+//		}
+//		if (loaded.getCredit() != 0.0) {
+//			detail.setCredit(loaded.getCredit());
+//		}
+//		detail.setLine(++line);
+//		Account account = getAccount( loaded.getAccount(), loaded.getDescription() );
+//		detail.setAccount(account);
+//		detailBean.insert(detail);		
+//	}
 
 	private Account getAccount(String code,String description) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);

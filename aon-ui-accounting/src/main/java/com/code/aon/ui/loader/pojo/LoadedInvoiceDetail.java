@@ -2,6 +2,8 @@ package com.code.aon.ui.loader.pojo;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 
@@ -145,4 +147,53 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 	public void setCuentaIrpf(String cuentaIrpf) {
 		this.cuentaIrpf = cuentaIrpf;
 	}
+
+	public LoadedAccountEntryDetail getLoadedAccountEntryDetail(AccountEntryType type) {
+		LoadedAccountEntryDetail laed = new LoadedAccountEntryDetail();
+		laed.setCuenta(getCuenta());
+		laed.setDescripcionCuenta(getConcepto());
+		laed.setConcepto(getConcepto());
+		if (type == AccountEntryType.SALES_INVOICE) {
+			laed.setHaber(getBaseImponible());
+		} else {
+			laed.setDebe(getBaseImponible());
+		}
+		return laed;
+	}
+
+	public LoadedAccountEntryDetail getVATLoadedAccountEntryDetail(AccountEntryType type) {
+		LoadedAccountEntryDetail laed = new LoadedAccountEntryDetail();
+		laed.setConcepto(getConcepto());
+		if (StringUtils.isNotEmpty( getCuentaIva()) ){
+			laed.setCuenta( getCuentaIva() );
+			if (type == AccountEntryType.SALES_INVOICE) {
+				laed.setDescripcionCuenta( "Hacienda Pública, IVA repercutido." );
+			} else {
+				laed.setDescripcionCuenta( "Hacienda Pública, IVA soportado." );
+			}
+		} 
+		double cuota = CommonUtil.round(getCuotaIva() + getCuotaRe(),2);
+		if (type == AccountEntryType.SALES_INVOICE) {
+			laed.setHaber(cuota);
+		} else {
+			laed.setDebe(cuota);
+		}
+		return laed;
+	}
+	
+	public LoadedAccountEntryDetail getRetentionLoadedAccountEntryDetail(AccountEntryType type) {
+		LoadedAccountEntryDetail laed = new LoadedAccountEntryDetail();
+		laed.setConcepto(getConcepto());
+		if (StringUtils.isNotEmpty( getCuentaIva()) ){
+			laed.setCuenta( getCuentaIva() );
+			laed.setDescripcionCuenta( "Hacienda Pública, retenciones y pagos a cuenta." );
+		} 
+		if (type == AccountEntryType.SALES_INVOICE) {
+			laed.setDebe(getCuotaIrpf());
+		} else {
+			laed.setHaber(getCuotaIrpf());
+		}
+		return laed;
+	}
+	
 }

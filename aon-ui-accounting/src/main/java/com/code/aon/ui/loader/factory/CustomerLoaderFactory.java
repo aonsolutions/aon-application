@@ -1,37 +1,46 @@
 package com.code.aon.ui.loader.factory;
 
+ import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.Account;
+import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryBank;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.loader.Column;
+import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
-import com.code.aon.ui.loader.ILoaderIdCache;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 import com.code.aon.ui.loader.pojo.LoadedCustomer;
+import com.esferalia.aon.entity.IEntityAlias;
 
-public class CustomerLoaderFactory implements ILoaderFactory<ILoadedPojo>{
+public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
-	private static final String CLI = "CLI";
 	private static final Column[] SUPPORTED_COLUMNS = {
 			 new Column(CLI,"id"							,0,6	,true	,null)
 			,new Column(CLI,"razonSocial"					,2,64	,true	,null)
 			,new Column(CLI,"alias"							,2,32	,false	,null)
-			,new Column(CLI,"tipoDocumento"					,4,1	,true	,new int[] {0,1,2,3,4,5})
+			,new Column(CLI,"tipoDocumento"					,0,1	,true	,new int[] {0,1,2,3,4,5})
 			,new Column(CLI,"paisDocumento"					,2,2	,true	,null)
 			,new Column(CLI,"documento"						,2,16	,true	,null)
 			,new Column(CLI,"nacionalidad"					,2,2	,true	,null)
 			,new Column(CLI,"cuenta"						,2,9	,false	,null)
-			,new Column(CLI,"re"							,0,1	,false	,null)
+			,new Column(CLI,"re"							,0,1	,false	,new int[] {0,1})
 			,new Column(CLI,"transaccion"					,0,1	,false	,new int[] {0,1,2,3})
-			,new Column(CLI,"retencion"						,0,1	,false	,null)
-			,new Column(CLI,"facturarAlbaranesAgrupados"	,0,1	,false	,null)
+			,new Column(CLI,"retencion"						,0,1	,false	,new int[] {0,1})
+			,new Column(CLI,"facturarAlbaranesAgrupados"	,0,1	,false	,new int[] {0,1})
 			,new Column(CLI,"tipoVia"						,2,2	,false	,null)
 			,new Column(CLI,"direccion"						,2,128	,false	,null)
 			,new Column(CLI,"numero"						,0,6	,false	,null)
@@ -56,21 +65,26 @@ public class CustomerLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			,new Column(CLI,"diasPago"						,2,8	,false	,null)
 	};
 
+	private Map<String, Column[]> columns;
+	private ILoaderEngine engine;
+
 	public CustomerLoaderFactory() {
 	}
-	public CustomerLoaderFactory(ILoaderIdCache cache) {
+	public CustomerLoaderFactory(ILoaderEngine engine) {
+		this.engine = engine;
 	}
-	
-	private Map<String, Column[]> columns;
-	
+
 	public Map<String, Column[]> getColumns() {
 		return columns;
 	}
 
-
 	@Override
 	public boolean accept(String obj) {
 		return StringUtils.equals(obj,CLI);
+	}
+	@Override
+	public boolean accept(Class<? extends ILoadedPojo> clazz) {
+		return ClassUtils.isAssignable(clazz, LoadedCustomer.class);
 	}
 
 	@Override
@@ -89,14 +103,115 @@ public class CustomerLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	}
 
 	@Override
-	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
-		LoadedCustomer loaded = (LoadedCustomer) loadedPojo;
-		return params.getLoaderUtils().insertCustomer(loaded);
-	}
-	
-	@Override
 	public ITransferObject get(Integer id) throws AonException {
 		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		return bean.get(id);
+	}
+
+	@Override
+	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
+		LoadedCustomer loaded = (LoadedCustomer) loadedPojo;
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+		Customer customer  = new Customer ();
+		
+		customer.setRegistry(populateRegistry(params,loaded));
+		customer.setScope(params.getScope());
+		customer.setTransaction(loaded.getInvoiceTransactionType());
+		customer.setSurcharge(loaded.isSurcharge());
+		customer.setWithholding(loaded.isWithholding());
+		customer.setDeliveryGrouped(loaded.isDeliveryGrouped());
+		customer.setStatus(CustomerStatus.ACTIVE);
+		customer = (Customer) bean.insert(customer);
+		
+		
+		if (StringUtils.isNotBlank(loaded.getTipoVia())
+			|| StringUtils.isNotBlank(loaded.getDireccion())
+			|| StringUtils.isNotBlank(loaded.getNumero())
+			|| StringUtils.isNotBlank(loaded.getDireccion2())
+			|| StringUtils.isNotBlank(loaded.getDireccion3())
+			|| StringUtils.isNotBlank(loaded.getCp())
+			|| StringUtils.isNotBlank(loaded.getCiudad())
+			|| StringUtils.isNotBlank(loaded.getProvincia())
+			|| StringUtils.isNotBlank(loaded.getNombreProvincia())
+			|| StringUtils.isNotBlank(loaded.getPais())) {
+			insertRegistryAddress(customer.getRegistry(),loaded);	
+		}
+		
+		if (StringUtils.isNotBlank(loaded.getTelefono1())) {
+			insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono1());
+		}
+		if (StringUtils.isNotBlank(loaded.getTelefono2())) {
+			insertRegistryMedia(customer.getRegistry(),MediaType.FIXED_PHONE,loaded.getTelefono2());
+		}
+		if (StringUtils.isNotBlank(loaded.getFax())) {
+			insertRegistryMedia(customer.getRegistry(),MediaType.FAX,loaded.getFax());
+		}
+		if (StringUtils.isNotBlank(loaded.getEmail())) {
+			insertRegistryMedia(customer.getRegistry(),MediaType.EMAIL,loaded.getEmail());
+		}
+		if (StringUtils.isNotBlank(loaded.getWeb())) {
+			insertRegistryMedia(customer.getRegistry(),MediaType.WEB,loaded.getWeb());
+		}
+		RegistryBank rbank = null;
+		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
+			rbank = insertRegistryBank(engine,params,customer.getRegistry(),loaded);	
+		}
+		if (rbank != null || StringUtils.isNotBlank(loaded.getFormaPago())) {
+			insertRegistryPayMethod(params,customer.getRegistry(),rbank,loaded);
+		}
+		if (StringUtils.isNotBlank(loaded.getCuenta())) {
+			insertRegistryCustomerAccount( params, customer, loaded);
+		}
+		return customer.getId();
+	}
+
+	private void insertRegistryCustomerAccount(LoaderParams params,Customer customer, LoadedCustomer loaded) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CustomerAccount.class);
+		CustomerAccount ca = new CustomerAccount();
+		Account account = getLoaderUtils().ensureAccount(loaded.getCuenta(), customer.getRegistry().getName());
+		ca.setCustomer(customer);
+		ca.setAccount(account);
+		bean.insert(ca);
+	}
+	
+	@Override
+	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
+		LoadedCustomer loaded = (LoadedCustomer) loadedPojo;
+		Customer customer = searchCustomerByDocument( params, loaded );
+		if (customer == null && StringUtils.isNotBlank( loaded.getCuenta())) {
+			customer = searchCustomerByAccount( params, loaded );	
+		}
+		return customer;
+	}
+	
+	private Customer searchCustomerByDocument(LoaderParams params, LoadedCustomer loaded) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_REGISTRY_DOCUMENT), loaded.getDocumento());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CUSTOMER_SCOPE_ID), params.getScope().getId());
+		List<ITransferObject> list = bean.getList(criteria); 
+		if ( list.size() > 0 ) {
+			if ( list.size() > 1 ) {
+				throw new ManagerBeanException("Existe más de un cliente activo con el número de documento " + loaded.getDocumento());
+			}
+			return (Customer) list.get(0);
+		}
+		return null;
+	}
+	
+	private Customer searchCustomerByAccount(LoaderParams params, LoadedCustomer loaded) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(CustomerAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("CustomerAccount.account.code", loaded.getCuenta());
+		List<ITransferObject> list = bean.getList(criteria); 
+		if ( list.size() > 0 ) {
+			if ( list.size() > 1 ) {
+				throw new ManagerBeanException("Existe más de un cliente vinculado a la cuenta " + loaded.getCuenta());
+			}
+			CustomerAccount customerAccount = (CustomerAccount) list.get(0); 
+			return customerAccount.getCustomer();
+		}
+		return null;
 	}
 }

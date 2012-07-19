@@ -23,12 +23,12 @@
     		<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle" value="XXX Carga Generica de Entidades XXX" />
+				<ui:param name="toolbarTitle" value="#{accountingBundle.aon_loader_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="execute" 
-						value="XXXX Cargar XXX"
+						value="#{accountingBundle.aon_loader_load}"
 						actionListener="#{aonLoader.onLoad}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						rendered="#{aonLoader.aonFile.size > 0}"
@@ -36,10 +36,10 @@
 						reRender="poll,execute,paramsGrid"
 						focus="scrollTo"
 						onclick="if (!confirm('Se va a cargar  el contenido del archivo. Desea continuar?')) return false;"/>
-<!--
-Richfaces.showModalPanel('waitProccess')
-oncomplete="Richfaces.hideModalPanel('waitProccess')"  
- -->						
+					<aon:htmlCommandLink  id="help" target="_new" 
+						value="#{bundle.aon_help}"
+						actionListener="#{aonLoader.onHelp}"
+						styleClass="aon-finding-toolbar-item aon-icon-menu-help"/>
 				</ui:define>
 			</ui:decorate>
 

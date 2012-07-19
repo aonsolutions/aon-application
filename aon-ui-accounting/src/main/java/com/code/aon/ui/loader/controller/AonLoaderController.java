@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -25,7 +28,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
-import com.code.aon.ui.util.AonUtil;
 
 public class AonLoaderController {
 	
@@ -98,6 +100,21 @@ public class AonLoaderController {
 		thread.start();
 	}
 	
+	public void onHelp(ActionEvent event ) {
+		try {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ExternalContext ectx = ctx.getExternalContext();
+			HttpServletResponse response = (HttpServletResponse) ectx.getResponse();
+			response.setContentType( "text/html" );
+			Loader loader = new Loader(params,log);
+			loader.help(response.getWriter());
+			ctx.responseComplete();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+
 	private class LoaderThread extends Thread {
 		
 		private ThreadDomainProvider tdp;
@@ -127,7 +144,7 @@ public class AonLoaderController {
 				ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 				loader.loadMetadata(input);
 				input = new ByteArrayInputStream(getAonFile().getData());
-				loader.validateFormat(input);
+				loader.validate(input);
 				input = new ByteArrayInputStream(getAonFile().getData());
 				loader.load(input);
 				HibernateUtil.commitTransaction(sessionName);

@@ -44,16 +44,19 @@ public class LoadedCustomer extends LoadedRegistry{
 	}
 	
 	public InvoiceTransactionType getInvoiceTransactionType() {
+		if (getTransaccion() == null) {
+			return InvoiceTransactionType.NATIONAL; 
+		}
 		return InvoiceTransactionType.values()[getTransaccion()]; 
 	}
 	public boolean isDeliveryGrouped() {
-		return (getFacturarAlbaranesAgrupados() == 1);
+		return (getFacturarAlbaranesAgrupados() == null?true:(getFacturarAlbaranesAgrupados() == 1));
 	}
 	public boolean isSurcharge() {
-		return (getRe() == 1);
+		return (getRe()==null?false:(getRe() == 1));
 	}
 	public boolean isWithholding() {
-		return (getRetencion() == 1);
+		return (getRetencion()==null?false:(getRetencion() == 1));
 	}
 	
 }

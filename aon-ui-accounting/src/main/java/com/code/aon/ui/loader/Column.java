@@ -2,6 +2,8 @@ package com.code.aon.ui.loader;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.AonException;
+
 public class Column {
 	private String entity;
 	private String name;
@@ -19,37 +21,48 @@ public class Column {
 		this.enumValues = enumValues;
 	}
 
-	protected String getEntity() {
+	public String getEntity() {
 		return entity;
 	}
 
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
-	protected int getType() {
+	public int getType() {
 		return type;
 	}
 
-	protected int getLength() {
+	public int getLength() {
 		return length;
 	}
 
-	protected boolean isRequired() {
+	public boolean isRequired() {
 		return required;
 	}
 	
-	protected int[] getEnumValues() {
+	public int[] getEnumValues() {
 		return enumValues;
 	}
 
-	protected boolean hasValidation( ) {
-		return (getType() == 2 && getEnumValues() != null && enumValues.length > 0);
+	public boolean hasValidation( ) {
+		return (isRequired() || (getType() == 0 && getEnumValues() != null && enumValues.length > 0));
 	}
 
-	protected boolean validate( Object value ) {
-		int v = (Integer) value;
-		return (ArrayUtils.indexOf(getEnumValues(), v) != -1);
+	public String validate( Object value ) throws AonException {
+		if (isRequired() && value == null) {
+			return "El valor '"+getName()+"' es un dato requerido.";
+		}
+		if (enumValues != null) {
+			if (!isRequired() && value == null) {
+				return null;
+			}
+			int v = (Integer) value;
+			if (ArrayUtils.indexOf(getEnumValues(), v) == -1) {
+				return "El valor '"+ v + "'de la columna '"+getName()+"' no se encuentra en la lista de valores válidos. ("+ArrayUtils.toString(enumValues)+")";	
+			}
+		}
+		return null;
 	}
 	
 }

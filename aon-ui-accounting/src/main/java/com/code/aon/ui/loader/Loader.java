@@ -6,27 +6,38 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+
+import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.velocity.TemplateHelper;
+import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 
-public class Loader implements ILoaderIdCache{
+public class Loader implements ILoaderEngine {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
+	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/loader/";
+	private static final String VM_HELP_TEMPLATE = "help.html.vm";
+	private static final String VM_FACTORIES_KEY = "factories";
+	private static final String VM_BUNDLE_KEY = "bundle";
+	private static final String VM_HELP_BUNDLE = "com.code.aon.ui.loader.help";
 	
 	private static final String SEMICOLON = ";";
 	private static final String EQUALS = "=";
@@ -34,11 +45,11 @@ public class Loader implements ILoaderIdCache{
 	private static final String METADATA_MARK_1 = "1";
 	private static final String SEPARATOR_KEY = "Separador";
 	private static final String ENCODING_KEY = "Codificacion";
-	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private PrintWriter log;
 	private LoaderParams params;
 	private LoaderFactoryManager factoryManager;
 	private Map<String, Map<String, Integer>> ids;
+	private VelocityHelper velocityHelper;
 	
 	private String encoding = "ISO-8859-1";
 	private String sep = "|";
@@ -123,7 +134,7 @@ public class Loader implements ILoaderIdCache{
 		}
 	}
 	
-	private void log(String msg  ) {
+	public void log( String msg  ) {
 		log.print( msg );
 		log.print( "<br/>" );
 		log.flush();
@@ -199,7 +210,7 @@ public class Loader implements ILoaderIdCache{
 		log("Meta: Entidad " + entity + " registrada.");
 	}
 	
-	public void validateFormat(InputStream input) throws AonException {
+	public void validate(InputStream input) throws AonException {
 		try {
 			int errors = 0;
 			int warnings = 0;
@@ -217,11 +228,28 @@ public class Loader implements ILoaderIdCache{
 						if (!getFactoryManager().accept( entity )) {
 							raiseException(i, "La entidad " + entity+" no está soportada.");
 						}
-						parseLine(i,null,getColumns().get(entity),StringUtils.substringAfter(line, getSep()));
-					} else {
-						log ( "Ignorando la línea de meta información " + i);
-					}
-					
+						ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(entity);
+						ILoadedPojo loaded = factory.getTargetBean();
+						parseLine(i,loaded,getColumns().get(entity),StringUtils.substringAfter(line, getSep()));
+						PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
+						for (Column c : getColumns().get(entity)) {
+							try {
+								if (c.hasValidation()) {
+									Object data = propertyUtilsBean.getProperty(loaded, c.getName());
+									String msg = c.validate( data ); 
+									if ( msg != null) {
+										log("VALIDACIÓN: Línea " + i +": " + msg);
+									}
+								}
+							} catch (IllegalAccessException e) {
+								raiseException(i, e.getMessage());
+							} catch (InvocationTargetException e) {
+								raiseException(i, e.getMessage());
+							} catch (NoSuchMethodException e) {
+								raiseException(i, e.getMessage()
+							);							}
+						}
+					} 
 				}
 				 
 			}
@@ -257,10 +285,7 @@ public class Loader implements ILoaderIdCache{
 						ILoadedPojo loaded = factory.getTargetBean();
 						parseLine(i,loaded,getColumns().get(entity),StringUtils.substringAfter(line, getSep()));
 						try {
-							Integer id = factory.insert(getParams(), loaded );
-							if (id != null) {
-								cacheId(entity, loaded.getIdentifier(), id );	
-							}
+							insertAonEntity(params, loaded);
 						} catch (AonException e){
 							e.printStackTrace();
 							raiseException(i, e.getMessage());
@@ -311,7 +336,6 @@ public class Loader implements ILoaderIdCache{
 		}
 	}
 
-
 	private Object parseData(int i, String string, Column c) throws AonException {
 		try {
 			if (StringUtils.isBlank(string)) {
@@ -337,8 +361,8 @@ public class Loader implements ILoaderIdCache{
 
 	private Date getDate(String data) throws AonException {
 		try {
-			Date date = FORMATTER.parse(data);
-			String ensure = FORMATTER.format(date);
+			Date date = getParams().getDateFormatter().parse(data);
+			String ensure = getParams().getDateFormatter().format(date);
 			if (!StringUtils.equals(data, ensure)) {
 				throw new AonException("Fecha no correcta");	
 			}
@@ -366,8 +390,7 @@ public class Loader implements ILoaderIdCache{
 		}
 	}
 
-	@Override
-	public void cacheId(String key, String identifier, Integer id) {
+	private void cacheId(String key, String identifier, Integer id) {
 		Map<String, Integer> entityIds = getIds().get(key);
 		if (entityIds == null) {
 			entityIds = new HashMap<String, Integer>();
@@ -376,8 +399,7 @@ public class Loader implements ILoaderIdCache{
 		entityIds.put(identifier, id);
 	}
 	
-	@Override
-	public Integer getAonId(String key, String identifier) {
+	private Integer getAonId(String key, String identifier) {
 		Map<String, Integer> entityIds = getIds().get(key);
 		if (entityIds != null) {
 			return entityIds.get(identifier);
@@ -386,13 +408,87 @@ public class Loader implements ILoaderIdCache{
 	}
 
 	@Override
-	public ITransferObject getAonEntity(String key, String identifier) throws AonException {
-		Integer id = getAonId(key, identifier);
-		if (id != null) {
+	public ITransferObject ensureAonEntity(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
+		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
+		String key = factory.getKey();
+		String identifier = loadedPojo.getIdentifier();
+		ITransferObject to = getAonEntity(key, identifier);
+		if (to == null) {
+			to = factory.get(params, loadedPojo);
+			if (to == null) {
+				insertAonEntity(params, loadedPojo);
+				to = getAonEntity(key, identifier);
+			}
+		}
+		return to;
+	}
+
+	@Override
+	public ITransferObject get(String key, Integer aonId) throws AonException {
+		if (aonId != null) {
 			ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(key);
-			return factory.get(id);
+			return factory.get(aonId);
 		}
 		return null;
 	}
+
+	@Override
+	public ITransferObject getAonEntity(String key, String identifier) throws AonException {
+		if (StringUtils.isNotBlank(identifier)) {
+			Integer id = getAonId(key, identifier);
+			if (id != null) {
+				ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(key);
+				return factory.get(id);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Integer insertAonEntity(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
+		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
+		Integer id = factory.insert(getParams(), loadedPojo );
+		if (id != null) {
+			cacheId(factory.getKey(), loadedPojo.getIdentifier(), id );	
+		}
+		return id;
+	}
+
+	@Override
+	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
+		ILoaderFactory<ILoadedPojo> factory = getFactoryManager().getFactory(loadedPojo.getClass());
+		return factory.get(params,loadedPojo);
+	}
 	
+	public void help(Writer output) {
+		try {
+			processTemplate(output);
+			output.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
+	
+
+	private VelocityHelper getVelocityHelper() {
+		if ( this.velocityHelper == null ) {
+			this.velocityHelper = new VelocityHelper();
+			try {
+				this.velocityHelper.init( VM_PATH_DEFAULT );
+			} catch (Exception e) {
+				LOGGER.error( "Velocity engine could not be initialized", e );
+			}
+		}
+		return this.velocityHelper;
+	}
+	
+	private void processTemplate(Writer output) throws IOException, AonException {
+		TemplateHelper th = getVelocityHelper().getTemplateHelper();
+		ResourceBundle bundle = ResourceBundle.getBundle(VM_HELP_BUNDLE);
+		th.putInContext( VM_BUNDLE_KEY, bundle );
+		th.putInContext( VM_FACTORIES_KEY, getFactoryManager().getFactories() );
+		th.processTemplate(VM_HELP_TEMPLATE, output);
+	}
+
 }

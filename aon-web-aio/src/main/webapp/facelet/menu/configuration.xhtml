@@ -310,6 +310,24 @@
 										</aon:div>
 									</aon:div>
 								</aon:panelGrid>
+								
+								<aon:panelGrid id="group_utilities"
+									styleClass="aon-width-all" columnClasses="aon-padding"
+									headerClass="aon-direct-access-panel aon-icon-config">
+									<f:facet name="header">
+										<aon:outputText value="#{bundle.aon_utilities}" />
+									</f:facet>
+									<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="aonLoader"
+												action="aonLoader_form"
+												actionListener="#{aonLoader.onStart}"
+												value="#{accountingBundle.aon_loader_module}" />
+										</aon:div>
+									</aon:div>
+								</aon:panelGrid>
+								
+								
 							</c:if>
 						</c:if>
 					</aon:panelGroup>

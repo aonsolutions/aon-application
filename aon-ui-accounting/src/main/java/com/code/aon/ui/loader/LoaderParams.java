@@ -1,6 +1,9 @@
 package com.code.aon.ui.loader;
 
-import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 
 import com.code.aon.accounting.Period;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -14,9 +17,17 @@ public class LoaderParams {
 	private SecurityLevel securityLevel;
 	private WorkPlace workPlace;
 	private ProductCategory category;
-	private WeakReference<LoaderUtils> loaderUtils;
 	private Period accountPeriod;
-	
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("hh:mm:ss");
+	private static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,##0.00");
+	static {
+		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
+//		dfs.setGroupingSeparator('.');
+//		dfs.setDecimalSeparator(',');
+		NUMBER_FORMATTER.setDecimalFormatSymbols(dfs);	
+	}
+
 	public Scope getScope() {
 		return scope;
 	}
@@ -47,18 +58,21 @@ public class LoaderParams {
 	public void setCategory(ProductCategory category) {
 		this.category = category;
 	}
-
-	public LoaderUtils getLoaderUtils() {
-		if (loaderUtils == null) {
-			loaderUtils = new WeakReference<LoaderUtils>(new LoaderUtils( this ));	
-		}
-		return loaderUtils.get();
-	}
 	public Period getAccountPeriod() {
 		return accountPeriod;
 	}
 	public void setAccountPeriod(Period accountPeriod) {
 		this.accountPeriod = accountPeriod;
+	}
+	
+	public DateFormat getDateFormatter() {
+		return DATE_FORMATTER; 
+	}
+	public DateFormat getTimeFormatter() {
+		return TIME_FORMATTER; 
+	}
+	public DecimalFormat getNumberFormatter() {
+		return NUMBER_FORMATTER; 
 	}
 	
 }

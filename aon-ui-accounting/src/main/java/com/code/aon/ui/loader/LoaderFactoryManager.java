@@ -3,6 +3,8 @@ package com.code.aon.ui.loader;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.code.aon.ui.loader.factory.AccountEntryDetailLoaderFactory;
+import com.code.aon.ui.loader.factory.AccountEntryLoaderFactory;
 import com.code.aon.ui.loader.factory.CreditorLoaderFactory;
 import com.code.aon.ui.loader.factory.CustomerLoaderFactory;
 import com.code.aon.ui.loader.factory.FinanceLoaderFactory;
@@ -15,15 +17,17 @@ public class LoaderFactoryManager {
 	
 	private List<ILoaderFactory<ILoadedPojo>> factories;
 	
-	public LoaderFactoryManager(ILoaderIdCache cache) {
+	public LoaderFactoryManager(ILoaderEngine engine) {
 		factories = new LinkedList<ILoaderFactory<ILoadedPojo>>();
 		
-		factories.add( new CustomerLoaderFactory(cache));
-		factories.add( new CreditorLoaderFactory(cache));
-		factories.add( new SupplierLoaderFactory(cache));
-		factories.add( new FinanceLoaderFactory(cache));
-		factories.add( new InvoiceLoaderFactory(cache));
-		factories.add( new InvoiceDetailLoaderFactory(cache));
+		factories.add( new CustomerLoaderFactory(engine));
+		factories.add( new CreditorLoaderFactory(engine));
+		factories.add( new SupplierLoaderFactory(engine));
+		factories.add( new FinanceLoaderFactory(engine));
+		factories.add( new InvoiceLoaderFactory(engine));
+		factories.add( new InvoiceDetailLoaderFactory(engine));
+		factories.add( new AccountEntryLoaderFactory(engine));
+		factories.add( new AccountEntryDetailLoaderFactory(engine));
 	}
 	
 	public List<ILoaderFactory<ILoadedPojo>> getFactories() {
@@ -42,6 +46,15 @@ public class LoaderFactoryManager {
 	public ILoaderFactory<ILoadedPojo > getFactory( String key ) {
 		for (ILoaderFactory<ILoadedPojo> f : getFactories()) {
 			if (f.accept(key)) {
+				return f;
+			}
+		}
+		return null;
+	}
+
+	public ILoaderFactory<ILoadedPojo> getFactory(Class<? extends ILoadedPojo> clazz) {
+		for (ILoaderFactory<ILoadedPojo> f : getFactories()) {
+			if (f.accept(clazz)) {
 				return f;
 			}
 		}

@@ -9,7 +9,7 @@ public class LoadedFinance implements ILoadedPojo{
 
 	public Integer id;
 	public Integer factura;
-	public Integer numero;
+	public Integer idTitular;
 	public String cuenta;
 	public String documento;
 	public Integer tipoDocumento;
@@ -17,7 +17,7 @@ public class LoadedFinance implements ILoadedPojo{
 	public String razonSocial;
 	public String concepto;
 	public Date fechaVto;
-	public Integer tipo;
+	public Integer pago;
 	public String formaPago;
 	public String cuentaBanco;
 	public Double importe;
@@ -40,13 +40,12 @@ public class LoadedFinance implements ILoadedPojo{
 	public void setFactura(Integer factura) {
 		this.factura = factura;
 	}
-	public Integer getNumero() {
-		return numero;
+	public Integer getIdTitular() {
+		return idTitular;
 	}
-	public void setNumero(Integer numero) {
-		this.numero = numero;
+	public void setIdTitular(Integer idTitular) {
+		this.idTitular = idTitular;
 	}
-
 	public String getCuenta() {
 		return cuenta;
 	}
@@ -83,11 +82,11 @@ public class LoadedFinance implements ILoadedPojo{
 	public void setRazonSocial(String razonSocial) {
 		this.razonSocial = razonSocial;
 	}
-	public Integer getTipo() {
-		return tipo;
+	public Integer getPago() {
+		return pago;
 	}
-	public void setTipo(Integer tipo) {
-		this.tipo = tipo;
+	public void setPago(Integer pago) {
+		this.pago = pago;
 	}
 	public String getConcepto() {
 		return concepto;
@@ -120,4 +119,31 @@ public class LoadedFinance implements ILoadedPojo{
 		this.importe = importe;
 	}
 	
+	public LoadedCustomer getLoadedCustomer() {
+		LoadedCustomer loadedCustomer = new LoadedCustomer();
+		fillLoadedRegistry(loadedCustomer);
+		loadedCustomer.setCuenta(getCuenta());
+		return loadedCustomer;
+	}
+	public LoadedSupplier getLoadedSupplier() {
+		LoadedSupplier loadedSupplier = new LoadedSupplier();
+		fillLoadedRegistry(loadedSupplier);
+		loadedSupplier.setCuenta(getCuenta());
+		return loadedSupplier;
+	}
+	public LoadedCreditor getLoadedCreditor() {
+		LoadedCreditor loadedCreditor = new LoadedCreditor();
+		fillLoadedRegistry(loadedCreditor);
+		loadedCreditor.setCuenta(getCuenta());
+		return loadedCreditor;
+	}
+	private void fillLoadedRegistry(LoadedRegistry loadedRegistry) {
+		loadedRegistry.setDocumento(getDocumento());
+		loadedRegistry.setPaisDocumento(getPaisDocumento());
+		loadedRegistry.setTipoDocumento(getTipoDocumento());
+		loadedRegistry.setRazonSocial(getRazonSocial());
+		loadedRegistry.setFormaPago(getFormaPago());
+		loadedRegistry.setCuentaBanco(getCuentaBanco());
+		loadedRegistry.setId(getIdTitular());
+	}
 }

@@ -29,10 +29,13 @@ public class LoadedSupplier extends LoadedRegistry {
 		this.retencion = retencion;
 	}
 	public InvoiceTransactionType getInvoiceTransactionType() {
+		if (getTransaccion() == null) {
+			return InvoiceTransactionType.NATIONAL; 
+		}
 		return InvoiceTransactionType.values()[getTransaccion()]; 
 	}
 	public boolean isWithholding() {
-		return (getRetencion() == 1);
+		return (getRetencion()==null?false:(getRetencion() == 1));
 	}
 	
 }
