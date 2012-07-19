@@ -232,6 +232,23 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceModel = invoiceModel;
 	}
 
+	public void onLoad(ActionEvent event) throws ManagerBeanException {
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
+		onSearch(event);
+	}
+
+	@Override
+	protected Object getSelectedTO() {
+		try {
+			return getManagerBean().get(((ProjectReservation)this.model.getRowData()).getId());
+		} catch (ManagerBeanException ex) {
+			String msg = "No se puede acceder a la Reserva. Recargue la lista y vuelva a intentarlo.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 	public List<SelectItem> getReservationTimes() {
 		List<SelectItem> hours = new LinkedList<SelectItem>();
 		DateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -249,12 +266,6 @@ public class ProjectReservationController extends BasicController implements IPm
 			hours.add(item);
 		}
 		return hours;
-	}
-
-	public void onLoad(ActionEvent event) throws ManagerBeanException {
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_START_DATE), new Date());
-		onSearch(event);
 	}
 
 	public boolean isPendingRoomAssignation() throws ManagerBeanException {
