@@ -29,7 +29,7 @@
 						actionListener="#{reservation.onCheckOut}" />
 					<aon:menuItem id="reservation-EarlyCheckOut"
 						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
-						rendered="#{reservation.invoiced and reservation.checkIn and !reservation.checkOutable and (aonRole.config or aonRole.commercial)}"
+						rendered="#{reservation.invoiced and reservation.checkIn and !reservation.checkOutable and (aonRole.config or aonRole.commercialOperator)}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onEarlyCheckOutShow}"
 						reRender="showEarlyCheckOutWindow">
