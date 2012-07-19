@@ -28,20 +28,6 @@
 						accesskey="#{bundle.aon_key_print}">
 						<f:param name="reportKey" value="undeductibleInvoiceList" />
 					</aon:htmlCommandLink>
-<!--	DEPRECATED
-					<aon:htmlCommandLink id="undeductibleInvoiceDetailledList-excel-report"
-						value="&#160;" target="_blank" action="#{report.onExecute}"
-						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-						<f:param name="reportKey" value="undeductibleInvoiceDetailledList" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>							
-					<aon:htmlCommandLink id="undeductibleInvoiceDetailledList-report"
-						value="#{bundle.aon_detailed_listing}" target="_blank"
-						action="#{report.onExecute}" 
-						styleClass="aon-finding-toolbar-item aon-icon-pdf">
-						<f:param name="reportKey" value="undeductibleInvoiceDetailledList" />
-					</aon:htmlCommandLink>
--->					
 				</ui:define>
 
 			</ui:decorate>
@@ -111,6 +97,9 @@
 							<aon:outputText value="#{to.payMethod}">
 								<aon:abbreviateConverter maxWidth="15" />
 							</aon:outputText>
+							<f:facet name="footer">
+								<aon:outputText value="#{financeBundle.finance_total_amount}" />
+							</f:facet>																												
 						</aon:column>
 	
 						<aon:column styleClass="aon-editDataTable-textColumn">
@@ -127,6 +116,13 @@
 							<aon:outputText value="#{to.total}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText style="text-align:right" value="#{controller.totalInvoiceAmount}" >
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>														
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn">
