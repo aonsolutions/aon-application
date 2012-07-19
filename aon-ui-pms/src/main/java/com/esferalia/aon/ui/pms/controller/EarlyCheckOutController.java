@@ -51,7 +51,6 @@ public class EarlyCheckOutController implements IPmsConstants {
 	private List<Finance> reservationFinances;
 	private Map<Tax, Double> reservationUsedServices;
 	private boolean showEarlyCheckOutWindow;
-	private Date earlyCheckOutDate;
 	private int earlyCheckOutPenalty;
 
 	public ProjectReservation getReservation() {
@@ -94,14 +93,6 @@ public class EarlyCheckOutController implements IPmsConstants {
 		this.showEarlyCheckOutWindow = showEarlyCheckOutWindow;
 	}
 
-	public Date getEarlyCheckOutDate() {
-		return earlyCheckOutDate;
-	}
-
-	public void setEarlyCheckOutDate(Date earlyCheckOutDate) {
-		this.earlyCheckOutDate = earlyCheckOutDate;
-	}
-
 	public int getEarlyCheckOutPenalty() {
 		return earlyCheckOutPenalty;
 	}
@@ -119,10 +110,11 @@ public class EarlyCheckOutController implements IPmsConstants {
 		}
 
 		try {
-			setEarlyCheckOutDate(DateUtils.truncate(new Date(), Calendar.DATE));
 			setEarlyCheckOutPenalty(0);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setDirectCustomer(true);
+			getReservationInvoiceTo().setEarlyCheckOut(true);
+			getReservationInvoiceTo().setEarlyCheckOutDate(DateUtils.truncate(new Date(), Calendar.DATE));
 			getReservationInvoiceTo().setFinances(new LinkedList<Finance>());
 			setReservationFinances(obtainReservationFinances());
 			setReservationUsedServices(obtainReservationUsedServices());
@@ -157,7 +149,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, getReservation().getId());
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE);
-		criteria.addLessThanExpression(alias, getEarlyCheckOutDate());
+		criteria.addLessThanExpression(alias, getReservationInvoiceTo().getEarlyCheckOutDate());
 		if (getReservation().isAgencyHolder()) {
 			alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
 			criteria.addEqualExpression(alias, true);
@@ -303,9 +295,8 @@ public class EarlyCheckOutController implements IPmsConstants {
 
 	public void onEarlyCheckOut(ActionEvent event) {
 		try {
-			if (validateEarlyCheckOut(getReservation())) {
-				if (getEarlyCheckOutDate().compareTo(getReservation().getEndDate()) != 0) {
-					getReservationInvoiceTo().setEarlyCheckOut(true);
+			if (validateEarlyCheckOut()) {
+				if (getReservationInvoiceTo().getEarlyCheckOutDate().compareTo(getReservation().getEndDate()) != 0) {
 					getReservationInvoiceTo().setPenaltyAmount(getEarlyCheckOutPenaltyAmount());
 
 					if (getReservation().isAgencyHolder()) {
@@ -316,11 +307,11 @@ public class EarlyCheckOutController implements IPmsConstants {
 						getReservationInvoiceTo().setComments("SALIDA ANTICIPADA");
 	
 						PenalizationInvoicing penalizationInvoicing = new PenalizationInvoicing();
-						penalizationInvoicing.agencyCheckOutInvoice(getReservationInvoiceTo(), getReservation(), getEarlyCheckOutDate());
+						penalizationInvoicing.agencyCheckOutInvoice(getReservationInvoiceTo(), getReservation());
 			    	}
 
 					ReservationUtils reservationUtils = new ReservationUtils();
-			    	reservationUtils.releaseProjectReservationResources(getReservation(), true, getEarlyCheckOutDate());
+			    	reservationUtils.releaseProjectReservationResources(getReservation(), true, getReservationInvoiceTo().getEarlyCheckOutDate());
 
 			    	if (getReservationFinances().size() > 0) {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
@@ -360,8 +351,9 @@ public class EarlyCheckOutController implements IPmsConstants {
 		}
 	}
 
-	private boolean validateEarlyCheckOut(ProjectReservation reservation) throws ManagerBeanException {
-		if (reservation.getStartDate().after(getEarlyCheckOutDate()) || reservation.getEndDate().before(getEarlyCheckOutDate())) {
+	private boolean validateEarlyCheckOut() throws ManagerBeanException {
+		Date earlyCheckOutDate = getReservationInvoiceTo().getEarlyCheckOutDate();
+		if (getReservation().getStartDate().after(earlyCheckOutDate) || getReservation().getEndDate().before(earlyCheckOutDate)) {
 			String msg = "Fecha de Salida Anticipada incorrecta.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);

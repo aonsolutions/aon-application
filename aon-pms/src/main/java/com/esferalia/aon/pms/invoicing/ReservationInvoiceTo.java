@@ -34,6 +34,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private String comments;
 	private boolean deposit;
 	private boolean earlyCheckOut;
+	private Date earlyCheckOutDate;
 	private double penaltyAmount;
 	private List<HotelService> services;
 	private List<Finance> finances;
@@ -152,6 +153,14 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setEarlyCheckOut(boolean earlyCheckOut) {
 		this.earlyCheckOut = earlyCheckOut;
+	}
+
+	public Date getEarlyCheckOutDate() {
+		return earlyCheckOutDate;
+	}
+
+	public void setEarlyCheckOutDate(Date earlyCheckOutDate) {
+		this.earlyCheckOutDate = earlyCheckOutDate;
 	}
 
 	public double getPenaltyAmount() {

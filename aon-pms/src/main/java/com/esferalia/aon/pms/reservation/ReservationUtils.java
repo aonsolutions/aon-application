@@ -151,6 +151,7 @@ public class ReservationUtils implements IReservationConstants {
     		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
     		removeProjectReservationRoomDetails(reservationRoom, removeService, effectiveDate);
     	}
+    	removeProjectReservationServiceDetails(reservation, removeService, effectiveDate);
     }
 
     public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room, Integer[] services) throws ManagerBeanException {
@@ -313,7 +314,29 @@ public class ReservationUtils implements IReservationConstants {
 		}
 	}
 
-    public double getReservationCalculatedTaxableBase(ProjectReservation reservation) {
+	public void removeProjectReservationServiceDetails(ProjectReservation reservation, boolean removeService, Date effectiveDate) throws ManagerBeanException {
+    	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+    	Criteria criteria = new Criteria();
+    	String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
+    	criteria.addEqualExpression(alias, reservation.getId());
+    	alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE);
+    	criteria.addGreaterThanOrEqualExpression(alias, effectiveDate);
+    	if (!removeService) {
+        	alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL);
+        	criteria.addNotNullExpression(alias);
+    	}
+    	for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+    		ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+			if (removeService) {
+				reservationServiceDetailBean.remove(reservationServiceDetail);
+			} else {
+				reservationServiceDetail.setProjectReservationRoomDetail(null);
+				reservationServiceDetailBean.update(reservationServiceDetail);
+			}
+    	}
+	}
+
+	public double getReservationCalculatedTaxableBase(ProjectReservation reservation) {
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
 		return strategy.getTaxableBase(reservation);
     }

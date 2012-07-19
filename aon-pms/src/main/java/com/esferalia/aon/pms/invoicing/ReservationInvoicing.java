@@ -203,7 +203,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-			if (isVatGap /*|| reservationInvoiceTo.isEarlyCheckOut()*/) {
+			if (isVatGap) {
 				invoiceDetail.setTaxDataInDetail(true);
 				if (reservation.getVatQuota() != 0) {
 					invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
@@ -261,16 +261,13 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(reservation.getHotelReservation().getItemPenalty());
-			invoiceDetail.setDescription(reservation.getHotelReservation().getItemPenalty().getProduct().getName());
+			invoiceDetail.setDescription(obtainDetailDescription(reservationInvoiceTo.getEarlyCheckOutDate(), null, invoiceDetail.getItem().getProduct().getName()));
 			invoiceDetail.setQuantity(1);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setPrice(reservationInvoiceTo.getPenaltyAmount());
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			invoiceDetail.setTaxableBase(reservationInvoiceTo.getPenaltyAmount());
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-			//invoiceDetail.setTaxDataInDetail(true);
-			//invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
-			//invoiceDetail.setVatQuota(CommonUtil.round(reservationInvoiceTo.getPenaltyAmount() * invoiceDetail.getVatPercent() / 100));
 			invoiceDetail.getInvoice().setUpdateEnabled(true);
 			invoiceDetailBean.insert(invoiceDetail);
 		}

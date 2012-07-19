@@ -67,7 +67,7 @@
 										<aon:outputLabel for="ProjectReservation_earlyCheckOutDate"
 											value="#{bundle.aon_date} #{pmsBundle.pms_checkOut}" />
 										<aon:selectInputDate id="ProjectReservation_earlyCheckOutDate" 
-											value="#{controller.earlyCheckOutDate}" required="true"
+											value="#{controller.reservationInvoiceTo.earlyCheckOutDate}" required="true"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}">
 											<a4j:support ajaxSingle="true" event="oninputchange"

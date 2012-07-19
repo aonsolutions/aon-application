@@ -33,7 +33,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PenalizationInvoicing.class.getName());
 	
-	public Invoice agencyCheckOutInvoice(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation, Date effectiveDate) throws ManagerBeanException {
+	public Invoice agencyCheckOutInvoice(ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -44,7 +44,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 			HibernateUtil.beginTransaction(sessionName);
 			
 			Invoice invoice = createInvoice(reservationInvoiceTo, reservation);
-			createInvoiceDetails(invoice, reservation, effectiveDate);
+			createInvoiceDetails(invoice, reservationInvoiceTo, reservation);
 			recordInvoice(invoice);
 
 			HibernateUtil.getSession(sessionName).flush();
@@ -90,7 +90,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private void createInvoiceDetails(Invoice invoice, ProjectReservation reservation, Date effectiveDate) throws ManagerBeanException {
+	private void createInvoiceDetails(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		int line = 0;
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -99,7 +99,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
 		criteria.addEqualExpression(alias, reservation.getId());
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE);
-		criteria.addGreaterThanOrEqualExpression(alias, effectiveDate);
+		criteria.addGreaterThanOrEqualExpression(alias, reservationInvoiceTo.getEarlyCheckOutDate());
 		alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA);
 		criteria.addEqualExpression(alias, false);
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE));
@@ -113,11 +113,11 @@ public class PenalizationInvoicing implements IReservationConstants {
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
 			invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
-			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
+			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity() * (-1));
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
 			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
+			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase() * (-1));
 			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
 			invoiceDetailBean.insert(invoiceDetail);
@@ -128,10 +128,10 @@ public class PenalizationInvoicing implements IReservationConstants {
 		invoiceDetail.setProject(reservation.getProject());
 		invoiceDetail.setLine(++line);
 		invoiceDetail.setItem(reservation.getHotelReservation().getItemPenalty());
-		invoiceDetail.setDescription(reservation.getHotelReservation().getItemPenalty().getProduct().getName());
-		invoiceDetail.setQuantity(-1);
+		invoiceDetail.setDescription(obtainDetailDescription(reservationInvoiceTo.getEarlyCheckOutDate(), null, invoiceDetail.getItem().getProduct().getName()));
+		invoiceDetail.setQuantity(1);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-		invoiceDetail.setPrice(invoice.getTaxableBase());
+		invoiceDetail.setPrice(invoice.getTaxableBase() * (-1));
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 		invoiceDetail.setTaxableBase(invoice.getTaxableBase() * (-1));
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
