@@ -921,6 +921,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<!-- ************* EARLY CHECK-OUT INVOICE ***************** -->
+	<managed-bean>
+		<managed-bean-name>earlyCheckOut</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.EarlyCheckOutController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ********** PMS INVOICE PRINTER ********** -->
 	<managed-bean>
 		<managed-bean-name>pmsInvoicePrinter</managed-bean-name>

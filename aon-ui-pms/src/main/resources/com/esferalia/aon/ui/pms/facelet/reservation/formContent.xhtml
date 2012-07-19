@@ -55,8 +55,7 @@
 				styleClass="aon-icon-commandButton aon-icon-sincronize aon-margin-left"
 				title="#{bundle.aon_undo}" immediate="true" 
 				actionListener="#{reservation.onUndoCheckStatus}"
-				rendered="#{(reservation.active and reservation.checkIn and reservation.checkInable) or	
-							(reservation.invoiced and reservation.checkOut and reservation.checkOutable)}" />
+				rendered="#{reservation.active and reservation.checkIn and reservation.checkInable}" />
 		</aon:div>
 	</aon:panelGrid>
 
@@ -231,7 +230,7 @@
 		<aon:outputText value="#{reservation.to.agency.registry.fullName}" styleClass="aon-bold" 
 			rendered="#{!reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}" />
 		<aon:selectOneMenu id="ProjectReservation_agency" 
-			value="#{reservation.to.agency}" styleClass="aon-width-350"
+			value="#{reservation.to.agency}" styleClass="aon-width-350" required="#{reservation.to.agencyHolder}"
 			rendered="#{!reservation.to.companyHolder and reservation.active and aonRole.saleOperator}"
 			valueChangeListener="#{reservation.onAgencyChanged}"
 			reRender="ProjectReservation_roomTariff">
@@ -241,7 +240,7 @@
 		<aon:outputText value="#{reservation.to.company.registry.fullName}" styleClass="aon-bold" 
 			rendered="#{reservation.to.companyHolder and (!reservation.active or !aonRole.saleOperator)}" />
 		<aon:selectOneMenu id="ProjectReservation_company" 
-			value="#{reservation.to.company}" styleClass="aon-width-350"
+			value="#{reservation.to.company}" styleClass="aon-width-350" required="#{reservation.to.companyHolder}"
 			rendered="#{reservation.to.companyHolder and reservation.active and aonRole.saleOperator}"
 			valueChangeListener="#{reservation.onCompanyChanged}"
 			reRender="ProjectReservation_roomTariff">

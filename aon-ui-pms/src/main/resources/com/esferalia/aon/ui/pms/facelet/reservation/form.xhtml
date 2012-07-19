@@ -18,18 +18,27 @@
 				<ui:param name="showMoreMenu" value="#{!reservation.new and !reservation.cancelled}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="reservation-CheckIn"
-						value="#{pmsBundle.pms_check_in}"
-						immediate="#{true}" rendered="#{reservation.active and reservation.noCheck and reservation.checkInable}"
+						value="#{pmsBundle.pms_check_in}" immediate="#{true}" 
+						rendered="#{reservation.active and reservation.noCheck and reservation.checkInable}"
 						iconClass="aon-icon-check-in"
 						actionListener="#{reservation.onCheckIn}" />
 					<aon:menuItem id="reservation-CheckOut"
-						value="#{pmsBundle.pms_check_out}"
-						immediate="#{true}" rendered="#{reservation.invoiced and reservation.checkIn and reservation.checkOutable}"
+						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
+						rendered="#{reservation.invoiced and reservation.checkIn and reservation.checkOutable}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onCheckOut}" />
+					<aon:menuItem id="reservation-EarlyCheckOut"
+						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
+						rendered="#{reservation.invoiced and reservation.checkIn and !reservation.checkOutable and (aonRole.config or aonRole.commercial)}"
+						iconClass="aon-icon-check-out"
+						actionListener="#{reservation.onEarlyCheckOutShow}"
+						reRender="showEarlyCheckOutWindow">
+						<f:setPropertyActionListener target="#{earlyCheckOut.showEarlyCheckOutWindow}"
+							value="#{true}" />
+					</aon:menuItem>
 					<aon:menuItem id="reservation-Invoice"
-						value="#{pmsBundle.pms_to_invoice}"
-						immediate="#{true}" rendered="#{reservation.active and reservationService.model.rowCount > 0 and reservation.invoiceable}"
+						value="#{pmsBundle.pms_to_invoice}"	immediate="#{true}" 
+						rendered="#{reservation.active and reservationService.model.rowCount > 0 and reservation.invoiceable}"
 						iconClass="aon-icon-favorite"
 						actionListener="#{reservation.onInvoiceShow}"
 						reRender="showInvoiceWindow">
@@ -37,8 +46,8 @@
 							value="#{true}" />
 					</aon:menuItem>
 					<aon:menuItem id="reservation-NoShow"
-						value="#{pmsBundle.pms_no_show}"
-						immediate="#{true}" rendered="#{!reservation.cancelled and reservation.noCheck and (aonRole.admin or reservation.noShowable)}"
+						value="#{pmsBundle.pms_no_show}" immediate="#{true}" 
+						rendered="#{!reservation.cancelled and reservation.noCheck and (aonRole.admin or reservation.noShowable)}"
 						iconClass="aon-icon-no-show"
 						reRender="showConfirmWindow">
 						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
@@ -48,8 +57,8 @@
 					</aon:menuItem>
 					<c:if test="#{aonRole.saleOperator}">
 						<aon:menuItem id="reservation-Cancel"
-							value="#{pmsBundle.pms_to_cancel_reservation}"
-							immediate="#{true}" rendered="#{!reservation.cancelled and reservation.noCheck and reservation.cancellable}"
+							value="#{pmsBundle.pms_to_cancel_reservation}" immediate="#{true}" 
+							rendered="#{!reservation.cancelled and reservation.noCheck and reservation.cancellable}"
 							iconClass="aon-icon-removed"
 							reRender="showConfirmWindow">
 							<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
@@ -59,12 +68,12 @@
 						</aon:menuItem>
 					</c:if>
 					<aon:menuItem id="reservation-divert"
-						value="#{pmsBundle.pms_divert_reservation}"
-						immediate="true" rendered="#{!reservation.cancelled and reservation.divertable and !reservation.pendingDivert}"
+						value="#{pmsBundle.pms_divert_reservation}" immediate="true" 
+						rendered="#{!reservation.cancelled and reservation.divertable and !reservation.pendingDivert}"
 						iconClass="aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
 						reRender="showDivertWindow">
-						<f:setPropertyActionListener target="#{reservation.showDivertWindow}"
+						<f:setPropertyActionListener target="#{divert.showDivertWindow}"
 							value="#{true}" />
 					</aon:menuItem>
 				</ui:define>
@@ -116,8 +125,6 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/room/modalRoomDetail.xhtml">
@@ -137,9 +144,11 @@
 			<ui:param name="controller" value="#{reservation}" />
 			<ui:param name="service" value="#{false}" />
 		</ui:include>
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/modalEarlyCheckOut.xhtml">
+			<ui:param name="controller" value="#{earlyCheckOut}" />
+		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/divert/modalDivert.xhtml">
-			<ui:param name="controller" value="#{reservation}" />
-			<ui:param name="divert" value="#{divert}" />
+			<ui:param name="controller" value="#{divert}" />
 			<ui:param name="modalReRender" value="reservationForm" />
 			<ui:param name="skipReservation" value="true" />
 			<ui:param name="skipRequestHotel" value="true" />

@@ -389,7 +389,7 @@ public class ReservationManager implements IReservationConstants {
 						reservationServiceDetail.setEffectiveDate(currentCalendar.getTime());
 						reservationServiceDetail.setQuantity(price.getNumberOfUnits());
 						if (calculateTaxData) {
-							double vatPercent = reservationService.getItem().getProduct().getVat().getPercentage();
+							double vatPercent = getReservationUtils().getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservation.getStartDate());
 							double priceBeforeTax = price.getBase().getAmountBeforeTax().doubleValue();
 							if (priceBeforeTax < 1) {
 								String selfBooking = getReservationUtils().obtainCustomerCode(reservation.getAgency(), SELF_BOOKING);
@@ -429,7 +429,7 @@ public class ReservationManager implements IReservationConstants {
 		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), reservationCrsCode);
-		//criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS), new Boolean(true));
+		//criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS), true);
 		if (reservationBean.getCount(criteria) > 0) {
 			return (ProjectReservation)reservationBean.getList(criteria).get(0);
 		}
@@ -503,7 +503,7 @@ public class ReservationManager implements IReservationConstants {
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-			getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, true);
+			getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, true, null);
 		}
 	}
 

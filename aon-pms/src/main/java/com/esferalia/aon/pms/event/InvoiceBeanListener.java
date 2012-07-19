@@ -40,7 +40,8 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     }
 
     private void modifyReservationStatus(Invoice invoice) throws ManagerBeanException {
-    	ProjectReservation reservation = (ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).get(invoice.getProject().getId());
+		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+    	ProjectReservation reservation = (ProjectReservation)reservationBean.get(invoice.getProject().getId());
     	if (reservation != null) {
         	IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
     		Criteria criteria = new Criteria();
@@ -54,7 +55,6 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     		result = invoiceBean.getUniqueResult(projection, criteria);
     		int countInvoices = (result != null) ? ((Integer)result).intValue() : 0;
 
-    		IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
     		if (!invoice.isAdvance()) {
         		reservation.setStatus((totalInvoiced == 0 && countInvoices % 2 == 0) ? ReservationStatus.ACTIVE : ReservationStatus.INVOICED);
     		} else {

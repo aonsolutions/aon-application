@@ -55,7 +55,7 @@ public class PmsCollectionsController {
 	public int getCurrentUserHotelsCount() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		return hotelBean.getCount(criteria);
 	}
@@ -63,7 +63,7 @@ public class PmsCollectionsController {
 	public List<ITransferObject> getCurrentUserHotelList() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		return hotelBean.getList(criteria);
@@ -91,7 +91,7 @@ public class PmsCollectionsController {
 	public int getCurrentUserServiceHotelsCount() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		criteria.addNotNullExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SERVICE_CATALOGUE_ID));
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		return hotelBean.getCount(criteria);
@@ -100,7 +100,7 @@ public class PmsCollectionsController {
 	public List<ITransferObject> getCurrentUserServiceHotelList() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		criteria.addNotNullExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SERVICE_CATALOGUE_ID));
 		UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));

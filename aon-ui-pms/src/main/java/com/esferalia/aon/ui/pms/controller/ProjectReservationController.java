@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,7 +78,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	private boolean showRectificationWindow;
 	private Invoice invoiceToRectificate;
 	private DataModel invoiceModel;
-	private boolean showDivertWindow;
 
 	public String getSelectedTab() {
 		return selectedTab;
@@ -105,7 +103,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void resetStartTime() {
 		setStartTime(null);
 	}
-	
+
 	public String getEndTime() {
 		if (StringUtils.isEmpty(endTime)) {
 			ProjectReservation reservation = (ProjectReservation)getTo();
@@ -234,18 +232,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		this.invoiceModel = invoiceModel;
 	}
 
-	public boolean isShowDivertWindow() {
-		return showDivertWindow;
-	}
-	
-	public void setShowDivertWindow(boolean showDivertWindow) {
-		this.showDivertWindow = showDivertWindow;
-	}
-	
 	public List<SelectItem> getReservationTimes() {
 		List<SelectItem> hours = new LinkedList<SelectItem>();
 		DateFormat formatter = new SimpleDateFormat("HH:mm");
-		Calendar calendar = new GregorianCalendar();
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		for (int i=0; i<24; i++) {
 			calendar.set(Calendar.HOUR_OF_DAY, i);
@@ -335,7 +325,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			return getHotelRoomItems(reservation.getHotel());
 		}
 		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
-		return collectionsController.getRoomItems(); 
+		return collectionsController.getRoomItems();
 	}
 
 	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
@@ -456,13 +446,10 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
 		accept(event);
 	}
-	
+
 	public boolean isCheckOutable() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(reservation.getEndDate());
-		endCalendar.add(Calendar.DATE, 1);
-		return (reservation.getStartDate().before(new Date()) && endCalendar.getTime().after(new Date()));
+		return (reservation.getEndDate().before(new Date()));
 	}
 
 	public void onCheckOut(ActionEvent event) {
@@ -475,10 +462,8 @@ public class ProjectReservationController extends BasicController implements IPm
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		if (reservation.isCheckIn()) {
 			reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-		} else if (reservation.isCheckOut() || reservation.isNoShow()) {
-			reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
+			accept(event);
 		}
-		accept(event);
 	}
 
 	public boolean isActive() {
@@ -506,19 +491,19 @@ public class ProjectReservationController extends BasicController implements IPm
 		reservation.setStatus(ReservationStatus.BLOCKED);
 		accept(event);
 	}
-	
+
 	public void onUnblock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.ACTIVE);
 		accept(event);
 	}
-	
+
 	public void onCrsBlock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setCrs(true);
 		accept(event);
 	}
-	
+
 	public void onCrsUnblock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setCrs(false);
@@ -536,7 +521,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		endCalendar.set(Calendar.HOUR, 12);
 		return (startCalendar.getTime().before(new Date()) && endCalendar.getTime().after(new Date()));
 	}
-	
+
 	public boolean isCancellable() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -551,7 +536,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onCancelReservation(ActionEvent event) throws ManagerBeanException {
 		cancelReservation(event);
 	}
-	
+
 	private void cancelReservation(ActionEvent event) throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 
@@ -561,7 +546,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
 		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
 			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
-	    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+	    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
 		}
 
 		if (isConfirmNoShow()) {
@@ -611,14 +596,14 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
-			setReservationInvoiceTo(new ReservationInvoiceTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
-	
+
 	private void fillInvoiceData(ProjectReservation reservation) throws ManagerBeanException {
 		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
@@ -671,7 +656,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), scope.getId());
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		if (rectification) {
 			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), true);
@@ -757,8 +742,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				finance.setPayMethod(payMethod.getPayment());
 			}
 		}
-		double amount = CommonUtil.round(reservation.getTotal() - getAdvancedAmount() - getFinancesAmount());
-		finance.setAmount(amount);
+		finance.setAmount(CommonUtil.round(reservation.getTotal() - getAdvancedAmount() - getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -801,7 +785,7 @@ public class ProjectReservationController extends BasicController implements IPm
 			if (validateInvoice()) {
 				ProjectReservation reservation = (ProjectReservation)this.getTo();
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, false);
+				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
 				reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
 				reservation.setStatus(ReservationStatus.INVOICED);
@@ -868,7 +852,7 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 		try {
 			setInvoiceToRectificate((Invoice)getInvoiceModel().getRowData());
-			setReservationInvoiceTo(new ReservationInvoiceTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 		} catch (ManagerBeanException ex) {
@@ -901,13 +885,19 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public void onEarlyCheckOutShow(ActionEvent event) {
+		EarlyCheckOutController earlyCheckOutController = (EarlyCheckOutController)AonUtil.getRegisteredBean(EARLY_CHECKOUT_CONTROLLER_NAME);
+		earlyCheckOutController.setReservation((ProjectReservation)this.getTo());
+		earlyCheckOutController.onInit();
+	}
+
 	public boolean isDivertable() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)getTo();
 		Calendar endCalendar = Calendar.getInstance();
 		endCalendar.setTime(reservation.getEndDate());
 		return endCalendar.getTime().after(new Date());
 	}
-	
+
 	public boolean isPendingDivert() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		if (reservation != null) {
@@ -922,17 +912,11 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	public void onDivertModalShow(ActionEvent event) throws ManagerBeanException {
-		DivertController controller = (DivertController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
-		controller.onReset(event);
-		ProjectReservationDivert divert = (ProjectReservationDivert) controller.getTo();
-		divert.setProjectReservation((ProjectReservation) this.getTo());
+		IController divertController = (IController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
+		divertController.onReset(event);
+		((ProjectReservationDivert)divertController.getTo()).setProjectReservation((ProjectReservation)this.getTo());
 	}
-	
-	public void onAcceptDivert(ActionEvent event) {
-		DivertController controller = (DivertController)AonUtil.getRegisteredBean(DIVERT_CONTROLLER_NAME);
-		controller.onAccept(event);
-	}
-	
+
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (invoiceModel.isRowAvailable()) {
 			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(SELECTED_INVOICE_CONTROLLER_NAME);

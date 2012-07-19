@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -20,8 +22,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.Tax;
+import com.code.aon.config.TaxDetail;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -116,6 +121,38 @@ public class ReservationUtils implements IReservationConstants {
     	return StringUtils.abbreviate(dates + (guest == null ? "" : " " + guest) + (code == null ? "" : " (" + reservation.getCode() + ")"), 64);
     }
 
+	public Map<Tax, Double> getReservationServicesTaxableBases(Integer reservationId, Date fromDate, Date toDate) throws ManagerBeanException {
+		Map<Tax, Double> reservationBases = new HashMap<Tax, Double>();
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		Criteria criteria = new Criteria();
+		String alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), reservationId);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_EFFECTIVE_DATE;
+		criteria.addBetweenExpression(reservationServiceDetailBean.getFieldName(alias), fromDate, toDate);
+		alias = IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_EXTRA;
+		criteria.addEqualExpression(reservationServiceDetailBean.getFieldName(alias), false);
+		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
+			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
+			Tax vat = reservationServiceDetail.getProjectReservationService().getItem().getProduct().getVat();
+			double base = reservationServiceDetail.getTaxableBase();
+			if (reservationBases.containsKey(vat)) {
+				base += reservationBases.get(vat);
+			}
+			reservationBases.put(vat, CommonUtil.round(base, 4));
+		}
+		return reservationBases;
+	}
+
+    public void releaseProjectReservationResources(ProjectReservation reservation, boolean removeService, Date effectiveDate) throws ManagerBeanException {
+    	IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+    	for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+    		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+    		removeProjectReservationRoomDetails(reservationRoom, removeService, effectiveDate);
+    	}
+    }
+
     public void insertProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, Room room, Integer[] services) throws ManagerBeanException {
     	Date startDate = reservationRoom.getProjectReservation().getStartDate();
     	Date endDate = reservationRoom.getProjectReservation().getEndDate();
@@ -175,13 +212,17 @@ public class ReservationUtils implements IReservationConstants {
     	}
     }
 
-	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService) throws ManagerBeanException {
+	public void removeProjectReservationRoomDetails(ProjectReservationRoom reservationRoom, boolean removeService, Date effectiveDate) throws ManagerBeanException {
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
 		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
 		criteria.addEqualExpression(alias, reservationRoom.getId());
+		if (effectiveDate != null) {
+			alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_ASSET_ACTIVITY_DATE);
+			criteria.addGreaterThanOrEqualExpression(alias, effectiveDate);
+		}
 		for (ITransferObject roomDetail : reservationRoomDetailBean.getList(criteria)) {
 			ProjectReservationRoomDetail reservationRoomDetail = (ProjectReservationRoomDetail)roomDetail;
 			criteria = new Criteria();
@@ -281,6 +322,21 @@ public class ReservationUtils implements IReservationConstants {
 		Customer customer = (Customer)BeanManager.getManagerBean(Customer.class).get(reservation.getProject().getRegistry().getId());
 		IPriceStrategy strategy = PriceStrategyFactory.getPriceStrategy();
 		return strategy.getTotalVatQuota(reservation, customer);
+    }
+
+    public double getTaxPercentage(Tax tax, Date date) throws ManagerBeanException {
+		if (date.before(tax.getStartDate())) {
+			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
+	    	Criteria criteria = new Criteria();
+	    	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), tax.getId());
+	    	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
+	    	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
+	    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+	    		TaxDetail taxDetail = (TaxDetail)ito;
+	    		return taxDetail.getValue();
+	    	}
+		}
+    	return tax.getPercentage();
     }
 
 

@@ -195,12 +195,12 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), getReservationInvoiceTo().getHotel().getScope().getId());
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		if (rectification) {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), true);
 		} else {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
 		}
 		return seriesBean.getList(criteria);
 	}
@@ -375,8 +375,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 
 	public void onNewFinance(ActionEvent event) {
 		Finance finance = new Finance();
-		double amount = CommonUtil.round(getServicesAmount() - getFinancesAmount());
-		finance.setAmount(amount);
+		finance.setAmount(CommonUtil.round(getServicesAmount() - getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -407,9 +406,10 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
 				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
+				getReservationInvoiceTo().setDirectCustomer(true);
 
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
+				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
 				onEditSearch(event);
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());

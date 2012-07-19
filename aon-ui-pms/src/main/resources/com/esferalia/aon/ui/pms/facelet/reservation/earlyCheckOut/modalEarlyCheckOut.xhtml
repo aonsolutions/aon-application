@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showEarlyCheckOutWindow">
+		<c:if test="#{controller.showEarlyCheckOutWindow}">
+			<rich:modalPanel id="earlyCheckOutModalPanel" 
+				minHeight="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (500) : (350)}" 
+				minWidth="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (640) : (450)}" 
+				rendered="#{controller.showEarlyCheckOutWindow}"
+				showWhenRendered="true" zindex="90" style="overflow-y:auto">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{pmsBundle.pms_early_check_out}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showEarlyCheckOutWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{controller.showEarlyCheckOutWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="earlyCheckOutForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="earlyCheckOut-accept"
+										styleClass="aon-finding-toolbar-item aon-icon-accept"
+										value="#{bundle.aon_accept}"
+										actionListener="#{controller.onEarlyCheckOut}"
+										reRender="aonContent"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')">
+										<rich:componentControl for="earlyCheckOutModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{controller.showEarlyCheckOutWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="earlyCheckOut-cancel" immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showEarlyCheckOutWindow">
+										<f:setPropertyActionListener
+											target="#{controller.showEarlyCheckOutWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;"
+										columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+
+										<aon:outputLabel for="ProjectReservation_earlyCheckOutDate"
+											value="#{bundle.aon_date} #{pmsBundle.pms_checkOut}" />
+										<aon:selectInputDate id="ProjectReservation_earlyCheckOutDate" 
+											value="#{controller.earlyCheckOutDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}">
+											<a4j:support ajaxSingle="true" event="oninputchange"
+												actionListener="#{controller.onCheckOutDateChanged}"
+												reRender="invoiceFinancesDiv"
+												focus="ProjectReservation_earlyCheckOutPenalty" />
+											<a4j:support ajaxSingle="true" event="onchanged"
+												actionListener="#{controller.onCheckOutDateChanged}"
+												reRender="invoiceFinancesDiv"
+												focus="ProjectReservation_earlyCheckOutPenalty" />
+										</aon:selectInputDate>
+
+										<aon:outputLabel for="ProjectReservation_earlyCheckOutPenalty"
+											value="#{pmsBundle.pms_penalty_days}"
+											rendered="#{!controller.reservation.agencyHolder}" />
+										<aon:selectOneMenu id="ProjectReservation_earlyCheckOutPenalty"
+											value="#{controller.earlyCheckOutPenalty}"
+											rendered="#{!controller.reservation.agencyHolder}"
+											valueChangeListener="#{controller.onCheckOutPenaltyChanged}"
+											reRender="invoiceFinancesDiv">
+											<f:selectItem itemLabel="0 - 0.00 EUR." itemValue="0" />
+											<f:selectItem itemLabel="1 - #{controller.reservation.oneNightPenaltyPrice} EUR."  itemValue="1" />
+											<f:selectItem itemLabel="2 - #{controller.reservation.twoNightPenaltyPrice} EUR." itemValue="2" />
+										</aon:selectOneMenu>
+
+									</aon:panelGrid>
+
+									<c:if test="#{!controller.reservation.agencyHolder or !empty controller.reservationFinances}">
+										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_return.xhtml" />
+	
+										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />
+									</c:if>
+
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

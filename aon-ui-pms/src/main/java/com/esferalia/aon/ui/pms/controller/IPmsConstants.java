@@ -14,6 +14,7 @@ public interface IPmsConstants {
 	String ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER = "advanceInvoiceSearch";
 	String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
 	String DIVERT_CONTROLLER_NAME = "divert";
+	String EARLY_CHECKOUT_CONTROLLER_NAME = "earlyCheckOut";
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 	String POS_FINANCE_CONTROLLER_NAME = "posFinance";
 	String POS_FINANCE_SEARCH_LISTENER_NAME = "posFinanceSearch";

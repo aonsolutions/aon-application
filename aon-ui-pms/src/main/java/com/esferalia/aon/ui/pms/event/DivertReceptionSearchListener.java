@@ -46,7 +46,7 @@ private ReservationDivertStatus[] reservationDivertStatuses;
 	private void addDivertHotelsToCriteria() throws ManagerBeanException {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria hotelCriteria = new Criteria();
-		hotelCriteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		hotelCriteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		UserUtils.getInstance().addScopeFilterToCriteria(hotelCriteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
 		hotelCriteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		Expression expToAdd = null;

@@ -154,6 +154,14 @@
 						<ui:param name="skipLabel" value="#{true}" />
 					</ui:include>
 
+					<aon:outputLabel for="Item_id_penalty" 
+						value="#{pmsBundle.pms_penalty_item}" />
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{hotel.to.itemPenalty}" />
+						<ui:param name="lookupSuffix" value="_penalty" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
 					<aon:outputLabel for="Hotel_active" 
 						value="#{bundle.aon_active}" />
 					<aon:selectOneRadio id="Hotel_active"

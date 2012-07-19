@@ -148,7 +148,7 @@ public class ProjectReservationRoomController extends LinesController {
 		reservationRoom.setRoomNumber(null);
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
 
     	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
@@ -158,7 +158,7 @@ public class ProjectReservationRoomController extends LinesController {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
 
     	onRemove(event);
 

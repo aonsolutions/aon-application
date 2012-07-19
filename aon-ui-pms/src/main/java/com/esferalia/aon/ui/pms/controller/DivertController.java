@@ -31,7 +31,16 @@ public class DivertController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DivertController.class);
 	
+	private boolean showDivertWindow;
 	private IControllerListener divertFilter;
+	
+	public boolean isShowDivertWindow() {
+		return showDivertWindow;
+	}
+	
+	public void setShowDivertWindow(boolean showDivertWindow) {
+		this.showDivertWindow = showDivertWindow;
+	}
 	
 	public IControllerListener getDivertedReservationFilter() {
 		if ( this.divertFilter == null ) {
@@ -73,7 +82,7 @@ public class DivertController extends BasicController {
 		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), getScopeToExclude());
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {

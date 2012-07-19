@@ -36,6 +36,7 @@ import com.code.aon.registry.Registry;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class AdvanceInvoicing {
 
@@ -108,9 +109,11 @@ public class AdvanceInvoicing {
 	}
 
 	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advancePercent) throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils();
 		Item item = reservation.getHotelReservation().getItemAdvance();
 		double total = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
-		double taxableBase = CommonUtil.round(total / (1 + item.getVat().getPercentage() / 100));
+		double vatPercent = reservationUtils.getTaxPercentage(item.getVat(), invoice.getIssueDate());
+		double taxableBase = CommonUtil.round(total / (1 + vatPercent / 100));
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setInvoice(invoice);
@@ -125,7 +128,7 @@ public class AdvanceInvoicing {
 		invoiceDetail.setTaxableBase(taxableBase);
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 		invoiceDetail.setTaxDataInDetail(true);
-		invoiceDetail.setVatPercent(item.getVat().getPercentage());
+		invoiceDetail.setVatPercent(vatPercent);
 		invoiceDetail.setVatQuota(CommonUtil.round(total - taxableBase));
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -196,9 +199,9 @@ public class AdvanceInvoicing {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), reservation.getHotelReservation().getScope().getId());
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
 		for (ITransferObject ito : seriesBean.getList(criteria)) {
 			Series series = (Series) ito;
 			return series.getCode();

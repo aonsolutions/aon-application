@@ -17,9 +17,11 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ReservationInvoiceTo implements IReservationConstants {
 
+	private boolean service;
 	private Date issueDate;
 	private Hotel hotel;
 	private String series;
@@ -31,10 +33,14 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private IAddress address;
 	private String comments;
 	private boolean deposit;
+	private boolean earlyCheckOut;
+	private double penaltyAmount;
 	private List<HotelService> services;
 	private List<Finance> finances;
 
-	public ReservationInvoiceTo() {
+	public ReservationInvoiceTo(boolean service) {
+		setService(service);
+		setDirectCustomer(service);
 		setIssueDate(new Date());
 		setRegistry(new Registry());
 		setAddress(new InvoiceAddress());
@@ -44,9 +50,12 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		setFinances(new LinkedList<Finance>());
 	}
 
-	public ReservationInvoiceTo(boolean directCustomer) {
-		this();
-		setDirectCustomer(directCustomer);
+	public boolean isService() {
+		return service;
+	}
+
+	public void setService(boolean service) {
+		this.service = service;
 	}
 
 	public Date getIssueDate() {
@@ -135,6 +144,22 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setDeposit(boolean deposit) {
 		this.deposit = deposit;
+	}
+
+	public boolean isEarlyCheckOut() {
+		return earlyCheckOut;
+	}
+
+	public void setEarlyCheckOut(boolean earlyCheckOut) {
+		this.earlyCheckOut = earlyCheckOut;
+	}
+
+	public double getPenaltyAmount() {
+		return penaltyAmount;
+	}
+
+	public void setPenaltyAmount(double penaltyAmount) {
+		this.penaltyAmount = penaltyAmount;
 	}
 
 	public List<HotelService> getServices() {
@@ -231,8 +256,9 @@ public class ReservationInvoiceTo implements IReservationConstants {
 			this.taxableBase = taxableBase;
 		}
 
-		public double getTotal() {
-			return CommonUtil.round(taxableBase * (1 + (item.getProduct().getVat().getPercentage() / 100)));
+		public double getTotal() throws ManagerBeanException {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			return CommonUtil.round(taxableBase * (1 + (reservationUtils.getTaxPercentage(item.getProduct().getVat(), getIssueDate()) / 100)));
 		}
 
 
