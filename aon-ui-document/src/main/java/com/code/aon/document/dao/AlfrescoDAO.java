@@ -409,6 +409,12 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 			throws DAOException {
 		throw new UnsupportedOperationException("Not supported!");
 	}
+	
+	@Override
+	public Object getUniqueResult(ProjectionList projectionList,
+			Criteria criteria) throws DAOException {
+		throw new UnsupportedOperationException("Not supported!");
+	}
 
 	@Override
 	public Class<? extends ITransferObject> getPOJOClass() {
