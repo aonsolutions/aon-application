@@ -37,13 +37,13 @@ import com.esferalia.aon.entity.IEntityAlias;
  * @author ecastellano
  *
  */
-public class AccountEntryLoaderManager {
+public class XXAccountEntryLoaderManager {
 
 	private SecurityLevel securityLevel;
 	private Period period;
 	private Scope scope;
 	
-	public AccountEntryLoaderManager(Period period,Scope scope,SecurityLevel securityLevel, PrintWriter log) {
+	public XXAccountEntryLoaderManager(Period period,Scope scope,SecurityLevel securityLevel, PrintWriter log) {
 		this.securityLevel = securityLevel;
 		this.period = period;
 		this.scope = scope;
