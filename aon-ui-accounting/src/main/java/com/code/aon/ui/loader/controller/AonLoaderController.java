@@ -96,6 +96,7 @@ public class AonLoaderController {
 	}
 	
 	public void onLoad(ActionEvent event ) {
+        setEnablePolling( true );
 		LoaderThread thread = new LoaderThread();
 		thread.start();
 	}
@@ -140,7 +141,6 @@ public class AonLoaderController {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
-		        setEnablePolling( true );
 				ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 				loader.loadMetadata(input);
 				input = new ByteArrayInputStream(getAonFile().getData());
