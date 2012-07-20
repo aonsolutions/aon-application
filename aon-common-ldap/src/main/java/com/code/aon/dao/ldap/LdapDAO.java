@@ -556,4 +556,9 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
+	public Object getUniqueResult(ProjectionList projectionList,
+			Criteria criteria) throws DAOException {
+		throw new UnsupportedOperationException("Not supported!");
+	}
+	
 }
