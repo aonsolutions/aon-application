@@ -31,9 +31,11 @@ public class ProjectionList implements Criterion {
 	 * 
 	 * @param projection the projection
 	 */
-	public ProjectionList( Projection projection ) {
+	public ProjectionList( Projection ... projections ) {
 		this();
-		add(projection);
+		for( Projection projection : projections ) {
+			add(projection);			
+		}
 	}
 	
 	/**
@@ -69,5 +71,20 @@ public class ProjectionList implements Criterion {
     public void accept(CriterionVisitor visitor) {
         visitor.visitProjectionList(this);
     }
+    
+	@Override
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("ProjectionList[");
+		for( int i = 0; i < this.projections.size(); i++) {
+			if ( i > 0 ) {
+				buf.append(",");
+			}
+			buf.append(this.projections.get(i));
+		}
+		buf.append("]");
+		return buf.toString();
+	}
+    
 
 }

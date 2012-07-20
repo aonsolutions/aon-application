@@ -21,6 +21,7 @@ import com.code.aon.ql.ast.LogicalOrExpression;
 import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.SubQueryExpression;
 
 /**
  * Visitante de expresiones destinado a obtener una clausa WHERE de una
@@ -82,6 +83,13 @@ public class SqlRenderer implements CriterionVisitor {
 	
 	public void visitProjectionList(ProjectionList projectionList) {
 		throw new UnsupportedOperationException( "Projection not supported" );
+	}
+
+	@Override
+	public void visitSubQueryExpression(SubQueryExpression expression) {
+		write("( ");
+		expression.getCriteria().accept(this);
+		write(" )");		
 	}
 
 	/*

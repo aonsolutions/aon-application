@@ -40,6 +40,10 @@ public class TypeResolver {
 	public ClassMetadata getClassMetdata() {
 		return classMetdata;
 	}
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
 
 	private Type getType(ComponentType componentType, String property) {
         String[] names = componentType.getPropertyNames();

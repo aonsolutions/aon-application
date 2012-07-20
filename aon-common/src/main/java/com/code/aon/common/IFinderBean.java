@@ -49,6 +49,18 @@ public interface IFinderBean {
 	Object getUniqueResult(Projection projection, Criteria criteria) throws ManagerBeanException;
 
 	/**
+	 * Return a {@link Object} that carries out the projection list and the criteria.
+	 * 
+	 * @param projectionList the Projection list.
+	 * @param criteria the criteria
+	 * 
+	 * @return The object.
+	 * 
+     * @throws ManagerBeanException if an unexpected error occurs.
+	 */
+	Object getUniqueResult(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException;
+	
+	/**
 	 * Return a {@link List} that carries out the projection list and the criteria.
 	 * 
 	 * @param projectionList the Projection list.

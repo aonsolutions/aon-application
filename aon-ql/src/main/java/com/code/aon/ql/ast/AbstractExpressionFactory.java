@@ -1,5 +1,7 @@
 package com.code.aon.ql.ast;
 
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.impl.ExpressionFactoryImpl;
 
 /**
@@ -112,4 +114,19 @@ public abstract class AbstractExpressionFactory {
     public abstract BetweenExpression newBetweenExpression(Expression left,
             Expression minor, Expression major);
 
+    /**
+     * Returns an implementation of a <code>SubQueryExpression</code> for the given elements.
+     * 
+     * @param pojo
+     *            pojo.
+     * @param criteria
+     *            criteria.
+     * @param projectionList
+     *            projectionList.
+     * 
+     * @return The implementation of a <code>BetweenExpression</code>.
+     */
+    public abstract SubQueryExpression newSubQueryExpression(String pojo,
+            Criteria criteria, ProjectionList projectionList);
+    
 }

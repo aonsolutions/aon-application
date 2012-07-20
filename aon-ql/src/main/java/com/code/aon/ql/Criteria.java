@@ -237,6 +237,19 @@ public class Criteria implements Criterion {
 		Expression expression = ExpressionUtilities.getInExpression(identifier, data);
 		addExpression(expression);
 	}
+
+	/**
+	 * Adds a in expression to this Criteria (a in b).
+	 * 
+	 * @param identifier
+	 *            The left side of the operation.
+	 * @param expression
+	 *            The right side of the operation.
+	 */
+	public void addInExpression(String identifier, Expression expr) {
+		Expression expression = ExpressionUtilities.getInExpression(identifier, expr);
+		addExpression(expression);
+	}
 	
 	/**
 	 * Adds this identifier to the order list.

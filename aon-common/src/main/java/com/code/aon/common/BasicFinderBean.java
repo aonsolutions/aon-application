@@ -161,6 +161,21 @@ public class BasicFinderBean implements IFinderBean {
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public Object getUniqueResult(ProjectionList projectionList, Criteria criteria) throws ManagerBeanException {
+		try {
+			criteria = criteria==null?new Criteria():criteria;
+			FinderBeanEvent evt = getNewFinderBeanEvent( criteria );
+			fireVetoableBeanSearched(evt);
+			Object ret = dao.getUniqueResult(projectionList, criteria);
+			return ret;
+		} catch (DAOException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} catch (ManagerBeanVetoListenerException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
 
 	/* 
 	 * (non-Javadoc)
