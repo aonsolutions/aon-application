@@ -2,7 +2,9 @@ package com.code.aon.ui.purchase.controller;
 
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +37,8 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -327,15 +331,18 @@ public class PurchaseOrderController {
 	
 	public List<SelectItem> getItemSuppliers(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		Item item = ((ProposalDetail)getDetailModel().getRowData()).getItem();
+		ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), proposalDetail.getItem().getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 			for (ITransferObject ito : bean.getList(criteria)) {
 				ItemSupplier is = (ItemSupplier) ito;
-				SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
-				list.add(i);
+				if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+					SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+					list.add(i);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg =  "******** Error getting item suppliers. ";
