@@ -22,6 +22,7 @@
 	<field name="status" class="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 	<field name="roomCount" class="java.lang.Integer"/>
 	<field name="personCount" class="java.lang.Integer"/>
+	<field name="total" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -31,7 +32,7 @@
 	<pageHeader>
 		<band height="30" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
-			<textField pattern="dd/MM/yyyy HH.mm" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy HH:mm" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="570" y="0" width="212" height="12"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -63,7 +64,7 @@
 		<band height="12" splitType="Stretch">
 			<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue() || $V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="425" y="0" width="145" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="455" y="0" width="125" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -77,7 +78,7 @@
 				<textFieldExpression><![CDATA[$R{report_guest}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="325" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="355" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -91,7 +92,7 @@
 				<textFieldExpression><![CDATA[$R{report_input}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="570" y="0" width="152" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="580" y="0" width="157" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -105,7 +106,7 @@
 				<textFieldExpression><![CDATA[$R{report_agency}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="140" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="175" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -119,7 +120,7 @@
 				<textFieldExpression><![CDATA[$R{report_id}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="250" y="0" width="75" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="280" y="0" width="75" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -133,7 +134,7 @@
 				<textFieldExpression><![CDATA[$R{report_reservation_code}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="375" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="405" y="0" width="50" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -147,7 +148,7 @@
 				<textFieldExpression><![CDATA[$R{report_output}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="0" y="0" width="140" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="45" y="0" width="130" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -161,7 +162,7 @@
 				<textFieldExpression><![CDATA[$R{report_hotel_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="722" y="0" width="60" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="0" y="0" width="45" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -175,7 +176,7 @@
 				<textFieldExpression><![CDATA[$R{aon_status}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="220" y="0" width="30" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="255" y="0" width="25" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -189,7 +190,7 @@
 				<textFieldExpression><![CDATA[$R{report_pax}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="190" y="0" width="30" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="225" y="0" width="30" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -202,12 +203,26 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$R{report_reservation_room_count_abrv}]]></textFieldExpression>
 			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-59" mode="Opaque" x="737" y="0" width="45" height="12" forecolor="#FFFFFF" backcolor="#999999"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_amount}]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="425" y="0" width="145" height="14"/>
+				<reportElement key="textField-53" x="455" y="0" width="125" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -220,7 +235,7 @@
 				<textFieldExpression><![CDATA[$F{guestFullName}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="325" y="0" width="50" height="14"/>
+				<reportElement key="textField-53" x="355" y="0" width="50" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -233,7 +248,7 @@
 				<textFieldExpression><![CDATA[$F{startDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="375" y="0" width="50" height="14"/>
+				<reportElement key="textField-53" x="405" y="0" width="50" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -246,7 +261,7 @@
 				<textFieldExpression><![CDATA[$F{endDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="570" y="0" width="152" height="14"/>
+				<reportElement key="textField-53" x="580" y="0" width="157" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -261,7 +276,7 @@
 $R{report_direct_client})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="140" y="0" width="50" height="14"/>
+				<reportElement key="textField-53" x="175" y="0" width="50" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -274,7 +289,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="250" y="0" width="75" height="14"/>
+				<reportElement key="textField-53" x="280" y="0" width="75" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -287,7 +302,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="0" y="0" width="140" height="14"/>
+				<reportElement key="textField-53" x="45" y="0" width="130" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -300,7 +315,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{hotel}.getWorkPlace().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="722" y="0" width="60" height="14"/>
+				<reportElement key="textField-53" x="0" y="0" width="45" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -313,7 +328,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{status}.getName( $P{REPORT_LOCALE} )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="220" y="0" width="30" height="14"/>
+				<reportElement key="textField-53" x="255" y="0" width="25" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -326,7 +341,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{personCount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="190" y="0" width="30" height="14"/>
+				<reportElement key="textField-53" x="225" y="0" width="30" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,6 +352,19 @@ $R{report_direct_client})]]></textFieldExpression>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{roomCount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
+				<reportElement key="textField-53" x="737" y="0" width="45" height="14"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
