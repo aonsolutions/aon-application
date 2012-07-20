@@ -8,7 +8,11 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.RectificationType;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -24,9 +28,14 @@ public class InvoiceControllerListener extends ControllerAdapter {
 	public void afterModelInitialized(ControllerEvent event)throws ControllerListenerException {
 		InvoiceController controller = (InvoiceController)event.getController();
 		try {	
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);	
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);			
+			Criteria criteria = new Criteria();
+			String idAlias = invoiceBean.getFieldName(IEntityAlias.INVOICE_ID);
+			ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+			Expression exp = ExpressionUtilities.getSubQueryExpression(Invoice.class, controller.getCriteria(), pl);
+			criteria.addInExpression(idAlias, exp);
 			Projection amountProjection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
-			Double amount = (Double)invoiceBean.getUniqueResult(amountProjection, controller.getCriteria());
+			Double amount = (Double)invoiceBean.getUniqueResult(amountProjection, criteria);
 			controller.setTotalInvoiceAmount(CommonUtil.round(amount==null?0:amount));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
