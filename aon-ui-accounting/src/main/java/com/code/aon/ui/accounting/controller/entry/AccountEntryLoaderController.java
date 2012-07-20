@@ -24,7 +24,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.config.Scope;
 import com.code.aon.finance.Invoice;
-import com.code.aon.ui.accounting.entry.AccountEntryLoaderManager;
+import com.code.aon.ui.accounting.entry.XXAccountEntryLoaderManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryLoaderController {
@@ -118,7 +118,7 @@ public class AccountEntryLoaderController {
 			StringWriter sw = new StringWriter();
 			setLog( new PrintWriter( sw ) );
 			SecurityLevel sl = (AonUtil.getRoleManager().isConfidentiality()?getSecurityLevel():SecurityLevel.OFFICIAL);
-			AccountEntryLoaderManager m = new AccountEntryLoaderManager(getPeriod(),getScope(),sl, getLog() );
+			XXAccountEntryLoaderManager m = new XXAccountEntryLoaderManager(getPeriod(),getScope(),sl, getLog() );
 			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 			m.validateFormat(input);
 			input = new ByteArrayInputStream(getAonFile().getData());

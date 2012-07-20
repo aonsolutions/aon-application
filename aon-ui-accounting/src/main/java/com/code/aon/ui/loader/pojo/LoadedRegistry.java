@@ -218,7 +218,10 @@ public class LoadedRegistry  implements ILoadedPojo{
 	}
 	
 	public DocumentType getDocumentType() {
-		return DocumentType.values()[getTipoDocumento()];
+		if (getTipoDocumento() != null) {
+			return DocumentType.values()[getTipoDocumento()];	
+		}
+		return null;
 	}
 	public Country getDocumentCountry() {
 		if (StringUtils.isNotBlank(getPaisDocumento())) {
