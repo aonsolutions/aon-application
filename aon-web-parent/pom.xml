@@ -630,6 +630,7 @@
 								<copyright>2009, esferalia Networks S.A</copyright>
 								<requires>
 									<require>aon-external-libs</require>
+									<require>hibernate3 &gt;= 3.2.7-1</require>
 									<require>aon-directory-client &gt;= 5.0.0-4</require>
 								</requires>
 								<mappings>
