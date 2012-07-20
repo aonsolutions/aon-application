@@ -27,9 +27,9 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.ui.accounting.entry.XXAccountEntryLoaderManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class AccountEntryLoaderController {
+public class XXAccountEntryLoaderController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AccountEntryLoaderController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(XXAccountEntryLoaderController.class.getName());
 
 	private AonFile aonFile;
 	
