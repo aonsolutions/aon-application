@@ -17,30 +17,24 @@
 				<aon:panelGrid columns="5" styleClass="aon-margin-bottom aon-noborder"
 					columnClasses="aon-width-120,aon-width-120,aon-width-70,aon-width-120,aon-width-auto">
 					<aon:outputText value="&#160;" />
-					<aon:outputText value="#{pmsBundle.pms_reservation}:" styleClass="aon-bold"
-						rendered="#{controller.reservationAmount > 0}" />
+					<aon:outputText value="#{pmsBundle.pms_reservation}:" styleClass="aon-bold" />
 					<aon:div>
-						<aon:outputText value="#{controller.reservationAmount}" styleClass="aon-bold"
-							rendered="#{controller.reservationAmount > 0}">
+						<aon:outputText value="#{controller.reservationReturnAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
-						<aon:outputText value=" €" styleClass="aon-bold"
-							rendered="#{controller.reservationAmount > 0}" />
+						<aon:outputText value=" €" styleClass="aon-bold" />
 					</aon:div>
-					<aon:outputText value="#{pmsBundle.pms_services}:" styleClass="aon-bold"
-						rendered="#{controller.servicesAmount > 0}" />
+					<aon:outputText value="#{pmsBundle.pms_services}:" styleClass="aon-bold" />
 					<aon:div>
-						<aon:outputText value="#{controller.servicesAmount}" styleClass="aon-bold"
-							rendered="#{controller.servicesAmount > 0}">
+						<aon:outputText value="#{controller.servicesReturnAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
-						<aon:outputText value=" €" styleClass="aon-bold"
-							rendered="#{controller.servicesAmount > 0}" />
+						<aon:outputText value=" €" styleClass="aon-bold" />
 					</aon:div>
 				</aon:panelGrid>
 
 				<aon:dataTable id="paymentReturnsList"
-					value="#{controller.payments}" var="paymentReturn">
+					value="#{controller.returns}" var="paymentReturn">
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 						<aon:outputLabel value="#{configBundle.config_pay_method}" />
@@ -55,23 +49,23 @@
 					</aon:column>
 
 					<aon:column styleClass="aon-panelGrid-even aon-width-auto aon-editDataTable-textColumn">
-						<aon:outputText value="#{paymentReturn.totalAmount}">
+						<aon:outputText value="#{paymentReturn.totalReturnAmount}">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						<aon:outputText	value="&#160;" styleClass="aon-margin-left aon-icon-commandButton aon-icon-info" />
 						<rich:toolTip showEvent="onclick" hideEvent="onmouseout" direction="bottom-left">
 							<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-80,aon-noborder aon-bold aon-text-right">
 								<aon:outputLabel value="#{pmsBundle.pms_reservation}:"
-									rendered="#{paymentReturn.reservationAmount != 0}" />
-								<aon:outputText	value="#{paymentReturn.reservationAmount}"
-									rendered="#{paymentReturn.reservationAmount != 0}">
+									rendered="#{paymentReturn.reservationReturnAmount != 0}" />
+								<aon:outputText	value="#{paymentReturn.reservationReturnAmount}"
+									rendered="#{paymentReturn.reservationReturnAmount != 0}">
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
 
 								<aon:outputLabel value="#{pmsBundle.pms_services}:"
-									rendered="#{paymentReturn.servicesAmount != 0}" />
-								<aon:outputText	value="#{paymentReturn.servicesAmount}"
-									rendered="#{paymentReturn.servicesAmount != 0}">
+									rendered="#{paymentReturn.servicesReturnAmount != 0}" />
+								<aon:outputText	value="#{paymentReturn.servicesReturnAmount}"
+									rendered="#{paymentReturn.servicesReturnAmount != 0}">
 									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 								</aon:outputText>
 							</aon:panelGrid>
@@ -85,7 +79,7 @@
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="#{pmsBundle.pms_total_returns}:" styleClass="aon-bold" />
 					<aon:div>
-						<aon:outputText value="#{controller.paymentsAmount}" styleClass="aon-bold">
+						<aon:outputText value="#{controller.returnsAmount}" styleClass="aon-bold">
 							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						<aon:outputText value=" €" styleClass="aon-bold" />

@@ -6,8 +6,9 @@ import com.code.aon.config.PayMethod;
 public class PaymentSummaryTo {
 
 	private PayMethod payMethod;
-	private double reservationAmount;
-	private double servicesAmount;
+	private double reservationReturnAmount;
+	private double servicesReturnAmount;
+	private double paymentAmount;
 
 	public PayMethod getPayMethod() {
 		return payMethod;
@@ -17,24 +18,40 @@ public class PaymentSummaryTo {
 		this.payMethod = payMethod;
 	}
 
-	public double getReservationAmount() {
-		return reservationAmount;
+	public double getReservationReturnAmount() {
+		return reservationReturnAmount;
 	}
 
-	public void setReservationAmount(double reservationAmount) {
-		this.reservationAmount = reservationAmount;
+	public void setReservationReturnAmount(double reservationReturnAmount) {
+		this.reservationReturnAmount = reservationReturnAmount;
 	}
 
-	public double getServicesAmount() {
-		return servicesAmount;
+	public double getServicesReturnAmount() {
+		return servicesReturnAmount;
 	}
 
-	public void setServicesAmount(double servicesAmount) {
-		this.servicesAmount = servicesAmount;
+	public void setServicesReturnAmount(double servicesReturnAmount) {
+		this.servicesReturnAmount = servicesReturnAmount;
+	}
+
+	public double getPaymentAmount() {
+		return paymentAmount;
+	}
+
+	public void setPaymentAmount(double paymentAmount) {
+		this.paymentAmount = paymentAmount;
+	}
+
+	public double getTotalReturnAmount() {
+		return CommonUtil.round(getReservationReturnAmount() + getServicesReturnAmount());
 	}
 
 	public double getTotalAmount() {
-		return CommonUtil.round(getReservationAmount() + getServicesAmount());
+		return CommonUtil.round(getPaymentAmount() - getReservationReturnAmount() - getServicesReturnAmount());
+	}
+
+	public double getTotalAmountAbs() {
+		return Math.abs(getTotalAmount());
 	}
 
 	@Override

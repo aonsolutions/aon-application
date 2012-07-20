@@ -32,6 +32,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
@@ -191,35 +192,37 @@ public class ReservationInvoicing implements IReservationConstants {
 		List<ITransferObject> reservationServiceDetailList = reservationServiceDetailBean.getList(criteria);
 		for (ITransferObject ito : reservationServiceDetailList) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			InvoiceDetail invoiceDetail = new InvoiceDetail();
-			invoiceDetail.setInvoice(invoice);
-			invoiceDetail.setProject(reservation.getProject());
-			invoiceDetail.setLine(++line);
-			invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
-			invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
-			invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
-			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
-			invoiceDetail.setPrice(reservationServiceDetail.getPrice());
-			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-			invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
-			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-			if (isVatGap) {
-				invoiceDetail.setTaxDataInDetail(true);
-				if (reservation.getVatQuota() != 0) {
-					invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
-					double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
-					if (isVatGap && line == reservationServiceDetailList.size()) {
-						vatQuota = vatGap;
+			if (!reservationInvoiceTo.isEarlyCheckOut() || !isDeposit(reservationServiceDetail.getProjectReservationService())) {
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setInvoice(invoice);
+				invoiceDetail.setProject(reservation.getProject());
+				invoiceDetail.setLine(++line);
+				invoiceDetail.setItem(reservationServiceDetail.getProjectReservationService().getItem());
+				invoiceDetail.setDescription(obtainDetailDescription(reservationServiceDetail));
+				invoiceDetail.setQuantity(reservationServiceDetail.getQuantity());
+				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+				invoiceDetail.setPrice(reservationServiceDetail.getPrice());
+				invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+				invoiceDetail.setTaxableBase(reservationServiceDetail.getTaxableBase());
+				invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+				if (isVatGap) {
+					invoiceDetail.setTaxDataInDetail(true);
+					if (reservation.getVatQuota() != 0) {
+						invoiceDetail.setVatPercent(reservationUtils.getTaxPercentage(invoiceDetail.getItem().getProduct().getVat(), invoice.getIssueDate()));
+						double vatQuota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent() / 100);
+						if (isVatGap && line == reservationServiceDetailList.size()) {
+							vatQuota = vatGap;
+						}
+						invoiceDetail.setVatQuota(vatQuota);
+						vatGap = vatGap - vatQuota;
+					} else {
+						invoiceDetail.setVatPercent(0);
+						invoiceDetail.setVatQuota(0);
 					}
-					invoiceDetail.setVatQuota(vatQuota);
-					vatGap = vatGap - vatQuota;
-				} else {
-					invoiceDetail.setVatPercent(0);
-					invoiceDetail.setVatQuota(0);
 				}
+				invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
+				invoiceDetailBean.insert(invoiceDetail);
 			}
-			invoiceDetail.getInvoice().setUpdateEnabled(line == reservationServiceDetailList.size());
-			invoiceDetailBean.insert(invoiceDetail);
 		}
 
 		if (reservation.isAdvanceInvoiced() && !reservationInvoiceTo.isEarlyCheckOut()) {
@@ -255,7 +258,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 		}
 
-		if (reservationInvoiceTo.isEarlyCheckOut()) {
+		if (reservationInvoiceTo.isEarlyCheckOut() && reservationInvoiceTo.getPenaltyAmount() > 0) {
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(reservation.getProject());
@@ -366,6 +369,10 @@ public class ReservationInvoicing implements IReservationConstants {
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {
 		AccountEntryInvoiceWriter entryWriter = new AccountEntryInvoiceWriter();
 		entryWriter.recordAndUpdateInvoice(invoice);
+	}
+
+	private boolean isDeposit(ProjectReservationService reservationService) {
+		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
 	}
 
 	private String obtainDetailDescription(ProjectReservationServiceDetail reservationServiceDetail) throws ManagerBeanException {

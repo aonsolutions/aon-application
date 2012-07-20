@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showEarlyCheckOutWindow">
 		<c:if test="#{controller.showEarlyCheckOutWindow}">
 			<rich:modalPanel id="earlyCheckOutModalPanel" 
-				minHeight="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (500) : (350)}" 
+				minHeight="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (520) : (350)}" 
 				minWidth="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (640) : (450)}" 
 				rendered="#{controller.showEarlyCheckOutWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
@@ -88,6 +88,7 @@
 											rendered="#{!controller.reservation.agencyHolder}"
 											valueChangeListener="#{controller.onCheckOutPenaltyChanged}"
 											reRender="invoiceFinancesDiv">
+											<f:selectItem itemLabel="-" value="#{null}" />
 											<f:selectItem itemLabel="0 - 0.00 EUR." itemValue="0" />
 											<f:selectItem itemLabel="1 - #{controller.reservation.oneNightPenaltyPrice} EUR."  itemValue="1" />
 											<f:selectItem itemLabel="2 - #{controller.reservation.twoNightPenaltyPrice} EUR." itemValue="2" />
@@ -95,10 +96,12 @@
 
 									</aon:panelGrid>
 
-									<c:if test="#{!controller.reservation.agencyHolder or !empty controller.reservationFinances}">
+									<c:if test="#{!empty controller.reservationFinances}">
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_return.xhtml" />
 	
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />
+
+										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_totals.xhtml" />
 									</c:if>
 
 								</aon:div>
