@@ -86,7 +86,8 @@ public class WorkPlanningController implements ICollectionProvider {
 				return RoomWorkPlanning.CHECKIN;
 			} else {
 				long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
-				return days%3==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+				Integer sheetChangingDays = reservationRoomDetail.getRoom().getHotel().getSheetChanging();
+				return days%sheetChangingDays==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
 			}
 		} else {
 			ProjectReservationRoomDetail previousReservationRoomDetail = obtainActivity(room, DateUtils.addDays(getDate(), -1));
