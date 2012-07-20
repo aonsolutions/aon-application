@@ -75,11 +75,11 @@
 												focus="AdvanceInvoice_percent" />
 										</aon:selectInputDate>
 
-										<c:if test="#{!advanceInvoiceSearch.guestReservationSearch}">
+										<c:if test="#{!searchListener.guestReservationSearch}">
 											<aon:outputLabel for="AdvanceInvoice_percent"
 												value="#{pmsBundle.pms_invoice_percent}" />
 											<aon:inputText id="AdvanceInvoice_percent" 
-												value="#{advanceInvoice.advancePercent}" 
+												value="#{controller.advancePercent}" 
 												required="true" size="3" maxlength="3" 
 												ajaxSingle="true">
 												<f:validateDoubleRange minimum="1" maximum="100" />
@@ -88,27 +88,27 @@
 
 										<aon:outputLabel for="AdvanceInvoice_payMethod"
 											value="#{configBundle.config_pay_method}" />
-										<c:if test="#{advanceInvoiceSearch.guestReservationSearch}">
+										<c:if test="#{searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
-												value="#{advanceInvoice.advancePayMethod}" required="true" 
+												value="#{controller.advancePayMethod}" required="true" 
 												ajaxSingle="true">
 												<f:selectItems value="#{configCollections.directPayMethods}" />
 											</aon:selectOneMenu>
 										</c:if>
-										<c:if test="#{!advanceInvoiceSearch.guestReservationSearch}">
+										<c:if test="#{!searchListener.guestReservationSearch}">
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
-												value="#{advanceInvoice.advancePayMethod}" required="true"
+												value="#{controller.advancePayMethod}" required="true"
 												reRender="invoiceModalContent" ajaxSingle="true">
-												<f:selectItems value="#{advanceInvoice.agencyPayMethods}" />
+												<f:selectItems value="#{controller.agencyPayMethods}" />
 											</aon:selectOneMenu>
 										</c:if>
 
 										<aon:outputLabel for="AdvanceInvoice_bank"
-											rendered="#{advanceInvoice.bankRequired}"
+											rendered="#{controller.bankRequired}"
 											value="#{configBundle.config_bank}" />
 										<aon:selectOneMenu id="AdvanceInvoice_bank"
-											rendered="#{advanceInvoice.bankRequired}"
-											value="#{advanceInvoice.advanceBank}" required="true"
+											rendered="#{controller.bankRequired}"
+											value="#{controller.advanceBank}" required="true"
 											ajaxSingle="true">
 											<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 										</aon:selectOneMenu>
@@ -117,7 +117,7 @@
 											value="#{registryBundle.registry_days_to_first_payment}" />
 										<aon:panelGroup>
 											<aon:inputText id="AdvanceInvoice_daysToPayment"
-												value="#{advanceInvoice.advanceDaysToPayment}"
+												value="#{controller.advanceDaysToPayment}"
 												required="true" size="3" maxlength="3"
 												reRender="AdvanceInvoice_dueDate" ajaxSingle="true"> 
 												<f:validateDoubleRange minimum="0" />
@@ -126,7 +126,7 @@
 											<aon:outputText value="#{financeBundle.finance_pay_date}" 
 												styleClass="aon-italic aon-margin-left"/>
 											<aon:outputText id="AdvanceInvoice_dueDate" 
-												value="#{advanceInvoice.advancePaymentDate}" 
+												value="#{controller.advancePaymentDate}" 
 												styleClass="aon-italic aon-bold aon-margin-left">
 												<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 													timeZone="#{timeZoneController.timeZoneId}" />
