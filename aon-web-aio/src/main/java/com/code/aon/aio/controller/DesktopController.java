@@ -1,6 +1,9 @@
 package com.code.aon.aio.controller;
 
 
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.aio.DesktopNoticeSummary;
 import com.code.aon.aio.TaskInfo;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -50,13 +54,20 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.groupware.controller.NoteController;
+import com.code.aon.ui.purchase.controller.IPurchaseConstants;
+import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
@@ -85,6 +96,7 @@ public class DesktopController {
 			updateRecentNoteModel();
 			updateNoticeSummaryModel();
 			initTask();
+			initGarage();
 	    } catch (ManagerBeanException e) {
 	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
@@ -324,6 +336,7 @@ public class DesktopController {
             throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
         }
     }
+    
 	public boolean isHideHeaderContent() {
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		boolean hide = companyController.isHideHeaderContent();
@@ -335,5 +348,18 @@ public class DesktopController {
 		}
 		return hide;
 	}
-    
+ 
+	private void initGarage() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		if (! adc.isDeniedModule(Module.GARAGE.getName()) ) {
+			AonUtil.setBeanValue(ConfigConstants.SERIES, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IFinanceConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.DELIVERY_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IPurchaseConstants.PURCHASE_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+		}
+	}
+	
 }

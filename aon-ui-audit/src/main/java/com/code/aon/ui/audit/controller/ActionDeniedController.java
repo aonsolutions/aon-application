@@ -128,6 +128,10 @@ public class ActionDeniedController implements IAuditConstants {
 		this.selected = selected;
 	}
 	
+	public boolean isDeniedModule( String name ) {
+		return this.deniedModulesMap.containsKey(name);
+	}
+	
 	public void accept( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
@@ -311,7 +315,7 @@ public class ActionDeniedController implements IAuditConstants {
 	public void renderedModule( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = component.getId();
-			if ( this.deniedModulesMap.containsKey(id) ) {
+			if ( isDeniedModule(id) ) {
 				component.setRendered(false);
 			}				
 		}
@@ -365,7 +369,7 @@ public class ActionDeniedController implements IAuditConstants {
 					}					
 				}
 			}
-			if (! this.deniedModulesMap.containsKey(Module.DOCUMENT.getName()) ) {
+			if (! isDeniedModule(Module.DOCUMENT.getName()) ) {
 				AonUtil.getRoleManager().setUserInRole(IAonRole.DOCUMENT, true);
 			}
 		}

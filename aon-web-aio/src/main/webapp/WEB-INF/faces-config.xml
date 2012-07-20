@@ -135,6 +135,10 @@
 			<from-outcome>menu_configuration</from-outcome>
 			<to-view-id>/facelet/menu/configuration.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_garage</from-outcome>
+			<to-view-id>/facelet/menu/garage.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 	
    	<!-- ************************************************** -->
@@ -321,6 +325,18 @@
 			<value>#{enterpriseSearchEx}</value>			
 		</list-entries>
 	</managed-bean>
+	
+	<!-- ************ OFFER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>offerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.audabridge -->
+			<value>#{audabridgeOfferControllerListener}</value>
+		</list-entries>
+	</managed-bean>	
 
 	<!--  **** ROLE MANAGER DB **** -->
 	<managed-bean>

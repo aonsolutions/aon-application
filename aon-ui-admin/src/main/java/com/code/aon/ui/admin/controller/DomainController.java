@@ -21,6 +21,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
@@ -93,6 +94,12 @@ public class DomainController extends BasicController {
 					info.setDisabled(true);
 				}
 			}			
+		}
+		if ( getDomain().getType() != DomainType.GARAGE ) {
+			DomainModuleInfo garage = this.aioInfo.getModuleInfo(Module.GARAGE);
+			garage.setChecked(false);
+			appInfo.register();
+			appInfo.getApplicationModules().remove(garage);
 		}
 	}
 

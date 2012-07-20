@@ -88,6 +88,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.audabridge</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
@@ -224,6 +230,12 @@
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.tas</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>			
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.warehouse</artifactId>

@@ -55,7 +55,16 @@
 							value="#{adminBundle.admin_domain_parent}" />
 						<aon:inputText id="Domain_parentDomain" size="60" disabled="true"
 							value="#{adminDomain.to.parent.name}" />
-					</c:if>								
+					</c:if>			
+					
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:outputLabel for="Domain_type"
+							value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="Domain_type" 
+							value="#{adminDomain.to.type}">
+							<f:selectItems value="#{adminCollections.domainTypes}" />
+						</aon:selectOneMenu>		
+					</c:if>
 					
 				</aon:panelGrid>
 								
