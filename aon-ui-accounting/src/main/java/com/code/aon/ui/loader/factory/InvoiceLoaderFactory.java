@@ -44,7 +44,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	private static final Column[] SUPPORTED_COLUMNS = {
 		 new Column(FRA,"id"			,0,6	,true	,null)
 		,new Column(FRA,"serie"			,2,5	,true	,null)
-		,new Column(FRA,"numero"		,0,6	,true	,null)
+		,new Column(FRA,"numero"		,0,8	,true	,null)
 		,new Column(FRA,"referencia"	,2,32	,true	,null)
 		,new Column(VTO,"idTitular"		,0,6	,true	,null)
 		,new Column(FRA,"cuenta"		,2,9	,true	,null)

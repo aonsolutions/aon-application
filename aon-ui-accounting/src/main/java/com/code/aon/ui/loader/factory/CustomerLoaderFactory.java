@@ -193,7 +193,8 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		List<ITransferObject> list = bean.getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
-				throw new ManagerBeanException("Existe más de un cliente activo con el número de documento " + loaded.getDocumento());
+				engine.log("WARNING: Más de un cliente activo con el número de documento " + loaded.getDocumento()+". Se intenta deduplicar por cuenta contable.");
+				return searchCustomerByAccount( params, loaded );	
 			}
 			return (Customer) list.get(0);
 		}
