@@ -72,6 +72,16 @@ public class FinanceController extends FinanceListController {
 	private String invoiceViewer;
 	private boolean purchase;
 	private List<?> orderedList;
+	private boolean showBankManualInput;
+
+	
+	public boolean isShowBankManualInput() {
+		return showBankManualInput;
+	}
+
+	public void setShowBankManualInput(boolean showBankManualInput) {
+		this.showBankManualInput = showBankManualInput;
+	}
 
 	public Company getCompany() {
 		if (company == null) {

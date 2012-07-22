@@ -51,5 +51,13 @@ public class FinanceControllerListener extends ControllerAdapter {
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		Finance finance = (Finance) controller.getTo();
+		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+	}
 
 }

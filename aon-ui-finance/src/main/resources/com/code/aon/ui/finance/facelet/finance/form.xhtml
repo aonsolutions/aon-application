@@ -58,6 +58,34 @@
 						,aon-panelGrid-odd aon-width-140
 						,aon-panelGrid-even aon-width-auto">
 
+					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
+					<aon:div>
+						<aon:outputText value="#{finance.to.referenceCode}"
+							rendered="#{finance.to.emptyInvoice}" />
+						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
+							<aon:outputText value="#{finance.to.referenceCode}"
+								rendered="#{!finance.to.emptyInvoice}" />
+							<aon:outputText styleClass="aon-italic aon-margin-left"
+								value="(#{bundle.aon_date}: "
+								rendered="#{!finance.to.emptyInvoice}" />
+							<aon:outputText styleClass="aon-bold"
+								value="#{finance.to.invoice.issueDate}"
+								rendered="#{!finance.to.emptyInvoice}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputText styleClass="aon-italic"
+								value=")"
+								rendered="#{!finance.to.emptyInvoice}" />
+							<aon:commandLink id="invoice_link" immediate="true"
+								styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+								value="&#160;" title="#{bundle.aon_go}"
+								rendered="#{!finance.to.emptyInvoice}"
+								actionListener="#{finance.onLoadInvoice}"
+								action="#{finance.getInvoiceViewer}" />
+ 						</aon:div> 
+					</aon:div> 
+
 					<aon:outputLabel for="Finance_concept" 
 						value="#{financeBundle.finance_invoice_document_number}" />
 					<aon:div> 
@@ -90,34 +118,6 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
-
-					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
-					<aon:div>
-						<aon:outputText value="#{finance.to.referenceCode}"
-							rendered="#{finance.to.emptyInvoice}" />
-						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
-							<aon:outputText value="#{finance.to.referenceCode}"
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:outputText styleClass="aon-italic aon-margin-left"
-								value="(#{bundle.aon_date}: "
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:outputText styleClass="aon-bold"
-								value="#{finance.to.invoice.issueDate}"
-								rendered="#{!finance.to.emptyInvoice}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							<aon:outputText styleClass="aon-italic"
-								value=")"
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:commandLink id="invoice_link" immediate="true"
-								styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
-								value="&#160;" title="#{bundle.aon_go}"
-								rendered="#{!finance.to.emptyInvoice}"
-								actionListener="#{finance.onLoadInvoice}"
-								action="#{finance.getInvoiceViewer}" />
- 						</aon:div> 
-					</aon:div> 
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{finance.to.registry}" />
@@ -178,6 +178,18 @@
 								value="#{finance.registryData}" type="lookupChangeListener" />
 						</ui:include>
 					</aon:div>
+					
+					<aon:outputLabel for="Finance_payMethod_id"
+						value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="Finance_payMethod_id"
+						value="#{finance.to.payMethod}"
+						valueChangeListener="#{finance.onPayMethodChanged}"
+						reRender="Finance_registryBank_id,Finance_bankAccount"
+						disabled="#{!finance.pending and !finance.returned}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+					
 
 					<aon:outputLabel for="Finance_registry_document"
 						value="#{bundle.aon_company_document}" />
@@ -221,18 +233,7 @@
 								value="&#160;" />
 	 					</aon:panelGroup>
  					</aon:panelGroup>
-
-					<aon:outputLabel for="Finance_payMethod_id"
-						value="#{configBundle.config_pay_method}" />
-					<aon:selectOneMenu id="Finance_payMethod_id"
-						value="#{finance.to.payMethod}"
-						valueChangeListener="#{finance.onPayMethodChanged}"
-						reRender="Finance_registryBank_id,Finance_bankAccount"
-						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{configCollections.payMethods}" />
-					</aon:selectOneMenu>
-
+					
 					<aon:outputLabel for="Finance_dueDate"
 						value="#{financeBundle.finance_finance_date}" />
 					<aon:selectInputDate id="Finance_dueDate" 
@@ -243,8 +244,8 @@
 
 					<aon:outputLabel for="Bank_id"
 						value="#{configBundle.config_bank}" />
-					<aon:div>
-						<aon:panelGroup id="Finance_bankAccount">
+					<aon:div id="Finance_bankAccount_panel">
+						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showManualBankInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{finance.to.bank}" />
 								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
@@ -268,6 +269,41 @@
 								<f:validateLength minimum="10" maximum="10" />
 							</aon:inputText>
 						</aon:panelGroup>
+						
+						
+						<aon:outputLabel for="Finance_registryBank_id"
+							value="&#160;" rendered="#{!finance.showManualBankInput}" />
+						<aon:selectOneMenu id="Finance_registryBank_id"
+							rendered="#{!finance.showManualBankInput}"
+							value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
+							valueChangeListener="#{finance.onRegistryBankChanged}"
+							disabled="#{!finance.pending and !finance.returned}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<c:if test="#{!finance.new}">
+								<f:selectItems value="#{finance.allBanks}" />
+							</c:if>
+							<c:if test="#{finance.new}">
+								<f:selectItems value="#{finance.activeBanks}" />
+							</c:if>
+						</aon:selectOneMenu>
+						
+						<aon:commandLink id="bankAccount_show_manualInput"
+							rendered="#{!finance.showManualBankInput}" 
+							reRender="Finance_bankAccount_panel"
+							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;"
+							value="&#160;" title="mostrar edicion manual" >
+							<f:setPropertyActionListener target="#{finance.showManualBankInput}"
+								value="#{true}" />
+						</aon:commandLink>
+						<aon:commandLink id="bankAccount_hide_manualInput"
+							rendered="#{finance.showManualBankInput}" 
+							reRender="Finance_bankAccount_panel"
+							styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;"
+							value="&#160;" title="ocultar edicion manual" >
+							<f:setPropertyActionListener target="#{finance.showManualBankInput}"
+								value="#{false}" />
+						</aon:commandLink>
+						
 					</aon:div>
 
 					<aon:outputLabel for="Finance_amount"
@@ -278,6 +314,7 @@
 							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
 							required="true" size="10"
 							ajaxSingle="true" reRender="Finance_total" />
+						<!--  
 						<aon:outputLabel for="Finance_expenses" styleClass="aon-margin-left aon-margin-right aon-italic"
 							value="#{financeBundle.finance_expenses}" />
 						<aon:inputText id="Finance_expenses"
@@ -285,29 +322,17 @@
 							disabled="#{!finance.pending and !finance.returned}"
 							required="true" size="10"
 							ajaxSingle="true" reRender="Finance_total" />
+						-->
 					</aon:div>
-
-					<aon:outputLabel for="Finance_registryBank_id"
-						value="&#160;" />
-					<aon:selectOneMenu id="Finance_registryBank_id"
-						value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
-						valueChangeListener="#{finance.onRegistryBankChanged}"
-						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<c:if test="#{!finance.new}">
-							<f:selectItems value="#{finance.allBanks}" />
-						</c:if>
-						<c:if test="#{finance.new}">
-							<f:selectItems value="#{finance.activeBanks}" />
-						</c:if>
-					</aon:selectOneMenu>
-
+					
+<!--  
 					<aon:outputLabel for="Finance_total"
 						value="#{bundle.aon_total}" />
 					<aon:outputText id="Finance_total" styleClass="aon-bold"
 						value="#{finance.to.totalAmount}" size="15">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>	
+-->
 
 				</aon:panelGrid>
 					
