@@ -56,7 +56,7 @@ public class FinanceControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
-		Finance finance = (Finance) controller.getTo();
+		Finance finance = (Finance) controller.getTo(); 
 		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
 	}
 
