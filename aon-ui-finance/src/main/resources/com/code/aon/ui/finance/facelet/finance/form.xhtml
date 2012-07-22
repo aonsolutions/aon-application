@@ -245,7 +245,7 @@
 					<aon:outputLabel for="Bank_id"
 						value="#{configBundle.config_bank}" />
 					<aon:div id="Finance_bankAccount_panel">
-						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showManualBankInput}">
+						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{finance.to.bank}" />
 								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
@@ -272,9 +272,9 @@
 						
 						
 						<aon:outputLabel for="Finance_registryBank_id"
-							value="&#160;" rendered="#{!finance.showManualBankInput}" />
+							value="&#160;" rendered="#{!finance.showBankManualInput}" />
 						<aon:selectOneMenu id="Finance_registryBank_id"
-							rendered="#{!finance.showManualBankInput}"
+							rendered="#{!finance.showBankManualInput}"
 							value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
 							valueChangeListener="#{finance.onRegistryBankChanged}"
 							disabled="#{!finance.pending and !finance.returned}">
@@ -288,19 +288,19 @@
 						</aon:selectOneMenu>
 						
 						<aon:commandLink id="bankAccount_show_manualInput"
-							rendered="#{!finance.showManualBankInput}" 
+							rendered="#{!finance.showBankManualInput}" 
 							reRender="Finance_bankAccount_panel"
 							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;"
 							value="&#160;" title="mostrar edicion manual" >
-							<f:setPropertyActionListener target="#{finance.showManualBankInput}"
+							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{true}" />
 						</aon:commandLink>
 						<aon:commandLink id="bankAccount_hide_manualInput"
-							rendered="#{finance.showManualBankInput}" 
+							rendered="#{finance.showBankManualInput}" 
 							reRender="Finance_bankAccount_panel"
 							styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;"
 							value="&#160;" title="ocultar edicion manual" >
-							<f:setPropertyActionListener target="#{finance.showManualBankInput}"
+							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{false}" />
 						</aon:commandLink>
 						
