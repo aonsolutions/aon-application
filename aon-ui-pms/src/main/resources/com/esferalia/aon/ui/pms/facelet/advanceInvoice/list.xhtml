@@ -125,7 +125,7 @@
 								<aon:outputText value="#{pmsBundle.pms_advance}" />
 							</f:facet>
 							<aon:outputText value="#{to.advance}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
 
@@ -135,7 +135,7 @@
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
 							<aon:outputText value="#{to.total}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:column>
 					</ui:define>
@@ -145,7 +145,7 @@
 		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/esferalia/aon/ui/pms/facelet/advanceInvoice/modalInvoice.xhtml">
 			<ui:param name="controller" value="#{advanceInvoice}" />
-			<ui:param name="searchListener" value="#{advanceInvoiceSearchListener}" />
+			<ui:param name="searchListener" value="#{advanceInvoiceSearch}" />
 		</ui:include>
 
 	</ui:define>

@@ -52,14 +52,14 @@ public class AdvanceInvoicing {
 
 			HibernateUtil.beginTransaction(sessionName);
 
-			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			int count = 0;
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
 				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
 					Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
 					double total = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent());
-					createInvoiceAddress(invoice, reservation);
+					createAdvanceInvoiceAddress(invoice, reservation);
 					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, total);
 					recordInvoice(invoice);
 					++count;
@@ -137,7 +137,7 @@ public class AdvanceInvoicing {
 		return total;
 	}
 
-	private void createInvoiceAddress(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {
+	private void createAdvanceInvoiceAddress(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {
 		IAddress address = null;
 		if (reservation.isGuestHolder()) {
 			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
@@ -150,7 +150,7 @@ public class AdvanceInvoicing {
 			address = invoice.getRegistry().getDefaultAddress();
 		}
 
-		if (address != null && StringUtils.isNotEmpty(address.getAddress())) {
+		if (address != null && !isEmptyAddress(address)) {
 			InvoiceAddress invoiceAddress = new InvoiceAddress();
 			invoiceAddress.setInvoice(invoice);
 			invoiceAddress.setStreetType(address.getStreetType()); 
@@ -221,15 +221,15 @@ public class AdvanceInvoicing {
 			registry.setId(reservation.getHotelReservation().getCustomer().getRegistry().getId());
 			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
 			if (reservationGuest != null) {
+				registry.setName(reservationGuest.getFullName());
 				registry.setDocument(reservationGuest.getDocument());
 				registry.setDocumentType(reservationGuest.getDocumentType());
 				registry.setDocumentCountry(reservationGuest.getDocumentCountry());
-				registry.setName(reservationGuest.getFullName());
 			} else {
+				registry.setName(reservation.getHotelReservation().getCustomer().getRegistry().getFullName());
 				registry.setDocument(reservation.getHotelReservation().getCustomer().getRegistry().getDocument());
 				registry.setDocumentType(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentType());
 				registry.setDocumentCountry(reservation.getHotelReservation().getCustomer().getRegistry().getDocumentCountry());
-				registry.setName(reservation.getHotelReservation().getCustomer().getRegistry().getFullName());
 			}
 			return registry;
 		} else {
@@ -253,6 +253,10 @@ public class AdvanceInvoicing {
     	String date = StringUtils.rightPad(formatter.format(effectiveDate), 11);
     	room = (room == null) ? StringUtils.rightPad(StringUtils.repeat("-", 5), 6) : StringUtils.rightPad(room, 6);
     	return (date + room + description);
+	}
+
+	private boolean isEmptyAddress(IAddress address) {
+		return (StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getCity()) && StringUtils.isEmpty(address.getProvince()));
 	}
 
 }
