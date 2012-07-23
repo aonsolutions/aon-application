@@ -138,8 +138,17 @@
 								value="#{true}" />							
 						</aon:menuItem>		
 						
+						<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
+						<aon:menuItem id="fiscalInformation"
+							value="#{financeBundle.finance_fiscal_information}"
+							rendered="#{!saleInvoice.new}"
+							iconClass="aon-icon-info"
+							reRender="showFiscalInformationWindow">
+							<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
+								value="#{true}" />							
+						</aon:menuItem>
+								
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
-						
 						<aon:menuItem id="audit-info"
 							value="#{bundle.aon_audit}"
 							rendered="#{!saleInvoice.new}"
@@ -545,6 +554,9 @@
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAuditInfo.xhtml">
+			<ui:param name="invoiceController" value="#{saleInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />
 		</ui:include>
 		

@@ -6,6 +6,8 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CON
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,6 +19,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -90,6 +94,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private boolean showCommentsWindow;
 	private boolean showRemarksWindow;
 	private boolean showAuditInfoWindow;
+	private boolean showFiscalInformationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
@@ -376,6 +381,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
 		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public boolean isShowFiscalInformationWindow() {
+		return showFiscalInformationWindow;
+	}
+
+	public void setShowFiscalInformationWindow(boolean showFiscalInformationWindow) {
+		this.showFiscalInformationWindow = showFiscalInformationWindow;
 	}
 
 	public String getRectificationSeries() {
@@ -823,6 +836,39 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			LOGGER.error("Error getting invoice pdf file " + getInvoice(), e );
 		}
 		return false;
+	}
+	
+	public List<TaxBreakDown> getTaxBreakDowns() {
+		if (getTo() != null) {
+			Invoice invoice = getInvoice();
+			List<TaxBreakDown> taxBreakDowns = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
+			Collections.sort(taxBreakDowns, new Comparator<TaxBreakDown>() {
+				@Override
+				public int compare(TaxBreakDown o1, TaxBreakDown o2) {
+					int a = o1.getTaxType().ordinal();
+					int b = o2.getTaxType().ordinal();
+					if (a<b) {
+						return -1;
+					}
+					if (a>b) {
+						return 1;
+					}
+					return 0; 
+				}
+			});
+			return taxBreakDowns;
+		}
+		return null;
+	}
+	
+	public void onAcceptFiscalInformation(ActionEvent event) {
+		Invoice invoice = getInvoice();
+		
+		// Solo se puede modificar service e investment, que no afectan a los totales
+		// por lo tanto no es necesario recalcular.
+		invoice.setUpdateEnabled(false);
+		
+		super.accept(event);
 	}
 	
 }
