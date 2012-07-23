@@ -5,9 +5,26 @@ import com.code.aon.config.enumeration.Administration;
 public enum MOD349Format {
 
 	AEAT_2011(2011,Administration.COMMON_TERRITORY
-			,"/com/code/aon/file/tax/model/MOD349/xml/2011_AEAT_Deponent.xml"
-			,"/com/code/aon/file/tax/model/MOD349/xml/2011_AEAT_Operator.xml"
-			,"/com/code/aon/file/tax/model/MOD349/xml/2011_AEAT_Rectification.xml");
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Operator.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Rectification.xml")
+	,ALAVA_2011(2011,Administration.ALAVA
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Operator.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Rectification.xml")
+	,GIPUZKOA_2011(2011,Administration.GIPUZKOA
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Operator.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Rectification.xml")
+	,BIZKAIA_2011(2011,Administration.BIZKAIA
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Operator.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Rectification.xml")
+	,NAVARRA_2011(2011,Administration.NAVARRA
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Deponent.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Operator.xml"
+			,"/com/code/aon/file/tax/model/MOD349/xml/2011_Rectification.xml")
+	;
 
 	private Integer year;
 	private Administration administration;

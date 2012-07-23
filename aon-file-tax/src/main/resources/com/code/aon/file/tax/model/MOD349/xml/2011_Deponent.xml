@@ -21,5 +21,6 @@
  <field name="c004" value="bean" bean="DEPONENT" property="c004" format="Numeric" pattern="9(13)V99" />
  <field name="free1" value=" " format="Alphabetic" pattern="X(52)" />
  <field name="free2" value=" " format="Alphabetic" pattern="X(13)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(250)" />
  
 </register>

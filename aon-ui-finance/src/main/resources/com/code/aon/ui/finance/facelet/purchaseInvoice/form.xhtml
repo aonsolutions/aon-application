@@ -127,15 +127,17 @@
 								value="#{true}" />							
 						</aon:menuItem>		
 						
-						<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
-						<aon:menuItem id="fiscalInformation"
-							value="#{financeBundle.finance_fiscal_information}"
-							rendered="#{!purchaseInvoice.new}"
-							iconClass="aon-icon-info"
-							reRender="showFiscalInformationWindow">
-							<f:setPropertyActionListener target="#{purchaseInvoice.showFiscalInformationWindow}"
-								value="#{true}" />							
-						</aon:menuItem>
+						<c:if test="#{aonRole.accountingOperator}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
+							<aon:menuItem id="fiscalInformation"
+								value="#{financeBundle.finance_fiscal_information}"
+								rendered="#{!purchaseInvoice.new}"
+								iconClass="aon-icon-info"
+								reRender="showFiscalInformationWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showFiscalInformationWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</c:if>
 
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
 						<aon:menuItem id="audit-info"

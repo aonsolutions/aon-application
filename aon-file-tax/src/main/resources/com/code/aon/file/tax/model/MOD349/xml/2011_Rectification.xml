@@ -17,5 +17,6 @@
  <field name="base_imponible" value="bean" bean="RECTIFICATION" property="amount" format="Numeric" pattern="9(11)V99" />
  <field name="base_imponible_ant" value="bean" bean="RECTIFICATION" property="rectifiedAmount" format="Numeric" pattern="9(11)V99" />
  <field name="free3" value=" " format="Alphabetic" pattern="X(72)" />
+ <field name="free4" value=" " format="Alphabetic" pattern="X(250)" />
  
 </register>

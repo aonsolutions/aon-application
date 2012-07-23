@@ -137,16 +137,17 @@
 							<f:setPropertyActionListener target="#{saleInvoice.showRemarksWindow}"
 								value="#{true}" />							
 						</aon:menuItem>		
-						
-						<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
-						<aon:menuItem id="fiscalInformation"
-							value="#{financeBundle.finance_fiscal_information}"
-							rendered="#{!saleInvoice.new}"
-							iconClass="aon-icon-info"
-							reRender="showFiscalInformationWindow">
-							<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
-								value="#{true}" />							
-						</aon:menuItem>
+						<c:if test="#{aonRole.accountingOperator}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
+							<aon:menuItem id="fiscalInformation"
+								value="#{financeBundle.finance_fiscal_information}"
+								rendered="#{!saleInvoice.new}"
+								iconClass="aon-icon-info"
+								reRender="showFiscalInformationWindow">
+								<f:setPropertyActionListener target="#{saleInvoice.showFiscalInformationWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</c:if>
 								
 						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
 						<aon:menuItem id="audit-info"
