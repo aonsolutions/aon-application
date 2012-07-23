@@ -28,11 +28,14 @@ import com.code.aon.config.Tariff;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.customer.Customer;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
@@ -245,6 +248,25 @@ public class ReservationUtils implements IReservationConstants {
 		}
 	}
 
+	public boolean isPendingRoomAssignation(ProjectReservation reservation) throws ManagerBeanException {
+		boolean pendingRooms = true;
+		IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			pendingRooms = false;
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			criteria = new Criteria();
+			String alias = reservationRoomDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_DETAIL_PROJECT_RESERVATION_ROOM_ID);
+			criteria.addEqualExpression(alias, reservationRoom.getId());
+			if (reservationRoomDetailBean.getCount(criteria) == 0) {
+				return true;
+			}
+		}
+		return pendingRooms;
+	}
+
     public void insertProjectReservationServiceDetails(ProjectReservationService reservationService, Date fromDate, Date toDate, double quantity, double price, 
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
@@ -334,6 +356,42 @@ public class ReservationUtils implements IReservationConstants {
 				reservationServiceDetailBean.update(reservationServiceDetail);
 			}
     	}
+	}
+
+	public boolean isPendingServiceAssignation(ProjectReservation reservation, boolean extraIncluded) throws ManagerBeanException {
+		boolean pendingServices = true;
+		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
+		IManagerBean reservationServiceBean = BeanManager.getManagerBean(ProjectReservationService.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID), reservation.getId());
+		if (!extraIncluded) {
+			String alias = reservationServiceBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_EXTRA);
+			criteria.addEqualExpression(alias, false);
+		}
+		for (ITransferObject ito : reservationServiceBean.getList(criteria)) {
+			pendingServices = false;
+			ProjectReservationService reservationService = (ProjectReservationService)ito;
+			criteria = new Criteria();
+			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
+			criteria.addEqualExpression(alias, reservationService.getId());
+			criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
+			if (reservationServiceDetailBean.getCount(criteria) > 0) {
+				return true;
+			}
+		}
+		return pendingServices;
+	}
+
+	public double getReservationAdvancedAmount(Integer reservationId) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservationId);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
+		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
+		Object result = invoiceBean.getUniqueResult(projection, criteria);
+		return (result != null) ? CommonUtil.round(((Double)result).doubleValue()) : 0;
 	}
 
 	public double getReservationCalculatedTaxableBase(ProjectReservation reservation) {
