@@ -58,8 +58,10 @@
 						,aon-panelGrid-odd aon-width-140
 						,aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel value="#{financeBundle.finance_invoice}" />
-					<aon:div>
+					<aon:outputLabel
+						rendered="#{!finance.new and !finance.to.emptyInvoice}"  
+						value="#{financeBundle.finance_invoice}" />
+					<aon:div rendered="#{!finance.new and !finance.to.emptyInvoice}" >
 						<aon:outputText value="#{finance.to.referenceCode}"
 							rendered="#{finance.to.emptyInvoice}" />
 						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
@@ -84,8 +86,29 @@
 								actionListener="#{finance.onLoadInvoice}"
 								action="#{finance.getInvoiceViewer}" />
  						</aon:div> 
-					</aon:div> 
-
+					</aon:div>
+					
+					<aon:outputLabel for="Finance_type"
+						rendered="#{finance.new or finance.to.emptyInvoice}" 
+						value="#{bundle.aon_type}" />					
+					<aon:div rendered="#{finance.new or finance.to.emptyInvoice}">
+						<aon:selectOneRadio id="Finance_type"
+							
+							value="#{finance.financeGroup}"
+							reRender="Finance_amount">
+							<f:selectItem itemLabel="Unico" itemValue="false" />
+							<f:selectItem itemLabel="Agrupacion" itemValue="true" />
+						</aon:selectOneRadio>	
+					</aon:div> 					
+					
+					<aon:outputLabel for="Finance_dueDate"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_dueDate" 
+						value="#{finance.to.dueDate}"
+						disabled="#{!finance.pending and !finance.returned}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					
 					<aon:outputLabel for="Finance_concept" 
 						value="#{financeBundle.finance_invoice_document_number}" />
 					<aon:div> 
@@ -118,7 +141,18 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
-
+					
+					<aon:outputLabel for="Finance_payMethod_id"
+						value="#{configBundle.config_pay_method}" />
+					<aon:selectOneMenu id="Finance_payMethod_id"
+						value="#{finance.to.payMethod}"
+						valueChangeListener="#{finance.onPayMethodChanged}"
+						reRender="Finance_registryBank_id,Finance_bankAccount"
+						disabled="#{!finance.pending and !finance.returned}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{configCollections.payMethods}" />
+					</aon:selectOneMenu>
+					
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{finance.to.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
@@ -132,7 +166,6 @@
 						<aon:methodParam name="lookupChangeListener"
 							value="#{finance.registryData}" type="lookupChangeListener" />
 					</ui:include>
-
 					<aon:div rendered="#{finance.to.payment}">
 						<aon:outputLabel for="Supplier_id"
 							value="#{financeBundle.finance_creditor}"
@@ -179,18 +212,24 @@
 						</ui:include>
 					</aon:div>
 					
-					<aon:outputLabel for="Finance_payMethod_id"
-						value="#{configBundle.config_pay_method}" />
-					<aon:selectOneMenu id="Finance_payMethod_id"
-						value="#{finance.to.payMethod}"
-						valueChangeListener="#{finance.onPayMethodChanged}"
-						reRender="Finance_registryBank_id,Finance_bankAccount"
-						disabled="#{!finance.pending and !finance.returned}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{configCollections.payMethods}" />
-					</aon:selectOneMenu>
+					<aon:outputLabel for="Finance_amount"
+						value="#{bundle.aon_amount}" />
+					<aon:div>
+						<aon:inputText id="Finance_amount"
+							value="#{finance.to.amount}"
+							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned) or finance.financeGroup}"
+							required="true" size="10"
+							ajaxSingle="true" reRender="Finance_total" />
+						<aon:commandLink id="Finance_financeGroup_button"
+							rendered="#{!finance.new and finance.financeGroup}" 
+							reRender="showFinanceGroupWindow"
+							styleClass="aon-button-new aon-margin-left" style="padding-right: 20px;"
+							value="&#160;" title="Agrupar vencimientos" >
+							<f:setPropertyActionListener target="#{finance.showFinanceGroupWindow}"
+								value="#{true}" />
+						</aon:commandLink>
+					</aon:div>
 					
-
 					<aon:outputLabel for="Finance_registry_document"
 						value="#{bundle.aon_company_document}" />
 					<aon:panelGroup id="Finance_holder_document">
@@ -233,14 +272,14 @@
 								value="&#160;" />
 	 					</aon:panelGroup>
  					</aon:panelGroup>
-					
-					<aon:outputLabel for="Finance_dueDate"
-						value="#{financeBundle.finance_finance_date}" />
-					<aon:selectInputDate id="Finance_dueDate" 
-						value="#{finance.to.dueDate}"
+					  
+					<aon:outputLabel for="Finance_expenses" 
+						value="#{financeBundle.finance_expenses}" />
+					<aon:inputText id="Finance_expenses"
+						value="#{finance.to.expenses}"
 						disabled="#{!finance.pending and !finance.returned}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
+						required="true" size="10"
+						ajaxSingle="true" reRender="Finance_total" />
 
 					<aon:outputLabel for="Bank_id"
 						value="#{configBundle.config_bank}" />
@@ -269,8 +308,6 @@
 								<f:validateLength minimum="10" maximum="10" />
 							</aon:inputText>
 						</aon:panelGroup>
-						
-						
 						<aon:outputLabel for="Finance_registryBank_id"
 							value="&#160;" rendered="#{!finance.showBankManualInput}" />
 						<aon:selectOneMenu id="Finance_registryBank_id"
@@ -286,7 +323,6 @@
 								<f:selectItems value="#{finance.activeBanks}" />
 							</c:if>
 						</aon:selectOneMenu>
-						
 						<aon:commandLink id="bankAccount_show_manualInput"
 							rendered="#{!finance.showBankManualInput}" 
 							reRender="Finance_bankAccount_panel"
@@ -303,36 +339,14 @@
 							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{false}" />
 						</aon:commandLink>
-						
-					</aon:div>
-
-					<aon:outputLabel for="Finance_amount"
-						value="#{bundle.aon_amount}" />
-					<aon:div>
-						<aon:inputText id="Finance_amount"
-							value="#{finance.to.amount}"
-							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
-							required="true" size="10"
-							ajaxSingle="true" reRender="Finance_total" />
-						<!--  
-						<aon:outputLabel for="Finance_expenses" styleClass="aon-margin-left aon-margin-right aon-italic"
-							value="#{financeBundle.finance_expenses}" />
-						<aon:inputText id="Finance_expenses"
-							value="#{finance.to.expenses}"
-							disabled="#{!finance.pending and !finance.returned}"
-							required="true" size="10"
-							ajaxSingle="true" reRender="Finance_total" />
-						-->
 					</aon:div>
 					
-<!--  
 					<aon:outputLabel for="Finance_total"
 						value="#{bundle.aon_total}" />
 					<aon:outputText id="Finance_total" styleClass="aon-bold"
 						value="#{finance.to.totalAmount}" size="15">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>	
--->
 
 				</aon:panelGrid>
 					
@@ -437,6 +451,7 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalGroup.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 	</ui:define>
 </ui:composition>
