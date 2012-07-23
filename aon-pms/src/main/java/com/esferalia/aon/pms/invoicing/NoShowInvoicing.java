@@ -28,20 +28,22 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
 
-public class AdvanceInvoicing {
+public class NoShowInvoicing {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdvanceInvoicing.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(NoShowInvoicing.class.getName());
 
-	public int invoice(AdvanceInvoiceTo advanceInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
+	public int invoice(NoShowInvoiceTo noShowInvoiceTo, List<Integer> reservations) throws ManagerBeanException {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -55,11 +57,13 @@ public class AdvanceInvoicing {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
 			for (Integer reservationId : reservations) {
 				ProjectReservation reservation = (ProjectReservation)reservationBean.get(reservationId);
-				if (reservation.getHotelReservation().getItemAdvance() != null && reservation.getHotelReservation().getItemAdvance().getId() != null) {
-					Invoice invoice = createAdvanceInvoice(advanceInvoiceTo, reservation);
-					double advanceAmount = createAdvanceInvoiceDetails(invoice, reservation, advanceInvoiceTo.getPercent());
-					createAdvanceInvoiceAddress(invoice, reservation);
-					createAdvanceInvoiceFinances(invoice, advanceInvoiceTo, advanceAmount);
+				if (reservation.getHotelReservation().getItemNoShow() != null && reservation.getHotelReservation().getItemNoShow().getId() != null) {
+					Invoice invoice = createNoShowInvoice(noShowInvoiceTo, reservation);
+					double noShowAmount = createNoShowInvoiceDetails(invoice, reservation, noShowInvoiceTo);
+					createNoShowInvoiceAddress(invoice, reservation);
+					if (noShowAmount != 0) {
+						createNoShowInvoiceFinances(invoice, noShowInvoiceTo, noShowAmount);
+					}
 					recordInvoice(invoice);
 					++count;
 				}
@@ -85,7 +89,7 @@ public class AdvanceInvoicing {
 		}
 	}
 
-	private Invoice createAdvanceInvoice(AdvanceInvoiceTo advanceInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
+	private Invoice createNoShowInvoice(NoShowInvoiceTo noShowInvoiceTo, ProjectReservation reservation) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
 		invoice.setProject(reservation.getProject());
 		invoice.setSeries(getHotelSeries(reservation));
@@ -96,47 +100,92 @@ public class AdvanceInvoicing {
 		invoice.setRegistryDocumentCountry(invoice.getRegistry().getDocumentCountry());
 		invoice.setRegistryName(invoice.getRegistry().getName());
 		invoice.setRegistryAddress(null);
-		invoice.setIssueDate(advanceInvoiceTo.getIssueDate());
+		invoice.setIssueDate(noShowInvoiceTo.getIssueDate());
 		invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setType(InvoiceType.SALES);
 		invoice.setScope(reservation.getHotelReservation().getScope());
-		invoice.setAdvance(true);
 
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		return (Invoice)invoiceBean.insert(invoice);
 	}
 
-	private double createAdvanceInvoiceDetails(Invoice invoice, ProjectReservation reservation, double advancePercent) throws ManagerBeanException {
-		double advanceAmount = (reservation.isGuestHolder()) ? reservation.getAdvance() : CommonUtil.round(reservation.getTotal() * advancePercent / 100);
-
+	private double createNoShowInvoiceDetails(Invoice invoice, ProjectReservation reservation, NoShowInvoiceTo noShowInvoiceTo) throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
-		double taxableBase = CommonUtil.round(advanceAmount / (1 + vatPercent / 100));
+		boolean taxDataInDetail = false;
+
+		double advanceVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemAdvance().getVat(), invoice.getIssueDate());
+		double advancedAmount = reservation.getAdvancedAmount();
+		double advanceTaxableBase = CommonUtil.round(advancedAmount / (1 + advanceVatPercent / 100));
+
+		double penaltyVatPercent = reservationUtils.getTaxPercentage(reservation.getHotelReservation().getItemNoShow().getProduct().getVat(), invoice.getIssueDate());
+		double penaltyTaxableBase = (noShowInvoiceTo.isKeepAdvance()) ? CommonUtil.round(advancedAmount / (1 + penaltyVatPercent / 100)) : getPenaltyTaxableBase(reservation, noShowInvoiceTo.getPenaltyDays());
+		double penaltyAmount = (noShowInvoiceTo.isKeepAdvance()) ? advancedAmount : CommonUtil.round(penaltyTaxableBase * (1 + penaltyVatPercent / 100));
+
+		double invoiceTotal = CommonUtil.round(penaltyAmount - advancedAmount);
+		if (advancedAmount > 0) {
+			taxDataInDetail = (invoiceTotal != CommonUtil.round((penaltyTaxableBase - advanceTaxableBase) * (1 + penaltyVatPercent / 100)));
+
+			InvoiceDetail invoiceDetail = new InvoiceDetail();
+			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(reservation.getProject());
+			invoiceDetail.setLine(1);
+			invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
+			invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getProduct().getName()));
+			invoiceDetail.setQuantity(-1);
+			invoiceDetail.setPrice(advanceTaxableBase);
+			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
+			invoiceDetail.setTaxableBase(advanceTaxableBase * (-1));
+			invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
+			if (taxDataInDetail) {
+				invoiceDetail.setTaxDataInDetail(true);
+				invoiceDetail.setVatPercent(advanceVatPercent);
+				invoiceDetail.setVatQuota(CommonUtil.round((advancedAmount - advanceTaxableBase) * (-1)));
+			}
+
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			invoiceDetailBean.insert(invoiceDetail);
+		}
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setInvoice(invoice);
 		invoiceDetail.setProject(reservation.getProject());
-		invoiceDetail.setLine(1);
-		invoiceDetail.setItem(reservation.getHotelReservation().getItemAdvance());
+		invoiceDetail.setLine((advancedAmount <= 0) ? 1 : 2);
+		invoiceDetail.setItem(reservation.getHotelReservation().getItemNoShow());
 		invoiceDetail.setDescription(obtainDetailDescription(reservation.getStartDate(), null, invoiceDetail.getItem().getProduct().getName()));
 		invoiceDetail.setQuantity(1);
-		invoiceDetail.setPrice(taxableBase);
+		invoiceDetail.setPrice(penaltyTaxableBase);
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
-		invoiceDetail.setTaxableBase(taxableBase);
+		invoiceDetail.setTaxableBase(penaltyTaxableBase);
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
-		invoiceDetail.setTaxDataInDetail(true);
-		invoiceDetail.setVatPercent(vatPercent);
-		invoiceDetail.setVatQuota(CommonUtil.round(advanceAmount - taxableBase));
+		if (taxDataInDetail) {
+			invoiceDetail.setTaxDataInDetail(true);
+			invoiceDetail.setVatPercent(penaltyVatPercent);
+			invoiceDetail.setVatQuota(CommonUtil.round((penaltyAmount - penaltyTaxableBase)));
+		}
 
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		invoiceDetailBean.insert(invoiceDetail);
 
-		return advanceAmount;
+		if (advancedAmount > 0 && invoiceTotal != 0) {
+			Finance finance = getAdvancedFinance(reservation);
+			if (finance != null) {
+				noShowInvoiceTo.setPayMethod(finance.getPayMethod());
+				if (finance.getBankAccount() != null && StringUtils.isNotEmpty(finance.getBankAccount().toString())) {
+					RegistryBank registryBank = new RegistryBank();
+					registryBank.setBank(finance.getBank());
+					registryBank.setBankAccount(finance.getBankAccount());
+					noShowInvoiceTo.setRegistryBank(registryBank);
+				}
+			}
+		}
+
+		return invoiceTotal;
 	}
 
-	private void createAdvanceInvoiceAddress(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {
+	private void createNoShowInvoiceAddress(Invoice invoice, ProjectReservation reservation) throws ManagerBeanException {
 		IAddress address = null;
 		if (reservation.isGuestHolder()) {
 			ProjectReservationGuest reservationGuest = obtainMainGuest(reservation);
@@ -165,20 +214,20 @@ public class AdvanceInvoicing {
 		}
 	}
 
-	private void createAdvanceInvoiceFinances(Invoice invoice, AdvanceInvoiceTo advanceInvoiceTo, double advanceAmount) throws ManagerBeanException {
+	private void createNoShowInvoiceFinances(Invoice invoice, NoShowInvoiceTo noShowInvoiceTo, double noShowAmount) throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setInvoice(invoice);
 		finance.setRegistry(invoice.getRegistry());
 		finance.setPayment(false);
-		finance.setDueDate(advanceInvoiceTo.getFinanceDate());
+		finance.setDueDate(noShowInvoiceTo.getFinanceDate());
 		finance.setScope(invoice.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		finance.setPayMethod(advanceInvoiceTo.getPayMethod());
-		if (advanceInvoiceTo.getRegistryBank() != null) {
-			finance.setBank(advanceInvoiceTo.getRegistryBank().getBank());
-			finance.setBankAccount(advanceInvoiceTo.getRegistryBank().getBankAccount());
+		finance.setPayMethod(noShowInvoiceTo.getPayMethod());
+		if (noShowInvoiceTo.getRegistryBank() != null) {
+			finance.setBank(noShowInvoiceTo.getRegistryBank().getBank());
+			finance.setBankAccount(noShowInvoiceTo.getRegistryBank().getBankAccount());
 		}
-		finance.setAmount(advanceAmount);
+		finance.setAmount(noShowAmount);
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		financeBean.insert(finance);
@@ -242,6 +291,17 @@ public class AdvanceInvoicing {
 		return null;
 	}
 
+	private double getPenaltyTaxableBase(ProjectReservation reservation, int penaltyDays) throws ManagerBeanException {
+		switch (penaltyDays) {
+			case 1:
+				return reservation.getOneNightNoShowTaxableBase();
+			case 2:
+				return reservation.getTwoNightNoShowTaxableBase();
+			default:
+				return 0;
+		}
+	}
+
 	private String obtainDetailDescription(Date effectiveDate, String room, String description) {
     	DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     	String date = StringUtils.rightPad(formatter.format(effectiveDate), 11);
@@ -251,6 +311,20 @@ public class AdvanceInvoicing {
 
 	private boolean isEmptyAddress(IAddress address) {
 		return (StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getCity()) && StringUtils.isEmpty(address.getProvince()));
+	}
+
+	private Finance getAdvancedFinance(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), reservation.getId());
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_TYPE), InvoiceType.SALES);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), false);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ADVANCE), true);
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			return (Finance)ito;
+		}
+		return null;
 	}
 
 }

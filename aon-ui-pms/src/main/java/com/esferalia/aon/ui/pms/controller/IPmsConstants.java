@@ -11,11 +11,13 @@ public interface IPmsConstants {
 	// ************************************************************
 	String COLLECTIONS_CONTROLLER_NAME = "pmsCollections";
 	String ADVANCE_INVOICE_CONTROLLER_NAME = "advanceInvoice";
-	String ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER = "advanceInvoiceSearch";
+	String ADVANCE_INVOICE_SEARCH_LISTENER_NAME = "advanceInvoiceSearch";
 	String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
 	String DIVERT_CONTROLLER_NAME = "divert";
 	String EARLY_CHECKOUT_CONTROLLER_NAME = "earlyCheckOut";
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
+	String NO_SHOW_INVOICE_CONTROLLER_NAME = "noShowInvoice";
+	String NO_SHOW_INVOICE_SEARCH_LISTENER_NAME = "noShowInvoiceSearch";
 	String POS_FINANCE_CONTROLLER_NAME = "posFinance";
 	String POS_FINANCE_SEARCH_LISTENER_NAME = "posFinanceSearch";
 	String POS_SHIFT_CONTROLLER_NAME = "posShift";
@@ -36,8 +38,6 @@ public interface IPmsConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
-	String ADVANCE_INVOICE_CONTROLLER_LIST = "advanceInvoice_list";
-	String ADVANCE_INVOICE_CONTROLLER_SEARCH = "advanceInvoice_search";
 	String POS_FINANCE_LIST_NAME = "posFinance_list";
 	String POS_SHIFT_FORM_NAME = "posShift_form";
 	String RACK_LIST_NAME = "rack_list";

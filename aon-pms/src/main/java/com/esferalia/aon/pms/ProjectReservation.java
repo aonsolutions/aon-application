@@ -246,7 +246,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public double getOneNightPenaltyTaxableBase() throws ManagerBeanException {
 		if (getHotelReservation().getItemPenalty() != null && getHotelReservation().getItemPenalty().getId() != null) {
 			Double taxableBase = getOneNightTaxableBases().get(getHotelReservation().getItemPenalty().getProduct().getVat());
-			return (taxableBase != null) ? taxableBase.doubleValue() : 0;
+			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue()) : 0;
 		}
 		return 0;
 	}
@@ -255,7 +255,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public double getTwoNightPenaltyTaxableBase() throws ManagerBeanException {
 		if (getHotelReservation().getItemPenalty() != null && getHotelReservation().getItemPenalty().getId() != null) {
 			Double taxableBase = getTwoNightTaxableBases().get(getHotelReservation().getItemPenalty().getProduct().getVat());
-			return (taxableBase != null) ? taxableBase.doubleValue() : 0;
+			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue()) : 0;
 		}
 		return 0;
 	}
@@ -278,7 +278,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public double getOneNightNoShowTaxableBase() throws ManagerBeanException {
 		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
 			Double taxableBase = getOneNightTaxableBases().get(getHotelReservation().getItemNoShow().getProduct().getVat());
-			return (taxableBase != null) ? taxableBase.doubleValue() : 0;
+			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue()) : 0;
 		}
 		return 0;
 	}
@@ -287,7 +287,7 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	public double getTwoNightNoShowTaxableBase() throws ManagerBeanException {
 		if (getHotelReservation().getItemNoShow() != null && getHotelReservation().getItemNoShow().getId() != null) {
 			Double taxableBase = getTwoNightTaxableBases().get(getHotelReservation().getItemNoShow().getProduct().getVat());
-			return (taxableBase != null) ? taxableBase.doubleValue() : 0;
+			return (taxableBase != null) ? CommonUtil.round(taxableBase.doubleValue()) : 0;
 		}
 		return 0;
 	}
@@ -304,6 +304,15 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 		ReservationUtils reservationUtils = new ReservationUtils();
 		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
 		return CommonUtil.round(getTwoNightNoShowTaxableBase() * (1 + vatPercent / 100));
+	}
+
+	@Transient
+	public double getAdvancedAmount() throws ManagerBeanException {
+		if (isAdvanceInvoiced()) {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			return reservationUtils.getReservationAdvancedAmount(getId());
+		}
+		return 0;
 	}
 
 	@Transient

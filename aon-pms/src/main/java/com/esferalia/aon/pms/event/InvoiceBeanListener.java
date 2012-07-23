@@ -7,6 +7,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -46,6 +47,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
         	IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), invoice.getProject().getId());
+    		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
     		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
     		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), invoice.isAdvance());
     		Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
@@ -55,10 +57,11 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
     		result = invoiceBean.getUniqueResult(projection, criteria);
     		int countInvoices = (result != null) ? ((Integer)result).intValue() : 0;
 
+			boolean invoiced = (totalInvoiced != 0 || countInvoices % 2 != 0);
     		if (!invoice.isAdvance()) {
-        		reservation.setStatus((totalInvoiced == 0 && countInvoices % 2 == 0) ? ReservationStatus.ACTIVE : ReservationStatus.INVOICED);
+       			reservation.setStatus((invoiced) ? ReservationStatus.INVOICED : (reservation.isNoShow()) ? ReservationStatus.CANCELLED : ReservationStatus.ACTIVE);
     		} else {
-        		reservation.setAdvanceInvoiced((totalInvoiced == 0 && countInvoices % 2 == 0) ? false : true);
+        		reservation.setAdvanceInvoiced(invoiced);
     		}
     		reservationBean.update(reservation);
     	}

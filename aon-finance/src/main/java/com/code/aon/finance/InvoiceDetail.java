@@ -42,9 +42,9 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	private double retentionQuota;
 
 	public InvoiceDetail() {
-		this.updateEnabled = true;
-		this.taxDataInDetail = false;
-		this.skipServiceProcess = false;
+		setUpdateEnabled(true);
+		setTaxDataInDetail(false);
+		setSkipServiceProcess(false);
 	}
 
     public void setPrice(double price) {

@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showConfirmWindow">
 		<c:if test="#{controller.showConfirmWindow}">
-			<rich:modalPanel id="confirmModalPanel" minHeight="200" height="200" minWidth="320" width="320"
+			<rich:modalPanel id="confirmModalPanel" minHeight="200" height="200" minWidth="360" width="360"
 				rendered="#{controller.showConfirmWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -24,9 +24,15 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;" >
-									<aon:div style="margin-bottom:30px;">
+									<aon:div style="margin-bottom:30px">
 										<aon:outputText styleClass="aon-bold"
-											value="#{(controller.confirmNoShow) ? (pmsBundle.pms_no_show_confirm) : (pmsBundle.pms_to_cancel_reservation_confirm)}" />
+											value="#{pmsBundle.pms_no_invoiceable_confirm}" />
+										<aon:outputText styleClass="aon-bold" style="display:block;"
+											value="#{pmsBundle.pms_no_invoiceable_confirm_agency}"
+											rendered="#{!searchListener.guestReservationSearch}" />
+										<aon:outputText styleClass="aon-bold" style="display:block;"
+											value="#{pmsBundle.pms_no_invoiceable_confirm_guest}"
+											rendered="#{searchListener.guestReservationSearch}" />
 									</aon:div>
 
 									<aon:panelGrid columns="2" style="width: 100%;" styleClass="aon-panelGrid-formatting"
@@ -34,12 +40,12 @@
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_confirm}"
-											actionListener="#{controller.onCancelReservation}"
+											actionListener="#{controller.onNoShowNoInvoice}"
 											reRender="aonContent"
 											onclick="Richfaces.showModalPanel('waitProccess')"
 											oncomplete="Richfaces.hideModalPanel('waitProccess')">
 											<rich:componentControl for="confirmModalPanel"
-												event="onclick" operation="hide"/>																					
+												event="onclick" operation="hide"/>
 											<f:setPropertyActionListener
 												target="#{controller.showConfirmWindow}"
 												value="#{false}" />

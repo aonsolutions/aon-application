@@ -121,7 +121,7 @@ public class AdvanceInvoiceController extends BasicController{
 	public void onAdvanceInvoice(ActionEvent event) {
 		try {
 			AdvanceInvoiceTo advanceInvoiceTo = new AdvanceInvoiceTo();
-			AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_CONTROLLER_SEARCH_LISTENER);
+			AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_SEARCH_LISTENER_NAME);
 			advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
 			advanceInvoiceTo.setIssueDate(getAdvanceDate());
 			advanceInvoiceTo.setPercent(getAdvancePercent());
