@@ -110,10 +110,18 @@ public class PosOpeningController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setStartTime(new Date());
 			getPosShift().setUser(UserUtils.getInstance().getLoggedUser());
-			setPosShift((PosShift) bean.insertOrUpdate(getPosShift()));
+			PosShift ps = (PosShift) bean.insertOrUpdate(getPosShift());
+			setPosShift((PosShift) bean.get(ps.getId()));
 			if(getPosShift().getPos().isInvoiceable()){
 				PosInvoicing posInvoicing = new PosInvoicing();
-				posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
+				try {
+					posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
+				} catch (Exception e) {
+					String msg = "Error al crear la factura de caja. ";
+					AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
+					bean.remove(ps);
+					throw new AbortProcessingException(msg, e);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar la apertura de caja. ";

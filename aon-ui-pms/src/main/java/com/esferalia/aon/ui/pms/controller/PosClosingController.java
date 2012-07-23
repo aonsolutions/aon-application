@@ -159,10 +159,18 @@ public class PosClosingController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setEndTime(new Date());
 			PosShift ps = (PosShift) bean.update(getPosShift());
-			setPosShift(ps);
+			setPosShift((PosShift) bean.get(ps.getId()));
 			if(ps.getPos().isInvoiceable()){
 				PosInvoicing posInvoicing = new PosInvoicing();
-				posInvoicing.completeInvoice(ps);
+				try {
+					posInvoicing.completeInvoice(ps);
+				} catch (Exception e) {
+					String msg = "Error al completar la factura de caja";
+					AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
+					getPosShift().setEndTime(null);
+					bean.update(getPosShift());
+					throw new AbortProcessingException(msg, e);
+				}
 			}
 			selectPosShift( event );
 		} catch (ManagerBeanException e) {
