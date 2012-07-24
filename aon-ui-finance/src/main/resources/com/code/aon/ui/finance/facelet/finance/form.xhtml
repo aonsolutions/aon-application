@@ -59,9 +59,8 @@
 						,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel
-						rendered="#{!finance.new and !finance.to.emptyInvoice}"  
 						value="#{financeBundle.finance_invoice}" />
-					<aon:div rendered="#{!finance.new and !finance.to.emptyInvoice}" >
+					<aon:div>
 						<aon:outputText value="#{finance.to.referenceCode}"
 							rendered="#{finance.to.emptyInvoice}" />
 						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
@@ -87,20 +86,7 @@
 								action="#{finance.getInvoiceViewer}" />
  						</aon:div> 
 					</aon:div>
-					
-					<aon:outputLabel for="Finance_type"
-						rendered="#{finance.new or finance.to.emptyInvoice}" 
-						value="#{bundle.aon_type}" />					
-					<aon:div rendered="#{finance.new or finance.to.emptyInvoice}">
-						<aon:selectOneRadio id="Finance_type"
-							
-							value="#{finance.financeGroup}"
-							reRender="Finance_amount">
-							<f:selectItem itemLabel="Unico" itemValue="false" />
-							<f:selectItem itemLabel="Agrupacion" itemValue="true" />
-						</aon:selectOneRadio>	
-					</aon:div> 					
-					
+				
 					<aon:outputLabel for="Finance_dueDate"
 						value="#{financeBundle.finance_finance_date}" />
 					<aon:selectInputDate id="Finance_dueDate" 
@@ -217,17 +203,9 @@
 					<aon:div>
 						<aon:inputText id="Finance_amount"
 							value="#{finance.to.amount}"
-							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned) or finance.financeGroup}"
+							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
 							required="true" size="10"
 							ajaxSingle="true" reRender="Finance_total" />
-						<aon:commandLink id="Finance_financeGroup_button"
-							rendered="#{!finance.new and finance.financeGroup}" 
-							reRender="showFinanceGroupWindow"
-							styleClass="aon-button-new aon-margin-left" style="padding-right: 20px;"
-							value="&#160;" title="Agrupar vencimientos" >
-							<f:setPropertyActionListener target="#{finance.showFinanceGroupWindow}"
-								value="#{true}" />
-						</aon:commandLink>
 					</aon:div>
 					
 					<aon:outputLabel for="Finance_registry_document"
