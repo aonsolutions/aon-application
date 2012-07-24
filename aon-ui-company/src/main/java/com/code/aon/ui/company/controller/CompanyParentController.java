@@ -10,6 +10,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -772,6 +773,22 @@ public class CompanyParentController extends BasicController implements ICompany
 		}
 		return null;
 	}
+	
+	public void updateParam(String paramName, String value) throws ManagerBeanException {
+		boolean update = true;
+		ApplicationParameter param = obtainApplicationParameter(paramName);
+		if ( param == null ) {
+			param = new ApplicationParameter();
+			param.setName(paramName);
+		} else if ( StringUtils.equals(value, param.getValue()) ) {
+			update = false;
+		}
+		if ( update ) {
+			param.setValue(value);
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			appParamBean.insertOrUpdate(param);			
+		}
+	}	
 
 	/**
 	 * Checks if is e invoice.

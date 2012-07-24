@@ -50,6 +50,7 @@ public interface ICompanyController extends IController {
 	void searchCustomReportTemplate() throws ManagerBeanException;
 
 	ApplicationParameter obtainApplicationParameter(String printHeaderParam)  throws ManagerBeanException;
+	void updateParam(String paramName, String value) throws ManagerBeanException;
 
 	RegistryAddress getMainAddress();
 	void setPhone(RegistryMedia phone);
