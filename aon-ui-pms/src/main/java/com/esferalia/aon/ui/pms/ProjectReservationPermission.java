@@ -104,7 +104,8 @@ public class ProjectReservationPermission {
 	public boolean isInvoiceAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleAdmin() && isAfterCheckOut(now)) || isInHouse(now);
-		return reservation.isActive() && !getReservationUtils().isPendingServiceAssignation(reservation, false) && roleAllowed;
+		boolean unassigned = getReservationUtils().isPendingRoomAssignation(reservation) || getReservationUtils().isPendingServiceAssignation(reservation, false);
+		return reservation.isActive() && roleAllowed && !unassigned;
 	}
 
 	public boolean isNoShowAllowed() throws ManagerBeanException {
