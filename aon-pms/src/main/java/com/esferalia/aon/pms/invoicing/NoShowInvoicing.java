@@ -19,6 +19,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -226,6 +227,12 @@ public class NoShowInvoicing {
 		if (noShowInvoiceTo.getRegistryBank() != null) {
 			finance.setBank(noShowInvoiceTo.getRegistryBank().getBank());
 			finance.setBankAccount(noShowInvoiceTo.getRegistryBank().getBankAccount());
+		} else if (noShowInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
+			RegistryBank rBank = getRegistryBank(invoice.getRegistry());
+			if (rBank != null) {
+				finance.setBank(rBank.getBank());
+				finance.setBankAccount(rBank.getBankAccount());
+			}
 		}
 		finance.setAmount(noShowAmount);
 
@@ -327,4 +334,15 @@ public class NoShowInvoicing {
 		return null;
 	}
 
+	public RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACTIVE), true);
+		for (ITransferObject ito : rBankBean.getList(criteria)) {
+			return (RegistryBank)ito; 
+		}
+		return null;
+	}
+	
 }

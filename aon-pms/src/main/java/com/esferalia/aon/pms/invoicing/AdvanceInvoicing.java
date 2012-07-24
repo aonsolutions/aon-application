@@ -19,6 +19,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Series;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -32,6 +33,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.RegistryBank;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationGuest;
@@ -177,6 +179,12 @@ public class AdvanceInvoicing {
 		if (advanceInvoiceTo.getRegistryBank() != null) {
 			finance.setBank(advanceInvoiceTo.getRegistryBank().getBank());
 			finance.setBankAccount(advanceInvoiceTo.getRegistryBank().getBankAccount());
+		} else if (advanceInvoiceTo.getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT) {
+			RegistryBank rBank = getRegistryBank(invoice.getRegistry());
+			if (rBank != null) {
+				finance.setBank(rBank.getBank());
+				finance.setBankAccount(rBank.getBankAccount());
+			}
 		}
 		finance.setAmount(advanceAmount);
 
@@ -253,4 +261,15 @@ public class AdvanceInvoicing {
 		return (StringUtils.isEmpty(address.getAddress()) && StringUtils.isEmpty(address.getCity()) && StringUtils.isEmpty(address.getProvince()));
 	}
 
+	public RegistryBank getRegistryBank(Registry registry) throws ManagerBeanException {
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_ACTIVE), true);
+		for (ITransferObject ito : rBankBean.getList(criteria)) {
+			return (RegistryBank)ito; 
+		}
+		return null;
+	}
+	
 }
