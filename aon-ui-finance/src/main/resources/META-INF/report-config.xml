@@ -496,7 +496,7 @@
 		</params>
 		<nested-report report="invoiceDetailGta"/>
 		<nested-report report="invoiceTaxBreakDownGta"/>
-		<nested-report report="invoiceFinancesDefault"/>
+		<nested-report report="invoiceFinances"/>
 	</report>
 
 	<!--  *********  Receipt  ********* -->	

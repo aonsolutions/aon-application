@@ -106,9 +106,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
-			<param id="company" value="#{company.obtainCompany}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="email" value="#{company.obtainEmail}" />
@@ -133,6 +131,32 @@
 	<report id="deliveryVatBreakDown" description="VatBreakDown's Subreport">
 		<template path="/com/code/aon/ui/warehouse/report/deliveryVatBreakDown.jasper"/>
 	</report>
+	
+	<report id="deliveryGta" description="Delivery report">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryGta.jasper" />
+		<collection provider="#{delivery}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="deliveryDetailPrinter" value="#{tasDeliveryDetailPrinter.getInstance}" />
+		</params>
+		<nested-report report="deliveryDetailGta"/>
+		<nested-report report="deliveryTaxBreakDown"/>
+	</report>
+	<report id="deliveryDetailGta" description="Delivery's Subreport">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryDetailGta.jasper" />
+	</report>
+	<report id="deliveryTaxBreakDown" description="Delivery Tax report">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryTaxBreakDown.jasper"/>
+	</report>	
 	
 	<!--  *********  Listado Detallado Factura de Ventas  ********* -->
 
