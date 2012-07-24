@@ -1,5 +1,7 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.company.controller.CompanyParentController.DELIVERY_TEMPLATE_PARAM;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.IOException;
@@ -21,6 +23,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -46,6 +49,7 @@ import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -490,6 +494,15 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public String getReportTemplate() throws ManagerBeanException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		ApplicationParameter appParam = controller.obtainApplicationParameter(DELIVERY_TEMPLATE_PARAM);
+		if ( appParam != null ) {
+			return appParam.getValue();
+		}
+		return DELIVERY_CONTROLLER_NAME;
 	}
 
 }

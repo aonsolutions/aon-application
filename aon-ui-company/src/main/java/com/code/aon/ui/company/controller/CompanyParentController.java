@@ -53,6 +53,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public static final String SALE_INVOICE_TEMPLATE_PARAM = "APP_SALE_INVOICE_TEMPLATE_PARAM";
 	
+	public static final String OFFER_TEMPLATE_PARAM = "APP_OFFER_TEMPLATE_PARAM";
+	
+	public static final String DELIVERY_TEMPLATE_PARAM = "APP_DELIVERY_TEMPLATE_PARAM";
+	
 	public static final String PRINT_LOGO_PARAM = "APP_PRINT_LOGO_PARAM";
 	
 	public static final String PRINT_NAME_PARAM = "APP_PRINT_NAME_PARAM";

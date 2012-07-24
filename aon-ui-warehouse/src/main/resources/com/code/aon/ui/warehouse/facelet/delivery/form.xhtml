@@ -53,7 +53,7 @@
 							disabled="#{deliveryDetail.to != null}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf">
-							<f:param name="reportKey" value="delivery" />
+							<f:param name="reportKey" value="#{delivery.reportTemplate}" />
 							<f:param name="outputFormat" value="PDF" />
 						</aon:htmlCommandLink>
 					</ui:define>
