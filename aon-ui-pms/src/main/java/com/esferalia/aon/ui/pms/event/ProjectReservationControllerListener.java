@@ -22,11 +22,19 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.ui.pms.controller.ProjectReservationController;
 
 public class ProjectReservationControllerListener extends ControllerAdapter {
-	
+
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		ProjectReservation reservation = (ProjectReservation)controller.getTo();
+		reservation.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
+		reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), 1));
+		reservation.setCrs(false);
+		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
+		reservation.setStatus(ReservationStatus.ACTIVE);
+
 		try {
+			controller.getReservationPermission().setReservation(reservation);
 			controller.resetHotel();
 			controller.resetStartTime();
 			controller.resetEndTime();
@@ -38,18 +46,14 @@ public class ProjectReservationControllerListener extends ControllerAdapter {
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-
-		ProjectReservation reservation = (ProjectReservation)controller.getTo();
-		reservation.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
-		reservation.setEndDate(DateUtils.addDays(reservation.getStartDate(), 1));
-		reservation.setCrs(false);
-		reservation.setCheckStatus(ReservationCheckStatus.NO_CHECK);
-		reservation.setStatus(ReservationStatus.ACTIVE);
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		ProjectReservationController controller = (ProjectReservationController)event.getController();
+		ProjectReservation reservation = (ProjectReservation)controller.getTo();
+
+		controller.getReservationPermission().setReservation(reservation);
 		controller.resetStartTime();
 		controller.resetEndTime();
 		controller.resetNights();

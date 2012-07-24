@@ -51,11 +51,13 @@
 		<aon:div>
 			<aon:outputText value="#{reservation.to.checkStatus}" 
 				styleClass="aon-bold aon-label-info" rendered="#{!reservation.noCheck}" />
+<!-- 
 			<aon:commandButton id="undo-CheckStatus" value="&#160;"
 				styleClass="aon-icon-commandButton aon-icon-sincronize aon-margin-left"
 				title="#{bundle.aon_undo}" immediate="true" 
 				actionListener="#{reservation.onUndoCheckStatus}"
 				rendered="#{reservation.active and reservation.checkIn and reservation.checkInable}" />
+ -->
 		</aon:div>
 	</aon:panelGrid>
 

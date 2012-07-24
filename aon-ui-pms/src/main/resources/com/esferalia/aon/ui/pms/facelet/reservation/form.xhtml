@@ -13,23 +13,23 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
+				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
 				<ui:param name="showMoreMenu" value="#{!reservation.new and !reservation.cancelled}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="reservation-CheckIn"
 						value="#{pmsBundle.pms_check_in}" immediate="#{true}" 
-						rendered="#{reservation.active and reservation.noCheck and reservation.checkInable}"
+						rendered="#{reservation.reservationPermission.checkInAllowed}"
 						iconClass="aon-icon-check-in"
 						actionListener="#{reservation.onCheckIn}" />
 					<aon:menuItem id="reservation-CheckOut"
 						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
-						rendered="#{reservation.invoiced and reservation.checkIn and reservation.checkOutable}"
+						rendered="#{reservation.reservationPermission.checkOutAllowed}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onCheckOut}" />
 					<aon:menuItem id="reservation-EarlyCheckOut"
-						value="#{pmsBundle.pms_check_out}" immediate="#{true}" 
-						rendered="#{reservation.invoiced and reservation.checkIn and !reservation.checkOutable and (aonRole.config or aonRole.commercialOperator)}"
+						value="#{pmsBundle.pms_early_check_out}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.earlyCheckOutAllowed}"
 						iconClass="aon-icon-check-out"
 						actionListener="#{reservation.onEarlyCheckOutShow}"
 						reRender="showEarlyCheckOutWindow">
@@ -38,7 +38,7 @@
 					</aon:menuItem>
 					<aon:menuItem id="reservation-Invoice"
 						value="#{pmsBundle.pms_to_invoice}"	immediate="#{true}" 
-						rendered="#{reservation.active and reservationService.model.rowCount > 0 and reservation.invoiceable}"
+						rendered="#{reservation.reservationPermission.invoiceAllowed}"
 						iconClass="aon-icon-favorite"
 						actionListener="#{reservation.onInvoiceShow}"
 						reRender="showInvoiceWindow">
@@ -47,7 +47,7 @@
 					</aon:menuItem>
 					<aon:menuItem id="reservation-NoShow"
 						value="#{pmsBundle.pms_no_show}" immediate="#{true}" 
-						rendered="#{!reservation.cancelled and reservation.noCheck and (aonRole.admin or reservation.noShowable)}"
+						rendered="#{reservation.reservationPermission.noShowAllowed}"
 						iconClass="aon-icon-no-show"
 						reRender="showConfirmWindow">
 						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
@@ -55,21 +55,19 @@
 						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
 							value="#{true}" />
 					</aon:menuItem>
-					<c:if test="#{aonRole.saleOperator}">
-						<aon:menuItem id="reservation-Cancel"
-							value="#{pmsBundle.pms_to_cancel_reservation}" immediate="#{true}" 
-							rendered="#{!reservation.cancelled and reservation.noCheck and reservation.cancellable}"
-							iconClass="aon-icon-removed"
-							reRender="showConfirmWindow">
-							<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
-								value="#{true}" />
-							<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
-								value="#{false}" />
-						</aon:menuItem>
-					</c:if>
+					<aon:menuItem id="reservation-Cancel"
+						value="#{pmsBundle.pms_to_cancel_reservation}" immediate="#{true}" 
+						rendered="#{reservation.reservationPermission.cancelAllowed}"
+						iconClass="aon-icon-removed"
+						reRender="showConfirmWindow">
+						<f:setPropertyActionListener target="#{reservation.showConfirmWindow}"
+							value="#{true}" />
+						<f:setPropertyActionListener target="#{reservation.confirmNoShow}"
+							value="#{false}" />
+					</aon:menuItem>
 					<aon:menuItem id="reservation-divert"
 						value="#{pmsBundle.pms_divert_reservation}" immediate="true" 
-						rendered="#{!reservation.cancelled and reservation.divertable and !reservation.pendingDivert}"
+						rendered="#{reservation.reservationPermission.divertAllowed}"
 						iconClass="aon-icon-transfer"
 						actionListener="#{reservation.onDivertModalShow}"
 						reRender="showDivertWindow">

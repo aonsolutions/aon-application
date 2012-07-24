@@ -12,7 +12,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_reservation_module}" />
 				<ui:param name="controller" value="#{reservation}" />
-				<ui:param name="skipResetButton" value="#{!aonRole.saleOperator}" />
+				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="reservation-Refresh"
 						value="#{pmsBundle.pms_to_refresh}"	immediate="#{true}"

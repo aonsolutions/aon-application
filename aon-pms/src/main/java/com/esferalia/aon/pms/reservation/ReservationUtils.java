@@ -44,6 +44,7 @@ import com.code.aon.seller.enumeration.SellerStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
+import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.ProjectReservationRoom;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.ProjectReservationService;
@@ -51,6 +52,7 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.enumeration.BookingHolder;
+import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
 
 public class ReservationUtils implements IReservationConstants {
@@ -380,6 +382,14 @@ public class ReservationUtils implements IReservationConstants {
 			}
 		}
 		return pendingServices;
+	}
+
+	public boolean isPendingDivert(Integer reservationId) throws ManagerBeanException {
+		IManagerBean reservationDivertBean = BeanManager.getManagerBean(ProjectReservationDivert.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationDivertBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_PROJECT_RESERVATION_ID), reservationId);
+		criteria.addEqualExpression(reservationDivertBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_DIVERT_STATUS), ReservationDivertStatus.PENDING);
+		return (reservationDivertBean.getCount(criteria) > 0);
 	}
 
 	public double getReservationAdvancedAmount(Integer reservationId) throws ManagerBeanException {
