@@ -40,7 +40,8 @@
 									<aon:commandButton id="serviceDetail-accept"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										value="#{bundle.aon_save} #{pmsBundle.pms_service}"
-										actionListener="#{controller.onAssignReservationService}">
+										rendered="#{reservation.reservationPermission.acceptReservationServiceAllowed}"
+										actionListener="#{controller.onAcceptReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					
 										<f:setPropertyActionListener
@@ -50,7 +51,7 @@
 									<aon:commandButton id="serviceDetail-remove"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										value="#{bundle.aon_remove} #{pmsBundle.pms_service}"
-										rendered="#{aonRole.saleOperator and !controller.new and !reservation.to.crs and !controller.to.extra}"
+										rendered="#{!controller.new and reservation.reservationPermission.removeReservationServiceAllowed}"
 										actionListener="#{controller.onRemoveReservationService}">
 										<rich:componentControl for="serviceDetailModalPanel"
 											event="onclick" operation="hide"/>																					
@@ -72,14 +73,28 @@
 									<aon:panelGrid columns="2" styleClass="aon-width-all"
 										columnClasses="aon-panelGrid-odd aon-width-120, aon-panelGrid-even aon-width-auto">
 
-										<aon:outputLabel for="ProjectReservationService_roomItem"
-											value="#{pmsBundle.pms_room}"
+										<aon:outputLabel value="#{pmsBundle.pms_room}"
 											rendered="#{reservation.to.roomAssignedCount > 0}" />
 										<aon:selectOneMenu id="ProjectReservationService_roomItem" 
 											value="#{controller.serviceReservationRoom}"
-											rendered="#{reservation.to.roomAssignedCount > 0}">
+											rendered="#{controller.new and reservation.to.roomAssignedCount > 0}">
 											<f:selectItems value="#{controller.reservationRoomItems}" />
 										</aon:selectOneMenu>
+										<a4j:repeat value="#{controller.reservationRooms}" var="availableServiceRoom"
+											rendered="#{!controller.new and reservation.to.roomAssignedCount > 0}">
+											<aon:commandLink styleClass="aon-dataTable-link-noicon aon-bold aon-nowrap"
+												style="color: #{(availableServiceRoom.id == controller.to.projectReservationRoom.id) ? ('blue') : ('black')}"
+												value="#{availableServiceRoom.roomNumber}" immediate="true"
+												actionListener="#{controller.onAssignReservationRoom}">
+												<f:param name="availableServiceRoom" value="#{availableServiceRoom.id}"/>
+												<f:setPropertyActionListener
+													target="#{controller.showServiceDetailWindow}"
+													value="#{false}" />
+												<rich:componentControl for="serviceDetailModalPanel"
+													event="onclick" operation="hide"/>																					
+											</aon:commandLink>
+											<aon:outputText value=" " />
+										</a4j:repeat>
 
 										<aon:outputLabel value="#{bundle.aon_date}"
 											rendered="#{controller.new}" />
@@ -103,14 +118,14 @@
 										<aon:outputLabel for="Item_id" 
 											value="#{pmsBundle.pms_service}" />
 										<aon:outputText	value="#{controller.to.item.product.code} - #{controller.to.item.product.name}" styleClass="aon-bold"
-											rendered="#{reservation.to.crs or controller.to.extra}" />
+											rendered="#{!reservation.reservationPermission.reservationServicesEditable}" />
 										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{controller.to.item}" />
 											<ui:param name="idRequired" value="#{true}" />
 											<ui:param name="skipLabel" value="#{true}" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="skipGoToButton" value="#{true}" />
-											<ui:param name="lookupRendered" value="#{!reservation.to.crs and !controller.to.extra}" />
+											<ui:param name="lookupRendered" value="#{reservation.reservationPermission.reservationServicesEditable}" />
 											<ui:param name="lookupInputOnFocus" value="ProjectReservationService_quantity" />
 											<ui:param name="lookupReRender" value="ProjectReservationService_quantity,ProjectReservationService_salesPrice" />
 											<aon:methodParam name="lookupChangeListener"
@@ -120,12 +135,12 @@
 										<aon:outputLabel for="ProjectReservationService_quantity" 
 											value="#{pmsBundle.pms_units}" />
 										<aon:outputText	value="#{controller.serviceQuantity}" styleClass="aon-bold"
-											rendered="#{reservation.to.crs or controller.to.extra}">
+											rendered="#{!reservation.reservationPermission.reservationServicesEditable}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										<aon:inputText id="ProjectReservationService_quantity" 
 											value="#{controller.serviceQuantity}" size="5" required="true"
-											rendered="#{!reservation.to.crs and !controller.to.extra}" 
+											rendered="#{reservation.reservationPermission.reservationServicesEditable}" 
 											valueChangeListener="#{controller.onQuantityChanged}" 
 											reRender="ProjectReservationService_salesPrice"
 											focus="ProjectReservationService_salesPrice" />
@@ -133,12 +148,12 @@
 										<aon:outputLabel for="ProjectReservationService_salesPrice" 
 											value="#{bundle.aon_unit_price}" />
 										<aon:outputText	value="#{controller.servicePrice}" styleClass="aon-bold"
-											rendered="#{reservation.to.crs or controller.to.extra}">
+											rendered="#{!reservation.reservationPermission.reservationServicesEditable}">
 											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 										<aon:inputText id="ProjectReservationService_salesPrice" 
 											value="#{controller.servicePrice}" size="5" required="true"
-											rendered="#{!reservation.to.crs and !controller.to.extra}" 
+											rendered="#{reservation.reservationPermission.reservationServicesEditable}" 
 											valueChangeListener="#{controller.onSalesPriceChanged}" />
 
 									</aon:panelGrid>

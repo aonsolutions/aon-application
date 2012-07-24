@@ -35,7 +35,7 @@ public class ProjectReservationBeanVetoListener extends ManagerBeanVetoListenerA
     }
 
 	private void calculateReservationTotals(ReservationUtils reservationUtils, ProjectReservation reservation) throws ManagerBeanException {
-		if (!reservation.isCrs()) {
+		if (!reservation.isCrs() || reservation.isForceCalculateTotals()) {
 			double taxableBase = reservationUtils.getReservationCalculatedTaxableBase(reservation);
 			double vatQuota = reservationUtils.getReservationCalculatedVatQuota(reservation);
 

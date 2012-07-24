@@ -24,7 +24,7 @@
 				</f:facet>
 				<aon:commandButton id="Service-selectButton"
 					styleClass="aon-editDataTable-button aon-table-row-link"
-					rendered="#{reservation.active and (!reservation.to.crs or reservation.to.roomAssignedCount > 0)}"
+					rendered="#{reservation.reservationPermission.selectReservationServiceAllowed}"
 					actionListener="#{controller.onSelect}"
 					reRender="showServiceDetailWindow"
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
@@ -36,7 +36,7 @@
 						<aon:commandButton
 							id="Service-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							rendered="#{!reservation.to.crs and reservation.active}" 
+							rendered="#{reservation.reservationPermission.newReservationServiceAllowed}" 
 							actionListener="#{controller.onReset}"
 							reRender="showServiceDetailWindow"
 							accesskey="#{bundle.aon_key_new_line}" 

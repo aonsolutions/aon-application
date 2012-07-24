@@ -392,6 +392,9 @@ public class ProjectReservationController extends BasicController implements IPm
 			} else {
 				reservation.setCompany((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 			}
+			if (!reservation.isGuestHolder()) {
+				reservation.setAdvance(0);
+			}
 			resetRoomTariff();
 		}
 	}
@@ -424,26 +427,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		return tariff;
 	}
 
-	public boolean isNoCheck() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isNoCheck();
-	}
-
-	public boolean isCheckIn() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isCheckIn();
-	}
-
-	public boolean isCheckOut() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isCheckOut();
-	}
-
-	public boolean isNoShow() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isNoShow();
-	}
-
 	public void onCheckIn(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
@@ -464,26 +447,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
-	public boolean isActive() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isActive();
-	}
-
-	public boolean isBlocked() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isBlocked();
-	}
-
-	public boolean isCancelled() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isCancelled();
-	}
-
-	public boolean isInvoiced() {
-		ProjectReservation reservation = (ProjectReservation)getTo();
-		return reservation.isInvoiced();
-	}
-
 	public void onBlock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.BLOCKED);
@@ -493,18 +456,6 @@ public class ProjectReservationController extends BasicController implements IPm
 	public void onUnblock(ActionEvent event) {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
 		reservation.setStatus(ReservationStatus.ACTIVE);
-		accept(event);
-	}
-
-	public void onCrsBlock(ActionEvent event) {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		reservation.setCrs(true);
-		accept(event);
-	}
-
-	public void onCrsUnblock(ActionEvent event) {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		reservation.setCrs(false);
 		accept(event);
 	}
 
@@ -850,11 +801,6 @@ public class ProjectReservationController extends BasicController implements IPm
 		EarlyCheckOutController earlyCheckOutController = (EarlyCheckOutController)AonUtil.getRegisteredBean(EARLY_CHECKOUT_CONTROLLER_NAME);
 		earlyCheckOutController.setReservation((ProjectReservation)this.getTo());
 		earlyCheckOutController.onInit();
-	}
-
-	public boolean isPendingDivert() throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return getReservationUtils().isPendingDivert(reservation.getId());
 	}
 
 	public void onDivertModalShow(ActionEvent event) throws ManagerBeanException {

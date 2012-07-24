@@ -15,7 +15,7 @@
 				<ui:param name="controller" value="#{reservation}" />
 				<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationAllowed}" />
 				<ui:param name="skipRemoveButton" value="#{true}" />
-				<ui:param name="showMoreMenu" value="#{!reservation.new and !reservation.cancelled}" />
+				<ui:param name="showMoreMenu" value="#{!reservation.new and reservation.reservationPermission.showMoreMenuAllowed}" />
 				<ui:define name="moreMenuContent">
 					<aon:menuItem id="reservation-CheckIn"
 						value="#{pmsBundle.pms_check_in}" immediate="#{true}" 

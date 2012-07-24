@@ -24,7 +24,7 @@
 				</f:facet>
 				<aon:commandButton id="Room-selectButton"
 					styleClass="aon-editDataTable-button aon-table-row-link"
-					rendered="#{reservation.active or reservation.invoiced}"
+					rendered="#{reservation.reservationPermission.selectReservationRoomAllowed}"
 					actionListener="#{controller.onSelect}"
 					reRender="showRoomDetailWindow"
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
@@ -36,7 +36,7 @@
 						<aon:commandButton
 							id="Room-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							rendered="#{!reservation.to.crs and reservation.active}" 
+							rendered="#{reservation.reservationPermission.newReservationRoomAllowed}" 
 							actionListener="#{controller.onReset}"
 							reRender="showRoomDetailWindow"
 							accesskey="#{bundle.aon_key_new_line}" 
