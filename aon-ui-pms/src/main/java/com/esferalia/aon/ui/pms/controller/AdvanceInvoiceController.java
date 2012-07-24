@@ -20,6 +20,7 @@ import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoiceTo;
 import com.esferalia.aon.pms.invoicing.AdvanceInvoicing;
 import com.esferalia.aon.ui.pms.event.AdvanceInvoiceSearchListener;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class AdvanceInvoiceController extends BasicController{
 
@@ -91,22 +92,24 @@ public class AdvanceInvoiceController extends BasicController{
 	
 	public void onAdvanceInvoice(ActionEvent event) {
 		try {
-			AdvanceInvoiceTo advanceInvoiceTo = new AdvanceInvoiceTo();
-			AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_SEARCH_LISTENER_NAME);
-			advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
-			advanceInvoiceTo.setIssueDate(getAdvanceDate());
-			advanceInvoiceTo.setPercent(getAdvancePercent());
-			advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
-			advanceInvoiceTo.setRegistryBank(getAdvanceBank());
-			advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());
-
-			AdvanceInvoicing advanceInvoicing = new AdvanceInvoicing();
-			int count = advanceInvoicing.invoice(advanceInvoiceTo, getCheckedReservations());
-
-			clearCheckedReservations();
-			onSearch(event);
-			String msg = "Facturas de Anticipos generadas: " + count; 
-			AonUtil.addInfoMessage(msg);
+			if (validateAdvanceInvoice()) {
+				AdvanceInvoiceTo advanceInvoiceTo = new AdvanceInvoiceTo();
+				AdvanceInvoiceSearchListener search = (AdvanceInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.ADVANCE_INVOICE_SEARCH_LISTENER_NAME);
+				advanceInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
+				advanceInvoiceTo.setIssueDate(getAdvanceDate());
+				advanceInvoiceTo.setPercent(getAdvancePercent());
+				advanceInvoiceTo.setPayMethod(getAdvancePayMethod());
+				advanceInvoiceTo.setRegistryBank(getAdvanceBank());
+				advanceInvoiceTo.setFinanceDate(getAdvancePaymentDate());
+	
+				AdvanceInvoicing advanceInvoicing = new AdvanceInvoicing();
+				int count = advanceInvoicing.invoice(advanceInvoiceTo, getCheckedReservations());
+	
+				clearCheckedReservations();
+				onSearch(event);
+				String msg = "Facturas de Anticipos generadas: " + count; 
+				AonUtil.addInfoMessage(msg);
+			}
 		} catch (ManagerBeanException ex) {
 			String msg = "Se produjo un error al generar las Facturas de Anticipos. [" + ex.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
@@ -114,6 +117,25 @@ public class AdvanceInvoiceController extends BasicController{
 		}
 	}
 	
+	private boolean validateAdvanceInvoice() throws ManagerBeanException {
+		PmsUtils pmsUtils = new PmsUtils();
+		if (isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return true;
+	}
+
+	private boolean isCashOrCardPayment() {
+		PayMethodType type = getAdvancePayMethod().getType();
+		if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
+			return true;
+		}
+		return false;
+	}
+
 
 	private ArrayList<Integer> checks = new ArrayList<Integer>();
 

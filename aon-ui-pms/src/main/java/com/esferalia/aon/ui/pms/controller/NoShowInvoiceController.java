@@ -25,6 +25,7 @@ import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.NoShowInvoiceTo;
 import com.esferalia.aon.pms.invoicing.NoShowInvoicing;
 import com.esferalia.aon.ui.pms.event.NoShowInvoiceSearchListener;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class NoShowInvoiceController extends BasicController{
 
@@ -106,22 +107,24 @@ public class NoShowInvoiceController extends BasicController{
 	
 	public void onNoShowInvoice(ActionEvent event) {
 		try {
-			NoShowInvoiceTo noShowInvoiceTo = new NoShowInvoiceTo();
-			NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
-			noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
-			noShowInvoiceTo.setIssueDate(getNoShowDate());
-			noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
-			noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
-			noShowInvoiceTo.setRegistryBank(getNoShowBank());
-			noShowInvoiceTo.setFinanceDate(getNoShowPaymentDate());
-
-			NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
-			int count = noShowInvoicing.invoice(noShowInvoiceTo, getCheckedReservations());
-
-			clearCheckedReservations();
-			onSearch(event);
-			String msg = "Facturas de No Show generadas: " + count; 
-			AonUtil.addInfoMessage(msg);
+			if (validateNoShowInvoice()) {
+				NoShowInvoiceTo noShowInvoiceTo = new NoShowInvoiceTo();
+				NoShowInvoiceSearchListener search = (NoShowInvoiceSearchListener) AonUtil.getRegisteredBean(IPmsConstants.NO_SHOW_INVOICE_SEARCH_LISTENER_NAME);
+				noShowInvoiceTo.setGuestReservation(search.isGuestReservationSearch());
+				noShowInvoiceTo.setIssueDate(getNoShowDate());
+				noShowInvoiceTo.setPenaltyDays(getNoShowPenalty());
+				noShowInvoiceTo.setPayMethod(getNoShowPayMethod());
+				noShowInvoiceTo.setRegistryBank(getNoShowBank());
+				noShowInvoiceTo.setFinanceDate(getNoShowPaymentDate());
+	
+				NoShowInvoicing noShowInvoicing = new NoShowInvoicing();
+				int count = noShowInvoicing.invoice(noShowInvoiceTo, getCheckedReservations());
+	
+				clearCheckedReservations();
+				onSearch(event);
+				String msg = "Facturas de No Show generadas: " + count; 
+				AonUtil.addInfoMessage(msg);
+			}
 		} catch (ManagerBeanException ex) {
 			String msg = "Se produjo un error al generar las Facturas de No Show. [" + ex.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
@@ -129,6 +132,25 @@ public class NoShowInvoiceController extends BasicController{
 		}
 	}
 	
+	private boolean validateNoShowInvoice() throws ManagerBeanException {
+		PmsUtils pmsUtils = new PmsUtils();
+		if (isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
+		return true;
+	}
+
+	private boolean isCashOrCardPayment() {
+		PayMethodType type = getNoShowPayMethod().getType();
+		if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
+			return true;
+		}
+		return false;
+	}
+
 	public void onNoShowNoInvoice(ActionEvent event) {
 		try {
 			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);

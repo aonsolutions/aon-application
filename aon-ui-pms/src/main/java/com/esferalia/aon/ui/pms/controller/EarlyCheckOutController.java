@@ -24,6 +24,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Scope;
 import com.code.aon.config.Series;
 import com.code.aon.config.Tax;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -45,6 +46,7 @@ import com.esferalia.aon.pms.invoicing.PenalizationInvoicing;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
 import com.esferalia.aon.pms.reservation.ReservationUtils;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class EarlyCheckOutController implements IPmsConstants {
 
@@ -404,7 +406,26 @@ public class EarlyCheckOutController implements IPmsConstants {
 			throw new AbortProcessingException(msg);
 		}
 
+		PmsUtils pmsUtils = new PmsUtils();
+		if (isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 		return true;
+	}
+
+	private boolean isCashOrCardPayment() {
+		for (Finance finance : getReservationInvoiceTo().getFinances()) {
+			if (finance.getTotalAmount() != 0) {
+				PayMethodType type = finance.getPayMethod().getType();
+				if (type == PayMethodType.CASH_BASIS || type == PayMethodType.CREDIT_CARD || type == PayMethodType.DEBIT_CARD) {
+					return true;
+				}
+			 }
+		}
+		return false;
 	}
 
 	public boolean isFinancesAmountOk() throws ManagerBeanException {
