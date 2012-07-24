@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -18,12 +17,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.invoicing.NoShowInvoiceTo;
@@ -98,27 +94,6 @@ public class NoShowInvoiceController extends BasicController{
 		setNoShowPayMethod(null);
 		setNoShowBank(null);
 		setNoShowDaysToPayment(0);
-	}
-	
-	public List<SelectItem> getAgencyPayMethods() throws ManagerBeanException{
-		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
-		directPayMethods.add(PayMethodType.CASH_BASIS);
-		directPayMethods.add(PayMethodType.DEBIT_CARD);
-		directPayMethods.add(PayMethodType.CREDIT_CARD);
-		directPayMethods.add(PayMethodType.BANK_TRANSFER);
-		directPayMethods.add(PayMethodType.CHEQUE);
-
-		List<SelectItem> payMethods = new LinkedList<SelectItem>();
-		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
-		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
-		for (ITransferObject ito : payMethodBean.getList(criteria)) {
-			PayMethod payMethod = (PayMethod)ito;
-			SelectItem item = new SelectItem(payMethod, payMethod.getName());
-			payMethods.add(item);
-		}
-		return payMethods;
 	}
 
 	public boolean isBankRequired() {

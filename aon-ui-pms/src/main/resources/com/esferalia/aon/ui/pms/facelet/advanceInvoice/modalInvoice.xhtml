@@ -99,7 +99,7 @@
 											<aon:selectOneMenu id="AdvanceInvoice_payMethod"
 												value="#{controller.advancePayMethod}" required="true"
 												reRender="invoiceModalContent" ajaxSingle="true">
-												<f:selectItems value="#{controller.agencyPayMethods}" />
+												<f:selectItems value="#{configCollections.payMethods}" />
 											</aon:selectOneMenu>
 										</c:if>
 
