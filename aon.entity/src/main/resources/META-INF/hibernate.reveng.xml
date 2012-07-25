@@ -526,6 +526,9 @@
 		<column name="rdocument_type" type="com.code.aon.registry.enumeration.DocumentType" property="registryDocumentType"/>
 		<column name="status" property="financeStatus" type="com.code.aon.finance.enumeration.FinanceStatus"/>
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
+		<foreign-key constraint-name="FK_FINANCE_FINANCE">
+			<many-to-one property="financeGroup"/>
+		</foreign-key>
 	</table>
 
 	<table name="finance_pos">
