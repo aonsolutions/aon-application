@@ -109,20 +109,20 @@
 
 	<aon:outputLabel for="ProjectReservation_code" value="#{pmsBundle.pms_reservation_code}" />
 	<aon:outputText	value="#{reservation.to.code}" styleClass="aon-bold"
-		rendered="#{!reservation.reservationPermission.reservationCodeEditable}" />
+		rendered="#{!reservation.new and !reservation.reservationPermission.reservationCodeEditable}" />
 	<aon:inputText id="ProjectReservation_code" value="#{reservation.to.code}"
 		size="30" maxlength="32" required="true"
-		rendered="#{reservation.reservationPermission.reservationCodeEditable}" />
+		rendered="#{reservation.new or reservation.reservationPermission.reservationCodeEditable}" />
 
 	<aon:outputLabel for="ProjectReservation_startDate" value="#{pmsBundle.pms_checkIn}" />
 	<aon:panelGrid columns="2" columnClasses="aon-width-130, aon-width-auto">
 		<aon:outputText	value="#{reservation.to.startDate}" styleClass="aon-bold"
-			rendered="#{!reservation.reservationPermission.reservationDatesEditable}">
+			rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 		<aon:selectInputDate id="ProjectReservation_startDate" value="#{reservation.to.startDate}" 
-			required="true" rendered="#{reservation.reservationPermission.reservationDatesEditable}"
+			required="true" rendered="#{reservation.new or reservation.reservationPermission.reservationDatesEditable}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
 			<a4j:support ajaxSingle="true" event="oninputchange"
@@ -138,10 +138,10 @@
 			<aon:outputLabel for="ProjectReservation_nights" value="#{pmsBundle.pms_nights}:" 
 				styleClass="aon-margin-right aon-italic" />
 			<aon:outputText value="#{reservation.nights}" styleClass="aon-bold" 
-				rendered="#{!reservation.reservationPermission.reservationDatesEditable}" />
+				rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}" />
 			<aon:inputText id="ProjectReservation_nights" value="#{reservation.nights}"
 				size="1" maxlength="3"
-				rendered="#{reservation.reservationPermission.reservationDatesEditable}"
+				rendered="#{reservation.new or reservation.reservationPermission.reservationDatesEditable}"
 				valueChangeListener="#{reservation.onNightsChanged}"
 				reRender="ProjectReservation_endDate"
 				focus="ProjectReservation_bookingHolder">
@@ -159,12 +159,12 @@
 
 	<aon:outputLabel for="ProjectReservation_endDate" value="#{pmsBundle.pms_checkOut}" />
 	<aon:outputText	value="#{reservation.to.endDate}" styleClass="aon-bold"
-		rendered="#{!reservation.reservationPermission.reservationDatesEditable}">
+		rendered="#{!reservation.new and !reservation.reservationPermission.reservationDatesEditable}">
 		<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 			timeZone="#{timeZoneController.timeZoneId}" />
 	</aon:outputText>
 	<aon:selectInputDate id="ProjectReservation_endDate" value="#{reservation.to.endDate}" 
-		required="true" rendered="#{reservation.reservationPermission.reservationDatesEditable}"
+		required="true" rendered="#{reservation.new or reservation.reservationPermission.reservationDatesEditable}"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 		<a4j:support ajaxSingle="true" event="oninputchange"
@@ -188,9 +188,9 @@
 	<aon:panelGrid columns="3" columnClasses="aon-width-130, aon-width-130, aon-width-auto">
 		<aon:div>
 			<aon:outputText value="#{reservation.to.bookingHolder}" styleClass="aon-bold" 
-				rendered="#{!reservation.reservationPermission.bookingHolderEditable}" />
+				rendered="#{!reservation.new and !reservation.reservationPermission.bookingHolderEditable}" />
 			<aon:selectOneMenu id="ProjectReservation_bookingHolder" value="#{reservation.to.bookingHolder}" 
-				required="true" rendered="#{reservation.reservationPermission.bookingHolderEditable}"
+				required="true" rendered="#{reservation.new or reservation.reservationPermission.bookingHolderEditable}"
 				valueChangeListener="#{reservation.onHolderChanged}"
 				reRender="BookingHolderLabelDiv,BookingHolderValueDiv,AdvanceDiv,ProjectReservation_roomTariff">
 				<f:selectItems value="#{pmsCollections.bookingHolders}" />
@@ -215,20 +215,20 @@
 
 	<aon:div id="BookingHolderValueDiv">
 		<aon:outputText value="#{reservation.to.agency.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{reservation.reservationPermission.agencyVisible and !reservation.reservationPermission.agencyEditable}" />
+			rendered="#{reservation.reservationPermission.agencyVisible and !reservation.new and !reservation.reservationPermission.agencyEditable}" />
 		<aon:selectOneMenu id="ProjectReservation_agency" 
 			value="#{reservation.to.agency}" styleClass="aon-width-350" required="#{reservation.to.agencyHolder}"
-			rendered="#{reservation.reservationPermission.agencyVisible and reservation.reservationPermission.agencyEditable}"
+			rendered="#{reservation.reservationPermission.agencyVisible and (reservation.new or reservation.reservationPermission.agencyEditable)}"
 			valueChangeListener="#{reservation.onAgencyChanged}"
 			reRender="ProjectReservation_roomTariff">
 			<f:selectItem itemLabel="-" value="#{null}" />		
 			<f:selectItems value="#{pmsCollections.agencies}" />
 		</aon:selectOneMenu>
 		<aon:outputText value="#{reservation.to.company.registry.fullName}" styleClass="aon-bold" 
-			rendered="#{reservation.reservationPermission.companyVisible and !reservation.reservationPermission.companyEditable}" />
+			rendered="#{reservation.reservationPermission.companyVisible and !reservation.new and !reservation.reservationPermission.companyEditable}" />
 		<aon:selectOneMenu id="ProjectReservation_company" 
 			value="#{reservation.to.company}" styleClass="aon-width-350" required="#{reservation.to.companyHolder}"
-			rendered="#{reservation.reservationPermission.companyVisible and reservation.reservationPermission.companyEditable}"
+			rendered="#{reservation.reservationPermission.companyVisible and (reservation.new or reservation.reservationPermission.companyEditable)}"
 			valueChangeListener="#{reservation.onCompanyChanged}"
 			reRender="ProjectReservation_roomTariff">
 			<f:selectItem itemLabel="-" value="#{null}" />		
@@ -312,7 +312,7 @@
 
 	<aon:outputLabel for="ProjectReservation_comments" value="#{bundle.aon_remark} #{pmsBundle.pms_hotel}" />
 	<aon:inputTextarea id="ProjectReservation_comments" value="#{reservation.to.comments}"
-		cols="80" rows="5" disabled="#{!reservation.reservationPermission.commentsEditable}" />
+		cols="80" rows="5" disabled="#{!reservation.new and !reservation.reservationPermission.commentsEditable}" />
 
 	<aon:outputLabel for="ProjectReservation_remarks" value="#{bundle.aon_remark} #{pmsBundle.pms_reservation}"
 		rendered="#{!reservation.new}" />
