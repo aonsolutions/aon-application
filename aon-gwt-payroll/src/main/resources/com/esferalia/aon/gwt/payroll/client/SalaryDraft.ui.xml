@@ -13,8 +13,8 @@
 		}
 		
 	</ui:style>
-	<g:DockLayoutPanel unit="EM">
-		<g:north size="6">
+	<g:DockLayoutPanel unit="PX">
+		<g:north size="72"  >
 
 			<g:FlowPanel>
 
@@ -55,7 +55,10 @@
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /> 
+								<g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
+								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
+								<g:ListBox ui:field='dateListBox' styleName=''  />
+								<!--  g:ListBox ui:field='endDateBox' styleName=''  /-->
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>

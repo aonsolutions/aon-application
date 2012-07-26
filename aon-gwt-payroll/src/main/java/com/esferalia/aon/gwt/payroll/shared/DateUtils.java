@@ -6,6 +6,14 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class DateUtils {
 	
+	public static int getYear() {
+		return getYear(new Date());
+	}
+
+	public static int getYear(Date date) {
+		return date.getYear() + 1900;
+	}
+
 	public static Date getFirstDayOfMonth ( ) {
 		return getFirstDayOfMonth(new Date());
 	}
@@ -14,6 +22,26 @@ public class DateUtils {
 		return getLastDayOfMonth(new Date());
 	}
 
+	public static Date after(Date a, Date b ) {
+		if ( a == null ) 
+			return a;
+		if ( b == null ) 
+			return b;
+		if ( a.after(b) ) 
+			return a ;
+		return b;
+	}
+
+	public static Date before(Date a, Date b ) {
+		if ( a == null ) 
+			return b;
+		if ( b == null ) 
+			return a;
+		if ( a.before(b) ) 
+			return a ;
+		return b;
+	}
+	
 	public static Date getFirstDayOfMonth ( Date date ) {
 		Date firstDayOfMonth = CalendarUtil.copyDate(date);
 		CalendarUtil.setToFirstDayOfMonth(firstDayOfMonth);
@@ -37,5 +65,7 @@ public class DateUtils {
 		
 		return lastDayOfMonth;
 	}
+	
+
 	
 }

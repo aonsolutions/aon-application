@@ -295,7 +295,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 																		 * to
 																		 * int
 																		 */);
+
+		Map<Object, Object> images = new HashMap<Object, Object>();
+		parameters.put(JRHtmlExporterParameter.IMAGES_MAP, images);
+		String imagesUri = String.format("jasper_image/salary/%d/", 
+				salaryDraft.getEmployee().getId());
+		
+		parameters.put(JRHtmlExporterParameter.IMAGES_URI, imagesUri);
+		
 		String html = getSalaryDraftReceiptHTML(salaryDraft, parameters);
+
+		for (Entry<Object, Object> image : images.entrySet()) {
+			String name = String.format("%s%s", imagesUri, image.getKey());
+			JasperImageServlet.saveImage(name, (byte[]) image.getValue());
+		}
 
 		return html;
 	}
@@ -914,6 +927,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		public void beginGroup(ResultSet rs) throws SQLException {
 			Employee employee = new Employee();
 			employee.setId(rs.getInt(tableCol(CONTRACT, ContractColumns.ID)));
+			
+			Date startDate = rs.getDate(tableCol(CONTRACT,
+					ContractColumns.START_DATE));
+			employee.setStartDate(new Date(startDate.getTime()));
+			
+			Date endDate = rs.getDate(tableCol(CONTRACT,
+					ContractColumns.END_DATE));
+			if ( endDate != null ) {
+				employee.setEndDate(new Date(endDate.getTime()));
+			}
 			employee.setPerson(rs.getInt(tableCol(PERSON,
 					PersonColumns.REGISTRY)));
 			employee.setName(rs.getString(tableCol(PERSON, PersonColumns.NAME)));
@@ -921,6 +944,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					PersonColumns.FIRST_SURNAME)));
 			employee.setSecondSurName(rs.getString(tableCol(PERSON,
 					PersonColumns.SECOND_SURNAME)));
+			
 			workplaceHandler.getWorkplace().addEmployee(employee);
 		}
 	}

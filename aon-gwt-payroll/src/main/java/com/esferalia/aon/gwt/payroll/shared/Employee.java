@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 public class Employee implements Serializable {
@@ -17,6 +18,9 @@ public class Employee implements Serializable {
 	private String name ;
 	private String firstSurname;
 	private String secondSurname;
+	
+	private Date startDate;
+	private Date endDate;
 	
 	public int getId() {
 		return id;
@@ -78,6 +82,20 @@ public class Employee implements Serializable {
 		return sb.toString();
     }
 	
+	public Date getStartDate() {
+		return startDate;
+	}
 	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
 }

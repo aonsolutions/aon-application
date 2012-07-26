@@ -435,6 +435,10 @@ public class Employees extends Composite implements AsyncCallback<Enterprise>,
 			employeesService.getSalaryDraftReceiptHTML(salaryDraft, zoom,
 					callback);
 		}
-
+		
+		@Override
+		public com.esferalia.aon.gwt.payroll.shared.SalaryDraft getSalaryDraft() {
+			return salaryDraft;
+		}
 	}
 }
