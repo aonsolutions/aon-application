@@ -33,6 +33,8 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
@@ -73,8 +75,25 @@ public class FinanceController extends FinanceListController {
 	private boolean purchase;
 	private List<?> orderedList;
 	private boolean showBankManualInput;
+	private boolean showFinanceGroupWindow;
+	private boolean financeGroup;
 
-	
+	public boolean isShowFinanceGroupWindow() {
+		return showFinanceGroupWindow;
+	}
+
+	public void setShowFinanceGroupWindow(boolean showFinanceGroupWindow) {
+		this.showFinanceGroupWindow = showFinanceGroupWindow;
+	}
+
+	public boolean isFinanceGroup() {
+		return financeGroup;
+	}
+
+	public void setFinanceGroup(boolean financeGroup) {
+		this.financeGroup = financeGroup;
+	}
+
 	public boolean isShowBankManualInput() {
 		return showBankManualInput;
 	}
@@ -262,6 +281,11 @@ public class FinanceController extends FinanceListController {
 			finance.setRegistryDocument(registry.getRegistry().getDocument());
 			finance.setRegistryDocumentType(registry.getRegistry().getDocumentType());
 			finance.setRegistryDocumentCountry(registry.getRegistry().getDocumentCountry());
+		}
+		if(isFinanceGroup()){
+			FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+			groupListController.init();
+			finance.setAmount(0.0);
 		}
 	}
 
@@ -559,10 +583,14 @@ public class FinanceController extends FinanceListController {
 		super.accept(null);
 
 		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_SETTLED);
-		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
+		createFinanceTracking(finance, message);
 
 		FinanceTrackingController financeTrackingController = (FinanceTrackingController)FormUtil.getController(FINANCE_TRACKING_CONTROLLER_NAME);
 		financeTrackingController.onSearch(null);
+	}
+	
+	public void createFinanceTracking(Finance finance, String message){
+		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.SETTLED, message);
 	}
 
 	public List<?> getOrderedList() {
@@ -645,6 +673,122 @@ public class FinanceController extends FinanceListController {
 
 		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(invoiceControllerName);
 		invoiceController.onLoad(event, finance.getInvoice().getId(), FINANCE_FORM_NAME, FINANCE_CONTROLLER_NAME + ".refresh");
+	}
+	
+	public void onShowFinanceGroupWindow(ActionEvent event) throws ManagerBeanException{
+		refreshFinanceList();
+		setShowFinanceGroupWindow(true);
+	}
+	
+	public void onGroupSelected(ActionEvent event) throws ManagerBeanException {
+		FinanceListController financeListController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);        
+        FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+        if(!this.isNew()){
+        	groupSelected();
+        	buildFinanceGroupList((Finance) this.getTo());
+        } else {
+        	groupListController.getGroupList().addAll(financeListController.getCheckedFinances());
+        }
+        financeListController.clearCheckedFinances();
+        refreshFinanceList();
+        refreshFinanceGroupAmount();
+	}
+	
+	public void onUngroupSelected(ActionEvent event) throws ManagerBeanException{
+        FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+        if(!this.isNew()){
+        	ungroupSelected();
+        	buildFinanceGroupList((Finance) this.getTo());
+        } else {
+        	groupListController.getGroupList().removeAll(groupListController.getCheckedFinances());
+        }
+        groupListController.clearCheckedFinances();
+        refreshFinanceList();
+        refreshFinanceGroupAmount();
+	}
+	
+	public void buildFinanceGroupList(Finance finance) throws ManagerBeanException{
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression("Finance.financeGroup.id", finance.getId());
+		
+		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+		groupListController.init();
+		for(ITransferObject to: financeBean.getList(criteria)){
+			Finance f = (Finance) to;
+			groupListController.getGroupList().add(f);
+		}
+	}
+	
+	private void groupSelected() throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		FinanceListController financeListController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);        
+		for(Finance finance: financeListController.getCheckedFinances()){
+			finance.setFinanceGroup((Finance) this.getTo());
+			finance.setFinanceStatus(FinanceStatus.SETTLED);
+			financeBean.update(finance);
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_GROUPED);
+			createFinanceTracking(finance, message);
+		}
+	}
+
+	private void ungroupSelected() throws ManagerBeanException {
+		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+		ungroupSelected(groupListController.getCheckedFinances());
+    }
+	
+	public void ungroupSelected(List<?> finances) throws ManagerBeanException{
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		for(Object to : finances){
+			Finance finance = (Finance) to;
+			finance.setFinanceGroup(null);
+			finance.setFinanceStatus((FinanceTrackingWriter.wasFinanceReturned(finance)?FinanceStatus.RETURNED:FinanceStatus.PENDING));
+			financeBean.update(finance);
+			removeFinanceTracking(finance);
+		}
+	}
+	
+	private void removeFinanceTracking(Finance finance) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(FinanceTracking.class);
+		FinanceTracking tracking = getLastTracking(finance);
+		getWriter().removeAccountEntryFinanceTracking(tracking);
+		bean.remove(tracking);
+	}
+
+	private FinanceTracking getLastTracking(Finance finance) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.FINANCE_TRACKING_TRACKING_DATE), false);
+		List<ITransferObject> list = bean.getList(criteria);
+		return list.isEmpty()?null:(FinanceTracking)list.get(0);
+	}
+
+	private void refreshFinanceList() throws ManagerBeanException {
+		FinanceListController controller = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		controller.clearCriteria();
+		controller.getCriteria().addEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), ((Finance)getTo()).getRegistry().getId());
+		Expression expr1 = ExpressionUtilities.getEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
+		Expression expr2 = ExpressionUtilities.getEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_FINANCE_STATUS), FinanceStatus.RETURNED);
+		controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		if(getTo()!=null & ((Finance)getTo()).getId()!=null){
+			controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_ID), ((Finance)getTo()).getId());
+		}
+		
+		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+        for(Finance finance: groupListController.getGroupList()){
+        	controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.FINANCE_ID), finance.getId());
+        }
+        controller.initializeModel();
+	}
+	
+	private void refreshFinanceGroupAmount() {
+		FinanceGroupListController groupListController = (FinanceGroupListController) AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_GROUP_LIST_CONTROLLER_NAME);
+		Double amount = new Double(0.0);
+		for(Finance finance: groupListController.getGroupList()){
+			amount += finance.getAmount();
+		}
+		((Finance)getTo()).setAmount(amount);
 	}
 
 }

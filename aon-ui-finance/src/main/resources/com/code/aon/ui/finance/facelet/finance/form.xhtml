@@ -59,56 +59,56 @@
 						,aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel
+						rendered="#{!finance.new and !finance.to.emptyInvoice}"  
 						value="#{financeBundle.finance_invoice}" />
+					<aon:outputLabel for="Finance_type"
+						rendered="#{finance.new or finance.to.emptyInvoice}" 
+						value="#{bundle.aon_type}" />
 					<aon:div>
-						<aon:outputText value="#{finance.to.referenceCode}"
-							rendered="#{finance.to.emptyInvoice}" />
-						<aon:div rendered="#{!finance.to.emptyInvoice}"> 
-							<aon:outputText value="#{finance.to.referenceCode}"
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:outputText styleClass="aon-italic aon-margin-left"
-								value="(#{bundle.aon_date}: "
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:outputText styleClass="aon-bold"
-								value="#{finance.to.invoice.issueDate}"
-								rendered="#{!finance.to.emptyInvoice}">
-								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
-							<aon:outputText styleClass="aon-italic"
-								value=")"
-								rendered="#{!finance.to.emptyInvoice}" />
-							<aon:commandLink id="invoice_link" immediate="true"
-								styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
-								value="&#160;" title="#{bundle.aon_go}"
-								rendered="#{!finance.to.emptyInvoice}"
-								actionListener="#{finance.onLoadInvoice}"
-								action="#{finance.getInvoiceViewer}" />
- 						</aon:div> 
-					</aon:div>
-				
-					<aon:outputLabel for="Finance_dueDate"
-						value="#{financeBundle.finance_finance_date}" />
-					<aon:selectInputDate id="Finance_dueDate" 
-						value="#{finance.to.dueDate}"
-						disabled="#{!finance.pending and !finance.returned}"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}"/>
-					
-					<aon:outputLabel for="Finance_concept" 
-						value="#{financeBundle.finance_invoice_document_number}" />
-					<aon:div> 
 						<aon:panelGrid columns="2" columnClasses="aon-width-250,aon-width-auto">
-							<aon:div>
-								<aon:inputText id="Finance_concept"
-									value="#{finance.to.concept}" 
-									onblur="toUpperCase(this);"
-									rendered="#{finance.to.emptyInvoice and finance.pending}"
-									required="true" size="45" maxlength="25" />
-								<aon:outputText styleClass="aon-bold"
-									value="#{finance.to.documentNumber}"
-									rendered="#{!finance.to.emptyInvoice or !finance.pending}" />
-							</aon:div>
+							<aon:div rendered="#{!finance.new}" >
+								<aon:div rendered="#{finance.to.emptyInvoice and !finance.financeGroup}">
+									<aon:outputText value="#{financeBundle.finance_individual_finance}" />
+								</aon:div>
+								<aon:div rendered="#{finance.to.emptyInvoice and finance.financeGroup}">
+									<aon:outputText value="#{financeBundle.finance_agrupation_finance}" />
+								</aon:div>
+								<aon:div>
+									<aon:outputText value="#{finance.to.referenceCode}"
+										rendered="#{finance.to.emptyInvoice}" />
+									<aon:div rendered="#{!finance.to.emptyInvoice}"> 
+										<aon:outputText value="#{finance.to.referenceCode}"
+											rendered="#{!finance.to.emptyInvoice}" />
+										<aon:outputText styleClass="aon-italic aon-margin-left"
+											value="(#{bundle.aon_date}: "
+											rendered="#{!finance.to.emptyInvoice}" />
+										<aon:outputText styleClass="aon-bold"
+											value="#{finance.to.invoice.issueDate}"
+											rendered="#{!finance.to.emptyInvoice}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
+										<aon:outputText styleClass="aon-italic"
+											value=")"
+											rendered="#{!finance.to.emptyInvoice}" />
+										<aon:commandLink id="invoice_link" immediate="true"
+											styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+											value="&#160;" title="#{bundle.aon_go}"
+											rendered="#{!finance.to.emptyInvoice}"
+											actionListener="#{finance.onLoadInvoice}"
+											action="#{finance.getInvoiceViewer}" />
+			 						</aon:div>
+			 					</aon:div>
+		 					</aon:div>
+							<aon:div rendered="#{finance.new}">
+								<aon:selectOneRadio id="Finance_type"
+									value="#{finance.financeGroup}"
+									reRender="Finance_amount-Panel, financeGroup-button">
+									<f:selectItem itemLabel="#{financeBundle.finance_individual_finance}" itemValue="false" />
+									<f:selectItem itemLabel="#{financeBundle.finance_agrupation_finance}" itemValue="true" />
+								</aon:selectOneRadio>	
+							</aon:div> 		
+						
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Finance_securityLevel"
@@ -126,6 +126,28 @@
 									value="#{finance.to.financeStatus}" />
 							</aon:div>
 						</aon:panelGrid>
+									
+					</aon:div>					
+					
+					<aon:outputLabel for="Finance_dueDate"
+						value="#{financeBundle.finance_finance_date}" />
+					<aon:selectInputDate id="Finance_dueDate" 
+						value="#{finance.to.dueDate}"
+						disabled="#{!finance.pending and !finance.returned}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					
+					<aon:outputLabel for="Finance_concept" 
+						value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:div> 
+						<aon:inputText id="Finance_concept"
+							value="#{finance.to.concept}" 
+							onblur="toUpperCase(this);"
+							rendered="#{finance.to.emptyInvoice and finance.pending}"
+							required="true" size="45" maxlength="25" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{finance.to.documentNumber}"
+							rendered="#{!finance.to.emptyInvoice or !finance.pending}" />
 					</aon:div>
 					
 					<aon:outputLabel for="Finance_payMethod_id"
@@ -146,7 +168,7 @@
 						<ui:param name="lookupLabel" value="#{financeBundle.finance_debtor}" />
 						<ui:param name="lookupDisabled" value="#{!finance.new}" />
 						<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
-						<ui:param name="lookupReRender" value="Finance_holder_document" />
+						<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 						<aon:methodParam name="lookupChangeListener"
@@ -177,7 +199,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.new}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and finance.purchase}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
@@ -190,7 +212,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{!finance.new}" />
 							<ui:param name="lookupRendered" value="#{finance.to.payment and !finance.purchase}" />
-							<ui:param name="lookupReRender" value="Finance_holder_document" />
+							<ui:param name="lookupReRender" value="Finance_holder_document, Finance_amount-Panel, financeGroup-button" />
 							<ui:param name="idRequired" value="#{true}" />						
 							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
 							<aon:methodParam name="lookupChangeListener"
@@ -200,13 +222,31 @@
 					
 					<aon:outputLabel for="Finance_amount"
 						value="#{bundle.aon_amount}" />
-					<aon:div>
+					<aon:panelGroup id="Finance_amount-Panel">
 						<aon:inputText id="Finance_amount"
 							value="#{finance.to.amount}"
-							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned)}"
+							disabled="#{!finance.to.emptyInvoice or (!finance.pending and !finance.returned) or finance.financeGroup}"
 							required="true" size="10"
 							ajaxSingle="true" reRender="Finance_total" />
-					</aon:div>
+						<aon:commandLink id="Finance_financeGroup_button"
+							rendered="#{finance.financeGroup and finance.to.registry.id!=null}" ajaxSingle="true"
+							reRender="showFinanceGroupWindow"
+							actionListener="#{finance.onShowFinanceGroupWindow}"
+							styleClass="aon-icon-newFolder aon-margin-left" style="padding-right: 20px;"
+							value="&#160;" title="#{financeBundle.finance_group_finances}" >
+							<f:setPropertyActionListener target="#{finance.showFinanceGroupWindow}"
+								value="#{true}" />
+						</aon:commandLink>
+							
+						<aon:outputText styleClass="aon-italic aon-margin-left"
+							value="(#{financeBundle.finance_total_regs}: " rendered="#{finance.financeGroup}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{financeGroupList.model.rowCount}"
+							rendered="#{finance.financeGroup}" >
+						</aon:outputText>
+						<aon:outputText styleClass="aon-italic"
+							value=")" rendered="#{finance.financeGroup}" />
+					</aon:panelGroup>
 					
 					<aon:outputLabel for="Finance_registry_document"
 						value="#{bundle.aon_company_document}" />
@@ -301,19 +341,19 @@
 								<f:selectItems value="#{finance.activeBanks}" />
 							</c:if>
 						</aon:selectOneMenu>
-						<aon:commandLink id="bankAccount_show_manualInput"
-							rendered="#{!finance.showBankManualInput}" 
+						<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
+							rendered="#{!finance.showBankManualInput and (finance.pending or finance.returned)}"  
 							reRender="Finance_bankAccount_panel"
 							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;"
-							value="&#160;" title="mostrar edicion manual" >
+							value="&#160;" title="#{bundle.aon_edit}" >
 							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{true}" />
 						</aon:commandLink>
-						<aon:commandLink id="bankAccount_hide_manualInput"
-							rendered="#{finance.showBankManualInput}" 
+						<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
+							rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
 							reRender="Finance_bankAccount_panel"
 							styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;"
-							value="&#160;" title="ocultar edicion manual" >
+							value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
 							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{false}" />
 						</aon:commandLink>
@@ -413,6 +453,12 @@
 											rendered="#{to.bankStatementLink != null}"
 											actionListener="#{financeTracking.onLoadBankStatement}"
 											action="bankStatement_list" />
+										<aon:commandLink id="financeGroup_link" 
+											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
+											value="&#160;" title="#{financeBundle.finance_agrupation_finance}"
+											rendered="#{to.finance.financeGroup != null}"
+											actionListener="#{financeTracking.onLoadFinanceGroup}"
+											action="finance_form" />
 									</aon:div>
 								</aon:column>
 
@@ -429,6 +475,9 @@
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalPayment.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalReturn.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalGroup.xhtml" >
+			<ui:param name="modalReRender" value="Finance_amount-Panel, Finance_total" />
+		</ui:include>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />				
 	</ui:define>
 </ui:composition>

@@ -8,6 +8,7 @@ public interface IFinanceConstants {
 	String INVOICE_SIGNER_CONTROLLER_NAME = "invoiceSigner";
 	
 	String FINANCE_FORM_NAME = "finance_form";
+	String FINANCE_GROUP_LIST_CONTROLLER_NAME = "financeGroupList";
 	String FINANCE_LIST_CONTROLLER_NAME = "financeList";
 	String FINANCE_LIST_SEARCH_LISTENER_NAME = "financeListSearch";
 	String FINANCE_CONTROLLER_NAME = "finance";
