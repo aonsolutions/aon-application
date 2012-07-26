@@ -25,15 +25,7 @@
 			<property-name>beanName</property-name>
 			<value>companyWebInfo</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{webInfoControllerListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
-
 
 	<managed-bean>
 		<managed-bean-name>webPage</managed-bean-name>

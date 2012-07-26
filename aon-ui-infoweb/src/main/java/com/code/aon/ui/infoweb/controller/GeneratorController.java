@@ -37,11 +37,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Domain;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.infoweb.WebInfo;
 import com.code.aon.infoweb.WebInfoPage;
@@ -51,6 +53,7 @@ import com.code.aon.infoweb.WebInfoStyle;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
 import com.code.aon.infoweb.enumeration.WebInfoPageType;
 import com.code.aon.infoweb.enumeration.WebInfoVariableType;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -101,9 +104,29 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 	private Map<String, ApplicationParameter> parameters;
 	
+	
+	public GeneratorController() {
+		this.domain = getDomainName();
+		this.properties = FTPUtil.getProperties(getWebInfoProperties(), DEFAULT_FTP_PROPERTIES);
+		this.previewPage = "http://preview." + getDomain() + "/";
+		this.webPage = "http://www." + getDomain() + "/";
+	}
+
 	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
 		loadParameters();	
 		return parameters.get(key); 		
+	}
+	
+	private String getDomain() {
+		return this.domain;
+	}
+	
+	private File getWebInfoProperties() {
+		File file = new File(IInfoWebConstants.WEB_INFO_PATH, this.domain + ".properties");
+		if ( file.exists() && file.canRead() ) {
+			return file;
+		}
+		return PathUtil.getWebInfoProperties();
 	}
 	
 	private void loadParameters() throws ManagerBeanException{
@@ -117,10 +140,18 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 	}
 	
-	public GeneratorController() {
-		this.properties = FTPUtil.getProperties(PathUtil.getWebInfoProperties(), DEFAULT_FTP_PROPERTIES);
-		this.previewPage = "http://preview." + getDomain() + "/";
-		this.webPage = "http://www." + getDomain() + "/";
+	private String getDomainName() {
+		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			if ( domain != null ) {
+				return domain.getName();
+			}			
+		} catch ( ManagerBeanException e ) {
+			LOGGER.error(e.getMessage(), e );
+		}
+		return principal.getDomain();
 	}
 	
 	public Properties getProperties() {
@@ -168,14 +199,6 @@ public class GeneratorController extends BasicController implements VelocityCons
 			return (Company)companyList.get(0);
 		}		
 		return null;
-	}
-	
-	private String getDomain() {
-		if ( domain == null ) {
-			UserUtils utils = UserUtils.getInstance();
-			domain = PathUtil.getDomainSuffix(utils.getPrincipal().getDomain());
-		}
-		return domain;
 	}
 	
 	public void onInit(ActionEvent event) {
@@ -532,8 +555,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		return previewPage;
 	}
 
-	private String getDomain( String value ) {
-		String domain = null;
+	private String getWebPage( String value ) {
 		URL web = null;
 		try {
 			web = new URL(value);
@@ -546,15 +568,10 @@ public class GeneratorController extends BasicController implements VelocityCons
 				}
 			}
 		}
-		if ( web != null ) {
-			domain = web.getHost();
-			if (domain.indexOf(".") != domain.lastIndexOf(".")) {
-				domain = domain.substring(domain.indexOf(".") + 1);
-			}
-		} else {
+		if ( web == null ) {
 			AonUtil.addWarningMessage("WARNING: La url de la pagina web no tiene el formato correcto (http://www.midominio.com).");			
 		}
-		return domain;
+		return web.toString();
 	}
 	
 	public static String getImageName( RegistryAttachment ra ) {
@@ -663,8 +680,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 			RegistryMedia m = (RegistryMedia)mediaList.next();
 			switch (m.getMediaType()) {
 				case WEB:
-					String domain = getDomain(m.getValue());
-					LOGGER.info( "Domain: {} from {}", domain, m);
+					this.webPage = getWebPage(m.getValue());
 					break;
 				case EMAIL:
 					vu.put(EMAIL_KEY, m.getValue());

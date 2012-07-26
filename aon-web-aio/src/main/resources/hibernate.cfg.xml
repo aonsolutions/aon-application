@@ -339,6 +339,13 @@
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
+
+		<!-- AON-WEBINFO Mapping files -->
+		<mapping class="com.code.aon.infoweb.WebInfo"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPage"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageDetail"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageResource"/>
+		<mapping class="com.code.aon.infoweb.WebInfoStyle"/>
 		
 		<!-- AON-WEBMAIL Mapping files -->	
 		<mapping class="com.code.aon.webmail.db.Contact"/>

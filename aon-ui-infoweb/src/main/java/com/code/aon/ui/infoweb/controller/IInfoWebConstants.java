@@ -11,7 +11,8 @@ public interface IInfoWebConstants {
 	String WEB_PAGE_RESOURCE_CONTROLLER_NAME = "webPageResource";
 	
 	// WEB INFO PROPERTIES
-	String WEB_INFO_PROPERTIES = "/home/COMMON-RESOURCES/aon-web-info/ftp.properties";
+	String WEB_INFO_PATH = "/home/COMMON-RESOURCES/aon-web-info/";
+	String WEB_INFO_PROPERTIES = WEB_INFO_PATH + "ftp.properties";
 	
 	String FTP_SERVER = "ftp.server";
 	String FTP_USER = "ftp.user";

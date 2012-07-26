@@ -57,37 +57,97 @@
 						</aon:panelGrid>
 					</aon:panelGroup>
 					
-					<c:if test="#{aonRole.config}">
-						<aon:panelGrid id="group_marketing_general"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-reservation">
-							<f:facet name="header">
-								<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="question"
-										action="question_list" actionListener="#{question.onSearch}"
-										value="#{commercialBundle.commercial_question_module}" />
+					<aon:panelGroup>
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_marketing_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-reservation">
+								<f:facet name="header">
+									<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="question"
+											action="question_list" actionListener="#{question.onSearch}"
+											value="#{commercialBundle.commercial_question_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="surveyResponse"
+											action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}"
+											value="#{marketingBundle.marketing_survey_response_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="survey"
+											action="survey_list" actionListener="#{survey.onSearch}" 
+											value="#{marketingBundle.marketing_survey_module}" />
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="marketingTemplate"
+											action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
+											value="#{marketingBundle.marketing_template_module}" />
+									</aon:div>								
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="surveyResponse"
-										action="surveyResponse_list" actionListener="#{surveyResponse.onSearch}"
-										value="#{marketingBundle.marketing_survey_response_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="survey"
-										action="survey_list" actionListener="#{survey.onSearch}" 
-										value="#{marketingBundle.marketing_survey_module}" />
-								</aon:div>								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingTemplate"
-										action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
-										value="#{marketingBundle.marketing_template_module}" />
-								</aon:div>								
-							</aon:div>
-						</aon:panelGrid>
-					</c:if>							
+							</aon:panelGrid>
+						</c:if>
+
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_marketing_infoweb"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{infowebBundle.infoweb_module}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="company-marketing" 
+											action="company-marketing" actionListener="#{company.onLoad}"
+											value="#{companyBundle.company_data_module}">
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="companyWebInfo" 
+											action="companyWebInfo" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{infowebBundle.infoweb_data}" >
+											<aon:actionListener method="#{companyWebInfo.onLoadWebInfo}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="images" 
+											action="companyImages" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{companyBundle.company_images_module}">
+											<aon:actionListener method="#{companyImages.onCancel}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="webPage" 
+											action="webPage" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{infowebBundle.infoweb_pages}" >
+											<aon:actionListener method="#{webPage.onInit}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="webPageStyle" 
+											action="webPageStyle" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{infowebBundle.infoweb_template}" >
+											<aon:actionListener method="#{webPageStyle.onLoad}" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="generator" 
+											action="generator" 
+											actionListener="#{companyWebInfo.onInit}"
+											value="#{infowebBundle.infoweb_generate}" >
+											<aon:actionListener method="#{generator.onInit}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>							
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>													
 					
 				</h:panelGrid>
 			</aon:div>
