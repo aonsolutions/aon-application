@@ -99,6 +99,7 @@ class Arguments(object):
         domain.set_database_name(self.options.db)
         domain.set_domain_max_defined_users(self.options.domain_max_defined_users)
         domain.set_domain_modules(self.options.domain_modules)
+        domain.set_domain_owner(self.options.user_mail)
         return domain
 
     def is_verbose_enabled(self):
@@ -119,7 +120,7 @@ class Arguments(object):
             raise AonException(-3,"Password is required!")
         if not nodatabase:
             if self.options.db == None:
-                raise AonException(-3,"Database is required!")
+                raise AonException(-4,"Database is required!")
             
         conn = Connection()
         return conn.connect(self,nodatabase)

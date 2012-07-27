@@ -33,13 +33,13 @@ class DumpDomain(object):
 
         # Valida la existencia de la variable domain_name
         if domain.get_domain_name() == None:
-            raise AonException(-46,"Domain name is required!")
+            raise AonException(-81,"Domain name is required!")
         
         # Valida la existencia del dominio
         cur = conn.cursor()
         cur.execute("SELECT id FROM domain WHERE name = %s",(domain.get_domain_name(),))
         if int(cur.rowcount) == False:
-            raise AonException(-47,("Domain '%s' not found!" % domain.get_domain_name()))
+            raise AonException(-82,("Domain '%s' not found!" % domain.get_domain_name()))
         domain.set_domain_id(cur.fetchone()[0])
         cur.close()
         return domain

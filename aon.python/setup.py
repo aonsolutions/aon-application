@@ -32,6 +32,7 @@ setup(
                ,'list_domains.py'
                ,'report_domains.py'
                ,'domain_merge.py'
+               ,'domain_switcher.py'
                ,'dump_domain.py'],
       url='http://www.esferalia.com',
       license='LICENSE.txt',

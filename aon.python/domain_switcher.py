@@ -19,7 +19,7 @@ def main():
         sys.path.append(jar)
     
 
-    from com.code.aon.dbutils import AonDomainMerger
+    from com.code.aon.dbutils import AonDomainDatabaseSwitcher
     from org.gjt.mm.mysql import Driver
     from java.sql import Connection
     from java.sql import DriverManager
@@ -43,7 +43,9 @@ def main():
         if (line != None and line.strip() != ""):
             words = line.split()
             sourceURL = words[0]
-            domainName = words[len(words)-1]
+            domainName = words[len(words)-2]
+            parentDomain = words[len(words)-1]
+
             sorceUser = "dbuser"
             if len(words)>2:
                 sorceUser = words[1];
@@ -57,10 +59,11 @@ def main():
                 source = DriverManager.getConnection(sourceURL.strip(),sorceUser.strip(),sourcePassword.strip())
                 print "........ connected!"
                 print "Domain:",domainName
+                print "Parent Domain:",parentDomain
                 print "--------------------------------------"        
             
              
-                merger = AonDomainMerger(source, target, domainName.strip())
+                merger = AonDomainDatabaseSwitcher(source, target, domainName.strip(), parentDomain.strip(), domainName.strip())
                 merger.execute()
                 source.close()
     

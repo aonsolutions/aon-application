@@ -32,13 +32,13 @@ class RemoveDomain(object):
 
         # Valida la existencia de la variable domain_name
         if domain.get_domain_name() == None:
-            raise AonException(-46,"Domain name is required!")
+            raise AonException(-71,"Domain name is required!")
         
         # Valida la existencia del dominio
         cur = conn.cursor()
         cur.execute("SELECT id FROM domain WHERE name = %s",(domain.get_domain_name(),))
         if int(cur.rowcount) == False:
-            raise AonException(-47,("Domain '%s' not found!" % domain.get_domain_name()))
+            raise AonException(-72,("Domain '%s' not found!" % domain.get_domain_name()))
         domain.set_domain_id(cur.fetchone()[0])
         cur.close()
         
@@ -54,7 +54,7 @@ class RemoveDomain(object):
             for child in children:
                 print "\t %s --- %s" % ((child[0],child[1]))
             print
-            raise AonException(-48,("The domain %s has dependencies with other domains:" % domain.get_domain_name()))
+            raise AonException(-73,("The domain %s has dependencies with other domains:" % domain.get_domain_name()))
         cur.close()
         
         if self.__is_verbose_enabled():

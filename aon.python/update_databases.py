@@ -130,7 +130,7 @@ class updateDatabases:
                                 stdout=PIPE, stdin=PIPE, shell=True)
             output = process.communicate(file.read())[0]
             if (process.returncode != 0):
-                raise AonException(-31,"Error updating '"+database+"' database.")
+                raise AonException(-21,"Error updating '"+database+"' database.")
 
 if __name__ == '__main__':
     arguments = Arguments()

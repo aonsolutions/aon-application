@@ -6,6 +6,7 @@ Created on 16/04/2012
 from aonAdmin.aonException import AonException
 from aonAdmin import aon
 from datetime import datetime
+from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import MySQLdb
@@ -62,8 +63,11 @@ class Domain(object):
     Class to manage Domain object
     '''
 
-    __system_domain_modules = ("marketing","commercial","management","treasury"
-                             ,"warehouse","groupware","accounting","fiscal","payroll","document")
+    __system_domain_modules = ("marketing","commercial","management","treasury","warehouse","groupware","accounting","fiscal","payroll","document","garage")
+    __system_domain_modules_labels = ("Marketing","Gesti&oacute;n Comercial","Gesti&oacute;n","Tesorer&iacute;a","Almac&eacute;n","Expedientes","Contabilidad","Fiscal","Laboral","Documental","Taller")
+    __system_gt_domain_modules = "management,treasury,garage"
+    
+    __system_gt_module = "garage"
     
     def __init__(self):
         '''
@@ -84,6 +88,7 @@ class Domain(object):
         self.__database_name = None
         self.__domain_max_defined_users = None
         self.__domain_modules = None
+        self.__domain_owner = None
 
     def get_domain_id(self):
         return self.__domain_id
@@ -128,7 +133,26 @@ class Domain(object):
     
     def get_domain_modules(self):
         return self.__domain_modules
+    
+    def get_domain_modules_labels(self):
+        modules = self.get_domain_modules().split(",")
+        
+        modules_labels = "";
+        for mod in modules:
+            i = 0
+            for system_module  in self.__system_domain_modules:
+                if (system_module == mod):
+                    if (modules_labels != ""):
+                        modules_labels = modules_labels + ", "
+                    modules_labels = modules_labels + self.__system_domain_modules_labels[i]
+                    break
+                i = i + 1
+        return modules_labels
+    
 
+    def get_domain_owner(self):
+        return self.__domain_owner
+    
     def set_domain_id(self, value):
         self.__domain_id = value
 
@@ -178,6 +202,9 @@ class Domain(object):
     
     def set_domain_modules(self, value):
         self.__domain_modules = value
+
+    def set_domain_owner(self, value):
+        self.__domain_owner = value
 
     def is_verbose_enabled(self):
         return self.__verbose
@@ -245,13 +272,13 @@ class Domain(object):
             if self.is_valid_hostname(self.get_domain_parent_name()) == False:
                 raise AonException(-33,"Parent Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
          
-        if domain_type == DomainTypes.GT:
-            raise AonException(-34," Not yet supported!")
         if domain_type == DomainTypes.PMS:
             raise AonException(-35," Not yet supported!")
 
         if self.get_domain_user() == None:
             raise AonException(-36," User domain is required!")
+        if len(self.get_domain_user()) > 16:
+            raise AonException(-37," User domain length must not exceed 16 characters.")
         
         # Validacion de la creacion de un dominio padre.
         if domain_type.is_parent():
@@ -259,10 +286,21 @@ class Domain(object):
 
         # Validacion del numero maximo de usuarios
         if self.get_domain_max_defined_users() != None and not self.get_domain_max_defined_users() > 0:
-            raise AonException(-37,"Domain max defined users must be a non zero positive integer!")
+            raise AonException(-38,"Domain max defined users must be a non zero positive integer!")
             
-        # Validacion de los modulos
-        if self.get_domain_modules() != None: 
+
+        # Validacion y Asignacion del modulo "garage" al tipo de dominio GT
+        if domain_type == DomainTypes.GT:
+            if self.get_domain_modules() == None:
+                # Extensiones por defecto para el tipo de dominio GT
+                self.set_domain_modules(self.__system_gt_domain_modules)
+            else:
+                # Si no se ha indicado explicitamente la extension "garage", se agrega.
+                if self.__system_gt_module not in self.get_domain_modules():
+                    self.set_domain_modules( self.get_domain_modules() + "," + self.__system_gt_module)
+                                
+        # Validacion de los modulos        
+        if self.get_domain_modules() != None:
             modules = self.get_domain_modules().split(",")
             for mod in modules:
                 found = False
@@ -271,14 +309,14 @@ class Domain(object):
                         found = True
                         break
                 if not found:
-                    raise AonException(-38,"Module '"+mod+"' not found in system modules!")    
+                    raise AonException(-39,"Module '"+mod+"' not found in system modules!")    
             
         # Validacion de la creacion de un dominio hijo.
         if not domain_type.is_parent():
                     
             # validating Domain Parent
             if self.get_domain_parent_id() != None and not self.get_domain_parent_id().isdigit():
-                raise AonException(-37,"Domain parent must be a positive integer!")
+                raise AonException(-40,"Domain parent must be a positive integer!")
          
             if self.get_domain_parent_name() != None:
                 # Se valida que exista el "parent name" en la base de datos
@@ -296,15 +334,15 @@ class Domain(object):
                 cur.close()
 
                 if parent_schema == None: 
-                    raise AonException(-38,"Parent Domain name '"+self.get_domain_parent_name()+"' not found")
+                    raise AonException(-41,"Parent Domain name '"+self.get_domain_parent_name()+"' not found")
                 
                 # Se valida que exista el schema del "parent name" coincida con la base de datos indicada
                 if parent_schema != None and parent_schema != self.get_database_name():
-                    raise AonException(-39,"Parent Domain '"+self.get_domain_parent_name()+"' is not in Database '"+ self.get_database_name()+"'")
+                    raise AonException(-42,"Parent Domain '"+self.get_domain_parent_name()+"' is not in Database '"+ self.get_database_name()+"'")
                 
                 # Se valida que se haya encontrado un ID del parent
                 if parent_domain_id == None:
-                    raise AonException(-40,"Parent Domain '"+self.get_domain_parent_name()+"' does not retrieve a valid ID")
+                    raise AonException(-43,"Parent Domain '"+self.get_domain_parent_name()+"' does not retrieve a valid ID")
                 
                 if self.get_domain_parent_id() == None:
                     if self.is_verbose_enabled():
@@ -313,29 +351,29 @@ class Domain(object):
                 
                 # Se valida que el parant ID suministrado coincida con el real
                 if self.get_domain_parent_id() != str(parent_domain_id):
-                    raise AonException(-41,"Parent Domain name '"+self.get_domain_parent_name()+"' does not match with Parent Domain ID '"+self.get_domain_parent_id()+"'")
+                    raise AonException(-44,"Parent Domain name '"+self.get_domain_parent_name()+"' does not match with Parent Domain ID '"+self.get_domain_parent_id()+"'")
 
             # Validacion de la existencias del parent domain y en su caso, de la propiedad multidominio
             cur = db.cursor()
             cur.execute("SELECT domainManagement FROM domain WHERE id = %s",(self.get_domain_parent_id(),))
             if not int(cur.rowcount):
-                raise AonException(-42,"The parent domain '"+self.get_domain_parent_id()+"' can not be found!")
+                raise AonException(-45,"The parent domain '"+self.get_domain_parent_id()+"' can not be found!")
             domain_management = cur.fetchone()[0]
             if not domain_management:
-                raise AonException(-43,"Expected a multi-domain parent domain, but domain '"+self.get_domain_parent_id()+"' has this capability disabled!")
+                raise AonException(-46,"Expected a multi-domain parent domain, but domain '"+self.get_domain_parent_id()+"' has this capability disabled!")
             
             # Validacion del usuario dentro del dominio parent    
             if self.get_domain_user() == None:
-                raise AonException(-44,"If domain-parent-id parameter is provided, domain-user must be a valid admin user, now is empty!")
+                raise AonException(-47,"If domain-parent-id parameter is provided, domain-user must be a valid admin user, now is empty!")
             cur = db.cursor()
             cur.execute("SELECT 1 FROM user WHERE login = %s and password = %s and domain = %s",(self.get_domain_user(),self.__encripted_user_password,self.get_domain_parent_id()))
             if int(cur.rowcount) == False:
-                raise AonException(-45,"User '"+self.get_domain_user()+"' does not exists or can not be autenticated on parent domain '"+self.get_domain_parent_id()+"'")
+                raise AonException(-48,"User '"+self.get_domain_user()+"' does not exists or can not be autenticated on parent domain '"+self.get_domain_parent_id()+"'")
             
 
         # validating Domain Name
         if self.get_domain_name() == None:
-            raise AonException(-46,"Domain name is required!")
+            raise AonException(-49,"Domain name is required!")
         else:
             # Se valida que no exista el "name" en la base de datos
             cur = db.cursor()
@@ -346,17 +384,17 @@ class Domain(object):
                 stmt = "SELECT 1 FROM `"+schema[0]+"`.`domain` WHERE name = '" + self.get_domain_name() + "'";
                 dom_cur.execute(stmt)
                 if int(dom_cur.rowcount):
-                    raise AonException(-47,"Domain name '"+self.get_domain_name()+"' already exists in database '"+schema[0]+"'!")
+                    raise AonException(-50,"Domain name '"+self.get_domain_name()+"' already exists in database '"+schema[0]+"'!")
             cur.close()
             
             # Se valida que sea un nombre de host valido
             if self.is_valid_hostname(self.get_domain_name()) == False:
-                raise AonException(-48,"Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
+                raise AonException(-51,"Domain name '"+self.get_domain_name()+"' is not a valid host name, it must match '(?!-)[A-Z\d-]{1,63}(?<!-)$' regexp!")
         
 
         # validating Domain Description
         if self.get_domain_description() == None:
-            raise AonException(-49,"Domain description is required!")
+            raise AonException(-52,"Domain description is required!")
         
         
         if self.is_verbose_enabled():
@@ -374,7 +412,7 @@ class Domain(object):
         stmt = db.cursor()
         if self.is_verbose_enabled():
             print "\tTrying to insert domain (",self.get_domain_name(),",",self.get_domain_description(),",",self.get_domain_parent_id(),",",self.get_domain_suffix(),")",  
-        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        stmt.execute("INSERT INTO domain (name,description,parent,domainManagement,userManagement,subDomainSuffix,maxDocumentSize,maxTotalDocumentSize,maxDefinedUsers,owner) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                        ,(self.get_domain_name()
                          ,self.get_domain_description()
                          ,self.get_domain_parent_id()
@@ -383,7 +421,9 @@ class Domain(object):
                          ,self.get_domain_suffix()
                          ,0
                          ,0
-                         ,self.get_domain_max_defined_users()))
+                         ,self.get_domain_max_defined_users()
+                         ,self.get_domain_owner()
+                         ))
         self.set_domain_id( db.insert_id() )
         
         if self.is_verbose_enabled():
@@ -393,7 +433,7 @@ class Domain(object):
         cur = db.cursor()
         cur.execute("SELECT id FROM application WHERE name= %s",(application,))
         if not int(cur.rowcount):
-            raise AonException(-50,"The application '"+ application + "' can not be found in application table")
+            raise AonException(-53,"The application '"+ application + "' can not be found in application table")
         self.__application_id = cur.fetchone()[0]
         if self.is_verbose_enabled():
             print "\t\tApplication '"+application+"' found with id ",self.__application_id
@@ -436,7 +476,7 @@ class Domain(object):
         cur = db.cursor()
         cur.execute("SELECT id,description FROM scope WHERE domain= %s",(self.get_domain_id(),))
         if not int(cur.rowcount):
-            raise AonException(-50,"A suitable 'scope' can not be found.")
+            raise AonException(-54,"A suitable 'scope' can not be found.")
         rows = cur.fetchall()
         __scope_id = rows[0][0]
         __scope_name = rows[0][1]
@@ -464,7 +504,7 @@ class Domain(object):
         cur = db.cursor()
         cur.execute("SELECT id FROM profile WHERE name= %s and application = %s",(profile,self.__application_id,))
         if not int(cur.rowcount):
-            raise AonException(-51,"The profile '"+profile+"' for application '"+self.__application_id+"' can not be found in profile table")
+            raise AonException(-55,"The profile '"+profile+"' for application '"+self.__application_id+"' can not be found in profile table")
         self.__admin_profile_id = cur.fetchone()[0]
         if self.is_verbose_enabled():
             print "\t\t\tProfile '"+profile+"' found with id ",self.__admin_profile_id
@@ -510,7 +550,7 @@ class newDomain:
             conn.commit()
             if self.__arguments.is_verbose_enabled():
                 print aon.green("ok!")
-            self.send_mail()
+            self.send_mail(domain)
             print
             print aon.green("Dominio creado satisfactoriamente!")
             print
@@ -531,19 +571,120 @@ class newDomain:
             print "Exit!"
             sys.exit(e.errno)
 
-    def send_mail(self):
+    def send_mail(self, domain):
         if self.__arguments.get_user_mail()!=None and self.__arguments.get_user_mail()!="":
-            text = "Dominio creado satisfactoriamente"
+            img_data = open('aonSolutions.gif', 'rb').read()
+            subject = "AonSolutions.net - Domain Manager"
+            
+            passwd = domain.get_user_password()[0] + ("*" * (len(domain.get_user_password()) -2 )) +domain.get_user_password()[-1]
+            
+            text = '''
+            <table>
+                <tr>
+                    <td style="border-bottom: solid #DDDDDD 1px;padding-bottom: 10px;">
+                        <img style="height: 50%;" src="cid:aonSolutions.gif" />
+                    </td>
+                    <td style="border-bottom: solid #DDDDDD 1px; font-size: 1.5em; font-weight: bold; text-align: center; vertical-align: bottom; width: auto;padding-bottom: 10px;">
+                        Gestor de Dominios
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2" style="text-align: center; font-size: 1.2em;text-decoration: underline;">
+                        Dominio creado satisfactoriamente
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        Nombre del dominio
+                    </td>
+                    <td style="text-align: left; padding-left: 10px; font-family: Courier;">
+                        {domain_name}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        Descripci&oacute;n del dominio
+                    </td>
+                    <td style="text-align: left; padding-left: 10px; font-family: Courier;">
+                        {domain_description}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        Usuario administrador
+                    </td>
+                    <td style="text-align: left; padding-left: 10px;font-family: Courier;">
+                        {domain_user}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        Clave
+                    </td>
+                    <td style="text-align: left; padding-left: 10px;font-family: Courier;">
+                        {domain_password}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        Tipo de dominio
+                    </td>
+                    <td style="text-align: left; padding-left: 10px;font-family: Courier;">
+                        {domain_type}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        N&uacute;mero m&aacute;ximo de usuarios
+                    </td>
+                    <td style="text-align: left; padding-left: 10px;font-family: Courier;">
+                        {domain_max_defined_users}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-style: italic;text-align: right; paddign-right: 5px; font-size: 0.9em;">
+                        M&oacute;dulos contratados
+                    </td>
+                    <td style="text-align: left; padding-left: 10px;font-family: Courier;">
+                        {domain_modules}
+                    </td>
+                </tr>
+            </p>
+            '''
+                
+            text = text.format(
+                    domain_name=domain.get_domain_name()
+                    ,domain_description=domain.get_domain_description()
+                    ,domain_user=domain.get_domain_user()
+                    ,domain_password=passwd
+                    ,domain_type=domain.get_domain_type().get_name()
+                    ,domain_max_defined_users=domain.get_domain_max_defined_users()
+                    ,domain_modules=domain.get_domain_modules_labels()
+                    )
+            
             to = self.__arguments.get_user_mail() 
             me = "ecastellano@esferalia.com"
     
-            msg = MIMEMultipart()
-            msg['Subject'] = text
+            # Create a "related" message container that will hold the HTML 
+            # message and the image
+            msg = MIMEMultipart(_subtype="related")
+            msg['Subject'] = subject
             msg['To'] = to
             msg['From'] = me
-            part = MIMEText('text', "plain")
-            part.set_payload(text)
-            msg.attach(part)        
+            # Create the body with HTML. Note that the image, since it is inline, is 
+            # referenced with the URL cid:myimage... you should take care to make
+            # "myimage" unique
+            body = MIMEText(text,_subtype='html')
+            # part.set_payload(text)
+            msg.attach(body)        
+            
+            # Now create the MIME container for the image
+            img = MIMEImage(img_data, 'gif')
+            img.add_header('Content-Id', '<aonSolutions.gif>')  # angle brackets are important
+            msg.attach(img)
+            
             s = smtplib.SMTP("pod51016.outlook.com",587)
             if self.__arguments.is_verbose_enabled():
                 s.set_debuglevel(1)
@@ -553,7 +694,7 @@ class newDomain:
             s.starttls()
             s.ehlo()            
             s.login(me,"<password>")
-            s.sendmail(me, to , msg.as_string())
+            s.sendmail(me,to,msg.as_string())
             s.quit()
     
     def __load_domain_default_values(self,domain):

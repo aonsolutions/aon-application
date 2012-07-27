@@ -53,12 +53,12 @@ class createDatabase:
             cur = conn.cursor()
             cur.execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s",(self.__arguments.get_db(),))
             if int(cur.rowcount):
-                raise AonException(-31,"Database '"+self.__arguments.get_db()+"' already exists!")
+                raise AonException(-91,"Database '"+self.__arguments.get_db()+"' already exists!")
             if not self.__arguments.is_skip_domain_creation_enabled():
                 domain = self.__arguments.get_domain()
                 domain.validate( conn )
                 if not domain.get_domain_type().is_parent():
-                    raise AonException(-91,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
+                    raise AonException(-92,"No se puede crear un dominio hijo como primer dominio al crear la base de datos!")
             
             sql_script = self.__zf.open(self.CREATE_SCRIPT)
             file = NamedTemporaryFile(mode="r+")
@@ -138,7 +138,7 @@ class createDatabase:
         if self.__arguments.is_verbose_enabled():
             print "\tDefaults script returns code   ..... ",process.returncode
         if process.returncode != 0:
-            raise AonException(-90,"Se ha producido un error de SQL!")            
+            raise AonException(-93,"Se ha producido un error de SQL!")            
 
 if __name__ == '__main__':
     start = datetime.now();
