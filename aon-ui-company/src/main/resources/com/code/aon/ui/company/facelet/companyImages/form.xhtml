@@ -19,50 +19,47 @@
 			<aon:div styleClass="aon-scroll-area">			
 				<aon:panelGrid id="imagesPanel"
 					cellpadding="5" cellspacing="0" border="0" columns="2" styleClass="aon-noborder"
-					columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width aon-vertical-align-top">	
-					<aon:div styleClass="aon-width-300">
+					columnClasses="aon-midle-width aon-vertical-align-top,aon-midle-width aon-vertical-align-top">	
+					<aon:div styleClass="aon-width-500">
 						<aon:editDataTable id="companyImages"
-							var="to" value="#{companyImages.model}"
-							columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+							var="to" value="#{companyImages.model}" >
 			
-							<aon:rowSelector toggleOnClick="#{true}" actionListener="#{companyImages.onSelect}" reRender="image_form"/>
-							<aon:column>
+							<aon:rowSelector
+								toggleOnClick="#{true}" reRender="image_form"
+								actionListener="#{companyImages.onSelect}" />
+								
+							<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top" >
 								<f:facet name="header">
 									<aon:outputText value="&#160;"/>
 								</f:facet>
-								<aon:outputText value="&#160;"/>
 								<f:facet name="footer">
-									<aon:div rendered="#{(companyImages.maximumNumber == 0) or (companyImages.model.rowCount &lt; companyImages.maximumNumber)}">
-										<aon:commandButton id="reset" reRender="imagesPanel"
-											styleClass="aon-editDataTable-button aon-icon-reset"
-											value="" rendered="#{!companyImages.new}"
-											actionListener="#{companyImages.onReset}"
-											accesskey="#{bundle.aon_key_new_line}">
-										</aon:commandButton>
-									</aon:div>
+									<aon:commandButton
+										id="reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+										actionListener="#{companyImages.onReset}"
+										rendered="#{!companyImages.new}" reRender="imagesPanel"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										accesskey="#{bundle.aon_key_new_line}" />
 								</f:facet>
 							</aon:column>
 					
-							<aon:column>
+							<aon:column alias="RegistryAttachment.description"
+								styleClass="aon-editDataTable-textColumn aon-width-200 aon-nowrap">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}"/>
-								<c:if test="#{companyImages.maximumNumber != 0}">
-									<f:facet name="footer">
-										<aon:div>				
-											<aon:outputFormat value="#{companyBundle.company_max_number_images}" rendered="#{companyImages.model.rowCount &lt; companyImages.maximumNumber}">
-												<f:param value="#{companyImages.maximumNumber}" />
-											</aon:outputFormat>
-											<aon:outputFormat value="#{companyBundle.company_max_images_reached}" rendered="#{companyImages.model.rowCount &gt;= companyImages.maximumNumber}">
-												<f:param value="#{companyImages.maximumNumber}" />
-											</aon:outputFormat>
-										</aon:div>
-									</f:facet>
-								</c:if>
 							</aon:column>
 
-							<aon:column>
+							<aon:column alias="RegistryAttachment.size"
+								styleClass="aon-editDataTable-numberColumn aon-width-60">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_size}" />
+								</f:facet>
+								<aon:outputText value="#{to.sizeToDisplay}" />
+							</aon:column>
+
+							<aon:column alias="RegistryAttachment.mimeType"
+								styleClass="aon-editDataTable-textColumn aon-width-80 aon-nowrap">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_type}" />
 								</f:facet>
@@ -71,7 +68,11 @@
 					
 						</aon:editDataTable>
 	
-						<aon:dataScroller2 for="companyImages" showNote="true" />
+						<aon:div styleClass="aon-margin-top" >
+							<aon:outputText value="#{documentManager.freeSpaceMessage}" />
+						</aon:div>
+	
+						<aon:dataScroller2 for="companyImages" />
 					</aon:div>	
 					
 					<aon:div id="image_form" styleClass="aon-width-auto">	

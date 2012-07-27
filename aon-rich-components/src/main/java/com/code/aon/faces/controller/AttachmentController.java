@@ -81,7 +81,7 @@ public class AttachmentController extends LinesController implements IAttachment
 	 */
 	public void fileUploaded(UploadEvent event) {
 		AttachmentUtil.fileUploaded(event, this);
-		String description = FilenameUtils.getName(getAonFile().getFileName());
+		String description = FilenameUtils.getBaseName(getAonFile().getFileName());
 		getAttachment().setDescription(description);
 	}
 	

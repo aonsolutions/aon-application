@@ -555,6 +555,10 @@
 			<value>companyImages</value>
 		</managed-property>
 		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[1].value}</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -562,6 +566,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>company</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
