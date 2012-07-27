@@ -185,6 +185,26 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************* FPRINTER ***************** -->
+<!--
+	<managed-bean>
+		<managed-bean-name>fPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.fbatch.print.FBatchPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+-->
+
+	<!-- ************* FINANCE GROUP LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>financeGroupList</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.FinanceGroupListController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************* FINANCE LIST ***************** -->
 	<managed-bean>
