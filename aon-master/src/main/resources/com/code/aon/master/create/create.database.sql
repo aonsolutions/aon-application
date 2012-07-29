@@ -60,6 +60,7 @@ CREATE TABLE `domain` (
   `maxTotalDocumentSize` int(4) default NULL COMMENT 'Almacenamiento Documental Contratado',
   `maxDefinedUsers` int(4) default NULL COMMENT 'Numero Maximo de Usuarios',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si el Dominio esta activo o no',
+  `owner` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Creador del Dominio',
   PRIMARY KEY  (`id`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`)
