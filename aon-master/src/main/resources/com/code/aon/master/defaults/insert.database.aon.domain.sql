@@ -1762,21 +1762,21 @@ INSERT INTO `system_data` (`domain`,`name`,`expression`,`start_date`,`end_date`,
   (@Domain,'OCUPACION_IMS',' [\"a\": 0.35, \"b\": 1.00, \"d\": 3.35, \"e\": 1.50, \"f\": 3.35, \"g\": 1.50, \"h\": 2.20]','2010-01-01',NULL,1,'Tarifas de primas para I.M.S');
 
 INSERT INTO `system_deduction` (`domain`,`type`,`deduction_concept`,`description`,`description_decorable`,`expression`,`start_date`,`end_date`,`month`) VALUES 
-  (@Domain,0,1,NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,2,3,NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,3,4,NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,4,5,NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,5,6,NULL,1,NULL,'2010-01-01',NULL,NULL),
-  (@Domain,6,7,NULL,1,NULL,'2010-01-01',NULL,NULL);
+  (@Domain,0,(SELECT id FROM deduction_concept WHERE code = 'CGC' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
+  (@Domain,2,(SELECT id FROM deduction_concept WHERE code = 'DESMP' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
+  (@Domain,3,(SELECT id FROM deduction_concept WHERE code = 'FP' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
+  (@Domain,4,(SELECT id FROM deduction_concept WHERE code = 'NESTR' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
+  (@Domain,5,(SELECT id FROM deduction_concept WHERE code = 'ESTR' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL),
+  (@Domain,6,(SELECT id FROM deduction_concept WHERE code = 'IRPF' and domain = @Domain),NULL,1,NULL,'2010-01-01',NULL,NULL);
 
 INSERT INTO `system_payment` (`domain`,`type`,`payment_concept`,`description`,`description_decorable`,`expression`,`irpf_expression`,`quote_expression`,`start_date`,`month`,`end_date`,`salary_type`) VALUES 
-  (@Domain,NULL,1,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,2,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,3,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,4,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,5,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
-  (@Domain,NULL,6,NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2),
-  (@Domain,NULL,7,NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ECEMP' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ECSS' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'MTNAD' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'ATEP' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'GTZDO' and domain = @Domain),NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'FIVAC' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2),
+  (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'INDEM' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
 
 INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_date`,`vat_deduction_type`,`withholding_type`) VALUES 
   (@Domain,'GENERAL',1,18.000,4.000,'2010-07-01',0,0),
