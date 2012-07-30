@@ -47,6 +47,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 	private String domainPassword;
 	private String domainMaxDefinedUsers;
 	private String domainModules;
+	private String domainOwner;
 
 	private DomainServletUtil() {
 		// Para el main y pruebas
@@ -176,6 +177,13 @@ public class DomainServletUtil implements IDomainServletConstants{
 		this.domainModules = domainModules;
 	}
 
+	public String getDomainOwner() {
+		return domainOwner;
+	}
+	public void setDomainOwner(String domainOwner) {
+		this.domainOwner = domainOwner;
+	}
+
 	private void initializeConnectionProperties() throws SAXException, IOException, ParserConfigurationException, URISyntaxException  {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -277,6 +285,9 @@ public class DomainServletUtil implements IDomainServletConstants{
 		setPassword( request.getParameter(PASSWORD_PARAM) );
 		validateUser();
 		
+		System.out.println( userDomain );
+		setDomainOwner(userDomain);
+		
 		String db_target = request.getParameter(DOMAIN_TARGET);
 		if (StringUtils.isBlank(db_target)) {
 			throw new AonException("El objeto del dominio es un dato requerido (test,demo,pro)");	
@@ -333,7 +344,8 @@ public class DomainServletUtil implements IDomainServletConstants{
 				}
 			}
 		}
-		setDomainModules(modules_parsed);		
+		setDomainModules(modules_parsed);
+		
 	}
 	
 	private void parseModules(String[] modules) throws AonException {
@@ -372,6 +384,7 @@ public class DomainServletUtil implements IDomainServletConstants{
 		commandLine.add(SP_PASSWD + getDbPassword());
 		commandLine.add(SP_DB + getDbName());
 		commandLine.add(SP_DOMAIN_NAME + getDomainName());
+		commandLine.add(SP_DOMAIN_OWNER + getDomainOwner());
 
 		if (StringUtils.isNotBlank(getDomainDescription())) {
 			commandLine.add(SP_DOMAIN_DESCRIPTION + getDomainDescription());

@@ -51,6 +51,7 @@ public interface IDomainServletConstants {
     String SP_DOMAIN_PASSWORD = "--domain-password=";
     String SP_DOMAIN_MODULES = "--domain-modules=";
     String SP_DOMAIN_MAX_DEFINED_USERS = "--domain-max-defined-users=";
+    String SP_DOMAIN_OWNER = "--domain-owner=";
     
     // SQL SENTENCES
     String TABLE_SCHEMA_SENTENCE = "SELECT T.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as T WHERE T.TABLE_NAME = 'domain'";	

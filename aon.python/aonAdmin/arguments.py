@@ -43,6 +43,7 @@ class Arguments(object):
         __domainGroup.add_option("-a", "--domain-parent-id",dest="domain_parent_id", help="Parent domain ID of the domain to be created.")
         __domainGroup.add_option("-m", "--domain-parent-name",dest="domain_parent_name", help="Parent domain name of the domain to be created.")
         
+        __domainGroup.add_option("", "--domain-owner",dest="domain_owner", default="1", help="Domain Owner")
         __domainGroup.add_option("", "--domain-max-defined-users",type="int", dest="domain_max_defined_users", default="1", help="Domain Max Defined Users (%default by default)")
         __domainGroup.add_option("", "--domain-modules",dest="domain_modules", help="Domain Modules")
         __domainGroup.add_option("-f", "--load-defaults-from-parent",action="store_true", default=False,dest="load_defaults_from_parent", help="true if defaults values are inserted from parent domain, false if SQL script are used.")
@@ -79,7 +80,8 @@ class Arguments(object):
             print "\tDomain Password ...........: ", self.options.domain_password
             print "\tDomain Parent ID ..........: ", self.options.domain_parent_id
             print "\tDomain Parent Name ........: ", self.options.domain_parent_name
-            print "\tDomain Max Defined Users ..:", self.options.domain_max_defined_users
+            print "\tDomain Owner ..............: ", self.options.domain_owner
+            print "\tDomain Max Defined Users ..: ", self.options.domain_max_defined_users
             print
     
     def get_domain(self):
@@ -99,7 +101,7 @@ class Arguments(object):
         domain.set_database_name(self.options.db)
         domain.set_domain_max_defined_users(self.options.domain_max_defined_users)
         domain.set_domain_modules(self.options.domain_modules)
-        domain.set_domain_owner(self.options.user_mail)
+        domain.set_domain_owner(self.options.domain_owner)
         return domain
 
     def is_verbose_enabled(self):
