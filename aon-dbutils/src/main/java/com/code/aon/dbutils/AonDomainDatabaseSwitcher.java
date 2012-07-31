@@ -266,6 +266,21 @@ public class AonDomainDatabaseSwitcher {
 			sourceRs.close();
 			sourceStmnt.close();
 			return (this.sourceDomainId != null);
+		} else {
+			String sentence = "SELECT id FROM domain"; 
+			PreparedStatement sourceStmnt = getSourceConnection().prepareStatement(sentence);
+			ResultSet sourceRs = sourceStmnt.executeQuery();
+			int count = 0;
+			while (sourceRs.next()) {
+				++count;
+				this.sourceDomainId = sourceRs.getInt(1);
+			}
+			sourceRs.close();
+			sourceStmnt.close();
+			if (count != 1) {
+				System.out.printf("Existe más de un dominio y no se indicó el dominio fuente en la entrada standard (parámetro 4)");
+				return false;
+			}
 		}
 		return true;
 	}
@@ -812,16 +827,30 @@ public class AonDomainDatabaseSwitcher {
 			while ( line != null ) {
 				try {
 					String words [] = line.split("\\s+");
-					if (words.length < 5) {
-						throw new IllegalArgumentException("La linea "+ databases + " no está bien formada. Tiene menos de cuatro parámetros.");
+
+					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com dbuser seurbd2000 demo.esferalia.com parent.esferalia.com
+					
+					String sourceURL = words[0];
+
+					String sorceUser = "dbuser";
+					if (words.length > 1) {
+						sorceUser = words[1];	
 					}
 					
-					// line example : jdbc:mysql://127.0.0.1/demo-esferalia-com dbuser seurbd2000 demo.esferalia.com parent.esferalia.com
-					String sourceURL = words[0];
-					String sorceUser = words[1];
-					String sourcePassword = words[2];
-					String domainName = words[4];
-					String parentDomain = words[5];
+					String sourcePassword = "serubd2000"; 
+					if (words.length > 2) {
+						sourcePassword = words[2];	
+					}
+					
+					String domainName = "";
+					if (words.length > 3) {
+						domainName = words[3];	
+					}
+					
+					String parentDomain = "";
+					if (words.length > 4) {
+						parentDomain = words[4];	
+					}
 					
 					System.out.printf("Merging %s...", domainName);
 

@@ -2,10 +2,12 @@
 README.txt
 create_database.py
 domain_merge.py
+domain_switcher.py
 dump_domain.py
 list_domains.py
 new_domain.py
 remove_domain.py
+report_domains.py
 setup.cfg
 setup.py
 update_databases.py

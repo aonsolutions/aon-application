@@ -5,6 +5,7 @@ Created on 16/04/2012
 @author: ecastellano
 '''
 import sys
+from aonAdmin.aonException import AonException
 
 def main():
     
@@ -38,20 +39,29 @@ def main():
     
     driver = Driver()
     target = DriverManager.getConnection(targetURL,targetUser,targetPassword);
-    
+
+    databases = 0    
     for line in sys.stdin:
+        databases = databases + 1
         if (line != None and line.strip() != ""):
             words = line.split()
             sourceURL = words[0]
-            domainName = words[len(words)-2]
-            parentDomain = words[len(words)-1]
 
-            sorceUser = "dbuser"
-            if len(words)>2:
+            sorceUser="dbuser"
+            if len(words)>1:
                 sorceUser = words[1];
-            sourcePassword = "serubd2000"
-            if len(words)>3:
+            
+            sourcePassword="serubd2000"
+            if len(words)>2:
                 sourcePassword = words[2]
+            
+            domainName = ""
+            if len(words)>3:
+                domainName = words[3]
+            
+            parentDomain = ""
+            if len(words)>4:
+                parentDomain = words[4]
                 
             if (sourceURL != None and sourceURL.strip() != ""):
                 print

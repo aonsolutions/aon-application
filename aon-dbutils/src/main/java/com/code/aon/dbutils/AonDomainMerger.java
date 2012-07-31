@@ -509,6 +509,12 @@ public class AonDomainMerger {
 				newValue = map.get(value);
 			}
 			if (newValue == null) {
+				if ("profile".equals(fkTable)) {
+					ensureSystemTableById(fkTable, value);
+					newValue = (Integer) value; 
+				}
+			}
+			if (newValue == null) {
 				if (required) {
 					throw new IllegalStateException("ID no encontrado, tabla=" + fkTable + ", valor=" + value);	
 				}
@@ -711,16 +717,16 @@ public class AonDomainMerger {
 	}
 	
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, AonSQLException, FileNotFoundException, IOException {
-/*
+		/*
 		Class.forName("org.gjt.mm.mysql.Driver");
-		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/aon-mac-asesores","dbuser","serubd2000");
-		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/aon-inelco-mac-asesores-es","dbuser","serubd2000");
-		String domainName = "test1.esferalia.net";
+		Connection target = DriverManager.getConnection("jdbc:mysql://127.0.1.1/tad-aonsolutions-net","dbuser","serubd2000");
+		Connection source = DriverManager.getConnection("jdbc:mysql://127.0.0.1/tadsg000-aonsolutions-net","dbuser","serubd2000");
+		String domainName = "tadsg000-aonsolutions-net";
 		AonDomainMerger merger = new AonDomainMerger(source, target, domainName);
 		merger.execute();
         source.close();
         target.close();
-*/        
+        */        
         Class.forName("org.gjt.mm.mysql.Driver");
 		
 		String targetURL = args[0];
