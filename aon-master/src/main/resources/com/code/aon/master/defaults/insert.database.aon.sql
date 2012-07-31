@@ -4132,15 +4132,15 @@ INSERT INTO `profile_role` VALUES
 /*
   aon-aio (Invitado): Guest
 */
-  (15,null,73,218);
+  (15,null,73,218),
 /*
   aon-employee (Administrador): Admin
 */
-  (17,null,31,119)
+  (17,null,31,119),
 /*
   aon-employee (Invitado): Guest
 */
-  (19,null,32,118)
+  (19,null,32,118);
   
   
 COMMIT;
