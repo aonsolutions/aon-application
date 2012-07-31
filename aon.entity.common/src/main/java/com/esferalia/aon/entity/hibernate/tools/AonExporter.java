@@ -56,7 +56,7 @@ public class AonExporter extends GenericExporter{
 				isDomainContainer = true;
 			}
 		}
-		if ( "ProfileDB".equals(pojo.getDeclarationName()) ) {
+		if ( "ProfileDB".equals(pojo.getDeclarationName()) || "ProfileRoleDB".equals(pojo.getDeclarationName())) {
 			isDomainContainer = false;
 		}
 		additionalContext.put("hasProjectPrimaryKeyJoinColumn", hasProjectPrimaryKeyJoinColumn(pojo) );	
