@@ -5504,13 +5504,16 @@ CREATE TABLE `profile_module_denied` (
 
 CREATE TABLE `profile_role` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `domain` int(4) default NULL COMMENT 'Identificador del Dominio',
   `profile` int(4) NOT NULL COMMENT 'Identificador del Perfil',
   `application_role` int(4) NOT NULL COMMENT 'Identificador del Role de la Aplicacion',
   PRIMARY KEY  (`id`),
   KEY `IDX_PROFILE_ROLE_PROFILE` (`profile`),
   KEY `IDX_PROFILE_ROLE_APPLICATION_ROLE` (`application_role`),
+  KEY `IDX_PROFILE_ROLE_DOMAIN` (`domain`),
   CONSTRAINT `FK_PROFILE_ROLE_APPLICATION_ROLE` FOREIGN KEY (`application_role`) REFERENCES `application_role` (`id`),
   CONSTRAINT `FK_PROFILE_ROLE_PROFILE` FOREIGN KEY (`profile`) REFERENCES `profile` (`id`)
+  CONSTRAINT `FK_PROFILE_ROLE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Roles del Perfil';
 
 #
@@ -7021,7 +7024,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.1.6');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.1.7');
 
 COMMIT;
 

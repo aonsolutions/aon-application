@@ -4115,24 +4115,33 @@ INSERT INTO `profile_role` VALUES
 /*
  aon-aio (Administrador): Admin
 */
-  (2,71,219),
+  (2,null,71,219),
 /*  
  aon-aio (Gestion): Config, Auditor, Product, Commercial, Sale, Purchase, Warehouse, Finance, Statistics, eSignature
 */
-  (4,72,220),
-  (5,72,221),
-  (6,72,223),
-  (7,72,224),
-  (8,72,225),
-  (9,72,226),
-  (10,72,227),
-  (11,72,229),
-  (12,72,230),  
-  (13,72,232),  
+  (4,null,72,220),
+  (5,null,72,221),
+  (6,null,72,223),
+  (7,null,72,224),
+  (8,null,72,225),
+  (9,null,72,226),
+  (10,null,72,227),
+  (11,null,72,229),
+  (12,null,72,230),  
+  (13,null,72,232),  
 /*
   aon-aio (Invitado): Guest
 */
-  (15,73,218);      
+  (15,null,73,218);
+/*
+  aon-employee (Administrador): Admin
+*/
+  (17,null,31,119)
+/*
+  aon-employee (Invitado): Guest
+*/
+  (19,null,32,118)
+  
   
 COMMIT;
 
