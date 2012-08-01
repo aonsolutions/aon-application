@@ -366,6 +366,10 @@ public class FinanceController extends FinanceListController {
     public boolean isPaid(){
     	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PAID);
     }
+    
+    public boolean isGrouped(){
+    	return ((Finance)this.getTo()).getFinanceGroup() != null && ((Finance)this.getTo()).getFinanceGroup().getId()!=null;
+    }
 
 	public void onEditSearchCharge(ActionEvent event) {
 		setPayment(false);

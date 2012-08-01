@@ -17,7 +17,7 @@
 				<ui:param name="toolbarTitle" value="#{(finance.payment)?(financeBundle.finance_payment_module):(financeBundle.finance_charge_module)}" />
 				<ui:param name="controller" value="#{finance}" />
 				<ui:param name="skipSaveButton" value="#{!finance.new and !finance.pending and !finance.returned}" />
-				<ui:param name="skipRemoveButton" value="#{finance.new or !finance.to.emptyInvoice}" />
+				<ui:param name="skipRemoveButton" value="#{finance.new or !finance.to.emptyInvoice or finance.grouped}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="paymentPopup" 
