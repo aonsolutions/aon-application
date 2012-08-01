@@ -18,6 +18,13 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ PRINT UTIL **************** -->
+	<managed-bean>
+		<managed-bean-name>financePrintUtil</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.util.print.FinancePrintUtil</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************ CHECKING**************** -->
 	<managed-bean>
@@ -187,15 +194,13 @@
 	</managed-bean>
 
 	<!-- ************* FPRINTER ***************** -->
-<!--
 	<managed-bean>
-		<managed-bean-name>fPrinter</managed-bean-name>
+		<managed-bean-name>fPaymentPrint</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.finance.fbatch.print.FBatchPrinter
+			com.code.aon.ui.finance.controller.FinancePaymentPrintController
 		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
--->
 
 	<!-- ************* FINANCE GROUP LIST ***************** -->
 	<managed-bean>
@@ -3580,6 +3585,18 @@
 			<to-view-id>/com/code/aon/ui/finance/facelet/financePrint/invoiceChecking.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Finance Payment Print ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fPaymentPrint_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/fPaymentPrint/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fPaymentPrint_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/finance/facelet/fPaymentPrint/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
 
 	<!-- =================== Invoicing Group ========================== -->
 	<navigation-rule>

@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Iterator;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -167,6 +168,10 @@ public class FinanceTrackingController extends LinesController implements IFinan
 				FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
 				fBatchController.setPayment(fBatch.isPayment());
 				fBatchController.onLoad(event, fBatch.getId(), FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+			} else {
+				String msg =  "Error al seleccionar la remesa. ";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);	
 			}
 		}
 	}

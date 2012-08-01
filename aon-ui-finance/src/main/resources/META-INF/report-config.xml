@@ -531,6 +531,18 @@
 		<nested-report report="invoiceDetail"/>
 	</report>
 	
+	<!--  *********  Finance Payment List  ********* -->
+	<report id="fPaymentList" description="Finance Payment List">
+		<template path="/com/code/aon/ui/finance/report/fPaymentList.jasper" />
+		<collection provider="#{fPaymentPrint}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PrintUtil" value="#{financePrintUtil.getInstance}" />
+		</params>
+	</report>
+	
 	<!--  *********  FinanceList  ********* -->
 	<report id="financeList" description="Finance List">
 		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />

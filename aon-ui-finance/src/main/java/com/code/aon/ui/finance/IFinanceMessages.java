@@ -17,6 +17,7 @@ public interface IFinanceMessages {
 	String PAYMENT_PAY_METHOD_UNDEFINED_ERROR = "finance_payment_pay_method_undefined_error";
 	String FINANCE_TRACKING_FRACTIONED = "finance_tracking_fractioned";
 	String FINANCE_TRACKING_GROUPED = "finance_tracking_grouped";
+	String FINANCE_TRACKING_PAYMENT_PRINT = "finance_tracking_payment_print";
 	String FINANCE_TRACKING_SETTLED = "finance_tracking_settled";
 	String FINANCE_TRACKING_BATCHED = "finance_tracking_batched";
 	String FINANCE_TRACKING_RECORDED = "finance_tracking_recorded";
