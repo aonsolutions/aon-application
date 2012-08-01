@@ -91,6 +91,10 @@ public class ProjectReservationPermission {
 	private boolean isBeforeCheckIn(Date date) {
 		return reservation.getStartDate().after(date);
 	}
+	
+	private boolean isAfterCheckIn(Date date) {
+		return reservation.getStartDate().before(date);
+	}
 
 	private boolean isAfterCheckOut(Date date) {
 		return DateUtils.addDays(reservation.getEndDate(), 1).before(date);
@@ -102,6 +106,10 @@ public class ProjectReservationPermission {
 
 	private boolean isNoCheckOutable(Date date) {
 		return (reservation.isCheckIn() && isCheckOutDay(date)) || ((reservation.isNoCheck() || reservation.isCheckIn()) && isAfterCheckOut(date));
+	}
+	
+	private boolean isEarlyCheckOutable(Date date) {
+		return reservation.isCheckIn() && isAfterCheckIn(date);
 	}
 
 	private boolean isNoShowable(Date date) {
@@ -134,7 +142,7 @@ public class ProjectReservationPermission {
 	public boolean isEarlyCheckOutAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleConfig() && !isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isInvoiced() && isNoCheckOutable(now);
+		return roleAllowed && reservation.isInvoiced() && isEarlyCheckOutable(now);
 	}
 
 	public boolean isInvoiceAllowed() throws ManagerBeanException {
@@ -246,7 +254,7 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isCommentsEditable() throws ManagerBeanException {
-		return isInHouse(new Date());
+		return !isAfterCheckOut(new Date());
 	}
 
 	public boolean isRemarksEditable() throws ManagerBeanException {
