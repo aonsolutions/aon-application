@@ -1266,6 +1266,41 @@
 		<managed-bean-scope>session</managed-bean-scope>				
 	</managed-bean>
 	
+	<!-- ************* PAYMENT CARD SETTLE ***************** -->
+	<managed-bean>
+		<managed-bean-name>paymentCardSettle</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.controller.PaymentCardSettleController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<!--  
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Finance</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymentCardSettle</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Finance_dueDate desc</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymentCardSettleSearch}</value>
+			</list-entries>
+		</managed-property>
+		-->				
+	</managed-bean>
+	
+	<!--  
+	<managed-bean>
+		<managed-bean-name>paymentCardSettleSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.pms.event.PaymentCardSettleSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	-->
 	
 	<!-- **************************************** -->
 	<!-- ********** OPTIONAL LISTENERS ********** -->
@@ -1632,6 +1667,18 @@
 		<navigation-case>
 			<from-outcome>divertReception_grid</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/pms/facelet/divert/reception/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
+	<!-- =================== Payment Card Application ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>paymentCardSettle_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>paymentCardSettle_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule> 
 	

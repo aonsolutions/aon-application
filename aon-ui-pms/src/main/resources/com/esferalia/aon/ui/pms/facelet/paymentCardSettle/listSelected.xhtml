@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar">
+		<aon:commandButton title="#{bundle.aon_check_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+			value="#{bundle.aon_check_all}"
+			actionListener="#{paymentCardSettle.checkAll}" reRender="paymentCardSettleList"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+		<aon:commandButton title="#{bundle.aon_uncheck_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+			value="#{bundle.aon_uncheck_all}"
+			actionListener="#{paymentCardSettle.checkNone}" reRender="paymentCardSettleList"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+     	<aon:commandButton title="Borrar"
+			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+			value="Borrar"
+			rendered="#{paymentCardSettle.selectedTab == 'tab1' and paymentCardSettle.checkedCount > 0}"
+			actionListener="#{paymentCardSettle.onRemoveSelected}" reRender="paymentCardSettleList"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+     	<aon:commandButton id="fraction" 
+			value="#{financeBundle.finance_to_fraction}"
+			immediate="#{true}" rendered="#{paymentCardSettle.checkedCount > 0}"
+			styleClass="aon-finding-toolbar-item aon-icon-fraction"
+			actionListener="#{paymentCardSettle.onFractionFinance}"  />
+	</aon:div>
+ 
+	<aon:div id="paymentCardSettleDataDiv">
+	
+		<aon:dataTable id="paymentCardSettleData" value="#{paymentCardSettle.financeModel}"
+			var="to" rows="20" rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
+			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+				aon-editDataTable-numberColumn">				
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{paymentCardSettle.checkedCount}" />
+				</f:facet>
+				<aon:selectBooleanCheckbox id="Included_Row_checked"
+					value="#{paymentCardSettle.rowChecked}"
+					valueChangeListener="#{paymentCardSettle.rowSelected}"
+					reRender="paymentCardSettleList" />	
+			</aon:column>
+	
+			<aon:column alias="Finance.dueDate"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.dueDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+	
+			<aon:column alias="Finance.invoice&lt;referenceCode"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.referenceCode}" />
+			</aon:column>
+	
+			<aon:column alias="Finance.concept"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.concept}" />
+			</aon:column>
+	
+			<aon:column alias="Finance.registryName"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText	value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.registryName}" />
+			</aon:column>
+	
+			<aon:column alias="Finance.registryDocument"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_company_document}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.registryDocument}" />
+			</aon:column>
+	
+			<aon:column alias="Finance.financeStatus"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.financeStatus}" />
+<!--  
+				<f:facet name="footer">
+					<aon:outputText value="#{financeBundle.finance_total_amount}" />
+				</f:facet>
+-->
+			</aon:column>
+	
+			<aon:column alias="Finance.payMethod.name"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.payMethod.name}" />
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_total}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.totalAmount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+<!--  
+				<f:facet name="footer">
+					<aon:div style="float:right">
+						<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
+-->
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="importe agencia" />
+				</f:facet>
+				<aon:inputText value="#{to.amount}" >
+					<a4j:support event="onblur" reRender="paymentCardSettleData" />
+				</aon:inputText>
+			</aon:column>
+	
+			<aon:column styleClass="aon-editDataTable-numberColumn">
+				<f:facet name="header">
+					<aon:outputText value="diferencia" />
+				</f:facet>
+				<aon:outputText value="#{ (empty to.amount)?(''):(to.finance.totalAmount - to.amount)}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:column>
+	
+		</aon:dataTable>	
+		
+		<aon:dataScroller2 for="paymentCardSettleData" showNote="true" />
+	
+	</aon:div>
+			
+
+</ui:composition>
