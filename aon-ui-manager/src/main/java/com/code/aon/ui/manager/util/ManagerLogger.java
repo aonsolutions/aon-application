@@ -1,6 +1,5 @@
 package com.code.aon.ui.manager.util;
 
-import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.BUNDLE_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.LOGGER_SCRIPT;
 import static com.code.aon.ui.manager.controller.IManagerConstants.MANAGER_CONTROLLER_NAME;
@@ -24,7 +23,6 @@ import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
-import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
@@ -87,8 +85,7 @@ public class ManagerLogger {
 	}
 	
 	public ManagerLogger( String toEmails ) {
-		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		loggedUser = lu.getPrincipal();
+		loggedUser = AonUtil.getAuthPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
 			IMailAccount account = getMailAccount();
