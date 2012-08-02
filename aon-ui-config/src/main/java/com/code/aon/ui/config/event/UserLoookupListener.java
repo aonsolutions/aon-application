@@ -19,7 +19,6 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.common.controller.DomainResolver;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -36,7 +35,7 @@ public class UserLoookupListener extends ControllerAdapter {
 		if (! isDisabled() ) {
 	    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
 	    	this.domain = resolver.getDomain();			
-	    	this.application = StringUtils.removeStart(UserUtils.getInstance().getPrincipal().getContext(), "/" );			
+	    	this.application = StringUtils.removeStart(AonUtil.getAuthPrincipal().getContext(), "/" );			
 		}
 	}
 

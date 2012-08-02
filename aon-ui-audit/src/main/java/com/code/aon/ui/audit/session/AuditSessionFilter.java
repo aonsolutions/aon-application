@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.util.AonUtil;
 
 public class AuditSessionFilter implements Filter {
 	
@@ -34,7 +34,7 @@ public class AuditSessionFilter implements Filter {
 	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
 		try {
-			AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );

@@ -14,11 +14,11 @@ import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.IDomainChangeListener;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.util.AonUtil;
 
 public class AuditDomainChangeListener implements IDomainChangeListener {
 
@@ -71,7 +71,7 @@ public class AuditDomainChangeListener implements IDomainChangeListener {
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request, Integer domain ) {
 		try {
 			LOGGER.info( "Domain {}", domain );
-			AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );

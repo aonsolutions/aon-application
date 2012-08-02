@@ -29,7 +29,6 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.desktop.applications.ApplicationsManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -113,7 +112,7 @@ public class DomainController extends BasicController implements IDesktopConstan
 		IConsoleAdmin console = Utils.getSecurityConsole();
 		AuthPrincipal principal = null;
 		if ( userName != null ) {
-			String name = UserUtils.getInstance().getPrincipal().getName();
+			String name = AonUtil.getAuthPrincipal().getName();
 			principal = new AuthPrincipal( userName + name.substring(name.indexOf('@')));			
 		}
 		console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);

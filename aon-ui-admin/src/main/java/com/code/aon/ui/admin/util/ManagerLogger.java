@@ -1,6 +1,5 @@
 package com.code.aon.ui.admin.util;
 
-import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.util.Date;
@@ -16,7 +15,6 @@ import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.webmail.EmailSender;
@@ -35,8 +33,7 @@ public class ManagerLogger {
 	private boolean configured;
 	
 	public ManagerLogger( String toEmails ) {
-		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-		loggedUser = lu.getPrincipal();
+		loggedUser = AonUtil.getAuthPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
 			MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);

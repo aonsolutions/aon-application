@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -36,10 +35,6 @@ public class UserUtils {
 	private Boolean passwordExpired;
 	
 	private User loggedUser;
-	
-	public AuthPrincipal getPrincipal() {
-		return BasicPrincipal.getAuthPrincipal();
-	}
 
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
@@ -49,10 +44,11 @@ public class UserUtils {
 	}
 	
 	private User resolveUser() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		String q = "SELECT u FROM User u  WHERE u.login = '" + getPrincipal().getShortName() + "'";
-		if (getPrincipal().getDomainId() != null) {
-			q = q + " AND u.domain = " + getPrincipal().getDomainId();
+		String q = "SELECT u FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
+		if (principal.getDomainId() != null) {
+			q = q + " AND u.domain = " + principal.getDomainId();
 		}
 		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
 		List<?> queryList = query.list();

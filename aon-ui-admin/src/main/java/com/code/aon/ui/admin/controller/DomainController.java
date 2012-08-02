@@ -4,7 +4,6 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +24,6 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -76,7 +74,6 @@ public class DomainController extends BasicController {
 	
 	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
 		if (! DomainManager.isParentDomain() ) {
-			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);

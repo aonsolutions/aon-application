@@ -10,7 +10,6 @@ import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
@@ -34,7 +33,7 @@ public class WebmailManager implements IServices, IDesktopConstants {
 		app = apps.getApplication( "aon-webmail" );
 		if ( app != null ) {
 			try {
-				AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
+				AuthPrincipal user = AonUtil.getAuthPrincipal();
 				IMailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 				server = new AonServer(mailAccount);
 				server.connect();

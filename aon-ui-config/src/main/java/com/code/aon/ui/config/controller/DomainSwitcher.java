@@ -24,9 +24,9 @@ import com.code.aon.common.domain.AbstractDomainSwitcher;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Domain;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ui.util.AonUtil;
 
 public class DomainSwitcher extends AbstractDomainSwitcher {
 	
@@ -48,7 +48,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}
 	
 	private Integer initializeDomain() {
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		Integer domain = principal.getDomainId();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(Domain.class.getName());
 		String q = "SELECT d.parent FROM domain d WHERE d.id = " + domain;

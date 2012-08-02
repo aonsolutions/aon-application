@@ -51,7 +51,7 @@ public class ManagerController implements IPayrollConstants {
 	
 	private EnterpriseUser resolveUser() {
 		EnterpriseUser user = null;
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		try {
             IManagerBean bean = BeanManager.getManagerBean(EnterpriseUser.class);
             if ( principal.getUserId() != null ) {

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.jar.Manifest;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,7 +40,9 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ui.common.ICommonConstants;
@@ -88,6 +92,8 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private LocaleElement[] locales;
 	
+	private AuthPrincipal principal;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -102,6 +108,21 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		this.locales = new LocaleElement[] {
 			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
 		};
+		this.principal = resolvePrincipal();
+	}
+	
+	private AuthPrincipal resolvePrincipal() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest(); 
+		Principal principal = request.getUserPrincipal();
+		if ( principal instanceof AuthPrincipal ) {
+			return (AuthPrincipal) principal;
+		}
+		return BasicPrincipal.getAuthPrincipal();
+	}
+	
+	public AuthPrincipal getAuthPrincipal() {
+		return this.principal;
 	}
 
 	/**

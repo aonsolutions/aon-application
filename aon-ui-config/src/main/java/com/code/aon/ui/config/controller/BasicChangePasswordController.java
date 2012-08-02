@@ -11,7 +11,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.BeanServerUtil;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -34,7 +33,7 @@ public abstract class BasicChangePasswordController {
 	private String confirmPassword;
 	
 	public BasicChangePasswordController() {
-		this.principal = BasicPrincipal.getAuthPrincipal();
+		this.principal = AonUtil.getAuthPrincipal();
 		this.to = UserUtils.getInstance().getLoggedUser();
 	}
 	

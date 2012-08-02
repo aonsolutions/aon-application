@@ -20,7 +20,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.enumeration.AlarmStatus;
@@ -108,7 +107,7 @@ public class AlarmController extends BasicController {
         	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));    		
     	}
     	String userAlias = bean.getFieldName(IEntityAlias.ALARM_USER_ID);
-    	AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+    	AuthPrincipal principal = AonUtil.getAuthPrincipal();
     	criteria.addEqualExpression(userAlias, principal.getUserId());
     	String dateAlias = bean.getFieldName(IEntityAlias.ALARM_ALARM_DATE);
     	if ( from != null ) {

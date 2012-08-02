@@ -40,7 +40,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -93,8 +92,9 @@ public class DesktopController {
 
     public DesktopController() {
 		try {
-			updateRecentNoteModel();
-			updateNoticeSummaryModel();
+	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			updateRecentNoteModel(principal);
+			updateNoticeSummaryModel(principal);
 			initTask();
 			initGarage();
 	    } catch (ManagerBeanException e) {
@@ -104,7 +104,7 @@ public class DesktopController {
 		}
     }
 
-	public void updateNoticeSummaryModel() {
+	public void updateNoticeSummaryModel( AuthPrincipal principal ) {
         this.noticeSummaryList = new LinkedList<DesktopNoticeSummary>();
         NoticeType[] noticeTypes = NoticeType.values();
         for (int i=0; i<noticeTypes.length; i++) {
@@ -115,7 +115,6 @@ public class DesktopController {
         to.set(Calendar.HOUR_OF_DAY, 23);
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
-        AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
         String select = "select notice.type, count(*) " 
                         +" from Notice as notice, Alarm as alarm " 
                         +" where notice.id = alarm.sourceId " 
@@ -150,11 +149,9 @@ public class DesktopController {
         return noticeSummaryList;
     }
 
-    private void updateRecentNoteModel() throws ManagerBeanException {
+    private void updateRecentNoteModel( AuthPrincipal principal ) throws ManagerBeanException {
     	IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
-    	Criteria criteria = new Criteria();
-    	AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), principal.getUserId());
+    	Criteria criteria = new Criteria();    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), principal.getUserId());
     	criteria.addOrder(noteBean.getFieldName(IEntityAlias.NOTE_DATE), false);
     	this.recentNoteModel = new ListDataModel(noteBean.getList(criteria));
     }
@@ -166,8 +163,9 @@ public class DesktopController {
 	public void onRefresh( ActionEvent event ) {
 		LOGGER.info( "Desktop Refresh" );
 		try {
-			updateRecentNoteModel();
-			updateNoticeSummaryModel();
+	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			updateRecentNoteModel(principal);
+			updateNoticeSummaryModel(principal);
 			updateTaskSummaryModel();
 	    } catch (ManagerBeanException e) {
 	    	LOGGER.error( e.getMessage(), e );

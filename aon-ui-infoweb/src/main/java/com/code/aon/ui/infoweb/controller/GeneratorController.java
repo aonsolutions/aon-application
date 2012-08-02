@@ -60,7 +60,6 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyImagesController;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
 import com.code.aon.ui.infoweb.util.VelocityUtil;
@@ -141,7 +140,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	}
 	
 	private String getDomainName() {
-		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
 			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());

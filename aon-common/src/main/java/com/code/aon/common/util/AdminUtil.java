@@ -40,8 +40,7 @@ public class AdminUtil {
 		return null;
 	}
 	
-	public static Integer getApplicationUser( Integer domain ) {
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+	public static Integer getApplicationUser( AuthPrincipal principal, Integer domain ) {
 		Integer applicationUser = getApplicationUser(domain, principal.getUserId(), principal.getApplicationId());
 		if ( (applicationUser == null) && (! ObjectUtils.equals(domain, principal.getDomainId())) ) {
 			applicationUser = getApplicationUser(principal.getDomainId(), principal.getUserId(), principal.getApplicationId());

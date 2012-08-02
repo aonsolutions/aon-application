@@ -335,7 +335,7 @@ public class ActionDeniedController implements IAuditConstants {
 	private Map<String,Module> getDeniedModules() {
 		Map<String,Module> deniedModules = new HashMap<String, Module>();
 		try {			
-			Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain());
+			Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal(), DomainManager.getCurrentDomain());
 			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
 			if ( (profiles != null) && (!profiles.isEmpty()) ) {
 				for( Integer profile : profiles ) {
@@ -418,7 +418,6 @@ public class ActionDeniedController implements IAuditConstants {
 		return skipManagedBean;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public class FakeMap extends AbstractMap<String,Boolean> {
 		
 		@Override
@@ -427,7 +426,7 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 
 		@Override
-		public Set entrySet() {
+		public Set<Entry<String, Boolean>> entrySet() {
 			return null;
 		}
 		

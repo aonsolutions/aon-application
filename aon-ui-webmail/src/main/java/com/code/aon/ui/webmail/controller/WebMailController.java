@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -53,7 +52,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void startWebmail() {
 		try {
-			AuthPrincipal mailUser = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal mailUser = AonUtil.getAuthPrincipal();
 			if (mailUser != null) {
 	    		initDefault(mailUser);
 	    		initConfig(mailUser);

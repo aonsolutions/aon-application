@@ -25,8 +25,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Domain;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.common.ICommonConstants;
-import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DataSourceUtil;
@@ -192,8 +190,7 @@ public class NewDomainController {
 				buf.append(dbname);
 			}
 			
-			LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(ICommonConstants.LOGGED_USER_CONTROLLER_NAME);
-			AuthPrincipal principal = lu.getPrincipal(); 
+			AuthPrincipal principal = AonUtil.getAuthPrincipal(); 
 			Integer userId = principal.getUserId();
 			IManagerBean bean = BeanManager.getManagerBean(User.class);  
 			User appUser = (User) bean.get(userId);

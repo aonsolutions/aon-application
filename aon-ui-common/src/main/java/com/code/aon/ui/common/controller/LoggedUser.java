@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -32,20 +31,17 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	/** The company name. */
 	private String companyName;
 	
-	/** The principal. */
-	private AuthPrincipal principal;
-	
 	/**
 	 * Instantiates a new logged user.
 	 */
 	public LoggedUser() {
-		this.principal = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		if ( principal != null ) {
 			this.logged = true;
 			initVariables(principal);
 		}
 	}
-
+	
 	/**
 	 * Gets the aon user.
 	 *
@@ -175,15 +171,6 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
 	 */
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
-	}
-
-	/**
-	 * Gets the principal.
-	 *
-	 * @return the principal
-	 */
-	public AuthPrincipal getPrincipal() {
-		return principal;
 	}
 	
 }

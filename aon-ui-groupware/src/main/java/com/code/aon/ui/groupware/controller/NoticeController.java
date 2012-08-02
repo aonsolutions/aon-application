@@ -34,8 +34,8 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.sun.faces.util.MessageFactory;
 
@@ -199,7 +199,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private void chargeMails() {
-		String domain = UserUtils.getInstance().getPrincipal().getDomain();
+		String domain = AonUtil.getAuthPrincipal().getDomain();
 		mailList = "";
 
 		String SEP = "";
@@ -217,7 +217,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	private void chargeSMS() {
-		String domain = UserUtils.getInstance().getPrincipal().getDomain();
+		String domain = AonUtil.getAuthPrincipal().getDomain();
 		resetSMS();
 		try {
 			for (User user : getSelectedUsers()) {

@@ -6,12 +6,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
-import com.code.aon.config.User;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class GroupwareUtils {
@@ -20,7 +18,7 @@ public class GroupwareUtils {
 	
 	public TaskHolder getCurrentTaskHolder() throws ManagerBeanException {
 		if (currentTaskHolder == null) {
-	        AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
 	        if( principal.getUserId() == null){
 	        	throw new IllegalStateException("No es posible encontrar el usuario actual");
 	        }

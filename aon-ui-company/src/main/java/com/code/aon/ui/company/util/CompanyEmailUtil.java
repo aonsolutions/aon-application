@@ -35,7 +35,6 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
@@ -75,7 +74,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 	
 	public EmailSender getEmailSender() throws UnsupportedEncodingException {
 		if ( this.sender == null ) {
-			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+			AuthPrincipal user = AonUtil.getAuthPrincipal();
 			IMailAccount mailAccount = getDefaultMailAccount( user );
 			if ( mailAccount != null ) {
 				changeMailAccount(mailAccount);

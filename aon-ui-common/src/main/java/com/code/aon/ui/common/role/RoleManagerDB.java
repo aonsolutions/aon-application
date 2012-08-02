@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Clase que controla los roles habituales de las aplicaciones AON.
@@ -29,7 +30,7 @@ public class RoleManagerDB extends BasicRoleManager {
 
 	@Override
 	public void init() {
-		Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain());
+		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal(), DomainManager.getCurrentDomain());
 		updateApplicationUserRoles(applicationUser);
 		super.init();
 	}

@@ -17,7 +17,6 @@ import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -26,7 +25,6 @@ public class TaskManager implements IServices, IDesktopConstants {
 
 	private ApplicationsManager.App app;
 	
-	private Integer userId;
 	private TaskHolder taskHolder;
 	private GroupwareUtils groupwareUtils;
 	
@@ -57,7 +55,6 @@ public class TaskManager implements IServices, IDesktopConstants {
 	public TaskManager() {
 		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
 		app = apps.getApplication( "aon-task" );
-		userId = UserUtils.getInstance().getLoggedUser().getId();
 	}
 
 	private List<Integer> getUserWorkgroups() throws ManagerBeanException {

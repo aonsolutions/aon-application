@@ -7,12 +7,12 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.asset.Asset;
 import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.asset.controller.ActivityBasicController;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ActivityBasicSearchListener extends ControllerSearchListener{
@@ -74,7 +74,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 	@Override
 	protected void init() throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
-		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		String name = user.getShortName();
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
