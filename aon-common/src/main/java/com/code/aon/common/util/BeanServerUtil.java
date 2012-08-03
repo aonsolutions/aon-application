@@ -21,6 +21,10 @@ public class BeanServerUtil {
 	
 	public static final ObjectName MAIN_DEPLOYER = getObjectName(MAIN_DEPLOYER_REF);
 
+	public static final String SESSION_MANAGER_REF = "jboss.admin:service=AonSessionManager";
+	
+	public static final ObjectName SESSION_MANAGER = getObjectName(SESSION_MANAGER_REF);
+	
 	public static final String LDAP_SERVICE_REF = "jboss.admin:service=AonLdap";
 	
 	public static final ObjectName LDAP_SERVICE = getObjectName(LDAP_SERVICE_REF);
