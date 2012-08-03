@@ -153,7 +153,9 @@ public class ActionFavoriteController implements IAuditConstants {
 					String action = ((ActionFavorite) to).getAction().getName();
 					ApplicationOption option = options.get(action);
 					if ( (option != null) && (!getDeniedController().isDenied(option)) ) {
-						this.favorites.add(option);
+						if ( option.isRendered() ) {
+							this.favorites.add(option);	
+						}
 					} else {
 						bean.remove(to);
 						LOGGER.warn( "{} favorite removed", action );

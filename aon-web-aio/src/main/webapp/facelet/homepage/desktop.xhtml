@@ -230,7 +230,10 @@
 										</h:panelGrid>						
 									</f:facet>
 									<aon:div styleClass="aon-direct-access-list">
-										<aon:dynamicInclude value="#{actionFavorite.template}" />
+										<h:panelGrid styleClass="aon-width-all " columns="2"
+											columnClasses="aon-width-half aon-padding-righter,aon-width-half">
+											<aon:dynamicInclude value="#{actionFavorite.template}" />
+										</h:panelGrid>
 									</aon:div>
 								</h:panelGrid>
 							</aon:componentGroup>

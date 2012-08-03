@@ -123,6 +123,7 @@ public class ApplicationProfileController extends LinesController {
 			if ( item.isChecked() ) {
 				if ( item.getTo() == null ) {
 					ProfileRole to = new ProfileRole();
+					to.setDomain(profile.getDomain());
 					to.setProfile(profile);
 					to.setApplicationRole(item.getValue());
 					bean.insert(to);
