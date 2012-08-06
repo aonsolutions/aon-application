@@ -17,6 +17,11 @@ public class FacesDomainProvider implements IDomainProvider {
 		IDomainSwitcher d = (IDomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER_CONTROLLER);
 		return d.getDomainId();
 	}
+	
+	@Override
+	public Integer getUserDomain() {
+		return AonUtil.getAuthPrincipal().getDomainId();
+	}
 
 	@Override
 	public synchronized boolean accept() {

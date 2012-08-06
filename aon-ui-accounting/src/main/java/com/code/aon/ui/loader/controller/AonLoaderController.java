@@ -28,6 +28,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
+import com.code.aon.ui.util.AonUtil;
 
 public class AonLoaderController {
 	
@@ -124,6 +125,7 @@ public class AonLoaderController {
 			tdp = new ThreadDomainProvider(
 						this.getId(),
 						DomainManager.getCurrentDomain(),
+						AonUtil.getAuthPrincipal().getDomainId(),
 						DomainManager.isParentDomain(),
 						DomainManager.isDomainManagementAvailable()
 					);

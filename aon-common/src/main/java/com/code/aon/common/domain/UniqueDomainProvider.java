@@ -17,6 +17,11 @@ public class UniqueDomainProvider implements IDomainProvider {
 	public Integer getCurrentDomain() {
 		return 1;
 	}
+	
+	@Override
+	public Integer getUserDomain() {
+		return 1;
+	}
 
 	@Override
 	public boolean accept() {

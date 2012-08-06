@@ -8,13 +8,15 @@ public class ThreadDomainProvider implements IDomainProvider {
 
 	private long threadId; 
 	private Integer currentDomain;
+	private Integer userDomain;
 	private boolean parentDomain;
 	private boolean domainManagementAvailable;
 	private List<Integer> filter = new LinkedList<Integer>(); 
 	
-	public ThreadDomainProvider(long threadId ,Integer currentDomain,boolean parentDomain,boolean domainManagementAvailable) {
+	public ThreadDomainProvider(long threadId ,Integer currentDomain,Integer userDomain,boolean parentDomain,boolean domainManagementAvailable) {
 		this.threadId = threadId; 
 		this.currentDomain = currentDomain;
+		this.userDomain = userDomain;
 		this.parentDomain = parentDomain;
 		this.domainManagementAvailable = domainManagementAvailable;
 		filter.add(this.currentDomain);
@@ -23,6 +25,11 @@ public class ThreadDomainProvider implements IDomainProvider {
 	@Override
 	public Integer getCurrentDomain() {
 		return this.currentDomain;
+	}
+	
+	@Override
+	public Integer getUserDomain() {
+		return this.userDomain;
 	}
 
 	@Override

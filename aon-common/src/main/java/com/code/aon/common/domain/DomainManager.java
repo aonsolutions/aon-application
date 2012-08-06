@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.code.aon.common.util.BasicPrincipal;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 
@@ -88,8 +86,7 @@ public class DomainManager {
 	}
 	public synchronized static boolean isParentDomainUserInChildDomain() {
 		ensureCurrentDomain();
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-		int userDomain = principal.getDomainId();
+		int userDomain = getDomainProvider().getUserDomain();
 		int current = getDomainProvider().getCurrentDomain();
 		return (current != userDomain); 
 	}
