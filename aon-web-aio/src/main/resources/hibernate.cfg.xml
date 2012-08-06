@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
+		<property name="connection.provider_class">com.code.aon.ui.common.hibernate.C3P0ConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonMainDeployer</property>
 		<property name="connection.datasource">java:comp/env/jdbc/AonEnterprise</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>

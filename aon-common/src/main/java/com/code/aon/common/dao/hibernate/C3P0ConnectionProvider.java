@@ -1,6 +1,5 @@
 package com.code.aon.common.dao.hibernate;
 
-import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -42,7 +41,7 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 			throw new HibernateException(msg);
 		}
 
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal principal = getAuthPrincipal();
 		if ( principal != null ) {
 			Properties connectionProperties = ConnectionProvider.getDBProperties(principal);
 			LOGGER.info( "Connection properties: {}", connectionProperties );
@@ -52,6 +51,10 @@ public class C3P0ConnectionProvider extends org.hibernate.connection.C3P0Connect
 			dataSourceProvider = new DatasourceConnectionProvider();
 			dataSourceProvider.configure(props);			
 		}
+	}
+	
+	protected AuthPrincipal getAuthPrincipal() {
+		return BasicPrincipal.getAuthPrincipal();
 	}
 	
 	@Override
