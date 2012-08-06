@@ -165,7 +165,7 @@ public class ResourceServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			ResourceURI resource = new ResourceURI(req.getRequestURI(), req.getContextPath(), DEFAULT_PATTERN);
-			InputStream in = resource.getInputStream(basePath);
+			InputStream in = resource.getInputStream(getServletContext(), basePath);
 			if (in == null) {
 				res.sendError(HttpServletResponse.SC_NOT_FOUND);
 				return;
