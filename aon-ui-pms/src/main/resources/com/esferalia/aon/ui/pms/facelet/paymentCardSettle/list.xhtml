@@ -26,7 +26,12 @@
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
 				
 				<ui:define name="additionalToolbarContent">
-				
+					<aon:commandButton id="paymentCardSettle-search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}" 
+						action="paymentCardSettle_search" actionListener="#{paymentCardSettle.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
 				</ui:define>
 				
 			</ui:decorate>
@@ -40,9 +45,11 @@
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listSelected.xhtml" />
 					</aon:panelTab>
 					
-					<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
-						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
-					</aon:panelTab>
+					<c:if test="#{!paymentCardSettle.fractioned}">
+						<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
+							<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
+						</aon:panelTab>
+					</c:if>
 	
 				</aon:panelTabSet>
 			</aon:div>
@@ -57,7 +64,15 @@
 			<ui:param name="searchReRender" value="paymentCardSettleList" />
 		</ui:include>
 		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalFraction.xhtml" >
+			<ui:param name="fractionReRender" value="paymentCardSettleList" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalBatch.xhtml">
+			<ui:param name="controller" value="#{paymentCardSettle}" />
+		</ui:include>
+		
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
-
+		
 	</ui:define>
 </ui:composition>

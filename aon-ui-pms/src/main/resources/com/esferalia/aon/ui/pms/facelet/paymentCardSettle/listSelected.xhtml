@@ -6,16 +6,19 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar">
+	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar"
+		rendered="#{paymentCardSettle.financeModel.rowCount > 0}">
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
+			rendered="#{!paymentCardSettle.fractioned}"
 			actionListener="#{paymentCardSettle.checkAll}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 		<aon:commandButton title="#{bundle.aon_uncheck_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 			value="#{bundle.aon_uncheck_all}"
+			rendered="#{!paymentCardSettle.fractioned}"
 			actionListener="#{paymentCardSettle.checkNone}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -26,11 +29,27 @@
 			actionListener="#{paymentCardSettle.onRemoveSelected}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-     	<aon:commandButton id="fraction" 
-			value="#{financeBundle.finance_to_fraction}"
-			immediate="#{true}" rendered="#{paymentCardSettle.checkedCount > 0}"
+     	
+     	<aon:commandButton title="#{financeBundle.finance_to_fraction}"
 			styleClass="aon-finding-toolbar-item aon-icon-fraction"
-			actionListener="#{paymentCardSettle.onFractionFinance}"  />
+			value="#{financeBundle.finance_to_fraction}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and !paymentCardSettle.fractioned}"
+			reRender="showFinanceFractionWindow">
+			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceFractionWindow}"
+				value="#{true}" />
+		</aon:commandButton>
+		
+		
+		<aon:commandButton title="#{financeBundle.finance_add_batch}"
+			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+			value="#{financeBundle.finance_to_batch}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and paymentCardSettle.fractioned}"
+			actionListener="#{paymentCardSettle.onFinanceBatchShow}" 
+			reRender="showFinanceBatchWindow">
+			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceBatchWindow}"
+				value="#{true}" />
+		</aon:commandButton>
+			
 	</aon:div>
  
 	<aon:div id="paymentCardSettleDataDiv">
@@ -42,7 +61,7 @@
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-numberColumn">				
 			
-			<aon:column>
+			<aon:column rendered="#{!paymentCardSettle.fractioned}">
 				<f:facet name="header">
 					<aon:outputText value="#{paymentCardSettle.checkedCount}" />
 				</f:facet>
@@ -134,7 +153,8 @@
 -->
 			</aon:column>
 	
-			<aon:column styleClass="aon-editDataTable-numberColumn">
+			<aon:column styleClass="aon-editDataTable-numberColumn"
+				rendered="#{!paymentCardSettle.fractioned}">
 				<f:facet name="header">
 					<aon:outputText value="importe agencia" />
 				</f:facet>
@@ -143,7 +163,8 @@
 				</aon:inputText>
 			</aon:column>
 	
-			<aon:column styleClass="aon-editDataTable-numberColumn">
+			<aon:column styleClass="aon-editDataTable-numberColumn"
+				rendered="#{!paymentCardSettle.fractioned}">
 				<f:facet name="header">
 					<aon:outputText value="diferencia" />
 				</f:facet>

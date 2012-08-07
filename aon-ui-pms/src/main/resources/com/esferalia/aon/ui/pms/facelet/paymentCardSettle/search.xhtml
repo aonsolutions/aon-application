@@ -11,53 +11,9 @@
 
 		<aon:form id="paymentCardSettleSearch">
 			
-			<!--  
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="controller" value="#{paymentCardSettle}" />
-			</ui:include>
-			
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="skipAfterSearch" value="#{true}" />
-				<ui:param name="controller" value="#{paymentCardSettle}" />
-				<ui:param name="searchController" value="#{paymentCardSettleSearch}" />
-				
-				<ui:define name="searchContent">
-				
-					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{searchController.agency}" />
-						<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
-					
-					<aon:outputLabel value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:outputLabel for="Finance_invoice_issueDate_from"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="Finance_invoice_issueDate_from"
-							value="#{searchController.startDate}" required="true"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-						<aon:outputLabel for="Finance_invoice_issueDate_to"
-							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="Finance_invoice_issueDate_to"
-							value="#{searchController.endDate}" required="true"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</aon:div>
-						
-				</ui:define>
-				
 			</ui:decorate>
-			-->
-			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
-			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -82,13 +38,13 @@
 							<aon:outputLabel for="Finance_invoice_issueDate_from"
 								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
 							<aon:selectInputDate id="Finance_invoice_issueDate_from"
-								value="#{paymentCardSettle.startDate}" required="true"
+								value="#{paymentCardSettle.startDate}" 
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<aon:outputLabel for="Finance_invoice_issueDate_to"
 								styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 							<aon:selectInputDate id="Finance_invoice_issueDate_to"
-								value="#{paymentCardSettle.endDate}" required="true"
+								value="#{paymentCardSettle.endDate}" 
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 						</aon:div>
@@ -99,7 +55,10 @@
 							value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 							action="paymentCardSettle_list"
 							actionListener="#{paymentCardSettle.onSearch}"
-							accesskey="#{bundle.aon_key_search}" />
+							accesskey="#{bundle.aon_key_search}" >
+								<aon:actionHotKey key="return" />
+						</aon:commandButton>
+							
 					</aon:panelGrid>
 					
 				</aon:div>
