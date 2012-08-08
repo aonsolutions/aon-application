@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -44,12 +47,17 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.ui.pms.event.PosFinanceSearchListener;
 
 
 public class PaymentCardSettleController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(PaymentCardSettleController.class);
+	
+	private final String INCLUDED_FINANCE_TAB = "tab1";
+	private final String PENDING_FINANCE_TAB = "tab2";
 	
 	private String selectedTab;
 
@@ -60,6 +68,7 @@ public class PaymentCardSettleController {
 	private List<AgencyFinance> financeList;
 	
 	private Customer agency;
+	private Hotel hotel;
 	private Date startDate;
 	private Date endDate;
 	private PayMethod payMethod;
@@ -120,6 +129,12 @@ public class PaymentCardSettleController {
 	}
 	public void setAgency(Customer agency) {
 		this.agency = agency;
+	}
+	public Hotel getHotel() {
+		return hotel;
+	}
+	public void setHotel(Hotel hotel) {
+		this.hotel = hotel;
 	}
 	public Date getStartDate() {
 		return startDate;
@@ -215,6 +230,59 @@ public class PaymentCardSettleController {
 		return getCheckedFinances().size();
 	}
 	
+	public Double getTotalDifferenceAmount() {
+		Double total = 0.0;
+		for(AgencyFinance af: getFinanceList()){
+			total += (af.getFinance().getTotalAmount() - af.getAmount());
+		}
+		return total;
+	}
+	
+	public Double getTotalFinanceAmount() {
+		Double total = 0.0;
+		for(AgencyFinance af: getFinanceList()){
+			total += af.getFinance().getTotalAmount();
+		}
+		return total;
+	}
+	
+	public String getFinanceReservationCode() throws ManagerBeanException{
+		AgencyFinance af = (AgencyFinance) getFinanceModel().getRowData();
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		return ((ProjectReservation)bean.get(af.getFinance().getInvoice().getProject().getId())).getCode();
+	}
+	
+	public String getFinanceListReservationCode() throws ManagerBeanException{
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
+		Finance finance = (Finance) financeList.getModel().getRowData();
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
+		return ((ProjectReservation)bean.get(finance.getInvoice().getProject().getId())).getCode();
+	}
+	
+	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
+//		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
+		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), false);
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.TODO);
+		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_TYPE), FinanceBatchType.NONE);
+		if(getEndDate()!=null){
+			criteria.addGreaterThanOrEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), getEndDate());
+		}
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE));
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_DESCRIPTION));
+		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
+		for (ITransferObject ito : fBatchBean.getList(criteria)) {
+			FinanceBatch fBatch = (FinanceBatch)ito;
+			String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(fBatch.getIssueDate());
+			String amount = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern")).format(fBatch.getFinanceBatchTotalAmount());
+			
+			SelectItem item = new SelectItem(fBatch, date + " " + StringUtils.leftPad(amount, 10, "·") + "EUR. - " +fBatch.getDescription());
+			fBatchList.add(item);
+		}
+		return fBatchList;
+	}
+	
 	public void onExecuteReport(){
 //		ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
 //		report.onExecute();
@@ -241,7 +309,7 @@ public class PaymentCardSettleController {
 	}
 
 	public void onSearch(ActionEvent event) {
-		
+		setSelectedTab(PENDING_FINANCE_TAB);
 		try {
 			onSearchFinance(event);
 		} catch (ManagerBeanException e) {
@@ -273,6 +341,10 @@ public class PaymentCardSettleController {
 		for(AgencyFinance af: getFinanceList()){
 			financeList.getCriteria().addNotEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_ID), af.getFinance().getId());
         }
+		
+		if(getHotel()!=null && getHotel().getWorkPlace().getId()!=null){
+			financeList.getCriteria().addEqualExpression("Finance.invoice<lines.workPlace.id", getHotel().getWorkPlace().getId());
+		}
 		financeList.onSearch(event);
 	}
 	
@@ -387,7 +459,7 @@ public class PaymentCardSettleController {
 		String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(new Date());
 		FinanceBatch fBatch = new FinanceBatch();
 		fBatch.setIssueDate(new Date());
-		fBatch.setDescription(date + " " + getPayMethod().getName());
+		fBatch.setDescription(date + " " + getAgency().getRegistry().getFullName());
 		return fBatch;
 	}
 	
