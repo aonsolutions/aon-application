@@ -44,6 +44,7 @@
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
+		<module>aon-jaas</module>
 		<module>aon-common</module>
 		<module>aon-common-ldap</module>
 		<module>aon-report</module>
