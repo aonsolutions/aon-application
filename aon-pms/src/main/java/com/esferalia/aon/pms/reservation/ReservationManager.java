@@ -137,8 +137,7 @@ public class ReservationManager implements IReservationConstants {
 				throw new ReservationException("Reservation in use, can not be modified", reservation.getCrsCode(), 255);
 			}
 		} else {
-			String reservationCrsCode = findReservationId(reservationType.getResGlobalInfo(), SIRIUS);
-			throw new ReservationException("No Reservations found with search criteria", reservationCrsCode, 284);
+			return addReservation(reservationType, posType);
 		}
 	}
 
