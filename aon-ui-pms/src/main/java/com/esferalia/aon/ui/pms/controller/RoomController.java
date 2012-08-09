@@ -29,12 +29,20 @@ import com.esferalia.aon.pms.Room;
 
 public class RoomController extends BasicController {
 
+	private Room lastRoomAdded;
 	private boolean showRoomBlockWindow;
 	private boolean blockMode;
 	private Date blockFromDate;
 	private Date blockToDate;
 	private ActivityStatus blockStatus;
 	private String blockRemarks;
+
+	public Room getLastRoomAdded() {
+		return lastRoomAdded;
+	}
+	public void setLastRoomAdded(Room lastRoomAdded) {
+		this.lastRoomAdded = lastRoomAdded;
+	}
 
 	public boolean isShowRoomBlockWindow() {
 		return showRoomBlockWindow;
