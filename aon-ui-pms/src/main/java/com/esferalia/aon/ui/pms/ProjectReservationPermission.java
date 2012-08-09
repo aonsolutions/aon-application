@@ -133,7 +133,7 @@ public class ProjectReservationPermission {
 
 	public boolean isEarlyCheckOutAllowed() {
 		Date now = new Date();
-		boolean roleAllowed = (isInHouse(now)) || (isRoleFinance() && isAfterCheckOut(now));
+		boolean roleAllowed = (isInHouse(now)) || ((isRoleConfig() || isRoleFinance()) && isAfterCheckOut(now));
 		return roleAllowed && reservation.isInvoiced();
 	}
 
