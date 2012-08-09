@@ -170,7 +170,7 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 			if (payMethod.length() > 8) {
 				payMethod = payMethod.substring(0, 8);
 			}
-			hotel = hotel.substring(0, 20 - payMethod.length());
+			hotel = StringUtils.substring(hotel, 0, 20 - payMethod.length());
 		}
 
 		FinanceBatch fBatch = new FinanceBatch();
