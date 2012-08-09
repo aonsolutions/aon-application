@@ -40,12 +40,11 @@
 						<h:outputLink id="logout" styleClass="aon-header-logout-blue"
 							title="#{securityBundle.aon_login_user_logout}"
 							value="http://login.aonsolutions.es/">
+							<a4j:support event="onclick"
+								ajaxSingle="true" immediate="true" bypassUpdates="true"
+								actionListener="#{aonConfiguration.logout}" />
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}"
 								style="color: #0066FF;">
-								<a4j:support event="onclick"
-									onsubmit="disableRFAjax()"
-									ajaxSingle="true" immediate="true" bypassUpdates="true"
-									actionListener="#{aonConfiguration.logout}" />
 							</aon:outputText>
 						</h:outputLink>
 					</aon:panelGroup> 

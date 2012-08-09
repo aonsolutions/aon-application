@@ -30,12 +30,12 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 
     /** Field DELIM (value is "";"") */
     static final String DELIM = ";";
-    /** Field AON_MAIN_DEPLOYER (value is ""Catalina:type=Security,name=AonMainDeployer"") */
-    static final String AON_MAIN_DEPLOYER = "Catalina:type=Security,name=AonMainDeployer";
-    /** Field AON_SECURITY (value is ""Catalina:type=Security,name=AonSecurity"") */
+    /** Field AON_MAIN_DEPLOYER */
+    static final String AON_MAIN_DEPLOYER = "jboss.admin:service=AonMainDeployer";
+    /** Field AON_SECURITY */
     static final String AON_SECURITY = "Catalina:type=Security,name=AonSecurity";
-    /** Field AON_SESSION_MANAGER (value is ""Catalina:type=Security,name=AonSessionManager"") */
-    static final String AON_SESSION_MANAGER = "Catalina:type=Security,name=AonSessionManager";
+    /** Field AON_SESSION_MANAGER */
+    static final String AON_SESSION_MANAGER = "jboss.admin:service=AonSessionManager";
 
     /** Map of applications deployed in Tomcat webapps diretory. */
     private Map<String, IMBeanInfo> mbeans;
