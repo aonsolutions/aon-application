@@ -52,14 +52,14 @@
 	<bean description="Evita que se borre un cliente con facturas">
 		<pojo>com.code.aon.customer.Customer</pojo>
 		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.finance.event.FinanceRegistryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 
 	<bean description="Evita que se borre un proveedor con facturas">
 		<pojo>com.code.aon.supplier.Supplier</pojo>
 		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.finance.event.FinanceRegistryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 
@@ -67,7 +67,7 @@
 		<pojo>com.code.aon.finance.Creditor</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.finance.event.CreditorBeanVetoListener</vetoListener>
-	        <vetoListener>com.code.aon.finance.event.InvoiceRegistryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.finance.event.FinanceRegistryBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 	
