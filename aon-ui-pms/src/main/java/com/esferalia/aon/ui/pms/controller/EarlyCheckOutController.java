@@ -35,6 +35,7 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
+import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
@@ -55,6 +56,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 	private List<Finance> reservationFinances;
 	private Map<Tax, Double> reservationUsedServices;
 	private boolean showEarlyCheckOutWindow;
+	private boolean chargeCheckOut;
 	private Integer earlyCheckOutPenalty;
 
 	public ProjectReservation getReservation() {
@@ -97,6 +99,14 @@ public class EarlyCheckOutController implements IPmsConstants {
 		this.showEarlyCheckOutWindow = showEarlyCheckOutWindow;
 	}
 
+	public boolean isChargeCheckOut() {
+		return chargeCheckOut;
+	}
+
+	public void setChargeCheckOut(boolean chargeCheckOut) {
+		this.chargeCheckOut = chargeCheckOut;
+	}
+
 	public Integer getEarlyCheckOutPenalty() {
 		return earlyCheckOutPenalty;
 	}
@@ -114,6 +124,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		}
 
 		try {
+			setChargeCheckOut(true);
 			setEarlyCheckOutPenalty(null);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setDirectCustomer(true);
@@ -139,6 +150,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), true);
 		}
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
+		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), false);
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
 			financeList.add(finance);
@@ -181,6 +193,11 @@ public class EarlyCheckOutController implements IPmsConstants {
 		return usedServicesMap;
 	}
 
+	public boolean isEarlyCheckOutDateEditable() throws ManagerBeanException {
+		BasicRoleManager roleManager = AonUtil.getRoleManager();
+		return ((roleManager.isConfig() || roleManager.isFinanceOperator()) && DateUtils.addDays(getReservation().getEndDate(), 1).before(new Date()));
+	}
+
 	public double getReservationUsedServicesAmount() {
 		double amount = 0;
 		for (Tax vat : reservationUsedServices.keySet()) {
@@ -191,6 +208,10 @@ public class EarlyCheckOutController implements IPmsConstants {
 
 	private boolean isDeposit(ProjectReservationService reservationService) {
 		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
+	}
+
+	private int getEarlyCheckOutPenaltyDays() throws ManagerBeanException {
+		return (getEarlyCheckOutPenalty() != null) ? getEarlyCheckOutPenalty() : 0;
 	}
 
 	private double getEarlyCheckOutPenaltyAmount() throws ManagerBeanException {
@@ -286,8 +307,14 @@ public class EarlyCheckOutController implements IPmsConstants {
 					totalSummaryTo = totals.get(totals.indexOf(totalSummaryTo));
 				}
 				totalSummaryTo.setPaymentAmount(CommonUtil.round(totalSummaryTo.getPaymentAmount() + finance.getTotalAmount()));
-				if (!totals.contains(totalSummaryTo)) {
-					totals.add(totalSummaryTo);
+				if (totalSummaryTo.getTotalAmount() != 0) {
+					if (!totals.contains(totalSummaryTo)) {
+						totals.add(totalSummaryTo);
+					}
+				} else {
+					if (totals.contains(totalSummaryTo)) {
+						totals.remove(totalSummaryTo);
+					}
 				}
 			}
 		}
@@ -295,12 +322,29 @@ public class EarlyCheckOutController implements IPmsConstants {
 	}
 
 	public void onNewFinance(ActionEvent event) throws ManagerBeanException {
-		Finance finance = new Finance();
-		if (getReservationInvoiceTo().getFinancesCount() == 0 && getReservationFinances().size() > 0) {
-			finance.setPayMethod(getReservationFinances().get(0).getPayMethod());
+		double amount = CommonUtil.round(getReservationUsedServicesAmount() - getFinancesAmount());
+		if (getReservationFinances().size() > 0 && getReservationInvoiceTo().getFinancesCount() == 0) {
+			List<PaymentSummaryTo> returns = getReturns();
+			do {
+				Finance finance = new Finance();
+				finance.setAmount(amount);
+
+				PaymentSummaryTo returnSummary = returns.get(getReservationInvoiceTo().getFinancesCount());
+				if (returnSummary != null) {
+					finance.setPayMethod(returnSummary.getPayMethod());
+					if (returnSummary.getTotalReturnAmount() < finance.getAmount()) {
+						finance.setAmount(returnSummary.getTotalReturnAmount());
+					}
+				}
+				getReservationInvoiceTo().getFinances().add(finance);
+
+				amount = CommonUtil.round(amount - finance.getAmount());
+			} while (amount != 0 && returns.size() >= getReservationInvoiceTo().getFinancesCount());
+		} else {
+			Finance finance = new Finance();
+			finance.setAmount(amount);
+			getReservationInvoiceTo().getFinances().add(finance);
 		}
-		finance.setAmount(CommonUtil.round(getReservationUsedServicesAmount() - getFinancesAmount()));
-		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
 	public void onRemoveFinance(ActionEvent event) {
@@ -328,13 +372,14 @@ public class EarlyCheckOutController implements IPmsConstants {
 				if (getReservationInvoiceTo().getEarlyCheckOutDate().compareTo(getReservation().getEndDate()) != 0) {
 					getReservationInvoiceTo().setIssueDate(new Date());
 					getReservationInvoiceTo().setComments("SALIDA ANTICIPADA");
+					getReservationInvoiceTo().setPenaltyDays(getEarlyCheckOutPenaltyDays());
 					getReservationInvoiceTo().setPenaltyAmount(getEarlyCheckOutPenaltyAmount());
 
 					if (getReservation().isAgencyHolder()) {
 						getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 						getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 						getReservationInvoiceTo().setRegistry(getReservation().getHotelReservation().getCustomer().getRegistry());
-	
+
 						PenalizationInvoicing penalizationInvoicing = new PenalizationInvoicing();
 						penalizationInvoicing.agencyCheckOutInvoice(getReservationInvoiceTo(), getReservation());
 			    	}
@@ -342,9 +387,9 @@ public class EarlyCheckOutController implements IPmsConstants {
 					ReservationUtils reservationUtils = new ReservationUtils();
 			    	reservationUtils.releaseProjectReservationResources(getReservation(), true, getReservationInvoiceTo().getEarlyCheckOutDate());
 
-			    	if (getReservationFinances().size() > 0) {
+			    	if (isChargeCheckOut() && getReservationFinances().size() > 0) {
 						ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-			    		for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
+						for (ITransferObject ito : obtainReservationInvoiceList(getReservation())) {
 				    		Invoice invoiceToRectificate = (Invoice)ito;
 					    	if (invoiceToRectificate != null) {
 								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectificate));
@@ -362,7 +407,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			    		}
 
 				    	if (getReservationUsedServices().size() > 0) {
-							getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
+				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
 							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
 				    	}
@@ -373,6 +418,9 @@ public class EarlyCheckOutController implements IPmsConstants {
 				reservationController.setInvoiceModel(null);
 				reservationController.onCheckOut(event);
 				reservationController.setSelectedTab(INVOICE);
+
+				String msg = "Se ha realizado correctamente la Salida Anticipada."; 
+				AonUtil.addInfoMessage(msg);
 			}
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
@@ -388,26 +436,26 @@ public class EarlyCheckOutController implements IPmsConstants {
 			throw new AbortProcessingException(msg);
 		}
 
-		if (!getReservation().isAgencyHolder() && getEarlyCheckOutPenalty() == null) {
+		if (isChargeCheckOut() && !getReservation().isAgencyHolder() && getEarlyCheckOutPenalty() == null) {
 			String msg = "Indique los Días de Penalización.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 
-		if (!isFinancesAmountOk()) {
+		if (isChargeCheckOut() && !isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el Total a Pagar.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 
-		if (!isPayMethodOk()) {
+		if (isChargeCheckOut() && !isPayMethodOk()) {
 			String msg = "La Forma de Pago es obligatoria.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
 
 		PmsUtils pmsUtils = new PmsUtils();
-		if (isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
+		if (isChargeCheckOut() && isCashOrCardPayment() && !pmsUtils.isUserPosOpen()) {
 			String msg = "No se puede Facturar en Metálico/Tarjetas. El Usuario no ha abierto la Caja.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);

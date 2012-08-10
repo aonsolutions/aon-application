@@ -11,8 +11,8 @@
 	<aon:panelGroup id="showEarlyCheckOutWindow">
 		<c:if test="#{controller.showEarlyCheckOutWindow}">
 			<rich:modalPanel id="earlyCheckOutModalPanel" 
-				minHeight="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (520) : (350)}" 
-				minWidth="#{(!controller.reservation.agencyHolder or !empty controller.reservationFinances) ? (640) : (450)}" 
+				minHeight="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (520) : (350)}" 
+				minWidth="#{(controller.chargeCheckOut and (!controller.reservation.agencyHolder or !empty controller.reservationFinances)) ? (640) : (450)}" 
 				rendered="#{controller.showEarlyCheckOutWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
@@ -66,8 +66,15 @@
 
 										<aon:outputLabel for="ProjectReservation_earlyCheckOutDate"
 											value="#{bundle.aon_date} #{pmsBundle.pms_checkOut}" />
+										<aon:outputText value="#{controller.reservationInvoiceTo.earlyCheckOutDate}"
+											styleClass="aon-bold"
+											rendered="#{!controller.earlyCheckOutDateEditable}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:outputText>
 										<aon:selectInputDate id="ProjectReservation_earlyCheckOutDate" 
 											value="#{controller.reservationInvoiceTo.earlyCheckOutDate}" required="true"
+											rendered="#{controller.earlyCheckOutDateEditable}"
 											timeZone="#{timeZoneController.timeZone}"
 											popupDateFormat="#{bundle.aon_date_pattern}">
 											<a4j:support ajaxSingle="true" event="oninputchange"
@@ -80,12 +87,22 @@
 												focus="ProjectReservation_earlyCheckOutPenalty" />
 										</aon:selectInputDate>
 
+										<aon:outputLabel for="ProjectReservation_chargeCheckOut"
+											value="#{pmsBundle.pms_charge_check_out}" />
+										<aon:selectOneRadio id="ProjectReservation_chargeCheckOut"
+											value="#{controller.chargeCheckOut}"
+											rendered="#{!empty controller.reservationFinances}"
+											reRender="showEarlyCheckOutWindow">
+											<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+											<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+										</aon:selectOneRadio>
+
 										<aon:outputLabel for="ProjectReservation_earlyCheckOutPenalty"
 											value="#{pmsBundle.pms_penalty_days}"
-											rendered="#{!controller.reservation.agencyHolder}" />
+											rendered="#{controller.chargeCheckOut and !controller.reservation.agencyHolder}" />
 										<aon:selectOneMenu id="ProjectReservation_earlyCheckOutPenalty"
 											value="#{controller.earlyCheckOutPenalty}"
-											rendered="#{!controller.reservation.agencyHolder}"
+											rendered="#{controller.chargeCheckOut and !controller.reservation.agencyHolder}"
 											valueChangeListener="#{controller.onCheckOutPenaltyChanged}"
 											reRender="invoiceFinancesDiv">
 											<f:selectItem itemLabel="-" value="#{null}" />
@@ -96,7 +113,7 @@
 
 									</aon:panelGrid>
 
-									<c:if test="#{!empty controller.reservationFinances}">
+									<c:if test="#{controller.chargeCheckOut and !empty controller.reservationFinances}">
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/earlyCheckOut/form_return.xhtml" />
 	
 										<ui:include src="/com/esferalia/aon/ui/pms/facelet/reservation/invoice/form_finance.xhtml" />

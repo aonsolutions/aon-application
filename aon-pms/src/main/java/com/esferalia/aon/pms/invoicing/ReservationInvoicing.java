@@ -264,7 +264,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			invoiceDetail.setProject(reservation.getProject());
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(reservation.getHotelReservation().getItemPenalty());
-			invoiceDetail.setDescription(obtainDetailDescription(reservationInvoiceTo.getEarlyCheckOutDate(), null, invoiceDetail.getItem().getProduct().getName()));
+			invoiceDetail.setDescription(obtainPenaltyDetailDescription(reservationInvoiceTo, invoiceDetail.getItem()));
 			invoiceDetail.setQuantity(1);
 			invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 			invoiceDetail.setPrice(reservationInvoiceTo.getPenaltyAmount());
@@ -396,6 +396,11 @@ public class ReservationInvoicing implements IReservationConstants {
 			}
 		}
 		return obtainDetailDescription(effectiveDate, room, item.getProduct().getName());
+	}
+
+	private String obtainPenaltyDetailDescription(ReservationInvoiceTo reservationInvoiceTo, Item item) {
+		String penaltyDays = " (" + reservationInvoiceTo.getPenaltyDays() + (reservationInvoiceTo.getPenaltyDays() == 1 ? " día" : " días") + ")";
+		return obtainDetailDescription(reservationInvoiceTo.getEarlyCheckOutDate(), null, item.getProduct().getName() + penaltyDays);
 	}
 
 	private String obtainDetailDescription(Date effectiveDate, String room, String description) {
