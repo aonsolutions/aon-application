@@ -46,7 +46,10 @@ public enum Module implements IResourceable {
 	DOCUMENT( "document" ),
 	
     /** GARAGE. */
-	GARAGE( "garage" );
+	GARAGE( "garage" ),
+	
+    /** ACADEMY. */
+	ACADEMY( "academy" );	;
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.audit.i18n.messages";

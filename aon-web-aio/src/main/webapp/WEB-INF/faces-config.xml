@@ -139,6 +139,10 @@
 			<from-outcome>menu_garage</from-outcome>
 			<to-view-id>/facelet/menu/garage.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_academy</from-outcome>
+			<to-view-id>/facelet/menu/academy.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 	
    	<!-- ************************************************** -->

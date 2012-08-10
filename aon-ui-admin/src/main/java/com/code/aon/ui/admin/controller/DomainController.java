@@ -98,6 +98,12 @@ public class DomainController extends BasicController {
 			appInfo.register();
 			appInfo.getApplicationModules().remove(garage);
 		}
+		if ( getDomain().getType() != DomainType.ACADEMY ) {
+			DomainModuleInfo academy = this.aioInfo.getModuleInfo(Module.ACADEMY);
+			academy.setChecked(false);
+			appInfo.register();
+			appInfo.getApplicationModules().remove(academy);
+		}
 	}
 
 	public void initApplicationInfos() throws ManagerBeanException {
