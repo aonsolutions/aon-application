@@ -128,7 +128,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 	public void onReset(ActionEvent event) {
 		try {
 			PmsUtils pmsUtils = new PmsUtils();
-			if (!AonUtil.getRoleManager().isAdmin() && !pmsUtils.isUserPosOpen()) {
+			if (!pmsUtils.isUserPosOpen()) {
 				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
@@ -496,6 +496,13 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			throw new AbortProcessingException(msg);
 		}
 		try {
+			PmsUtils pmsUtils = new PmsUtils();
+			if (!pmsUtils.isUserPosOpen()) {
+				setShowRectificationWindow(false);
+				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			setInvoiceToRectificate((Invoice)getModel().getRowData());
 			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
