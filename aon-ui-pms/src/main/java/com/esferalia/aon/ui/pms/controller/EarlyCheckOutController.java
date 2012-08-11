@@ -339,7 +339,13 @@ public class EarlyCheckOutController implements IPmsConstants {
 				getReservationInvoiceTo().getFinances().add(finance);
 
 				amount = CommonUtil.round(amount - finance.getAmount());
-			} while (amount != 0 && returns.size() >= getReservationInvoiceTo().getFinancesCount());
+			} while (amount != 0 && returns.size() > getReservationInvoiceTo().getFinancesCount());
+
+			if (amount != 0) {
+				Finance finance = new Finance();
+				finance.setAmount(amount);
+				getReservationInvoiceTo().getFinances().add(finance);
+			}
 		} else {
 			Finance finance = new Finance();
 			finance.setAmount(amount);

@@ -88,7 +88,8 @@
 										</aon:selectInputDate>
 
 										<aon:outputLabel for="ProjectReservation_chargeCheckOut"
-											value="#{pmsBundle.pms_charge_check_out}" />
+											value="#{pmsBundle.pms_charge_check_out}"
+											rendered="#{!empty controller.reservationFinances}" />
 										<aon:selectOneRadio id="ProjectReservation_chargeCheckOut"
 											value="#{controller.chargeCheckOut}"
 											rendered="#{!empty controller.reservationFinances}"

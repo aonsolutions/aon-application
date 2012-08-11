@@ -15,7 +15,8 @@
 		<aon:div styleClass="aon-group-body"> 
 			<aon:div styleClass="aon-group-body-internal">
 				<aon:dataTable id="paymentTotalsList"
-					value="#{controller.totals}" var="paymentTotal">
+					value="#{controller.totals}" var="paymentTotal"
+					rendered="#{!empty controller.totals}">
 
 					<aon:column styleClass="aon-panelGrid-odd aon-width-100 aon-editDataTable-textColumn">
 						<aon:outputLabel value="#{configBundle.config_pay_method}" />
@@ -51,6 +52,11 @@
 					</aon:column>
 
 				</aon:dataTable>
+
+				<aon:outputText value="#{pmsBundle.pms_no_returns_message}"
+					styleClass="aon-bold"
+					rendered="#{empty controller.totals}" />
+
 			</aon:div>
 		</aon:div>
 	</aon:div>
