@@ -157,12 +157,11 @@
 		<aon:outputLabel for="ProjectReservation_serviceType"
 			value="#{bundle.aon_type}" />
 		<aon:selectOneRadio id="ProjectReservation_serviceType"
-			value="#{controller.reservationInvoiceTo.deposit}" required="true"
+			value="#{controller.reservationInvoiceTo.serviceType}" required="true"
 			disabled="#{controller.invoiceServicesCount > 1}"
 			valueChangeListener="#{controller.onInvoiceServiceTypeChanged}"
 			reRender="invoiceServicesDiv,invoiceFinancesDiv">
-			<f:selectItem itemLabel="#{pmsBundle.pms_services}" itemValue="false" />
-			<f:selectItem itemLabel="#{pmsBundle.pms_deposits}" itemValue="true" />
+			<f:selectItems value="#{controller.serviceTypes}" />
 		</aon:selectOneRadio>				
 	</c:if>
 

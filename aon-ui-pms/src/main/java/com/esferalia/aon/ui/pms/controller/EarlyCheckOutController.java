@@ -144,12 +144,13 @@ public class EarlyCheckOutController implements IPmsConstants {
 		List<Finance> financeList = new LinkedList<Finance>();
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), getReservation().getId());
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
 		if (getReservation().isAgencyHolder()) {
 			criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), true);
 		}
-		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
+		criteria.addNotEqualExpression("Finance.invoice<lines.item.product.type", ProductType.EXTERNAL_WORK);
 		criteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_TYPE), false);
 		for (ITransferObject ito : financeBean.getList(criteria)) {
 			Finance finance = (Finance)ito;
@@ -172,7 +173,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		}
 		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			if (!isDeposit(reservationServiceDetail.getProjectReservationService())) {
+			if (!isDepositOrDamage(reservationServiceDetail.getProjectReservationService())) {
 				Tax vat = reservationServiceDetail.getItem().getProduct().getVat();
 				double taxableBase = reservationServiceDetail.getTaxableBase();
 				if (usedServicesMap.containsKey(vat)) {
@@ -206,7 +207,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		return amount;
 	}
 
-	private boolean isDeposit(ProjectReservationService reservationService) {
+	private boolean isDepositOrDamage(ProjectReservationService reservationService) {
 		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
 	}
 
@@ -571,6 +572,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		if (reservation.isAgencyHolder()) {
 			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), true);
 		}
+		criteria.addNotEqualExpression("Invoice.lines.item.product.type", ProductType.EXTERNAL_WORK);
 		criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
 		return invoiceBean.getList(criteria);
 	}

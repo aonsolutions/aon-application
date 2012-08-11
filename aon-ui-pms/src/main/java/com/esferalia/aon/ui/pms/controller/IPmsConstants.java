@@ -2,11 +2,6 @@ package com.esferalia.aon.ui.pms.controller;
 
 public interface IPmsConstants {
 
-	String AVAILABLE_ROOM = "availableRoom";
-	String AVAILABLE_SERVICE_ROOM = "availableServiceRoom";
-	String RACK_RESERVATION = "rackReservation";
-	String INVOICE = "invoice";
-	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
@@ -47,5 +42,12 @@ public interface IPmsConstants {
 	String RESERVATION_FORM_NAME = "reservation_form";
 	String RESERVATION_REQUEST_FORM_NAME = "reservationRequest_form";
 	
+	// ************************************************************
+	// OTHER
+	// ************************************************************
+	String AVAILABLE_ROOM = "availableRoom";
+	String AVAILABLE_SERVICE_ROOM = "availableServiceRoom";
+	String RACK_RESERVATION = "rackReservation";
+	String INVOICE = "invoice";
 
 }

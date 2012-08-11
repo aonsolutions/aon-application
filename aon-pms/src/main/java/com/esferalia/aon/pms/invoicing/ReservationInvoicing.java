@@ -192,7 +192,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		List<ITransferObject> reservationServiceDetailList = reservationServiceDetailBean.getList(criteria);
 		for (ITransferObject ito : reservationServiceDetailList) {
 			ProjectReservationServiceDetail reservationServiceDetail = (ProjectReservationServiceDetail)ito;
-			if (!reservationInvoiceTo.isEarlyCheckOut() || !isDeposit(reservationServiceDetail.getProjectReservationService())) {
+			if (!reservationInvoiceTo.isEarlyCheckOut() || !isDepositOrDamage(reservationServiceDetail.getProjectReservationService())) {
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setProject(reservation.getProject());
@@ -371,7 +371,7 @@ public class ReservationInvoicing implements IReservationConstants {
 		entryWriter.recordAndUpdateInvoice(invoice);
 	}
 
-	private boolean isDeposit(ProjectReservationService reservationService) {
+	private boolean isDepositOrDamage(ProjectReservationService reservationService) {
 		return (reservationService.isExtra() && reservationService.getItem().getProduct().getType() != ProductType.SERVICE);
 	}
 

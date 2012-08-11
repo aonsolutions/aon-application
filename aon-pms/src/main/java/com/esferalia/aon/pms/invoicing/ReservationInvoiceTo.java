@@ -9,6 +9,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.IAddress;
@@ -32,7 +33,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private Registry registry;
 	private IAddress address;
 	private String comments;
-	private boolean deposit;
+	private ProductType serviceType;
 	private boolean earlyCheckOut;
 	private Date earlyCheckOutDate;
 	private int penaltyDays;
@@ -47,7 +48,7 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		setRegistry(new Registry());
 		setAddress(new InvoiceAddress());
 		setComments(null);
-		setDeposit(false);
+		setServiceType(ProductType.SERVICE);
 		setServices(new LinkedList<HotelService>());
 		setFinances(new LinkedList<Finance>());
 	}
@@ -140,12 +141,12 @@ public class ReservationInvoiceTo implements IReservationConstants {
 		this.comments = comments;
 	}
 
-	public boolean isDeposit() {
-		return deposit;
+	public ProductType getServiceType() {
+		return serviceType;
 	}
 
-	public void setDeposit(boolean deposit) {
-		this.deposit = deposit;
+	public void setServiceType(ProductType serviceType) {
+		this.serviceType = serviceType;
 	}
 
 	public boolean isEarlyCheckOut() {

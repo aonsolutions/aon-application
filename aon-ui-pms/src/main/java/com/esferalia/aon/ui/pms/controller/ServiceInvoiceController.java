@@ -52,6 +52,7 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.ui.pms.IPmsMessages;
 import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
@@ -284,9 +285,20 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
 	}
 
+	public List<SelectItem> getServiceTypes() {
+		List<SelectItem> serviceTypes = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_SERVICES));
+		serviceTypes.add(item);
+		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DEPOSITS));
+		serviceTypes.add(item);
+		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DAMAGES));
+		serviceTypes.add(item);
+		return serviceTypes;
+	}
+
 	public void onInvoiceServiceTypeChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			getReservationInvoiceTo().setDeposit((Boolean)event.getNewValue());
+			getReservationInvoiceTo().setServiceType((ProductType)event.getNewValue());
 			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
 			onNewService(null);
 		}
@@ -340,7 +352,7 @@ public class ServiceInvoiceController extends BasicController implements IPmsCon
 			String alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID);
 			criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getServiceCatalogue().getId());
 			alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_TYPE);
-			criteria.addEqualExpression(alias, getReservationInvoiceTo().isDeposit() ? ProductType.COMMERCIAL_PRODUCT : ProductType.SERVICE);
+			criteria.addEqualExpression(alias, getReservationInvoiceTo().getServiceType());
 			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_NAME));
 			for (ITransferObject ito : catalogueItemBean.getList(criteria)) {
 				CatalogueItem catalogueItem = (CatalogueItem)ito;

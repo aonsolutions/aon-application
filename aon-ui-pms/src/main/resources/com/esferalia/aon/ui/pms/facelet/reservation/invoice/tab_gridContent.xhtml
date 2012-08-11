@@ -124,7 +124,7 @@
 		<c:if test="#{!skipRectifyButton}">
 			<aon:commandButton id="reservationInvoice-rectify"
 				value="&#160;" title="#{pmsBundle.pms_to_return}"
-				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and !to.itemServicesInDetail))}"
+				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and to.allCommercialProducts))}"
 				actionListener="#{controller.onRectifyInvoiceShow}"
 				reRender="showRectificationWindow"
 				styleClass="aon-finding-toolbar-item aon-icon-removed">
