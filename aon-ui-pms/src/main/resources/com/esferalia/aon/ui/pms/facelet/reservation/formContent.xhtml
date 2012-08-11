@@ -276,6 +276,11 @@
 				styleClass="aon-bold" >
 				<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 			</aon:outputText>
+			<aon:commandButton id="enable-Advance" value="&#160;"
+				styleClass="aon-icon-commandButton aon-search-add aon-margin-left"
+				title="#{pmsBundle.pms_advance_enabled}" immediate="true" 
+				actionListener="#{reservation.onEnableAdvance}"
+				rendered="#{reservation.reservationPermission.advanceEnable}" />
 			<aon:inputText id="ProjectReservation_advance"
 				value="#{reservation.to.advance}" size="8"
 				rendered="#{reservation.reservationPermission.advanceEditable}" />

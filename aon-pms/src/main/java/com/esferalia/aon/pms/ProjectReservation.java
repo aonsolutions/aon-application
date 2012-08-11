@@ -322,11 +322,8 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 
 	@Transient
 	public double getAdvancedAmount() throws ManagerBeanException {
-		if (isAdvanceInvoiced()) {
-			ReservationUtils reservationUtils = new ReservationUtils();
-			return reservationUtils.getReservationAdvancedAmount(getId());
-		}
-		return 0;
+		ReservationUtils reservationUtils = new ReservationUtils();
+		return reservationUtils.getReservationAdvancedAmount(getId());
 	}
 
 	@Transient

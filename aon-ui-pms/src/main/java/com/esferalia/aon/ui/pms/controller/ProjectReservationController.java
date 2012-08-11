@@ -36,7 +36,6 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.form.BasicController;
@@ -415,6 +414,15 @@ public class ProjectReservationController extends BasicController implements IPm
 		}
 	}
 
+	public void onEnableAdvance(ActionEvent event) {
+		ProjectReservation reservation = (ProjectReservation)this.getTo();
+		if (reservation.isAdvanceInvoiced()) {
+			reservation.setAdvanceInvoiced(false);
+			reservation.setAdvance(0);
+			accept(event);
+		}
+	}
+
 	private Tariff obtainReservationTariff(ProjectReservation reservation) {
 		Tariff tariff = null;
 		if (reservation.getBookingHolder() == BookingHolder.AGENCY && reservation.getAgency() != null && reservation.getAgency().getId() != null) {
@@ -652,7 +660,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				finance.setPayMethod(payMethod.getPayment());
 			}
 		}
-		finance.setAmount(CommonUtil.round(reservation.getTotal() - getAdvancedAmount() - getFinancesAmount()));
+		finance.setAmount(CommonUtil.round(reservation.getTotal() - reservation.getAdvancedAmount() - getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -673,20 +681,6 @@ public class ProjectReservationController extends BasicController implements IPm
 			amount += CommonUtil.round(finance.getAmount());
 		}
 		return CommonUtil.round(amount);
-	}
-
-	private double getAdvancedAmount() throws ManagerBeanException {
-		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		if (reservation.isAdvanceInvoiced()) {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), true);
-			Projection projection = Projection.sum(invoiceBean.getFieldName(IEntityAlias.INVOICE_TOTAL));
-			Object total = invoiceBean.getUniqueResult(projection, criteria);
-			return (total != null) ? ((Double)total).doubleValue() : 0;
-		}
-		return 0;
 	}
 
 	public void onInvoice(ActionEvent event) {
@@ -726,7 +720,7 @@ public class ProjectReservationController extends BasicController implements IPm
 
 	public boolean isFinancesAmountOk() throws ManagerBeanException {
 		ProjectReservation reservation = (ProjectReservation)this.getTo();
-		return CommonUtil.round(reservation.getTotal() - getAdvancedAmount() - getFinancesAmount()) == 0;
+		return CommonUtil.round(reservation.getTotal() - reservation.getAdvancedAmount() - getFinancesAmount()) == 0;
 	}
 
 	public boolean isPayMethodOk() {

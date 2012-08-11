@@ -240,6 +240,12 @@ public class ProjectReservationPermission {
 		return roleAllowed && reservation.isActive() && !reservation.isAdvanceInvoiced() && reservation.isGuestHolder();
 	}
 
+	public boolean isAdvanceEnable() throws ManagerBeanException {
+		Date now = new Date();
+		boolean roleAllowed = isRoleAdmin() || (isRoleFinance() && !isAfterCheckOut(now));
+		return roleAllowed && reservation.isActive() && reservation.isAdvanceInvoiced() && (reservation.getAdvancedAmount() < reservation.getTotal());
+	}
+
 	public boolean isSellerEditable() throws ManagerBeanException {
 		boolean roleAllowed = isRoleAdmin();
 		return roleAllowed && reservation.isActive();
