@@ -182,7 +182,7 @@
 												value="#{pmsBundle.pms_room_services}" />
 											<aon:div>
 												<aon:selectManyCheckbox id="ProjectReservationRoom_serviceList" layout="pageDirection" 
-													value="#{controller.linkedServices}"
+													value="#{controller.linkedServices}" ajaxSingle="true"
 													rendered="#{reservation.reservationPermission.reservationRoomServicesEditable}">
 													<f:selectItems value="#{controller.availableServicesList}" />
 												</aon:selectManyCheckbox>
