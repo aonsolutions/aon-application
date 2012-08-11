@@ -338,13 +338,13 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 
 	@Transient
-	public boolean isItemServicesInDetail() {
+	public boolean isAllCommercialProducts() {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
-			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.SERVICE);
-			return invoiceDetailBean.getCount(criteria) > 0;
+			criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.COMMERCIAL_PRODUCT);
+			return (invoiceDetailBean.getCount(criteria) == 0);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining invoiceDetail list", e);
 		}
