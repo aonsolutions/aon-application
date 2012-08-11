@@ -118,7 +118,7 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isShowMoreMenuAllowed() {
-		return !reservation.isCancelled();
+		return !reservation.isCancelled() && !reservation.isCheckOut();
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
@@ -134,7 +134,7 @@ public class ProjectReservationPermission {
 	public boolean isEarlyCheckOutAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isInHouse(now)) || ((isRoleConfig() || isRoleFinance()) && isAfterCheckOut(now));
-		return roleAllowed && reservation.isInvoiced();
+		return roleAllowed && reservation.isInvoiced() && reservation.isCheckIn();
 	}
 
 	public boolean isInvoiceAllowed() throws ManagerBeanException {
