@@ -31,48 +31,48 @@
 					</aon:form>
 				</f:facet>
 				<aon:form id="financeFractionForm">
-				<aon:div styleClass="aon-popupWindow-content">
-					<aon:div style="width:100%">
-						<aon:div styleClass="aon-popupWindow-content-internal">
-							<aon:div style="width:99%">
-								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="financeFraction-accept"
-										value="#{bundle.aon_accept}"
-										reRender="showFinanceSearchWindow,#{fractionReRender}"
-										actionListener="#{paymentCardSettle.onAcceptFraction}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept">
-										<rich:componentControl for="financeFractionModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{paymentCardSettle.showFinanceFractionWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-									<aon:commandButton id="financeFraction-cancel"
-										value="#{bundle.aon_cancel}"
-										reRender="showFinanceFractionWindow"
-										immediate="true"
-										styleClass="aon-finding-toolbar-item aon-icon-cancel">
-										<f:setPropertyActionListener
-											target="#{paymentCardSettle.showFinanceFractionWindow}"
-											value="#{false}" />
-									</aon:commandButton>
-								</aon:div>
-								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
-									
-										<aon:outputLabel for="Finance_payMethod"
-											value="#{configBundle.config_pay_method}" />
-										<aon:selectOneMenu id="fraction-payMethod" 
-											value="#{paymentCardSettle.payMethod}">
-											<f:selectItems value="#{configCollections.payMethods}" />
-										</aon:selectOneMenu>
-
-									</aon:panelGrid>
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="financeFraction-accept"
+											value="#{bundle.aon_accept}"
+											reRender="showFinanceSearchWindow,#{fractionReRender}"
+											actionListener="#{paymentCardSettle.onAcceptFraction}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+											<rich:componentControl for="financeFractionModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{paymentCardSettle.showFinanceFractionWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+										<aon:commandButton id="financeFraction-cancel"
+											value="#{bundle.aon_cancel}"
+											reRender="showFinanceFractionWindow"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+											<f:setPropertyActionListener
+												target="#{paymentCardSettle.showFinanceFractionWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</aon:div>
+									<aon:div style="margin-top: 2em;">
+										<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+										
+											<aon:outputLabel for="Finance_payMethod"
+												value="#{configBundle.config_pay_method}" />
+											<aon:selectOneMenu id="fraction-payMethod" 
+												value="#{paymentCardSettle.payMethod}">
+												<f:selectItems value="#{configCollections.payMethods}" />
+											</aon:selectOneMenu>
+	
+										</aon:panelGrid>
+									</aon:div>
 								</aon:div>
 							</aon:div>
 						</aon:div>
 					</aon:div>
-				</aon:div>
 				</aon:form>
 			</rich:modalPanel>
 		</c:if>

@@ -38,6 +38,52 @@
  
 			<aon:div styleClass="aon-scroll-area">
 			
+				<aon:panel>
+					<aon:outputText value="#{pmsBundle.pms_agency}:" styleClass="aon-bold"/>
+					<aon:outputText styleClass="aon-margin-left"
+						value="#{(paymentCardSettle.agency!=null and paymentCardSettle.agency.id!=null)?(paymentCardSettle.agency.registry.fullName):('-')}"/>
+					
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						rendered="#{paymentCardSettle.payMethod.id!=null}"
+						value="#{configBundle.config_pay_method}:" />
+					<aon:outputText styleClass="aon-margin-left "
+						rendered="#{paymentCardSettle.payMethod.id!=null}"
+						value="#{paymentCardSettle.payMethod.name}"/>
+
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						rendered="#{paymentCardSettle.hotel!=null}"
+						value="#{pmsBundle.pms_hotel}:" />
+					<aon:outputText styleClass="aon-margin-left "
+						rendered="#{paymentCardSettle.hotel!=null}"
+						value="#{paymentCardSettle.hotel.workPlace.description}"/>
+
+					<aon:outputText styleClass="aon-margin-left aon-bold" 
+						rendered="#{not empty paymentCardSettle.reservationId}"
+						value="#{pmsBundle.pms_reservation}:" />
+					<aon:outputText styleClass="aon-margin-left "
+						rendered="#{not empty paymentCardSettle.reservationId}"
+						value="#{paymentCardSettle.reservationId}"/>
+
+					<aon:outputText styleClass="aon-margin-left aon-bold" 
+						rendered="#{not empty paymentCardSettle.reservationCode}"
+						value="#{pmsBundle.pms_reservation_code}:" />
+					<aon:outputText styleClass="aon-margin-left "
+						rendered="#{not empty paymentCardSettle.reservationCode}"
+						value="#{paymentCardSettle.reservationCode}"/>
+
+					<aon:outputText styleClass="aon-margin-left aon-bold" 
+						rendered="#{not empty paymentCardSettle.guestName or not empty paymentCardSettle.guestSurname}"
+						value="#{pmsBundle.pms_guest}:" />
+					<aon:div style="display:inline;">
+						<aon:outputText styleClass="aon-margin-left "
+							rendered="#{not empty paymentCardSettle.guestName}"
+							value="#{paymentCardSettle.guestName}"/>
+						<aon:outputText styleClass="aon-margin-left "
+							rendered="#{not empty paymentCardSettle.guestSurname}"
+							value="#{paymentCardSettle.guestSurname}"/>
+					</aon:div>
+				
+				</aon:panel>
 			
 				<aon:panelTabSet selectedTab="#{paymentCardSettle.selectedTab}">
 	
@@ -57,7 +103,8 @@
 			
 		</aon:form>
 		
-		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalSearch.xhtml">
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/modalSearch.xhtml">
+			<ui:param name="masterController" value="#{paymentCardSettle}" />
 			<ui:param name="controller" value="#{financeList}" />
 			<ui:param name="showType" value="false" />
 			<ui:param name="payMethodSearchList" value="#{configCollections.payMethods}" />

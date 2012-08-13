@@ -16,7 +16,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
@@ -38,6 +36,7 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceListController;
@@ -49,7 +48,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
-import com.esferalia.aon.ui.pms.event.PosFinanceSearchListener;
 
 
 public class PaymentCardSettleController {
@@ -64,7 +62,6 @@ public class PaymentCardSettleController {
 	private ArrayList<AgencyFinance> checks = new ArrayList<AgencyFinance>();
 	
 	private DataModel financeModel;
-	
 	private List<AgencyFinance> financeList;
 	
 	private Customer agency;
@@ -72,6 +69,11 @@ public class PaymentCardSettleController {
 	private Date startDate;
 	private Date endDate;
 	private PayMethod payMethod;
+	private String guestName;
+	private String guestSurname;
+	private Integer reservationId;
+	private String reservationCode;
+	
 	
 	private boolean newBatch;
 	private FinanceBatch financeBatch;
@@ -82,6 +84,30 @@ public class PaymentCardSettleController {
 	private boolean fractioned;
 	
 	
+	public Integer getReservationId() {
+		return reservationId;
+	}
+	public void setReservationId(Integer reservationId) {
+		this.reservationId = reservationId;
+	}
+	public String getReservationCode() {
+		return reservationCode;
+	}
+	public void setReservationCode(String reservationCode) {
+		this.reservationCode = reservationCode;
+	}
+	public String getGuestName() {
+		return guestName;
+	}
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
+	}
+	public String getGuestSurname() {
+		return guestSurname;
+	}
+	public void setGuestSurname(String guestSurname) {
+		this.guestSurname = guestSurname;
+	}
 	public boolean isShowFinanceSearchWindow() {
 		return showFinanceSearchWindow;
 	}
@@ -246,17 +272,17 @@ public class PaymentCardSettleController {
 		return total;
 	}
 	
-	public String getFinanceReservationCode() throws ManagerBeanException{
+	public ProjectReservation getFinanceProjectReservation() throws ManagerBeanException{
 		AgencyFinance af = (AgencyFinance) getFinanceModel().getRowData();
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
-		return ((ProjectReservation)bean.get(af.getFinance().getInvoice().getProject().getId())).getCode();
+		return ((ProjectReservation)bean.get(af.getFinance().getInvoice().getProject().getId()));
 	}
 	
-	public String getFinanceListReservationCode() throws ManagerBeanException{
+	public ProjectReservation getFinanceListProjectReservation() throws ManagerBeanException{
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
 		Finance finance = (Finance) financeList.getModel().getRowData();
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
-		return ((ProjectReservation)bean.get(finance.getInvoice().getProject().getId())).getCode();
+		return ((ProjectReservation)bean.get(finance.getInvoice().getProject().getId()));
 	}
 	
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
@@ -294,7 +320,11 @@ public class PaymentCardSettleController {
 		setFractioned(false);
 		setFinanceModel(null);
 		setFinanceList(null);
-		
+		setGuestName(null);
+		setGuestSurname(null);
+		setPayMethod(null);
+		setReservationId(null);
+		setReservationCode(null);
 	}
 	
 	public void onEditSearch(ActionEvent event) {
@@ -337,7 +367,9 @@ public class PaymentCardSettleController {
 		if(getEndDate()!=null){
 			financeList.getCriteria().addLessThanOrEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_ISSUE_DATE), getEndDate());
 		}
-		
+		if (getPayMethod() != null && getPayMethod().getId() != null) {
+			financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), getPayMethod().getId());
+		}
 		for(AgencyFinance af: getFinanceList()){
 			financeList.getCriteria().addNotEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_ID), af.getFinance().getId());
         }
@@ -345,7 +377,38 @@ public class PaymentCardSettleController {
 		if(getHotel()!=null && getHotel().getWorkPlace().getId()!=null){
 			financeList.getCriteria().addEqualExpression("Finance.invoice<lines.workPlace.id", getHotel().getWorkPlace().getId());
 		}
+		List<Integer> reservationIds =  getProjectReservationIds();
+		if(!reservationIds.isEmpty()){
+			financeList.getCriteria().addInExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_PROJECT_ID), reservationIds);
+		}
+		
 		financeList.onSearch(event);
+	}
+	
+	private List<Integer> getProjectReservationIds() throws ManagerBeanException{
+		List<Integer> list = new LinkedList<Integer>();
+		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);		
+		Criteria criteria = new Criteria();
+		if (getReservationId()!=null) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), getReservationId());
+		}
+		if (StringUtils.isNotEmpty(getReservationCode())) {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE), getReservationCode());
+		}
+		if (StringUtils.isNotEmpty(getGuestName())) {
+			criteria.addExpression(ExpressionUtilities.getLikeExpression("ProjectReservation.guests.name", "%"+getGuestName()+"%"));
+		}
+		if (StringUtils.isNotEmpty(getGuestSurname())) {
+			criteria.addExpression(ExpressionUtilities.getLikeExpression("ProjectReservation.guests.surname", "%"+getGuestSurname()+"%"));
+		}
+		if(!criteria.isEmpty()){
+			list.add(-1);
+			for(ITransferObject to: bean.getList(criteria)){
+				ProjectReservation reservation = (ProjectReservation) to;
+				list.add(reservation.getId());
+			}
+		}
+		return list;
 	}
 	
 	private Criteria getAvailableFinancesCriteria() throws ManagerBeanException {
@@ -408,15 +471,11 @@ public class PaymentCardSettleController {
 				Finance finance = af.getFinance();
 				finance.setAmount(finance.getAmount() - diff);
 				bean.update(finance);
-				
-				String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
-				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+				createFinanceTracking(finance, 1, amount);
 				
 				Finance fraction = createFractionFinance(finance, diff);
 				bean.insert(fraction);
-				
-				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
-				FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+				createFinanceTracking(fraction, 2, amount);
 			}
 		}
 		setFractioned(true);
@@ -442,6 +501,11 @@ public class PaymentCardSettleController {
 		finance.setSecurityLevel(targetFinance.getSecurityLevel());
 		finance.setScope(targetFinance.getScope());
 		return finance;
+	}
+	
+	private void createFinanceTracking(Finance finance, int fractionNum, Double amount){
+		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, fractionNum, 2);
+		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 	}
 	
 	public void onFinanceBatchShow(ActionEvent event) throws ManagerBeanException {
@@ -537,11 +601,6 @@ public class PaymentCardSettleController {
 //			HibernateUtil.setCloseSession(mustCloseSession);
 //			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 //		}
-	}
-	
-	private void createFinanceTracking(Finance finance){
-//		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_PAYMENT_PRINT);
-//		FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.BATCHED, message);
 	}
 	
 	public class AgencyFinance{

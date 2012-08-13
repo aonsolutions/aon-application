@@ -44,11 +44,7 @@
 	<aon:div id="financeDataDiv">
 	
 		<aon:dataTable id="paymentListData" value="#{financeList.model}"
-			var="to" rows="20" rendered="#{financeList.model.rowCount > 0}"
-			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-				aon-editDataTable-numberColumn">				
+			var="to" rows="20" rendered="#{financeList.model.rowCount > 0}">				
 			
 			<aon:column>
 				<f:facet name="header">
@@ -79,32 +75,6 @@
 				<aon:outputText value="#{to.referenceCode}" />
 			</aon:column>
 	
-			<aon:column alias="Finance.concept"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
-				</f:facet>
-				<aon:outputText value="#{to.concept}" />
-			</aon:column>
-	
-<!--  
-			<aon:column alias="Finance.registryName"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText	value="#{(finance.payment) ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
-				</f:facet>
-				<aon:outputText value="#{to.registryName}" />
-			</aon:column>
-	
-			<aon:column alias="Finance.registryDocument"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_company_document}" />
-				</f:facet>
-				<aon:outputText value="#{to.registryDocument}" />
-			</aon:column>
--->
-	
 			<aon:column alias="Finance.invoice.project.id"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
@@ -114,13 +84,55 @@
 					value="#{to.invoice.project.id}" />
 			</aon:column>
 
-			<aon:column alias="Finance.invoice.project.code"
+			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{pmsBundle.pms_reservation_code}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.invoice.service}"
-					value="#{paymentCardSettle.financeListReservationCode}" />
+					value="#{paymentCardSettle.financeListProjectReservation.code}" />
+			</aon:column>
+	
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_hotel}" />
+				</f:facet>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{paymentCardSettle.financeListProjectReservation.hotelReservation.workPlace.description}" />
+			</aon:column>
+			
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_guest}" />
+				</f:facet>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{paymentCardSettle.financeListProjectReservation.guestFullName}" />
+			</aon:column>
+			
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_checkIn}" />
+				</f:facet>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{paymentCardSettle.financeListProjectReservation.startDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+	
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_checkOut}" />
+				</f:facet>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{paymentCardSettle.financeListProjectReservation.endDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
 			</aon:column>
 			
 			<aon:column alias="Finance.financeStatus"
@@ -136,6 +148,7 @@
 			-->
 			</aon:column>
 	
+<!--  
 			<aon:column alias="Finance.payMethod.name"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
@@ -143,6 +156,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.payMethod.name}" />
 			</aon:column>
+-->
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
