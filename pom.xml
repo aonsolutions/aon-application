@@ -98,6 +98,7 @@
 		<module>aon-tas</module>
 		<module>aon.test.entity</module>
 		<module>aon-pms</module>
+		<module>aon-academy</module>    
 
 		<!-- UI MODULES -->
     <module>aon-ui-academy</module>

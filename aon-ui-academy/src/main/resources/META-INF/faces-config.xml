@@ -1,5 +1,4 @@
-<faces-config version="1.2"
-	xmlns="http://java.sun.com/xml/ns/javaee"
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
@@ -7,7 +6,200 @@
 		<resource-bundle>
 			<base-name>com.code.aon.ui.academy.i18n.messages</base-name>
 			<var>academyBundle</var>
-		</resource-bundle>				
+		</resource-bundle>
 	</application>
+
+	<!-- ************* ACADEMIC YEARS ***************** -->
+	<managed-bean>
+		<managed-bean-name>academicYear</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AcademicYear</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>academicYear</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AcademicYear_description</value>
+		</managed-property>						
+	</managed-bean>
+	
+	<!-- ************* COURSE SUBJECTS ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseSubject</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseSubject</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseSubject</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseSubject_description</value>
+		</managed-property>								
+	</managed-bean>
+	
+	<!-- ************* COURSE LEVELS ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseLevel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseLevel_description</value>
+		</managed-property>								
+	</managed-bean>
+	
+	<!-- ************* ACADEMIC SKILL ***************** -->
+	<managed-bean>
+		<managed-bean-name>academicSkill</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AcademicSkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>academicSkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AcademicSkill_code</value>
+		</managed-property>										
+	</managed-bean>
+
+	<!-- ************* QUALIFICATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>qualification</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Qualification</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>qualification</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Qualification_code</value>
+		</managed-property>										
+	</managed-bean>
+
+	<!-- ************* OBSERVATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>observation</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Observation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>observation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Observation_description</value>
+		</managed-property>										
+	</managed-bean>
+	
+	<!-- ************* QUALITY SKILL ***************** -->
+	<managed-bean>
+		<managed-bean-name>qualitySkill</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.QualitySkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>qualitySkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>QualitySkill_code</value>
+		</managed-property>										
+	</managed-bean>	
+	
+	<!-- ======================= NAVIGATION ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>academicYear_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/academicYear/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>courseSubject_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/courseSubject/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>courseLevel_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/courseLevel/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>academicSkill_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/academicSkill/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>qualification_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/qualification/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>observation_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/observation/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>qualitySkill_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/qualitySkill/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>
