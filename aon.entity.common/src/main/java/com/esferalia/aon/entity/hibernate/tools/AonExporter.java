@@ -158,6 +158,17 @@ public class AonExporter extends GenericExporter{
 
 	static {
 		map = new HashMap<String, String>();
+
+		// AON ACADEMY
+		map.put("AcademicYear","com.code.aon.academy.AcademicYear");		
+		map.put("CourseSubject","com.code.aon.academy.CourseSubject");
+		map.put("CourseLevel","com.code.aon.academy.CourseLevel");
+		map.put("AcademicSkill","com.code.aon.academy.AcademicSkill");
+		map.put("Qualification","com.code.aon.academy.Qualification");
+		map.put("Observation","com.code.aon.academy.Observation");
+		map.put("QualitySkill","com.code.aon.academy.QualitySkill");
+		map.put("AcademicYear","com.code.aon.academy.AcademicYear");
+		
 		// AON ACCOUNT
 		map.put("Account","com.code.aon.account.Account");
 		
