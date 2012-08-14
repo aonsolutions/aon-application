@@ -75,6 +75,7 @@ public class PaymentCardSettleController {
 	private String reservationCode;
 	
 	
+	private PayMethod fractionPayMethod;
 	private boolean newBatch;
 	private FinanceBatch financeBatch;
 	
@@ -84,6 +85,13 @@ public class PaymentCardSettleController {
 	private boolean fractioned;
 	
 	
+	
+	public PayMethod getFractionPayMethod() {
+		return fractionPayMethod;
+	}
+	public void setFractionPayMethod(PayMethod fractionPayMethod) {
+		this.fractionPayMethod = fractionPayMethod;
+	}
 	public Integer getReservationId() {
 		return reservationId;
 	}
@@ -173,7 +181,6 @@ public class PaymentCardSettleController {
 		return endDate;
 	}
 	public void setEndDate(Date endDate) {
-//		this.endDate = DateUtils. addMilliseconds(endDate, 24*60*60*1000 - 1000);
 		this.endDate = endDate;
 	}
 	
@@ -241,7 +248,6 @@ public class PaymentCardSettleController {
 	
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
 		for (AgencyFinance af : getFinanceList()) {
-//			Finance detail = (Finance)ito;
 			if (!checks.contains(af)) {
 				checks.add( af );
 			}
@@ -286,7 +292,6 @@ public class PaymentCardSettleController {
 	}
 	
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
-//		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), false);
@@ -309,13 +314,6 @@ public class PaymentCardSettleController {
 		return fBatchList;
 	}
 	
-	public void onExecuteReport(){
-//		ReportManager report = (ReportManager) AonUtil.getRegisteredBean("report");
-//		report.onExecute();
-//		batchFinances();
-//		clearCheckedFinances();
-	}
-	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
 		setFractioned(false);
 		setFinanceModel(null);
@@ -333,8 +331,8 @@ public class PaymentCardSettleController {
 			onInit(event);
 			onEditSearchFinance(event);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error searching finances";
+			LOGGER.error(msg);
 		}
 	}
 
@@ -343,11 +341,10 @@ public class PaymentCardSettleController {
 		try {
 			onSearchFinance(event);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error searching finances";
+			LOGGER.error(msg);
 		}
 	}
-	
 	
 	public void onEditSearchFinance(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
@@ -357,7 +354,6 @@ public class PaymentCardSettleController {
 
 	public void onSearchFinance(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
-		financeList.clearCriteria();
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getAgency().getId());
 		
@@ -444,19 +440,27 @@ public class PaymentCardSettleController {
         financeList.clearCheckedFinances();
 	}
 	
-	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
-		for(AgencyFinance af: getCheckedFinances()){
-			getFinanceList().remove(af);
-		}
+	public void onRemoveAllSelected(ActionEvent event) throws ManagerBeanException {
+		getFinanceList().clear();
 		clearCheckedFinances();
-		onSearchFinance(event);
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
+		financeList.clearCriteria();
+		onSearchFinance(event);
+		financeList.clearCheckedFinances();
+	}
+
+	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
+		AgencyFinance af = (AgencyFinance) getFinanceModel().getRowData();
+		getFinanceList().remove(af);
+		clearCheckedFinances();
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
+		financeList.clearCriteria();
+		onSearchFinance(event);
 		financeList.clearCheckedFinances();
 	}
 
 	public void searchFinanceList(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
-//		financeList.onEditSearch(event);
         financeList.setCriteria(getAvailableFinancesCriteria());
         financeList.onSearch(event);
         financeList.clearCheckedFinances();
@@ -565,42 +569,6 @@ public class PaymentCardSettleController {
 			BasicController controller = (BasicController)AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_BATCH_CONTROLLER_NAME);
 			controller.onLoad(event, getFinanceBatch().getId(), "paymentCardSettle_list", "paymentCardSettle" + ".onSearch");
 		}
-	}
-
-	private void batchFinances() {
-//		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-//		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-//		String sessionName = HibernateUtil.getSessionFactoryName(FinancePaymentPrintController.class.getName());
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(Finance.class);
-//
-//			HibernateUtil.setBeginTransaction(false);
-//			HibernateUtil.setCloseSession(false);
-//			HibernateUtil.beginTransaction(sessionName);
-//
-//			for(Finance finance: getCheckedFinances()){
-//				finance.setFinanceStatus(FinanceStatus.BATCHED);
-//				bean.update(finance);
-//				createFinanceTracking(finance);
-//			}
-//
-//			HibernateUtil.getSession(sessionName).flush();
-//			HibernateUtil.commitTransaction(sessionName);
-//		} catch (Exception e) {
-//			try {
-//				HibernateUtil.rollbackTransaction(sessionName);
-//			} catch (DAOException daoe) {
-//				String msg =  "Unable to rollback transaction!";
-//				throw new AbortProcessingException(msg);
-//			}
-//			String msg =  "Error batching finance. " + e.getMessage();
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
-//		} finally {
-//			HibernateUtil.closeSession(sessionName);
-//			HibernateUtil.setCloseSession(mustCloseSession);
-//			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-//		}
 	}
 	
 	public class AgencyFinance{

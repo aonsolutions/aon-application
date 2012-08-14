@@ -91,11 +91,13 @@
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listSelected.xhtml" />
 					</aon:panelTab>
 					
+					<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
+						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
+					</aon:panelTab>
+					<!--  
 					<c:if test="#{!paymentCardSettle.fractioned}">
-						<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
-							<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
-						</aon:panelTab>
 					</c:if>
+					-->
 	
 				</aon:panelTabSet>
 			</aon:div>

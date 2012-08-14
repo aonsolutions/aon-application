@@ -8,38 +8,21 @@
 
 	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar"
 		rendered="#{paymentCardSettle.financeModel.rowCount > 0}">
-		<aon:commandButton title="#{bundle.aon_check_all}"
-			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
-			value="#{bundle.aon_check_all}"
-			rendered="#{!paymentCardSettle.fractioned}"
-			actionListener="#{paymentCardSettle.checkAll}" reRender="paymentCardSettleList"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
-		<aon:commandButton title="#{bundle.aon_uncheck_all}"
-			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
-			value="#{bundle.aon_uncheck_all}"
-			rendered="#{!paymentCardSettle.fractioned}"
-			actionListener="#{paymentCardSettle.checkNone}" reRender="paymentCardSettleList"
-			onclick="Richfaces.showModalPanel('waitProccess')" 
-     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-     	<aon:commandButton title="Excluir"
+     	<aon:commandButton title="#{pmsBundle.pms_exclude} #{bundle.aon_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
-			value="Excluir"
-			rendered="#{paymentCardSettle.selectedTab == 'tab1' and paymentCardSettle.checkedCount > 0}"
-			actionListener="#{paymentCardSettle.onRemoveSelected}" reRender="paymentCardSettleList"
+			value="#{pmsBundle.pms_exclude} #{bundle.aon_all}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
+			actionListener="#{paymentCardSettle.onRemoveAllSelected}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-     	
-     	<aon:commandButton title="#{financeBundle.finance_to_fraction} diferencias"
+     	<aon:commandButton title="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
 			styleClass="aon-finding-toolbar-item aon-icon-fraction"
-			value="#{financeBundle.finance_to_fraction} diferencias"
+			value="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
 			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and !paymentCardSettle.fractioned and paymentCardSettle.totalDifferenceAmount>0}"
 			reRender="showFinanceFractionWindow">
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceFractionWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-		
-		
 		<aon:commandButton title="#{financeBundle.finance_add_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{financeBundle.finance_to_batch}"
@@ -49,23 +32,14 @@
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceBatchWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-			
 	</aon:div>
  
 	<aon:div id="paymentCardSettleDataDiv">
 	
 		<aon:dataTable id="paymentCardSettleData" value="#{paymentCardSettle.financeModel}"
-			var="to" rows="0" rendered="#{paymentCardSettle.financeModel.rowCount > 0}" >				
+			var="to" rows="0" rendered="#{paymentCardSettle.financeModel.rowCount > 0}" >
 			
-			<aon:column rendered="#{!paymentCardSettle.fractioned}">
-				<f:facet name="header">
-					<aon:outputText value="#{paymentCardSettle.checkedCount}" />
-				</f:facet>
-				<aon:selectBooleanCheckbox id="Included_Row_checked"
-					value="#{paymentCardSettle.rowChecked}"
-					valueChangeListener="#{paymentCardSettle.rowSelected}"
-					reRender="paymentCardSettleList" />	
-			</aon:column>
+			<aon:rowSelector toggleOnClick="#{false}" immediate="#{true}" />				
 	
 			<aon:column alias="Finance.dueDate"
 				styleClass="aon-editDataTable-textColumn">
@@ -157,15 +131,6 @@
 				</f:facet>
 			</aon:column>
 	
-<!--  
-			<aon:column alias="Finance.payMethod.name"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
-				</f:facet>
-				<aon:outputText value="#{to.finance.payMethod.name}" />
-			</aon:column>
--->	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_total}" />
@@ -182,20 +147,25 @@
 				</f:facet>
 			</aon:column>
 	
-			<aon:column styleClass="aon-editDataTable-numberColumn"
-				rendered="#{!paymentCardSettle.fractioned}">
+			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="importe agencia" />
+					<aon:outputText value="#{bundle.aon_amount} #{pmsBundle.pms_agency}" />
 				</f:facet>
-				<aon:inputText value="#{to.amount}" >
+				<aon:inputText value="#{to.amount}" size="10" >
 					<a4j:support event="onblur" reRender="paymentCardSettleToolBarDiv, paymentCardSettleDataDiv" />
 				</aon:inputText>
+				<f:facet name="footer">
+					<aon:div style="float:right">
+						<aon:outputText style="text-align:right" value="#{paymentCardSettle.totalFinanceAmount - paymentCardSettle.totalDifferenceAmount}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</aon:div>
+				</f:facet>
 			</aon:column>
 	
-			<aon:column styleClass="aon-editDataTable-numberColumn"
-				rendered="#{!paymentCardSettle.fractioned}">
+			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
-					<aon:outputText value="diferencia" />
+					<aon:outputText value="#{pmsBundle.pms_difference}" />
 				</f:facet>
 				<aon:outputText value="#{ (empty to.amount)?(''):(to.finance.totalAmount - to.amount)}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -207,6 +177,18 @@
 						</aon:outputText>
 					</aon:div>
 				</f:facet>
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-iconColumn" >
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:commandButton
+					id="remove-button" title="#{pmsBundle.pms_exclude}"
+					immediate="true"  
+					reRender="paymentCardSettleList"
+					actionListener="#{paymentCardSettle.onRemoveSelected}"
+					styleClass="aon-editDataTable-button aon-icon-delete" />	
 			</aon:column>
 	
 		</aon:dataTable>	

@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showFinanceSearchWindow">
 		<c:if test="#{financeList.showFinanceSearchWindow}">
-			<rich:modalPanel id="financeSearchModalPanel" minHeight="280"
+			<rich:modalPanel id="financeSearchModalPanel" minHeight="400"
 				minWidth="580" rendered="#{financeList.showFinanceSearchWindow}"
 				showWhenRendered="true" zindex="100">
 				<f:facet name="header">
@@ -36,6 +36,10 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="clear-button"
+										value="#{bundle.aon_clear}"
+										type="reset" ajaxSingle="true"
+										styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 									<aon:commandButton id="financeSearch-search"
 										value="#{bundle.aon_search}"
 										reRender="showFinanceSearchWindow,#{searchReRender}"
@@ -46,6 +50,7 @@
 										<f:setPropertyActionListener
 											target="#{financeList.showFinanceSearchWindow}"
 											value="#{false}" />
+										<aon:actionHotKey key="return" />
 									</aon:commandButton>
 									<aon:commandButton id="financeSearch-cancel"
 										value="#{bundle.aon_cancel}"
@@ -58,85 +63,100 @@
 									</aon:commandButton>
 								</aon:div>
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
-
-										<c:if test="#{showType}">
-											<aon:outputLabel for="Finance_payment"
-												value="#{bundle.aon_type}" />
-											<aon:selectOneRadio id="Finance_payment"
-												valueChangeListener="#{controller.addExpression}">
-												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="false" />
-												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="true" />
-											</aon:selectOneRadio>				
-										</c:if>
-
-										<aon:outputLabel for="Finance_amount"
-											value="#{bundle.aon_amount}" />
-										<aon:inputText id="Finance_amount"
-											valueChangeListener="#{controller.addExpression}"
-											size="15">
-										</aon:inputText>
-
-										<!--  
-										<aon:outputLabel for="Finance_registryName" 
-											value="#{financeBundle.finance_debtor} / #{financeBundle.finance_creditor}" />
-										<aon:inputText id="Finance_registryName"
-											onblur="toUpperCase(this);"
-											valueChangeListener="#{controller.addExpression}"
-											size="45">
-										</aon:inputText>
-
-										<aon:outputLabel for="Finance_concept" 
-											value="#{financeBundle.finance_invoice_document_number}" />
-										<aon:inputText id="Finance_concept"
-											onblur="toUpperCase(this);"
-											valueChangeListener="#{controller.addExpression}"
-											size="30">
-										</aon:inputText>
-										-->
-
-										<aon:outputLabel 
-											value="#{financeBundle.finance_finance_date_abbrv}" />
-										<aon:div>
-											<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
-												value="#{bundle.aon_date_from}:" />
-											<aon:selectInputDate id="Finance_dueDate-From"
-												valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}">
-											</aon:selectInputDate>
-
-											<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label aon-padding-right"
-												value="#{bundle.aon_date_to}:" />
-											<aon:selectInputDate id="Finance_dueDate-To"
-												valueChangeListener="#{controller.addLessThanOrEqualExpression}"
-												timeZone="#{timeZoneController.timeZone}"
-												popupDateFormat="#{bundle.aon_date_pattern}">
-											</aon:selectInputDate>
-										</aon:div>
-
-										<!--  
-										<aon:outputLabel for="Finance_payMethod_id"
-											value="#{configBundle.config_pay_method}" />
-										<aon:selectOneMenu id="Finance_payMethod_id"
-											value="#{configCollections.payMethod}"
-											valueChangeListener="#{controller.addIdEqualExpression}">
-											<f:selectItem itemLabel="-" value="#{null}"/>
-											<f:selectItems value="#{payMethodSearchList}" />
-										</aon:selectOneMenu>
-
-										<c:if test="#{aonRole.confidentiality}">
-											<aon:outputLabel for="Finance_securityLevel"
-												value="#{bundle.aon_confidential}" />
-											<aon:selectOneRadio id="Finance_securityLevel"
-												valueChangeListener="#{controller.addExpression}">
-												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
-												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
-											</aon:selectOneRadio>				
-										</c:if>
-										-->
-
-									</aon:panelGrid>
+								
+									<aon:panel label="#{financeBundle.finance_finance}">
+										<f:facet name="header">
+											<aon:outputText value="#{financeBundle.finance_finance}" />
+										</f:facet>
+										<aon:panelGrid columns="2" >
+											
+											<aon:outputLabel for="Finance_hotel" 
+												value="#{pmsBundle.pms_hotel}" />
+											<aon:selectOneMenu id="Finance_hotel" 
+												value="#{paymentCardSettle.hotel}" >
+												<f:selectItem itemLabel=" - " itemValue="#{null}" />
+												<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+											</aon:selectOneMenu>
+											
+											<aon:outputLabel for="Finance_concept" 
+												value="#{financeBundle.finance_invoice_document_number}" />
+											<aon:inputText id="Finance_concept"
+												onblur="toUpperCase(this);"
+												valueChangeListener="#{controller.addExpression}"
+												size="30">
+											</aon:inputText>
+											
+											<aon:outputLabel 
+													value="#{financeBundle.finance_finance_date_abbrv}" />
+											<aon:div>
+												<aon:outputLabel for="Finance_invoice_issueDate_from"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
+												<aon:selectInputDate id="Finance_invoice_issueDate_from"
+													value="#{paymentCardSettle.startDate}" 
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+												<aon:outputLabel for="Finance_invoice_issueDate_to"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
+												<aon:selectInputDate id="Finance_invoice_issueDate_to"
+													value="#{paymentCardSettle.endDate}" 
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+											</aon:div>
+											
+											<aon:outputLabel for="Finance_amount"
+												value="#{bundle.aon_amount}" />
+											<aon:inputText id="Finance_amount"
+												valueChangeListener="#{controller.addExpression}"
+												size="15">
+											</aon:inputText>
+											
+											<aon:outputLabel for="Finance_payMethod_id"
+												value="#{configBundle.config_pay_method}" />
+											<aon:selectOneMenu id="Finance_payMethod_id" 
+												value="#{paymentCardSettle.payMethod}">
+												<f:selectItem itemLabel="-" value="#{null}"/>
+												<f:selectItems value="#{configCollections.payMethods}" />
+											</aon:selectOneMenu>
+									
+										</aon:panelGrid>
+									</aon:panel>
+									
+									<aon:panel label="#{pmsBundle.pms_reservation}">
+										<f:facet name="header">
+											<aon:outputText value="#{pmsBundle.pms_reservation}" />
+										</f:facet>
+										<aon:panelGrid columns="2" >
+											
+											<aon:outputLabel for="ProjectReservation_project_id" 
+												value="#{pmsBundle.pms_reservation_id}" />
+											<aon:inputText id="ProjectReservation_project_id"
+												value="#{paymentCardSettle.reservationId}"
+												size="20" />
+										
+											<aon:outputLabel for="ProjectReservation_code" 
+												value="#{pmsBundle.pms_reservation_code}" />
+											<aon:inputText id="ProjectReservation_code"
+												value="#{paymentCardSettle.reservationCode}"
+												size="20" />
+												
+											<aon:outputLabel value="#{pmsBundle.pms_guest}" />
+											<aon:div>
+												<aon:outputLabel for="ProjectReservation_guestName"
+													styleClass="aon-italic aon-margin-right" value="#{bundle.aon_name}" />
+												<aon:inputText id="ProjectReservation_guestName"
+													value="#{paymentCardSettle.guestName}"
+													size="14" />
+												<aon:outputLabel for="ProjectReservation_guestSurname"
+													styleClass="aon-italic aon-margin-left aon-margin-right" value="#{bundle.aon_surname}" />
+												<aon:inputText id="ProjectReservation_guestSurname"
+													value="#{paymentCardSettle.guestSurname}"
+													size="20" />
+											</aon:div>
+											
+										</aon:panelGrid>
+									</aon:panel>	
+								
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>

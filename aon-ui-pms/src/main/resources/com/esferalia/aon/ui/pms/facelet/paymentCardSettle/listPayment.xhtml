@@ -32,9 +32,9 @@
 				value="#{true}" />
 		</aon:commandButton>
 
-		<aon:commandButton title="Incluir"
+		<aon:commandButton title="#{pmsBundle.pms_include}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
-			value="Incluir"
+			value="#{pmsBundle.pms_include}"
 			rendered="#{financeList.checkedCount > 0}"
 			actionListener="#{paymentCardSettle.onAddSelected}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -44,7 +44,9 @@
 	<aon:div id="financeDataDiv">
 	
 		<aon:dataTable id="paymentListData" value="#{financeList.model}"
-			var="to" rows="20" rendered="#{financeList.model.rowCount > 0}">				
+			var="to" rows="20" rendered="#{financeList.model.rowCount > 0}">
+			
+			<aon:rowSelector toggleOnClick="#{false}" immediate="#{true}" />				
 			
 			<aon:column>
 				<f:facet name="header">
@@ -53,7 +55,7 @@
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
 					value="#{financeList.rowChecked}"
 					valueChangeListener="#{financeList.rowSelected}"
-					reRender="paymentCardSettleList" />	
+					reRender="financeToolBarDiv, financeDataDiv" />	
 			</aon:column>
 	
 			<aon:column alias="Finance.dueDate"
@@ -141,22 +143,7 @@
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.financeStatus}" />
-			<!--  
-				<f:facet name="footer">
-					<aon:outputText value="#{financeBundle.finance_total_amount}" />
-				</f:facet>
-			-->
 			</aon:column>
-	
-<!--  
-			<aon:column alias="Finance.payMethod.name"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{configBundle.config_pay_method}" />
-				</f:facet>
-				<aon:outputText value="#{to.payMethod.name}" />
-			</aon:column>
--->
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">
@@ -165,15 +152,6 @@
 				<aon:outputText value="#{to.totalAmount}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<!--  
-				<f:facet name="footer">
-					<aon:div style="float:right">
-						<aon:outputText style="text-align:right" value="#{finance.totalFinanceAmount}" >
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</aon:div>
-				</f:facet>
-				-->
 			</aon:column>
 	
 		</aon:dataTable>	
