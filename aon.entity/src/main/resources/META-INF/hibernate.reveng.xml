@@ -23,19 +23,10 @@
 	<!--  **************** -->
 	<!--  TABLAS DE ACADEMY -->
 	<!--  **************** -->
-	<table-filter match-name="absence" exclude="true" />
 	<table-filter match-name="alumn_loan" exclude="true" />
-	<table-filter match-name="course" exclude="true" />
-	<table-filter match-name="course_academicskill" exclude="true" />
-	<table-filter match-name="course_alumn" exclude="true" />
-	<table-filter match-name="course_evaluation" exclude="true" />
-	<table-filter match-name="course_instructor" exclude="true" />
-	<table-filter match-name="course_observation" exclude="true" />
-	<table-filter match-name="course_schedule" exclude="true" />
 	<table-filter match-name="customer_segment" exclude="true" />
 	<table-filter match-name="evaluation_observation" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
-	<table-filter match-name="mark" exclude="true" />
 
 	<!--  **************** -->
 	<!--  TABLAS DE ECOMMERCE -->
@@ -394,6 +385,18 @@
 		<column name="salary_type" type="com.esferalia.aon.salary.enumeration.SalaryType"/>
 		<column name="month" type="com.code.aon.common.enumeration.Month"/>
 		<column name="description_decorable" type="boolean" />
+	</table>
+
+	<table name="course">
+		<column name="status" type="com.code.aon.academy.enumeration.CourseStatus" />
+	</table>
+
+	<table name="course_alumn">
+		<column name="status" type="com.code.aon.academy.enumeration.CourseAlumnStatus" />
+	</table>
+	
+	<table name="course_instructor">
+		<column name="type" type="com.code.aon.academy.enumeration.InstructorType" />
 	</table>
 
 	<table name="creditor">
