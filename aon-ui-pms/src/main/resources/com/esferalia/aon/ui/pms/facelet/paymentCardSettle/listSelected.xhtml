@@ -18,7 +18,7 @@
      	<aon:commandButton title="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
 			styleClass="aon-finding-toolbar-item aon-icon-fraction"
 			value="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
-			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and !paymentCardSettle.fractioned and paymentCardSettle.totalDifferenceAmount>0}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and paymentCardSettle.totalDifferenceAmount>0}"
 			reRender="showFinanceFractionWindow">
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceFractionWindow}"
 				value="#{true}" />
@@ -26,7 +26,7 @@
 		<aon:commandButton title="#{financeBundle.finance_add_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{financeBundle.finance_to_batch}"
-			rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and paymentCardSettle.totalDifferenceAmount == 0}"
 			actionListener="#{paymentCardSettle.onFinanceBatchShow}" 
 			reRender="showFinanceBatchWindow">
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceBatchWindow}"
@@ -140,7 +140,7 @@
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:div style="float:right">
-						<aon:outputText style="text-align:right" value="#{paymentCardSettle.totalFinanceAmount}" >
+						<aon:outputText id="finance_total_amount" style="text-align:right" value="#{paymentCardSettle.totalFinanceAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:div>
@@ -152,11 +152,12 @@
 					<aon:outputText value="#{bundle.aon_amount} #{pmsBundle.pms_agency}" />
 				</f:facet>
 				<aon:inputText value="#{to.amount}" size="10" >
-					<a4j:support event="onblur" reRender="paymentCardSettleToolBarDiv, paymentCardSettleDataDiv" />
+					<a4j:support event="onblur" reRender="paymentCardSettleToolBarDiv, agency_total_amount, difference_total_amount, difference_amount" />
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:div style="float:right">
-						<aon:outputText style="text-align:right" value="#{paymentCardSettle.totalFinanceAmount - paymentCardSettle.totalDifferenceAmount}" >
+						<aon:outputText id="agency_total_amount" 
+							style="text-align:right" value="#{paymentCardSettle.totalFinanceAmount - paymentCardSettle.totalDifferenceAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:div>
@@ -167,12 +168,12 @@
 				<f:facet name="header">
 					<aon:outputText value="#{pmsBundle.pms_difference}" />
 				</f:facet>
-				<aon:outputText value="#{ (empty to.amount)?(''):(to.finance.totalAmount - to.amount)}">
+				<aon:outputText id="difference_amount" value="#{ (empty to.amount)?(''):(to.finance.totalAmount - to.amount)}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:div style="float:right">
-						<aon:outputText style="text-align:right" value="#{paymentCardSettle.totalDifferenceAmount}" >
+						<aon:outputText id="difference_total_amount" style="text-align:right" value="#{paymentCardSettle.totalDifferenceAmount}" >
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:div>

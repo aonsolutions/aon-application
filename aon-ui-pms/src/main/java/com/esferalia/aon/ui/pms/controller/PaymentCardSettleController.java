@@ -82,8 +82,6 @@ public class PaymentCardSettleController {
 	private boolean showFinanceSearchWindow;
 	private boolean showFinanceFractionWindow;
 	private boolean showFinanceBatchWindow;
-	private boolean fractioned;
-	
 	
 	
 	public PayMethod getFractionPayMethod() {
@@ -127,12 +125,6 @@ public class PaymentCardSettleController {
 	}
 	public void setShowFinanceBatchWindow(boolean showFinanceBatchWindow) {
 		this.showFinanceBatchWindow = showFinanceBatchWindow;
-	}
-	public boolean isFractioned() {
-		return fractioned;
-	}
-	public void setFractioned(boolean fractioned) {
-		this.fractioned = fractioned;
 	}
 	public boolean isShowFinanceFractionWindow() {
 		return showFinanceFractionWindow;
@@ -315,7 +307,6 @@ public class PaymentCardSettleController {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
-		setFractioned(false);
 		setFinanceModel(null);
 		setFinanceList(null);
 		setGuestName(null);
@@ -482,7 +473,6 @@ public class PaymentCardSettleController {
 				createFinanceTracking(fraction, 2, amount);
 			}
 		}
-		setFractioned(true);
 	}
 	
 	private Finance createFractionFinance(Finance targetFinance, Double amount) {
@@ -565,7 +555,6 @@ public class PaymentCardSettleController {
 	
 	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
 		if (getFinanceBatch() != null && getFinanceBatch().getId() != null) {
-			onInit(event);
 			BasicController controller = (BasicController)AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_BATCH_CONTROLLER_NAME);
 			controller.onLoad(event, getFinanceBatch().getId(), "paymentCardSettle_list", "paymentCardSettle" + ".onSearch");
 		}

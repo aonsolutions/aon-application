@@ -10,18 +10,6 @@
 	<ui:define name="content">
 		<aon:form id="paymentCardSettleList">
 
-			<!--  
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
-				<ui:param name="controller" value="#{paymentCardSettle}" />
-				<ui:param name="skipResetButton" value="true" />
-				
-				<ui:define name="additionalToolbarContent">
-				
-				</ui:define>
-				
-			</ui:decorate>
-			-->
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_paymentCardSettle_module}" />
 				
@@ -94,10 +82,6 @@
 					<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
 					</aon:panelTab>
-					<!--  
-					<c:if test="#{!paymentCardSettle.fractioned}">
-					</c:if>
-					-->
 	
 				</aon:panelTabSet>
 			</aon:div>
