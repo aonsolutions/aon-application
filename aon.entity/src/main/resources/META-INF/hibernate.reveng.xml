@@ -395,6 +395,8 @@
 		<column name="status" type="com.code.aon.academy.enumeration.CourseAlumnStatus" />
 	</table>
 	
+	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill" />
+	
 	<table name="course_instructor">
 		<column name="type" type="com.code.aon.academy.enumeration.InstructorType" />
 	</table>
