@@ -37,7 +37,30 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Course_code,Course_startDate</value>
+			<value>Course_code,Course_startDate desc</value>
+		</managed-property>								
+	</managed-bean>
+
+	<!-- ************* ALUMN LOAN ***************** -->
+	<managed-bean>
+		<managed-bean-name>alumnLoan</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AlumnLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>alumnLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AlumnLoan_endDate desc,AlumnLoan_material,AlumnLoan_id</value>
 		</managed-property>								
 	</managed-bean>
 
@@ -250,4 +273,20 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Alumn Loan ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>alumnLoan_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/alumnLoan/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>alumnLoan_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/alumnLoan/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>alumnLoan_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/alumnLoan/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	  
 </faces-config>
