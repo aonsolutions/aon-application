@@ -160,14 +160,22 @@ public class AonExporter extends GenericExporter{
 		map = new HashMap<String, String>();
 
 		// AON ACADEMY
-		map.put("AcademicYear","com.code.aon.academy.AcademicYear");		
-		map.put("CourseSubject","com.code.aon.academy.CourseSubject");
-		map.put("CourseLevel","com.code.aon.academy.CourseLevel");
+		map.put("Absence","com.code.aon.academy.Absence");
 		map.put("AcademicSkill","com.code.aon.academy.AcademicSkill");
-		map.put("Qualification","com.code.aon.academy.Qualification");
+		map.put("AcademicYear","com.code.aon.academy.AcademicYear");	
+		map.put("Course","com.code.aon.academy.Course");
+		map.put("CourseAcademicSkill","com.code.aon.academy.CourseAcademicSkill");
+		map.put("CourseAlumn","com.code.aon.academy.CourseAlumn");
+		map.put("CourseEvaluation","com.code.aon.academy.CourseEvaluation");
+		map.put("CourseInstructor","com.code.aon.academy.CourseInstructor");
+		map.put("CourseLevel","com.code.aon.academy.CourseLevel");		
+		map.put("CourseObservation","com.code.aon.academy.CourseObservation");
+		map.put("CourseSchedule","com.code.aon.academy.CourseSchedule");
+		map.put("CourseSubject","com.code.aon.academy.CourseSubject");
+		map.put("Mark","com.code.aon.academy.Mark");
 		map.put("Observation","com.code.aon.academy.Observation");
+		map.put("Qualification","com.code.aon.academy.Qualification");
 		map.put("QualitySkill","com.code.aon.academy.QualitySkill");
-		map.put("AcademicYear","com.code.aon.academy.AcademicYear");
 		
 		// AON ACCOUNT
 		map.put("Account","com.code.aon.account.Account");
