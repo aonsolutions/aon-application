@@ -161,6 +161,7 @@ public class AonExporter extends GenericExporter{
 
 		// AON ACADEMY
 		map.put("Absence","com.code.aon.academy.Absence");
+		map.put("AlumnLoan","com.code.aon.academy.AlumnLoan");
 		map.put("AcademicSkill","com.code.aon.academy.AcademicSkill");
 		map.put("AcademicYear","com.code.aon.academy.AcademicYear");	
 		map.put("Course","com.code.aon.academy.Course");
@@ -172,6 +173,7 @@ public class AonExporter extends GenericExporter{
 		map.put("CourseObservation","com.code.aon.academy.CourseObservation");
 		map.put("CourseSchedule","com.code.aon.academy.CourseSchedule");
 		map.put("CourseSubject","com.code.aon.academy.CourseSubject");
+		map.put("EvaluationObservation","com.code.aon.academy.EvaluationObservation");
 		map.put("Mark","com.code.aon.academy.Mark");
 		map.put("Observation","com.code.aon.academy.Observation");
 		map.put("Qualification","com.code.aon.academy.Qualification");

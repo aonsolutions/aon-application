@@ -23,9 +23,7 @@
 	<!--  **************** -->
 	<!--  TABLAS DE ACADEMY -->
 	<!--  **************** -->
-	<table-filter match-name="alumn_loan" exclude="true" />
 	<table-filter match-name="customer_segment" exclude="true" />
-	<table-filter match-name="evaluation_observation" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
 
 	<!--  **************** -->
@@ -503,6 +501,11 @@
 			<many-to-one property="activity" />
 		</foreign-key>
 	</table>
+	
+	<table name="evaluation_observation">
+		<column name="evaluation" type="int"/>
+		<column name="comments" type="text" />
+	</table>	
 
 	<table name="fan_batch">
 		<column name="liquidation_type" type="com.esferalia.aon.payroll.enumeration.LiquidationType"/>

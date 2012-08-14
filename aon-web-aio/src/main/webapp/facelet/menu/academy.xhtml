@@ -28,18 +28,19 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="alumn" 
 										action="alumn"
-										value="#{academyBundle.academy_alumn}" />
+										value="#{academyBundle.academy_alumns}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="course" 
-										action="course"
+										action="course_search"
 										actionListener="#{course.onEditSearch}"
-										value="#{academyBundle.academy_course}" />
+										value="#{academyBundle.academy_courses}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="teacher" 
-										action="teacher"
-										value="#{academyBundle.academy_teacher}" />
+										actionListener="#{person.onEditSearch}"
+										action="#{person.initialAction}"
+										value="#{academyBundle.academy_teachers}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="mark" 
@@ -51,7 +52,7 @@
 									<aon:commandLink id="loan" 
 										action="loan"
 										actionListener="#{loan.onEditSearch}"
-										value="#{academyBundle.academy_loan}" />
+										value="#{academyBundle.academy_loans}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
