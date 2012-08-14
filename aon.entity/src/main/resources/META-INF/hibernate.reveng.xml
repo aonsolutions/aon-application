@@ -51,9 +51,9 @@
 	<!--  PAYROLL -->
 	<table-filter match-name="salary_data" exclude="true" />
 	
-	<!--  *********************************** -->
-	<!--  *********** AON-ACCOUNT *********** -->
-	<!--  *********************************** -->
+	<table name="absence">
+		<column name="evaluation" type="int"/>
+	</table>
 
 	<table name="account">
 		<column name="entryEnabled" type="boolean" />
@@ -388,6 +388,7 @@
 	</table>
 
 	<table name="course">
+		<column name="alumn_limit" type="int" />
 		<column name="status" type="com.code.aon.academy.enumeration.CourseStatus" />
 	</table>
 
@@ -395,10 +396,20 @@
 		<column name="status" type="com.code.aon.academy.enumeration.CourseAlumnStatus" />
 	</table>
 	
-	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill" />
+	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill" >
+		<column name="weight" type="int" />
+	</table>
+
+	<table name="course_evaluation">
+		<column name="quantity" type="int" />
+	</table>
 	
 	<table name="course_instructor">
 		<column name="type" type="com.code.aon.academy.enumeration.InstructorType" />
+	</table>
+
+	<table name="course_schedule">
+		<column name="day" type="com.code.aon.common.enumeration.WeekDay" />
 	</table>
 
 	<table name="creditor">
@@ -870,6 +881,11 @@
 		<foreign-key constraint-name="FK_MAIL_ACCOUNT_USER">
 			<many-to-one property="user"/>
 		</foreign-key>        
+	</table>
+	
+	<table name="mark">
+		<column name="evaluation" type="int"/>
+		<column name="mark" type="java.lang.Double"/>
 	</table>
 	
 	<table name="message_content">
