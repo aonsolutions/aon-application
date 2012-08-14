@@ -53,6 +53,7 @@
 	
 	<table name="absence">
 		<column name="evaluation" type="int"/>
+		<column name="comments" type="text" />
 	</table>
 
 	<table name="account">
@@ -409,7 +410,7 @@
 	</table>
 
 	<table name="course_schedule">
-		<column name="day" type="com.code.aon.common.enumeration.WeekDay" />
+		<column name="day_of_week" type="com.code.aon.common.enumeration.WeekDay" />
 	</table>
 
 	<table name="creditor">
