@@ -192,10 +192,9 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
-			String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(fBatch.getIssueDate());
 			String amount = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern")).format(fBatch.getFinanceBatchTotalAmount());
 			
-			SelectItem item = new SelectItem(fBatch, date + " " + StringUtils.leftPad(amount, 10, "·") + "EUR. - " +fBatch.getDescription());
+			SelectItem item = new SelectItem(fBatch, fBatch.getId() + " - " + fBatch.getDescription() + StringUtils.leftPad(amount, 50 - fBatch.getDescription().length()-amount.length(), "·") + "EUR.");
 			fBatchList.add(item);
 		}
 		return fBatchList;

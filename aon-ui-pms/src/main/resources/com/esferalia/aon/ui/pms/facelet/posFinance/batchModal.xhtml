@@ -64,7 +64,8 @@
 										value="#{controller.newBatch}">
 										<f:selectItem itemLabel="#{pmsBundle.pms_create_finance_batch}" itemValue="#{true}" />
 										<f:selectItem itemLabel="#{pmsBundle.pms_modify_finance_batch}" itemValue="#{false}" />
-										<a4j:support event="onclick" actionListener="#{controller.onBatchModeChanged}" reRender="financeBatchGrid" />
+										<a4j:support event="onclick" ajaxSingle="true" 
+											actionListener="#{controller.onBatchModeChanged}" reRender="financeBatchGrid" />
 									</aon:selectOneRadio>
 
 									<aon:panelGrid id="financeBatchGrid" 
@@ -92,6 +93,7 @@
 										<aon:selectOneMenu id="FinanceBatch_registryBank"
 											value="#{controller.financeBatch.registryBank}" required="true"
 											rendered="#{controller.newBatch}">
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 										</aon:selectOneMenu>
 

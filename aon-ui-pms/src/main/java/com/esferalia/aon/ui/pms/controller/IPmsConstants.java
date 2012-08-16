@@ -14,6 +14,7 @@ public interface IPmsConstants {
 	String FINANCE_BATCH_CONTROLLER_NAME = "fbatch";
 	String NO_SHOW_INVOICE_CONTROLLER_NAME = "noShowInvoice";
 	String NO_SHOW_INVOICE_SEARCH_LISTENER_NAME = "noShowInvoiceSearch";
+	String PAYMENT_CARD_SETTLE_CONTROLLER_NAME = "paymentCardSettle";
 	String POS_FINANCE_CONTROLLER_NAME = "posFinance";
 	String POS_FINANCE_SEARCH_LISTENER_NAME = "posFinanceSearch";
 	String POS_SHIFT_CONTROLLER_NAME = "posShift";
@@ -34,6 +35,7 @@ public interface IPmsConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
+	String PAYMENT_CARD_SETTLE_LIST_NAME = "paymentCardSettle_list";
 	String POS_FINANCE_LIST_NAME = "posFinance_list";
 	String POS_SHIFT_FORM_NAME = "posShift_form";
 	String RACK_LIST_NAME = "rack_list";

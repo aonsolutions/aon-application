@@ -75,11 +75,13 @@
 			
 				<aon:panelTabSet selectedTab="#{paymentCardSettle.selectedTab}">
 	
-					<aon:panelTab id="tab1" label="Vencimientos incluidos en la carta" reRender="paymentCardSettleList">
+					<aon:panelTab id="#{paymentCardSettle.includedFinancesTabName}" label="#{pmsBundle.pms_finances_in_card}" 
+						reRender="paymentCardSettleList">
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listSelected.xhtml" />
 					</aon:panelTab>
 					
-					<aon:panelTab id="tab2" label="Vencimientos pendientes" reRender="paymentCardSettleList">
+					<aon:panelTab id="#{paymentCardSettle.pendingFinancesTabName}" label="#{pmsBundle.pms_pending_finances}" 
+						reRender="paymentCardSettleList">
 						<ui:include src="/com/esferalia/aon/ui/pms/facelet/paymentCardSettle/listPayment.xhtml" />
 					</aon:panelTab>
 	

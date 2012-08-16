@@ -78,9 +78,9 @@
 												<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 											</aon:selectOneMenu>
 											
-											<aon:outputLabel for="Finance_concept" 
-												value="#{financeBundle.finance_invoice_document_number}" />
-											<aon:inputText id="Finance_concept"
+											<aon:outputLabel for="Finance_invoice_referenceCode" 
+												value="#{financeBundle.finance_invoice}" />
+											<aon:inputText id="Finance_invoice_referenceCode"
 												onblur="toUpperCase(this);"
 												valueChangeListener="#{controller.addExpression}"
 												size="30">

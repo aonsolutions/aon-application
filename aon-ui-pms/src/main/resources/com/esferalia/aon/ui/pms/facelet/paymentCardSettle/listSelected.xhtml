@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="paymentCardSettleToolBarDiv" styleClass="aon-toolbar"
@@ -15,6 +16,8 @@
 			actionListener="#{paymentCardSettle.onRemoveAllSelected}" reRender="paymentCardSettleList"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+     		
+     		
      	<aon:commandButton title="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
 			styleClass="aon-finding-toolbar-item aon-icon-fraction"
 			value="#{financeBundle.finance_to_fraction} #{pmsBundle.pms_differences}"
@@ -59,14 +62,55 @@
 				</f:facet>
 				<aon:outputText value="#{to.finance.referenceCode}" />
 			</aon:column>
+			
+			<aon:column alias="Finance.payMethod.name"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{configBundle.config_pay_method}" />
+				</f:facet>
+				<aon:outputText value="#{to.finance.payMethod.name}" />
+			</aon:column>
 
 			<aon:column alias="Finance.invoice.project.id"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{pmsBundle.pms_reservation}" />
 				</f:facet>
+				<aon:commandLink id="reservationLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 10px;" 
+					value="&#160;"  
+					rendered="#{!to.finance.invoice.service}" 
+					actionListener="#{paymentCardSettle.onLoadReservation}"
+					action="reservation_form"
+					reRender="aonContent">
+				</aon:commandLink>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
 					value="#{to.finance.invoice.project.id}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{financeBundle.finance_invoice}"
+					rendered="#{!to.finance.invoice.rectifier and !to.finance.invoice.rectified}" />
+				<aon:div rendered="#{to.finance.invoice.rectifier}">
+					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+						<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message}" styleClass="aon-bold aon-label-error">
+							<f:param value="#{to.finance.invoice.rectificationInvoice.referenceCode}" />
+						</aon:outputFormat>
+					</rich:toolTip>
+				</aon:div>
+				<aon:div rendered="#{to.finance.invoice.rectified}">
+					<aon:outputText value="#{to.finance.invoice.rectificationType}" />
+					<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+						<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message}" styleClass="aon-bold">
+							<f:param value="#{to.finance.invoice.rectificationInvoicesString}" />
+						</aon:outputFormat>
+					</rich:toolTip>
+				</aon:div>
 			</aon:column>
 
 			<aon:column 
@@ -81,19 +125,19 @@
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_hotel}" />
+					<aon:outputText value="#{pmsBundle.pms_guest}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
-					value="#{paymentCardSettle.financeProjectReservation.hotelReservation.workPlace.description}" />
+					value="#{paymentCardSettle.financeProjectReservation.guestFullName}" />
 			</aon:column>
 	
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_guest}" />
+					<aon:outputText value="#{pmsBundle.pms_hotel}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.finance.invoice.service}"
-					value="#{paymentCardSettle.financeProjectReservation.guestFullName}" />
+					value="#{paymentCardSettle.financeProjectReservation.hotelReservation.workPlace.description}" />
 			</aon:column>
 	
 			<aon:column 
@@ -118,18 +162,20 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
+				<f:facet name="footer">
+					<aon:outputText value="#{financeBundle.finance_total_amount}" />
+				</f:facet>
 			</aon:column>
 	
+<!--  
 			<aon:column alias="Finance.financeStatus"
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.finance.financeStatus}" />  
-				<f:facet name="footer">
-					<aon:outputText value="#{financeBundle.finance_total_amount}" />
-				</f:facet>
 			</aon:column>
+-->
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn">
 				<f:facet name="header">

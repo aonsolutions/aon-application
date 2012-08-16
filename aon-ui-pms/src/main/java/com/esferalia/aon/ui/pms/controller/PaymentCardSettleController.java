@@ -205,6 +205,13 @@ public class PaymentCardSettleController {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
+	
+	public String getIncludedFinancesTabName(){
+		return INCLUDED_FINANCE_TAB;
+	}
+	public String getPendingFinancesTabName(){
+		return PENDING_FINANCE_TAB;
+	}
 
 	public void rowSelected(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
@@ -297,10 +304,9 @@ public class PaymentCardSettleController {
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
-			String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(fBatch.getIssueDate());
 			String amount = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern")).format(fBatch.getFinanceBatchTotalAmount());
 			
-			SelectItem item = new SelectItem(fBatch, date + " " + StringUtils.leftPad(amount, 10, "·") + "EUR. - " +fBatch.getDescription());
+			SelectItem item = new SelectItem(fBatch, fBatch.getId() + " - " + fBatch.getDescription() + StringUtils.leftPad(amount, 50 - fBatch.getDescription().length()-amount.length(), "·") + "EUR.");
 			fBatchList.add(item);
 		}
 		return fBatchList;
@@ -346,6 +352,7 @@ public class PaymentCardSettleController {
 	public void onSearchFinance(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
+		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), false);
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getAgency().getId());
 		
 		if(getStartDate()!=null){
@@ -556,8 +563,20 @@ public class PaymentCardSettleController {
 	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
 		if (getFinanceBatch() != null && getFinanceBatch().getId() != null) {
 			BasicController controller = (BasicController)AonUtil.getRegisteredBean(IFinanceConstants.FINANCE_BATCH_CONTROLLER_NAME);
-			controller.onLoad(event, getFinanceBatch().getId(), "paymentCardSettle_list", "paymentCardSettle" + ".onSearch");
+			controller.onLoad(event, getFinanceBatch().getId(), IPmsConstants.PAYMENT_CARD_SETTLE_LIST_NAME, IPmsConstants.PAYMENT_CARD_SETTLE_CONTROLLER_NAME + ".onSearch");
 		}
+	}
+	
+	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
+		Finance finance = null;
+		if(getSelectedTab().equals(INCLUDED_FINANCE_TAB)){
+			finance = ((AgencyFinance) getFinanceModel().getRowData()).getFinance();
+		} else if(getSelectedTab().equals(PENDING_FINANCE_TAB)) {
+			FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
+			finance = (Finance) financeList.getModel().getRowData();
+		}
+		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+		reservationController.onLoad(event, finance.getInvoice().getProject().getId(), IPmsConstants.PAYMENT_CARD_SETTLE_LIST_NAME, null);
 	}
 	
 	public class AgencyFinance{
