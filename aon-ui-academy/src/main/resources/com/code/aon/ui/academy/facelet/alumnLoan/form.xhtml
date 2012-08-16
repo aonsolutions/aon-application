@@ -18,86 +18,43 @@
 
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:panelGrid id="dataTable" columns="6" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even,
-						aon-panelGrid-odd aon-width-120,aon-panelGrid-even,
-						aon-panelGrid-odd aon-width-120,aon-panelGrid-even">
+				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="Course_code"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Course_code"
-						value="#{course.to.code}" size="8" maxlength="5">
-						<f:validateLength minimum="1" maximum="5" />
-					</aon:inputText>
-
-					<aon:outputLabel for="Course_workPlace"
-						value="#{companyBundle.company_workplace}" />
-					<aon:selectOneMenu id="Course_workPlace"
-						required="true" value="#{course.to.workPlace}" >
-						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Course_status"
-						value="#{bundle.aon_status}" />
-					<aon:selectOneMenu id="Course_status"
-						value="#{course.to.status}">
-						<f:selectItems value="#{academyCollections.courseStatuses}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Course_academicYear"
-						value="#{academyBundle.academy_academic_year}" />
-					<aon:selectOneMenu id="Course_academicYear"
-						required="true" value="#{course.to.academicYear}">
-						<f:selectItems value="#{academyCollections.academicYears}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Course_courseSubject"
-						value="#{academyBundle.academy_subject}" />
-					<aon:selectOneMenu id="Course_courseSubject"
-						required="true" value="#{course.to.courseSubject}">
-						<f:selectItems value="#{academyCollections.courseSubjects}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Course_courseLevel"
-						value="#{academyBundle.academy_level}" />
-					<aon:selectOneMenu id="Course_courseLevel"
-						required="true" value="#{course.to.courseLevel}">
-						<f:selectItems value="#{academyCollections.courseLevels}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Course_startDate"
-						value="#{bundle.aon_start_date}" />
-					<aon:selectInputDate id="Course_startDate" 
-						value="#{course.to.startDate}" required="true"
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{alumnLoan.to.customer}" />
+						<ui:param name="idRequired" value="#{true}" />						
+					</ui:include>
+	
+					<aon:outputLabel for="AlumnLoan_material"
+						value="#{academyBundle.academy_loan_material}" />
+					<aon:inputText id="AlumnLoan_material"
+						value="#{alumnLoan.to.material}" required="true"
+						size="16" maxlength="16" />
+						
+					<aon:outputLabel for="AlumnLoan_loanDate"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="AlumnLoan_loanDate" 
+						value="#{alumnLoan.to.loanDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
-							
-					<aon:outputLabel for="Course_endDate"
+					
+					<aon:outputLabel for="AlumnLoan_endDate"
 						value="#{bundle.aon_end_date}" />
-					<aon:selectInputDate id="Course_endDate" 
-						value="#{course.to.endDate}" required="true"
+					<aon:selectInputDate id="AlumnLoan_endDate" 
+						value="#{alumnLoan.to.endDate}"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
-
-					<aon:outputLabel for="Course_alumnLimit"
-						value="#{academyBundle.academy_limit}" />
-					<aon:inputText id="Course_alumnLimit"
-						required="true" value="#{course.to.alumnLimit}"
-						size="5" maxlength="3"/>
+	
+					<aon:outputLabel for="AlumnLoan_comments"
+						value="#{bundle.aon_remark}" />
+					<aon:inputText id="AlumnLoan_comments"
+						value="#{alumnLoan.to.comments}"
+						size="64" maxlength="64" />
 
 				</aon:panelGrid>
-				
-				<aon:div styleClass="aon-margin-top">
-					<aon:panelGrid columns="2" rendered="#{!course.new}" >
-						<aon:outputLabel for="Course_description"
-							value="#{bundle.aon_description}" />
-						<aon:inputText id="Course_description"
-							required="true" value="#{course.to.description}"
-							size="98" maxlength="64"/>
-					</aon:panelGrid>					
-				</aon:div>
 
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 	</ui:define>
 </ui:composition>

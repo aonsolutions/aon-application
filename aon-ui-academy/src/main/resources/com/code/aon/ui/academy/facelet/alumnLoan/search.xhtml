@@ -48,7 +48,7 @@
 					</aon:div>		
 					
 					<aon:outputLabel value="#{bundle.aon_end_date}" />				
-					<aon:div>
+					<aon:div id="AlumnLoan_endDateDiv">
 						<aon:outputLabel for="AlumnLoan_endDate-From"
 							styleClass="aon-form-date-label aon-padding-right" 
 							value="#{bundle.aon_date_from}:" />
@@ -65,13 +65,10 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 	
-						<!--
-						<aon:outputLabel for="AlumnLoan_not_returned"
-							value="#{appBundle.loan_not_returned}" />
-						<aon:selectBooleanCheckbox  id="AlumnLoan_not_returned" 
-							value="#{controller.notReturned}"/>
-						-->		
-	
+						<aon:outputLabel for="AlumnLoan_notReturned"
+							value="#{academyBundle.academy_loan_not_returned}" />
+						<aon:selectBooleanCheckbox id="AlumnLoan_notReturned"
+							value="#{alumnLoanSearch.notReturned}"/>
 					</aon:div>					
 									
 				</ui:define>
