@@ -22,7 +22,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>compile-reports</goal>
 						</goals>
@@ -83,6 +83,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.report</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>		
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>
