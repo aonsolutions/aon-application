@@ -5,15 +5,17 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:valueParam name="controller" default="#{lookup}" />
 
 	<aon:outputLabel for="Course_code" value="#{bundle.aon_id}" />
 	<aon:inputText id="Course_code"
 		valueChangeListener="#{controller.addExpression}"
 		size="16" maxlength="15" />
 
-	<aon:outputLabel for="Course_academicYear"
+	<aon:outputLabel for="Course_academicYear_id"
 		value="#{academyBundle.academy_academic_year}" />
-	<aon:selectOneMenu id="Course_academicYear"
+	<aon:selectOneMenu id="Course_academicYear_id"
 		value="#{academyCollections.academicYear}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
@@ -60,27 +62,27 @@
 		</aon:div>		
 	</c:if>
 	
-	<aon:outputLabel for="Course_courseSubject"
+	<aon:outputLabel for="Course_courseSubject_id"
 		value="#{academyBundle.academy_subject}" />
-	<aon:selectOneMenu id="Course_courseSubject"
+	<aon:selectOneMenu id="Course_courseSubject_id"
 		value="#{academyCollections.courseSubject}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{academyCollections.courseSubjects}" />
 	</aon:selectOneMenu>					
 
-	<aon:outputLabel for="Course_courseLevel"
+	<aon:outputLabel for="Course_courseLevel_id"
 		value="#{academyBundle.academy_level}" />
-	<aon:selectOneMenu id="Course_courseLevel"
+	<aon:selectOneMenu id="Course_courseLevel_id"
 		value="#{academyCollections.courseLevel}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
 		<f:selectItems value="#{academyCollections.courseLevels}" />
 	</aon:selectOneMenu>					
 	
-	<aon:outputLabel for="Course_workPlace"
+	<aon:outputLabel for="Course_workPlace_id"
 		value="#{companyBundle.company_workplace}" />
-	<aon:selectOneMenu id="Course_workPlace"
+	<aon:selectOneMenu id="Course_workPlace_id"
 		value="#{companyCollections.workPlace}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		

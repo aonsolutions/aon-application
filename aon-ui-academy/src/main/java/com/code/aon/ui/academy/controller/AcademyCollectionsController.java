@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.AcademicYear;
 import com.code.aon.academy.CourseLevel;
 import com.code.aon.academy.CourseSubject;
@@ -95,159 +96,25 @@ public class AcademyCollectionsController {
 		}
 		return courseStatuses;
 	}
-	
-	/*
-	
-	public List<SelectItem> getInstructors() throws ManagerBeanException {
-		List<SelectItem> employees = new LinkedList<SelectItem>();
-		IManagerBean employeeBean = BeanManager.getManagerBean(Employee.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(employeeBean.getFieldName(ICompanyAlias.EMPLOYEE_ACTIVE), new Boolean(true));
-		criteria.addOrder(employeeBean.getFieldName(ICompanyAlias.EMPLOYEE_REGISTRY_NAME));
-		Iterator<ITransferObject> iter = employeeBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Employee employee = (Employee) iter.next();
-			SelectItem item = new SelectItem(employee.getId(), employee.getRegistry().getName());
-			employees.add(item);
-		}
-		return employees;
-	}
-	
-	public List<SelectItem> getInstructorTypes() {
-		List<SelectItem> instructorTypes = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		InstructorType[] types = InstructorType.values();
-		for (int i = 0; i < types.length; i++) {
-			InstructorType type = types[i];
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			instructorTypes.add(item);
-		}
-		return instructorTypes;
-	}
-	
-	public List<SelectItem> getWeekDays(){
-		List<SelectItem> weekDays = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		WeekDay[] days = WeekDay.values();
-		for (int i = 0; i < days.length; i++) {
-			WeekDay day = days[i];
-			String name = day.getName(locale);
-			SelectItem item = new SelectItem(day, name);
-			weekDays.add(item);
-		}
-		return weekDays;
-	}
-	
-	@SuppressWarnings("unchecked")
-    public List<SelectItem> getCourseAlumns() throws ManagerBeanException{
-        List<SelectItem> courseAlumns = new LinkedList<SelectItem>();
-        try{
-            CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
-            Customer customer = (Customer)customerController.getTo();
 
-            IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_ID), customer.getId());
-            criteria.addExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), ""+CourseAlumnStatus.ACTIVE.ordinal());
-            Iterator iter= courseAlumnBean.getList(criteria).iterator();
-            while(iter.hasNext()){
-            	CourseAlumn courseAlumn = (CourseAlumn)iter.next();
-                SelectItem item = new SelectItem(courseAlumn.getId(), courseAlumn.getCourse().getDescription());
-                courseAlumns.add(item);
-            }
-            return courseAlumns;
-        }catch (Exception e) {
-        	throw new ManagerBeanException(e);
-		}
-    }
+    public AcademicSkill getAcademicSkill() {
+		return null;
+	}
 
-	@SuppressWarnings("unchecked")
+	public void setAcademicSkill(AcademicSkill academicSkill) {
+	}
+	
     public List<SelectItem> getAcademicSkills() throws ManagerBeanException{
         List<SelectItem> academicSkills = new LinkedList<SelectItem>();
         IManagerBean academicSkillBean = BeanManager.getManagerBean(AcademicSkill.class);
         Criteria criteria = new Criteria();
-        criteria.addOrder(academicSkillBean.getFieldName(IAcademyAlias.ACADEMIC_SKILL_CODE));
-        Iterator iter= academicSkillBean.getList(criteria).iterator();
-        while(iter.hasNext()){
-        	AcademicSkill academicSkill = (AcademicSkill)iter.next();
-            SelectItem item = new SelectItem(academicSkill.getId(), academicSkill.getCode() +" / "+ academicSkill.getDescription());
+        criteria.addOrder(academicSkillBean.getFieldName(IEntityAlias.ACADEMIC_SKILL_CODE));
+		for( ITransferObject to : academicSkillBean.getList(criteria) ) {
+			AcademicSkill academicSkill = (AcademicSkill) to;
+            SelectItem item = new SelectItem(academicSkill, academicSkill.getCode() +" / "+ academicSkill.getDescription());
             academicSkills.add(item);
         }
         return academicSkills;
     }
-
-	@SuppressWarnings("unchecked")
-    public List<SelectItem> getMarkSubjects() throws ManagerBeanException{
-        List<SelectItem> markSubjects = new LinkedList<SelectItem>();
-        try{
-            CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
-            Course course = (Course)courseController.getTo();
-
-            IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
-            Iterator iter= courseAcademicSkillBean.getList(criteria).iterator();
-            while(iter.hasNext()){
-            	CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iter.next();
-                SelectItem item = new SelectItem(courseAcademicSkill.getId(), courseAcademicSkill.getAcademicSkill().getDescription());
-                markSubjects.add(item);
-            }
-            return markSubjects;
-        }catch (Exception e) {
-        	throw new ManagerBeanException(e);
-		}
-    }
-    
-	@SuppressWarnings("unchecked")
-    public List<SelectItem> getMarkAlumns() throws ManagerBeanException{
-        List<SelectItem> markAlumns = new LinkedList<SelectItem>();
-        try{
-            CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
-            Course course = (Course)courseController.getTo();
-
-            IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
-            Criteria criteria = new Criteria();
-            criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
-            Iterator iter= courseAlumnBean.getList(criteria).iterator();
-            while(iter.hasNext()){
-            	CourseAlumn courseAlumn = (CourseAlumn)iter.next();
-                SelectItem item = new SelectItem(courseAlumn.getCustomer().getId(), courseAlumn.getCustomer().getRegistry().getName());
-                markAlumns.add(item);
-            }
-            return markAlumns;
-        }catch (Exception e) {
-        	throw new ManagerBeanException(e);
-		}
-    }
-
-	public List<SelectItem> getCourseAlumnStatuses() {
-		List<SelectItem> courseAlumnStatuses = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		CourseAlumnStatus[] statuses = CourseAlumnStatus.values();
-		for (int i = 0; i < statuses.length; i++) {
-			CourseAlumnStatus status = statuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			courseAlumnStatuses.add(item);
-		}
-		return courseAlumnStatuses;
-	}
-
-	@SuppressWarnings("unchecked")
-    public List<SelectItem> getQualitySkills() throws ManagerBeanException{
-        List<SelectItem> qualitySkills = new LinkedList<SelectItem>();
-        IManagerBean qualitySkillBean = BeanManager.getManagerBean(QualitySkill.class);
-        Criteria criteria = new Criteria();
-        criteria.addOrder(qualitySkillBean.getFieldName(IAcademyAlias.QUALITY_SKILL_CODE));
-        Iterator iter= qualitySkillBean.getList(criteria).iterator();
-        while(iter.hasNext()){
-        	QualitySkill qualitySkill = (QualitySkill)iter.next();
-            SelectItem item = new SelectItem(qualitySkill.getId(), qualitySkill.getCode() +" / "+ qualitySkill.getDescription());
-            qualitySkills.add(item);
-        }
-        return qualitySkills;
-    }
-    */
 
 }

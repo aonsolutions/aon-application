@@ -12,13 +12,6 @@
 		</f:facet>
 		<aon:outputText value="#{to.code}" />
 	</aon:column>
-	<aon:column alias="Course.academicYear.description"
-		styleClass="aon-editDataTable-textColumn aon-width-100">
-		<f:facet name="header">
-			<aon:outputText value="#{academyBundle.academy_academic_year}" />
-		</f:facet>
-		<aon:outputText value="#{to.academicYear.description}" />
-	</aon:column>
 	<aon:column alias="Course.startDate"
 		styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
@@ -39,33 +32,12 @@
 				timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>
 	</aon:column>
-	<aon:column alias="Course.courseSubject.description"
+	<aon:column alias="Course.comments"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputText value="#{academyBundle.academy_subject}" />
+			<aon:outputText value="#{bundle.aon_description}" />
 		</f:facet>
-		<aon:outputText value="#{to.courseSubject.description}" />
+		<aon:outputText value="#{to.description}" />
 	</aon:column>
-	<aon:column alias="Course.courseLevel.description"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{academyBundle.academy_level}" />
-		</f:facet>
-		<aon:outputText value="#{to.courseLevel.description}" />
-	</aon:column>
-	<aon:column alias="Course.workPlace.description"
-		styleClass="aon-editDataTable-textColumn">
-		<f:facet name="header">
-			<aon:outputText value="#{companyBundle.company_workplace}" />
-		</f:facet>
-		<aon:outputText value="#{to.workPlace.description}" />
-	</aon:column>
-	<aon:column alias="Course.workPlace.status"
-		styleClass="aon-editDataTable-textColumn aon-width-80">
-		<f:facet name="header">
-			<aon:outputText value="#{bundle.aon_status}" />
-		</f:facet>
-		<aon:outputText value="#{to.status}" />
-	</aon:column>	
 
 </ui:composition>

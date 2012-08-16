@@ -44,8 +44,8 @@
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="mark" 
-										action="mark"
-										actionListener="#{mark.onNewSearch}"
+										action="mark_search"
+										actionListener="#{mark.onEditSearch}"
 										value="#{academyBundle.academy_mark}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -136,7 +136,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="academicSkill" 
 										action="academicSkill_form"
-										value="#{academyBundle.academy_academic_skill}" />
+										value="#{academyBundle.academy_academic_skills}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="qualification" 

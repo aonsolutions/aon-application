@@ -41,6 +41,42 @@
 		</managed-property>								
 	</managed-bean>
 
+	<!-- ************* MARK ***************** -->
+	<managed-bean>
+		<managed-bean-name>mark</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Mark</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mark</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Mark_alumn_course_code,Mark_alumn_customer_registry_name,Mark_evaluation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{markSearch}</value>
+			</list-entries>
+		</managed-property>													
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>markSearch</managed-bean-name>
+	    <managed-bean-class>com.code.aon.ui.academy.event.MarkSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************* ALUMN LOAN ***************** -->
 	<managed-bean>
 		<managed-bean-name>alumnLoan</managed-bean-name>
@@ -238,6 +274,50 @@
 		</managed-property>										
 	</managed-bean>	
 	
+	<!-- ========================================================== -->
+	<!-- ======================= LOOKUP =========================== -->
+	<!-- ========================================================== -->
+	
+	<!-- ************ COURSE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>courseLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Course_code,Course_startDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Course_description</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Course_status</key>
+					<value>#{academyCollections.courseStatuses[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>							
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/academy/facelet/course/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/academy/facelet/course/searchContent.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ======================= NAVIGATION ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -301,5 +381,17 @@
 			<to-view-id>/com/code/aon/ui/academy/facelet/alumnLoan/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	  
+
+	<!-- =================== Mark ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mark_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/mark/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mark_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/mark/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		  
 </faces-config>
