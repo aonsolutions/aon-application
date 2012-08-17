@@ -280,14 +280,20 @@ public class PaymentCardSettleController {
 	public ProjectReservation getFinanceProjectReservation() throws ManagerBeanException{
 		AgencyFinance af = (AgencyFinance) getFinanceModel().getRowData();
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
-		return ((ProjectReservation)bean.get(af.getFinance().getInvoice().getProject().getId()));
+		if(af.getFinance().getInvoice().getProject()!=null){
+			return ((ProjectReservation)bean.get(af.getFinance().getInvoice().getProject().getId()));
+		}
+		return null;
 	}
 	
 	public ProjectReservation getFinanceListProjectReservation() throws ManagerBeanException{
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
 		Finance finance = (Finance) financeList.getModel().getRowData();
 		IManagerBean bean = BeanManager.getManagerBean(ProjectReservation.class);
-		return ((ProjectReservation)bean.get(finance.getInvoice().getProject().getId()));
+		if(finance.getInvoice().getProject()!=null){
+			return ((ProjectReservation)bean.get(finance.getInvoice().getProject().getId()));
+		}
+		return null;
 	}
 	
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
@@ -577,6 +583,18 @@ public class PaymentCardSettleController {
 		}
 		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		reservationController.onLoad(event, finance.getInvoice().getProject().getId(), IPmsConstants.PAYMENT_CARD_SETTLE_LIST_NAME, null);
+	}
+	
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Finance finance = null;
+		if(getSelectedTab().equals(INCLUDED_FINANCE_TAB)){
+			finance = ((AgencyFinance) getFinanceModel().getRowData()).getFinance();
+		} else if(getSelectedTab().equals(PENDING_FINANCE_TAB)) {
+			FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
+			finance = (Finance) financeList.getModel().getRowData();
+		}
+		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME);
+		invoiceController.onLoad(event, finance.getInvoice().getId(), IPmsConstants.PAYMENT_CARD_SETTLE_LIST_NAME, null);
 	}
 	
 	public class AgencyFinance{
