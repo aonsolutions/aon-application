@@ -187,8 +187,7 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.TODO);
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_TYPE), FinanceBatchType.NONE);
 		criteria.addGreaterThanOrEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), searchListener.getEndDate());
-		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE));
-		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_DESCRIPTION));
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ID));
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
