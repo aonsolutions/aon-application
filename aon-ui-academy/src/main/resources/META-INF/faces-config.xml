@@ -274,6 +274,38 @@
 		</managed-property>										
 	</managed-bean>	
 	
+	<!-- ************* CLOSE GROUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>closeGroup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CloseGroupController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>closeGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Course_code,Course_startDate desc</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Course_status</key>
+					<value>#{academyCollections.courseStatuses[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>							
+	</managed-bean>
+	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
@@ -393,5 +425,17 @@
 			<to-view-id>/com/code/aon/ui/academy/facelet/mark/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Close Group ====================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>closeGroup_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/closeGroup/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>closeGroup_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/academy/facelet/closeGroup/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 		  
 </faces-config>

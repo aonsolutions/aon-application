@@ -815,6 +815,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public void initializeModel() {
 		try {
+			this.checkList.clear();
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeModelInitialized(evt);
 			LOGGER.debug(">>>> before InitializeModel");
