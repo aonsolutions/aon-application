@@ -3,12 +3,9 @@ package com.code.aon.ui.form;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -20,8 +17,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
-import com.code.aon.ql.ProjectionList;
 
 /**
  * LinesController is used to implement child Controllers.
@@ -39,16 +34,6 @@ public class LinesController extends BasicController {
 
 	/** cascade delete. */
 	private boolean cascadeDelete;
-
-	/** A list that contains the selected objects of the model. */
-	private Set<Serializable> checkList;
-
-	/**
-	 * Default constructor
-	 */
-	public LinesController() {
-		this.checkList = new HashSet<Serializable>();
-	}
 
 	/**
 	 * Sets the master controller name.
@@ -104,7 +89,7 @@ public class LinesController extends BasicController {
 	/**
 	 * Initializes the model.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void initModel() {
 		if (isMasterNew()) {
 			this.model = new ListDataModel(new ArrayList());
@@ -169,7 +154,7 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void saveModel(ITransferObject masterTO) throws ManagerBeanException {
 		if ( this.model != null ) {
 			List list = (List) this.model.getWrappedData();
@@ -234,8 +219,8 @@ public class LinesController extends BasicController {
 	 * 
 	 * @see com.code.aon.ui.form.BasicController#add()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected ITransferObject add() throws ManagerBeanException {
 		if (isMasterNew()) {
 			List<ITransferObject> list = (List) this.model.getWrappedData();
@@ -273,8 +258,8 @@ public class LinesController extends BasicController {
 	 * 
 	 * @see com.code.aon.ui.form.BasicController#remove()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("rawtypes")	
 	protected void remove() throws ManagerBeanException {
 		if (isMasterNew()) {
 			List list = (List) this.model.getWrappedData();
@@ -296,50 +281,6 @@ public class LinesController extends BasicController {
 		}
 		return super.update();
 	}
-	
-	private Serializable getCurrentId() throws ManagerBeanException {
-		ITransferObject to = (ITransferObject) model.getRowData();
-		return getManagerBean().getId(to);
-	}
-
-	/**
-	 * Gets the if the selected row is checked.
-	 * 
-	 * @return the row checked
-	 * @throws ManagerBeanException 
-	 */
-	public boolean getRowChecked() throws ManagerBeanException {
-		return checkList.contains( getCurrentId() );
-	}
-
-	/**
-	 * Sets the selected row checked.
-	 * 
-	 * @param rowChecked
-	 *            the row checked
-	 * @throws ManagerBeanException 
-	 */
-	public void setRowChecked(boolean rowChecked) throws ManagerBeanException {
-		Serializable id = getCurrentId();
-		if (rowChecked) {
-			if (!checkList.contains(id)) {
-				checkList.add(id);
-			}
-		} else {
-			if (checkList.contains(id)) {
-				checkList.remove(id);
-			}
-		}
-	}
-
-	/**
-	 * Gets the check list.
-	 * 
-	 * @return the check list
-	 */
-	protected Collection<Serializable> getCheckList() {
-		return checkList;
-	}
 
 	/**
 	 * Removes all the selected objects.
@@ -350,7 +291,7 @@ public class LinesController extends BasicController {
 	public void onRemoveSelected(ActionEvent event) {
 		try {
 			IManagerBean bean = getManagerBean();
-			for (Serializable id : checkList) {
+			for (Serializable id : getCheckList()) {
 				ITransferObject to = bean.get(id);
 				bean.remove(to);
 			}
@@ -361,27 +302,4 @@ public class LinesController extends BasicController {
 		}
 	}
 
-	/**
-	 * Clears the selected list.
-	 * 
-	 * @param event the event
-	 */
-	public void checkNone(ActionEvent event) {
-		this.checkList.clear();
-	}
-	
-	/**
-	 * Check all.
-	 * 
-	 * @param event the event
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		ProjectionList projectList = new ProjectionList(Projection.property(getIdAlias()));
-		List<Serializable> list = getManagerBean().getList(projectList, getCriteria());
-		this.checkList.clear();
-		this.checkList.addAll(list);
-	}	
-	
 }

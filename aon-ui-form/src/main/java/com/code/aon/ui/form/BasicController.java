@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -32,6 +34,8 @@ import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.IdentExpression;
@@ -99,7 +103,10 @@ public class BasicController extends AbstractPojoController implements IControll
 	private String backAction;
 	private String backActionListener;
 	
-	private String afterSearchAction; 
+	private String afterSearchAction;
+	
+	/** A list that contains the selected objects of the model. */
+	private Set<Serializable> checkList;	
 
 	/**
 	 * Constructor.
@@ -109,6 +116,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		this.controllerListenerSupport = new ControllerListenerSupport();
 		this.selectedIndex = -1;
 		this.saveState = true;
+		this.checkList = new HashSet<Serializable>();		
 	}
 
 	/**
@@ -1341,4 +1349,71 @@ public class BasicController extends AbstractPojoController implements IControll
 		select(event);		
 	}
 
+	private Serializable getCurrentId() throws ManagerBeanException {
+		ITransferObject to = (ITransferObject) model.getRowData();
+		return getManagerBean().getId(to);
+	}
+	
+	/**
+	 * Gets the if the selected row is checked.
+	 * 
+	 * @return the row checked
+	 * @throws ManagerBeanException 
+	 */
+	public boolean getRowChecked() throws ManagerBeanException {
+		return checkList.contains( getCurrentId() );
+	}
+
+	/**
+	 * Sets the selected row checked.
+	 * 
+	 * @param rowChecked
+	 *            the row checked
+	 * @throws ManagerBeanException 
+	 */
+	public void setRowChecked(boolean rowChecked) throws ManagerBeanException {
+		Serializable id = getCurrentId();
+		if (rowChecked) {
+			if (!checkList.contains(id)) {
+				checkList.add(id);
+			}
+		} else {
+			if (checkList.contains(id)) {
+				checkList.remove(id);
+			}
+		}
+	}
+
+	/**
+	 * Gets the check list.
+	 * 
+	 * @return the check list
+	 */
+	protected Collection<Serializable> getCheckList() {
+		return checkList;
+	}
+
+	/**
+	 * Clears the selected list.
+	 * 
+	 * @param event the event
+	 */
+	public void checkNone(ActionEvent event) {
+		this.checkList.clear();
+	}
+	
+	/**
+	 * Check all.
+	 * 
+	 * @param event the event
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@SuppressWarnings("unchecked")
+	public void checkAll(ActionEvent event) throws ManagerBeanException{
+		ProjectionList projectList = new ProjectionList(Projection.property(getIdAlias()));
+		List<Serializable> list = getManagerBean().getList(projectList, getCriteria());
+		this.checkList.clear();
+		this.checkList.addAll(list);
+	}	
+		
 }
