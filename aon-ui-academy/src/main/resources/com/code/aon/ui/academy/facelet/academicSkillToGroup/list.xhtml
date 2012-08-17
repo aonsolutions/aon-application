@@ -10,19 +10,19 @@
 	<ui:define name="content">
 		<aon:form>
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{academyBundle.academy_close_groups}" />
+				<ui:param name="toolbarTitle" value="#{academyBundle.academy_academic_skill_to_groups}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="accept"
 						value="#{bundle.aon_accept}"
-						rendered="#{!(empty closeGroup.checkList)}"
-						action="course_list" actionListener="#{closeGroup.onClose}"
+						rendered="#{!(empty academicSkillToGroup.checkList)}"
+						action="course_list" actionListener="#{academicSkillToGroup.onAssign}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_accept}" >
 					</aon:commandButton>				
 					<aon:commandButton id="search"
 						value="#{bundle.aon_search}"
-						action="closeGroup_search" actionListener="#{closeGroup.onEditSearch}"
+						action="academicSkillToGroup_search" actionListener="#{academicSkillToGroup.onEditSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}" />
 				</ui:define>
@@ -31,22 +31,41 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 			
-				<aon:div styleClass="aon-toolbar" rendered="#{closeGroup.model.rowCount > 0}">
+
+				<aon:panelGrid id="dataTable" columns="4"
+					columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even,
+						aon-panelGrid-odd aon-width-120,aon-panelGrid-even">
+
+					<aon:outputLabel for="AcademicSkill_id"
+						value="#{academyBundle.academy_academic_skill}" />
+					<aon:selectOneMenu id="AcademicSkill_id"
+						value="#{academicSkillToGroup.academicSkill}">
+						<f:selectItems value="#{academyCollections.academicSkills}" />
+					</aon:selectOneMenu>					
+
+					<h:outputLabel for="AcademicSkill_weight"
+						value="#{academyBundle.academy_weight}" />
+					<aon:inputText id="AcademicSkill_weight"
+						value="#{academicSkillToGroup.weight}" size="5" />
+				</aon:panelGrid>
+			
+				<aon:div styleClass="aon-toolbar aon-margin-top"
+					rendered="#{academicSkillToGroup.model.rowCount > 0}">
 					<aon:commandButton title="#{bundle.aon_check_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 						value="#{bundle.aon_check_all}"
 						ajaxSingle="true" reRender="courseDataDiv,aonToolbar"
-						actionListener="#{closeGroup.checkAll}"/>	
+						actionListener="#{academicSkillToGroup.checkAll}"/>	
 					<aon:commandButton title="#{bundle.aon_uncheck_all}"
 						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 						value="#{bundle.aon_uncheck_all}"
 						ajaxSingle="true" reRender="courseDataDiv,aonToolbar"
-						actionListener="#{closeGroup.checkNone}" />				
+						actionListener="#{academicSkillToGroup.checkNone}" />				
 				</aon:div>
 					
 				<aon:div id="courseDataDiv">					
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{closeGroup}" />
+						<ui:param name="controller" value="#{academicSkillToGroup}" />
 						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 						<ui:param name="skipSelectButton" value="#{true}" />
 						<ui:define name="columns">
@@ -56,7 +75,7 @@
 									<aon:outputText value="&#160;" />
 								</f:facet>
 								<aon:selectBooleanCheckbox id="Included_Row_checked"
-									value="#{closeGroup.rowChecked}"
+									value="#{academicSkillToGroup.rowChecked}"
 									ajaxSingle="true" reRender="aonToolbar" />
 							</aon:column>
 	

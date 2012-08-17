@@ -13,10 +13,9 @@ import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class CloseGroupController extends BasicController {
+public class CloseGroupController extends GroupSelectionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CloseGroupController.class);
 	
@@ -28,6 +27,7 @@ public class CloseGroupController extends BasicController {
 				course.setStatus(CourseStatus.INACTIVE);
 				courseBean.update(course);
 			}
+			updateCourseController(event);
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Unable to close the selected courses");
 			LOGGER.error("Unable to close the selected courses", e);

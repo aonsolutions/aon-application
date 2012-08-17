@@ -1390,7 +1390,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @return the check list
 	 */
-	protected Collection<Serializable> getCheckList() {
+	public Collection<Serializable> getCheckList() {
 		return checkList;
 	}
 
