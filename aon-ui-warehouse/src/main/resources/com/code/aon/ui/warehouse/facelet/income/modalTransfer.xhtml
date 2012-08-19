@@ -54,17 +54,21 @@
 									<aon:commandButton id="purchaseTransfer-accept"
 										value="#{warehouseBundle.warehouse_income_to_transfer}"
 										rendered="#{income.purchaseTransferManager.purchaseModel.rowCount > 0}"
-										reRender="showPurchaseTransferWindow,incomeForm"
+										reRender="showPurchaseTransferWindow,incomeForm,showConfirmWindow"
 										actionListener="#{income.onPurchaseTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
+<!--  
+										<c:if test="#{!income.quantityGreatherThanTransfered}">
+										</c:if>
 										<rich:componentControl for="purchaseTransferModalPanel"
-											event="onclick" operation="hide"/>																					
+											event="onclick" operation="#{income.transferedGreatherThanPending?'none':'hide'}"/>																					
 										<f:setPropertyActionListener
 											target="#{income.showPurchaseTransferWindow}"
-											value="#{false}" />
+											value="#{!income.transferedGreatherThanPending}" />
 										<f:setPropertyActionListener
 											target="#{income.purchaseTransferManager}"
 											value="#{null}" />
+-->
 									</aon:commandButton>
 									<aon:commandButton id="purchaseTransfer-cancel"
 										value="#{bundle.aon_cancel}"
@@ -152,7 +156,8 @@
 											var="to" rows="0" rendered="#{income.purchaseTransferManager.detailModel.rowCount > 0}"
 											columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn, 
-												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn">
+												aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
+												aon-editDataTable-iconColumn">
 	
 											<aon:column>
 												<f:facet name="header">
@@ -208,6 +213,16 @@
 													value="#{to.transfered}" size="4"
 													valueChangeListener="#{income.purchaseTransferManager.onTransferedChanged}"
 													reRender="purchaseData,detailDataContainer" ajaxSingle="true" />	
+											</aon:column>
+	
+											<aon:column>
+												<f:facet name="header">
+													<h:outputText value="&#160;" />
+												</f:facet>
+												<aon:outputText value="&#160;"
+													rendered="#{to.transfered > to.pendingQuantity}" 
+													styleClass="aon-icon-commandButton aon-icon-errorwarning" 
+													title="#{warehouseBundle.warehouse_income_transfered_gt_quantity}" /> 
 											</aon:column>
 	
 										</aon:dataTable>
