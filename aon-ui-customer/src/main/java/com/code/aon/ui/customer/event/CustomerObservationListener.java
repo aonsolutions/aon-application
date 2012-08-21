@@ -1,5 +1,7 @@
 package com.code.aon.ui.customer.event;
 
+import static com.code.aon.ui.customer.controller.ICustomerConstants.CUSTOMER_OBSERVATION_CONTROLLER_NAME;
+
 import com.code.aon.customer.Customer;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -9,8 +11,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CustomerObservationListener extends ControllerAdapter {
 	
-	private static final String CUSTOMER_OBSERVATION_CONTROLLER_NAME = "customerObservation";
-
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try{

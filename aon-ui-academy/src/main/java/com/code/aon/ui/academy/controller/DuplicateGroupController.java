@@ -3,7 +3,6 @@ package com.code.aon.ui.academy.controller;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import com.code.aon.academy.CourseSchedule;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
@@ -146,15 +146,13 @@ public class DuplicateGroupController extends GroupSelectionController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createCourseInstructors(Integer courseId, Course newCourse) {
 		try {
 			IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseInstructorBean.getFieldName(IEntityAlias.COURSE_INSTRUCTOR_COURSE_ID), courseId);
-			Iterator iter = courseInstructorBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				CourseInstructor courseInstructor = (CourseInstructor)iter.next();
+			for( ITransferObject to : courseInstructorBean.getList(criteria) ) {
+				CourseInstructor courseInstructor = (CourseInstructor) to;
 				CourseInstructor newCourseInstructor = new CourseInstructor();
 				newCourseInstructor.setCourse(newCourse);
 				newCourseInstructor.setEmployee(courseInstructor.getEmployee());
@@ -166,15 +164,13 @@ public class DuplicateGroupController extends GroupSelectionController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createCourseSchedules(Integer courseId, Course newCourse) {
 		try {
 			IManagerBean courseScheduleBean = BeanManager.getManagerBean(CourseSchedule.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseScheduleBean.getFieldName(IEntityAlias.COURSE_SCHEDULE_COURSE_ID), courseId);
-			Iterator iter = courseScheduleBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				CourseSchedule courseSchedule = (CourseSchedule)iter.next();
+			for( ITransferObject to : courseScheduleBean.getList(criteria) ) {
+				CourseSchedule courseSchedule = (CourseSchedule) to;
 				CourseSchedule newCourseSchedule = new CourseSchedule();
 				newCourseSchedule.setCourse(newCourse);
 				newCourseSchedule.setDayOfWeek(courseSchedule.getDayOfWeek());
@@ -187,15 +183,13 @@ public class DuplicateGroupController extends GroupSelectionController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createCourseSkills(Integer courseId, Course newCourse) {
 		try {
 			IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IEntityAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), courseId);
-			Iterator iter = courseAcademicSkillBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iter.next();
+			for( ITransferObject to : courseAcademicSkillBean.getList(criteria) ) {
+				CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill) to;
 				CourseAcademicSkill newCourseAcademicSkill = new CourseAcademicSkill();
 				newCourseAcademicSkill.setCourse(newCourse);
 				newCourseAcademicSkill.setAcademicSkill(courseAcademicSkill.getAcademicSkill());

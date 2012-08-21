@@ -19,12 +19,12 @@
 				<aon:selectOneMenu id="RegistrySegment_name" rendered="#{formEdit}"
 					required="true" value="#{controller.to.segment.id}" 
 					valueChangeListener="#{controller.segmentData}">
-					<f:selectItems value="#{registryCollections.segments}" />
+					<f:selectItems value="#{registryCollections.segmentIds}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
 					<aon:selectOneMenu id="RegistrySegment_name-New" rendered="#{formNew}"
 						required="true" value="#{controller.to.segment.id}">
-						<f:selectItems value="#{registryCollections.segments}" />
+						<f:selectItems value="#{registryCollections.segmentIds}" />
 					</aon:selectOneMenu>								
 				</f:facet>
 			</aon:column>

@@ -190,6 +190,14 @@ public class RegistryCollectionsController {
 	}
 	
     public List<SelectItem> getSegments() throws ManagerBeanException{
+    	return getSegments(false);
+    }
+
+    public List<SelectItem> getSegmentIds() throws ManagerBeanException{
+    	return getSegments(true);
+    }
+    
+    private List<SelectItem> getSegments( boolean onlyId ) throws ManagerBeanException{
     	List<SelectItem> segments = new LinkedList<SelectItem>();
     	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
     	Criteria criteria = new Criteria();
@@ -197,8 +205,11 @@ public class RegistryCollectionsController {
     	Iterator<?> iter = segmentBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Segment segment = (Segment)iter.next();
-    		SelectItem item = new SelectItem(segment.getId(), segment.getName());
-    		segments.add(item);
+    		if ( onlyId ) {
+    			segments.add(new SelectItem(segment.getId(), segment.getName()));
+    		} else {
+    			segments.add(new SelectItem(segment, segment.getName()));	
+    		}
     	}
     	return segments;
     }
