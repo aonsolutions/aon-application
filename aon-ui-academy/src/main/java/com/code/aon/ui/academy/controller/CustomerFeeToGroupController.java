@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -29,6 +31,8 @@ public class CustomerFeeToGroupController extends GroupSelectionController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerFeeToGroupController.class);
 	
 	private CustomerFee fee;
+	
+	private boolean longDescription;
 	
 	public CustomerFee getFee() {
 		return fee;
@@ -93,4 +97,39 @@ public class CustomerFeeToGroupController extends GroupSelectionController {
 		fee.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
 
+	public void onLongDescription(ActionEvent event) {
+		setLongDescription(true);
+
+		if (StringUtils.equals(fee.getItem().getProduct().getName().trim(), fee.getDescription().trim())) {
+			String longDescription = fee.getItem().getDescription();
+			if (!StringUtils.isEmpty(longDescription)) {
+				fee.setDescription(fee.getDescription() + "\r\n" + longDescription);
+			}
+		}
+	}
+
+	public void onShortDescription(ActionEvent event) {
+		setLongDescription(false);
+	}
+	
+	public void onItemChanged(LookupChangeEvent event) {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			Item item = (Item)event.getNewValue();
+			fee.setItem(item);
+			String description = item.getProduct().getName();
+			if (! StringUtils.isBlank(item.getDetail()) ) {
+				description += " " + item.getDetail();
+			}
+			fee.setDescription( description );
+		}
+	}	
+	
+	public boolean isLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(boolean longDescription) {
+		this.longDescription = longDescription;
+	}
+		
 }
