@@ -29,7 +29,7 @@
 		<aon:commandButton title="#{financeBundle.finance_add_batch}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{financeBundle.finance_to_batch}"
-			rendered="#{paymentCardSettle.financeModel.rowCount > 0 and paymentCardSettle.totalDifferenceAmount == 0}"
+			rendered="#{paymentCardSettle.financeModel.rowCount > 0}"
 			actionListener="#{paymentCardSettle.onFinanceBatchShow}" 
 			reRender="showFinanceBatchWindow">
 			<f:setPropertyActionListener target="#{paymentCardSettle.showFinanceBatchWindow}"

@@ -325,6 +325,7 @@ public class PaymentCardSettleController {
 		setPayMethod(null);
 		setReservationId(null);
 		setReservationCode(null);
+		setFractionPayMethod(null);
 	}
 	
 	public void onEditSearch(ActionEvent event) {
@@ -485,6 +486,7 @@ public class PaymentCardSettleController {
 				createFinanceTracking(fraction, 2, amount);
 			}
 		}
+		setFractionPayMethod(null);
 	}
 	
 	private Finance createFractionFinance(Finance targetFinance, Double amount) {
@@ -500,7 +502,7 @@ public class PaymentCardSettleController {
 		finance.setConcept(targetFinance.getConcept());
 		finance.setInvoice(targetFinance.getInvoice());
 		finance.setDueDate(targetFinance.getDueDate());
-		finance.setPayMethod(getPayMethod());
+		finance.setPayMethod(getFractionPayMethod());
 		finance.setBank(targetFinance.getBank());
 		finance.setBankAccount(targetFinance.getBankAccount());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
@@ -561,7 +563,8 @@ public class PaymentCardSettleController {
 				}
 			}
 		}
-
+		getFinanceList().clear();
+		clearCheckedFinances();
 		onLoadFinanceBatch(event);
 	}
 	

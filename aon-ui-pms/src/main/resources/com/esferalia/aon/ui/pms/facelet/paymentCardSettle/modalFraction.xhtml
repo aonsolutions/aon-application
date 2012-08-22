@@ -62,8 +62,9 @@
 										
 											<aon:outputLabel for="Finance_payMethod"
 												value="#{configBundle.config_pay_method}" />
-											<aon:selectOneMenu id="fraction-payMethod" 
+											<aon:selectOneMenu id="Finance_payMethod" required="#{true}" 
 												value="#{paymentCardSettle.fractionPayMethod}">
+												<f:selectItem itemLabel=" - " itemValue="#{null}" />
 												<f:selectItems value="#{configCollections.payMethods}" />
 											</aon:selectOneMenu>
 	
