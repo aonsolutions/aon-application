@@ -11,6 +11,7 @@ import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.AcademicYear;
 import com.code.aon.academy.CourseLevel;
 import com.code.aon.academy.CourseSubject;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,6 +23,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class AcademyCollectionsController {
 	
 	private List<SelectItem> courseStatuses;
+	private List<SelectItem> courseAlumnStatuses;
 	
     public AcademicYear getAcademicYear() {
 		return null;
@@ -117,4 +119,17 @@ public class AcademyCollectionsController {
         return academicSkills;
     }
 
+	public List<SelectItem> getCourseAlumnStatuses() {
+		if (courseAlumnStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			courseAlumnStatuses = new LinkedList<SelectItem>();
+			for( CourseAlumnStatus status : CourseAlumnStatus.values() ) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				courseAlumnStatuses.add(item);			
+			}
+		}
+		return courseAlumnStatuses;
+	}
+	
 }

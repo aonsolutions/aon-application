@@ -104,9 +104,15 @@
 							<ui:param name="controller" value="#{courseSchedule}" />
 						</ui:include>
 					</aon:panelTab>
+					<aon:panelTab id="alumns" label="#{academyBundle.academy_alumns}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumn/tab_grid.xhtml">
+							<ui:param name="controller" value="#{courseAlumn}" />
+						</ui:include>
+					</aon:panelTab>
 				</aon:panelTabSet>
 
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 	</ui:define>
 </ui:composition>

@@ -18,16 +18,14 @@
 				</f:facet>
 				<aon:outputText value="#{to.dayOfWeek}" rendered="#{formList}" />
 				<aon:selectOneMenu id="CourseSchedule_dayOfWeek"
-					value="#{courseSchedule.to.dayOfWeek}" rendered="#{formEdit}" >
+					value="#{controller.to.dayOfWeek}" rendered="#{formEdit}" >
 					<f:selectItems value="#{commonCollections.weekDays}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:div rendered="#{courseSchedule.new}">
-						<aon:selectOneMenu id="CourseSchedule_dayOfWeek-New"
-							value="#{courseSchedule.to.dayOfWeek}" rendered="#{formNew}">
-							<f:selectItems value="#{commonCollections.weekDays}" />
-						</aon:selectOneMenu>
-					</aon:div>
+					<aon:selectOneMenu id="CourseSchedule_dayOfWeek-New"
+						value="#{controller.to.dayOfWeek}" rendered="#{formNew}">
+						<f:selectItems value="#{commonCollections.weekDays}" />
+					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
 						
@@ -41,12 +39,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>		
 				<aon:selectInputDate id="CourseSchedule_startTime" 
-					value="#{courseSchedule.to.startTime}" required="true"
+					value="#{controller.to.startTime}" required="true"
 					timeZone="#{timeZoneController.timeZone}" rendered="#{formEdit}"
 					popupDateFormat="#{bundle.aon_time2_pattern}" />
 				<f:facet name="footer">
 					<aon:selectInputDate id="CourseSchedule_startTime-New" 
-						value="#{courseSchedule.to.startTime}" required="true"
+						value="#{controller.to.startTime}" required="true"
 						timeZone="#{timeZoneController.timeZone}" rendered="#{formNew}"
 						popupDateFormat="#{bundle.aon_time2_pattern}" />
 				</f:facet>
@@ -62,12 +60,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>		
 				<aon:selectInputDate id="CourseSchedule_endTime" 
-					value="#{courseSchedule.to.endTime}" required="true"
+					value="#{controller.to.endTime}" required="true"
 					timeZone="#{timeZoneController.timeZone}" rendered="#{formEdit}"
 					popupDateFormat="#{bundle.aon_time2_pattern}" />
 				<f:facet name="footer">
 					<aon:selectInputDate id="CourseSchedule_endTime-New" 
-						value="#{courseSchedule.to.endTime}" required="true"
+						value="#{controller.to.endTime}" required="true"
 						timeZone="#{timeZoneController.timeZone}" rendered="#{formNew}"
 						popupDateFormat="#{bundle.aon_time2_pattern}" />
 				</f:facet>

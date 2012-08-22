@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:div styleClass="aon-toolbar">
+		<aon:htmlCommandLink id="absenceTemplateList-excel-report"
+			value="&#160;" target="_blank" action="#{report.onExecute}"
+			styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+			<f:param name="reportKey" value="absenceTemplateList" />
+			<f:param name="outputFormat" value="MS Excel" />
+		</aon:htmlCommandLink>
+		<aon:htmlCommandLink id="absenceTemplateList-report"
+			value="#{academyBundle.academy_absences_listing}"
+			target="_blank" action="#{report.onExecute}"
+			styleClass="aon-finding-toolbar-item aon-icon-pdf"
+			accesskey="#{bundle.aon_key_print}">
+			<f:param name="reportKey" value="absenceTemplateList" />
+		</aon:htmlCommandLink>
+	</aon:div>
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="skipResetButton" value="#{controller.limitReached}" />
+		<ui:define name="columns">
+		
+			<aon:column alias="CourseAlumn.customer.registry.name"
+				styleClass="aon-editDataTable-textColumn" >
+				<f:facet name="header">
+					<aon:outputLabel for="CourseAlumn_customer" value="#{academyBundle.academy_alumn}" />
+				</f:facet>
+				<aon:outputText value="#{to.customer.registry.name}" />
+				<f:facet name="footer">
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{controller.to.customer}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />									
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+					</ui:include>
+				</f:facet>
+			</aon:column>
+
+			<aon:column alias="CourseAlumn.status"
+				styleClass="aon-editDataTable-textColumn" >
+				<f:facet name="header">
+					<aon:outputLabel for="CourseAlumn_status" value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.status}" rendered="#{formList}" />
+				<aon:selectOneMenu id="CourseAlumn_status" rendered="#{formEdit}"
+					value="#{controller.to.status}">
+					<f:selectItems value="#{academyCollections.courseAlumnStatuses}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="CourseAlumn_status-New" rendered="#{formNew}"
+						value="#{controller.to.status}">
+						<f:selectItems value="#{academyCollections.courseAlumnStatuses}" />
+					</aon:selectOneMenu>
+				</f:facet>
+			</aon:column>
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

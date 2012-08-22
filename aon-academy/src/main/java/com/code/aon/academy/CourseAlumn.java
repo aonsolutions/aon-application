@@ -3,6 +3,7 @@ package com.code.aon.academy;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.esferalia.aon.entity.master.CourseAlumnDB;
 
 /**
@@ -14,4 +15,8 @@ public class CourseAlumn extends CourseAlumnDB {
 	
 	private static final long serialVersionUID = 1L;
 
+    public CourseAlumn() {
+    	setStatus( CourseAlumnStatus.ACTIVE );
+    }
+	
 }
