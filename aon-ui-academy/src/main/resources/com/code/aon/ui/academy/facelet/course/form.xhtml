@@ -89,14 +89,22 @@
 				</aon:panelGrid>
 				
 				<aon:div styleClass="aon-margin-top">
-					<aon:panelGrid columns="2" rendered="#{!course.new}" >
+					<aon:panelGrid columns="2">
 						<aon:outputLabel for="Course_description"
 							value="#{bundle.aon_description}" />
 						<aon:inputText id="Course_description"
-							required="true" value="#{course.to.description}"
+							value="#{course.to.description}"
 							size="98" maxlength="64"/>
 					</aon:panelGrid>					
 				</aon:div>
+
+				<aon:panelTabSet rendered="#{!course.new}" selectedTab="#{course.selectedTab}">
+					<aon:panelTab id="schedule" label="#{academyBundle.academy_schedule_schedule}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseSchedule/tab_grid.xhtml">
+							<ui:param name="controller" value="#{courseSchedule}" />
+						</ui:include>
+					</aon:panelTab>
+				</aon:panelTabSet>
 
 			</aon:div>
 		</aon:form>

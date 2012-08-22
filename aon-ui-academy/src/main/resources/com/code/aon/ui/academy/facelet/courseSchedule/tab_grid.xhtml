@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+
+		<ui:define name="columns">
+		
+			<aon:column alias="CourseSchedule.dayOfWeek"
+				styleClass="aon-editDataTable-textColumn" >
+				<f:facet name="header">
+					<aon:outputLabel for="CourseSchedule_dayOfWeek" value="#{bundle.aon_day}" />
+				</f:facet>
+				<aon:outputText value="#{to.dayOfWeek}" rendered="#{formList}" />
+				<aon:selectOneMenu id="CourseSchedule_dayOfWeek"
+					value="#{courseSchedule.to.dayOfWeek}" rendered="#{formEdit}" >
+					<f:selectItems value="#{commonCollections.weekDays}" />
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:div rendered="#{courseSchedule.new}">
+						<aon:selectOneMenu id="CourseSchedule_dayOfWeek-New"
+							value="#{courseSchedule.to.dayOfWeek}" rendered="#{formNew}">
+							<f:selectItems value="#{commonCollections.weekDays}" />
+						</aon:selectOneMenu>
+					</aon:div>
+				</f:facet>
+			</aon:column>
+						
+			<aon:column alias="CourseSchedule.startTime"
+				styleClass="aon-editDataTable-textColumn aon-width-120">
+				<f:facet name="header">
+					<aon:outputLabel for="CourseSchedule_startTime" value="#{bundle.aon_start_time}" />
+				</f:facet>
+				<aon:outputText value="#{to.startTime}" rendered="#{formList}" >
+					<f:convertDateTime pattern="#{bundle.aon_time2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+				<aon:selectInputDate id="CourseSchedule_startTime" 
+					value="#{courseSchedule.to.startTime}" required="true"
+					timeZone="#{timeZoneController.timeZone}" rendered="#{formEdit}"
+					popupDateFormat="#{bundle.aon_time2_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CourseSchedule_startTime-New" 
+						value="#{courseSchedule.to.startTime}" required="true"
+						timeZone="#{timeZoneController.timeZone}" rendered="#{formNew}"
+						popupDateFormat="#{bundle.aon_time2_pattern}" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column alias="CourseSchedule.endTime"
+				styleClass="aon-editDataTable-textColumn aon-width-120">
+				<f:facet name="header">
+					<aon:outputLabel for="CourseSchedule_endTime" value="#{bundle.aon_end_time}" />
+				</f:facet>
+				<aon:outputText value="#{to.endTime}" rendered="#{formList}" >
+					<f:convertDateTime pattern="#{bundle.aon_time2_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+				<aon:selectInputDate id="CourseSchedule_endTime" 
+					value="#{courseSchedule.to.endTime}" required="true"
+					timeZone="#{timeZoneController.timeZone}" rendered="#{formEdit}"
+					popupDateFormat="#{bundle.aon_time2_pattern}" />
+				<f:facet name="footer">
+					<aon:selectInputDate id="CourseSchedule_endTime-New" 
+						value="#{courseSchedule.to.endTime}" required="true"
+						timeZone="#{timeZoneController.timeZone}" rendered="#{formNew}"
+						popupDateFormat="#{bundle.aon_time2_pattern}" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

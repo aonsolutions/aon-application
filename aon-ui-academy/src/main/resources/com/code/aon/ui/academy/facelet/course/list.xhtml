@@ -9,10 +9,64 @@
 
 	<ui:define name="content">
 		<aon:form>
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{academyBundle.academy_courses}" />
 				<ui:param name="controller" value="#{course}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:htmlCommandLink id="courseList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="courseList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="courseList-report"
+						value="#{bundle.aon_listing}"
+						target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf"
+						accesskey="#{bundle.aon_key_print}">
+						<f:param name="reportKey" value="courseList" />
+					</aon:htmlCommandLink>
+
+					<aon:htmlCommandLink id="courseDetailList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="courseDetailList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="courseDetailList-report"
+						value="#{bundle.aon_detailed_listing}"
+						target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="courseDetailList" />
+					</aon:htmlCommandLink>
+
+					<aon:htmlCommandLink id="markTemplateList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="markTemplateList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="markTemplateList-report"
+						value="#{academyBundle.academy_notes_listing}"
+						target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="markTemplateList" />
+					</aon:htmlCommandLink>
+
+					<aon:htmlCommandLink id="courseAbsenceTemplateList-excel-report"
+						value="&#160;" target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+						<f:param name="reportKey" value="courseAbsenceTemplateList" />
+						<f:param name="outputFormat" value="MS Excel" />
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="courseAbsenceTemplateList-report"
+						value="#{academyBundle.academy_absences_listing}"
+						target="_blank" action="#{report.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="courseAbsenceTemplateList" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 	

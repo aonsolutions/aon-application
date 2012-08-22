@@ -13,6 +13,7 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.Province;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -29,6 +30,7 @@ public class CommonCollections {
 	private List<SelectItem> levels;
 	private List<SelectItem> confidentialValues;
 	private List<SelectItem> mimeTypes;
+	private List<SelectItem> weekDays;
 	
 	/**
      * Get year months.
@@ -154,5 +156,18 @@ public class CommonCollections {
 		}
 		return mimeTypes;
 	}	
-	
+
+	public List<SelectItem> getWeekDays() {
+		if ( weekDays == null ) {
+			Locale locale = AonUtil.getCurrentLocale();
+			weekDays = new LinkedList<SelectItem>();
+			for( WeekDay weekDay : WeekDay.values() ) {
+				String name = weekDay.getName(locale);
+				SelectItem item = new SelectItem(weekDay, name);
+				weekDays.add(item);			
+			}
+		}
+		return weekDays;
+	}	
+
 }
