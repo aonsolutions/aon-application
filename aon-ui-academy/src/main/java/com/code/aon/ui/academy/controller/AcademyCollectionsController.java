@@ -11,6 +11,7 @@ import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.AcademicYear;
 import com.code.aon.academy.CourseLevel;
 import com.code.aon.academy.CourseSubject;
+import com.code.aon.academy.QualitySkill;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.BeanManager;
@@ -131,5 +132,18 @@ public class AcademyCollectionsController {
 		}
 		return courseAlumnStatuses;
 	}
-	
+
+    public List<SelectItem> getQualitySkills() throws ManagerBeanException{
+        List<SelectItem> qualitySkills = new LinkedList<SelectItem>();
+        IManagerBean qualitySkillBean = BeanManager.getManagerBean(QualitySkill.class);
+        Criteria criteria = new Criteria();
+        criteria.addOrder(qualitySkillBean.getFieldName(IEntityAlias.QUALITY_SKILL_CODE));
+        for( ITransferObject to : qualitySkillBean.getList(criteria) ) {
+        	QualitySkill qualitySkill = (QualitySkill) to;
+            SelectItem item = new SelectItem(qualitySkill, qualitySkill.getCode() +" / "+ qualitySkill.getDescription());
+            qualitySkills.add(item);
+        }
+        return qualitySkills;
+    }	
+
 }
