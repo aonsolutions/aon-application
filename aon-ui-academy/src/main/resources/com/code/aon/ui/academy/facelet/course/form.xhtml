@@ -109,6 +109,11 @@
 							<ui:param name="controller" value="#{courseAlumn}" />
 						</ui:include>
 					</aon:panelTab>
+					<aon:panelTab id="academicSkills" label="#{academyBundle.academy_academic_skills}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseAcademicSkill/tab_grid.xhtml">
+							<ui:param name="controller" value="#{courseAcademicSkill}" />
+						</ui:include>
+					</aon:panelTab>
 				</aon:panelTabSet>
 
 			</aon:div>
