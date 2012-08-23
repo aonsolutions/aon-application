@@ -455,6 +455,7 @@
 								
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{offer.to.bank}" />
+								<ui:param name="lookupSuffix" value="Offer" />
 								<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 							</ui:include>
 							<aon:div>

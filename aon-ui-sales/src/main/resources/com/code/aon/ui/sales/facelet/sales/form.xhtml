@@ -345,6 +345,7 @@
 								disabled="#{!sales.pending}" size="5" />
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{sales.to.bank}" />
+								<ui:param name="lookupSuffix" value="Sales" />
 								<ui:param name="lookupDisabled" value="#{!sales.pending}" />
 							</ui:include>								
 							<aon:div>

@@ -323,6 +323,7 @@
 								disabled="#{!delivery.pending}" size="5" />
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{delivery.to.bank}" />
+								<ui:param name="lookupSuffix" value="Delivery" />
 								<ui:param name="lookupDisabled" value="#{!delivery.pending}" />
 							</ui:include>								
 							<aon:div>

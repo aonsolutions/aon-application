@@ -299,12 +299,13 @@
 						required="true" size="10"
 						ajaxSingle="true" reRender="Finance_total" />
 
-					<aon:outputLabel for="Bank_id"
+					<aon:outputLabel for="Bank_idFinance"
 						value="#{configBundle.config_bank}" />
 					<aon:div id="Finance_bankAccount_panel">
 						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{finance.to.bank}" />
+								<ui:param name="lookupSuffix" value="Finance"/>
 								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
 								<ui:param name="lookupReRender" value="Finance_bankAccount" />
 								<aon:methodParam name="lookupChangeListener"
