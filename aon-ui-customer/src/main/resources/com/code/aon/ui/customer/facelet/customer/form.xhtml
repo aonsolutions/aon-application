@@ -270,6 +270,17 @@
 								</ui:include>								
 							</aon:panelTab>
 						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
+							<aon:panelTab id="absence"
+								label="#{academyBundle.academy_absences}">
+								<ui:include	src="/com/code/aon/ui/academy/facelet/customerAbsence/tab_grid.xhtml">
+									<ui:param name="controller" value="#{customerAbsence}" />
+									<ui:param name="removeButtonReRender" value="customerTab" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>

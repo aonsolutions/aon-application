@@ -198,6 +198,8 @@
 			<value>#{customerAccount}</value>
 			<!-- aon-ui-project-->
 			<value>#{customerProjectListener}</value>
+			<!-- aon-ui-academy-->
+			<value>#{customerAbsenceChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

@@ -2,6 +2,7 @@ package com.code.aon.aio.controller;
 
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
 import java.awt.image.BufferedImage;
@@ -59,6 +60,7 @@ import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.GroupwareUtils;
@@ -97,6 +99,7 @@ public class DesktopController {
 			updateNoticeSummaryModel(principal);
 			initTask();
 			initGarage();
+			initAcademy();
 	    } catch (ManagerBeanException e) {
 	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
@@ -357,6 +360,13 @@ public class DesktopController {
 			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
 			AonUtil.setBeanValue(IPurchaseConstants.PURCHASE_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+		}
+	}
+
+	private void initAcademy() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		if (! adc.isDeniedModule(Module.ACADEMY.getName()) ) {
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_ABSENCE, Boolean.TRUE);
 		}
 	}
 	

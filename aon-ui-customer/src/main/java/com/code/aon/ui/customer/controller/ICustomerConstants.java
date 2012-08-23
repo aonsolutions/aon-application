@@ -14,4 +14,10 @@ public interface ICustomerConstants {
 	
 	String CUSTOMER_SEARCH_LISTENER_NAME = "customerSearch";
 	
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+
+	String SHOW_ABSENCE = "showAbsence";	
+
 }

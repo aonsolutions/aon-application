@@ -10,6 +10,8 @@ public interface IAcademyConstants {
 	
 	String COURSE_CONTROLLER_NAME = "course";
 	
+	String CUSTOMER_ABSENCE_CONTROLLER_NAME = "customerAbsence";
+	
 	// ************************************************************
 	// MESSAGE
 	// ************************************************************

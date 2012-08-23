@@ -36,10 +36,12 @@
 	
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{mark}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 					<ui:define name="columns">
 	
 						<aon:column alias="Mark.subject.course.code"
-							styleClass="aon-editDataTable-textColumn  aon-width-80">
+							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{academyBundle.academy_course}" />
 							</f:facet>
@@ -55,7 +57,7 @@
 						</aon:column>
 						
 						<aon:column alias="Mark.subject.academicSkill.description"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{academyBundle.academy_academic_skill}" />
 							</f:facet>

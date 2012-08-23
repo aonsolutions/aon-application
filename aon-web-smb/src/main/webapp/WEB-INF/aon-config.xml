@@ -59,6 +59,7 @@
 			showAddInfo="true"
 			showDirStaff="false"
 			showHistory="true"
+			showAbsence="false"
 		/>
 	</customer:config>
 

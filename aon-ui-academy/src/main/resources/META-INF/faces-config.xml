@@ -347,6 +347,13 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************* COURSEMARK ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseMark</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CourseMarkController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 
 	<!-- ************* MARK ***************** -->
 	<managed-bean>
@@ -382,6 +389,31 @@
 		<managed-bean-name>markSearch</managed-bean-name>
 	    <managed-bean-class>com.code.aon.ui.academy.event.MarkSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- ************* CUSTOMER ABSENCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerAbsence</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CustomerAbsenceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Absence</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerAbsence</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerAbsenceChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.event.CustomerAbsenceChildListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 
 	<!-- ************* ALUMN LOAN ***************** -->
