@@ -131,6 +131,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{roomSearch}</value>
+				<value>#{roomScopeListener}</value>
 				<value>#{roomControllerListener}</value>
 				<value>#{rommFeatureLinesListener}</value>
 			</list-entries>
@@ -143,6 +144,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 
+	<managed-bean>
+		<managed-bean-name>roomScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>Room_hotel_scope_id</value>
+		</managed-property>
+	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>roomControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.pms.event.RoomControllerListener</managed-bean-class>
