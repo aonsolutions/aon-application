@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="480"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -70,11 +70,13 @@
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". "
-+ ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"")
++ ($P{recordData}!=null?
+( ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"")
 + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"")
 + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"")
 + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"")
-+ ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")]]></textFieldExpression>
++ ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):""))
+:"")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-6" x="-25" y="241" width="4" height="1"/>
@@ -214,8 +216,7 @@
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-131" positionType="Float" mode="Transparent" x="0" y="48" width="136" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
-						<printWhenExpression><![CDATA[$P{printHeader} && !$P{email}.getValue().trim().isEmpty()
-]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{printHeader} && !$P{email}.getValue().trim().isEmpty()]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -227,8 +228,7 @@
 						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{email}.getValue().trim().isEmpty()?null:"e" + ": " + $P{email}.getValue()
-]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{email}.getValue().trim().isEmpty()?null:"e" + ": " + $P{email}.getValue()]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement key="textField-81" positionType="Float" x="0" y="24" width="136" height="12" isRemoveLineWhenBlank="true">
