@@ -18,15 +18,35 @@
 				<ui:define name="beforeSpinToolbarContent">
 				</ui:define>
 				<ui:define name="moreMenuContent">
-					<c:if test="#{!customer.new and aonConfiguration.bean.customer.showHistory}">
-						<aon:menuItem id="CustomerHistory" 
-							action="registry_stats" actionListener="#{customer.onCustomerHistory}"
-							value="#{bundle.aon_history}"
-							iconClass="aon-icon-task-assume">
-						</aon:menuItem>
-						<rich:menuSeparator id="historyMenuSeparator" />		
-					</c:if>
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
+					<c:if test="#{!customer.new}">
+						<c:if test="#{aonConfiguration.bean.customer.showHistory}">
+							<aon:menuItem id="CustomerHistory" 
+								action="registry_stats" actionListener="#{customer.onCustomerHistory}"
+								value="#{bundle.aon_history}"
+								iconClass="aon-icon-task-assume">
+							</aon:menuItem>
+							<rich:menuSeparator id="historyMenuSeparator" />		
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
+							<aon:menuItem id="absence-button"
+								value="#{academyBundle.academy_absences}"
+								iconClass="aon-icon-data"
+								reRender="showNewAbsenceWindow"
+								actionListener="#{customerAbsence.onReset}">
+								<f:setPropertyActionListener target="#{customerAbsence.showNewWindow}" value="#{true}" />							
+							</aon:menuItem>		
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.customer.showLoan}">
+							<aon:menuItem id="loan-button"
+								value="#{academyBundle.academy_loans}"
+								iconClass="aon-icon-data"
+								reRender="showNewLoanWindow"
+								actionListener="#{customerLoan.onReset}">
+								<f:setPropertyActionListener target="#{customerLoan.showNewWindow}" value="#{true}" />							
+							</aon:menuItem>		
+						</c:if>
+					</c:if>					
+					<ui:decorate template="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{customer}" />
 						<ui:param name="showFeeButton" value="#{aonConfiguration.bean.customer.showFinanceFeeData and aonRole.financeOperator}" />
 						<ui:param name="showProjectButton" value="#{aonConfiguration.bean.customer.showProjectData}" />
@@ -46,7 +66,7 @@
 						<ui:param name="addInfoController" value="#{customerAddInfo}" /> 
 						<ui:param name="dirStaffController" value="#{customerDirStaff}" /> 
 						<ui:param name="rAttachController" value="#{customerRAttach}" />
-					</ui:include>
+					</ui:decorate>
 				</ui:define>
 			</ui:decorate>
 			
@@ -271,11 +291,19 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
-							<aon:panelTab id="absence"
-								label="#{academyBundle.academy_absences}">
+						<c:if test="#{aonConfiguration.bean.customer.showAbsence and customerAbsence.showTab}">
+							<aon:panelTab id="absence" label="#{academyBundle.academy_absences}">
 								<ui:include	src="/com/code/aon/ui/academy/facelet/customerAbsence/tab_grid.xhtml">
 									<ui:param name="controller" value="#{customerAbsence}" />
+									<ui:param name="removeButtonReRender" value="customerTab" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.customer.showLoan and customerLoan.showTab}">
+							<aon:panelTab id="loan" label="#{academyBundle.academy_loans}">
+								<ui:include	src="/com/code/aon/ui/academy/facelet/customerLoan/tab_grid.xhtml">
+									<ui:param name="controller" value="#{customerLoan}" />
 									<ui:param name="removeButtonReRender" value="customerTab" />
 								</ui:include>
 							</aon:panelTab>
@@ -367,6 +395,18 @@
 				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/newAttachModal.xhtml">
 					<ui:param name="controller" value="#{customer}" />
 					<ui:param name="attachmentController" value="#{customerRAttach}" />
+					<ui:param name="modalReRender" value="customerTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
+				<ui:include src="/com/code/aon/ui/academy/facelet/customerAbsence/newAbsenceModal.xhtml">
+					<ui:param name="absenceController" value="#{customerAbsence}" />
+					<ui:param name="modalReRender" value="customerTab" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.customer.showLoan}">
+				<ui:include src="/com/code/aon/ui/academy/facelet/customerLoan/newLoanModal.xhtml">
+					<ui:param name="loanController" value="#{customerLoan}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
 			</c:if>

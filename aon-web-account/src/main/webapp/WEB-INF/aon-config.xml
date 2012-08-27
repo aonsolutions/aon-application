@@ -60,6 +60,8 @@
 			showDirStaff="false"
 			showHistory="false"
 			showAbsence="false"
+			showLoan="false"
+			showCourse="false"			
 		/>
 	</customer:config>
 

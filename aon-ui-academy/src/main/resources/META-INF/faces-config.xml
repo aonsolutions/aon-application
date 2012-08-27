@@ -416,6 +416,67 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 
+	<!-- ************* CUSTOMER LOAN ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerLoan</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CustomerLoanController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AlumnLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerLoan</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AlumnLoan_endDate desc,AlumnLoan_material</value>
+		</managed-property>						
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>customer.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerAlumnLoanChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerLoan</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AlumnLoan_customer_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* ALUMN LOAN ***************** -->
 	<managed-bean>
 		<managed-bean-name>alumnLoan</managed-bean-name>
@@ -435,7 +496,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>AlumnLoan_endDate desc,AlumnLoan_material,AlumnLoan_id</value>
+			<value>AlumnLoan_endDate desc,AlumnLoan_material</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listenerClasses</property-name>

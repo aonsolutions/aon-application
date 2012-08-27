@@ -3,6 +3,8 @@ package com.code.aon.aio.controller;
 
 import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
 import java.awt.image.BufferedImage;
@@ -367,6 +369,8 @@ public class DesktopController {
 		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
 		if (! adc.isDeniedModule(Module.ACADEMY.getName()) ) {
 			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_ABSENCE, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_LOAN, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_COURSE, Boolean.TRUE);
 		}
 	}
 	

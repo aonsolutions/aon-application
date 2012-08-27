@@ -200,6 +200,7 @@
 			<value>#{customerProjectListener}</value>
 			<!-- aon-ui-academy-->
 			<value>#{customerAbsenceChildListener}</value>
+			<value>#{customerAlumnLoanChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

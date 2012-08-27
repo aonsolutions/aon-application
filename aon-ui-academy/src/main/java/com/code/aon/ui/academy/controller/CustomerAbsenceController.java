@@ -1,6 +1,5 @@
 package com.code.aon.ui.academy.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,13 +9,11 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 
-import com.code.aon.academy.Absence;
 import com.code.aon.academy.AcademicYear;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
@@ -30,6 +27,18 @@ public class CustomerAbsenceController extends BasicController {
 
 	private Customer customer;
 	
+	private List<CourseAlumn> courseAlumns;
+	
+	private boolean showNewWindow;
+	
+	public boolean isShowNewWindow() {
+		return showNewWindow;
+	}
+
+	public void setShowNewWindow(boolean showNewWindow) {
+		this.showNewWindow = showNewWindow;
+	}
+
 	/**
 	 * @return the academicYear
 	 */
@@ -69,6 +78,7 @@ public class CustomerAbsenceController extends BasicController {
 		try {
 			this.academicYear = null;
 			if (customer!=null) {
+				updateCourseAlumns();
 				loadAbsences(customer);
 			}
 		} catch (ExpressionException e) {
@@ -76,44 +86,53 @@ public class CustomerAbsenceController extends BasicController {
 		}
 	}
 	
-	private void loadAbsences(Customer customer) throws ManagerBeanException, ExpressionException{
+	public boolean isShowTab() throws ManagerBeanException {
+		Criteria criteria = getCriteria(getManagerBean());
+		return getManagerBean().getCount(criteria) > 0;
+	}
+	
+	private Criteria getCriteria( IManagerBean bean ) throws ManagerBeanException {
 		Criteria criteria = new Criteria(); 
-		IManagerBean absenceBean = BeanManager.getManagerBean(Absence.class);
-		
-		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
-		Criteria courseAlumnCriteria = new Criteria();
-		courseAlumnCriteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), customer.getId());
-		List<ITransferObject> listCourseAlumn = courseAlumnBean.getList(courseAlumnCriteria);
-		if (!listCourseAlumn.isEmpty()){
-			Iterator<ITransferObject> iterCourseAlumn = listCourseAlumn.iterator();
-			while (iterCourseAlumn.hasNext()){
-				CourseAlumn courseAlumn = (CourseAlumn)iterCourseAlumn.next();
-				criteria.addOrExpression(absenceBean.getFieldName(IEntityAlias.ABSENCE_COURSE_ALUMN_ID),String.valueOf(courseAlumn.getId()));
+		if (! courseAlumns.isEmpty()) {
+			List<Integer> ids = new LinkedList<Integer>();
+			for( CourseAlumn courseAlumn :courseAlumns ) {
+				ids.add(courseAlumn.getId());
 			}
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.ABSENCE_COURSE_ALUMN_ID), ids);
 		} else {
-			criteria.addOrExpression(absenceBean.getFieldName(IEntityAlias.ABSENCE_COURSE_ALUMN_ID),"-1");
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.ABSENCE_COURSE_ALUMN_ID));
 		}
-		if (this.getAcademicYear()!=null &&
-				this.getAcademicYear().getId()!=null){
-			criteria.addEqualExpression("Absence.courseAlumn.course.academicYear.id", this.getAcademicYear().getId());
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ABSENCE_ABSENCE_DATE), false);
+		return criteria;
+	}
+	
+	private void loadAbsences(Customer customer) throws ManagerBeanException, ExpressionException{
+		Criteria criteria = getCriteria(getManagerBean());
+		if ((getAcademicYear()!=null) && (getAcademicYear().getId()!=null)) {
+			criteria.addEqualExpression("Absence.courseAlumn.course.academicYear.id", getAcademicYear().getId());
 		}
-		criteria.addOrder(absenceBean.getFieldName(IEntityAlias.ABSENCE_ABSENCE_DATE),false);
 		setCriteria(criteria);
 		onSearch(null);
 	}
 
     public List<SelectItem> getCourseAlumns() throws ManagerBeanException{
         List<SelectItem> courseAlumns = new LinkedList<SelectItem>();
-        IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
-        Criteria criteria = new Criteria();
-        criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), customer.getId());
-        criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
-        for( ITransferObject to : courseAlumnBean.getList(criteria) ) {
-        	CourseAlumn courseAlumn = (CourseAlumn) to;
-            SelectItem item = new SelectItem(courseAlumn, courseAlumn.getCourse().getDescription());
-            courseAlumns.add(item);
+        for( CourseAlumn courseAlumn : this.courseAlumns ) {
+        	if ( courseAlumn.getStatus() == CourseAlumnStatus.ACTIVE ) {
+                SelectItem item = new SelectItem(courseAlumn, courseAlumn.getCourse().getDescription());
+                courseAlumns.add(item);        		
+        	}
         }
         return courseAlumns;
     }
-	
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void updateCourseAlumns() throws ManagerBeanException{
+        IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_CUSTOMER_ID), customer.getId());
+        criteria.addOrder(courseAlumnBean.getFieldName(IEntityAlias.COURSE_ALUMN_COURSE_CODE));
+        this.courseAlumns = (List) courseAlumnBean.getList(criteria);
+    }
+    
 }
