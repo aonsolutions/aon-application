@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -28,15 +29,13 @@
 			
 				<aon:panel>
 					<aon:outputText value="#{pmsBundle.pms_agency}:" styleClass="aon-bold"/>
-					<aon:outputText styleClass="aon-margin-left"
-						value="#{(paymentCardSettle.agency!=null and paymentCardSettle.agency.id!=null)?(paymentCardSettle.agency.registry.fullName):('-')}"/>
-					
-					<aon:outputText styleClass="aon-margin-left aon-bold"
-						rendered="#{paymentCardSettle.payMethod.id!=null}"
-						value="#{configBundle.config_pay_method}:" />
-					<aon:outputText styleClass="aon-margin-left "
-						rendered="#{paymentCardSettle.payMethod.id!=null}"
-						value="#{paymentCardSettle.payMethod.name}"/>
+					<a4j:repeat value="#{paymentCardSettle.agencies}" rowKeyVar="index" var="agency">
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{agency.registry.fullName}"/>
+						<aon:outputText 
+							rendered="#{paymentCardSettle.agenciesSize-1 > index}"
+							value=","/>
+					</a4j:repeat>
 
 					<aon:outputText styleClass="aon-margin-left aon-bold"
 						rendered="#{paymentCardSettle.hotel!=null}"
@@ -44,6 +43,18 @@
 					<aon:outputText styleClass="aon-margin-left "
 						rendered="#{paymentCardSettle.hotel!=null}"
 						value="#{paymentCardSettle.hotel.workPlace.description}"/>
+					
+					<aon:outputText styleClass="aon-margin-left aon-bold"
+						rendered="#{paymentCardSettle.payMethodsSize > 0 and not empty paymentCardSettle.payMethods[0].name}"
+						value="#{configBundle.config_pay_method}:" />
+					<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
+						<aon:outputText styleClass="aon-margin-left "
+							rendered="#{paymentCardSettle.payMethodsSize > 0}"
+							value="#{payMth.name}"/>
+						<aon:outputText 
+							rendered="#{paymentCardSettle.payMethodsSize-1 > index}"
+							value=","/>
+					</a4j:repeat>
 
 					<aon:outputText styleClass="aon-margin-left aon-bold" 
 						rendered="#{not empty paymentCardSettle.reservationId}"

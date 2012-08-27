@@ -25,17 +25,35 @@
 					<aon:panelGrid columns="2" >
 							
 						<aon:outputText value="" />
-						<aon:div style="width:600px;">
+						<aon:div style="width:700px;">
 						
-							<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_finance}">
-								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+							<aon:panelCollapsible expanded="true" label="#{financeBundle.finance_finance}" id="financeSearchPanel">
+								<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" >
+
+									<aon:outputLabel rendered="#{paymentCardSettle.agenciesSize > 0}" value="&#160;" />
+									<aon:div id="agenciesDiv" rendered="#{paymentCardSettle.agenciesSize > 0}">
+										<a4j:repeat value="#{paymentCardSettle.agencies}" rowKeyVar="index" var="agency" >
+											<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+												<aon:outputText value="#{agency.registry.name}" />
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="financeSearchPanel"
+													actionListener="#{paymentCardSettle.onRemoveAgency}">
+													<f:param name="agencyIndex" value="#{index}" />
+												</aon:commandButton>
+											</aon:div>						
+										</a4j:repeat>
+									</aon:div>
 									
-									<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+									<ui:decorate template="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{paymentCardSettle.agency}" />
 										<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
-										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="idRequired" value="#{paymentCardSettle.agenciesSize == 0}" />
 										<ui:param name="skipNewButton" value="#{true}" />
-									</ui:include>
+										<ui:define name="afterLookupContent2">
+											<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="financeSearchPanel"
+												actionListener="#{paymentCardSettle.onAddAgency}"
+												rendered="#{(paymentCardSettle.agency.id != null)}" />					
+										</ui:define>
+									</ui:decorate>
 									
 									<aon:outputLabel for="Finance_hotel" 
 										value="#{pmsBundle.pms_hotel}" />
@@ -63,11 +81,26 @@
 									
 									<aon:outputLabel for="Finance_payMethod_id"
 										value="#{configBundle.config_pay_method}" />
-									<aon:selectOneMenu id="Finance_payMethod_id"
-										value="#{paymentCardSettle.payMethod}">
-										<f:selectItem itemLabel="-" value="#{null}"/>
-										<f:selectItems value="#{configCollections.payMethods}" />
-									</aon:selectOneMenu>
+									<aon:div id="payMethodDiv">
+										<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
+											<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+												<aon:selectOneMenu id="Finance_payMethod_id"
+													value="#{paymentCardSettle.payMethods[index]}">
+													<f:selectItem itemLabel="-" itemValue="#{paymentCardSettle.emptyPayMethod}" />
+													<f:selectItems value="#{configCollections.payMethods}" />
+												 	<a4j:support event="onchange" reRender="payMethodDiv" />
+												</aon:selectOneMenu>
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+													actionListener="#{paymentCardSettle.onRemovePayMethod}"
+													rendered="#{payMth.id != null}">
+													<f:param name="payMethodIndex" value="#{index}" />
+												</aon:commandButton>
+												<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+													actionListener="#{paymentCardSettle.onAddPayMethod}"
+													rendered="#{(payMth.id != null) and (index == (paymentCardSettle.payMethodsSize-1))}" />					
+											</aon:div>						
+										</a4j:repeat>
+									</aon:div>
 							
 								</aon:panelGrid>
 							</aon:panelCollapsible>

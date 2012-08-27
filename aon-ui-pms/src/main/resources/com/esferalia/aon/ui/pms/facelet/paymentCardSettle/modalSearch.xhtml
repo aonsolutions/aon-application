@@ -12,7 +12,7 @@
 		<c:if test="#{financeList.showFinanceSearchWindow}">
 			<rich:modalPanel id="financeSearchModalPanel" minHeight="400"
 				minWidth="580" rendered="#{financeList.showFinanceSearchWindow}"
-				showWhenRendered="true" zindex="100">
+				showWhenRendered="true" zindex="100" style="overflow: auto;" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{financeBundle.finance_refine_search}" />
@@ -30,8 +30,8 @@
 						</aon:commandButton>
 					</aon:form>
 				</f:facet>
-				<aon:form id="financeSearchForm">
-				<aon:div styleClass="aon-popupWindow-content">
+				<aon:form id="financeSearchForm" >
+				<aon:div styleClass="aon-popupWindow-content" >
 					<aon:div style="width:100%">
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
@@ -112,11 +112,26 @@
 											
 											<aon:outputLabel for="Finance_payMethod_id"
 												value="#{configBundle.config_pay_method}" />
-											<aon:selectOneMenu id="Finance_payMethod_id" 
-												value="#{paymentCardSettle.payMethod}">
-												<f:selectItem itemLabel="-" value="#{null}"/>
-												<f:selectItems value="#{configCollections.payMethods}" />
-											</aon:selectOneMenu>
+											<aon:div id="payMethodDiv">
+												<a4j:repeat value="#{paymentCardSettle.payMethods}" rowKeyVar="index" var="payMth">
+													<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+														<aon:selectOneMenu id="Finance_payMethod_id"
+															value="#{paymentCardSettle.payMethods[index]}">
+															<f:selectItem itemLabel="-" itemValue="#{paymentCardSettle.emptyPayMethod}" />
+															<f:selectItems value="#{configCollections.payMethods}" />
+														 	<a4j:support event="onchange" reRender="payMethodDiv" />
+														</aon:selectOneMenu>
+														<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
+															actionListener="#{paymentCardSettle.onRemovePayMethod}"
+															rendered="#{payMth.id != null}">
+															<f:param name="payMethodIndex" value="#{index}" />
+														</aon:commandButton>
+														<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
+															actionListener="#{paymentCardSettle.onAddPayMethod}"
+															rendered="#{(payMth.id != null) and (index == (paymentCardSettle.payMethodsSize-1))}" />					
+													</aon:div>						
+												</a4j:repeat>
+											</aon:div>
 									
 										</aon:panelGrid>
 									</aon:panel>

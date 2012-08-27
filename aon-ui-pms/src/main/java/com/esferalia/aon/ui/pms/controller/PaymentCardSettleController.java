@@ -8,14 +8,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,10 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceListController;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
@@ -56,6 +59,7 @@ public class PaymentCardSettleController {
 	
 	private final String INCLUDED_FINANCE_TAB = "tab1";
 	private final String PENDING_FINANCE_TAB = "tab2";
+	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
 	private String selectedTab;
 
@@ -64,11 +68,12 @@ public class PaymentCardSettleController {
 	private DataModel financeModel;
 	private List<AgencyFinance> financeList;
 	
+	private List<Customer> agencies;
 	private Customer agency;
 	private Hotel hotel;
 	private Date startDate;
 	private Date endDate;
-	private PayMethod payMethod;
+	private PayMethod[] payMethods;
 	private String guestName;
 	private String guestSurname;
 	private Integer reservationId;
@@ -89,6 +94,21 @@ public class PaymentCardSettleController {
 	}
 	public void setFractionPayMethod(PayMethod fractionPayMethod) {
 		this.fractionPayMethod = fractionPayMethod;
+	}
+	public PayMethod[] getPayMethods() {
+		if (payMethods == null) {
+			payMethods = new PayMethod[]{EMPTY_PAYMETHOD};
+		}	
+		return payMethods;
+	}
+	public void setPayMethods(PayMethod[] payMethods) {
+		this.payMethods = payMethods;
+	}
+	public PayMethod getEmptyPayMethod() {
+		return EMPTY_PAYMETHOD;
+	}
+	public int getPayMethodsSize() {
+		return ArrayUtils.getLength(payMethods);
 	}
 	public Integer getReservationId() {
 		return reservationId;
@@ -144,17 +164,23 @@ public class PaymentCardSettleController {
 	public void setFinanceBatch(FinanceBatch financeBatch) {
 		this.financeBatch = financeBatch;
 	}
-	public PayMethod getPayMethod() {
-		return payMethod;
-	}
-	public void setPayMethod(PayMethod payMethod) {
-		this.payMethod = payMethod;
-	}
 	public Customer getAgency() {
 		return agency;
 	}
 	public void setAgency(Customer agency) {
 		this.agency = agency;
+	}
+	public List<Customer> getAgencies() {
+		if(agencies == null){
+			agencies = new LinkedList<Customer>();
+		}
+		return agencies;
+	}
+	public void setAgencies(List<Customer> agencies) {
+		this.agencies = agencies;
+	}
+	public int getAgenciesSize() {
+		return agencies.size();
 	}
 	public Hotel getHotel() {
 		return hotel;
@@ -205,7 +231,14 @@ public class PaymentCardSettleController {
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
+	public boolean isExistAmountDifferences(){
+		for(AgencyFinance af: getFinanceList()){
+			if( Double.compare(CommonUtil.round(af.getAmount()),CommonUtil.round(af.getFinance().getTotalAmount())) != 0 ){
+				return true;
+			}
+		}
+		return false;
+	}
 	public String getIncludedFinancesTabName(){
 		return INCLUDED_FINANCE_TAB;
 	}
@@ -305,7 +338,7 @@ public class PaymentCardSettleController {
 		if(getEndDate()!=null){
 			criteria.addGreaterThanOrEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), getEndDate());
 		}
-		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ID));
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ID), false);
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;
@@ -318,19 +351,46 @@ public class PaymentCardSettleController {
 	}
 	
 	public void onInit(ActionEvent event) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
 		setFinanceModel(null);
 		setFinanceList(null);
+		setHotel(null);
 		setGuestName(null);
 		setGuestSurname(null);
-		setPayMethod(null);
+		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
+		setAgency((Customer) bean.createNewTo());
 		setReservationId(null);
 		setReservationCode(null);
 		setFractionPayMethod(null);
 	}
+
+	public void onAddPayMethod(ActionEvent event) {
+		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
+	}
+
+	public void onRemovePayMethod(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("payMethodIndex"));
+		this.payMethods = (PayMethod[]) ArrayUtils.remove(this.payMethods, index);
+		if ( ArrayUtils.isEmpty(this.payMethods) ) {
+			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
+		}
+	}
+	public void onAddAgency(ActionEvent event) throws ManagerBeanException {
+		this.agencies.add(getAgency());
+		IManagerBean bean = BeanManager.getManagerBean(Customer.class);
+		setAgency((Customer) bean.createNewTo());
+	}
+	
+	public void onRemoveAgency(ActionEvent event) throws ManagerBeanException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("agencyIndex"));
+		this.agencies.remove(index);
+	}
 	
 	public void onEditSearch(ActionEvent event) {
 		try {
-			setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
+			setAgencies(new LinkedList<Customer>());
 			onInit(event);
 			onEditSearchFinance(event);
 		} catch (ManagerBeanException e) {
@@ -342,6 +402,10 @@ public class PaymentCardSettleController {
 	public void onSearch(ActionEvent event) {
 		setSelectedTab(PENDING_FINANCE_TAB);
 		try {
+			if(getAgency() != null && getAgency().getId() != null){
+				this.agencies.add(getAgency());
+				setAgency(null);
+			}
 			onSearchFinance(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Error searching finances";
@@ -359,7 +423,8 @@ public class PaymentCardSettleController {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(IFinanceConstants.FINANCE_LIST_CONTROLLER_NAME);
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAYMENT), false);
 		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_SERVICE), false);
-		financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID), getAgency().getId());
+		String agencyAlias = financeList.getFieldName(IEntityAlias.FINANCE_REGISTRY_ID);
+		addAgenciesToCriteria(financeList.getCriteria(), agencyAlias);
 		
 		if(getStartDate()!=null){
 			financeList.getCriteria().addGreaterThanOrEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_ISSUE_DATE), getStartDate());
@@ -367,8 +432,9 @@ public class PaymentCardSettleController {
 		if(getEndDate()!=null){
 			financeList.getCriteria().addLessThanOrEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_INVOICE_ISSUE_DATE), getEndDate());
 		}
-		if (getPayMethod() != null && getPayMethod().getId() != null) {
-			financeList.getCriteria().addEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID), getPayMethod().getId());
+		if (getPayMethods() != null && getPayMethodsSize() > 0) {
+			String payMethod = financeList.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_ID);
+			addEnumToCriteria(financeList.getCriteria(), payMethod, getPayMethodsIds().toArray());
 		}
 		for(AgencyFinance af: getFinanceList()){
 			financeList.getCriteria().addNotEqualExpression(financeList.getFieldName(IEntityAlias.FINANCE_ID), af.getFinance().getId());
@@ -383,6 +449,49 @@ public class PaymentCardSettleController {
 		}
 		
 		financeList.onSearch(event);
+	}
+	
+	private void addAgenciesToCriteria( Criteria criteria, String alias ) throws ManagerBeanException {
+		Expression expToAdd = null;
+		for( Customer agency : getAgencies() ) {
+			if ( agency != null ) {
+				if ( expToAdd == null ) {
+					expToAdd = ExpressionUtilities.getEqualExpression(alias, agency.getId());				
+				} else {
+					Expression exp  = ExpressionUtilities.getEqualExpression(alias, agency.getId());
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				}
+			}
+		}
+		if ( expToAdd != null ) {
+			criteria.addExpression(expToAdd);
+		}
+	}
+	private void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+		Expression expToAdd = null;
+		for( Object value : values ) {
+			if ( value != null ) {
+				if ( expToAdd == null ) {
+					expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
+				} else {
+					Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				}
+			}
+		}
+		if ( expToAdd != null ) {
+			criteria.addExpression(expToAdd);
+		}
+	}
+	
+	public List<Integer> getPayMethodsIds() {
+		List<Integer> ids = new LinkedList<Integer>();
+		for (PayMethod payMethod : getPayMethods()) {
+			if ((payMethod != null) && (payMethod.getId() != null)) {
+				ids.add(payMethod.getId());
+			}
+		}
+		return ids;
 	}
 	
 	private List<Integer> getProjectReservationIds() throws ManagerBeanException{
@@ -519,6 +628,7 @@ public class PaymentCardSettleController {
 	public void onFinanceBatchShow(ActionEvent event) throws ManagerBeanException {
 		setNewBatch(true);
 		setFinanceBatch(createFinanceBatch());
+		completeFBatchDescription();
 	}
 
 	public void onBatchModeChanged(ActionEvent event) {
@@ -528,11 +638,30 @@ public class PaymentCardSettleController {
 	}
 
 	private FinanceBatch createFinanceBatch() {
-		String date = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_date_pattern")).format(new Date());
 		FinanceBatch fBatch = new FinanceBatch();
 		fBatch.setIssueDate(new Date());
-		fBatch.setDescription(date + " " + getAgency().getRegistry().getFullName());
 		return fBatch;
+	}
+	
+	private void completeFBatchDescription(){
+		String bank = "";
+		if(getFinanceBatch().getRegistryBank()!=null && getFinanceBatch().getRegistryBank().getId()!=null){
+			bank = getFinanceBatch().getRegistryBank().getAlias();
+		}
+		String agency = getAgencies().get(0).getRegistry().getFullName();
+		if ((bank+agency).length() > 32) {
+			if ((bank).length() > 10) {
+				bank = StringUtils.substring(bank, 0, 10);
+			}
+			if ((agency).length() > 22) {
+				agency = StringUtils.substring(agency, 0, 21);
+			}
+		}
+		getFinanceBatch().setDescription(bank + " " + agency);
+	}
+	
+	public void onFinanceBatchBankChange(ActionEvent event) throws ManagerBeanException {
+		completeFBatchDescription();
 	}
 	
 	public void onFinanceBatch(ActionEvent event) throws ManagerBeanException {
@@ -612,12 +741,7 @@ public class PaymentCardSettleController {
 			return amount;
 		}
 		public void setAmount(Double amount) {
-			if(NumberUtils.compare(finance.getAmount(),amount) < 0){
-				AonUtil.addErrorMessage("No se permite introducir un valor superior al del vencimiento.");
-				this.amount = finance.getAmount();
-			} else {
-				this.amount = amount;
-			}
+			this.amount = amount;
 		}
 	}
 		

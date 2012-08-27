@@ -95,6 +95,8 @@
 											rendered="#{controller.newBatch}">
 											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
+											<a4j:support event="onchange" reRender="FinanceBatch_description"
+												actionListener="#{controller.onFinanceBatchBankChange}"/>
 										</aon:selectOneMenu>
 
 										<aon:outputLabel for="FinanceBatchList"

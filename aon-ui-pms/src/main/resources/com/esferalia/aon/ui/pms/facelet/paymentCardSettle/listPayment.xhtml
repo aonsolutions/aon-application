@@ -6,7 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-
 	<aon:div id="financeToolBarDiv" styleClass="aon-toolbar">
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -22,7 +21,6 @@
 			actionListener="#{financeList.checkNone}" reRender="financeToolBarDiv,financeDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
-
 		<aon:commandButton title="#{financeBundle.finance_refine_search}"
 			styleClass="aon-finding-toolbar-item aon-icon-search"
 			value="#{financeBundle.finance_refine_search}"
@@ -32,7 +30,6 @@
 			<f:setPropertyActionListener target="#{financeList.showFinanceSearchWindow}"
 				value="#{true}" />
 		</aon:commandButton>
-
 		<aon:commandButton title="#{pmsBundle.pms_include}"
 			styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 			value="#{pmsBundle.pms_include}"
@@ -101,24 +98,6 @@
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:column>
-	
-			<aon:column alias="Finance.invoice.project.id"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_reservation}" />
-				</f:facet>
-				<aon:commandLink id="reservationLink" immediate="true"
-					styleClass="aon-button-goto"
-					style="padding-right: 10px;" 
-					value="&#160;"  
-					rendered="#{!to.invoice.service and to.invoice.project.id!=null}" 
-					actionListener="#{paymentCardSettle.onLoadReservation}"
-					action="reservation_form"
-					reRender="aonContent">
-				</aon:commandLink>
-				<aon:outputText rendered="#{!to.invoice.service}"
-					value="#{to.invoice.project.id}" />
-			</aon:column>
 			
 			<aon:column>
 				<f:facet name="header">
@@ -143,6 +122,24 @@
 					</rich:toolTip>
 				</aon:div>
 			</aon:column>
+	
+			<aon:column alias="Finance.invoice.project.id"
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_reservation}" />
+				</f:facet>
+				<aon:commandLink id="reservationLink" immediate="true"
+					styleClass="aon-button-goto"
+					style="padding-right: 10px;" 
+					value="&#160;"  
+					rendered="#{!to.invoice.service and to.invoice.project.id!=null}" 
+					actionListener="#{paymentCardSettle.onLoadReservation}"
+					action="reservation_form"
+					reRender="aonContent">
+				</aon:commandLink>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{to.invoice.project.id}" />
+			</aon:column>
 
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
@@ -152,6 +149,29 @@
 				<aon:outputText rendered="#{!to.invoice.service}"
 					value="#{paymentCardSettle.financeListProjectReservation.code}" />
 			</aon:column>
+
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_agency}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.name}"
+					title="#{to.registry.name}" >
+					<aon:abbreviateConverter maxWidth="20" />
+				</aon:outputText>
+			</aon:column>
+			
+			<aon:column 
+				styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputText value="#{pmsBundle.pms_hotel}" />
+				</f:facet>
+				<aon:outputText rendered="#{!to.invoice.service}"
+					value="#{paymentCardSettle.financeListProjectReservation.hotelReservation.workPlace.description}" 
+					title="#{paymentCardSettle.financeListProjectReservation.hotelReservation.workPlace.description}" > 
+					<aon:abbreviateConverter maxWidth="20" />
+				</aon:outputText>
+			</aon:column>
 			
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
@@ -159,18 +179,12 @@
 					<aon:outputText value="#{pmsBundle.pms_guest}" />
 				</f:facet>
 				<aon:outputText rendered="#{!to.invoice.service}"
-					value="#{paymentCardSettle.financeListProjectReservation.guestFullName}" />
+					value="#{paymentCardSettle.financeListProjectReservation.guestFullName}" 
+					title="#{paymentCardSettle.financeListProjectReservation.guestFullName}" >
+					<aon:abbreviateConverter maxWidth="20" />
+				</aon:outputText>
 			</aon:column>
 	
-			<aon:column 
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{pmsBundle.pms_hotel}" />
-				</f:facet>
-				<aon:outputText rendered="#{!to.invoice.service}"
-					value="#{paymentCardSettle.financeListProjectReservation.hotelReservation.workPlace.description}" />
-			</aon:column>
-			
 			<aon:column 
 				styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
@@ -194,23 +208,11 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
-			
-<!--  
-			<aon:column alias="Finance.financeStatus"
-				styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_status}" />
-				</f:facet>
-				<aon:outputText value="#{to.financeStatus}" />
-			</aon:column>
--->
-	
 	
 		</aon:dataTable>	
 		
 		<aon:dataScroller2 for="paymentListData" showNote="true" />
 	
 	</aon:div>
-			
 
 </ui:composition>
