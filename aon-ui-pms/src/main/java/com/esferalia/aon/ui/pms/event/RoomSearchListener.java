@@ -24,6 +24,7 @@ import com.esferalia.aon.ui.pms.controller.RoomController;
 
 public class RoomSearchListener extends ControllerSearchListener {
 
+	private PmsCollectionsController collectionsController;
 	private Hotel hotel;
 	private Item item;
 	
@@ -43,11 +44,21 @@ public class RoomSearchListener extends ControllerSearchListener {
 		this.item = item;
 	}
 	
+	private PmsCollectionsController getCollectionController() {
+		if(collectionsController == null){
+			collectionsController = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		}
+		return collectionsController;
+	}
+	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		if(getCollectionController().getCurrentUserHotelsCount() == 1){
+			setHotel((Hotel) getCollectionController().getCurrentUserHotelList().get(0));
+		} else {
+			setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		}
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
-
 		((RoomController)getController()).clearCheckedRooms();
 	}
 	
@@ -55,8 +66,7 @@ public class RoomSearchListener extends ControllerSearchListener {
 		if (getHotel() != null && getHotel().getId() != null) {
 			return getHotelRoomItems(getHotel());
 		}
-		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
-		return collectionsController.getRoomItems(); 
+		return getCollectionController().getRoomItems(); 
 	}
 	
 	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
