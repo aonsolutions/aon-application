@@ -19,7 +19,7 @@ public class ConfidentialityFilterListener extends ControllerAdapter {
 		BasicController controller = (BasicController)event.getController();
 		String alias = controller.getPojoShortName() + "_securityLevel";
 		try {
-			controller.getCriteria().addEqualExpression(controller.getFieldName(alias), SecurityLevel.OFFICIAL);
+			controller.getCriteria().addEqualExpression(controller.resolveAlias(alias), SecurityLevel.OFFICIAL);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error adding confidentialityFilter",e);
 		}

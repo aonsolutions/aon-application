@@ -18,6 +18,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.DataModelListener;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.type.Type;
@@ -1190,8 +1191,8 @@ public class BasicController extends AbstractPojoController implements IControll
 			List<IControllerListener> interfaceListeners = new LinkedList<IControllerListener>();
 			try {
 				Class clazz = Class.forName(getPojo());
-				Class[] interfaces = clazz.getInterfaces();
-				for (Class interfaz : interfaces) {
+				List interfaces = ClassUtils.getAllInterfaces(clazz);
+				for (Object interfaz : interfaces) {
 					if (IConfidentialable.class.equals(interfaz) && !AonUtil.getRoleManager().isConfidentiality()) {
 						interfaceListeners.add(new ConfidentialityFilterListener());
 					}
