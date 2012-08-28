@@ -48,6 +48,7 @@
 				<value>#{courseAcademicSkillChildListener}</value>
 				<value>#{courseEvaluationChildListener}</value>
 				<value>#{courseObservationChildListener}</value>
+				<value>#{courseInstructorChildListener}</value>
 			</list-entries>
 		</managed-property>										
 	</managed-bean>
@@ -55,7 +56,7 @@
 	<!-- ************* COURSE SCHEDULE ***************** -->
 	<managed-bean>
 		<managed-bean-name>courseSchedule</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CourseScheduleController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -102,6 +103,59 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>		
+	
+	<!-- ************* COURSE INSTRUCTOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseInstructor</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CourseInstructorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseInstructor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseInstructor</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseInstructorChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseInstructor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseInstructor_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ************* COURSE ALUMN ***************** -->
 	<managed-bean>

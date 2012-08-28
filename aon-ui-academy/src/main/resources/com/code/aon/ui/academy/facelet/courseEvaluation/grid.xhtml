@@ -6,21 +6,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div styleClass="aon-toolbar">
-		<aon:htmlCommandLink id="courseEvaluationList-excel-report"
-			value="&#160;" target="_blank" action="#{report.onExecute}"
-			styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-			<f:param name="reportKey" value="courseEvaluationList" />
-			<f:param name="outputFormat" value="MS Excel" />
-		</aon:htmlCommandLink>
-		<aon:htmlCommandLink id="courseEvaluationList-report"
-			value="#{bundle.aon_listing}"
-			target="_blank" action="#{report.onExecute}"
-			styleClass="aon-finding-toolbar-item aon-icon-pdf"
-			accesskey="#{bundle.aon_key_print}">
-			<f:param name="reportKey" value="courseEvaluationList" />
-		</aon:htmlCommandLink>
-	</aon:div>
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="innerToolbar" value="true" />
+		<ui:param name="toolbarID" value="courseEvaluationToolbar" />
+		<ui:define name="toolbarContent">
+			<aon:htmlCommandLink id="courseEvaluationList-excel-report"
+				value="&#160;" target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+				<f:param name="reportKey" value="courseEvaluationList" />
+				<f:param name="outputFormat" value="MS Excel" />
+			</aon:htmlCommandLink>
+			<aon:htmlCommandLink id="courseEvaluationList-report"
+				value="#{bundle.aon_listing}"
+				target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="courseEvaluationList" />
+			</aon:htmlCommandLink>
+		</ui:define>
+	</ui:decorate>
 
 	<aon:panel>
 		<f:facet name="header">

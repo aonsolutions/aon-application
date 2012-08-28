@@ -6,21 +6,25 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div styleClass="aon-toolbar">
-		<aon:htmlCommandLink id="absenceTemplateList-excel-report"
-			value="&#160;" target="_blank" action="#{report.onExecute}"
-			styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-			<f:param name="reportKey" value="absenceTemplateList" />
-			<f:param name="outputFormat" value="MS Excel" />
-		</aon:htmlCommandLink>
-		<aon:htmlCommandLink id="absenceTemplateList-report"
-			value="#{academyBundle.academy_absences_listing}"
-			target="_blank" action="#{report.onExecute}"
-			styleClass="aon-finding-toolbar-item aon-icon-pdf"
-			accesskey="#{bundle.aon_key_print}">
-			<f:param name="reportKey" value="absenceTemplateList" />
-		</aon:htmlCommandLink>
-	</aon:div>
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="innerToolbar" value="true" />
+		<aon:valueParam name="toolbarID" default="#{controller.beanName}Toolbar" />
+		<ui:define name="toolbarContent">
+			<aon:htmlCommandLink id="absenceTemplateList-excel-report"
+				value="&#160;" target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+				<f:param name="reportKey" value="absenceTemplateList" />
+				<f:param name="outputFormat" value="MS Excel" />
+			</aon:htmlCommandLink>
+			<aon:htmlCommandLink id="absenceTemplateList-report"
+				value="#{academyBundle.academy_absences_listing}"
+				target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="absenceTemplateList" />
+			</aon:htmlCommandLink>
+		</ui:define>
+	</ui:decorate>
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
