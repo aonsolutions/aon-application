@@ -1182,6 +1182,10 @@ public class BasicController extends AbstractPojoController implements IControll
 		super.setPojo(bean);
 		addInterfaceListeners();
 	}
+	
+	public void setInterfaceListenersFlag(boolean interfaceListenersFlag) {
+		this.interfaceListenersFlag = interfaceListenersFlag;
+	}
 
 	@SuppressWarnings("rawtypes")
 	private void addInterfaceListeners() {
