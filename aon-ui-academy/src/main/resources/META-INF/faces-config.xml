@@ -49,6 +49,7 @@
 				<value>#{courseEvaluationChildListener}</value>
 				<value>#{courseObservationChildListener}</value>
 				<value>#{courseInstructorChildListener}</value>
+				<value>#{courseMarkChildListener}</value>
 			</list-entries>
 		</managed-property>										
 	</managed-bean>
@@ -392,7 +393,17 @@
 		<managed-bean-name>courseMark</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.academy.controller.CourseMarkController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseMark</value>
+		</managed-property>		
 	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>courseMarkChildListener</managed-bean-name>
+	    <managed-bean-class>com.code.aon.ui.academy.event.CourseMarkChildListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
 
 	<!-- ************* MARK ***************** -->
 	<managed-bean>

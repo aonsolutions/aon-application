@@ -27,6 +27,7 @@ public class AcademyCollectionsController {
 	private List<SelectItem> courseStatuses;
 	private List<SelectItem> courseAlumnStatuses;
 	private List<SelectItem> instructorTypes;
+	private List<SelectItem> evaluations;
 	
     public AcademicYear getAcademicYear() {
 		return null;
@@ -161,4 +162,15 @@ public class AcademyCollectionsController {
 		return instructorTypes;
 	}    
 
+	public List<SelectItem> getEvaluations() {
+		if (evaluations == null) {
+			evaluations = new LinkedList<SelectItem>();
+			for( int i = 1; i <= 12; i++ ) {
+				SelectItem item = new SelectItem(i, Integer.toString(i));
+				evaluations.add(item);			
+			}
+		}
+		return evaluations;
+	}    
+	
 }

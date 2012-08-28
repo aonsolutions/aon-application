@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -25,21 +26,75 @@ import com.code.aon.ui.academy.model.AlumnMarkHeader;
 import com.code.aon.ui.academy.model.AlumnMarks;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CourseMarkController{
+public class CourseMarkController {
 
 	private Course course;
 	
-	private int evaluation = 1;
+	private int evaluation;
 	
-	List<ITransferObject> academicSkills;
+	private List<ITransferObject> academicSkills;
 	
 	private List<AlumnMarkHeader> alumnMarkHeaders;
 	
-	private DataModel result;
+	private DataModel model;
+	
+	private String beanName;
+	
+	private boolean isNew;
+	
+	private int pageLimit = 20;
 	
 	private AlumnMarks to;
 
-    /**
+    public CourseMarkController() {
+    	this.evaluation = 1;
+    }
+
+	/**
+	 * Return name of the bean associated to controller.
+	 * 
+	 * @return String
+	 */
+	public String getBeanName() {
+		return beanName;
+	}
+
+	/**
+	 * Set the name of the bean associated to controller.
+	 * 
+	 * @param beanName
+	 */
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+	
+	/**
+	 * Return the limit of page in the model associated to controller.
+	 * 
+	 * @return int
+	 */
+	public int getPageLimit() {
+		return pageLimit;
+	}
+
+	/**
+	 * Set the limit of page in the model associated to controller.
+	 * 
+	 * @param pageLimit
+	 */
+	public void setPageLimit(int pageLimit) {
+		this.pageLimit = pageLimit;
+	}
+	
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	
+	/**
 	 * @return the to
 	 */
 	public AlumnMarks getTo() {
@@ -54,7 +109,7 @@ public class CourseMarkController{
 	}
 
     public void onSelect(ActionEvent event) {
-    	setTo((AlumnMarks) this.result.getRowData());
+    	setTo((AlumnMarks) this.model.getRowData());
     }
 
     public void onAccept(ActionEvent event) throws ManagerBeanException {
@@ -76,7 +131,7 @@ public class CourseMarkController{
     	resetTo();
     }
 
-    private void resetTo(){
+    private void resetTo() {
         this.to = null;
     }
     
@@ -111,15 +166,8 @@ public class CourseMarkController{
 	/**
 	 * @return the result
 	 */
-	public DataModel getResult() {
-		return result;
-	}
-
-	/**
-	 * @param result the result to set
-	 */
-	public void setResult(DataModel result) {
-		this.result = result;
+	public DataModel getModel() {
+		return model;
 	}
 
 	/**
@@ -136,6 +184,11 @@ public class CourseMarkController{
 		this.alumnMarkHeaders = alumnMarkHeaders;
 	}
 
+	public void onEvaluationChange(ValueChangeEvent event) throws ManagerBeanException {
+		setEvaluation( (Integer) event.getNewValue() );
+		refresh();
+	}	
+		
 	public void initCourse() throws ManagerBeanException{
     	IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
     	Criteria courseAcademicSkillCriteria = new Criteria();
@@ -152,7 +205,7 @@ public class CourseMarkController{
     	}
 	}
 
-	public void onSearch(ActionEvent event) throws ManagerBeanException {
+	public void refresh() throws ManagerBeanException {
 		initCourse();
     	IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
     	IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -179,7 +232,7 @@ public class CourseMarkController{
         	alumnMarks.setValues(obtainOrderedValues(markMap));
         	alumnMarksList.add(alumnMarks);
     	}
-		setResult(new ListDataModel(alumnMarksList));
+		this.model = new ListDataModel(alumnMarksList);
     }
 
     private Object[] obtainOrderedValues(Map<Integer, Mark> markMap) {
@@ -209,8 +262,8 @@ public class CourseMarkController{
 		boolean printAverage = false;
 		Double averageMark = 0.0;
 		Double weightSum = 0.0;
-		if (result.isRowAvailable()) {
-			AlumnMarks marks = (AlumnMarks)result.getRowData();
+		if (getModel().isRowAvailable()) {
+			AlumnMarks marks = (AlumnMarks) getModel().getRowData();
 			for(int i=0; i<marks.getValues().length; i++) {
 				Mark mark = (Mark)marks.getValues()[i];
 				if (mark.getMark() != null) {

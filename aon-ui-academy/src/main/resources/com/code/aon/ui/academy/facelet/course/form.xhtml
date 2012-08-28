@@ -122,6 +122,11 @@
 					<aon:panelTab id="evaluation" label="#{academyBundle.academy_course_evaluation}">
 						<ui:include	src="/com/code/aon/ui/academy/facelet/courseEvaluation/grid.xhtml" />
 					</aon:panelTab>
+					<aon:panelTab id="qualification" label="#{academyBundle.academy_qualification}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseMark/tab_grid.xhtml" >
+							<ui:param name="controller" value="#{courseMark}" />
+						</ui:include>
+					</aon:panelTab>
 				</aon:panelTabSet>
 
 			</aon:div>
