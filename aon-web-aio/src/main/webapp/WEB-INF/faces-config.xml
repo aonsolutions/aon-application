@@ -201,6 +201,7 @@
 			<!-- aon-ui-academy-->
 			<value>#{customerAbsenceChildListener}</value>
 			<value>#{customerAlumnLoanChildListener}</value>
+			<value>#{customerAlumnCourseChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

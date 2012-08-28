@@ -137,21 +137,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{courseAlumnControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>courseAlumnControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.academy.event.CourseAlumnControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -476,6 +461,85 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************* ALUMN COURSES ***************** 	-->
+	<managed-bean>
+		<managed-bean-name>customerCourse</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CustomerCourseController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>customerCourse</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseAlumn_course_code,CourseAlumn_course_description</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>customer.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerCourseControllerListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerCourseControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CustomerCourseControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerAlumnCourseChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerCourse</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_customer_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 
 	<!-- ************* ALUMN LOAN ***************** -->
 	<managed-bean>

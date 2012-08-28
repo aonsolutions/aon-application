@@ -10,6 +10,8 @@ public interface IAcademyConstants {
 	
 	String COURSE_CONTROLLER_NAME = "course";
 	
+	String COURSE_ALUMN_CONTROLLER_NAME = "courseAlumn";
+	
 	String CUSTOMER_ABSENCE_CONTROLLER_NAME = "customerAbsence";
 	
 	// ************************************************************
@@ -17,5 +19,7 @@ public interface IAcademyConstants {
 	// ************************************************************
 
 	String COURSE_ALUMN_LIMIT = "academy_course_alumn_limit";
+	
+	String COURSE_ALUMN_EXISTS = "academy_course_alumn_exists";
 	
 }

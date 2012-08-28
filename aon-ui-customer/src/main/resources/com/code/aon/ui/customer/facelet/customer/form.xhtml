@@ -27,6 +27,15 @@
 							</aon:menuItem>
 							<rich:menuSeparator id="historyMenuSeparator" />		
 						</c:if>
+						<c:if test="#{aonConfiguration.bean.customer.showCourse}">
+							<aon:menuItem id="course-button"
+								value="#{academyBundle.academy_courses}"
+								iconClass="aon-icon-data"
+								reRender="showNewCourseWindow"
+								actionListener="#{customerCourse.onReset}">
+								<f:setPropertyActionListener target="#{customerCourse.showNewWindow}" value="#{true}" />							
+							</aon:menuItem>		
+						</c:if>
 						<c:if test="#{aonConfiguration.bean.customer.showAbsence}">
 							<aon:menuItem id="absence-button"
 								value="#{academyBundle.academy_absences}"
@@ -309,6 +318,15 @@
 							</aon:panelTab>
 						</c:if>
 
+						<c:if test="#{aonConfiguration.bean.customer.showCourse and customerCourse.showTab}">
+							<aon:panelTab id="course" label="#{academyBundle.academy_course}">
+								<ui:include	src="/com/code/aon/ui/academy/facelet/customerCourse/tab_grid.xhtml">
+									<ui:param name="controller" value="#{customerCourse}" />
+									<ui:param name="removeButtonReRender" value="customerTab" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
@@ -409,6 +427,13 @@
 					<ui:param name="loanController" value="#{customerLoan}" />
 					<ui:param name="modalReRender" value="customerTab" />
 				</ui:include>
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.customer.showCourse}">
+				<ui:include src="/com/code/aon/ui/academy/facelet/customerCourse/newCourseModal.xhtml">
+					<ui:param name="courseController" value="#{customerCourse}" />
+					<ui:param name="modalReRender" value="customerTab" />
+				</ui:include>
+				<aon:lookupButtonPopup lookup="#{courseLookup}" />				
 			</c:if>
 		</c:if>
 	</ui:define>
