@@ -38,6 +38,7 @@ public class CustomerReportTest extends AbsReportPrintTest{
 	public CompanyController getCompanyController() {
 		if (companyController == null) {
 			companyController = new CompanyController();
+			companyController.setInterfaceListenersFlag(true);
 			companyController.setPojo(Company.class.getName());
 		}
 		return companyController;
