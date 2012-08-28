@@ -69,10 +69,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". "
 + ($P{recordData}!=null?
-( ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"")
-+ ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"")
-+ ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"")
-+ ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"")
+( ($P{recordData}.getVolume().trim().isEmpty()?"":"Tomo " + $P{recordData}.getVolume() + ", ")
++ ($P{recordData}.getSection().trim().isEmpty()?"":"Sección " + $P{recordData}.getSection() + ", ")
++ ($P{recordData}.getPage().trim().isEmpty()?"":"Folio " + $P{recordData}.getPage() + ", ")
++ ($P{recordData}.getSheet().trim().isEmpty()?"":"Hoja " + $P{recordData}.getSheet() + ", ")
 + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):""))
 :"")]]></textFieldExpression>
 			</textField>

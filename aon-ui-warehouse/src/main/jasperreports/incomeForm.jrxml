@@ -187,10 +187,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". "
 + ($P{recordData}!=null?
-( ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"")
-+ ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"")
-+ ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"")
-+ ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"")
+( ($P{recordData}.getVolume().trim().isEmpty()?"":"Tomo " + $P{recordData}.getVolume() + ", ")
++ ($P{recordData}.getSection().trim().isEmpty()?"":"Sección " + $P{recordData}.getSection() + ", ")
++ ($P{recordData}.getPage().trim().isEmpty()?"":"Folio " + $P{recordData}.getPage() + ", ")
++ ($P{recordData}.getSheet().trim().isEmpty()?"":"Hoja " + $P{recordData}.getSheet() + ", ")
 + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):""))
 :"")]]></textFieldExpression>
 			</textField>
@@ -768,6 +768,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxPercent"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<textField pattern="###0.00;-###0.00" isBlankWhenNull="false">
@@ -1096,6 +1114,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["itemSupplierCode"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="false">
@@ -1129,6 +1165,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_description}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["description"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
@@ -1306,6 +1360,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["quantity"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<textField pattern="#,##0.00" isBlankWhenNull="false">
@@ -1341,6 +1413,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_price}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["price"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
