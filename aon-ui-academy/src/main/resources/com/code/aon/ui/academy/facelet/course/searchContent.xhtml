@@ -91,13 +91,10 @@
 
 	<c:if test="#{!hideStatus}" >
 		<aon:outputLabel for="Course_status"
-			value="#{bundle.aon_status}" />
-		<aon:selectOneMenu id="Course_status"
-			converter="aon.EnumConverter"
-			valueChangeListener="#{controller.addExpression}" >
-			<f:selectItem value="#{null}" itemLabel="-"/>
-			<f:selectItems value="#{academyCollections.courseStatuses}" />
-		</aon:selectOneMenu>
+			value="#{bundle.aon_status}" />			
+		<aon:selectManyCheckbox value="#{courseSearch.courseStatuses}">
+			<f:selectItems value="#{academyCollections.courseStatuses}"/>
+		</aon:selectManyCheckbox>				
 	</c:if>	
 						
 </ui:composition>

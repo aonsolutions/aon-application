@@ -43,6 +43,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseSearch}</value>
 				<value>#{courseScheduleChildListener}</value>
 				<value>#{courseAlumnChildListener}</value>
 				<value>#{courseAcademicSkillChildListener}</value>
@@ -53,6 +54,14 @@
 			</list-entries>
 		</managed-property>										
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************* COURSE SCHEDULE ***************** -->
 	<managed-bean>

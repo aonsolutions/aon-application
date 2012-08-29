@@ -10,7 +10,7 @@
 	<aon:div styleClass="aon-margin-bottom">
 		<aon:panelGrid columns="2">
 			<aon:outputLabel for="Absence_academicYear"
-				value="#{academyBundle.academy_academic_year}" />
+				value="#{academyBundle.academy_mark_evaluation}" />
 			<aon:selectOneMenu id="Absence_academicYear"
 				reRender="#{controller.beanName}Data"
 				value="#{controller.evaluation}"
@@ -31,6 +31,16 @@
 				</f:facet>
 				<aon:outputText value="#{to.customer.registry.name}" />
 			</aon:column>
+			
+			<rich:columns value="#{courseMark.alumnMarkHeaders}" var="column">
+				<f:facet name="header">
+					<aon:outputText title="#{column.description}" value="#{column.code}" />
+				</f:facet>
+				<aon:outputText value="#{to.values[column.position].mark}"
+					rendered="#{formList}" />
+				<aon:inputText size="3" rendered="#{formEdit}"
+					value="#{courseMark.to.values[column.position].mark}" />
+			</rich:columns>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn" >
 				<f:facet name="header">
