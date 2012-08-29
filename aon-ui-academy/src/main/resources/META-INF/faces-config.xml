@@ -52,6 +52,7 @@
 				<value>#{courseInstructorChildListener}</value>
 				<value>#{courseMarkChildListener}</value>
 				<value>#{courseAlumnObservationChildListener}</value>
+				<value>#{courseAlumnAbsenceChildListener}</value>
 			</list-entries>
 		</managed-property>										
 	</managed-bean>
@@ -508,6 +509,95 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!-- ************* COURSE ALUMN ABSENCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAlumnAbsence</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseAlumnAbsenceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseAlumnAbsence</value>
+		</managed-property>						
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseAlumn_customer_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_status</key>
+					<value>#{academyCollections.courseAlumnStatuses[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>													
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnAbsenceChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAlumnAbsence</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* ABSENCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>absence</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.AbsenceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>absence</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Absence</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Absence_absenceDate desc</value>
+		</managed-property>		
+	</managed-bean>
+	
 	<!-- ************* MARK ***************** -->
 	<managed-bean>
 		<managed-bean-name>mark</managed-bean-name>

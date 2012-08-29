@@ -114,6 +114,11 @@
 							<ui:param name="controller" value="#{courseAlumn}" />
 						</ui:include>
 					</aon:panelTab>
+					<aon:panelTab id="absences" label="#{academyBundle.academy_absences}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumnAbsence/tab_grid.xhtml">
+							<ui:param name="controller" value="#{courseAlumnAbsence}" />
+						</ui:include>
+					</aon:panelTab>
 					<aon:panelTab id="academicSkills" label="#{academyBundle.academy_academic_skills}">
 						<ui:include	src="/com/code/aon/ui/academy/facelet/courseAcademicSkill/tab_grid.xhtml">
 							<ui:param name="controller" value="#{courseAcademicSkill}" />
@@ -132,7 +137,6 @@
 							<ui:param name="controller" value="#{courseAlumnObservation}" />
 						</ui:include>
 					</aon:panelTab>
-					
 					
 				</aon:panelTabSet>
 

@@ -18,6 +18,8 @@ public interface IAcademyConstants {
 	
 	String EVALUATION_OBSERVATION_CONTROLLER_NAME = "evaluationObservation";
 	
+	String ABSENCE_CONTROLLER_NAME = "absence";
+	
 	// ************************************************************
 	// MESSAGE
 	// ************************************************************

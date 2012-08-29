@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.academy.AcademicYear;
+import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.BeanManager;
@@ -119,7 +120,8 @@ public class CustomerAbsenceController extends BasicController {
         List<SelectItem> courseAlumns = new LinkedList<SelectItem>();
         for( CourseAlumn courseAlumn : this.courseAlumns ) {
         	if ( courseAlumn.getStatus() == CourseAlumnStatus.ACTIVE ) {
-                SelectItem item = new SelectItem(courseAlumn, courseAlumn.getCourse().getDescription());
+        		Course course = courseAlumn.getCourse();
+                SelectItem item = new SelectItem(courseAlumn, course.getCode() + " " + course.getDescription());
                 courseAlumns.add(item);        		
         	}
         }

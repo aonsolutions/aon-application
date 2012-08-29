@@ -30,7 +30,7 @@
 				<f:facet name="header">
 					<aon:outputLabel for="Absence_courseAlumn" value="#{academyBundle.academy_absence}" />
 				</f:facet>
-				<aon:outputText value="#{to.courseAlumn.course.description}"
+				<aon:outputText value="#{to.courseAlumn.course.code} #{to.courseAlumn.course.description}"
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="Absence_courseAlumn" 
 					rendered="#{formEdit}" value="#{controller.to.courseAlumn}">
