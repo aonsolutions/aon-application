@@ -127,10 +127,18 @@
 							<ui:param name="controller" value="#{courseMark}" />
 						</ui:include>
 					</aon:panelTab>
+					<aon:panelTab id="observation" label="#{academyBundle.academy_observation}">
+						<ui:include	src="/com/code/aon/ui/academy/facelet/courseAlumnObservation/tab_grid.xhtml">
+							<ui:param name="controller" value="#{courseAlumnObservation}" />
+						</ui:include>
+					</aon:panelTab>
+					
+					
 				</aon:panelTabSet>
 
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
+		<aon:lookupButtonPopup lookup="#{observationLookup}" />
 	</ui:define>
 </ui:composition>

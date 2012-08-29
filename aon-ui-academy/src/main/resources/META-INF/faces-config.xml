@@ -51,6 +51,7 @@
 				<value>#{courseObservationChildListener}</value>
 				<value>#{courseInstructorChildListener}</value>
 				<value>#{courseMarkChildListener}</value>
+				<value>#{courseAlumnObservationChildListener}</value>
 			</list-entries>
 		</managed-property>										
 	</managed-bean>
@@ -84,6 +85,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>course</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseSchedule_dayOfWeek,CourseSchedule_startTime</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -190,7 +195,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CourseAlumn_course_endDate desc,CourseAlumn_course_code,CourseAlumn_customer_registry_name</value>
+			<value>CourseAlumn_customer_registry_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -413,6 +418,95 @@
 	    <managed-bean-class>com.code.aon.ui.academy.event.CourseMarkChildListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>		
+
+	<!-- ************* COURSE ALUMN OBSERVATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAlumnObservation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseAlumnObservationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseAlumnObservation</value>
+		</managed-property>						
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CourseAlumn_customer_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_status</key>
+					<value>#{academyCollections.courseAlumnStatuses[0].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>													
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnObservationChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAlumnObservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* EVALUATION OBSERVATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>evaluationObservation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.EvaluationObservationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>evaluationObservation</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.EvaluationObservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>EvaluationObservation_comments</value>
+		</managed-property>		
+	</managed-bean>
 
 	<!-- ************* MARK ***************** -->
 	<managed-bean>
@@ -992,6 +1086,33 @@
 		<managed-property>
 			<property-name>searchPagePath</property-name>
 			<value>/com/code/aon/ui/academy/facelet/course/searchContent.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ OBSERVATION LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>observationLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>courseLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.academy.Observation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Observation_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/academy/facelet/observation/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/academy/facelet/observation/searchContent.xhtml</value>
 		</managed-property>
 	</managed-bean>
 	

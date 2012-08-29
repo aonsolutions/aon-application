@@ -92,7 +92,8 @@
 	<c:if test="#{!hideStatus}" >
 		<aon:outputLabel for="Course_status"
 			value="#{bundle.aon_status}" />			
-		<aon:selectManyCheckbox value="#{courseSearch.courseStatuses}">
+		<aon:selectManyCheckbox id="Course_status"
+			value="#{courseSearch.courseStatuses}">
 			<f:selectItems value="#{academyCollections.courseStatuses}"/>
 		</aon:selectManyCheckbox>				
 	</c:if>	
