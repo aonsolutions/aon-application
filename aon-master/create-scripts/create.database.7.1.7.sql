@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 7.1.8
+# Version: 7.1.7
 # Created by: girazu
-# Creation Date: 30/08/2012 12:20
+# Creation Date: 30/08/2012 12:15
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -11,6 +11,36 @@ CREATE DATABASE `aon_master`
     COLLATE 'latin1_spanish_ci';
 
 USE `aon_master`;
+
+#
+# Structure for the `course_subject` table : 
+#
+
+CREATE TABLE `course_subject` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Materia',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Materia',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materias de Cursos';
+
+#
+# Structure for the `course_level` table : 
+#
+
+CREATE TABLE `course_level` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Nivel',
+  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Nivel',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles de Cursos';
+
+#
+# Structure for the `academic_year` table : 
+#
+
+CREATE TABLE `academic_year` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Año Academico',
+  `description` varchar(9) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Año Academico',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Año Academico';
 
 #
 # Structure for the `domain` table : 
@@ -35,45 +65,6 @@ CREATE TABLE `domain` (
   KEY `IDX_DOMAIN_PARENT` (`parent`),
   CONSTRAINT `FK_DOMAIN_PARENT` FOREIGN KEY (`parent`) REFERENCES `domain` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Dominios';
-
-#
-# Structure for the `academic_year` table : 
-#
-
-CREATE TABLE `academic_year` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Año Academico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
-  `description` varchar(9) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Año Academico',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ACADEMIC_YEAR_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACADEMIC_YEAR_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Año Academico';
-
-#
-# Structure for the `course_level` table : 
-#
-
-CREATE TABLE `course_level` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Nivel',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Nivel',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_LEVEL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_LEVEL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Niveles de Cursos';
-
-#
-# Structure for the `course_subject` table : 
-#
-
-CREATE TABLE `course_subject` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Materia',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
-  `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Materia',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_SUBJECT_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_SUBJECT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materias de Cursos';
 
 #
 # Structure for the `holiday` table : 
@@ -255,7 +246,6 @@ CREATE TABLE `workplace` (
 
 CREATE TABLE `course` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Curso',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Alias del Curso',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del Curso',
   `start_date` date NOT NULL COMMENT 'Fecha inicio del Curso',
@@ -268,16 +258,14 @@ CREATE TABLE `course` (
   `status` tinyint(2) default NULL COMMENT 'Estado del Curso',
   `comments` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Comentarios sobre el Curso',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_ACADEMIC_YEAR` (`academic_year`),
-  KEY `IDX_COURSE_LEVEL` (`level`),
-  KEY `IDX_COURSE_SUBJECT` (`subject`),
-  KEY `IDX_COURSE_WORKPLACE` (`workplace`),
-  KEY `IDX_COURSE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_ACADEMIC_YEAR` FOREIGN KEY (`academic_year`) REFERENCES `academic_year` (`id`),
-  CONSTRAINT `FK_COURSE_LEVEL` FOREIGN KEY (`level`) REFERENCES `course_level` (`id`),
-  CONSTRAINT `FK_COURSE_SUBJECT` FOREIGN KEY (`subject`) REFERENCES `course_subject` (`id`),
-  CONSTRAINT `FK_COURSE_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
+  KEY `subject` (`subject`),
+  KEY `level` (`level`),
+  KEY `academic_year` (`academic_year`),
+  KEY `workplace` (`workplace`),
+  CONSTRAINT `course_fk` FOREIGN KEY (`subject`) REFERENCES `course_subject` (`id`),
+  CONSTRAINT `course_fk1` FOREIGN KEY (`level`) REFERENCES `course_level` (`id`),
+  CONSTRAINT `course_fk2` FOREIGN KEY (`academic_year`) REFERENCES `academic_year` (`id`),
+  CONSTRAINT `course_fk3` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cursos';
 
 #
@@ -339,17 +327,14 @@ CREATE TABLE `customer` (
 
 CREATE TABLE `course_alumn` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
   `customer` int(4) NOT NULL COMMENT 'Identificador del Alumno',
   `status` tinyint(2) default NULL COMMENT 'Estado del alumno en el curso',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_ALUMN_COURSE` (`course`),
-  KEY `IDX_COURSE_ALUMN_CUSTOMER` (`customer`),
-  KEY `IDX_COURSE_ALUMN_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_ALUMN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_ALUMN_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
-  CONSTRAINT `FK_COURSE_ALUMN_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
+  KEY `course` (`course`),
+  KEY `customer` (`customer`),
+  CONSTRAINT `course_alumns_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
+  CONSTRAINT `course_alumns_fk1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Alumnos por Curso';
 
 #
@@ -358,16 +343,13 @@ CREATE TABLE `course_alumn` (
 
 CREATE TABLE `absence` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course_alumn` int(4) NOT NULL COMMENT 'Identificador del CursoAlumno',
   `absence_date` date default NULL COMMENT 'Fecha de la Ausencia',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Ausencia',
   `evaluation` tinyint(2) default NULL COMMENT 'Numero de Evaluacion en que se produjo la Ausencia',
   PRIMARY KEY  (`id`),
-  KEY `IDX_ABSENCE_COURSE_ALUMN` (`course_alumn`),
-  KEY `IDX_ABSENCE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ABSENCE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ABSENCE_COURSE_ALUMN` FOREIGN KEY (`course_alumn`) REFERENCES `course_alumn` (`id`)
+  KEY `course_alumn` (`course_alumn`),
+  CONSTRAINT `absence_fk_1` FOREIGN KEY (`course_alumn`) REFERENCES `course_alumn` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ausencias';
 
 #
@@ -376,12 +358,9 @@ CREATE TABLE `absence` (
 
 CREATE TABLE `academic_skill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Aptitud Academica',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Aptitud Academica',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Aptitud Academica',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_ACADEMIC_SKILL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACADEMIC_SKILL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Academicas';
 
 #
@@ -1199,17 +1178,14 @@ CREATE TABLE `alarm` (
 
 CREATE TABLE `alumn_loan` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Prestamo',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `customer` int(4) NOT NULL COMMENT 'Alumno al que se le realizo el Prestamo',
   `material` varchar(16) collate latin1_spanish_ci NOT NULL COMMENT 'Material prestado',
   `loan_date` date NOT NULL COMMENT 'Fecha del Prestamo',
   `end_date` date default NULL COMMENT 'Fecha devolucion del material',
   `comments` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Observaciones',
   PRIMARY KEY  (`id`),
-  KEY `IDX_ALUMN_LOAN_CUSTOMER` (`customer`),
-  KEY `IDX_ALUMN_LOAN_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ALUMN_LOAN_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_ALUMN_LOAN_CUSTOMER` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
+  KEY `customer` (`customer`),
+  CONSTRAINT `alumn_loan_fk1` FOREIGN KEY (`customer`) REFERENCES `customer` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Prestamos a Alumnos';
 
 #
@@ -2498,7 +2474,6 @@ CREATE TABLE `company` (
 
 CREATE TABLE `contact_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `name` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Nombre',
   `surname` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Apellido',
   `address` varchar(256) collate latin1_spanish_ci default NULL COMMENT 'Direccion',
@@ -2520,9 +2495,7 @@ CREATE TABLE `contact_data` (
   `organizationPhone` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Telefono de la Organización',
   `organizationFax` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Fax de la Organización',
   `web` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Web',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_CONTACT_DATA_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTACT_DATA_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contactos';
 
 #
@@ -2531,16 +2504,13 @@ CREATE TABLE `contact_data` (
 
 CREATE TABLE `contact` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `user_id` int(4) default NULL COMMENT 'Identificador del Usuario',
+  `user_id` int(4) NOT NULL COMMENT 'Identificador del Usuario',
   `displayName` varchar(128) collate latin1_spanish_ci NOT NULL COMMENT 'Mostrar Como',
   `contact_data` int(4) default NULL COMMENT 'Identificador de la Información del Contacto',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTACT_CONTACT_DATA` (`contact_data`),
   KEY `IDX_CONTACT_USER` (`user_id`),
-  KEY `IDX_CONTACT_DOMAIN` (`domain`),
   CONSTRAINT `FK_CONTACT_CONTACT_DATA` FOREIGN KEY (`contact_data`) REFERENCES `contact_data` (`id`),
-  CONSTRAINT `FK_CONTACT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTACT_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Grupo de Contactos';
 
@@ -2550,14 +2520,11 @@ CREATE TABLE `contact` (
 
 CREATE TABLE `contact_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `contact_group` int(4) NOT NULL COMMENT 'Identificador del Grupo de Contactos',
   `contact` int(4) NOT NULL COMMENT 'Identificador del Contacto',
   PRIMARY KEY  (`id`),
   KEY `IDX_CONTACT_DETAIL_CONTACT` (`contact`),
   KEY `IDX_CONTACT_DETAIL_CONTACT_GROUP` (`contact_group`),
-  KEY `IDX_CONTACT_DETAIL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_CONTACT_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_CONTACT_DETAIL_CONTACT` FOREIGN KEY (`contact`) REFERENCES `contact` (`id`),
   CONSTRAINT `FK_CONTACT_DETAIL_CONTACT_GROUP` FOREIGN KEY (`contact_group`) REFERENCES `contact` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalles del Grupo de Contactos';
@@ -2861,17 +2828,14 @@ CREATE TABLE `cost_profile` (
 
 CREATE TABLE `course_academicskill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador Unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Curso',
   `academic_skill` int(4) NOT NULL COMMENT 'Aptitud Academica',
   `weight` int(4) NOT NULL default '1' COMMENT 'Peso de la Aptitud para calcular la Nota media',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_ACADEMIC_SKILL_COURSE` (`course`),
-  KEY `IDX_COURSE_ACADEMIC_SKILL_ACADEMIC_SKILL` (`academic_skill`),
-  KEY `IDX_COURSE_ACADEMIC_SKILL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_ACADEMIC_SKILL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_ACADEMIC_SKILL_ACADEMIC_SKILL` FOREIGN KEY (`academic_skill`) REFERENCES `academic_skill` (`id`),
-  CONSTRAINT `FK_COURSE_ACADEMIC_SKILL_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
+  KEY `course` (`course`),
+  KEY `academic_skill` (`academic_skill`),
+  CONSTRAINT `course_academic_skill_fk_1` FOREIGN KEY (`academic_skill`) REFERENCES `academic_skill` (`id`),
+  CONSTRAINT `course_academic_skill_fk_2` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Aptitudes Academicas por Curso';
 
 #
@@ -2880,12 +2844,9 @@ CREATE TABLE `course_academicskill` (
 
 CREATE TABLE `quality_skill` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Aptitud Calidad',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Aptitud Calidad',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Aptitud Calidad',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_QUALITY_SKILL_DOMAIN` (`domain`),
-  CONSTRAINT `FK_QUALITY_SKILL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aptitudes Calidad';
 
 #
@@ -2894,18 +2855,15 @@ CREATE TABLE `quality_skill` (
 
 CREATE TABLE `course_evaluation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Identificador de Curso',
   `quality_skill` int(4) NOT NULL COMMENT 'Identificador de Aptitudes Calidad',
   `evaluation` double(15,3) default '0.000' COMMENT 'Evaluaciones',
   `quantity` int(4) default '0' COMMENT 'Cantidad',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_EVALUATION_COURSE` (`course`),
-  KEY `IDX_COURSE_EVALUATION_QUALITY_SKILL` (`quality_skill`),
-  KEY `IDX_COURSE_EVALUATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_EVALUATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_EVALUATION_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
-  CONSTRAINT `FK_COURSE_EVALUATION_QUALITY_SKILL` FOREIGN KEY (`quality_skill`) REFERENCES `quality_skill` (`id`)
+  KEY `course` (`course`),
+  KEY `quality_skill` (`quality_skill`),
+  CONSTRAINT `course_evaluation_skill_fk_1` FOREIGN KEY (`quality_skill`) REFERENCES `quality_skill` (`id`),
+  CONSTRAINT `course_evaluation_skill_fk_2` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Evaluaciones por Curso';
 
 #
@@ -2928,17 +2886,14 @@ CREATE TABLE `instructor` (
 
 CREATE TABLE `course_instructor` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
   `employee` int(4) NOT NULL COMMENT 'Identificador del Profesor',
   `type` tinyint(2) default NULL COMMENT 'Tipo de Profesor',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_INSTRUCTOR_COURSE` (`course`),
-  KEY `IDX_COURSE_INSTRUCTOR_EMPLOYEE` (`employee`),
-  KEY `IDX_COURSE_INSTRUCTOR_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_INSTRUCTOR_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_INSTRUCTOR_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
-  CONSTRAINT `FK_COURSE_INSTRUCTOR_EMPLOYEE` FOREIGN KEY (`employee`) REFERENCES `instructor` (`registry`)
+  KEY `course` (`course`),
+  KEY `employee` (`employee`),
+  CONSTRAINT `course-instructor_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`),
+  CONSTRAINT `course-instructor_fk1` FOREIGN KEY (`employee`) REFERENCES `instructor` (`registry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Profesores por Curso';
 
 #
@@ -2947,14 +2902,11 @@ CREATE TABLE `course_instructor` (
 
 CREATE TABLE `course_observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Identificador de Curso',
   `observation` varchar(64) character set latin1 collate latin1_spanish_ci default NULL COMMENT 'Observaciones',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_OBSERVATION_COURSE` (`course`),
-  KEY `IDX_COURSE_OBSERVATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_OBSERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_OBSERVATION_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
+  KEY `course` (`course`),
+  CONSTRAINT `course_observation_skill_fk_1` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Curso';
 
 #
@@ -2963,16 +2915,13 @@ CREATE TABLE `course_observation` (
 
 CREATE TABLE `course_schedule` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Horario',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `course` int(4) NOT NULL COMMENT 'Identificador del Curso',
   `day_of_week` tinyint(2) NOT NULL COMMENT 'Dia de la semana',
   `start_time` time NOT NULL COMMENT 'Hora de comienzo',
   `end_time` time NOT NULL COMMENT 'Hora de fin',
   PRIMARY KEY  (`id`),
-  KEY `IDX_COURSE_SCHEDULE_COURSE` (`course`),
-  KEY `IDX_COURSE_SCHEDULE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_COURSE_SCHEDULE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_COURSE_SCHEDULE_COURSE` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
+  KEY `course` (`course`),
+  CONSTRAINT `course_schedule_fk` FOREIGN KEY (`course`) REFERENCES `course` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Horarios de Cursos';
 
 #
@@ -3562,15 +3511,12 @@ CREATE TABLE `enterprise_data` (
 
 CREATE TABLE `evaluation_observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `alumn` int(4) NOT NULL COMMENT 'Identificador de Alumno',
   `evaluation` tinyint(2) NOT NULL COMMENT 'Numero de Evaluacion',
   `comments` text character set latin1 collate latin1_spanish_ci COMMENT 'Comentarios',
   PRIMARY KEY  (`id`),
-  KEY `IDX_EVALUATION_OBSERVATION_ALUMN` (`alumn`),
-  KEY `IDX_EVALUATION_OBSERVATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_EVALUATION_OBSERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_EVALUATION_OBSERVATION_ALUMN` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`)
+  KEY `alumn` (`alumn`),
+  CONSTRAINT `evaluation_observation_ibfk_1` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Observaciones por Evaluacion';
 
 #
@@ -5028,19 +4974,16 @@ CREATE TABLE `make` (
 
 CREATE TABLE `mark` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `subject` int(4) NOT NULL COMMENT 'Identificador de Asignatura',
   `alumn` int(4) NOT NULL COMMENT 'Identificador de Alumno',
   `evaluation` tinyint(2) NOT NULL COMMENT 'Numero de evaluacion',
   `mark` double(15,3) default '0.000' COMMENT 'Nota',
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `IDX_MARK_SUBJECT_ALUMN_EVALUATION` (`subject`,`alumn`,`evaluation`),
-  KEY `IDX_MARK_ALUMN` (`alumn`),
-  KEY `IDX_MARK_SUBJECT` (`subject`),
-  KEY `IDX_MARK_DOMAIN` (`domain`),
-  CONSTRAINT `FK_MARK_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_MARK_ALUMN` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`),
-  CONSTRAINT `FK_MARK_SUBJECT` FOREIGN KEY (`subject`) REFERENCES `course_academicskill` (`id`)
+  UNIQUE KEY `subject_customer_evaluation` (`subject`,`alumn`,`evaluation`),
+  KEY `subject` (`subject`),
+  KEY `customer` (`alumn`),
+  CONSTRAINT `mark_ibfk_1` FOREIGN KEY (`alumn`) REFERENCES `course_alumn` (`id`),
+  CONSTRAINT `mark_subject_fk` FOREIGN KEY (`subject`) REFERENCES `course_academicskill` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Notas de Alumnos';
 
 #
@@ -5273,11 +5216,8 @@ CREATE TABLE `notice` (
 
 CREATE TABLE `observation` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Observacion',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `description` varchar(256) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Observacion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_OBSERVATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_OBSERVATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Observaciones';
 
 #
@@ -5541,24 +5481,6 @@ CREATE TABLE `product_account` (
   CONSTRAINT `FK_PRODUCT_ACCOUNT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_PRODUCT_ACCOUNT_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Cuentas Contables de Productos';
-
-#
-# Structure for the `profile_action_denied` table : 
-#
-
-CREATE TABLE `profile_action_denied` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `profile` int(4) NOT NULL COMMENT 'Identificador del Perfil',
-  `action_id` int(4) NOT NULL COMMENT 'Identificador de la Accion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PROFILE_ACTION_DENIED_DOMAIN` (`domain`),
-  KEY `IDX_PROFILE_ACTION_DENIED_PROFILE` (`profile`),
-  KEY `IDX_PROFILE_ACTION_DENIED_ACTION` (`action_id`),
-  CONSTRAINT `FK_PROFILE_ACTION_DENIED_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
-  CONSTRAINT `FK_PROFILE_ACTION_DENIED_PROFILE` FOREIGN KEY (`profile`) REFERENCES `profile` (`id`),
-  CONSTRAINT `FK_PROFILE_ACTION_DENIED_ACTION` FOREIGN KEY (`action_id`) REFERENCES `action` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones Inhabilitadas en el Perfil';
 
 #
 # Structure for the `profile_module_denied` table : 
@@ -5911,14 +5833,11 @@ CREATE TABLE `project_tas` (
 
 CREATE TABLE `qualification` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Calificacion',
-  `domain` int(4) NOT NULL default '1' COMMENT 'Identificador del Dominio',
   `code` char(5) collate latin1_spanish_ci NOT NULL COMMENT 'Codigo de la Calificacion',
   `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion de la Calificacion',
   `min_value` double(15,3) NOT NULL default '0.000' COMMENT 'Limite inferior de la Calificacion',
   `max_value` double(15,3) NOT NULL default '0.000' COMMENT 'Limite superior de la Calificacion',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_QUALIFICATION_DOMAIN` (`domain`),
-  CONSTRAINT `FK_QUALIFICATION_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Calificaciones';
 
 #
@@ -7105,7 +7024,7 @@ CREATE TABLE `workplace_department` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('7.1.8');
+INSERT INTO `db_version` (`version_number`) VALUES ('7.1.7');
 
 COMMIT;
 
