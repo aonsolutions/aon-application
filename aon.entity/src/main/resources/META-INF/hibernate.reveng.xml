@@ -890,10 +890,10 @@
 	<table name="mark">
 		<column name="evaluation" type="int"/>
 		<column name="mark" type="java.lang.Double"/>
-		<foreign-key constraint-name="mark_ibfk_1">
+		<foreign-key constraint-name="FK_MARK_ALUMN">
 			<many-to-one property="alumn"/>
 		</foreign-key>        
-		<foreign-key constraint-name="mark_subject_fk">
+		<foreign-key constraint-name="FK_MARK_SUBJECT">
 			<many-to-one property="subject"/>
 		</foreign-key>        
 	</table>
