@@ -35,8 +35,13 @@ public enum Toolbar implements IResourceable {
 	/**
      * ARSYS 
      */
-	ARSYS;   
-    
+	ARSYS,   
+
+	/**
+     * ACENS 
+     */
+	ACENS;   
+	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
 
