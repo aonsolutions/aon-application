@@ -515,6 +515,7 @@ public class ProjectReservationController extends BasicController implements IPm
 				throw new AbortProcessingException(msg);
 			}
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
+			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
 			fillInvoiceData(reservation);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());

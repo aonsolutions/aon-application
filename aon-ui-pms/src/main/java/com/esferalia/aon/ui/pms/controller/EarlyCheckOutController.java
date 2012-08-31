@@ -127,6 +127,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			setChargeCheckOut(true);
 			setEarlyCheckOutPenalty(null);
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
+			getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
 			getReservationInvoiceTo().setDirectCustomer(true);
 			getReservationInvoiceTo().setEarlyCheckOut(true);
 			getReservationInvoiceTo().setEarlyCheckOutDate(DateUtils.truncate(new Date(), Calendar.DATE));
@@ -199,10 +200,12 @@ public class EarlyCheckOutController implements IPmsConstants {
 		return ((roleManager.isConfig() || roleManager.isFinanceOperator()) && DateUtils.addDays(getReservation().getEndDate(), 1).before(new Date()));
 	}
 
-	public double getReservationUsedServicesAmount() {
+	public double getReservationUsedServicesAmount() throws ManagerBeanException {
+		ReservationUtils reservationUtils = new ReservationUtils();
 		double amount = 0;
 		for (Tax vat : reservationUsedServices.keySet()) {
-			amount += CommonUtil.round(reservationUsedServices.get(vat) * (1 + vat.getPercentage() / 100));
+			double vatPercent = reservationUtils.getTaxPercentage(vat, getReservationInvoiceTo().getIssueDate());
+			amount += CommonUtil.round(reservationUsedServices.get(vat) * (1 + vatPercent / 100));
 		}
 		return amount;
 	}
@@ -377,7 +380,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 		try {
 			if (validateEarlyCheckOut()) {
 				if (getReservationInvoiceTo().getEarlyCheckOutDate().compareTo(getReservation().getEndDate()) != 0) {
-					getReservationInvoiceTo().setIssueDate(new Date());
+					getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
 					getReservationInvoiceTo().setComments("SALIDA ANTICIPADA");
 					getReservationInvoiceTo().setPenaltyDays(getEarlyCheckOutPenaltyDays());
 					getReservationInvoiceTo().setPenaltyAmount(getEarlyCheckOutPenaltyAmount());
@@ -401,6 +404,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 					    	if (invoiceToRectificate != null) {
 								getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries(invoiceToRectificate));
 								getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+								getReservationInvoiceTo().setIssueDate(new Date());
 
 								getReservationInvoiceTo().setRegistry(invoiceToRectificate.getRegistry());
 								getReservationInvoiceTo().getRegistry().setName(invoiceToRectificate.getRegistryName());
@@ -416,6 +420,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 				    	if (getReservationUsedServices().size() > 0) {
 				    		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 							getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+							getReservationInvoiceTo().setIssueDate(getReservation().getStartDate());
 							reservationInvoicing.invoice(getReservationInvoiceTo(), getReservation());
 				    	}
 			    	}

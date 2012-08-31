@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,7 @@ public class PenalizationInvoicing implements IReservationConstants {
 			
 			Invoice invoice = createInvoice(reservationInvoiceTo, reservation);
 			createInvoiceDetails(invoice, reservationInvoiceTo, reservation);
+			updateInvoiceDate(invoice);
 			recordInvoice(invoice);
 
 			HibernateUtil.getSession(sessionName).flush();
@@ -137,6 +139,12 @@ public class PenalizationInvoicing implements IReservationConstants {
 		invoiceDetail.setWorkPlace(reservation.getHotelReservation().getWorkPlace());
 		invoiceDetail.getInvoice().setUpdateEnabled(true);
 		invoiceDetailBean.insert(invoiceDetail);
+	}
+
+	private void updateInvoiceDate(Invoice invoice) throws ManagerBeanException {
+		if (!DateUtils.isSameDay(invoice.getIssueDate(), new Date())) {
+			invoice.setIssueDate(new Date());
+		}
 	}
 
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException {

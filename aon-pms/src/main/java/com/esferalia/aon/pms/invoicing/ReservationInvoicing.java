@@ -67,6 +67,7 @@ public class ReservationInvoicing implements IReservationConstants {
 			if (reservationInvoiceTo.getAddress() != null) {
 				createInvoiceAddress(invoice, reservationInvoiceTo.getAddress());
 			}
+			updateInvoiceDate(invoice);
 			createInvoiceFinances(invoice, reservationInvoiceTo);
 			recordInvoice(invoice);
 
@@ -343,6 +344,12 @@ public class ReservationInvoicing implements IReservationConstants {
 		}
 		invoiceAddress.setInvoice(invoice);
 		invoiceAddressBean.insert(invoiceAddress);
+	}
+
+	private void updateInvoiceDate(Invoice invoice) throws ManagerBeanException {
+		if (!DateUtils.isSameDay(invoice.getIssueDate(), new Date())) {
+			invoice.setIssueDate(new Date());
+		}
 	}
 
 	private void createInvoiceFinances(Invoice invoice, ReservationInvoiceTo reservationInvoiceTo) throws ManagerBeanException {
