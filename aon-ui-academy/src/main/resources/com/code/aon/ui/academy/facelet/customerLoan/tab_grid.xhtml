@@ -11,6 +11,7 @@
 	
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:param name="toolbarDescription" value="#{customerLoan.history ? bundle.aon_history : bundle.aon_list}" />
+			<ui:param name="toolbarID" value="#{controller.beanName}Toolbar" />
 			<ui:param name="innerToolbar" value="true" />
 			<ui:define name="toolbarContent">
 				<aon:commandButton id="customerLoan-save"

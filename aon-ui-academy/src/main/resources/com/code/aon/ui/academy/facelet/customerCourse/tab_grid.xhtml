@@ -12,6 +12,7 @@
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 			<ui:param name="toolbarDescription" value="#{customerCourse.history ? bundle.aon_history : bundle.aon_list}" />
 			<ui:param name="innerToolbar" value="true" />
+			<ui:param name="toolbarID" value="#{controller.beanName}Toolbar" />
 			<ui:define name="toolbarContent">
 				<aon:commandButton id="customerCourse-save"
 					rendered="#{!customerCourse.history}"
@@ -39,7 +40,7 @@
 				<aon:column alias="CourseAlumn.course.code,CourseAlumn.course.description"
 					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
-						<aon:outputLabel for="CourseAlumn_id"
+						<aon:outputLabel for="Course_id"
 							value="#{academyBundle.academy_course}" />
 					</f:facet>				
 					<aon:outputText value="#{to.course.code} #{to.course.description}" rendered="#{formList}" />

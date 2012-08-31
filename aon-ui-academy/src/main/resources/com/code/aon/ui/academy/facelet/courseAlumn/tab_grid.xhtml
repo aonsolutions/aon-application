@@ -8,7 +8,7 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:param name="innerToolbar" value="true" />
-		<aon:valueParam name="toolbarID" default="#{controller.beanName}Toolbar" />
+		<ui:param name="toolbarID" value="#{controller.beanName}Toolbar" />
 		<ui:define name="toolbarContent">
 			<aon:htmlCommandLink id="absenceTemplateList-excel-report"
 				value="&#160;" target="_blank" action="#{report.onExecute}"
