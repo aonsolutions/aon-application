@@ -277,14 +277,14 @@ public class ProjectReservation extends ProjectReservationDB implements ICalcula
 	@Transient
 	public double getOneNightNoShowPrice() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
+		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), new Date());
 		return CommonUtil.round(getOneNightNoShowTaxableBase() * (1 + vatPercent / 100));
 	}
 
 	@Transient
 	public double getTwoNightNoShowPrice() throws ManagerBeanException {
 		ReservationUtils reservationUtils = new ReservationUtils();
-		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), getStartDate());
+		double vatPercent = reservationUtils.getTaxPercentage(getHotelReservation().getItemNoShow().getProduct().getVat(), new Date());
 		return CommonUtil.round(getTwoNightNoShowTaxableBase() * (1 + vatPercent / 100));
 	}
 

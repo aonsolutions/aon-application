@@ -202,7 +202,7 @@ public class ProjectReservationServiceController extends LinesController {
 		return reservationRoomList;
 	}
 
-	public void onItemChanged(LookupChangeEvent event) {
+	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
@@ -215,12 +215,16 @@ public class ProjectReservationServiceController extends LinesController {
 			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setQuantity(getServiceQuantity());
+
+	        ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 			Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-			setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
+			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+			setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
 		}
 	}	
 
-	public void onQuantityChanged(ValueChangeEvent event) {
+	public void onQuantityChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		Item item = reservationService.getItem();
 		if (item != null && item.getId() != null) {
@@ -230,8 +234,12 @@ public class ProjectReservationServiceController extends LinesController {
 				ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 				reservationServiceDetail.setProjectReservationService(reservationService);
 				reservationServiceDetail.setQuantity(getServiceQuantity());
+
+		        ReservationUtils reservationUtils = new ReservationUtils();
+				double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 				Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-				setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
+				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+				setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
 			} else {
 				setServiceQuantity(1);
 			}
@@ -253,16 +261,17 @@ public class ProjectReservationServiceController extends LinesController {
 	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 
+		ReservationUtils reservationUtils = new ReservationUtils();
 		boolean isNew = isNew();
 		Date fromDate = getServiceFromDate();
 		Date toDate = getServiceToDate();
 		double quantity = getServiceQuantity();
-		double price = getPricesManager().getPrice(reservationService.getItem(), getServicePrice(), 4);
+		double vatPercent = reservationUtils.getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservationService.getProjectReservation().getDate());
+		double price = getPricesManager().getPrice(reservationService.getItem(), vatPercent, 0, getServicePrice(), 4);
 		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
 
 		onAccept(event);
 
-		ReservationUtils reservationUtils = new ReservationUtils();
 		if (isNew) {
 			reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, reservationRoom, getPriceStrategy());
 		} else {
