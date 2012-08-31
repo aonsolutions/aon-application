@@ -207,7 +207,20 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAlumnControllerListener}</value>
+			</list-entries>
+		</managed-property>												
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.event.CourseAlumnControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>courseAlumnChildListener</managed-bean-name>
@@ -266,8 +279,21 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAcademicSkillControllerListener}</value>
+			</list-entries>
+		</managed-property>												
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>courseAcademicSkillControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.event.CourseAcademicSkillControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+		
 	<managed-bean>
 		<managed-bean-name>courseAcademicSkillChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -1131,6 +1157,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerSearch}</value>
+				<value>#{customerScopeListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
