@@ -217,7 +217,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>MailAccount_email</value>
+			<value>MailAccount_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>

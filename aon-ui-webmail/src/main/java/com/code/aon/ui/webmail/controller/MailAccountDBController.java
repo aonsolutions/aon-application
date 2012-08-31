@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -54,12 +55,20 @@ public class MailAccountDBController extends MailDBController implements IMailAc
 		try {		
     		Criteria criteria = new Criteria();
     		User user = UserUtils.getInstance().getLoggedUser();
-			Expression exp1 = ExpressionUtilities.getEqualExpression("MailAccount.user<id", user.getId());
+			Expression userExp = ExpressionUtilities.getEqualExpression("MailAccount.user<id", user.getId());
 			if ( AonUtil.isBeanValue(BEAN_WEBMAIL, SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY) ) {
-				Expression exp2 = getExpression(null);
-				exp1 = ExpressionUtilities.getOrExpression(exp1, exp2); 					
+				Expression exp = getExpression(null);
+				userExp = ExpressionUtilities.getOrExpression(userExp, exp); 					
 			}
-			criteria.addExpression(exp1);		
+			criteria.addExpression(userExp);
+			if ( DomainManager.isParentDomainUserInChildDomain() ) {
+	    		criteria.setSkipDomainFilter(true);
+				String domainId = getFieldName(IEntityAlias.MAIL_ACCOUNT_DOMAIN);
+				Expression exp1 = ExpressionUtilities.getEqualExpression(domainId, DomainManager.getCurrentDomain());
+				Expression exp2 = ExpressionUtilities.getEqualExpression(domainId, user.getDomain());
+				criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+			}		
+			criteria.addOrder(getFieldName(IEntityAlias.MAIL_ACCOUNT_NAME));
 			for( ITransferObject to : getManagerBean().getList(criteria) ) {
 				MailAccount account = (MailAccount) to;
 				SelectItem item = new SelectItem(account, account.getName());

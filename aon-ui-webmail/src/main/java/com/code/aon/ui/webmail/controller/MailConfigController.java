@@ -201,6 +201,7 @@ public class MailConfigController {
 	public void onSetDefault(ActionEvent event) {
 		try {
 			IMailAccount currentAccount = getSelectMailAccount();
+			updateMailAccountList();
 			for( SelectItem item : getMailAccounts() ) {
 				IMailAccount account = (IMailAccount) item.getValue();
 				account.setDefaultAccount( ObjectUtils.equals(currentAccount, account) );

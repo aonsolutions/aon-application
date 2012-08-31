@@ -18,7 +18,8 @@
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:define name="columns">
 
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column alias="Signature.name"
+					styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
