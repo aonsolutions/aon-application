@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="delivery" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="480"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -41,6 +41,7 @@
 	<field name="status" class="com.code.aon.warehouse.enumeration.DeliveryStatus"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="comments" class="java.lang.String"/>
+	<field name="project" class="com.code.aon.project.Project"/>
 	<variable name="currentPurchase" class="com.code.aon.purchase.Purchase">
 		<variableExpression><![CDATA[(com.code.aon.purchase.Purchase)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -68,7 +69,14 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". "
++ ($P{recordData}!=null?
+( ($P{recordData}.getVolume().trim().isEmpty()?"":"Tomo " + $P{recordData}.getVolume() + ", ")
++ ($P{recordData}.getSection().trim().isEmpty()?"":"Sección " + $P{recordData}.getSection() + ", ")
++ ($P{recordData}.getPage().trim().isEmpty()?"":"Folio " + $P{recordData}.getPage() + ", ")
++ ($P{recordData}.getSheet().trim().isEmpty()?"":"Hoja " + $P{recordData}.getSheet() + ", ")
++ ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):""))
+:"")]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-6" x="-25" y="241" width="4" height="1"/>
@@ -88,9 +96,9 @@
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="83" splitType="Stretch">
+		<band height="83" splitType="Prevent">
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top" isUsingCache="true">
-				<reportElement key="image-1" positionType="Float" mode="Opaque" x="0" y="0" width="71" height="54" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement key="image-1" mode="Opaque" x="0" y="0" width="150" height="75" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 				</reportElement>
 				<graphicElement fill="Solid"/>
@@ -148,96 +156,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{issueDate}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-81" x="85" y="27" width="136" height="12">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA["t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-82" x="85" y="15" width="136" height="12">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-83" x="85" y="3" width="136" height="12">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-89" x="85" y="39" width="136" height="12">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA["f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-130" x="210" y="51" width="121" height="12">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{web}.getValue()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement key="textField-131" x="85" y="51" width="125" height="12" forecolor="#000000">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" pdfFontName="Helvetica"/>
-				</textElement>
-				<textFieldExpression><![CDATA["e: "+$P{email}.getValue()]]></textFieldExpression>
-			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-74" x="388" y="31" width="59" height="13"/>
 				<box>
@@ -264,13 +182,107 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{supplier}.getId()]]></textFieldExpression>
 			</textField>
+			<frame>
+				<reportElement x="184" y="3" width="158" height="72"/>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-130" positionType="Float" x="0" y="60" width="136" height="12" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$P{printHeader} && !$P{web}.getValue().trim().isEmpty()]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{web}.getValue().trim().isEmpty()?null:"w" + ": " + $P{web}.getValue()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-83" x="0" y="0" width="136" height="12">
+						<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{address}.getFullAddress()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-131" positionType="Float" mode="Transparent" x="0" y="48" width="136" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[$P{printHeader} && !$P{email}.getValue().trim().isEmpty()]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{email}.getValue().trim().isEmpty()?null:"e" + ": " + $P{email}.getValue()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-81" positionType="Float" x="0" y="24" width="136" height="12" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$P{printHeader} && !$P{phone}.getValue().trim().isEmpty()]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{phone}.getValue().trim().isEmpty()?null:"t" + ": " + $P{phone}.getValue()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-89" positionType="Float" x="0" y="36" width="136" height="12" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$P{printHeader} && !$P{fax}.getValue().trim().isEmpty()]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{fax}.getValue().trim().isEmpty()?null:"f" + ": " + $P{fax}.getValue()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-82" x="0" y="12" width="136" height="12">
+						<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="8" isStrikeThrough="false" pdfFontName="Helvetica"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+				</textField>
+			</frame>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="571" splitType="Stretch">
+		<band height="361" splitType="Stretch">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-112" x="2" y="3" width="69" height="23"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
@@ -335,14 +347,14 @@
 				<textFieldExpression><![CDATA[$F{supplier}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="70" y="112" width="102" height="23"/>
+				<reportElement key="textField-118" x="70" y="129" width="102" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{purchase_workplace}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-119" x="172" y="112" width="366" height="23"/>
+				<reportElement key="textField-119" x="172" y="129" width="366" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -356,7 +368,7 @@
 				<textFieldExpression><![CDATA[$F{workPlace}.getDescription()]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="2" y="165" width="536" height="36"/>
+				<reportElement key="subreport-1" positionType="Float" x="2" y="182" width="536" height="36"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="printValue">
 					<subreportParameterExpression><![CDATA[$P{printValue}]]></subreportParameterExpression>
@@ -368,7 +380,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("purchaseFormDetail")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-4" positionType="Float" x="2" y="201" width="536" height="41">
+				<reportElement key="subreport-4" positionType="Float" x="2" y="218" width="536" height="41">
 					<printWhenExpression><![CDATA[$P{printValue}]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -385,7 +397,7 @@
 				<subreportExpression><![CDATA[$P{nestedReports}.get("purchaseVatBreakDown")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-134" x="85" y="87" width="343" height="25"/>
+				<reportElement key="textField-134" x="85" y="104" width="343" height="25"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -440,7 +452,7 @@
 				<textFieldExpression><![CDATA[$R{purchase_text_financial2}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="71" y="291" width="124" height="23" forecolor="#000000"/>
+				<reportElement key="textField-119" positionType="Float" x="70" y="291" width="150" height="23" forecolor="#000000"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -461,7 +473,7 @@
 				<textFieldExpression><![CDATA[$R{purchase_text_financial3}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="321" y="291" width="141" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="307" y="291" width="200" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -475,21 +487,21 @@
 				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBank().getName():$F{bank}.getName())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="231" y="291" width="82" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="225" y="291" width="82" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{purchase_bank}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" positionType="Float" x="231" y="314" width="82" height="23"/>
+				<reportElement key="textField-118" positionType="Float" x="225" y="314" width="82" height="23"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{purchase_bank_account}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="321" y="314" width="141" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="307" y="314" width="200" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -503,7 +515,7 @@
 				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ? $F{supplier}.getRegistry().getPayMethod().getBankAccount().getEntity()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getOffice()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getControl()+" . "+$F{supplier}.getRegistry().getPayMethod().getBankAccount().getAccount() :$F{bankAccount}.getEntity()+" . "+$F{bankAccount}.getOffice()+" . "+$F{bankAccount}.getControl()+" . "+ $F{bankAccount}.getAccount() )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-119" positionType="Float" x="71" y="314" width="124" height="23"/>
+				<reportElement key="textField-119" positionType="Float" x="70" y="314" width="150" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -517,7 +529,7 @@
 				<textFieldExpression><![CDATA[($P{defaultPayMethod}.booleanValue() ?  " "+$F{supplier}.getRegistry().getPayMethod().getNumberOfPayments()+" ":" "+ $F{numberOfPayments}+" " )]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-118" x="2" y="112" width="68" height="23"/>
+				<reportElement key="textField-118" x="2" y="129" width="68" height="23"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
@@ -531,14 +543,14 @@
 				<textFieldExpression><![CDATA[$R{purchase_text_financial1}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-112" x="1" y="135" width="69" height="23"/>
+				<reportElement key="textField-112" x="1" y="152" width="69" height="23"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{aon_comments}+ ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-113" x="70" y="135" width="467" height="23"/>
+				<reportElement key="textField-113" x="70" y="152" width="467" height="23"/>
 				<box leftPadding="3" bottomPadding="2">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 					<topPen lineWidth="0.0" lineStyle="Solid"/>
@@ -550,6 +562,38 @@
 					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-54" positionType="Float" mode="Transparent" x="2" y="72" width="69" height="15" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_project} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-53" positionType="Float" mode="Transparent" x="71" y="72" width="317" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean($F{project} != null && !"".equals($F{project}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project}.getName()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

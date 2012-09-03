@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:outputLabel for="TargetProfile_lastUpdate" value="#{commercialBundle.commercial_target_profile_lastUpdate}" />
+	<aon:selectInputDate id="TargetProfile_lastUpdate" value="#{controller.to.lastUpdate}"
+		timeZone="#{timeZoneController.timeZone}"  required="true"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+	</aon:selectInputDate>
+	
+	<aon:outputLabel for="Question_id" value="#{commercialBundle.commercial_question}" />
+	<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.question}" />
+		<ui:param name="idRequired" value="#{true}" />
+		<ui:param name="skipLabel" value="#{true}" />
+		<ui:param name="lookupRendered" value="#{controller.new}" />
+		<ui:param name="lookupReRender" value="#{questionReRender}" />
+		<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
+	</ui:include>
+
+	<aon:outputLabel for="TargetProfile_value-New"
+		value="#{commercialBundle.commercial_response}" />
+	<aon:div id="TargetProfile_response-New">
+		<aon:div layout="none">
+			<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml" >
+				<ui:param name="inputId" value="TargetProfile_value-New" />
+				<ui:param name="valueHolder" value="#{controller.to}" />
+			</ui:include>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>

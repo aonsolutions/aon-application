@@ -10,11 +10,11 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.commercial.QuestionValue;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -37,7 +37,6 @@ public class SurveyQuestionController extends BasicController implements IMarket
 		return questions;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void refreshQuestions( SurveyQuestion sq ) throws ManagerBeanException {
 		questions = new LinkedList<SelectItem>();
 		IManagerBean bean = getManagerBean();

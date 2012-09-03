@@ -1,11 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.ui.form.BasicController;
@@ -71,11 +71,9 @@ public class FinanceListController extends BasicController implements IFinanceCo
 		checks = new ArrayList<Finance>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
+		for (ITransferObject ito : this.getManagerBean().getList(this.getCriteria())) {
+			Finance finance = (Finance)ito;
 			if (!checks.contains(finance)) {
 				checks.add(finance);
 			}
@@ -84,6 +82,10 @@ public class FinanceListController extends BasicController implements IFinanceCo
 
 	public void checkNone(ActionEvent event) {
 		clearCheckedFinances();
+	}
+
+	public int getCheckedCount() {
+		return getCheckedFinances().size();
 	}
 
 

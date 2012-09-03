@@ -89,7 +89,7 @@ public class ActionMoreUsedController implements IAuditConstants {
 		        	String action = (String) array[1];
 					ApplicationOption option = options.get(action);
 					if ( option != null ) {
-						if (! getDeniedController().isDenied(option) ) {
+						if (option.isRendered() && (!getDeniedController().isDenied(option)) ) {
 							ActionMoreUsed ams = new ActionMoreUsed( (Integer) array[0], option );
 							list.add( ams );
 						}

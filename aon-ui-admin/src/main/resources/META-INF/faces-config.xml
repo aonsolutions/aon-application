@@ -36,49 +36,21 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>		
-		
-	<!-- ************* APPLICATION ***************** -->
+			
+	<!-- ************* NEW DOMAIN ***************** -->
 	<managed-bean>
-		<managed-bean-name>adminApplication</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.admin.controller.ApplicationController
-		</managed-bean-class>
+		<managed-bean-name>adminNewDomain</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.NewDomainController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.Application</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>adminApplication</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Application_name</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{applicationControllerListener}</value>
-				<value>#{applicationRoleListener}</value>
-				<value>#{applicationProfileListener}</value>
-			</list-entries>
-		</managed-property>		
 	</managed-bean>	
 
+	<!-- ************* REMOVE DOMAIN ***************** -->
 	<managed-bean>
-		<managed-bean-name>applicationControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.admin.event.ApplicationControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-			
+		<managed-bean-name>adminRemoveDomain</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.RemoveDomainController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
 		<managed-bean-name>adminDomain</managed-bean-name>
@@ -160,8 +132,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{domainUserControllerListener}</value>
-				<value>#{domainUserScopeListener}</value>
-				<value>#{domainUserWorkGroupListener}</value>
+				<value>#{domainUserSearch}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
@@ -174,126 +145,26 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>			
 
+	<managed-bean>
+		<managed-bean-name>domainUserSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.event.DomainUserSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>			
+
 	<!-- ************ USER SCOPE ************** -->
 	<managed-bean>
 		<managed-bean-name>userScopeEx</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.admin.controller.UserScopeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.UserScope</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>userScopeEx</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>domainUser</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>UserScope_scope_description</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>user.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>domainUserScopeListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>userScopeEx</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>UserScope_user_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
 	
 	<!-- ************ USER WORKGROUP ************** -->
 	<managed-bean>
 		<managed-bean-name>userWorkGroupEx</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.admin.controller.UserWorkGroupController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.UserWorkGroup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>userWorkGroupEx</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>domainUser</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>UserWorkGroup_workGroup_description</value>
-		</managed-property>		
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>user.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>domainUserWorkGroupListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>userWorkGroupEx</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>UserWorkGroup_user_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
 	</managed-bean>
 	
 	<!-- ************* DOMAIN APPLICATION ***************** -->
@@ -325,8 +196,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{domainApplicationControllerListener}</value>
 				<value>#{domainApplicationUserControllerListener}</value>
-				<value>#{domainApplicationModuleControllerListener}</value>
-				<value>#{domainApplicationProfileListener}</value>
+				<value>#{domainApplicationProfileChildListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
@@ -357,10 +227,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>appUser</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -416,125 +282,12 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>		
-
-	<!-- ************* DOMAIN APPLICATION USER ***************** -->
-	<managed-bean>
-		<managed-bean-name>domainApplicationModule</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.DomainApplicationModule</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domainApplicationModule</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>domainApplication</value>
-		</managed-property>										
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>domainApplication.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>		
-	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>domainApplicationModuleControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>domainApplicationModule</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>DomainApplicationModule_domainApplication_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>		
 		
-	<!-- ************* ROLE ***************** -->
-	<managed-bean>
-		<managed-bean-name>role</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.admin.ApplicationRole</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>role</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>adminApplication</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ApplicationRole_role_name</value>
-		</managed-property>
-	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>applicationRoleListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>role</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ApplicationRole_application_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
-	
 	<!-- ************* APPLICATION PROFILE ***************** -->
 	<managed-bean>
 		<managed-bean-name>applicationProfile</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.admin.controller.ApplicationProfileController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.admin.Profile</value>
@@ -542,14 +295,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>applicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>adminApplication</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -565,27 +310,6 @@
 			</map-entries>
 		</managed-property>				
 	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>applicationProfileListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>applicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Profile_application_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>		
 		
 	<!-- ************* DOMAIN APPLICATION PROFILE ***************** -->
 	<managed-bean>
@@ -603,10 +327,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>domainApplicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -633,151 +353,31 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{profileRoleListener}</value>
-				<value>#{profileModuleDeniedListener}</value>
+				<value>#{domainApplicationProfileListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
-	
+
 	<managed-bean>
 		<managed-bean-name>domainApplicationProfileListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
+			com.code.aon.ui.admin.event.DomainApplicationProfileControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+	
+	<managed-bean>
+		<managed-bean-name>domainApplicationProfileChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.admin.event.DomainApplicationProfileLinesListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
 			<value>domainApplicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>Profile_application_id</key>
-                    <value>application.id</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 	</managed-bean>		
 
-	<!-- ************* PROFILE ROLE ***************** -->
-	<managed-bean>
-		<managed-bean-name>profileRole</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.admin.ProfileRole</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>profileRole</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>domainApplicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>ProfileRole_applicationRole_role_name</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>profile.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>						
-	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>profileRoleListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>profileRole</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ProfileRole_profile_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
-
-	<!-- ************* PROFILE DENIED MODULE ***************** -->
-	<managed-bean>
-		<managed-bean-name>profileModuleDenied</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.audit.ProfileModuleDenied</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>profileModuleDenied</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>domainApplicationProfile</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>profile.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>						
-	</managed-bean>	
-	
-	<managed-bean>
-		<managed-bean-name>profileModuleDeniedListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>profileModuleDenied</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>ProfileModuleDenied_profile_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>	
-		
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -786,27 +386,11 @@
 		</navigation-case>
 	</navigation-rule>	
 	
-	<!-- =================== Applications ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>adminApplication_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/adminApplication/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>adminApplication_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/adminApplication/form.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>	
-	
 	<!-- =================== Domain ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>adminDomain_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>domainCapabilities</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/adminDomain/capabilities.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 		
@@ -837,5 +421,37 @@
 			<to-view-id>/com/code/aon/ui/admin/facelet/domainApplication/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>			
-		
+
+	<!-- =================== Profiles ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domainApplicationProfile_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/profile/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainApplicationProfile_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/profile/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>applicationProfile_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/applicationProfile/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>			
+
+	<!-- =================== New Domain  ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>newDomain_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/newDomain/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>			
+
+	<!-- =================== Remove Domain  ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>removeDomain_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/admin/facelet/removeDomain/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>			
+	
 </faces-config>

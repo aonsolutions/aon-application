@@ -5,6 +5,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 				
+	<aon:outputLabel value="#{bundle.aon_id}" />
+	<aon:inputText id="Proposal_id"
+		valueChangeListener="#{controller.addExpression}" size="5" />
+	
 	<aon:outputLabel value="#{purchaseBundle.purchase_issueDate}" />
 	<aon:div>
 		<aon:outputLabel for="Proposal_issueDate-From"

@@ -22,7 +22,7 @@ import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.dao.ldap.util.IPerson;
 
 @EntryObject(mainObjectClass=CONTACT, objectClasses={TOP})
-public class Contact implements IPerson {
+public class Contact implements IPerson, IContact {
 
 	private static final long serialVersionUID = 7825997921660369372L;
 

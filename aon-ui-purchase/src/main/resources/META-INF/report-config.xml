@@ -25,7 +25,6 @@
 			<param id="printRecordData" value="#{company.isPrintRecordData}"/>
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="PriceStrategy" value="#{purchaseDetail.getPriceStrategy}" />
-			<param id="TotalPrice" value="#{purchase.getTotalPrice}" />
 			<param id="defaultPayMethod" value="#{purchase.getDefaultPayMethod}" />
 		</params>
 	</report>

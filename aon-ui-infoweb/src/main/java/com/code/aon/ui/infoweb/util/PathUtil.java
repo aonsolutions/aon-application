@@ -2,8 +2,6 @@ package com.code.aon.ui.infoweb.util;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -33,14 +31,6 @@ public class PathUtil implements VelocityConstants {
 	public static File getStyleTemplate( String template) {
 		return new File( getCssPath(template), STYLE_TEMPLATE );
 	}
-
-	public static String getDomainSuffix( String domain ) {
-		String[] parts = StringUtils.split( domain, "." );
-		if ( parts.length > 2 ) {
-			return StringUtils.join(parts, ".", 1, parts.length);
-		}
-		return domain;
-	}	
 
 	public static File getDomainsPath() {
 		return new File( DOMAINS_PATH );

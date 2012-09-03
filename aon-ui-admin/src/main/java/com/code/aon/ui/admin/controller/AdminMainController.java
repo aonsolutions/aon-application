@@ -1,43 +1,35 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.bridge.controller.ISecurityBridgeConstants.USER_PASSWORD_INVALID;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_CONTACT_DB;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.io.Serializable;
 import java.util.Properties;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
-import javax.naming.Name;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
-import com.code.aon.config.Domain;
-import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.config.enumeration.WorkGroupStatus;
-import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.ui.admin.UserType;
+import com.code.aon.config.User;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.util.ManagerLogger;
-import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.controller.ContactDBController;
+import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
+import com.code.aon.ui.webmail.controller.SignatureDBController;
 
 public class AdminMainController implements IAdminConstants {
 	
@@ -47,17 +39,15 @@ public class AdminMainController implements IAdminConstants {
 	
 	private static final String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.config.properties";
 	
+	private static final String NORMAL_PROPERTIES = PROPERTIES_PATH + "normal.properties";
+	
+	private static final String SYS_ADMIN_PROPERTIES = PROPERTIES_PATH + "sysAdmin.properties";
+	
 	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-admin/config.properties" );
 
 	private String _user;
 
 	private String _password;
-	
-	private UserType userType;
-	
-	private Domain currentDomain;
-	
-	private List<SelectItem> workGroupStatuses;
 	
 	private Properties properties;
 	
@@ -70,12 +60,14 @@ public class AdminMainController implements IAdminConstants {
 	public AdminMainController() {
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
+		this.config = PropertiesUtil.loadProperties(NORMAL_PROPERTIES);
 	}
 	
 	public void onInit( ActionEvent event ) {
-		this.currentDomain = calculateCurrentDomain();
-		this.userType = calculateUserType();
-		init( event );
+		initDomain(event);
+		if ( AonUtil.getRoleManager().isSysAdmin() ) {
+			initSysAdmin(event);			
+		}
 	}
 	
 	public Properties getProperties() {
@@ -88,46 +80,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	public ManagerLogger getLogger() {
 		return logger;
-	}
-
-	public UserType getUserType() {
-		return userType;
-	}
-	
-	private void setUserType(UserType userType) {
-		this.userType = userType;
-	}
-	
-	public Domain getCurrentDomain() {
-		return currentDomain;
-	}
-	
-	public String getCurrentDomainTypeLabel() {
-		return currentDomain.getType().getName(AonUtil.getCurrentLocale());
-	}	
-	
-	public void setCurrentDomain(Domain currentDomain) {
-		this.currentDomain = currentDomain;
-	}
-
-	public boolean isSysAdmin() {		
-		return AonUtil.getRoleManager().isSysAdmin();
-	}
-
-	public boolean isUserManagement() {
-		if ( isSysAdmin() ) {
-			return true;
-		}
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		return dc.getDomain().isUserManagement();
-	}
-
-	public boolean isDomainManagement() {
-		return isSysAdmin() || getCurrentDomain().isDomainManagement();
-	}
-	
-	public String getHomeTemplate() {
-		return this.userType.getTemplate();
 	}
 	
 	public String getUser() {
@@ -155,85 +107,26 @@ public class AdminMainController implements IAdminConstants {
 	}	
 
 	public void resetTermsOfServiceAccepted() {
-		termsOfServiceAccepted = isSysAdmin();
+		termsOfServiceAccepted = AonUtil.getRoleManager().isSysAdmin();
 	}
 	
 	public void onAccept(ActionEvent event) {
-		String crypted = hash(_password);
+		String crypted = AdminUtil.encodeSHA(_password);
 		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
 		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
 		if (amUser.equals(_user) && amPassword.equals(crypted)) {
-			setUserType(UserType.ESFERALIA);
-			init(event);
+			initSysAdmin(event);
 		} else {
-			String message = AonUtil.getMessage("securityBundle", "aon_login_err_0", _user);
+			String message = AonUtil.getMessage(BUNDLE_NAME, USER_PASSWORD_INVALID, _user);
 			AonUtil.addErrorMessage(message);
 		}
 		_user = null;
 		_password = null;
 	}
-
-	/**
-	* Encripta un String con el algoritmo MD5.
-	* @return String
-	* @throws Exception
-	*/
-	private String hash(String passwd){
-		String md5_passwd = passwd;
-		byte[] defaultBytes = md5_passwd.getBytes();
-		try{
-			MessageDigest algorithm = MessageDigest.getInstance("MD5");
-			algorithm.reset();
-			algorithm.update(defaultBytes);
-			byte messageDigest[] = algorithm.digest();
-			StringBuffer hexString = new StringBuffer();
-			for (int i=0;i<messageDigest.length;i++) {
-				hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-			}
-			md5_passwd=hexString+"";
-		}catch(NoSuchAlgorithmException nsae){
-			LOGGER.debug( nsae.getMessage(), nsae);
-		}
-		return md5_passwd;
-	} 
 	
-	public List<SelectItem> getWorkGroupStatuses() {
-		if(workGroupStatuses == null){
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			workGroupStatuses = new LinkedList<SelectItem>();
-			for (WorkGroupStatus status : WorkGroupStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				workGroupStatuses.add(item);
-			}
-		}
-		return workGroupStatuses;
-	}	
-	
-	private Domain calculateCurrentDomain() {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-			return (Domain) bean.get( DomainManager.getCurrentDomain() );
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return null;
-	}
-	
-	private UserType calculateUserType() {
-		if ( isSysAdmin() ) {
-			return UserType.ESFERALIA;
-		}
-		UserType type = UserType.NORMAL;
-		DomainType dt = currentDomain.getType();
-		if ( (dt == DomainType.CONSULTANCY) || (dt == DomainType.ENTERPRISE_MANAGER) ) {
-			type = UserType.PARENT;
-		}
-		return type;
-	}
-	
-	private void initEsferaliaUser( ActionEvent event ) {
-		AonUtil.getRoleManager().setUserInRole(IAonRole.SYS_ADMIN, true);
+	private void initSysAdmin( ActionEvent event ) {
+		AonUtil.getRoleManager().setSysAdmin();
+		this.config = PropertiesUtil.loadProperties(SYS_ADMIN_PROPERTIES);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
 	}
@@ -241,56 +134,61 @@ public class AdminMainController implements IAdminConstants {
 	private void initDomain( ActionEvent event ) {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
-			controller.select(event, currentDomain.getId());
+			if ( controller.getTo() == null ) {
+				controller.select(event, DomainManager.getCurrentDomain());	
+			}
+			controller.initApplicationInfos();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
 	}
+
+	private void initSignature( User user ) throws ManagerBeanException {
+		SignatureDBController signature = (SignatureDBController) AonUtil.getRegisteredBean(BEAN_SIGNATURE_DB);
+		signature.updateUser(user);
+		signature.onSearch(null);
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		String title = (user == null) ? AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_ENTERPRISE_TITLE) : null;
+		mailConfig.setSignatureTitle(title);
+	}
+
+	private void initMailAccount( User user ) throws ManagerBeanException {
+		MailAccountDBController account = (MailAccountDBController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT_DB);
+		account.updateUser(user);
+		account.onSearch(null);		
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		String title = (user == null) ? AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_ENTERPRISE_TITLE) : null;
+		mailConfig.setMailAccountTitle(title);
+		mailConfig.setSkipDefaultAccountColumn(true);
+	}
+
+	private void initContact( User user ) throws ManagerBeanException {
+		ContactDBController contact = (ContactDBController) AonUtil.getRegisteredBean(BEAN_CONTACT_DB);
+		contact.updateUser(user);
+		contact.onSearch(null);
+	}
 	
-	private void init( ActionEvent event ) {
-		this.config = PropertiesUtil.loadProperties(this.userType.getResource());
-		initDomain(event);
-		if ( this.userType == UserType.ESFERALIA ) {
-			initEsferaliaUser(event);			
-		}
+	public void onInitMailAccount( ActionEvent event ) throws ManagerBeanException {
+		initMailAccount(null);
+	}
+
+	public void onInitSignature( ActionEvent event ) throws ManagerBeanException {
+		initSignature(null);
+	}
+	
+	public void initWebmail( User user ) throws ManagerBeanException {
+		initSignature(user);
+		initMailAccount(user);
+		initContact(user);
+	}
+
+	public static void removeLines( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(_class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(alias), id);
+		for( ITransferObject to : bean.getList(criteria) ) {
+			bean.remove(to);
+		}	
 	}	
-	
-	public int execute( String[] commandLine ) {
-		int exitVal = -1;
-        try {
-            Runtime rt = Runtime.getRuntime();
-            LOGGER.info( "Executing: {}", StringUtils.join(commandLine, " ") );
-            Process pr = rt.exec( commandLine );
-
-            Reader reader = new InputStreamReader(pr.getInputStream());
-            BufferedReader in = new BufferedReader(reader);
-
-            String line=null;
-            while((line=in.readLine()) != null) {
-            	LOGGER.debug( "Output: {}", line );
-            }
-
-            exitVal = pr.waitFor();
-            LOGGER.debug( "Exited with error code {}", exitVal );
-        } catch(Throwable e) {
-        	LOGGER.error( "Error executing command " + commandLine[0], e );
-        }		
-        return exitVal;
-	}
-	
-	public static void updateController( String name, Name parent ) {
-		updateController(name, parent, true);
-	}
-
-	public static void updateController( String name, Name parent, boolean force ) {
-		LdapBasicController controller = (LdapBasicController) AonUtil.getRegisteredBean(name);
-		LdapDAO dao = controller.getLdapDAO();
-		Name oldDN = dao.getBaseDN();
-		controller.updateBaseDN(parent);
-		Name currentDN = dao.getBaseDN();
-		if ( force || (! ObjectUtils.equals(oldDN, currentDN)) ) {
-			controller.onSearch(null);	
-		}				
-	}
 	
 }

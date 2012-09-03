@@ -2,6 +2,7 @@ package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BUNDLE_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_DOCUMENT_ERROR;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.util.List;
 
@@ -24,8 +25,8 @@ import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class RegistryController extends BasicController {
 
@@ -48,6 +49,14 @@ public class RegistryController extends BasicController {
 	private boolean showNewAddInfoWindow;
 
 	private boolean showNewDirStaffWindow;
+	
+	private boolean showNewTargetItemWindow;
+	
+	private boolean showNewTargetProfileWindow;
+	
+	private boolean showNewTargetSellerWindow;
+	
+	private boolean showNewTargetSupplierWindow;
 	
 	private boolean showNewDocumentWindow;
 
@@ -123,6 +132,38 @@ public class RegistryController extends BasicController {
 		this.showNewProjectWindow = showNewProjectWindow;
 	}
 	
+	public boolean isShowNewTargetItemWindow() {
+		return showNewTargetItemWindow;
+	}
+
+	public void setShowNewTargetItemWindow(boolean showNewTargetItemWindow) {
+		this.showNewTargetItemWindow = showNewTargetItemWindow;
+	}
+
+	public boolean isShowNewTargetProfileWindow() {
+		return showNewTargetProfileWindow;
+	}
+
+	public void setShowNewTargetProfileWindow(boolean showNewTargetProfileWindow) {
+		this.showNewTargetProfileWindow = showNewTargetProfileWindow;
+	}
+
+	public boolean isShowNewTargetSellerWindow() {
+		return showNewTargetSellerWindow;
+	}
+
+	public void setShowNewTargetSellerWindow(boolean showNewTargetSellerWindow) {
+		this.showNewTargetSellerWindow = showNewTargetSellerWindow;
+	}
+
+	public boolean isShowNewTargetSupplierWindow() {
+		return showNewTargetSupplierWindow;
+	}
+
+	public void setShowNewTargetSupplierWindow(boolean showNewTargetSupplierWindow) {
+		this.showNewTargetSupplierWindow = showNewTargetSupplierWindow;
+	}
+
 	public boolean isShowNewDocumentWindow() {
 		return showNewDocumentWindow;
 	}
@@ -137,15 +178,15 @@ public class RegistryController extends BasicController {
 	}
 
 	public void onSendEmail(ActionEvent event) {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			FacesContext context = FacesContext.getCurrentInstance();
 			Object email = context.getExternalContext().getRequestParameterMap().get("email");
 			messageController.setRecipientsTo(email.toString());
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 

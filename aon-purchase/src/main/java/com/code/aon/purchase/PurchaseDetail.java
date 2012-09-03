@@ -39,8 +39,6 @@ public class PurchaseDetail extends PurchaseDetailDB implements ICalculable {
 	}
 	@Transient
 	public double getTransfered() {
-		double pending = getPendingQuantity();
-		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
 	public void setTransfered(double transfered) {

@@ -7,7 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<c:if test="#{!service and aonRole.saleOperator}">
+	<c:if test="#{!service and aonRole.admin}">
 		<aon:outputLabel for="ProjectReservation_invoiceSeries"
 			value="#{bundle.aon_series}" />
 		<aon:selectOneMenu id="ProjectReservation_invoiceSeries"
@@ -32,19 +32,19 @@
 			<ui:param name="lookupControllerListener" value="#{controller.currentReservationFilter}" />
 			<aon:methodParam name="lookupChangeListener" value="#{controller.onReservationChanged}" type="lookupChangeListener" />
 		</ui:include>
-	
+
 		<aon:outputLabel for="ProjectReservation_invoiceHotel"
 			value="#{pmsBundle.pms_hotel}" />
 		<aon:div id="invoiceHotelDiv">
 			<aon:selectOneMenu id="ProjectReservation_invoiceHotel"
 				value="#{controller.reservationInvoiceTo.hotel}" required="true"
-				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1 and pmsCollections.currentUserHotelsCount > 1 and controller.projectReservation.id == null}"
+				rendered="#{controller.reservationInvoiceTo.room == null and controller.invoiceServicesCount == 1 and pmsCollections.currentUserServiceHotelsCount > 1 and controller.projectReservation.id == null}"
 				valueChangeListener="#{controller.onInvoiceHotelChanged}" 
 				reRender="ProjectReservation_invoiceRoom,ProjectReservation_invoiceGuest,invoiceServicesDiv,invoiceFinancesDiv">
-				<f:selectItems value="#{pmsCollections.currentUserHotels}" />
+				<f:selectItems value="#{pmsCollections.currentUserServiceHotels}" />
 			</aon:selectOneMenu>
 			<aon:outputText value="#{controller.reservationInvoiceTo.hotel.workPlace.description}" styleClass="aon-bold"
-				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserHotelsCount == 1 or controller.projectReservation.id != null}" />
+				rendered="#{controller.reservationInvoiceTo.room != null or controller.invoiceServicesCount > 1 or pmsCollections.currentUserServiceHotelsCount == 1 or controller.projectReservation.id != null}" />
 		</aon:div>
 
 		<aon:outputLabel for="ProjectReservation_invoiceRoom"
@@ -104,7 +104,7 @@
 		</aon:selectOneMenu>
 		<aon:inputText id="ProjectReservation_invoiceCustomerDocument"	style="margin-left: 2px;"
 			value="#{controller.reservationInvoiceTo.registry.document}"
-			required="true" size="15" maxlength="16"
+			size="15" maxlength="16"
 			rendered="#{controller.reservationInvoiceTo.directCustomer}"
 			onblur="toUpperCase(this);" />
 		<aon:outputText value="#{controller.reservationInvoiceTo.registry.document}" styleClass="aon-bold"
@@ -116,7 +116,7 @@
 	<aon:div id="invoiceAddressDiv">
 		<aon:inputText id="ProjectReservation_invoiceCustomerAddress"
 			value="#{controller.reservationInvoiceTo.address.address}"
-			required="true" size="53" maxlength="45"
+			size="53" maxlength="45"
 			rendered="#{controller.reservationInvoiceTo.directCustomer}" />
 		<aon:outputText value="#{controller.reservationInvoiceTo.address.fullAddress}" styleClass="aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
@@ -127,7 +127,7 @@
 	<aon:div id="invoiceCityDiv">
 		<aon:inputText id="ProjectReservation_invoiceCustomerCity"
 			value="#{controller.reservationInvoiceTo.address.city}"
-			required="true" size="53" maxlength="45"
+			size="53" maxlength="45"
 			rendered="#{controller.reservationInvoiceTo.directCustomer}" />
 		<aon:outputText value="#{controller.reservationInvoiceTo.address.city}" styleClass="aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
@@ -138,7 +138,7 @@
 	<aon:div id="invoiceProvinceDiv">
 		<aon:inputText id="ProjectReservation_invoiceCustomerProvince"
 			value="#{controller.reservationInvoiceTo.address.province}"
-			required="true" size="30" maxlength="45"
+			size="30" maxlength="45"
 			rendered="#{controller.reservationInvoiceTo.directCustomer}" />
 		<aon:outputText styleClass="aon-margin-left aon-margin-right aon-italic"
 			value="C.P."
@@ -152,5 +152,17 @@
 		<aon:outputText value="#{controller.reservationInvoiceTo.address.zip}" styleClass="aon-margin-left aon-bold"
 			rendered="#{!controller.reservationInvoiceTo.directCustomer}" />
 	</aon:div>
+
+	<c:if test="#{service}">
+		<aon:outputLabel for="ProjectReservation_serviceType"
+			value="#{bundle.aon_type}" />
+		<aon:selectOneRadio id="ProjectReservation_serviceType"
+			value="#{controller.reservationInvoiceTo.serviceType}" required="true"
+			disabled="#{controller.invoiceServicesCount > 1}"
+			valueChangeListener="#{controller.onInvoiceServiceTypeChanged}"
+			reRender="invoiceServicesDiv,invoiceFinancesDiv">
+			<f:selectItems value="#{controller.serviceTypes}" />
+		</aon:selectOneRadio>				
+	</c:if>
 
 </ui:composition>

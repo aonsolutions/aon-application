@@ -111,6 +111,7 @@ public class AuditManager implements IAuditConstants {
 		ae.setSession( session );
 		ae.setAction(action);
 		ae.setExecutionDate( new Date() );
+		ae.setDomain( session.getDomain() );
 		IManagerBean actionEntryBean = BeanManager.getManagerBean(ActionEntry.class);
 		actionEntryBean.insert( ae );
 		LOGGER.debug( "ActionEntry inserted {}", ae );

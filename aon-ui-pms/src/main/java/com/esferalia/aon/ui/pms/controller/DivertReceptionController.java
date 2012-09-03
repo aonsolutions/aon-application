@@ -300,8 +300,8 @@ public class DivertReceptionController extends BasicController {
 			if(getModel().getRowIndex()>-1){
 				ProjectReservationDivert divert = (ProjectReservationDivert)getModel().getRowData();
 				return divert.isPending()
-						&& ( AonUtil.getRoleManager().isAdmin()
-						|| (DateUtils.isSameDay(divert.getDivertDate(),new Date()) || divert.getDivertDate().after(new Date())) );
+						&& ( AonUtil.getRoleManager().isSaleOperator() || AonUtil.getRoleManager().isConfig()
+						|| ( DateUtils.addDays(divert.getDivertDate(), 2).after(new Date())) );
 			}
 		} catch (ManagerBeanException e) {
 			// NADA

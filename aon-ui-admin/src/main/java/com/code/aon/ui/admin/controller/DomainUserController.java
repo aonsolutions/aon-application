@@ -1,13 +1,14 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_NAME;
-import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_USER;
+import static com.code.aon.common.util.BeanServerUtil.AON_SECURITY_DOMAIN;
+import static com.code.aon.ui.admin.controller.IAdminConstants.ACTIVE_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
 import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.MAXIMUM_NUMBER_USERS;
 import static com.code.aon.ui.admin.controller.IAdminConstants.NEW_PASSWORD_ERROR;
 import static com.code.aon.ui.admin.controller.IAdminConstants.USER_DUPLICATED;
+import static com.code.aon.ui.config.controller.ConfigConstants.CHANGE_PASSWORD;
 
-import java.security.MessageDigest;
 import java.util.Date;
 import java.util.List;
 
@@ -16,16 +17,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.AdminUtil;
+import com.code.aon.common.util.BeanServerUtil;
+import com.code.aon.config.Domain;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -33,7 +37,9 @@ import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.admin.util.IdCheckUtil;
+import com.code.aon.ui.config.controller.BasicChangePasswordController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -41,8 +47,6 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class DomainUserController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainUserController.class);
-	
-	private static final String SHA_ALGORITHM = "SHA";
 	
 	private boolean showChangePasswordWindow;
 	
@@ -54,12 +58,11 @@ public class DomainUserController extends BasicController {
 	
 	private IdCheckUtil idCheck;
 	
+	private List<UserApplicationInfo> applicationInfos;
+	
 	public DomainUserController() {
 		this.idCheck = new IdCheckUtil(this, IEntityAlias.USER_LOGIN, USER_DUPLICATED);
-	}
-
-	private AdminMainController getAdmin() {
-		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
+		this.idCheck.setDomainAlias(IEntityAlias.USER_DOMAIN);
 	}
 	
 	public String getSelectedTab() {
@@ -88,36 +91,9 @@ public class DomainUserController extends BasicController {
 		criteria.addEqualExpression(getFieldName(IEntityAlias.USER_ACTIVE), Boolean.TRUE);
 		return (List) getManagerBean().getList(criteria);
 	}	
-
-	private boolean isAdmin( User user ) {
-		return StringUtils.equals(ADMIN_USER, user.getLogin());
-	}
-	
-	public void deactiveUsers() throws ManagerBeanException {
-		for ( User user : getUsers() ) {
-			if (! isAdmin(user) ) {
-				user.setActive(false);
-				getManagerBean().update(user);
-			}
-		}
-	}	
 	
 	public User getDomainUser() {
 		return (User) getTo();
-	}	
-	
-	public boolean isUserRemoveable() {
-		if ( getAdmin().isSysAdmin() ) {
-			return true;
-		}
-		return getAdmin().isUserManagement() && (!isAdmin(getDomainUser()));
-	}
-
-	public boolean isUserActivable() {
-		if ( getAdmin().isSysAdmin() ) {
-			return true;
-		}
-		return getAdmin().isUserManagement() && !isAdmin(getDomainUser());
 	}	
 
 	public void onShowChangePasswordWindow( ActionEvent event ) {
@@ -126,17 +102,6 @@ public class DomainUserController extends BasicController {
 		setConfirmPassword(null);
 	}
 	
-	private String encodeSHA( String value ) {
-		String shaPassword = null;
-		try {
-			byte[] hash = MessageDigest.getInstance(SHA_ALGORITHM).digest(value.getBytes());
-			shaPassword = new String( Base64.encodeBase64(hash) );
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}        		
-		return shaPassword;
-	}	
-	
 	public void onChangePassword( ActionEvent event ) {
 		if (! StringUtils.equals(newPassword, confirmPassword)) {
 			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, NEW_PASSWORD_ERROR );
@@ -144,23 +109,31 @@ public class DomainUserController extends BasicController {
 		}		
 		User user = getDomainUser();
 		try {
-	        user.setPassword( encodeSHA(newPassword) );
+	        user.setPassword( AdminUtil.encodeSHA(newPassword) );
+	        user.setPasswordExpiration( DateUtils.addDays(new Date(), 180) );
 	        getManagerBean().update(user);
+			flushPasswordCache();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			AonUtil.addErrorMessage("Error cambiando la contraseña" );
 		}
-		flushPasswordCache();
 	}
 	
 	public void onResetPassword( ActionEvent event ) {
-		resetPassword( getDomainUser() );
-		flushPasswordCache();
+		User user = getDomainUser();
+		try {
+			resetPassword( user );
+	        getManagerBean().update(user);
+			flushPasswordCache();
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage("Error cambiando la contraseña" );
+		}		
 	}	
 	
 	public void resetPassword( User user ) {
 		user.setPasswordExpiration( DateUtils.addDays(new Date(), -1) );
-		String newPassword = encodeSHA(user.getLogin());
+		String newPassword = AdminUtil.encodeSHA(user.getLogin());
 		user.setPassword( newPassword );
 	}		
 	
@@ -188,9 +161,10 @@ public class DomainUserController extends BasicController {
 		this.confirmPassword = confirmPassword;
 	}
 
-	private void flushPasswordCache() {
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		dc.flushAuthenticationCache(getDomainUser());
+	private void flushPasswordCache() throws AonException {
+		BeanServerUtil.flushAuthenticationCache(AON_SECURITY_DOMAIN);
+		BasicChangePasswordController bcpc = (BasicChangePasswordController) AonUtil.getRegisteredBean(CHANGE_PASSWORD);
+		bcpc.setShowPasswordChangedWindow(true);
 	}
 	
 	public void registerScope( User user, String scopeName ) throws ManagerBeanException {
@@ -246,5 +220,80 @@ public class DomainUserController extends BasicController {
 			bean.insert(uwg);
 		}
 	}		
-		
+
+	public int getNumberOfActiveUsers() {
+        try {
+			IManagerBean bean = BeanManager.getManagerBean(User.class);
+			Criteria criteria = new Criteria();
+			String alias = bean.getFieldName(IEntityAlias.USER_ACTIVE);
+			criteria.addEqualExpression(alias, Boolean.TRUE);
+			return bean.getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+        return 0;
+	}
+	
+	public String getActiveUsersMessage() {
+		return AonUtil.getMessage(BUNDLE_NAME, ACTIVE_USERS, getNumberOfActiveUsers());		
+	}
+
+	public String getDetailMessage() {
+		String message = getActiveUsersMessage();
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
+			message += ", " + AonUtil.getMessage(BUNDLE_NAME, MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
+		}
+		return message;
+	}
+
+	public int getMinimumUserNumber() {
+		return Math.max(0, getNumberOfActiveUsers());
+	}
+	
+	public boolean isSkipUserReset() {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		Domain domain = dc.getDomain();
+		if ( domain.getMaxDefinedUsers() != null ) {
+			return getNumberOfActiveUsers() >= domain.getMaxDefinedUsers();
+		}
+		return true;
+	}
+	
+	public boolean isUserActivable() {
+		if ( AonUtil.getRoleManager().isSysAdmin() ) {
+			return true;
+		}
+		return getDomainUser().isActive() || (!isSkipUserReset());
+	}	
+
+	public void initApplicationInfos( User user ) throws ManagerBeanException {
+		this.applicationInfos = UserApplicationInfo.getApplicationInfos(user);
+	}
+	
+	public List<UserApplicationInfo> getApplicationInfos() {
+		return applicationInfos;
+	}
+	
+	public boolean isShowOnlyProfiles() {
+		return applicationInfos.size() == 1;
+	}
+
+	public void registerAllApplications() throws ManagerBeanException {
+		for( UserApplicationInfo uai : this.applicationInfos ) {
+			uai.setChecked(true);
+			uai.register();
+		}
+	}	
+	
+	public void onSaveApplications( ActionEvent event ) throws ManagerBeanException {
+		for( UserApplicationInfo uai : this.applicationInfos ) {
+			if ( uai.isChecked() ) {
+				uai.register();
+			} else {
+				uai.unregister();
+			}
+		}
+	}	
+	
 }

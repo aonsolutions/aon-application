@@ -89,7 +89,7 @@ public class PosOpeningController {
 	}
 
 	public void onInit( ActionEvent event ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean("cashCalculator");
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setClosedPosList(null);
@@ -110,10 +110,18 @@ public class PosOpeningController {
 			IManagerBean bean = BeanManager.getManagerBean(PosShift.class);
 			getPosShift().setStartTime(new Date());
 			getPosShift().setUser(UserUtils.getInstance().getLoggedUser());
-			setPosShift((PosShift) bean.insertOrUpdate(getPosShift()));
+			PosShift ps = (PosShift) bean.insertOrUpdate(getPosShift());
+			setPosShift((PosShift) bean.get(ps.getId()));
 			if(getPosShift().getPos().isInvoiceable()){
 				PosInvoicing posInvoicing = new PosInvoicing();
-				posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
+				try {
+					posInvoicing.createInvoice(getPosShift(), getPosShift().getShift().getName(AonUtil.getCurrentLocale()));
+				} catch (Exception e) {
+					String msg = "Error al crear la factura de caja. ";
+					AonUtil.addErrorMessage(msg +"("+ e.getMessage()+")");
+					bean.remove(ps);
+					throw new AbortProcessingException(msg, e);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al grabar la apertura de caja. ";
@@ -134,6 +142,15 @@ public class PosOpeningController {
 	public void onAcceptCalculatorAmount( ActionEvent event ){
 		getPosShift().setInitialAmount(getCalculator().getCalcTotal());
 	}
+	
+	public void onSelectPos( ActionEvent event ){
+		if(getPosShift()!=null && getPosShift().getPos()!=null){
+			getPosShift().setInitialAmount(getPosShift().getPos().getInitialAmount());
+		} else {
+			getPosShift().setInitialAmount(0.0);
+		}
+	}
+	
 	
 	
 }

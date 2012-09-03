@@ -1,5 +1,9 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.company.controller.CompanyParentController.OFFER_TEMPLATE_PARAM;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +35,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -63,6 +68,7 @@ import com.code.aon.tas.TasItem;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -70,8 +76,8 @@ import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -296,6 +302,15 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	private Offer getOffer() {
 		return (Offer) this.getTo();
+	}
+	
+	public Double getOffersTotalAmount() throws ManagerBeanException {
+		double offersTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Offer o = (Offer) to;
+			offersTotalAmount += getOfferTotalPrice(o);
+		}
+		return offersTotalAmount;
 	}
 	
 	public boolean isReadOnly() {
@@ -538,6 +553,10 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public double getOfferTotalPrice() throws ManagerBeanException {
 		Offer offer = (Offer)this.getModel().getRowData();
+		return getOfferTotalPrice(offer);
+	}
+	
+	public double getOfferTotalPrice(Offer offer) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
 	}
 
@@ -749,15 +768,15 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public void sendOfferByEmail(SecurityInfo securyInfo) throws ManagerBeanException, ReportException, IOException, SAXException {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			emailUtil.initMessageController(messageController, getOffer());
 			messageController.setShowNewMessageWindow(true);
 			messageController.setSecurityInfo(securyInfo);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 
@@ -894,4 +913,13 @@ public class OfferController extends BasicController implements ISignatureContro
 		}
 	}
 
+	public String getReportTemplate() throws ManagerBeanException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		ApplicationParameter appParam = controller.obtainApplicationParameter(OFFER_TEMPLATE_PARAM);
+		if ( appParam != null ) {
+			return appParam.getValue();
+		}
+		return OFFER_CONTROLLER_NAME;
+	}
+	
 }

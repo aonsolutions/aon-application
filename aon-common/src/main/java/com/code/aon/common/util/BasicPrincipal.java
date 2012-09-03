@@ -2,7 +2,6 @@ package com.code.aon.common.util;
 
 import java.security.Principal;
 
-import javax.faces.context.FacesContext;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.security.auth.Subject;
@@ -111,8 +110,7 @@ public class BasicPrincipal implements Principal {
     			return (AuthPrincipal) subject.getPrincipals().iterator().next();
             }
 		} catch (NamingException e) {
-			return (AuthPrincipal) FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-//			LOGGER.error( "Error getting principal from " + SECURITY_SUBJECT, e );
+			LOGGER.error( "Error getting principal from " + SECURITY_SUBJECT, e );
 		} finally {
 			if ( ic != null) {
 				try {

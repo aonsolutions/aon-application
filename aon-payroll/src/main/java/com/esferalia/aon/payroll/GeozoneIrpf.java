@@ -17,5 +17,5 @@ public class GeozoneIrpf extends GeozoneIrpfDB {
 	public Integer getYear(){
 		return CommonUtil.getYear(getStartDate());
 	}
-
+	
 }

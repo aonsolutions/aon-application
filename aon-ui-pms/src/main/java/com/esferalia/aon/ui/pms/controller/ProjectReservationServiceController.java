@@ -3,7 +3,10 @@ package com.esferalia.aon.ui.pms.controller;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -104,11 +107,14 @@ public class ProjectReservationServiceController extends LinesController {
 	}
 
 	@Override
-	public void onReset(ActionEvent arg0) {
+	public void onReset(ActionEvent event) {
+		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		masterController.accept(event);
 		try {
 			ProjectReservationService reservationService = new ProjectReservationService();
 			reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
 			setTo(reservationService);
+			masterController.getReservationPermission().setReservationService(reservationService);
 
 			setNew(true);
 			fillReservationServiceValues(reservationService);
@@ -121,10 +127,14 @@ public class ProjectReservationServiceController extends LinesController {
 
 	@Override
 	public void onSelect(ActionEvent event) {
+		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		masterController.accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
 				ProjectReservationService reservationService = (ProjectReservationService)getModel().getRowData();
+				reservationService.setProjectReservation((ProjectReservation)getMasterController().getTo());
 				setTo(reservationService);
+				masterController.getReservationPermission().setReservationService(reservationService);
 
 				fillReservationServiceValues(reservationService);
 			}
@@ -176,7 +186,23 @@ public class ProjectReservationServiceController extends LinesController {
 		return roomItemList;
 	}
 
-	public void onItemChanged(LookupChangeEvent event) {
+	public List<ProjectReservationRoom> getReservationRooms() throws ManagerBeanException {
+		ProjectReservation reservation = (ProjectReservation)getMasterController().getTo();
+		IManagerBean reservationRoomBean = BeanManager.getManagerBean(ProjectReservationRoom.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_PROJECT_RESERVATION_ID), reservation.getId());
+		criteria.addOrder(reservationRoomBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ROOM_ROOM_INDEX));
+		List<ProjectReservationRoom> reservationRoomList = new LinkedList<ProjectReservationRoom>();
+		for (ITransferObject ito : reservationRoomBean.getList(criteria)) {
+			ProjectReservationRoom reservationRoom = (ProjectReservationRoom)ito;
+			if (reservationRoom.getRoomNumber() != null) {
+				reservationRoomList.add(reservationRoom);
+			}
+		}
+		return reservationRoomList;
+	}
+
+	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
@@ -189,12 +215,16 @@ public class ProjectReservationServiceController extends LinesController {
 			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setQuantity(getServiceQuantity());
+
+	        ReservationUtils reservationUtils = new ReservationUtils();
+			double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 			Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-			setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
+			double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+			setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
 		}
 	}	
 
-	public void onQuantityChanged(ValueChangeEvent event) {
+	public void onQuantityChanged(ValueChangeEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 		Item item = reservationService.getItem();
 		if (item != null && item.getId() != null) {
@@ -204,8 +234,12 @@ public class ProjectReservationServiceController extends LinesController {
 				ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 				reservationServiceDetail.setProjectReservationService(reservationService);
 				reservationServiceDetail.setQuantity(getServiceQuantity());
+
+		        ReservationUtils reservationUtils = new ReservationUtils();
+				double vatPercent = reservationUtils.getTaxPercentage(item.getProduct().getVat(), reservationService.getProjectReservation().getDate());
 				Tariff tariff = (getServiceReservationRoom() != null) ? getServiceReservationRoom().getTariff() : null;
-				setServicePrice(getPricesManager().getSalesPrice(item, getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff)));
+				double price = getPriceStrategy().getUnitPrice(reservationServiceDetail, getServiceFromDate(), tariff);
+				setServicePrice(getPricesManager().getSalesPrice(item, vatPercent, 0, price));
 			} else {
 				setServiceQuantity(1);
 			}
@@ -224,31 +258,40 @@ public class ProjectReservationServiceController extends LinesController {
 		}
 	}
 
-	public void onAssignReservationService(ActionEvent event) throws ManagerBeanException {
+	public void onAcceptReservationService(ActionEvent event) throws ManagerBeanException {
 		ProjectReservationService reservationService = (ProjectReservationService)getTo();
 
+		ReservationUtils reservationUtils = new ReservationUtils();
 		boolean isNew = isNew();
 		Date fromDate = getServiceFromDate();
 		Date toDate = getServiceToDate();
 		double quantity = getServiceQuantity();
-		double price = getPricesManager().getPrice(reservationService.getItem(), getServicePrice(), 4);
+		double vatPercent = reservationUtils.getTaxPercentage(reservationService.getItem().getProduct().getVat(), reservationService.getProjectReservation().getDate());
+		double price = getPricesManager().getPrice(reservationService.getItem(), vatPercent, 0, getServicePrice(), 4);
 		ProjectReservationRoom reservationRoom = getServiceReservationRoom();
 
 		onAccept(event);
 
-		ReservationUtils reservationUtils = new ReservationUtils();
 		if (isNew) {
 			reservationUtils.insertProjectReservationServiceDetails(reservationService, fromDate, toDate, quantity, price, reservationRoom, getPriceStrategy());
 		} else {
-			if (reservationService.getProjectReservation().isCrs()) {
-				reservationUtils.updateProjectReservationServiceDetails(reservationService, null, null, reservationRoom, null);
-			} else {
-				reservationUtils.updateProjectReservationServiceDetails(reservationService, quantity, price, reservationRoom, getPriceStrategy());
-			}
+			reservationUtils.updateProjectReservationServiceDetails(reservationService, quantity, price, null, getPriceStrategy());
 			reservationService.setRoomNumber(null);
 		}
 
 		refreshReservationTotals();
+	}
+
+	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		Map<String, String> params = ec.getRequestParameterMap();
+		Integer reservationRoomId = new Integer(params.get(IPmsConstants.AVAILABLE_SERVICE_ROOM));
+		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)BeanManager.getManagerBean(ProjectReservationRoom.class).get(reservationRoomId);
+
+		ProjectReservationService reservationService = (ProjectReservationService)getTo();
+		ReservationUtils reservationUtils = new ReservationUtils();
+		reservationUtils.updateProjectReservationServiceDetails(reservationService, null, null, reservationRoom, getPriceStrategy());
+		reservationService.setRoomNumber(null);
 	}
 
 	public void onRemoveReservationService(ActionEvent event) throws ManagerBeanException {
@@ -264,7 +307,9 @@ public class ProjectReservationServiceController extends LinesController {
 
 	private void refreshReservationTotals() throws ManagerBeanException {
 		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		((ProjectReservation)masterController.getTo()).setForceCalculateTotals(true);
 		masterController.accept(null);
+		((ProjectReservation)masterController.getTo()).setForceCalculateTotals(false);
 	}
 
 	public void onShowServiceDetails(ActionEvent event) throws ManagerBeanException {

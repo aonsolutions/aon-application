@@ -1,6 +1,6 @@
 #/bin/sh
 #####################################################################
-# Copyright (c) 2010, esferalia NETWORKS S.A
+# Copyright (c) 2012, esferalia NETWORKS S.A
 #
 # The copyright of the computer program herein is the property 
 # of esferalia NETWORKS.
@@ -20,7 +20,6 @@
 #                                                           
 
 
-. aondir-functions
 
 CLASSPATH=/usr/share/java/mysql-connector-java.jar
 CLASSPATH=$CLASSPATH:/usr/share/java/aon-dbutils.jar:/usr/share/java/aon-master.jar
@@ -30,16 +29,36 @@ CLASSPATH=$CLASSPATH:/usr/share/java/commons-logging.jar:/usr/share/java/commons
 
 ERR=1
 
-for db_connection in `aondir_db_connections`; do
+DEPLOYED_XML=/etc/jbossas/default/aon.workspace/deployed.xml
 
-        URL=$(perl -e 'if ("'$db_connection'"=~ /([^?]*)/) { print "$1\n" }');
-        DB=$(perl -e 'if ("'$db_connection'"=~ /jdbc:[^\/]*\/\/[^\/]*\/([^?]*)/) { print "$1\n" }');
+function getDBs() {
+	mysql -h $1 -u $2 --password=$3 -sNe "SHOW DATABASES" | \
+	while read DB; do
+		mysql -h $1 -u $2 --password=$3 $DB -e "SELECT 1 FROM registry" &>/dev/null && echo -n ' '$DB;
+	done
+}
 
+function getOption() {
+	local OPTION=$1;
+	echo "cat /applications/options/option[@name='$OPTION']/@value" | \
+	xmllint --shell  $DEPLOYED_XML | grep  "value"|  sed -e 's/\s*value="\(.*\)"/\1/';
+}
+
+
+
+URL=`getOption 'hibernate.connection.url'`
+USERNAME=`getOption 'hibernate.connection.username'`
+PASSWORD=`getOption 'hibernate.connection.password'`
+
+HOST=`echo $URL | sed -e 's/.*\/\/\([^:^,^\/]*\).*/\1/'`
+
+DBS=`getDBs $HOST $USERNAME $PASSWORD`
+
+
+for DB in $DBS; do
         echo -n "Actualizando '$DB'..." ;
-        ERR=$(java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL  dbuser serubd2000 com.mysql.jdbc.Driver 2>&1);
+        ERR=$(java -classpath $CLASSPATH com.code.aon.master.Up2DateDB $URL/$DB  dbuser serubd2000 com.mysql.jdbc.Driver 2>&1);
         [ $? -eq 0 ] && echo -e "\\033[1;32mOK\\033[0;39m" || echo -e "\\033[1;31mERROR $ERR\\033[0;39m";
 done
-
-
 
 

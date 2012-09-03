@@ -12,7 +12,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.DomainApplication;
@@ -23,6 +22,7 @@ import com.code.aon.ui.common.controller.DomainResolver;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class UserLoookupListener extends ControllerAdapter {
@@ -33,7 +33,7 @@ public class UserLoookupListener extends ControllerAdapter {
 	
 	public UserLoookupListener() {
 		try {
-			AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			if ( principal != null ) {
 				domainApplication = getDomainApplication(principal);
 			}

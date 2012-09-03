@@ -1,11 +1,11 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.ui.form.LinesController;
@@ -47,11 +47,9 @@ public class FBatchDetailListController extends LinesController {
 		checks = new ArrayList<FinanceBatchDetail>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator iterator = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while (iterator.hasNext()) {
-			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
+		for (ITransferObject ito : this.getManagerBean().getList(this.getCriteria())) {
+			FinanceBatchDetail detail = (FinanceBatchDetail)ito;
 			if (!checks.contains(detail)) {
 				checks.add( detail );
 			}
@@ -60,6 +58,10 @@ public class FBatchDetailListController extends LinesController {
 
 	public void checkNone(ActionEvent event) {
 		clearCheckedFinanceBatchDetails();
+	}
+
+	public int getCheckedCount() {
+		return getCheckedFinanceBatchDetails().size();
 	}
 
 }

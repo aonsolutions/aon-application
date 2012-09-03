@@ -33,6 +33,7 @@
 										<aon:actionListener method="#{enterprise.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>							
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryDraft" action="salaryDraft_search"
 										actionListener="#{salaryDraft.onEditSearch}"
@@ -61,7 +62,20 @@
 										value="#{payrollBundle.payroll_contractLeave_module}">
 									</aon:commandLink>
 								</aon:div>		
+
+								<aon:div styleClass="aon-direct-access-list-element" rendered="#{gwt.enabled}" >
+									<aon:commandLink id="gwt_integral" 
+										action="gwt_enterprise_formTree" 
+										value="#{gwt.menuIntegral}">
+										<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+										<aon:actionListener method="#{enterprise.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>							
+
 							</aon:div>
+
+												
+
 						</aon:panelGrid>
 						
 						
@@ -340,22 +354,34 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cnae"
 										action="cnae_list" actionListener="#{cnae.onSearch}" 
-										value="#{configBundle.config_cnae_module}" />
+										value="#{configBundle.config_cnae_module}" >
+										<aon:actionListener method="#{cnae.onEditSearch}" />
+										<aon:actionListener method="#{cnae.onSearch}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cnae2009"
 										action="cnae2009_list" actionListener="#{cnae2009.onSearch}" 
-										value="#{configBundle.config_cnae2009_module}" />
+										value="#{configBundle.config_cnae2009_module}" >
+										<aon:actionListener method="#{cnae2009.onEditSearch}" />
+										<aon:actionListener method="#{cnae2009.onSearch}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cnae2009Rate"
 										action="cnae2009Rate_list" actionListener="#{cnae2009Rate.onSearch}" 
-										value="#{configBundle.config_cnae2009Rate_module}" />
+										value="#{configBundle.config_cnae2009Rate_module}" >
+										<aon:actionListener method="#{cnae2009Rate.onEditSearch}" />
+										<aon:actionListener method="#{cnae2009Rate.onSearch}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cno"
-										action="cno_list" actionListener="#{cno.onSearch}" 
-										value="#{payrollBundle.payroll_cno_module}" />
+										action="cno_list"  
+										value="#{payrollBundle.payroll_cno_module}" >
+										<aon:actionListener method="#{cno.onEditSearch}" />
+										<aon:actionListener method="#{cno.onSearch}" />
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="geozoneIrpf"

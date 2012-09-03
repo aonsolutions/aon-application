@@ -1,10 +1,14 @@
 package com.code.aon.ui.accounting.controller.balance;
 
+
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.balance.BalanceDefaults;
+import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -17,11 +21,27 @@ public class BalanceController extends BasicController {
 		Integer id = balance.getId();
 		try {
 			if (id >= 1 && id <= 5) {
-				defaults.reloadBalance(balance);
+				defaults.reloadBalance(balance,id);
 			} else {
-				String msg = "No existe un balance preconfigurado para el código " + id;
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+				// TODO ÑAPA!!
+				int type = 0;
+				if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN")) {
+					type = 1;	
+				} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN")) {
+					type = 2;	
+				} else if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN (ABREVIADO)")) {
+					type = 3;	
+				} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN (ABREVIADA)")) {
+					type = 4;	
+				} else if (StringUtils.equals(balance.getName(),"ESTADO DE CAMBIOS EN EL PATRIMONIO NETO (ABREVIADO)")) {
+					type = 5;	
+				}
+				if (type == 0) {
+					String msg = "No existe un balance preconfigurado para el código " + id;
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+				defaults.reloadBalance(balance,type);
 			}
 			
 			super.onEditSearch(event);

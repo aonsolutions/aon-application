@@ -61,7 +61,7 @@
 								<aon:div styleClass="aon-scroll-area" style="margin-top: 1em;">
 									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
 
-										<c:if test="#{!service and aonRole.saleOperator}">
+										<c:if test="#{!service and aonRole.admin}">
 											<aon:outputLabel for="ProjectReservation_rectificationSeries"
 												value="#{bundle.aon_series}" />
 											<aon:selectOneMenu id="ProjectReservation_rectificationSeries"

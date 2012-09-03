@@ -11,6 +11,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
 
 public class DomainManager {
 	
+//	private static final String COMPANY = "company.";
+
 	private static DomainManager domainManager;
 	
 	private List<IDomainProvider> domainProviders;
@@ -37,6 +39,12 @@ public class DomainManager {
 	public static void addDomainProvider(IDomainProvider domainProvider) {
 		getDomainManager().getDomainProviders().add(domainProvider);
 	}
+	public static void removeDomainProvider(IDomainProvider domainProvider) {
+		boolean removed = getDomainManager().getDomainProviders().remove(domainProvider);
+		if (removed) {
+			System.out.println(" DomianProvider removed.");	
+		}
+	}
 	
 	public synchronized static IDomainProvider getDomainProvider() {
 		for (IDomainProvider domainProvider : getDomainManager().getDomainProviders()) {
@@ -53,39 +61,68 @@ public class DomainManager {
 		throw new IllegalStateException("No hay un proveedor de dominios activo!");
 	}
 
-	public synchronized static Integer getCurrentDomain() {
+	private static void ensureCurrentDomain() {
 		if (getDomainProvider() == null) {
 			throw new IllegalStateException("No se ha definido un proveedor de Domain.");
 		}
 		if (getDomainProvider().getCurrentDomain() == null) {
 			throw new IllegalStateException("El proveedor de Domain, no tiene un Domain activo.");
 		}
+	}
+
+	public synchronized static Integer getCurrentDomain() {
+		ensureCurrentDomain();
 		return getDomainProvider().getCurrentDomain();
 	}
 
-	public static Expression getCurrentDomainExpression(String alias) {
-		// TODO esta expression, debería completarse con los dominios 
-		// parents o como quiera que se haga cuando se piense.
-		return ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
+	public synchronized static boolean isParentDomain() {
+		ensureCurrentDomain();
+		return getDomainProvider().isParentDomain();
 	}
 	
-	public static String getSQLWhereClause(String columnidentifier) {
+	public synchronized static boolean isDomainManagementAvailable() {
+		ensureCurrentDomain();
+		return getDomainProvider().isDomainManagementAvailable();
+	}
+	public synchronized static boolean isParentDomainUserInChildDomain() {
+		ensureCurrentDomain();
+		int userDomain = getDomainProvider().getUserDomain();
+		int current = getDomainProvider().getCurrentDomain();
+		return (current != userDomain); 
+	}
+
+	public synchronized static Expression getCurrentDomainExpression(String alias) {
+		Expression exp = null;
+//		if ( isParentFilterApplicable(alias) ) {
+//			exp = ExpressionUtilities.getInExpression(alias, getDomainProvider().getDomainFilter());
+//		} else {
+			exp = ExpressionUtilities.getEqualExpression(alias, getCurrentDomain());
+//		}
+		return exp;
+	}
+	
+//	private static boolean isParentFilterApplicable(String alias) {
+//		return ( !StringUtils.startsWithIgnoreCase(alias, COMPANY)
+//				&& DomainManager.isParentDomain() 
+//				&& DomainManager.isDomainManagementAvailable());
+//	}
+
+	public synchronized static String getSQLWhereClause(String columnidentifier) {
 		// TODO esta clausula, debería completarse con los dominios 
 		// parents o como quiera que se haga cuando se piense.
 		return (" " + columnidentifier + " = " + getCurrentDomain() + " ");
 	}
 
-	public static String getStaticSQLWhereClause(String columnidentifier) {
+	public synchronized static String getStaticSQLWhereClause(String columnidentifier) {
 		// TODO esta clausula, debería completarse con los dominios 
 		// parents o como quiera que se haga cuando se piense.
 		return (" " + columnidentifier + " = ? ");
 	}
 
-	public static int fillHostVariables(PreparedStatement stmt, int parameterIndex) throws SQLException {
+	public synchronized static int fillHostVariables(PreparedStatement stmt, int parameterIndex) throws SQLException {
 		// TODO esta clausula, debería completarse con los dominios 
 		// parents o como quiera que se haga cuando se piense.
 		stmt.setInt(parameterIndex, getCurrentDomain());
-		
 		// Devuelve el número de variables asignadas.
 		return 1;
 	}

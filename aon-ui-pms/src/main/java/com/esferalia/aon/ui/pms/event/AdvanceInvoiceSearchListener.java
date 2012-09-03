@@ -1,7 +1,5 @@
 package com.esferalia.aon.ui.pms.event;
 
-import java.util.Date;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
@@ -18,13 +16,9 @@ import com.esferalia.aon.ui.pms.controller.AdvanceInvoiceController;
 public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 
 	private boolean guestReservationSearch;
-	private Hotel hotel;
-	private Date fromStartDate;
-	private Date toStartDate;
-	private Date fromEndDate;
-	private Date toEndDate;
-	private Tariff tariff;
+	private Hotel hotelReservation;
 	private Customer agency;
+	private Tariff tariff;
 
 	public boolean isGuestReservationSearch() {
 		return guestReservationSearch;
@@ -33,46 +27,11 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 		this.guestReservationSearch = guestReservationSearch;
 	}
 	
-	public Hotel getHotel() {
-		return hotel;
+	public Hotel getHotelReservation() {
+		return hotelReservation;
 	}
-	public void setHotel(Hotel hotel) {
-		this.hotel = hotel;
-	}
-
-	public Date getFromStartDate() {
-		return fromStartDate;
-	}
-	public void setFromStartDate(Date fromStartDate) {
-		this.fromStartDate = fromStartDate;
-	}
-
-	public Date getToStartDate() {
-		return toStartDate;
-	}
-	public void setToStartDate(Date toStartDate) {
-		this.toStartDate = toStartDate;
-	}
-
-	public Date getFromEndDate() {
-		return fromEndDate;
-	}
-	public void setFromEndDate(Date fromEndDate) {
-		this.fromEndDate = fromEndDate;
-	}
-
-	public Date getToEndDate() {
-		return toEndDate;
-	}
-	public void setToEndDate(Date toEndDate) {
-		this.toEndDate = toEndDate;
-	}
-
-	public Tariff getTariff() {
-		return tariff;
-	}
-	public void setTariff(Tariff tariff) {
-		this.tariff = tariff;
+	public void setHotelReservation(Hotel hotelReservation) {
+		this.hotelReservation = hotelReservation;
 	}
 
 	public Customer getAgency() {
@@ -82,40 +41,43 @@ public class AdvanceInvoiceSearchListener extends ControllerSearchListener {
 		this.agency = agency;
 	}
 	
+	public Tariff getTariff() {
+		return tariff;
+	}
+	public void setTariff(Tariff tariff) {
+		this.tariff = tariff;
+	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
 		setGuestReservationSearch(true);
-		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setHotelReservation((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
 		setAgency((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
-		setTariff(null);
-		AdvanceInvoiceController c = ((AdvanceInvoiceController) getController());
-		c.initialize();
+		setTariff((Tariff)BeanManager.getManagerBean(Tariff.class).createNewTo());
+
+		((AdvanceInvoiceController)getController()).clearCheckedReservations();
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		
-		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_ID), getHotel().getId());			
-		}
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.ACTIVE);
 		criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ADVANCE_INVOICED), false);
 		criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_TOTAL), 0.0);
-		
-		if (isGuestReservationSearch() ) {
+		if (getHotelReservation() != null && getHotelReservation().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_HOTEL_RESERVATION_ID), getHotelReservation().getId());			
+		}
+		if (isGuestReservationSearch()) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
 			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_ADVANCE), 0.0);		
 		} else {
+			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
 			if (getAgency() != null && getAgency().getId() != null) {
 				criteria.addEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_AGENCY_ID), getAgency().getId());			
 			}
 			if (getTariff() != null && getTariff().getId() != null) {
 				criteria.addEqualExpression(getController().resolveAlias("ProjectReservation.rooms.tariff.id"), getTariff().getId());			
 			}
-			criteria.addNotEqualExpression(getFieldName(IEntityAlias.PROJECT_RESERVATION_BOOKING_HOLDER), BookingHolder.GUEST);
 		}
-		
 	}
 
 }

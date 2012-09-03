@@ -48,6 +48,11 @@ public abstract class BasicRoleManager {
 		this.roles[role.ordinal()] = value;
 	}
 	
+	public void setSysAdmin() {
+		this.admin = true;
+		setUserInRole(IAonRole.SYS_ADMIN, true);
+	}
+	
 	/**
 	 * @param role
 	 *            The Role
@@ -56,26 +61,19 @@ public abstract class BasicRoleManager {
 	public boolean isUserInRole(IAonRole role) {
 		return this.roles[role.ordinal()];
 	}
-	
-	/**
-	 * @return TRUE if user has IAonRole.USER role, false otherwise.
-	 */
-	public boolean isUser() {
-		return isUserInRole(IAonRole.USER);
-	}
 
 	/**
 	 * @return TRUE if user has IAonRole.GUEST role, false otherwise.
 	 */
 	public boolean isGuest() {
-		return isUserInRole(IAonRole.GUEST);
+		return (!this.admin) && isUserInRole(IAonRole.GUEST);
 	}
 
 	/**
 	 * @return TRUE if user has IAonRole.ADMIN role, false otherwise.
 	 */
 	public boolean isAdmin() {
-		return isUserInRole(IAonRole.ADMIN);
+		return this.admin;
 	}
 
 	/**
@@ -181,6 +179,34 @@ public abstract class BasicRoleManager {
 	 */
 	public boolean isTgc() {
 		return isUserInRole(IAonRole.TGC);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT role, false otherwise.
+	 */
+	public boolean isDocument() {
+		return isDocumentManager() || isUserInRole(IAonRole.DOCUMENT);
+	}
+	
+	/**
+	 * @return TRUE if user has IAonRole.DOCUMENT_MANANGER role, false otherwise.
+	 */
+	public boolean isDocumentManager() {
+		return this.admin || isUserInRole(IAonRole.DOCUMENT_MANAGER);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.PAYROLL role, false otherwise.
+	 */
+	public boolean isPayroll() {
+		return this.admin || isUserInRole(IAonRole.PAYROLL);
+	}
+
+	/**
+	 * @return TRUE if user has IAonRole.FISCAL role, false otherwise.
+	 */
+	public boolean isFiscal() {
+		return this.admin || isUserInRole(IAonRole.FISCAL);
 	}
 	
 	/**

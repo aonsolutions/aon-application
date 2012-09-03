@@ -12,7 +12,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -25,12 +24,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class BoardBookingController implements ICollectionProvider {
 	
@@ -39,7 +40,6 @@ public class BoardBookingController implements ICollectionProvider {
 	private Hotel hotel;
 	private Date fromDate;
 	private Date toDate;
-	private boolean searchNoRoomBoard;
 	
 	private List<Booking> bookingList;
 	private DataModel model;
@@ -56,19 +56,22 @@ public class BoardBookingController implements ICollectionProvider {
 		return fromDate;
 	}
 	public void setFromDate(Date fromDate) {
+		if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
+			toDate = DateUtils.addDays(fromDate, 15);
+		}
 		this.fromDate = fromDate;
 	}
 	public Date getToDate() {
 		return toDate;
 	}
 	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-	public boolean isSearchNoRoomBoard() {
-		return searchNoRoomBoard;
-	}
-	public void setSearchNoRoomBoard(boolean searchNoRoomBoard) {
-		this.searchNoRoomBoard = searchNoRoomBoard;
+		if(toDate.before(fromDate)){
+			this.toDate = fromDate;
+		} else if(CommonUtil.getDaysBetweenDates(fromDate, toDate, false)>15){
+			this.toDate = DateUtils.addDays(fromDate, 15);
+		} else {
+			this.toDate = toDate;
+		}
 	}
 	public List<Booking> getBookingList() {
 		return bookingList;
@@ -89,149 +92,113 @@ public class BoardBookingController implements ICollectionProvider {
 	
 	public void onInit(ActionEvent event) {
 		setHotel(null);
-		setFromDate(new Date());
-		setToDate(new Date());
-		setSearchNoRoomBoard(true);
+		fromDate = new Date();
+		toDate = DateUtils.addDays(new Date(), 10);
 	}
 	
 	public void onSearch(ActionEvent event) {
 		try {
 			buildBookingList();
 		} catch (ManagerBeanException e) {
-			String msg = "Error al construir el listado de booking";
+			String msg = "Error al construir el booking de pensiones";
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg, e);
 		}
+		setModel(new ListDataModel(getBookingList()));
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void buildBookingList() throws ManagerBeanException {
-		String select = ""
-		+ " ( SELECT W.description, " 
-		+ " IF (P.code='001',date(PRSD.effective_date)+ INTERVAL 1 DAY,PRSD.effective_date) AS Fecha,"
-		+ " SUM(PRSD.quantity), P.name AS"
-		+ " Servicio, P.code"
-		+ " FROM project_reservation_service_detail AS PRSD"
-		+ " LEFT JOIN project_reservation_service AS PRS ON"
-		+ " PRSD.project_reservation_service=PRS.id"
-		+ " LEFT JOIN project_reservation AS PR ON PRS.project_reservation=PR.project"
-		+ " LEFT JOIN item AS I ON PRS.item=I.id"
-		+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
-		+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-		+ " LEFT JOIN item_composition AS IC ON I.id=IC.item"
-		+ " LEFT JOIN product AS P ON IC.composition_item=P.id"
-		+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
-		+ (isSearchNoRoomBoard() ? "" : " AND PRSD.project_reservation_room_detail is not null")
-		+ " AND PRS.item<>34 AND P.category=4 AND PR.status<>2"
-		+ " AND PR.hotel IN (" + getHotelIds() + ") "
-		+ " GROUP BY PR.hotel,PRSD.effective_date,P.code"
-		+ " ORDER BY PR.hotel,PRSD.effective_date,P.code )"
-		+ " UNION"
-		+ " ( SELECT W.description, " 
-		+ " IF (P.code='001' OR P.code='001F',date(PRSD.effective_date)+ INTERVAL 1 DAY,PRSD.effective_date) AS Fecha, " 
-		+ " SUM(PRSD.quantity), P.name AS"
-		+ " Servicio, P.code"
-		+ " FROM project_reservation_service_detail AS PRSD"
-		+ " LEFT JOIN project_reservation_service AS PRS ON"
-		+ " PRSD.project_reservation_service=PRS.id"
-		+ " LEFT JOIN project_reservation AS PR ON PRS.project_reservation=PR.project"
-		+ " LEFT JOIN item AS I ON PRS.item=I.id"
-		+ " LEFT JOIN hotel AS H ON PR.hotel=H.id"
-		+ " LEFT JOIN workplace AS W ON H.workplace=W.id"
-		+ " LEFT JOIN product AS P ON I.product=P.id"
-		+ " WHERE PRSD.effective_date BETWEEN :start AND :end"
-		+ (isSearchNoRoomBoard() ? "" : " AND PRSD.project_reservation_room_detail is not null")
-		+ " AND PRS.item<>34 AND P.category=4 AND PR.status<>2"
-		+ " AND P.composition=0" 
-		+ " AND PR.hotel IN (" + getHotelIds() + ") "
-		+ " GROUP BY PR.hotel,PRSD.effective_date,P.code"
-		+ " ORDER BY PR.hotel,PRSD.effective_date,P.code )"
-		+ " ORDER BY 1,2,5";
+		buildEmptyList(getHotel());
+		
+		String select = PmsReportManager.getInstance().getBoardBookingSQL(getHotel());
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
-		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(),-1).getTime()));
+		query.setDate("start", new java.sql.Date(DateUtils.addDays(getFromDate(), -1).getTime()));
 		query.setDate("end", new java.sql.Date(getToDate().getTime()));
+
+		Iterator it = query.list().iterator();
+				
+		Object o = it.hasNext()?it.next():null;
+		Integer hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+		Date date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+		String code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+		Double quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
 		
+		for(Booking booking: getBookingList() ){
+			while( booking.getHotelId().equals(hotelId) && booking.getDate().after(date) && it.hasNext() ){
+				o = it.next();
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+			}
+
+			while( booking.getHotelId().equals(hotelId) && booking.getDate().equals(date) && it.hasNext() ){
+				code = o!=null?(String) (((Object[])o)[PmsReportManager.BOARD_CODE]):null;
+				quantity = o!=null?Double.parseDouble((((Object[])o)[PmsReportManager.BOARD_QUANTITY]).toString()):null;
+				booking.getQuantityList().set(getBoardPosition(code), booking.getQuantityList().get(getBoardPosition(code))+quantity.intValue());
+				
+				o = it.next();
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+			}
+			while( booking.getHotelId().equals(hotelId) && getToDate().before(date) && it.hasNext() ){
+				o = it.next();
+				hotelId = o!=null?(Integer)(((Object[])o)[PmsReportManager.BOARD_HOTEL_NAME]):null;
+				date = o!=null?(Date) (((Object[])o)[PmsReportManager.BOARD_DATE]):null;
+			}
+		}
 		
-		List<Booking> list = new LinkedList<BoardBookingController.Booking>();
-		Booking booking = null;
-		
+	}
+	
+	private void buildEmptyList(Hotel hotel2) throws ManagerBeanException{
+		setBookingList(new LinkedList<Booking>());
 		Calendar fromCal = Calendar.getInstance();
 		Calendar toCal = Calendar.getInstance();
-		
-		for(Object o: query.list()){
-			String hotel = (String) (((Object[])o)[0]);
-			Date date = (Date) (((Object[])o)[1]);
-			Double quantity = (Double) (((Object[])o)[2]);
-			String name = (String) (((Object[])o)[3]);
-			if(!date.before(getFromDate())){
-				if(booking != null && booking.getHotel().equals(hotel) && booking.getDate().equals(date)){
-					booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
-				} else {
-					
-					if( booking==null || !booking.getHotel().equals(hotel)){
-						fromCal.setTime(getFromDate());
-					} else {
-						fromCal.setTime(DateUtils.addDays(booking.getDate(),1));
-					}
-					
-					toCal.setTime(date);
-					while( fromCal.before(toCal) ){
-						booking = new Booking();
-						booking.setHotel(hotel);
-						booking.setDate(fromCal.getTime());
-						booking.setQuantityList(getEmptyList());
-						list.add(booking);
-						fromCal.add(Calendar.DAY_OF_MONTH, 1);
-					}
-					
-					booking = new Booking();
-					booking.setHotel(hotel);
-					booking.setDate(date);
-					booking.setQuantityList(getEmptyList());
-					booking.getQuantityList().add(getBoardPosition(name), quantity.intValue());
-					booking.setBoardList(null);
-					list.add(booking);
-					fromCal.setTime(date);
+		if( getHotel() != null && getHotel().getId()!=null ){
+			fromCal.setTime(getFromDate());
+			toCal.setTime(getToDate());
+			while(fromCal.before(toCal) || fromCal.equals(toCal)){
+				Booking b = new Booking();
+				b.setHotelId(getHotel().getId());
+				b.setDate(fromCal.getTime());
+				b.setQuantityList(obtainEmptyQuantityList());
+				getBookingList().add(b);
+				fromCal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+		} else {
+			PmsCollectionsController collections = (PmsCollectionsController) AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+			Hotel hotel = null;
+			for(ITransferObject to: collections.getCurrentUserHotelList() ){
+				hotel = (Hotel) to;
+				fromCal.setTime(getFromDate());
+				toCal.setTime(getToDate());
+				Booking b = null;
+				while(fromCal.before(toCal) || fromCal.equals(toCal)){
+					b = new Booking();
+					b.setHotelId(hotel.getId());
+					b.setDate(fromCal.getTime());
+					b.setQuantityList(obtainEmptyQuantityList());
+					getBookingList().add(b);
+					fromCal.add(Calendar.DAY_OF_MONTH, 1);
 				}
 			}
 		}
-		setBookingList(list);
-		setModel(new ListDataModel(getBookingList()));
-		
 	}
 	
-	private String getHotelIds() throws ManagerBeanException {
-		if( getHotel() != null ){
-			return getHotel().getId().toString();
-		} else {
-			List<Integer> hotelIds = new LinkedList<Integer>();
-			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
-			UserUtils.getInstance().addScopeFilterToCriteria(criteria, hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID));
-			criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
-			for (ITransferObject ito : hotelBean.getList(criteria)) {
-				Hotel hotel = (Hotel)ito;
-				hotelIds.add(hotel.getId());
-			}
-			return StringUtils.join(hotelIds, ",");
-		}
-	}
-	private List<Integer> getEmptyList() {
+	private List<Integer> obtainEmptyQuantityList() {
 		List<Integer> list = new LinkedList<Integer>();
-		Iterator<ITransferObject> it = getBoardItems().iterator();
-		while(it.hasNext()){
-			it.next();
+		for(int i=0; i<getBoardItems().size();i++){
 			list.add(0);
 		}
 		return list;
 	}
-	private int getBoardPosition(String name) {
+	
+	private int getBoardPosition(String code) {
 		Iterator<ITransferObject> it = getBoardItems().iterator();
 		int i = 0;
 		while(it.hasNext()){
 			Item item = (Item) it.next();
-			if(item.getProduct().getName().equals(name)){
+			if(item.getProduct().getCode().equals(code)){
 				return i;
 			}
 			++i;
@@ -246,6 +213,7 @@ public class BoardBookingController implements ICollectionProvider {
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CATEGORY_ID), getBoardCategoryId());
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_COMPOSITION), false);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_STATUS), ProductStatus.ACTIVE);
 				criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_PRODUCT_CODE));
 				List<ITransferObject> list = bean.getList(criteria);
 				return list.isEmpty()?null:list;
@@ -273,15 +241,10 @@ public class BoardBookingController implements ICollectionProvider {
 	/**************************************************/
 	/**************************************************/
 	
-	public class Booking {
+	public class DayBooking {
 		private String hotel;
 		private Date date;
-		private List<Item> boardList;
-		private List<Integer> quantityList;
-		
-		public Booking (){
-			
-		}
+		private Integer quantity;
 		public String getHotel() {
 			return hotel;
 		}
@@ -294,17 +257,44 @@ public class BoardBookingController implements ICollectionProvider {
 		public void setDate(Date date) {
 			this.date = date;
 		}
-		public List<Item> getBoardList() {
-			return boardList;
+		public Integer getQuantity() {
+			return quantity;
 		}
-		public void setBoardList(List<Item> boardList) {
-			this.boardList = boardList;
+		public void setQuantity(Integer quantity) {
+			this.quantity = quantity;
+		}
+	}
+	
+	public class Booking {
+		private Integer hotelId;
+		private String hotelName;
+		private Date date;
+		private List<Integer> quantityList;
+		
+		public Booking (){
+			
+		}
+		public Integer getHotelId() {
+			return hotelId;
+		}
+		public void setHotelId(Integer hotelId) throws ManagerBeanException {
+			this.hotelId = hotelId;
+			hotelName = ((Hotel)BeanManager.getManagerBean(Hotel.class).get(hotelId)).getWorkPlace().getDescription();
+		}
+		public Date getDate() {
+			return date;
+		}
+		public void setDate(Date date) {
+			this.date = date;
 		}
 		public List<Integer> getQuantityList() {
 			return quantityList;
 		}
 		public void setQuantityList(List<Integer> quantityList) {
 			this.quantityList = quantityList;
+		}
+		public String getHotelName() {
+			return hotelName;
 		}
 	
 	}

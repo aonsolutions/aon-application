@@ -39,10 +39,7 @@ public enum InvoiceSource implements IResourceable {
     DIRECT_INVOICE,
 
     /** OFFER. Facturacion de un presupuesto */
-    OFFER,
-
-    /** ADVANCE. Facturacion negativa de una factura de anticipo */
-    ADVANCE;
+    OFFER;
 
 
 	/** Message file base path. */

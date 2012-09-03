@@ -72,7 +72,7 @@
 									<aon:outputText value="&#160;" />
 								</rich:column>
 								
-								<rich:column colspan="5" >
+								<rich:column colspan="6" >
 									<aon:outputText value="#{pmsBundle.pms_rooms}" />
 								</rich:column>
 								
@@ -82,14 +82,14 @@
 							</rich:columnGroup>
 						</f:facet>
 						
-						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-300">
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_hotel}" />
 							</f:facet>
 							<aon:outputText value="#{to.hotel}" />
 						</aon:column>	
 						
-						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -99,56 +99,63 @@
 							</aon:outputText>
 						</aon:column>	
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckin}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomCheckout}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_occupation_group}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomBusy}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_free}" />
 							</f:facet>
-							<aon:outputText value="#{to.roomTotal - to.roomBusy}" />
+							<aon:outputText value="#{to.roomFree}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_blocked}" />
+							</f:facet>
+							<aon:outputText value="#{to.roomBlocked}" />
+						</aon:column>				
+									
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_total}" />
 							</f:facet>
 							<aon:outputText value="#{to.roomTotal}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckin}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
 							</f:facet>
 							<aon:outputText value="#{to.guestCheckout}" />
 						</aon:column>				
 									
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_hotel}" />
 							</f:facet>

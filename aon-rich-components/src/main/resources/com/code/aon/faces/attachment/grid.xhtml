@@ -34,7 +34,8 @@
 				</f:facet>
 				<aon:div id="#{controller.beanName}_attachFile">													
 					<aon:htmlCommandLink id="download" target="_blank"
-						onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
+						onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
+						onmouseout="enableRowSelector();"						
 						rendered="#{formList and (to.data != null)}"
 						actionListener="#{controller.downloadAttachment}"
 						styleClass="aon-icon aon-icon-mail-save"

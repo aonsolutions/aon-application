@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -582,6 +583,23 @@ public class AonMessage implements IMimeType, BundleConstants {
 		Address[] addresses = message.getRecipients(type);
 		if (ArrayUtils.isEmpty(addresses)) {
 			return null;
+		}
+		return addresses;
+	}
+	
+	public List<Address> getAllRecipients() throws WebmailException {
+		List<Address> addresses = new LinkedList<Address>();
+		Address[] to = getRecipientsToAddress();
+		if (! ArrayUtils.isEmpty(to) ) {
+			addresses.addAll(Arrays.asList(to));
+		}
+		Address[] cc = getRecipientsCcAddress();
+		if (! ArrayUtils.isEmpty(cc) ) {
+			addresses.addAll(Arrays.asList(cc));
+		}
+		Address[] bcc = getRecipientsBccAddress();
+		if (! ArrayUtils.isEmpty(bcc) ) {
+			addresses.addAll(Arrays.asList(bcc));
 		}
 		return addresses;
 	}

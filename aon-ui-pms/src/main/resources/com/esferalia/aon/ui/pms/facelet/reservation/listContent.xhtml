@@ -8,11 +8,14 @@
 
 	<c:if test="#{!skipActivityButton}">
 		<aon:column styleClass="aon-editDataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="S" />
+			</f:facet>
 			<aon:commandLink id="#{dataTableId}-selectButton" 
 				styleClass="#{(to.invoiced) ? 
-								((to.noShow) ? ('aon-icon-predetermine2') : ('aon-icon-predetermine')) :
+								('aon-icon-predetermine') :
 								((to.cancelled) ?
-									((to.noShow) ? ('aon-icon-question') : ('aon-icon-wrong')) :
+									('aon-icon-wrong') :
 									((to.blocked) ?
 										('aon-icon-lock') :
 										((reservation.pendingRoomAssignation) ?
@@ -24,14 +27,14 @@
 				title="#{(to.invoiced) ? 
 							(pmsBundle.pms_invoiced) :
 							((to.cancelled) ?
-								((to.noShow) ? (pmsBundle.pms_no_show) : (pmsBundle.pms_cancelled)) :
+								(pmsBundle.pms_cancelled) :
 								((to.blocked) ?
 									(pmsBundle.pms_blocked) :
 									((reservation.pendingRoomAssignation) ?
 										(pmsBundle.pms_room_assignation_pending_msg) :
 										((reservation.pendingServiceAssignation) ?
 											(pmsBundle.pms_service_assignation_pending_msg) :
-											('OK')))))}" 
+											(pmsBundle.pms_active)))))}" 
 				immediate="true" ajaxSingle="true" requestDelay="100"
 				action="#{rowSelectorAction}"
 				actionListener="#{rowSelectorActionListener}"
@@ -47,6 +50,28 @@
 				<ui:insert name="selectFooterContent"/>
 			</f:facet>
 		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-iconColumn">
+			<f:facet name="header">
+				<aon:outputText value="C" />
+			</f:facet>
+			<aon:outputText value="&#160;" 
+				styleClass="aon-icon-commandButton 
+								#{(to.checkIn) ? 
+									('aon-icon-check-in') : 
+									((to.checkOut) ? 
+										('aon-icon-check-out') : 
+										((to.noShow) ? 
+											('aon-icon-no-show') : 
+											('')))}" 
+				title="#{(to.checkIn) ? 
+							(pmsBundle.pms_check_in) : 
+							((to.checkOut) ? 
+								(pmsBundle.pms_check_out) : 
+								((to.noShow) ? 
+									(pmsBundle.pms_no_show) : 
+									('')))}" /> 
+		</aon:column>
 	</c:if>
 
 	<aon:column alias="ProjectReservation.hotel.workPlace.description"
@@ -54,7 +79,7 @@
 		<f:facet name="header">
 			<aon:outputText value="#{pmsBundle.pms_hotel}" />
 		</f:facet>
-		<h:outputText value="#{to.hotel.workPlace.description}" />
+		<aon:outputText value="#{to.hotel.workPlace.description}" />
 	</aon:column>
 
 	<aon:column alias="ProjectReservation.project.id"
@@ -62,7 +87,23 @@
 		<f:facet name="header">
 			<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
 		</f:facet>
-		<h:outputText value="#{to.id}" />
+		<aon:outputText value="#{to.id}" />
+	</aon:column>
+
+	<aon:column 
+		styleClass="aon-editDataTable-numberColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{pmsBundle.pms_room_count_abrv}" />
+		</f:facet>
+		<aon:outputText value="#{to.roomCount}" />
+	</aon:column>
+
+	<aon:column 
+		styleClass="aon-editDataTable-numberColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{pmsBundle.pms_pax}" />
+		</f:facet>
+		<aon:outputText value="#{to.personCount}" />
 	</aon:column>
 
 	<aon:column alias="ProjectReservation.code"
@@ -114,14 +155,14 @@
 		</aon:column>
 	</c:if>
 
-	<c:if test="#{!skipStatus}">
-		<aon:column alias="ProjectReservation.status"
-			styleClass="aon-editDataTable-textColumn">
-			<f:facet name="header">
-				<aon:outputText value="#{bundle.aon_status}" />
-			</f:facet>
-			<aon:outputText value="#{to.status}" />
-		</aon:column>
-	</c:if>
+	<aon:column alias="ProjectReservation.total"
+		styleClass="aon-editDataTable-numberColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{bundle.aon_amount}" />
+		</f:facet>
+		<aon:outputText value="#{to.total}">
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+	</aon:column>
 
 </ui:composition>

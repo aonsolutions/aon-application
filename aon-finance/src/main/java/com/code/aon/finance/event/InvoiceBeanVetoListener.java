@@ -82,10 +82,12 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (invoice.getRectificationType() == null) {
 			invoice.setRectificationType(RectificationType.NONE);
 		}
-		invoice.setTaxableBase(0);
-		invoice.setVatQuota(0);
-		invoice.setRetentionQuota(0);
-		invoice.setTotal(0);
+		if (invoice.isUpdateEnabled()) {
+			invoice.setTaxableBase(0);
+			invoice.setVatQuota(0);
+			invoice.setRetentionQuota(0);
+			invoice.setTotal(0);
+		}
 	}
 
 	@Override

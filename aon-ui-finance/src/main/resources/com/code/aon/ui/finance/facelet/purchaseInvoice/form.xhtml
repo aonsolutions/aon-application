@@ -82,6 +82,26 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					     </c:if>
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
+							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or purchaseInvoice.to.signed or (!certificate.signable) or (!purchaseInvoice.attachmentAvailable)}" />
+							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoice.to.signed) or (!purchaseInvoice.attachmentAvailable)}" />
+							<ui:param name="signButtonReRender" value="purchaseInvoiceForm" />
+						</ui:include>
+						
+						
+						<rich:menuSeparator id="actionMenuSeparator" />
+						
+						<aon:menuItem id="newProject-button"
+							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(projectBundle.project_project)}"
+							iconClass="aon-icon-statistics"
+							reRender="showNewProjectWindow"
+							actionListener="#{project.onReset}">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showNewProjectWindow}" 
+								value="#{true}" />							
+							<f:setPropertyActionListener target="#{project.to.registry}" 
+								value="#{purchaseInvoice.to.registry}" />							
+						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
 							rendered="#{!purchaseInvoice.new}"
@@ -90,12 +110,45 @@
 							<f:setPropertyActionListener target="#{purchaseInvoice.showDocumentWindow}"
 								value="#{true}" />							
 						</aon:menuItem>						
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
-							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or purchaseInvoice.to.signed or (!certificate.signable) or (!purchaseInvoice.attachmentAvailable)}" />
-							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoice.to.signed) or (!purchaseInvoice.attachmentAvailable)}" />
-							<ui:param name="signButtonReRender" value="purchaseInvoiceForm" />
-						</ui:include>
+						<aon:menuItem id="comments"
+							value="#{bundle.aon_comment}"
+							rendered="#{!purchaseInvoice.new}"
+							iconClass="aon-icon-notes"
+							reRender="showCommentsWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showCommentsWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						<aon:menuItem id="remarks"
+							value="#{bundle.aon_remark}"
+							rendered="#{!purchaseInvoice.new}"
+							iconClass="aon-icon-notes"
+							reRender="showRemarksWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showRemarksWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						
+						<c:if test="#{aonRole.accountingOperator}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
+							<aon:menuItem id="fiscalInformation"
+								value="#{financeBundle.finance_fiscal_information}"
+								rendered="#{!purchaseInvoice.new}"
+								iconClass="aon-icon-info"
+								reRender="showFiscalInformationWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showFiscalInformationWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</c:if>
+
+						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
+						<aon:menuItem id="audit-info"
+							value="#{bundle.aon_audit}"
+							rendered="#{!purchaseInvoice.new}"
+							iconClass="aon-icon-audit"
+							reRender="showAuditInfoWindow">
+							<f:setPropertyActionListener target="#{purchaseInvoice.showAuditInfoWindow}"
+								value="#{true}" />							
+						</aon:menuItem>
+						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -163,41 +216,22 @@
 
 					<aon:outputLabel for="Invoice_issueDate"
 						value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:selectInputDate id="Invoice_issueDate"
-							value="#{purchaseInvoice.to.issueDate}" required="true"
-							disabled="#{purchaseInvoice.readOnly}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<c:if test="#{aonRole.accountingOperator}">
-								<a4j:support ajaxSingle="true" event="oninputchange"
-									actionListener="#{purchaseInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Supplier_id" />
-								<a4j:support ajaxSingle="true" event="onchanged"
-									actionListener="#{purchaseInvoice.onDateChanged}"
-									reRender="Invoice_taxDate"
-									focus="Supplier_id" />
-							</c:if>
-						</aon:selectInputDate>
+					<aon:selectInputDate id="Invoice_issueDate"
+						value="#{purchaseInvoice.to.issueDate}" required="true"
+						disabled="#{purchaseInvoice.readOnly}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
 						<c:if test="#{aonRole.accountingOperator}">
-							<aon:outputLabel for="Invoice_taxDate" styleClass="aon-margin-left aon-margin-right aon-italic"
-								value="#{financeBundle.finance_tax_date}" />
-							<aon:selectInputDate id="Invoice_taxDate"
-								value="#{purchaseInvoice.to.taxDate}" required="true"
-								disabled="#{purchaseInvoice.readOnly}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"
-								inputStyle="#{purchaseInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
-								<a4j:support ajaxSingle="true" event="oninputchange"
-									reRender="Invoice_taxDate"
-									focus="Supplier_id" />
-								<a4j:support ajaxSingle="true" event="onchanged"
-									reRender="Invoice_taxDate"
-									focus="Supplier_id" />
-							</aon:selectInputDate>
+							<a4j:support ajaxSingle="true" event="oninputchange"
+								actionListener="#{purchaseInvoice.onDateChanged}"
+								reRender="Invoice_taxDate"
+								focus="Supplier_id" />
+							<a4j:support ajaxSingle="true" event="onchanged"
+								actionListener="#{purchaseInvoice.onDateChanged}"
+								reRender="Invoice_taxDate"
+								focus="Supplier_id" />
 						</c:if>
-					</aon:div>
+					</aon:selectInputDate>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{purchaseInvoice.to.registry}" />
@@ -212,6 +246,27 @@
 						<aon:methodParam name="lookupChangeListener"
 							value="#{purchaseInvoice.supplierData}" type="lookupChangeListener" />
 					</ui:include>
+					
+					<aon:outputLabel for="Invoice_taxDate" 
+						value="#{financeBundle.finance_tax_date}" />
+					<c:if test="#{aonRole.accountingOperator}">
+						<aon:selectInputDate id="Invoice_taxDate"
+							value="#{purchaseInvoice.to.taxDate}" required="true"
+							disabled="#{purchaseInvoice.readOnly}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"
+							inputStyle="#{purchaseInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
+							<a4j:support ajaxSingle="true" event="oninputchange"
+								reRender="Invoice_taxDate"
+								focus="Supplier_id" />
+							<a4j:support ajaxSingle="true" event="onchanged"
+								reRender="Invoice_taxDate"
+								focus="Supplier_id" />
+						</aon:selectInputDate>
+					</c:if>
+					<c:if test="#{!aonRole.accountingOperator}">
+						<aon:outputText value="#{purchaseInvoice.to.taxDate}" />
+					</c:if>
 
 					<aon:outputLabel for="Supplier_registry_document"
 						value="#{bundle.aon_company_document}" />
@@ -255,6 +310,10 @@
 								value="&#160;" />
 	 					</aon:panelGroup>
  					</aon:panelGroup>
+					
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputText styleClass="aon-bold"
+						value="#{purchaseInvoice.to.documentNumber}" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />
@@ -325,13 +384,11 @@
 					</aon:panelGrid>
 				</aon:div>
 
-				<aon:panelGrid columns="4" style="width: 100%;"
+				<aon:panelGrid columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div>
+					<aon:div rendered="#{!empty purchaseInvoice.to.comments}">
 						<aon:outputLabel for="Invoice_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -339,11 +396,12 @@
 								value="(#{bundle.aon_comment_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:inputTextarea id="Invoice_comments" cols="80" rows="3"
+					<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
+						rendered="#{!empty purchaseInvoice.to.comments}"
 						disabled="#{purchaseInvoice.readOnly}"
 						value="#{purchaseInvoice.to.comments}" />
 
-					<aon:div>
+					<aon:div rendered="#{!empty purchaseInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"
 							value="#{bundle.aon_remark}" />
 						<aon:div>
@@ -351,12 +409,14 @@
 								value="(#{bundle.aon_remark_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:inputTextarea id="Invoice_remarks" cols="80" rows="3"
+					<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
+						rendered="#{!empty purchaseInvoice.to.remarks}"
 						disabled="#{purchaseInvoice.readOnly}"
 						value="#{purchaseInvoice.to.remarks}" />
 
 				</aon:panelGrid>
 
+				<!--  
 				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-500,
@@ -370,6 +430,7 @@
 						rendered="#{!purchaseInvoice.new}" />
 
 				</aon:panelGrid>
+				-->
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
 					<ui:param name="invoiceController" value="#{purchaseInvoice}" />
@@ -418,6 +479,12 @@
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 			<ui:param name="attachmentController" value="#{purchaseInvoiceAttach}" />
 		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalComments.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRemarks.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
 		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/income/modalTransfer.xhtml" />
 		</c:if>
@@ -427,6 +494,18 @@
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="purchaseInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
+		</ui:include>
+		
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalNewProject.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+			<ui:param name="projectController" value="#{project}" />
+			<ui:param name="skipRegistryLookup" value="true" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAuditInfo.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

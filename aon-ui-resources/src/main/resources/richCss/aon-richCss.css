@@ -240,7 +240,7 @@ color:#000;
 
 /* commanLink que no tienen desplegables */
 .aon-top-menu-item{
-	font-family:arial,verdana, "sans-serif";
+	font-family: arial,verdana, "sans-serif";
 	color:#000;
  	text-transform:uppercase; 	
  	font-size:1em;
@@ -498,6 +498,15 @@ color:#000;
  .aon-icon-project-warn{
 	background:transparent url(images/aon-icon/aon-icon-project-warn.png) scroll left center no-repeat;	
  }
+ .aon-icon-check-in{
+	background:transparent url(images/aon-icon/aon-icon-check-in.png) scroll left center no-repeat;	
+ }
+ .aon-icon-check-out{
+	background:transparent url(images/aon-icon/aon-icon-check-out.png) scroll left center no-repeat;	
+ }
+ .aon-icon-no-show{
+	background:transparent url(images/aon-icon/aon-icon-no-show.png) scroll left center no-repeat;	
+ }
 
 /* otros */
 .aon-icon-agenda{
@@ -548,6 +557,15 @@ color:#000;
  }
 .aon-icon-signed{
 	background:transparent url(images/aon-icon/aon-icon-signed.png) scroll left center no-repeat;
+ }
+.aon-icon-unsigned{
+	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
+ }
+.aon-icon-domain-change{
+	background:transparent url(images/aon-icon/aon-icon-domain-change.png) scroll left center no-repeat;
+ }
+.aon-icon-logout-blue{
+	background:transparent url(images/aon-icon/aon-icon-logout-blue.png) scroll left center no-repeat;
  }
 .aon-icon-unsigned{
 	background:transparent url(images/aon-icon/aon-icon-unsigned.png) scroll left center no-repeat;
@@ -1097,6 +1115,9 @@ color:#000;
 }
 .aon-message-info{
 }
+.aon-label-info {
+	color: blue;
+}
 /****************************/
 /**** FORM ELEMENTS  *****/
 /*****************************/
@@ -1571,9 +1592,23 @@ color:#000;
 	padding:2px 6px 1px 18px;";
 	text-decoration: underline;
 }
+.aon-header-logout-blue{
+	background:transparent url(images/aon-icon/aon-icon-logout-blue.png) no-repeat scroll center left;
+	color: #0069B4;
+	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
+}
 .aon-header-domain{
 	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll left center no-repeat;
 	cursor:pointer;
+	padding:2px 6px 1px 18px;";
+	text-decoration: underline;
+}
+.aon-header-domain-blue{
+	background:transparent url(images/aon-icon/aon-icon-domain-change.png) scroll left center no-repeat;
+	color: #0069B4;
+cursor:pointer;
 	padding:2px 6px 1px 18px;";
 	text-decoration: underline;
 }
@@ -1608,6 +1643,21 @@ color:#000;
 	margin-left:150px;
 	padding-left:88px;
 	padding-top:66px;
+	text-align:center;
+}
+
+.aon-header-domain-title{
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	clear:both;
+	color:#0072CF;
+	display:inline;
+	font-family:tahoma,arial,sans;
+	font-size:16px;
+	font-weight:bold;
+	height:100%;
+	margin-left:5px;
 	text-align:center;
 }
 
@@ -1663,7 +1713,7 @@ color:#000;
 .aon-dropDownMenu-disabledItem{ 		
   }
  .aon-menuItem-styleClass{
- 	 background-color:#f2f2f2; 	 
+ 	 background-color: #f2f2f2; 	 
  }
  .aon-menuItem-iconClass{
 	 background:transparent url(images/aon-icon/aon-icon-menu-top-item.png) left top no-repeat;
@@ -1801,6 +1851,10 @@ color:#000;
 	display:inline;
 	}
 .aon-lookupInputText{
+	border:#808080 1px solid;
+	margin-right:0.2em;
+	}
+.aon-lookupSuggestText{
 	border:#808080 1px solid;
 	}
 .aon-lookupButton, .aon-lookupButtonPopup{
@@ -2554,6 +2608,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-changePassword{
 	background:transparent url(images/aon-main-menu/aon-icon-changePassword.png) no-repeat scroll center left;
 }
+.aon-icon-mail{
+	background:transparent url(images/aon-main-menu/aon-icon-mail.png) no-repeat scroll center left;
+}
+.aon-icon-save{
+	background:transparent url(images/aon-main-menu/aon-icon-save.png) no-repeat scroll center left;
+}
 .aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 
@@ -2605,4 +2665,11 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	cursor: pointer;
 	color: #285E9C; 
 	text-decoration: underline;
+}
+
+.aon-icon-flag-es{
+	background:transparent url(images/aon-header/aon-icon-flag-es.png) no-repeat scroll center left;
+}
+.aon-icon-flag-en{
+	background:transparent url(images/aon-header/aon-icon-flag-en.png) no-repeat scroll center left;
 }

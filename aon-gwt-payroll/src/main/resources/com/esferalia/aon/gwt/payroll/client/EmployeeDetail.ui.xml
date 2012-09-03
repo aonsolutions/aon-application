@@ -1,0 +1,10 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+	
+	<g:SimpleLayoutPanel ui:field="panel" >
+	</g:SimpleLayoutPanel>
+	
+</ui:UiBinder>

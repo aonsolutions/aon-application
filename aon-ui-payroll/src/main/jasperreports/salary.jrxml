@@ -696,7 +696,7 @@
 					<textElement/>
 					<text><![CDATA[B. TOTAL DEDUCIR]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="445" y="191" width="100" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getTotalDeduction() == 0.00 ? "" : $F{salary}.getTotalDeduction()]]></textFieldExpression>
@@ -706,7 +706,7 @@
 					<textElement/>
 					<text><![CDATA[LÍQUIDO TOTAL A PERCIBIR (A-B)]]></text>
 				</staticText>
-				<textField isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement style="total1" x="445" y="208" width="100" height="13"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getTotalLiquid() == 0.00 ? "" : $F{salary}.getTotalLiquid()]]></textFieldExpression>

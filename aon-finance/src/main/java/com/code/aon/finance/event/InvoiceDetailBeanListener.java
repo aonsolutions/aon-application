@@ -1,5 +1,8 @@
 package com.code.aon.finance.event;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +11,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
@@ -26,6 +30,13 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
+	
+	private static final String STMT =  "SELECT SUM(id.taxable_base)" 
+			+" FROM invoice_detail id"
+			+" INNER JOIN item it ON id.item = it.id"
+			+" INNER JOIN product pr ON it.product =  pr.id"
+			+" WHERE id.invoice = ?"
+			+" AND pr.type = 1";
 	
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
@@ -64,7 +75,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		if (invoice.getProject() == null && detail.getProject() != null && detail.getProject().getId() != null) {
 			invoice.setProject(detail.getProject());
 		}
-		updateInvoiceTotals(invoice);
+		updateInvoiceTotals(invoice, detail.isSkipServiceProcess() );
 		detail.setInvoice(invoice);
 	}
 	
@@ -107,7 +118,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				}
 			}
 
-			updateInvoiceTotals(detail.getInvoice());
+			updateInvoiceTotals(detail.getInvoice(), detail.isSkipServiceProcess());
 		}
 		detail.setUpdateEnabled(true);
 		detail.getInvoice().setUpdateEnabled(true);
@@ -143,7 +154,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				}
 			}
 
-			updateInvoiceTotals(detail.getInvoice());
+			updateInvoiceTotals(detail.getInvoice(), detail.isSkipServiceProcess());
 		}
 	}
 
@@ -198,7 +209,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return null;
 	}
 
-	private void updateInvoiceTotals(Invoice invoice) throws ManagerBeanException {
+	private void updateInvoiceTotals(Invoice invoice, boolean skipServiceProcess) throws ManagerBeanException {
 		if (invoice.isUpdateEnabled()) {
 			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
 			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
@@ -211,8 +222,43 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setVatQuota(vatQuota);
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
+			if (!skipServiceProcess) {
+				invoice.setService( isServiceInvoice(invoice, taxableBase));	
+			}
 			invoiceBean.update(invoice);
 		}
 	}
 
+	private boolean isServiceInvoice(Invoice invoice, double invoiceTotal) throws ManagerBeanException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(STMT,
+					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, invoice.getId());
+			rs = ps.executeQuery();
+			double serviceTaxableBase = 0;
+			if (rs.next()) {
+				serviceTaxableBase = rs.getDouble(1);	
+			}
+			return (serviceTaxableBase > (invoiceTotal / 2));  
+		} catch (SQLException e) {
+			throw new ManagerBeanException(e.getMessage());
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+	
 }

@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -18,6 +20,7 @@ import java.util.jar.Manifest;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,8 +40,13 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ui.common.ICommonConstants;
+import com.code.aon.ui.common.LocaleElement;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
 
@@ -46,9 +54,11 @@ import com.sun.org.apache.xerces.internal.jaxp.JAXPConstants;
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController implements Serializable, ICommonConstants {
+public class ConfigurationController implements Serializable, ICommonConstants, JAXPConstants, ILdapConstants, IAonObjectClasses {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
+	
+	private static final Locale SPANISH = new Locale("es");
 
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
@@ -80,6 +90,10 @@ public class ConfigurationController implements Serializable, ICommonConstants {
 	
 	private String application;
 	
+	private LocaleElement[] locales;
+	
+	private AuthPrincipal principal;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -91,6 +105,24 @@ public class ConfigurationController implements Serializable, ICommonConstants {
 			bean = loadBeanConfiguration( document );
 		}		
 		initApplicationVersion();
+		this.locales = new LocaleElement[] {
+			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
+		};
+		this.principal = resolvePrincipal();
+	}
+	
+	private AuthPrincipal resolvePrincipal() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest(); 
+		Principal principal = request.getUserPrincipal();
+		if ( principal instanceof AuthPrincipal ) {
+			return (AuthPrincipal) principal;
+		}
+		return BasicPrincipal.getAuthPrincipal();
+	}
+	
+	public AuthPrincipal getAuthPrincipal() {
+		return this.principal;
 	}
 
 	/**
@@ -261,10 +293,10 @@ public class ConfigurationController implements Serializable, ICommonConstants {
 		factory.setNamespaceAware(true);
 		factory.setValidating(true);
 		factory.setIgnoringElementContentWhitespace(true);
-		factory.setAttribute( JAXPConstants.JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		factory.setAttribute( JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
 		String[] schemas = getXmlSchemas();
-		factory.setAttribute( JAXPConstants.JAXP_SCHEMA_SOURCE, schemas );		
+		factory.setAttribute( JAXP_SCHEMA_SOURCE, schemas );		
 		
 		Document document = null;
 		LogErrorHandler errorHandler = new LogErrorHandler();
@@ -357,6 +389,10 @@ public class ConfigurationController implements Serializable, ICommonConstants {
 	 */
 	public String getHelpURL() {
 		return getURL(this.application, this.currentAction);
+	}
+	
+	public LocaleElement[] getLocales() {
+		return locales;
 	}
 	
 	private class LogErrorHandler implements ErrorHandler {

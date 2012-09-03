@@ -7,55 +7,18 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="workGroupList">
+		<aon:form id="workGroupGrid">
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{configBundle.config_workgroup_module}" />
 					<ui:param name="controller" value="#{workGroup}" />
 				</ui:decorate>
-				<aon:div styleClass="aon-scroll-area">
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-						<ui:param name="controller" value="#{workGroup}" />
-						
-						<ui:define name="columns">
-					
-							<aon:column styleClass="aon-editDataTable-textColumn"
-								alias="WorkGroup.description" >
-								<f:facet name="header">
-									<aon:outputLabel for="WorkGroup_description" value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.description}" rendered="#{formList}" />
-								<aon:inputText id="WorkGroup_description"
-									rendered="#{formEdit}" size="64" maxlength="64"
-									value="#{controller.to.description}" required="true" />
-								<f:facet name="footer">
-									<aon:inputText id="WorkGroup_description-New"
-										rendered="#{formNew}" size="64" maxlength="64"
-										value="#{controller.to.description}" required="true" />
-								</f:facet>
-							</aon:column>
-					
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
-								alias="WorkGroup.status" >
-								<f:facet name="header">
-									<aon:outputLabel for="WorkGroup_status" value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" rendered="#{formList}" />
-								<aon:selectOneMenu id="WorkGroup_status"
-									rendered="#{formEdit}" value="#{controller.to.status}">
-									<f:selectItems value="#{configCollections.workGroupStatuses}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="WorkGroup_status-New"
-										rendered="#{formNew}" value="#{controller.to.status}">
-										<f:selectItems value="#{configCollections.workGroupStatuses}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
-						</ui:define>
-					</ui:decorate>
-				</aon:div>
+			</aon:div>				
+			<aon:div styleClass="aon-scroll-area">
+				<ui:include src="/com/code/aon/ui/config/facelet/workgroup/gridContent.xhtml" >
+					<ui:param name="controller" value="#{workGroup}" />
+				</ui:include>
 			</aon:div>
 		</aon:form>			
 	</ui:define>

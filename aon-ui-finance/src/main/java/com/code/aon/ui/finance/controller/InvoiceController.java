@@ -2,8 +2,12 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
 import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,6 +19,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +50,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
@@ -62,8 +68,8 @@ import com.code.aon.ui.sign.controller.ISignatureController;
 import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -81,14 +87,20 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> projects;
 	private boolean showInvoiceAddressWindow;
 	private boolean showProjectWindow;
+	private boolean showNewProjectWindow;
 	private boolean showDetailProjectWindow;
 	private boolean showRectificationWindow;
 	private boolean showDocumentWindow;
+	private boolean showCommentsWindow;
+	private boolean showRemarksWindow;
+	private boolean showAuditInfoWindow;
+	private boolean showFiscalInformationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
 	private Date rectificationDate;
 	private String rectificationCause;
 	private FinanceEmailUtil emailController;
+	private double totalInvoiceAmount;
 
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -156,6 +168,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			return addresses.size();
 		}
 		return 0;
+	}
+	
+	public double getTotalInvoiceAmount() {
+		return totalInvoiceAmount;
+	}
+
+	public void setTotalInvoiceAmount(double totalInvoiceAmount) {
+		this.totalInvoiceAmount = totalInvoiceAmount;
 	}
 	
 	public void loadAddresses(Integer id) throws ManagerBeanException {
@@ -228,6 +248,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
+	public void loadInvoiceProjects(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = (Invoice) this.getTo();
+		loadProjects(invoice.getRegistry().getId());
+	}
+	
 	public boolean isShowInvoiceAddressWindow() {
 		return showInvoiceAddressWindow;
 	}
@@ -250,6 +275,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowProjectWindow(boolean value) {
 		this.showProjectWindow = value;
+	}
+
+	public boolean isShowNewProjectWindow() {
+		return showNewProjectWindow;
+	}
+
+	public void setShowNewProjectWindow(boolean showNewProjectWindow) {
+		this.showNewProjectWindow = showNewProjectWindow;
 	}
 
 	public boolean isShowDetailProjectWindow() {
@@ -309,7 +342,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			invoiceDetailBean.update(invoiceDetail);
 		}
 	}
-
+	
 	public boolean isShowRectificationWindow() {
 		return showRectificationWindow;
 	}
@@ -324,6 +357,38 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowDocumentWindow(boolean showDocumentWindow) {
 		this.showDocumentWindow = showDocumentWindow;
+	}
+
+	public boolean isShowCommentsWindow() {
+		return showCommentsWindow;
+	}
+
+	public void setShowCommentsWindow(boolean showCommentsWindow) {
+		this.showCommentsWindow = showCommentsWindow;
+	}
+
+	public boolean isShowRemarksWindow() {
+		return showRemarksWindow;
+	}
+
+	public void setShowRemarksWindow(boolean showRemarksWindow) {
+		this.showRemarksWindow = showRemarksWindow;
+	}
+
+	public boolean isShowAuditInfoWindow() {
+		return showAuditInfoWindow;
+	}
+
+	public void setShowAuditInfoWindow(boolean showAuditInfoWindow) {
+		this.showAuditInfoWindow = showAuditInfoWindow;
+	}
+	
+	public boolean isShowFiscalInformationWindow() {
+		return showFiscalInformationWindow;
+	}
+
+	public void setShowFiscalInformationWindow(boolean showFiscalInformationWindow) {
+		this.showFiscalInformationWindow = showFiscalInformationWindow;
 	}
 
 	public String getRectificationSeries() {
@@ -730,17 +795,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	private void sendInvoiceByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			Invoice invoice = getInvoice();
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 			messageController.initNewMessage();
 			IAttachment attach = getInvoiceData(invoice);
 			emailController.initMessageController(messageController, invoice, attach, facturae);
 			messageController.setShowNewMessageWindow(true);
 			messageController.setSecurityInfo(securyInfo);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 
@@ -771,6 +836,39 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			LOGGER.error("Error getting invoice pdf file " + getInvoice(), e );
 		}
 		return false;
+	}
+	
+	public List<TaxBreakDown> getTaxBreakDowns() {
+		if (getTo() != null) {
+			Invoice invoice = getInvoice();
+			List<TaxBreakDown> taxBreakDowns = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
+			Collections.sort(taxBreakDowns, new Comparator<TaxBreakDown>() {
+				@Override
+				public int compare(TaxBreakDown o1, TaxBreakDown o2) {
+					int a = o1.getTaxType().ordinal();
+					int b = o2.getTaxType().ordinal();
+					if (a<b) {
+						return -1;
+					}
+					if (a>b) {
+						return 1;
+					}
+					return 0; 
+				}
+			});
+			return taxBreakDowns;
+		}
+		return null;
+	}
+	
+	public void onAcceptFiscalInformation(ActionEvent event) {
+		Invoice invoice = getInvoice();
+		
+		// Solo se puede modificar service e investment, que no afectan a los totales
+		// por lo tanto no es necesario recalcular.
+		invoice.setUpdateEnabled(false);
+		
+		super.accept(event);
 	}
 	
 }

@@ -76,6 +76,9 @@
 			showAddInfo="true"
 			showDirStaff="true"
 			showHistory="true"
+			showAbsence="false"
+			showLoan="false"
+			showCourse="false"			
 		/>
 	</customer:config>
 
@@ -93,6 +96,27 @@
 			showSendEmail="true"
 		/>
 	</finance:config>
+
+	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
+		<payroll:payroll
+			showPaymentEditionTab="true"
+			showDeductionEditionTab="true"
+		/>
+		<payroll:salary
+			showEnterpriseColumn="true"
+			showPersonColumn="true"
+			showIssueDateColumn="true"
+		/>
+		<payroll:salaryDraft
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:paymentUpdate
+			showEnterpriseInSearch="true"
+		/>
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true"
+		/>
+	</payroll:config>
 
 	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
 		<fiscal:fiscal
@@ -182,7 +206,7 @@
 
 	<webmail:config version="1.3" xmlns:webmail="http://www.esferalia.com/webmail" >
 		<webmail:webmail
-			connect="true"
+			connect="false"
 			showDomainMailAccounts="true"
 			connectDomainMailAccounts="false"			
 		/>

@@ -34,6 +34,7 @@ import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
@@ -63,9 +64,9 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	private Set<InvoiceAttachment> attachments = new HashSet<InvoiceAttachment>();
 
 	public Invoice() {
-		setIssueDate( new Date() );
-		setDefaultTaxInfo( true );
-		setUpdateEnabled( true );
+		setIssueDate(new Date());
+		setDefaultTaxInfo(true);
+		setUpdateEnabled(true);
 	}
 
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
@@ -149,7 +150,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	}
 	
 	@Transient
-	public IAddress getAddress(){
+	public IAddress getAddress() {
 		return(getAddresses().iterator().hasNext()?getAddresses().iterator().next():getRegistryAddress());
 	}
 	
@@ -172,7 +173,7 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
-			if(getType().equals(InvoiceType.SALES)){
+			if (getType().equals(InvoiceType.SALES)) {
 				criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE));
 			}
 			criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ID));
@@ -249,6 +250,10 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	@Transient
 	public boolean isCanCeuMel() {
 		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
+	}
+	@Transient
+	public boolean isNoRectification() {
+		return (getRectificationType() == RectificationType.NONE);
 	}
 	@Transient
 	public boolean isRectifier() {
@@ -332,6 +337,20 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return payMethodName;
 	}
 
+	@Transient
+	public boolean isAllCommercialProducts() {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getId());
+			criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.COMMERCIAL_PRODUCT);
+			return (invoiceDetailBean.getCount(criteria) == 0);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error obtaining invoiceDetail list", e);
+		}
+		return false;
+	}
+
 	@Formula("(select COUNT(*) from invoice_attach ia where id = ia.invoice)")
 	public boolean isAttachmentAvailable() {
 		return attachmentAvailable;
@@ -340,6 +359,5 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	public void setAttachmentAvailable(boolean customer) {
 		this.attachmentAvailable = customer;
 	}
-	
-	
+
 }

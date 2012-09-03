@@ -70,8 +70,11 @@
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
+		<mapping class="com.code.aon.commercial.Question"/>
+		<mapping class="com.code.aon.commercial.QuestionValue"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetProfile"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
@@ -195,6 +198,7 @@
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
@@ -203,6 +207,7 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
+		<mapping class="com.code.aon.registry.Tag"/>
 
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>
@@ -213,6 +218,12 @@
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
+
+		<!-- AON-TAS Mapping files -->	
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.ProjectTas"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
 
 		<!-- AON-WAREHOUSE Mapping files -->		
 		<mapping class="com.code.aon.warehouse.Delivery"/>

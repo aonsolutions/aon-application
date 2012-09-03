@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,7 +26,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.Invoice;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -40,26 +40,22 @@ import com.esferalia.aon.pms.PosShiftCount;
 
 public class PosShiftController extends BasicController {
 	
-	private final String CASH_CALCULATOR_CONTROLLER_NAME = "cashCalculator";
-	private final String POS_SHIFT_COUNT_CONTROLLER_NAME = "posShiftCount";
-	private final String POS_SHIFT_CONTROLLER_NAME = "posShift";
-	
 	private PosShift posShift;
 	private Hotel hotel;
 	private CashCalculatorController calculator;
 	private boolean cashCalculator;
 	
-	private DataModel invoiceModel;
+	private DataModel invoiceFinancesModel;
 	private DataModel comparedCashModel;
 	
-	public DataModel getInvoiceModel() {
-		return invoiceModel;
+	public DataModel getInvoiceFinancesModel() {
+		return invoiceFinancesModel;
 	}
 
-	public void setInvoiceModel(DataModel invoiceModel) {
-		this.invoiceModel = invoiceModel;
+	public void setInvoiceFinancesModel(DataModel invoiceFinancesModel) {
+		this.invoiceFinancesModel = invoiceFinancesModel;
 	}
-	
+
 	public DataModel getComparedCashModel() {
 		return comparedCashModel;
 	}
@@ -93,52 +89,54 @@ public class PosShiftController extends BasicController {
 		this.hotel = hotel;
 	}
 	
-	private List<ITransferObject> getInvoiceList(PosShift posShift) {
+	public boolean getUniquePayMethod() throws ManagerBeanException{
+		Finance finance = (Finance) getInvoiceFinancesModel().getRowData();
+		return finance.getPayMethod().getName().equals(finance.getInvoice().getPayMethod());
+	}
+
+	public String getPayMethod() throws ManagerBeanException{
+		Finance finance = (Finance) getInvoiceFinancesModel().getRowData();
+		return (finance.getPayMethod().getName().equals(finance.getInvoice().getPayMethod())?"":finance.getInvoice().getPayMethod()+"/")+finance.getPayMethod().getName();
+	}
+	
+	private List<ITransferObject> invoiceFinancesList;
+	
+	public List<ITransferObject> getInvoiceFinancesList() {
+		if( invoiceFinancesList==null ){
+			searchInvoiceFinancesList();
+		}
+		return invoiceFinancesList;
+	}
+	
+	private void searchInvoiceFinancesList() {
 		try {
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			IManagerBean financesBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
-			criteria.addBetweenExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_MODIFICATION_DATE),posShift.getStartTime(), posShift.getEndTime()!=null?posShift.getEndTime():new Date());
-			criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_CREATION_USER), posShift.getUser().getLogin());
-			criteria.addOrder(invoiceBean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
-			return invoiceBean.getList(criteria);
+			criteria.addBetweenExpression(financesBean.getFieldName(IEntityAlias.FINANCE_INVOICE_CREATION_DATE),((PosShift)getTo()).getStartTime(), ((PosShift)getTo()).getEndTime()!=null?((PosShift)getTo()).getEndTime():new Date());
+			criteria.addEqualExpression(financesBean.getFieldName(IEntityAlias.FINANCE_INVOICE_CREATION_USER), ((PosShift)getTo()).getUser().getLogin());
+			criteria.addOrder(financesBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
+			invoiceFinancesList = financesBean.getList(criteria);
 		} catch (ManagerBeanException ex) {
-			String msg = "Error al cargar los datos de Facturas.";
+			String msg = "Error al cargar los vencimientos de Facturas.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, ex);
 		}
 	}
 	
-	private List<PaymethodCount> getComparedPaymethodCashList(PosShift posShift) {
-		List<Integer> invoiceIds = new LinkedList<Integer>();  
-		for(ITransferObject to: getInvoiceList(posShift)){
-			Invoice i = (Invoice) to;
-			invoiceIds.add(i.getId());
-		}
+	private List<PaymethodCount> getComparedPaymethodCashList() {
+		List<ITransferObject> financeList = getInvoiceFinancesList();
 		try {
-			Map<String, PaymethodCount> map = new HashMap<String, PosShiftController.PaymethodCount>();
-			if(!invoiceIds.isEmpty()){
-				IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-				Criteria financeCriteria = new Criteria();
-				financeCriteria.addInExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoiceIds);
-				financeCriteria.addOrder(financeBean.getFieldName(IEntityAlias.FINANCE_PAY_METHOD_NAME));
-				for(ITransferObject to: financeBean.getList(financeCriteria)){
+			Map<Integer, PaymethodCount> map = new HashMap<Integer, PosShiftController.PaymethodCount>();
+			if(!financeList.isEmpty()){
+				for(ITransferObject to: financeList){
 					Finance finance = (Finance) to;
-					if(finance.getPayMethod().getType()==PayMethodType.CASH_BASIS){
-						if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-							map.get(PayMethodType.CASH_BASIS.name()).setInvoiceAmount(map.get(PayMethodType.CASH_BASIS.name()).getInvoiceAmount()+finance.getAmount());
-						} else {
-							PaymethodCount pc = new PaymethodCount();
-							pc.setPayMethod(finance.getPayMethod());
-							pc.setInvoiceAmount(finance.getAmount());
-							map.put(PayMethodType.CASH_BASIS.name(), pc);
-						}
-					} else if(map.containsKey(finance.getPayMethod().getId())){
+					if(map.containsKey(finance.getPayMethod().getId())){
 						map.get(finance.getPayMethod().getId()).setInvoiceAmount(map.get(finance.getPayMethod().getId()).getInvoiceAmount()+finance.getAmount());
 					} else {
 						PaymethodCount pc = new PaymethodCount();
 						pc.setPayMethod(finance.getPayMethod());
 						pc.setInvoiceAmount(finance.getAmount());
-						map.put(finance.getPayMethod().getName(), pc);
+						map.put(finance.getPayMethod().getId(), pc);
 					}
 				}
 			}
@@ -148,29 +146,28 @@ public class PosShiftController extends BasicController {
 			countCriteria.addOrder(countBean.getFieldName(IEntityAlias.POS_SHIFT_COUNT_PAY_METHOD_NAME));
 			for(ITransferObject to: countBean.getList(countCriteria)){
 				PosShiftCount psc = (PosShiftCount) to;
-				if(psc.getPayMethod().getType()==PayMethodType.CASH_BASIS){
-					if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-						map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()+psc.getAmount());
-					} else {
-						PaymethodCount pc = new PaymethodCount();
-						pc.setPayMethod(psc.getPayMethod());
-						pc.setPosAmount(psc.getAmount());
-						map.put(PayMethodType.CASH_BASIS.name(), pc);
-					}
-				} else if(map.containsKey(psc.getPayMethod().getId())){
+				if(map.containsKey(psc.getPayMethod().getId())){
 					map.get(psc.getPayMethod().getId()).setPosAmount(map.get(psc.getPayMethod().getId()).getPosAmount()+psc.getAmount());
 				} else {
 					PaymethodCount pc = new PaymethodCount();
 					pc.setPayMethod(psc.getPayMethod());
 					pc.setPosAmount(psc.getAmount());
-					map.put(psc.getPayMethod().getName(), pc);
+					map.put(psc.getPayMethod().getId(), pc);
 				}
 			}
-			if(map.containsKey(PayMethodType.CASH_BASIS.name())){
-				// se resta al metalico el importe inicial de la caja
-				map.get(PayMethodType.CASH_BASIS.name()).setPosAmount(map.get(PayMethodType.CASH_BASIS.name()).getPosAmount()-getPosShift().getInitialAmount());
+			PayMethod cashBasis = getPayMethodCashBasis();
+			if(cashBasis!=null && map.containsKey(cashBasis.getId())){
+				// se resta al efectivo (metalico) el importe inicial de la caja
+				map.get(cashBasis.getId()).setPosAmount(map.get(cashBasis.getId()).getPosAmount()-getPosShift().getInitialAmount());
 			}
-			return new ArrayList<PaymethodCount>(map.values());
+			List<PaymethodCount> list = new LinkedList<PosShiftController.PaymethodCount>(map.values());
+			Collections.sort(list, new Comparator<PaymethodCount>() {  
+				@Override
+				public int compare(PaymethodCount o1, PaymethodCount o2) {
+					return o1.getPayMethod().getName().compareToIgnoreCase(o2.getPayMethod().getName());
+				}  
+		    });  
+			return list;
 		} catch (ManagerBeanException ex) {
 			String msg = "Error al cargar los datos de Facturas.";
 			AonUtil.addErrorMessage(msg);
@@ -178,34 +175,13 @@ public class PosShiftController extends BasicController {
 		}
 	}
 	
-	public Double getTotalCashAmount() {
-		String sqlSelect;
-		try {
-			sqlSelect = "SELECT sum(amount)"
-					+ " FROM pos_shift_count"
-					+ " WHERE " + DomainManager.getSQLWhereClause("pos_shift_count.domain") 
-					+ " AND pos_shift = " + ((PosShift)getTo()).getId()
-					+ getCashPayMethodClause()
-					+ " GROUP BY pos_shift";
-		} catch (ManagerBeanException e) {
-			return null;
-		}
-		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
-		Query sqlQuery = session.createSQLQuery(sqlSelect);
-		return (Double) sqlQuery.uniqueResult();
-	}
-	
-	private String getCashPayMethodClause() throws ManagerBeanException {
-		String clause = "";
+	private PayMethod getPayMethodCashBasis() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(PayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), PayMethodType.CASH_BASIS);
-		for(ITransferObject to: bean.getList(criteria)){
-			PayMethod pm = (PayMethod) to;
-			clause += (clause.isEmpty()?" AND (":" OR ") + " pay_method = " + pm.getId();
-		}
-		clause += " )";
-		return clause;
+		criteria.addOrder(bean.getFieldName(IEntityAlias.PAY_METHOD_ID));
+		List<ITransferObject> list = bean.getList(criteria);
+		return (!list.isEmpty())?(PayMethod) list.get(0):null;
 	}
 	
 	public List<SelectItem> getPosList() throws ManagerBeanException {
@@ -221,7 +197,8 @@ public class PosShiftController extends BasicController {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for(Object to: sqlQuery.list()){
 			Pos pos = (Pos) BeanManager.getManagerBean(Pos.class).get((Integer)(((Object[])to)[0]));
-			SelectItem item = new SelectItem(pos, pos.getName());
+			String name = pos.getName() + ((getHotel()!=null && getHotel().getId()!=null)?"":" ("+pos.getWorkPlace().getDescription()+")");
+			SelectItem item = new SelectItem(pos, name);
 			list.add(item);
 		}
 		return list;
@@ -232,7 +209,7 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void init( ){
-		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(CASH_CALCULATOR_CONTROLLER_NAME);
+		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
 		setHotel(null);
@@ -240,8 +217,9 @@ public class PosShiftController extends BasicController {
 		getPosShift().setStartTime(new Date());
 	}
 	public void initInvoiceData( ){
-		setInvoiceModel(new ListDataModel(getInvoiceList((PosShift)getTo())));
-		setComparedCashModel(new ListDataModel(getComparedPaymethodCashList((PosShift)getTo())));
+		invoiceFinancesList = null;
+		setInvoiceFinancesModel(new ListDataModel(getInvoiceFinancesList()));
+		setComparedCashModel(new ListDataModel(getComparedPaymethodCashList()));
 	}
 	
 	public void onShowCalculatorWindow( ActionEvent event ){
@@ -260,14 +238,25 @@ public class PosShiftController extends BasicController {
 	
 	public void onAcceptCalculatorAmount( ActionEvent event ){
 		if( isCashCalculator() ){
-			IController controller = FormUtil.getController(POS_SHIFT_COUNT_CONTROLLER_NAME);
+			IController controller = FormUtil.getController(IPmsConstants.POS_SHIFT_COUNT_CONTROLLER_NAME);
 			getCalculator().setCashAmount(getCalculator().getCalcTotal());
 			((PosShiftCount)controller.getTo()).setAmount(getCalculator().getCalcTotal());
 		} else {
-			IController controller = FormUtil.getController(POS_SHIFT_CONTROLLER_NAME);
-			PosShift c = (PosShift) controller.getTo();
-			c.setInitialAmount(getCalculator().getCalcTotal());
+			PosShift posShift = (PosShift) this.getTo();
+			posShift.setInitialAmount(getCalculator().getCalcTotal());
 		} 
+	}
+	
+	public void onAcceptPosShiftCount( ActionEvent event ){
+		IController controller = FormUtil.getController(IPmsConstants.POS_SHIFT_COUNT_CONTROLLER_NAME);
+		controller.onAccept(event);
+		setComparedCashModel(new ListDataModel(getComparedPaymethodCashList()));
+	}
+
+	public void onRemovePosShiftCount( ActionEvent event ){
+		IController controller = FormUtil.getController(IPmsConstants.POS_SHIFT_COUNT_CONTROLLER_NAME);
+		controller.onRemove(event);
+		setComparedCashModel(new ListDataModel(getComparedPaymethodCashList()));
 	}
 	
 	public void onPrintShiftInvoice(ActionEvent event) throws ManagerBeanException {
@@ -279,23 +268,20 @@ public class PosShiftController extends BasicController {
 	}
 	
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
-		if (invoiceModel.isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
-			controller.select(event, ((Invoice)getInvoiceModel().getRowData()).getId());
-		}
+		SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(IPmsConstants.SELECTED_INVOICE_CONTROLLER_NAME);
+		controller.setTo(((Finance)getInvoiceFinancesModel().getRowData()).getInvoice());
 	}
 	
+	
 	public void onLoadReservation(ActionEvent event) throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getInvoiceModel().getRowData();
+		Finance finance = (Finance)this.getInvoiceFinancesModel().getRowData();
 		BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
-		reservationController.onLoad(event, invoice.getProject().getId(), IPmsConstants.POS_SHIFT_FORM_NAME, IPmsConstants.POS_SHIFT_CONTROLLER_NAME + ".onBackPosShift");
+		reservationController.onLoad(event, finance.getInvoice().getProject().getId(), IPmsConstants.POS_SHIFT_FORM_NAME, IPmsConstants.POS_SHIFT_CONTROLLER_NAME + ".onBackPosShift");
 	}
 	
 	public void onBackPosShift(ActionEvent event) throws ManagerBeanException {
 		initInvoiceData();
 	}
-	
-	
 	
 	public class PaymethodCount {
 		private PayMethod payMethod;

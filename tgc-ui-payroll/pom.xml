@@ -60,7 +60,7 @@
 				<dependencies>
 					<dependency>
 						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>jasperreports</artifactId>
+						<artifactId>${jasperReportsArtifact}</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
                                         <dependency>

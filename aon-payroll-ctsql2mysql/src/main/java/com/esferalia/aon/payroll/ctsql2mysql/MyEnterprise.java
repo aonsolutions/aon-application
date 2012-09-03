@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.rowset.serial.SerialBlob;
 
@@ -657,6 +658,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		return DefaultMysqlDB.get( workplaces_old_agreements, oldCdgEmp, oldCdgDomicilio);
 	}
 	
+	
+	protected Set<Integer> getEmprnifCdgs() {
+		return enterprises.keySet();
+	}
 	
 	private void insertLogo(Enterprise enterprise, Empract empract) throws SQLException{
 		insertImage(enterprise, empract, RegistryAttachmentType.LOGO, "L");

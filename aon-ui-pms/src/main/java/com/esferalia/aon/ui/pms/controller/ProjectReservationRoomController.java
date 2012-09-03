@@ -56,6 +56,8 @@ public class ProjectReservationRoomController extends LinesController {
 
 	@Override
 	public void onReset(ActionEvent event) {
+		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		masterController.accept(event);
 		try {
 			ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 			reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
@@ -69,6 +71,7 @@ public class ProjectReservationRoomController extends LinesController {
 				reservationRoom.setTariff(tariff);
 			}
 			setTo(reservationRoom);
+			masterController.getReservationPermission().setReservationRoom(reservationRoom);
 
 			RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
 			roomAvailability.onInitializeRoomList(reservationRoom, null, null);
@@ -81,16 +84,21 @@ public class ProjectReservationRoomController extends LinesController {
 		}
 	}
 
+	@Override
 	public void onSelect(ActionEvent event) {
+		ProjectReservationController masterController = (ProjectReservationController)getMasterController();
+		masterController.accept(event);
 		try {
 			if (getModel().isRowAvailable()) {
 				ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getModel().getRowData();
+				reservationRoom.setProjectReservation((ProjectReservation)getMasterController().getTo());
 				setTo(reservationRoom);
+				masterController.getReservationPermission().setReservationRoom(reservationRoom);
 
 				Date startDate = reservationRoom.getProjectReservation().getStartDate();
 				Date endDate = reservationRoom.getProjectReservation().getEndDate();
 				Date date = new Date();
-				if (date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
+				if (reservationRoom.getRoomNumber() == null || date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
 					date = null;
 				}
 				RoomAvailabilityController roomAvailability = (RoomAvailabilityController)AonUtil.getRegisteredBean(IPmsConstants.ROOM_AVAILABILITY_CONTROLLER_NAME);
@@ -115,8 +123,8 @@ public class ProjectReservationRoomController extends LinesController {
 	public void onAssignReservationRoom(ActionEvent event) throws ManagerBeanException {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		Map<String, String> params = ec.getRequestParameterMap();
-
 		Room availableRoom = (Room)BeanManager.getManagerBean(Room.class).get(new Integer(params.get(IPmsConstants.AVAILABLE_ROOM)));
+
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 		if (isNew()) {
 			reservationRoom.setItem(availableRoom.getItem());
@@ -143,7 +151,7 @@ public class ProjectReservationRoomController extends LinesController {
 		reservationRoom.setRoomNumber(null);
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
 
     	IController reservationServiceController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_SERVICE_CONTROLLER_NAME);
     	reservationServiceController.onSearch(event);
@@ -153,7 +161,7 @@ public class ProjectReservationRoomController extends LinesController {
 		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 
 		ReservationUtils reservationUtils = new ReservationUtils();
-    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false);
+    	reservationUtils.removeProjectReservationRoomDetails(reservationRoom, false, null);
 
     	onRemove(event);
 

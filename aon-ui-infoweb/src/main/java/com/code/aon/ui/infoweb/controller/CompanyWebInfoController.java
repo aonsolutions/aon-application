@@ -6,6 +6,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.infoweb.WebInfo;
@@ -19,14 +20,13 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyWebInfoController extends BasicController {
 	
-	@SuppressWarnings({"unchecked"})
 	public void onLoadWebInfo(ActionEvent event) throws ManagerBeanException{
 		IController companyController = (IController) FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
 		IManagerBean webInfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(webInfoBean.getFieldName(IEntityAlias.WEB_INFO_COMPANY_ID), company.getId());
-		Iterator iter = webInfoBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = webInfoBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			this.setTo((WebInfo)iter.next());
 			this.setNew(false);

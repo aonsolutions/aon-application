@@ -36,6 +36,7 @@
 		<template path="/com/esferalia/aon/ui/pms/report/reservationList.jasper" />
 		<bean key="com.esferalia.aon.pms.ProjectReservation" />
 		<criteria provider="#{reservation}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -101,6 +102,7 @@
 			<param id="hotel" value="#{boardList.getHotel}" />
 			<param id="date" value="#{boardList.getDate}" />
 			<param id="boardPageBreak" value="#{boardList.isBoardPageBreak}" />
+			<param id="boardsTotal" value="#{boardList.getBoardsTotalList}" />
 		</params>
 	</report>
 
@@ -134,6 +136,34 @@
 			<param id="fromDate" value="#{roomBooking.getFromDate}" />
 			<param id="toDate" value="#{roomBooking.getToDate}" />
 			<param id="item" value="#{roomBooking.getItem}" />
+		</params>
+	</report>
+
+	<!--  ********* Empty Room ********* -->
+	<report id="emptyRoomList" description="Empty Room Report">
+		<template path="/com/esferalia/aon/ui/pms/report/emptyRoomList.jasper" />
+		<collection provider="#{emptyRoom}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{emptyRoom.getHotel}" />
+			<param id="date" value="#{emptyRoom.getDate}" />
+		</params>
+	</report>
+
+	<!--  ********* Hotel Guests ********* -->
+	<report id="hotelGuest" description="Hotel Guests Report">
+		<template path="/com/esferalia/aon/ui/pms/report/hotelGuest.jasper" />
+		<collection provider="#{hotelGuest}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.pms.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="hotel" value="#{hotelGuest.getHotel}" />
+			<param id="date" value="#{hotelGuest.getDate}" />
 		</params>
 	</report>
 

@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -86,7 +88,7 @@ public class ResourceURI {
 	 * @return the input stream
 	 * @throws IOException 
 	 */
-	public InputStream getInputStream( String basePath ) throws IOException {
+	public InputStream getInputStream( ServletContext ctx, String basePath ) throws IOException {
 		InputStream in = null;
 		if ( this.commonResource ) {
 			File file = new File( COMMON_RESOURCES_PATH, this.path );
@@ -98,15 +100,23 @@ public class ResourceURI {
 				path = basePath + path;
 			}
 			LOGGER.debug("Request for resource (in jar): {}", path);
-			in = getClass().getResourceAsStream(path);
+			in = getResourceAsStream(ctx, path);
 			if (in == null) {
 				LOGGER.debug("Request for resource (in war): {}", this.path);
-				in = getClass().getResourceAsStream(this.path);
+				in = getResourceAsStream(ctx, this.path);
 			}			
 		}
 		return in;
 	}
 
+	private InputStream getResourceAsStream( ServletContext ctx, String path ) {
+		InputStream in = getClass().getResourceAsStream(path);
+		if ( in == null ) {
+			in = ctx.getResourceAsStream(path);
+		}
+		return in;
+	}
+	
 	/**
 	 * Checks if is cacheable.
 	 * 

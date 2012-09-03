@@ -9,8 +9,8 @@
 
 	<ui:decorate
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:param name="skipResetButton" value="#{!reservation.active and !reservation.invoiced}" />
-		<ui:param name="skipLineEdition" value="#{!reservation.active and !reservation.invoiced}" />
+		<ui:param name="skipResetButton" value="#{!reservation.reservationPermission.newReservationGuestAllowed}" />
+		<ui:param name="skipLineEdition" value="#{!reservation.reservationPermission.editReservationGuestAllowed}" />
 		<ui:param name="skipRemoveButton" value="#{controller.to.guestIndex == 1}" />
 
 		<ui:define name="columns">
@@ -27,7 +27,15 @@
 				<f:facet name="header">
 					<aon:outputLabel value="#{pmsBundle.pms_guest}" />
 				</f:facet>
-				<aon:outputText value="#{to.fullName}" rendered="#{formList}" />
+				<aon:div rendered="#{formList}">
+					<aon:outputText value="#{to.fullName}"  />
+					<aon:div rendered="#{!empty to.barcode}" style="display:inline;">
+						<aon:outputText value="(" styleClass="aon-margin-left" />
+						<aon:outputText value="#{pmsBundle.pms_barcode}:" styleClass="aon-italic" />
+						<aon:outputText value="#{to.barcode}" styleClass="aon-bold aon-margin-left" />
+						<aon:outputText value=")" />
+					</aon:div>
+				</aon:div>
 				<aon:div rendered="#{formEdit}">
 					<ui:include src="tab_grid_name.xhtml">
 						<ui:param name="suffix" value="" />

@@ -1,8 +1,7 @@
 package com.code.aon.ui.document.controller;
 
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.NOT_SERVER_CONNECTED;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,8 +32,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class BatchDocument {
 
@@ -99,8 +98,8 @@ public class BatchDocument {
 	}	
 
 	public void onSendInvoiceByEmail(ActionEvent event) {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			messageController.setShowNewMessageWindow(true);
@@ -114,7 +113,7 @@ public class BatchDocument {
 				}				
 			}
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}
 	

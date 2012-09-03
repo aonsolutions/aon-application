@@ -24,7 +24,7 @@
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.audit</artifactId>
+			<artifactId>aon.ui.audit</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>		
@@ -52,12 +52,6 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.3</version>
-			<scope>provided</scope>
-		</dependency>						
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>

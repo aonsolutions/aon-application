@@ -31,7 +31,6 @@
 								value="#{pmsBundle.pms_hotel}" />
 							<aon:selectOneMenu id="BoardBooking_hotel_id"
 								value="#{boardBooking.hotel}" >
-								<f:selectItem itemLabel="#{bundle.aon_check_all}" itemValue="null" />
 								<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 							</aon:selectOneMenu>
 							
@@ -44,7 +43,10 @@
 									required="true"	
 									value="#{boardBooking.fromDate}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
+									popupDateFormat="#{bundle.aon_date_pattern}">
+									<a4j:support event="oninputchange" reRender="boardBookingSearch"/>
+									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
+								</aon:selectInputDate>
 									
 								<aon:outputLabel for="BoardBooking_endDate"
 									styleClass="aon-italic aon-margin-right" 
@@ -53,16 +55,10 @@
 									required="true"	
 									value="#{boardBooking.toDate}"
 									timeZone="#{timeZoneController.timeZone}"
-									popupDateFormat="#{bundle.aon_date_pattern}"/>
-							</aon:div>
-									
-							<aon:outputText 
-								value="&#160;" />
-							<aon:div>
-								<aon:selectBooleanCheckbox id="BoardBooking_searchNoRoomBoard"
-									value="#{boardBooking.searchNoRoomBoard}" />
-								<aon:outputLabel for="BoardBooking_searchNoRoomBoard"
-									value="#{pmsBundle.pms_board_searchNoRoomBoard}" />
+									popupDateFormat="#{bundle.aon_date_pattern}">
+									<a4j:support event="oninputchange" reRender="boardBookingSearch" />
+									<a4j:support event="onchanged" reRender="boardBookingSearch"  />
+								</aon:selectInputDate>
 							</aon:div>
 									
 							<aon:outputText value="&#160;" />
@@ -70,7 +66,9 @@
 								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
 								action="boardBooking_list"
 								actionListener="#{boardBooking.onSearch}"
-								accesskey="#{bundle.aon_key_search}" />
+								accesskey="#{bundle.aon_key_search}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 								
 						</aon:panelGrid>
 					
@@ -78,6 +76,8 @@
 			</aon:div>
 			
 		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		
 	</ui:define>
 </ui:composition>

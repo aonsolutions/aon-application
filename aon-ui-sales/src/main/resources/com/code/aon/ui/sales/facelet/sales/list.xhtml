@@ -110,6 +110,13 @@
 							<aon:outputText value="#{sales.salesTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText style="text-align:right" value="#{sales.salesTotalAmount}" >
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>

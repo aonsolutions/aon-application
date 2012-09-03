@@ -18,7 +18,6 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.desktop.controller.DesktopController;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.messaging.controller.SMSController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -49,7 +48,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 	private void initSMSController() throws ManagerBeanException {
 		SMSController sms = (SMSController) AonUtil.getRegisteredBean( SMS_CONTROLLER_NAME );
 		sms.setShowDemoMessage(true);
-		String username = UserUtils.getInstance().getPrincipal().getShortName();
+		String username = AonUtil.getAuthPrincipal().getShortName();
 		sms.setUsername(username);
 		DesktopController desktop = (DesktopController) AonUtil.getRegisteredBean( DESKTOP_CONTROLLER_NAME );
 		sms.setOrganization(desktop.getCompanyAlias());
@@ -102,7 +101,7 @@ public class SMSManager implements Serializable, IServices, IDesktopConstants  {
 				sms.setDomainName(null);
 			}
 		} else {
-			String domain = UserUtils.getInstance().getPrincipal().getDomain();
+			String domain = AonUtil.getAuthPrincipal().getDomain();
 			sms.setDomainName(domain);	
 		}
 	}

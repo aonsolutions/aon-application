@@ -26,36 +26,72 @@
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="predefinedDocuments" 
-										action="corporateIdentity_predefined" immediate="true"
-										value="#{registryBundle.registry_predefined_documents}">
-									</aon:commandLink>
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
 										action="corporateIdentityAttach_list" immediate="true"
-										actionListener="#{category.onSearch}"
-										value="#{registryBundle.registry_corporate_documents}">
+										value="#{bundle.aon_documents}">
+										<f:setPropertyActionListener value="#{false}"
+											target="#{corporateIdentityAttach.massiveUpload}"  />			
+										<aon:actionListener method="#{corporateIdentityAttach.onCancel}" />																		
 									</aon:commandLink>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="search" 
-										action="corporateIdentityAttach_search" immediate="true"
-										actionListener="#{corporateIdentityAttach.onEditSearch}"
-										value="#{bundle.aon_search}">
+									<aon:commandLink id="batchDocument" 
+										action="batchDocument_form" immediate="true"
+										value="#{registryBundle.registry_batch_document}">
 									</aon:commandLink>
-								</aon:div>							
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="category" 
-										action="category_form" immediate="true" 
-										actionListener="#{company.onLoad}"
-										value="#{registryBundle.registry_category_module}">
-									</aon:commandLink>		
-								</aon:div>
+								</aon:div>					
+								<c:if test="#{aonRole.documentManager and domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="documentMassiveUpload" 
+											action="corporateIdentityAttach_form" immediate="true"
+											value="#{registryBundle.registry_document_massive_upload}">
+											<f:setPropertyActionListener value="#{true}"
+												target="#{corporateIdentityAttach.massiveUpload}"  />
+											<aon:actionListener method="#{corporateIdentityAttach.onReset}" />
+										</aon:commandLink>
+									</aon:div>
+								</c:if>							
+								<c:if test="#{domainSwitcher.parentDomain and domainSwitcher.domainManagementAvailable}">									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="documentGlobal" 
+											action="documentGlobal_search" immediate="true"
+											actionListener="#{documentGlobal.onEditSearch}"
+											value="#{registryBundle.registry_document_global_search}">
+										</aon:commandLink>
+									</aon:div>					
+								</c:if>								
 							</aon:div>
 						</aon:panelGrid>
 					
 					</aon:panelGroup>
+					
+					<aon:panelGroup>
+						<c:if test="#{aonRole.documentManager}">													
+							<aon:panelGrid id="group_documental_utilities"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-utilities aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{registryBundle.registry_qualifier_group}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tag" 
+											action="tag_form" immediate="true" 
+											actionListener="#{tag.onCancel}"
+											value="#{registryBundle.registry_tag_module}">
+										</aon:commandLink>		
+									</aon:div>								
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="category" 
+											action="category_form" immediate="true"
+											actionListener="#{category.onCancel}" 
+											value="#{registryBundle.registry_category_module}">
+										</aon:commandLink>		
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>					
 
 				</h:panelGrid>
 			</aon:div>

@@ -1,10 +1,10 @@
 package com.code.aon.file.tax.model.MOD340.data;
 
-import java.util.Date;
 
 
 public class Invoice {
 
+	private String type;
 	private Integer year;
 	private String period;
 	private String code;
@@ -24,7 +24,36 @@ public class Invoice {
 	private double costTaxableBase;
 	private String invoiceNumber;
 	private String documentNumber;
+	private int invoiceCount;
+	private int registerCount;
+	private String firstInvoiceNumber;
+	private String lastInvoiceNumber;
+	private String rectifiedInvoiceNumber;
+	private double surchargePercent;
+	private double surchargeQuota;
+	private double deductibleQuota;
+	private String intracommunitaryType;
+	private String declaredKey;
+	private int operationPeriod;
+	private String description;
+	private String address;
+	private String city;
+	private String zip;
+	private String other;
+	private int yearProrate;
+	private int yearRegularization;
+	private String deliveryInvoice;
+	private double doneRegularization;
+	private String investementDate;
+	private String investementName;
+	
 
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public Integer getYear() {
 		return year;
 	}
@@ -138,6 +167,138 @@ public class Invoice {
 	}
 	public void setDocumentNumber(String documentNumber) {
 		this.documentNumber = documentNumber;
+	}
+	public int getInvoiceCount() {
+		return invoiceCount;
+	}
+	public void setInvoiceCount(int invoiceCount) {
+		this.invoiceCount = invoiceCount;
+	}
+	public int getRegisterCount() {
+		return registerCount;
+	}
+	public void setRegisterCount(int registerCount) {
+		this.registerCount = registerCount;
+	}
+	public String getFirstInvoiceNumber() {
+		return firstInvoiceNumber;
+	}
+	public void setFirstInvoiceNumber(String firstInvoiceNumber) {
+		this.firstInvoiceNumber = firstInvoiceNumber;
+	}
+	public String getLastInvoiceNumber() {
+		return lastInvoiceNumber;
+	}
+	public void setLastInvoiceNumber(String lastInvoiceNumber) {
+		this.lastInvoiceNumber = lastInvoiceNumber;
+	}
+	public String getRectifiedInvoiceNumber() {
+		return rectifiedInvoiceNumber;
+	}
+	public void setRectifiedInvoiceNumber(String rectifiedInvoiceNumber) {
+		this.rectifiedInvoiceNumber = rectifiedInvoiceNumber;
+	}
+	public double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public void setSurchargePercent(double surchargePercent) {
+		this.surchargePercent = surchargePercent;
+	}
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public void setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
+	}
+	public double getDeductibleQuota() {
+		return deductibleQuota;
+	}
+	public void setDeductibleQuota(double deductibleQuota) {
+		this.deductibleQuota = deductibleQuota;
+	}
+	public String getIntracommunitaryType() {
+		return intracommunitaryType;
+	}
+	public void setIntracommunitaryType(String intracommunitaryType) {
+		this.intracommunitaryType = intracommunitaryType;
+	}
+	public String getDeclaredKey() {
+		return declaredKey;
+	}
+	public void setDeclaredKey(String declaredKey) {
+		this.declaredKey = declaredKey;
+	}
+	public int getOperationPeriod() {
+		return operationPeriod;
+	}
+	public void setOperationPeriod(int operationPeriod) {
+		this.operationPeriod = operationPeriod;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+	public String getOther() {
+		return other;
+	}
+	public void setOther(String other) {
+		this.other = other;
+	}
+	public int getYearProrate() {
+		return yearProrate;
+	}
+	public void setYearProrate(int yearProrate) {
+		this.yearProrate = yearProrate;
+	}
+	public int getYearRegularization() {
+		return yearRegularization;
+	}
+	public void setYearRegularization(int yearRegularization) {
+		this.yearRegularization = yearRegularization;
+	}
+	public String getDeliveryInvoice() {
+		return deliveryInvoice;
+	}
+	public void setDeliveryInvoice(String deliveryInvoice) {
+		this.deliveryInvoice = deliveryInvoice;
+	}
+	public double getDoneRegularization() {
+		return doneRegularization;
+	}
+	public void setDoneRegularization(double doneRegularization) {
+		this.doneRegularization = doneRegularization;
+	}
+	public String getInvestementDate() {
+		return investementDate;
+	}
+	public void setInvestementDate(String investementDate) {
+		this.investementDate = investementDate;
+	}
+	public String getInvestementName() {
+		return investementName;
+	}
+	public void setInvestementName(String investementName) {
+		this.investementName = investementName;
 	}
 
 	

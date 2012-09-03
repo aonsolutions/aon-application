@@ -17,7 +17,11 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.Domain;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
@@ -39,24 +43,18 @@ public class DocumentManager {
 
 	/** Maximun number of users allowed to access application in each domain. */
 	private Long maxTotalDocumentSize;	
-
-	private boolean show;
-	
-	private boolean showSearch;
-	
-	private String formTemplate;
 	
 	public DocumentManager() {
-		this.show = true;
-		this.showSearch = true;
 		this.maxDocumentSize = DEFAULT_MAX_DOCUMENT_SIZE;
 		this.maxTotalDocumentSize = DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
 		if (! AonUtil.isSkipLdap() ) {
-			init();	
+			initLdap();	
+		} else {
+			initDB();
 		}
 	}
 
-	private void init() {
+	private void initLdap() {
 		DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DOMAIN_RESOLVER_CONTROLLER_NAME);
 		String domainName = domainResolver.getDomain();		
 		Name domainDN = NameResolver.getDomainDN(domainName);
@@ -84,13 +82,22 @@ public class DocumentManager {
 			maxTotalDocumentSize = entry.toInteger(MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE) * MB_SIZE;
 		}
 	}
-
-	public boolean isShow() {
-		return show;
-	}
-
-	public void setShow(boolean show) {
-		this.show = show;
+	
+	private void initDB() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(DomainManager.getCurrentDomain());
+			if ( domain != null ) {
+				if ( domain.getMaxDocumentSize() != null ) {
+					maxDocumentSize = domain.getMaxDocumentSize() * MB_SIZE;	
+				}
+				if ( domain.getMaxTotalDocumentSize() != null ) {
+					maxTotalDocumentSize = domain.getMaxTotalDocumentSize() * MB_SIZE;
+				}
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error init max document szie", th);
+		}		
 	}
 	
 	private Long getUsedSpace() {
@@ -119,22 +126,6 @@ public class DocumentManager {
 		String freeSpace = FileUtils.byteCountToDisplaySize(getFreeSpace()); 
 		String maxSize = FileUtils.byteCountToDisplaySize(maxDocumentSize);
 		return AonUtil.getMessage(DEFAULT_BUNDLE, DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
-	}
-
-	public boolean isShowSearch() {
-		return showSearch;
-	}
-
-	public void setShowSearch(boolean showSearch) {
-		this.showSearch = showSearch;
-	}
-
-	public String getFormTemplate() {
-		return formTemplate;
-	}
-
-	public void setFormTemplate(String formTemplate) {
-		this.formTemplate = formTemplate;
 	}
 	
 }

@@ -10,28 +10,38 @@ public interface IMailConstants {
 	
 	File WEBMAIL_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-webmail/mail.properties" );	
 	
-	String MAIL_MIME_DECODETEXT_STRICT = "mail.mime.decodetext.strict";
-
-	String MAIL_IMAP_SOCKET_FACTORY_PORT = "mail.imap.socketFactory.port";
-
-	String MAIL_IMAP_PORT = "mail.imap.port";
-
-	String MAIL_IMAP_SOCKET_FACTORY_FALLBACK = "mail.imap.socketFactory.fallback";
-
-	String MAIL_IMAP_SOCKET_FACTORY_CLASS = "mail.imap.socketFactory.class";
-	
-	String MAIL_SMTP_AUTH = "mail.smtp.auth";
-
-	String MAIL_HOST = "mail.host";
-
-	String MAIL_STORE_PROTOCOL = "mail.store.protocol";
-
 	String IMAP = "imap";
 	
 	String SMTPS = "smtps";
 
 	String SMTP = "smtp";
+		
+	String MAIL_PREFIX = "mail.";
 	
+	String PORT = ".port";
+
+	String SOCKET_FACTORY_PORT = ".socketFactory.port";
+	
+	String SOCKET_FACTORY_FALLBACK = ".socketFactory.fallback";
+
+	String SOCKET_FACTORY_CLASS = ".socketFactory.class";
+	
+	String STARTTLS_ENABLE = ".starttls.enable";
+	
+	String TIMEOUT = ".timeout";
+	
+	String CONNECTION_TIMEOUT = ".connectiontimeout";
+	
+	String DEFAULT_TIMEOUT = "30000";
+	
+	String AUTH = ".auth";
+
+	String MAIL_HOST = MAIL_PREFIX + "host";
+	
+	String MAIL_STORE_PROTOCOL = MAIL_PREFIX + "store.protocol";
+	
+	String MAIL_TRANSPORT_PROTOCOL = MAIL_PREFIX + "transport.protocol";
+
 	String X_MAILER = "X-Mailer";
 	
 	String WEBMAIL_MAILER = "OfficeWeb - AonWebMail 4.11.0";	

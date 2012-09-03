@@ -34,6 +34,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.groupware.controller.NoticeController;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
@@ -158,7 +159,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 	}
 	
 	private void sendNoticeMail(Notice notice, String mailList) {
-		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		String domain = user.getDomain();
 		String login = user.getShortName();
 		String username = UserUtils.getInstance().getLoggedUser().getName();
@@ -194,7 +195,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 	private void sendNoticeSMS(Notice notice, List<String> recipients) {
 		Message message = new Message();
 		message.init();
-		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		String domain = user.getDomain();
 		message.getInfo().setOrganization( domain );
 		message.getInfo().setOriginator( domain );

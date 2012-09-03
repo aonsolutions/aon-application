@@ -1,9 +1,5 @@
 package com.code.aon.common.dao.hibernate;
 
-import java.security.Principal;
-
-import com.code.aon.common.util.BasicPrincipal;
-import com.code.aon.jaas.auth.AuthPrincipal;
 
 
 /**
@@ -26,12 +22,6 @@ public class DefaultSessionFactoryNameProvider implements ISessionFactoryNamePro
     }
     
 	public String getName( String pojoClass ) {
-       	AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-       	if (principal != null) {
-       		String name = principal.getName();
-       		int index = name.indexOf('@');
-       		return (index > -1)? name.substring(index + 1, name.length()): name;
-       	}
         return HibernateUtil.DEFAULT_SESSION_FACTORY_NAME;
 	}
 

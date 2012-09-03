@@ -7,6 +7,7 @@ public interface IReservationConstants {
 	String OPERATION_TIME_STAMP = "OperationTimeStamp";
 	String DATE = "Date";
 	String TIME = "Time";
+	String DESCRIPTION = "Description";
 	String DISCOUNT_MODE = "DiscountMode";
 	String DISCOUNT = "Discount";
 	String PERCENT = "Percent";
@@ -24,11 +25,15 @@ public interface IReservationConstants {
 	String AGENCY_TYPE = "5";
 	String COMPANY_TYPE = "4";
 	String IATA = "IATA";
+	String COMPANY = "EMPRESA";
 	String SOLRES = "Solres";
 	String REQRES = "Reqres";
 	String CRO = "CRO";
 	String AGENCY_REBATE = "S";
 	String RATE_PLAN = "RATEPLAN";
+	String BOOKING_PAYMENT = "BOOKING_PAYMENT";
+	String VOUCHER = "Voucher";
+	String SELF_BOOKING = "SELF_BOOKING";
 	String EUR = "EUR";
 
 	String GUEST_HOLDER = "C";
@@ -53,4 +58,9 @@ public interface IReservationConstants {
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";
 	String SOAP_SERVER_URL = "PMS_SOAP_SERVER_URL";
+
+	String UNDEFINED_TARIFF = "PMS_UNDEFINED_TARIFF";
+	String UNDEFINED_ROOM_ITEM = "PMS_UNDEFINED_ROOM_ITEM";
+	String UNDEFINED_SERVICE_ITEM = "PMS_UNDEFINED_SERVICE_ITEM";
+
 }

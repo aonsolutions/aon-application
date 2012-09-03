@@ -5,7 +5,6 @@ import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_PASSWORD;
 import static com.code.aon.document.BasicAlfresco.SERVER_ADMIN_USER;
 import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
-import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
@@ -39,7 +38,6 @@ import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.event.IControllerListener;
-import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MailAccountDBController;
 import com.code.aon.ui.webmail.controller.MailConfigController;
@@ -94,8 +92,6 @@ public class ManagerController implements IEnterpriseController {
 		if ( AonUtil.isSkipLdap() ) {
 			LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
 			lu.setCompanyName(enterprise.getRegistry().getFullName());
-			DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
-			dm.setShow(false);
 		}
 	}
 	

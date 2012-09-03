@@ -1,7 +1,5 @@
 package com.code.aon.ui.form;
 
-import java.io.Serializable;
-
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
@@ -14,7 +12,7 @@ import com.code.aon.common.ManagerBeanException;
  * 
  * @author Consulting & Development.
  */
-public interface IController extends ISearchable , Serializable{
+public interface IController extends ISearchable {
 	
 	/** The form suffix for template action. */
 	String FORM_SUFFIX = "_form";

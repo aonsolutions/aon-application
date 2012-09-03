@@ -4,8 +4,6 @@
  */
 package com.code.aon.ui.form.event;
 
-import java.io.Serializable;
-
 import com.code.aon.ui.form.IController;
 
 /**
@@ -14,7 +12,7 @@ import com.code.aon.ui.form.IController;
  * @author Consulting & Development. Iñaki Ayerbe - 07-abr-2005
  * @since 1.0
  */
-public interface IControllerListener extends Serializable{
+public interface IControllerListener {
 
 	/**
 	 * Sets the controller.

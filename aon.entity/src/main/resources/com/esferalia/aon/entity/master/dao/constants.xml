@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
+	<!-- ** AON ACADEMY **************************************************** -->
+	<bean class="com.code.aon.academy.CourseAlumn" sqlName="course_alumn">
+		<alias names="course_id,customer_id,customer_registry_name,id,course_code,course_academicYear_id,course_startDate,course_endDate,course_status,status" />
+		<hibernate names="course.id,customer.id,customer.registry.name,id,course.code,course.academicYear.id,course.startDate,course.endDate,course.status,status" />
+	</bean>
+	
+	<bean class="com.code.aon.academy.Mark" sqlName="mark">
+		<alias names="alumn_customer_id,alumn_course_code,alumn_course_academicYear_id,alumn_course_courseLevel_id,alumn_course_courseSubject_id,alumn_course_id,alumn_customer_registry_name,alumn_id,evaluation,id,mark,subject_academicSkill_id,subject_id" />
+		<hibernate names="alumn.customer.id,alumn.course.code,alumn.course.academicYear.id,alumn.course.courseLevel.id,alumn.course.courseSubject.id,alumn.course.id,alumn.customer.registry.name,alumn.id,evaluation,id,mark,subject.academicSkill.id,subject.id" />
+	</bean>
+		
 	<!-- ** AON ACCOUNTING **************************************************** -->
 	<bean class="com.code.aon.accounting.AccountEntryDetail" sqlName="account_entry_detail">
 		<alias names="accountEntry_id,accountEntry_type,accountEntry_entryDate,accountEntry_accountPeriod_id,accountEntry_securityLevel,accountEntry_journal,account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,concept,credit,debit,id,line,documentNumber" />
@@ -90,8 +101,8 @@
 		<hibernate names="id,commissionType.id,commission.id,commission.name,commission.startDate,commission.endDate"/>
 	</bean>
 	<bean class="com.code.aon.commercial.ProjectCommercial" sqlName="project_commercial">
-		<alias names="id,project_id,target_id,seller_id,comments,source,status,statusDate,probability,project_name,project_alias,project_date,project_commercial"/>
-		<hibernate names="id,project.id,target.id,seller.id,comments,source,status,statusDate,probability,project.name,project.alias,project.date,project.commercial"/>
+		<alias names="id,project_id,target_id,seller_id,comments,source,status,statusDate,probability,project_name,project_alias,project_date,project_commercial,target_scope_id"/>
+		<hibernate names="id,project.id,target.id,seller.id,comments,source,status,statusDate,probability,project.name,project.alias,project.date,project.commercial,target.scope.id"/>
 	</bean>
 
 	<!-- ** AON COMPANY **************************************************** -->
@@ -144,8 +155,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
-		<alias names="description,discountExpression,id,invoice_id,invoice_type,item_id,line,price,project,project_id,quantity,source,sourceId,item_product_type,item_product_code,taxableBase,taxes,warehouse_id,workPlace_id" />
-		<hibernate names="description,discountExpression,id,invoice.id,invoice.type,item.id,line,price,project,project.id,quantity,source,sourceId,item.product.type,item.product.code,taxableBase,taxes,warehouse.id,workPlace.id" />
+		<alias names="description,discountExpression,id,invoice_id,invoice_project_id,invoice_type,invoice_advance,invoice_rectificationType,item_id,line,price,project,project_id,quantity,source,sourceId,item_product_type,item_product_code,taxableBase,taxes,warehouse_id,workPlace_id" />
+		<hibernate names="description,discountExpression,id,invoice.id,invoice.project.id,invoice.type,invoice.advance,invoice.rectificationType,item.id,line,price,project,project.id,quantity,source,sourceId,item.product.type,item.product.code,taxableBase,taxes,warehouse.id,workPlace.id" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">
@@ -164,8 +175,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.finance.Finance" sqlName="finance">
-		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_name,payMethod_type,payment,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate" />
-		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice&lt;id,payMethod.id,payMethod.name,payMethod.type,payment,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate" />
+		<alias names="amount,bankAccount,bank_id,bank_code,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_name,payMethod_type,payment,registry_id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope_id,invoice_project_id,invoice_series,invoice_number,invoice_referenceCode,invoice_issueDate,invoice_type,invoice_rectificationType,invoice_advance,invoice_service,invoice_creationDate,invoice_creationUser" />
+		<hibernate names="amount,bankAccount,bank.id,bank.code,concept,dueDate,expenses,financeStatus,id,invoice&lt;id,payMethod.id,payMethod.name,payMethod.type,payment,registry.id,registryName,registryDocument,registryDocumentType,registryDocumentCountry,securityLevel,scope.id,invoice&lt;project.id,invoice&lt;series,invoice&lt;number,invoice&lt;referenceCode,invoice&lt;issueDate,invoice&lt;type,invoice&lt;rectificationType,invoice&lt;advance,invoice&lt;service,invoice&lt;creationDate,invoice&lt;creationUser" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
@@ -233,8 +244,8 @@
 
 	<!-- ** AON MARKETING **************************************************** -->
 	<bean class="com.code.aon.marketing.MarketingAction" sqlName="mk_action">
-		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active"/>
-		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active"/>
+		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active,campaign_scope_id"/>
+		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active,campaign.scope.id"/>
 	</bean>
 	<!-- 
 	<bean class="com.code.aon.entity.master.MarketingTarget" sqlName="target">
@@ -264,12 +275,12 @@
 		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.GeozoneIrpfDescendant">
-		<alias names="descendant,geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozoneCode,id,percent"/>
-		<hibernate names="descendant,geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozoneCode,id,percent"/>
+		<alias names="descendant,geozoneIrpf_amount,geozoneIrpf_endDate,geozoneIrpf_startDate,geozoneIrpf_id,geozoneIrpf_geozoneCode,id,percent"/>
+		<hibernate names="descendant,geozoneIrpf.amount,geozoneIrpf.endDate,geozoneIrpf.startDate,geozoneIrpf.id,geozoneIrpf.geozoneCode,id,percent"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.GeozoneIrpfHandicap">
-		<alias names="geozoneIrpf_amount,geozoneIrpf_id,geozoneIrpf_geozoneCode,handicap,id,percent"/>
-		<hibernate names="geozoneIrpf.amount,geozoneIrpf.id,geozoneIrpf.geozoneCode,handicap,id,percent"/>
+		<alias names="geozoneIrpf_amount,geozoneIrpf_endDate,geozoneIrpf_id,geozoneIrpf_startDate,geozoneIrpf_geozoneCode,handicap,id,percent"/>
+		<hibernate names="geozoneIrpf.amount,geozoneIrpf.endDate,geozoneIrpf.id,geozoneIrpf.startDate,geozoneIrpf.geozoneCode,handicap,id,percent"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.PayrollWorkPlace">
 		<alias     names="id,agreement_id,calendar_id,enterpriseActivity_id,workPlace_id,workPlace_enterprise_id"/>
@@ -282,12 +293,12 @@
 
 	<!-- ** AON PMS  **************************************************** -->
 	<bean class="com.esferalia.aon.pms.Hotel" sqlName="hotel">
-		<alias names="id,domain,code,scope_id,workPlace_id,workPlace_description,phone,fax,email,web,customer_id,serviceCatalogue_id,active,itemAdvance_id,itemNoshow_id"/>
-		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active,itemAdvance.id,itemNoshow.id"/>
+		<alias names="id,domain,code,scope_id,workPlace_id,workPlace_description,phone,fax,email,web,customer_id,serviceCatalogue_id,active,itemAdvance_id,itemNoshow_id,itemPenalty_id"/>
+		<hibernate names="id,domain,code,scope.id,workPlace.id,workPlace.description,phone,fax,email,web,customer.id,serviceCatalogue.id,active,itemAdvance.id,itemNoshow.id,itemPenalty.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservation" sqlName="project_reservation">
-		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,code,creationDate,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,noShow,advance,advanceInvoiced,status"/>
-		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,code,creationDate,startDate,startTime,endDate,endTime,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,noShow,advance,advanceInvoiced,status"/>
+		<alias names="id,domain,project_id,hotel_id,hotel_scope_id,hotelReservation_id,code,creationDate,startDate,startTime,endDate,endTime,seller_id,agency_id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company_id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,advance,advanceInvoiced,checkStatus,status"/>
+		<hibernate names="id,domain,project.id,hotel.id,hotel.scope.id,hotelReservation.id,code,creationDate,startDate,startTime,endDate,endTime,seller.id,agency.id,agencyCommissionPercent,agencyCommissionAmount,agencyRebate,company.id,discountPercent,discountAmount,bookingHolder,taxableBase,vatQuota,otherTaxQuota,total,comments,remarks,crs,crsCode,advance,advanceInvoiced,checkStatus,status"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.ProjectReservationGuest" sqlName="project_reservation_guest">
 		<alias names="id,domain,projectReservation_id,projectReservation_hotel_id,projectReservation_startDate,projectReservation_endDate,guestIndex,name,surname,treatment,document,documentType,documentCountry,email,phone,address,zip,city,province,country" />
@@ -306,8 +317,8 @@
 		<hibernate names="id,domain,invoiceDetail.id,projectReservationService.id,projectReservationService.item.product.code,projectReservationService.projectReservation.id,projectReservationService.projectReservation.hotel.id,projectReservationService.extra,projectReservationRoomDetail,projectReservationRoomDetail.assetActivity.asset.name,projectReservationRoomDetail.id,projectReservationRoomDetail.projectReservationRoom.id,effectiveDate,quantity,price,taxableBase"/>
 	</bean>
 	<bean class="com.esferalia.aon.pms.PosShift" sqlName="pos_shift">
-		<alias names="id,domain,pos_id,pos_workPlace_id,shift,user,startTime,endTime,initialAmount,remarks,invoice_id"/>
-		<hibernate names="id,domain,pos.id,pos.workPlace.id,shift,user,startTime,endTime,initialAmount,remarks,invoice.id"/>
+		<alias names="id,domain,pos_id,pos_workPlace_id,pos_workPlace_scope_id,pos_invoiceable,shift,user_id,user_login,startTime,endTime,initialAmount,remarks,invoice_id,pos_pinPad"/>
+		<hibernate names="id,domain,pos.id,pos.workPlace.id,pos.workPlace.scope.id,pos.invoiceable,shift,user.id,user.login,startTime,endTime,initialAmount,remarks,invoice.id,pos.pinPad"/>
 	</bean> 
 	<bean class="com.esferalia.aon.pms.PosShiftCount" sqlName="pos_shift_count">
 		<alias names="id,domain,posShift_id,payMethod_id,payMethod_name,amount"/>
@@ -326,8 +337,8 @@
 		<hibernate names="id,domain,reservationRequest.id,reservationRequest.hotel.id,reservationRequest.hotel.scope.id,reservationRequest.active,roomIndex,item.id,adults,children,babies,crsCode,tariffCode,tariffDescription,inventoryCode,roomCode,roomDescription,mealPlan,dailyPrice,totalPrice,cancelPenalty,creationUser,creationDate,modificationUser,modificationDate" />
 	</bean>
 	<bean class="com.esferalia.aon.pms.Room" sqlName="room">
-		<alias names="id,asset_id,asset_name,domain,hotel_id,item_id"/>
-		<hibernate names="id,asset.id,asset.name,domain,hotel.id,item.id"/>
+		<alias names="id,asset_id,asset_name,domain,hotel_id,hotel_scope_id,item_id,item_product_name"/>
+		<hibernate names="id,asset.id,asset.name,domain,hotel.id,hotel.scope.id,item.id,item.product.name"/>
 	</bean> 
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
@@ -337,8 +348,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.CatalogueItem" sqlName="catalogue_item">
-		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name" />
-		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name" />
+		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name,item_product_type" />
+		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name,item.product.type" />
 	</bean>
 
 	<bean class="com.code.aon.product.Item" sqlName="item">

@@ -7,7 +7,7 @@ import com.esferalia.aon.entity.master.ProfileModuleDeniedDB;
 
 @Entity
 @Table(name="profile_module_denied")
-public class ProfileModuleDenied extends ProfileModuleDeniedDB {
+public class ProfileModuleDenied extends ProfileModuleDeniedDB implements IModule {
 
 	private static final long serialVersionUID = 1L;
 	

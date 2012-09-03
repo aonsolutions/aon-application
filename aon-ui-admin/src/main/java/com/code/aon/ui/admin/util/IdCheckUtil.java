@@ -1,6 +1,7 @@
 package com.code.aon.ui.admin.util;
 
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.validator.ValidatorException;
@@ -10,7 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -22,6 +27,8 @@ public class IdCheckUtil {
 	
 	private String alias;
 	
+	private String domainAlias;
+	
 	private String duplicateMessage;
 	
 	private String oldValue;
@@ -30,6 +37,14 @@ public class IdCheckUtil {
 		this.controller = controller;
 		this.alias = alias;
 		this.duplicateMessage = duplicateMessage;
+	}
+
+	public String getDomainAlias() {
+		return domainAlias;
+	}
+
+	public void setDomainAlias(String domainAlias) {
+		this.domainAlias = domainAlias;
 	}
 
 	public String getOldValue() {
@@ -52,6 +67,17 @@ public class IdCheckUtil {
 	
 	private boolean exists( String newValue ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
+		if ( domainAlias != null ) {
+			criteria.setSkipDomainFilter(true);
+			String field = controller.getFieldName(domainAlias);
+			Expression expr1 = ExpressionUtilities.getEqualExpression(field, DomainManager.getCurrentDomain());
+			if (! DomainManager.isParentDomain() ) {
+				DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+				Expression expr2 = ExpressionUtilities.getEqualExpression(field, ds.getParentDomain());
+				expr1 = ExpressionUtilities.getOrExpression(expr1, expr2);
+			}			
+			criteria.addExpression(expr1);
+		}
 		criteria.addEqualExpression(controller.getFieldName(alias), newValue);
 		return controller.getManagerBean().getCount(criteria) > 0;
 	}

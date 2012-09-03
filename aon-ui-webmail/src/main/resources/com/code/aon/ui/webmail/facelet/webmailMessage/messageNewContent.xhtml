@@ -61,12 +61,12 @@
 				<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
 				columnClasses="aon-panelGrid-odd aon-width-130 aon-text-right,aon-panelGrid-even">
 
-					<aon:div rendered="#{mailConfig.showAccountList}">
+					<aon:div rendered="#{mailConfig.mailAccountCount &gt; 1}">
 						<aon:outputLabel for="NewMail_From" 
 							value="#{webmailBundle.webmail_from}: " />
 					</aon:div>							
 					<aon:selectOneMenu id="NewMail_From" reRender="messageContent"
-						rendered="#{mailConfig.showAccountList}"
+						rendered="#{mailConfig.mailAccountCount &gt; 1}"
 						converter="#{mailConfig.mailAccountConverter}"
 						valueChangeListener="#{webmailMessage.onMailAccountChanged}"
 						value="#{webmailMessage.senderMailAccount}">

@@ -18,13 +18,11 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.converter.ContactConverter;
 import com.code.aon.webmail.Contact;
@@ -48,7 +46,7 @@ public class ContactController extends LdapBasicController implements IWebMailCo
 
 	@Override
 	protected void initDAO() {
-		AuthPrincipal auth = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal auth = AonUtil.getAuthPrincipal();
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 

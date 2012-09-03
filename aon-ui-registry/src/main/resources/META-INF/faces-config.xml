@@ -38,6 +38,35 @@
 			<property-name>beanName</property-name>
 			<value>category</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Category_name</value>
+		</managed-property>				
+	</managed-bean>
+
+	<!-- ************ TAG ************** -->
+	<managed-bean>
+		<managed-bean-name>tag</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.Tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tag</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Tag_name</value>
+		</managed-property>				
 	</managed-bean>
 	
 	<!-- ************ RELATIONSHIP ************** -->
@@ -159,10 +188,6 @@
 		<managed-bean-name>documentManager</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.registry.controller.DocumentManager</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>formTemplate</property-name>
-			<value>/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml</value>
-		</managed-property>
 	</managed-bean>
 	
 	<!-- **** CORPORATE IDENTITY **** -->
@@ -192,10 +217,6 @@
 			<value>corporateIdentityAttach</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
-		</managed-property>
-		<managed-property>
 			<property-name>type</property-name>
 			<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
 		</managed-property>
@@ -206,6 +227,10 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -222,6 +247,7 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{corporateIdentityAttachControllerListener}</value> 
 				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -229,7 +255,7 @@
 	<managed-bean>
 		<managed-bean-name>corporateIdentityAttachControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.registry.controller.event.RegistryAttachControllerListener
+			com.code.aon.ui.registry.controller.event.CorporateIdentityControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -242,6 +268,12 @@
 			<property-name>aliasName</property-name>
 			<value>RegistryAttachment_scope_id</value>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>corporateIdentitySearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.CorporateIdentitySearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -263,6 +295,55 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	</managed-bean>
+
+	<!-- ************ BATCH DOCUMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>batchDocument</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.BatchDocument</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>batchDocument</value>
+		</managed-property>		
+	</managed-bean>	
+
+	<!-- **** DOCUMENT GLOBAL SEARCH **** --> 
+	<managed-bean>
+		<managed-bean-name>documentGlobal</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.DocumentGlobalController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentGlobal</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{documentGlobalSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>documentGlobalSearch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.event.DocumentGlobalSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ========================================================== -->
@@ -402,19 +483,27 @@
 		</navigation-case>
 	</navigation-rule>	
 
+	<!-- =================== Tag ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tag_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/tag/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	<!-- =================== Corporate Identity Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>corporateIdentityAttach_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>corporateIdentityAttach_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/corporate.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>corporateIdentityAttach_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/search.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>corporateIdentity_predefined</from-outcome>
-			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/predefined.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>corporateIdentity_fax</from-outcome>
@@ -433,5 +522,33 @@
 			<to-view-id>/com/code/aon/ui/registry/facelet/corporateIdentity/receipt.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Batch Document ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>batchDocument_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/batchDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Document Global Search ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>documentGlobal_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentGlobal/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>documentGlobal_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/registry/facelet/documentGlobal/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 		
 </faces-config>

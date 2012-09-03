@@ -6,27 +6,24 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j">
 
-	<ui:define name="content">
-			<ui:include src="/com/code/aon/ui/stat/facelet/generic/commercialStatList.xhtml">
-				<ui:param name="statController" value="#{commercialStat}" />
-				<ui:param name="statModel" value="#{commercialStat.yearStatModel}" />
-				<ui:param name="categoryLabel" value="#{statBundle.stat_seller}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_menu_commercial_seller}" />
-				<aon:methodParam name="backAction" value="commercial_seller_stat_search" />
-				<aon:methodParam name="goAction" value="summary_stats_year"/>
-				<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
-				<aon:methodParam name="backMethod" value="" type="actionListener" />
-				<ui:param name="paramName" value="year" />
-				<ui:param name="showLastColumn" value="true" />
-				<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
-				<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialSellerOfferStats}" type="actionListener" />
-				<aon:methodParam  name="offerFacelet" value="offers_list" />
-				<ui:param name="reportKeyParam" value="commercialStatsList" />
-				<ui:param name="reportGraphKeyParam" value="commercialStatsGraph" />
-			</ui:include>
+	<ui:include src="/com/code/aon/ui/stat/facelet/generic/commercialStatList.xhtml">
+		<ui:param name="statController" value="#{commercialStat}" />
+		<ui:param name="statModel" value="#{commercialStat.yearStatModel}" />
+		<ui:param name="categoryLabel" value="#{statBundle.stat_seller}" />
+		<ui:param name="windowTitle" value="#{statBundle.stat_menu_commercial_seller}" />
+		<aon:methodParam name="backAction" value="commercial_seller_stat_search" />
+		<aon:methodParam name="goAction" value="summary_stats_year"/>
+		<aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
+		<aon:methodParam name="backMethod" value="" type="actionListener" />
+		<ui:param name="paramName" value="year" />
+		<ui:param name="showLastColumn" value="true" />
+		<ui:param name="lastColumnName" value="#{statBundle.stat_show_offers}" />	
+		<aon:methodParam name="lastColumnAction" value="#{commercialStat.onCommercialSellerOfferStats}" type="actionListener" />
+		<aon:methodParam  name="offerFacelet" value="offers_list" />
+		<ui:param name="reportKeyParam" value="commercialStatsList" />
+		<ui:param name="reportGraphKeyParam" value="commercialStatsGraph" />
+	</ui:include>
 			
-	</ui:define>
 </ui:composition>

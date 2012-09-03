@@ -11,7 +11,6 @@
 		<aon:outputLabel value="#{pmsBundle.pms_hotel}" />
 		<aon:selectOneMenu id="Room_hotel"
 			value="#{roomSearch.hotel}" >
-			<f:selectItem itemLabel=" - " itemValue="#{null}" />
 			<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 			<a4j:support event="onchange" reRender="Room_item" ignoreDupResponses="true" />
 			<a4j:support event="oninputchanged" reRender="Room_item" ignoreDupResponses="true" />	

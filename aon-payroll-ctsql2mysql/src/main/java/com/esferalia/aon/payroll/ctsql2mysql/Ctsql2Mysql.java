@@ -7,8 +7,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,6 +74,7 @@ public class Ctsql2Mysql
 	
 	private Date fromDate;
 	private File imagesDir;
+	private List<String> cifs ;
 	
 
 	public Ctsql2Mysql(String args [] ) {
@@ -151,6 +155,15 @@ public class Ctsql2Mysql
     	OptionBuilder.withDescription(  "ruta del directorio de imagenes ( logos y firmas )" );
     	Option imagesDirOption = OptionBuilder.create( "images" );
 
+    	OptionBuilder.isRequired(false);
+    	OptionBuilder.hasArgs();
+    	OptionBuilder.withArgName( "cifs" );
+    	OptionBuilder.withValueSeparator(',');
+    	OptionBuilder.withType(String.class);
+    	OptionBuilder.withDescription(  "traspasar únicamente estas empresas" );
+    	Option enterprisesOption = OptionBuilder.create( "enterprises" );
+
+
     	options.addOption(helpOption);
     	options.addOption(dryRunOption);
     	options.addOption(ctsqlURLOption);
@@ -161,6 +174,7 @@ public class Ctsql2Mysql
     	options.addOption(mysqlPasswdOption);
     	options.addOption(fromDateOption);
     	options.addOption(imagesDirOption);
+    	options.addOption(enterprisesOption);
     	
     	CommandLineParser parser = new PosixParser();   
 
@@ -173,6 +187,7 @@ public class Ctsql2Mysql
 	        	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
 	        	return false;
 	        }
+
 
             ctsqlURL = line.getOptionValue(ctsqlURLOption.getOpt());
             ctsqlUser = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");
@@ -194,6 +209,13 @@ public class Ctsql2Mysql
             	imagesDir = new File(imagesDirPath);
             }
 
+            String enterprises [ ] = line.getOptionValues(enterprisesOption.getOpt());
+            if ( enterprises != null ) { 
+            	cifs = Arrays.asList(enterprises);
+	        }
+
+            
+            
 		} catch (Exception e) {
         	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
 		}
@@ -256,11 +278,12 @@ public class Ctsql2Mysql
 	        
 	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
 	        
+	        mysqlWriter.setCifs(cifs);
 	        mysqlWriter.setFromDate(fromDate);
 	        mysqlWriter.setImagesDir(imagesDir);
 	        
 	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
-	        mysqlWriter.writeAll(ctsqlReader);
+	        mysqlWriter.write(ctsqlReader);
 	        
 	        if ( !dryRun ) {
 	        	mysqlConnection.commit(); 

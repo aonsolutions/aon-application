@@ -27,7 +27,7 @@
 					onmouseover="disableRowSelector();"
 					onmouseout="enableRowSelector();"				
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
-					reRender="#{rowSelectorReRender}" >
+					rendered="#{selectButtonRendered}" reRender="#{rowSelectorReRender}" >
 				</aon:commandLink>
 				<f:facet name="footer">
 					<ui:insert name="selectFooterContent"/>
@@ -75,6 +75,8 @@
 					}
 	    		})" />
 	</c:if>
+
+	<ui:insert name="additionalDataTableContent"/>
 
 	<c:if test="#{showDataScroller}">
 		<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" oncomplete="#{dataTableId}FocusFirst();" />

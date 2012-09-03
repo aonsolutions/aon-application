@@ -75,6 +75,8 @@
 		<!-- AON-FISCAL Mapping files -->	
 		<mapping class="com.code.aon.fiscal.Mod347"/>
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
+		<mapping class="com.code.aon.fiscal.Mod349"/>
+		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
 		<mapping class="com.code.aon.fiscal.ProfessionalRetention"/>
 		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.RentingDetail"/>
@@ -155,6 +157,7 @@
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
@@ -163,6 +166,7 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
+		<mapping class="com.code.aon.registry.Tag"/>		
 	</session-factory>
 
 </hibernate-configuration>

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,10 +36,9 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	
 	// --------------------------------------------------------------
-	private Date		fromDate = null;		
-	private File		imagesDir = null;
-	
-	
+	private List<String>	cifs = null;
+	private Date			fromDate = null;		
+	private File			imagesDir = null;
 
 	// --------------------------------------------------------------
 	
@@ -46,6 +46,11 @@ public class MysqlDB extends DefaultMysqlDB{
 		super(mysqlConnection);
 	}
 	
+	public void setCifs(List<String> cifs) {
+		this.cifs = cifs;
+	}
+	
+
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;
 	}
@@ -53,7 +58,14 @@ public class MysqlDB extends DefaultMysqlDB{
 	public void setImagesDir(File imagesDir) {
 		this.imagesDir = imagesDir;
 	}
-
+	
+	public void write(CtsqlDB ctsqlReader) throws SQLException {
+		if ( cifs != null && !cifs.isEmpty() ) 
+			writeLazy(ctsqlReader);
+		else 
+			writeAll(ctsqlReader);
+	}
+	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		start();
 
@@ -106,6 +118,55 @@ public class MysqlDB extends DefaultMysqlDB{
 	
 	
 	
+	public void writeLazy(CtsqlDB ctsqlReader) throws SQLException {
+		start();
+
+		MyPerson myPerson = 
+			new LazyMyPerson(this);
+		MyConcept myConcept = 
+			new LazyMyConcept(this);
+		MyAgreement myAgreement = 
+			new LazyMyAgreement(this, 
+					myConcept, fromDate); 
+		MyHoliday myHoliday =
+			new MyHoliday(this, 
+						"Aplicación Total");
+		MyCalendar myCalendar = 
+			new LazyMyCalendar(this, 
+					myHoliday);
+		MyEnterprise myEnterprise = 
+			new LazyMyEnterprise(this, 
+					myPerson,
+					myConcept,
+					myCalendar,
+					myAgreement,
+					imagesDir,
+					fromDate,
+					cifs);
+		
+		MyFsProfRetention myFsProfRetention = 
+			new MyFsProfRetention(this, 
+					myEnterprise, 
+					fromDate);
+		
+		ctsqlReader.visitPais(this);
+		ctsqlReader.visitTipdoc(this);
+		ctsqlReader.visit(myHoliday);
+		
+		ctsqlReader.visit(myPerson);
+		ctsqlReader.visit(myConcept);
+		ctsqlReader.visit(myAgreement);
+		ctsqlReader.visit(myCalendar);
+
+		ctsqlReader.visit(myEnterprise);
+
+		ctsqlReader.visit(myFsProfRetention);
+		
+		finish();
+		//ctsqlReader.visit(new MyTraverse());
+	}
+	
+
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		
 		// create the command line parser

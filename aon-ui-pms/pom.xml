@@ -32,7 +32,7 @@
 				<dependencies>
 					<dependency>
 						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>jasperreports</artifactId>
+						<artifactId>${jasperReportsArtifact}</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
 					<dependency>
@@ -103,6 +103,12 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.finance</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

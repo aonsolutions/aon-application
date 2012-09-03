@@ -12,70 +12,50 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
-				<ui:param name="skipResetButton" value="#{!adminMain.userManagement}" />
+				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:define name="searchContent">
 		
-					<aon:outputLabel for="DomainUser_uid"
+					<aon:outputLabel for="User_login"
 						value="#{bundle.aon_login}" />
-					<aon:inputText id="DomainUser_uid" size="80"
+					<aon:inputText id="User_login" size="80"
 						valueChangeListener="#{controller.addExpression}" />
 		
-					<aon:outputLabel for="DomainUser_outlookName"
+					<aon:outputLabel for="User_name"
 						value="#{bundle.aon_name}" />
-					<aon:inputText id="DomainUser_outlookName" size="80"
+					<aon:inputText id="User_name" size="80"
 						maxlength="64" valueChangeListener="#{controller.addExpression}" />
 
-					<aon:outputLabel for="DomainUser_surname"
-						value="#{bundle.aon_surname}" />
-					<aon:inputText id="DomainUser_surname" size="80"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_active"
+					<aon:outputLabel for="User_active"
 						value="#{configBundle.config_user_active}" />
-					<aon:selectOneMenu id="DomainUser_active"
+					<aon:selectOneMenu id="User_active"
 						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-"	itemValue="#{null}" />
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="TRUE" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="FALSE" />
+						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="DomainUser_displayName"
-						value="#{bundle.aon_displayName}" />
-					<aon:inputText id="DomainUser_displayName" size="80"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_organization"
-						value="#{bundle.aon_organization}" />
-					<aon:inputText id="DomainUser_organization" size="80"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_email"
-						value="#{bundle.aon_email}" />
-					<aon:inputText id="DomainUser_email" size="40"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_postalCode"
-						value="#{bundle.aon_postal_code}" />
-					<aon:inputText id="DomainUser_postalCode" size="80"
-						maxlength="128" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_outlookCity"
-						value="#{bundle.aon_city}" />
-					<aon:inputText id="DomainUser_outlookCity" size="25"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="DomainUser_state"
-						value="#{bundle.aon_state}" />
-					<aon:inputText id="DomainUser_state" size="25"
-						maxlength="64" valueChangeListener="#{controller.addExpression}" />		
-						
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{domainUserSearch.enterprise}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+								
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+						<ui:param name="lookupBean" value="#{registryLookup}" />
+						<ui:param name="lookupTo" value="#{domainUserSearch.registry}" />
+						<ui:param name="lookupLabel" value="#{bundle.aon_entity}"/>
+						<ui:param name="skipGoToButton" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+								
 				</ui:define>
 			</ui:decorate>
 			
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 	</ui:define>
 </ui:composition>

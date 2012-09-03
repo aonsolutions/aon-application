@@ -1,12 +1,15 @@
 package com.code.aon.ui.audit.controller;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.el.MethodExpression;
 import javax.faces.component.UICommand;
@@ -15,6 +18,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +36,14 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.common.role.IAonRole;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
@@ -49,9 +56,10 @@ public class ActionDeniedController implements IAuditConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActionDeniedController.class);
 	
-	private final static String UTILITIES_CATEGORY = "utilities";
+	private final static String ENTERPRISE_CATEGORY = "enterprise";
+	private final static String CONFIGURATION_CATEGORY = "configuration";
 	
-	private final static String[] SKIP_CATEGORIES = new String[]{UTILITIES_CATEGORY};
+	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY,CONFIGURATION_CATEGORY};
 	
 	private Map<String,ApplicationOption> deniedActionsMap;
 	
@@ -67,6 +75,10 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	private IControllerListener listener;
 	
+	private FakeMap skipManagedBean;
+	
+	private Set<String> enabledManagedBeans;
+	
 	public ActionDeniedController() {
 		User user = UserUtils.getInstance().getLoggedUser();
 		initDeniedModules(user);
@@ -77,6 +89,7 @@ public class ActionDeniedController implements IAuditConstants {
 		if ( AonUtil.isSkipLdap() ) {
 			this.listener = new UserLoookupListener();	
 		}
+		initEnabledManagedBeans();
 	}
 
 	private AuditController getAuditController() {
@@ -113,6 +126,10 @@ public class ActionDeniedController implements IAuditConstants {
 
 	public void setSelected(List<ApplicationOption> selected) {
 		this.selected = selected;
+	}
+	
+	public boolean isDeniedModule( String name ) {
+		return this.deniedModulesMap.containsKey(name);
 	}
 	
 	public void accept( ActionEvent event ) {
@@ -158,15 +175,27 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 		return null;		
 	}
-
+	
 	private Map<String,Module> getEnabledModules( User user ) {
 		Map<String,Module> enabledModules = new HashMap<String, Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
-			Integer da = AdminUtil.getDomainApplication(user.getDomain(), getAuditController().getApplication().getId());
-			String filed = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
-			criteria.addEqualExpression( filed, da );
+			criteria.setSkipDomainFilter(true);
+			Integer appId = getAuditController().getApplication().getId();
+			Integer domainId = DomainManager.getCurrentDomain();
+			Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);
+			String alias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
+			Expression expression = ExpressionUtilities.getEqualExpression(alias, domainApplication);
+	    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+	    	if ( parentDomainId != null ) {
+	    		domainApplication = AdminUtil.getDomainApplication(parentDomainId, appId);
+	    		if ( domainApplication != null ) {
+		    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, domainApplication);
+		    		expression = ExpressionUtilities.getOrExpression(expression, expr2);	    			
+	    		}
+	    	}			
+			criteria.addExpression(expression);
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
 				enabledModules.put( dam.getModule().getName(), dam.getModule() );
@@ -225,17 +254,22 @@ public class ActionDeniedController implements IAuditConstants {
 		if ( event.getNewValue() == null ) {
 			reset();
 		} else {
-			this.deniedActions = getDeniedActions( (User) event.getNewValue() );
-			List<ApplicationOption> deniedList = getOptions( this.deniedActions );
-			this.options = new ArrayList<ApplicationOption>( getOptions(true) );
-			this.selected = new LinkedList<ApplicationOption>();
-			for( ApplicationOption option : this.options ) {
-				if ( deniedList.contains(option) ) {
-					this.selected.add(option);
-				}
-			}
-			this.options.removeAll(deniedList);
+			init( (User) event.getNewValue() );
 		}
+	}
+	
+	public void init( User user ) {
+		setUser(user);
+		this.deniedActions = getDeniedActions( getUser() );
+		List<ApplicationOption> deniedList = getOptions( this.deniedActions );
+		this.options = new ArrayList<ApplicationOption>( getOptions(true) );
+		this.selected = new LinkedList<ApplicationOption>();
+		for( ApplicationOption option : this.options ) {
+			if ( deniedList.contains(option) ) {
+				this.selected.add(option);
+			}
+		}
+		this.options.removeAll(deniedList);		
 	}
 	
 	private String getAction( UICommand command ) {
@@ -281,7 +315,7 @@ public class ActionDeniedController implements IAuditConstants {
 	public void renderedModule( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = component.getId();
-			if ( this.deniedModulesMap.containsKey(id) ) {
+			if ( isDeniedModule(id) ) {
 				component.setRendered(false);
 			}				
 		}
@@ -301,7 +335,7 @@ public class ActionDeniedController implements IAuditConstants {
 	private Map<String,Module> getDeniedModules() {
 		Map<String,Module> deniedModules = new HashMap<String, Module>();
 		try {			
-			Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain());
+			Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal(), DomainManager.getCurrentDomain());
 			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
 			if ( (profiles != null) && (!profiles.isEmpty()) ) {
 				for( Integer profile : profiles ) {
@@ -335,6 +369,9 @@ public class ActionDeniedController implements IAuditConstants {
 					}					
 				}
 			}
+			if (! isDeniedModule(Module.DOCUMENT.getName()) ) {
+				AonUtil.getRoleManager().setUserInRole(IAonRole.DOCUMENT, true);
+			}
 		}
 	}
 	
@@ -364,6 +401,35 @@ public class ActionDeniedController implements IAuditConstants {
 			}				
 		}
 		return list;
-	}		
+	}
+	
+	public void initEnabledManagedBeans() {
+		this.skipManagedBean = new FakeMap();
+		this.enabledManagedBeans = new HashSet<String>();
+		List<ApplicationOption> options = new ArrayList<ApplicationOption>( getOptions(false) );
+		options.removeAll(this.deniedActionsMap.values());		
+		for( ApplicationOption option : options ) {
+			String managedBean = StringUtils.substringBefore(option.getAction(), "-");
+			this.enabledManagedBeans.add(StringUtils.substringBefore(managedBean, "_"));
+		}
+	}
+
+	public FakeMap getSkip() {
+		return skipManagedBean;
+	}
+	
+	public class FakeMap extends AbstractMap<String,Boolean> {
+		
+		@Override
+		public Boolean get(Object key) {
+			return ! enabledManagedBeans.contains(key);
+		}
+
+		@Override
+		public Set<Entry<String, Boolean>> entrySet() {
+			return null;
+		}
+		
+	}
 	
 }

@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.common.controller.DomainResolver;
@@ -56,7 +55,7 @@ public class MailAccountController extends LdapBasicController implements IMailA
 	
 	@Override
 	protected void initDAO() {
-		AuthPrincipal auth = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal auth = AonUtil.getAuthPrincipal();
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 
@@ -122,7 +121,7 @@ public class MailAccountController extends LdapBasicController implements IMailA
 	}	
 
 	private List<SelectItem> getUserMailAccounts() {
-		AuthPrincipal auth = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal auth = AonUtil.getAuthPrincipal();
 		Name dn = NameResolver.getUserDN(auth.getDomain(), auth.getShortName());
 		return getMailAccounts(dn, false);
 	}

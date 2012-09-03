@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="posFinanceList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posFinance_module}" />
+				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="controller" value="#{posFinance}" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton title="#{bundle.aon_check_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						value="#{bundle.aon_check_all}"
+						rendered="#{posFinance.model.rowCount > 0}"
+						actionListener="#{posFinance.checkAll}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						value="#{bundle.aon_uncheck_all}"
+						rendered="#{posFinance.model.rowCount > 0}"
+						actionListener="#{posFinance.checkNone}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+			     	<aon:commandButton title="#{financeBundle.finance_add_batch}"
+						styleClass="aon-finding-toolbar-item aon-icon-newFolder"
+						value="#{financeBundle.finance_to_batch}"
+						rendered="#{posFinance.checkedCount > 0}"
+						actionListener="#{posFinance.onFinanceBatchShow}" 
+						reRender="showFinanceBatchWindow">
+						<f:setPropertyActionListener target="#{posFinance.showFinanceBatchWindow}"
+							value="#{true}" />
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panel rendered="#{posFinance.model.rowCount > 0}">
+					<aon:outputText value="#{pmsBundle.pms_hotel}:" />
+					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
+						value="#{posFinanceSearch.hotel.workPlace.description}" />
+					<aon:outputText styleClass="aon-margin-left"
+						value="#{configBundle.config_pay_method}:" />
+					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" 
+						value="#{posFinanceSearch.payMethod.name}" />
+					<aon:outputText styleClass="aon-margin-left"
+						value="#{bundle.aon_amount} #{pmsBundle.pms_selected}:" />
+					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold"
+						value="#{posFinance.selectedAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:panel>
+
+				<aon:div id="financeDataDiv">
+					<aon:dataTable id="financeData" value="#{posFinance.model}"
+						var="to" rows="20" rendered="#{posFinance.model.rowCount > 0}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
+							aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{posFinance.checkedCount}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Included_Row_checked"
+								value="#{posFinance.rowChecked}"
+								reRender="posFinanceList"
+								valueChangeListener="#{posFinance.rowSelected}" />	
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_shift_date}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.startTime}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_pos}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.pos.name}"/>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_shift}" />
+							</f:facet>
+							<aon:outputText value="#{posFinance.financePosShift.shift}"/>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.totalAmount}" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_document_number}" />
+							</f:facet>
+							<aon:outputText styleClass="aon-nowrap" 
+								value="#{to.documentNumber}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_finance_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.dueDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{pmsBundle.pms_source}" />
+							</f:facet>
+							<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.invoice.service and !to.invoice.advance}" />
+							<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.invoice.service}" />
+							<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.invoice.advance}" />
+							<aon:commandLink id="reservationLink" immediate="true"
+								styleClass="aon-button-goto"
+								style="padding-right: 20px;" 
+								value="&#160;"  
+								rendered="#{!to.invoice.service}" 
+								actionListener="#{posFinance.onLoadReservation}"
+								action="reservation_form"
+								reRender="aonContent">
+							</aon:commandLink>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{financeBundle.finance_invoice}"
+								rendered="#{!to.invoice.rectifier and !to.invoice.rectified}" />
+							<aon:div rendered="#{to.invoice.rectifier}">
+								<aon:outputText value="#{to.invoice.rectificationType}" />
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+									<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message}" styleClass="aon-bold aon-label-error">
+										<f:param value="#{to.invoice.rectificationInvoice.referenceCode}" />
+									</aon:outputFormat>
+								</rich:toolTip>
+							</aon:div>
+							<aon:div rendered="#{to.invoice.rectified}">
+								<aon:outputText value="#{to.invoice.rectificationType}" />
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+									<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message}" styleClass="aon-bold">
+										<f:param value="#{to.invoice.rectificationInvoicesString}" />
+									</aon:outputFormat>
+								</rich:toolTip>
+							</aon:div>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{customerBundle.customer_customer}" />
+							</f:facet>
+							<aon:outputText value="#{to.registryName}" />
+						</aon:column>
+				
+					</aon:dataTable>
+					
+					<aon:dataScroller2 for="financeData" showNote="true" />
+				</aon:div>
+				
+			</aon:div>
+
+		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/pms/facelet/posFinance/batchModal.xhtml">
+			<ui:param name="controller" value="#{posFinance}" />
+		</ui:include>
+		
+	</ui:define>
+</ui:composition>

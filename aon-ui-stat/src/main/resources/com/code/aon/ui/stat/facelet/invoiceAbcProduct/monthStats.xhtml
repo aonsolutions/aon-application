@@ -6,28 +6,21 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
-	template="/facelet/templates/aon.ui.content.xhtml">
-
-	<ui:define name="content">
-	 
+	xmlns:a4j="http://richfaces.org/a4j">
         
-           <ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
-				<ui:param name="statController" value="#{stat}" />
-				<ui:param name="statModel" value="#{stat.abcStatModel}" />
-				<aon:methodParam name="backAction" value="abc_product_stats"/>
-				<ui:param name="categoryLabel" value="#{statBundle.stat_month}" />
-				<ui:param name="windowTitle" value="#{statBundle.stat_abc_product}" />
-				<aon:methodParam name="goAction" value="customer_month_stats"/>
-			    <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
-				<ui:param name="paramName" value="segment" />
-			     <ui:param name="showLastColumn" value="false" />
-				<ui:param name="reportKeyParam" value="abcStatsList" />
-				<ui:param name="reportGraphKeyParam" value="abcStatsGraph" />
-				<aon:methodParam name="backMethod" value="#{stat.onProductAbcStats}" type="actionListener" />
-				
-			</ui:include>		
+	<ui:include src="/com/code/aon/ui/stat/facelet/generic/statList.xhtml">
+		<ui:param name="statController" value="#{stat}" />
+		<ui:param name="statModel" value="#{stat.abcStatModel}" />
+		<aon:methodParam name="backAction" value="abc_product_stats"/>
+		<ui:param name="categoryLabel" value="#{statBundle.stat_month}" />
+		<ui:param name="windowTitle" value="#{statBundle.stat_abc_product}" />
+		<aon:methodParam name="goAction" value="customer_month_stats"/>
+	    <aon:methodParam name="goMethod" value="#{stat.onNoAction}" type="actionListener" />
+		<ui:param name="paramName" value="segment" />
+	    <ui:param name="showLastColumn" value="false" />
+		<ui:param name="reportKeyParam" value="abcStatsList" />
+		<ui:param name="reportGraphKeyParam" value="abcStatsGraph" />
+		<aon:methodParam name="backMethod" value="#{stat.onProductAbcStats}" type="actionListener" />
+	</ui:include>		
        	
-		
-	</ui:define>
 </ui:composition>

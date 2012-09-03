@@ -6,6 +6,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -14,9 +15,9 @@ import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.enumeration.MediaType;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
-public class RegistrySearchListener extends ControllerSearchListener {
+public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	
@@ -24,7 +25,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 
 	private List<MediaType> mediaTypes;
 	
-	private List<GeoZone> geoZones;
+	private GeoZone[] geoZones;
 	
 	private List<String> segments;
 	
@@ -44,20 +45,19 @@ public class RegistrySearchListener extends ControllerSearchListener {
 		return mediaTypes.size();
 	}
 	
-	public List<GeoZone> getGeoZones() {
+	public GeoZone[] getGeoZones() {
 		if (geoZones == null) {
-			geoZones = new LinkedList<GeoZone>();
-			geoZones.add(EMPTY_GEOZONE);
+			geoZones = new GeoZone[]{EMPTY_GEOZONE};
 		}
 		return geoZones;
 	}
 
-	public void setGeoZones(List<GeoZone> geoZones) {
+	public void setGeoZones(GeoZone[] geoZones) {
 		this.geoZones = geoZones;
 	}
 
 	public int getGeoZonesSize() {
-		return geoZones.size();
+		return ArrayUtils.getLength(geoZones);
 	}
 	
 	public List<Integer> getGeoZonesIds() {
@@ -104,8 +104,7 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	protected void init() throws ManagerBeanException {
 		setMediaTypes(new LinkedList<MediaType>());
 		getMediaTypes().add(null);
-		setGeoZones(new LinkedList<GeoZone>());
-		getGeoZones().add(EMPTY_GEOZONE);
+		setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
 		setSegments(new LinkedList<String>());
 		getSegments().add(null);
 	}
@@ -146,15 +145,15 @@ public class RegistrySearchListener extends ControllerSearchListener {
 	}
 
 	public void onAddGeoZone(ActionEvent event) {
-		getGeoZones().add(EMPTY_GEOZONE);
+		this.geoZones = (GeoZone[]) ArrayUtils.add(this.geoZones, EMPTY_GEOZONE);
 	}
 	
 	public void onRemoveGeoZone(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getGeoZones().remove(index);
-		if (getGeoZones().isEmpty()) {
-			getGeoZones().add(EMPTY_GEOZONE);
+		this.geoZones = (GeoZone[]) ArrayUtils.remove(this.geoZones, index);
+		if ( ArrayUtils.isEmpty(this.geoZones) ) {
+			setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
 		}
 	}	
 	

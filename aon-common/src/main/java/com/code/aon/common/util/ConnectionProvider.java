@@ -1,8 +1,8 @@
 package com.code.aon.common.util;
 
+import static com.code.aon.common.util.BeanServerUtil.LDAP_SERVICE;
 import static com.code.aon.common.util.BeanServerUtil.MAIN_DEPLOYER;
 
-import java.io.FileInputStream;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.code.aon.jaas.auth.spi.db.Util;
 
 public class ConnectionProvider {
 
@@ -31,6 +29,18 @@ public class ConnectionProvider {
 	 */
 	public static final String CONNECTION_METHOD_OLD_NAME = "getDSMDProperties";
 	
+	private static Properties convertProperties( Properties properties ) {
+		if ( properties != null ) {
+			Properties hibernateProperties = new Properties();
+			hibernateProperties.put(Environment.USER, properties.get("username"));
+			hibernateProperties.put(Environment.PASS, properties.get("password"));
+			hibernateProperties.put(Environment.URL, properties.get("url"));
+			hibernateProperties.put(Environment.DRIVER, properties.get("driverClassName"));
+			return hibernateProperties;
+		}
+		return null;
+	}	
+
 	private static BasicPrincipal getBasicPrincipal( Principal principal ) {
 		String name = principal.getName();
 		String domain = StringUtils.substringBetween(name, "@", "/");
@@ -50,18 +60,29 @@ public class ConnectionProvider {
     	BasicPrincipal bp = getBasicPrincipal(principal);	
     	MBeanServer server = BeanServerUtil.getMBeanServer();
     	Properties properties = getDBProperties(server, bp.getDomain(), bp.getApplication());
+    	if ( properties == null ) {
+    		properties = getDBProperties(server, principal);
+    	}
     	return properties;
     }
+    
+    private static Properties getDBProperties( MBeanServer server, Principal principal ) {
+		Object[] params = { principal };
+		String[] sig = { Principal.class.getName() }; 	
+		try {
+			Properties properties = (Properties) server.invoke( LDAP_SERVICE, CONNECTION_METHOD_OLD_NAME, params, sig );
+			return convertProperties(properties);
+		} catch (Throwable e) {
+			LOGGER.warn( e.getMessage(), e );
+		} 
+    	return null;
+    }    
     
     private static Properties getDBProperties( MBeanServer server, String domain, String application ) {
 		Object[] params = { domain, application };
 		String[] sig = { String.class.getName(), String.class.getName() }; 	
 		try {
-//			return (Properties) server.invoke( MAIN_DEPLOYER, CONNECTION_METHOD_NAME, params, sig );
-			Properties props = new Properties();
-			props.load(new FileInputStream("/usr/share/tomcat6/conf/deployed.properties"));
-			Util util = new Util(props);
-			return util.getConnectionProperties(domain);
+			return (Properties) server.invoke( MAIN_DEPLOYER, CONNECTION_METHOD_NAME, params, sig );
 		} catch (Throwable e) {
 			LOGGER.warn( e.getMessage(), e );
 		} 

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputLabel for="ProjectCommercial_id"
@@ -32,10 +33,12 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 
-	<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-		<ui:param name="lookupTo" value="#{controller.to.target}" />
-		<ui:param name="idRequired" value="#{true}" />
-	</ui:include>
+	<c:if test="#{!skipTarget}">
+		<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{controller.to.target}" />
+			<ui:param name="idRequired" value="#{true}" />
+		</ui:include>
+	</c:if>
 	
 	<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.seller}" />

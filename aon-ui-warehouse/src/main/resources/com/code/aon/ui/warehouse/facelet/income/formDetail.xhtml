@@ -15,7 +15,7 @@
 		<ui:param name="rows" value="0" />
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
-		<ui:param name="skipResetButton" value="#{!income.pending}" />
+		<ui:param name="skipResetButton" value="#{!income.pending or (aonRole.warehouseOperator and !aonRole.purchaseOperator)}" />
 		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
@@ -68,6 +68,8 @@
 				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
+					<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="skipSuggestText" value="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="IncomeDetail_description" />
@@ -98,6 +100,8 @@
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{incomeDetail.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
+							<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipSuggestText" value="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}" />
 							<ui:param name="lookupInputOnFocus" value="IncomeDetail_description-New" />
@@ -152,16 +156,16 @@
 					<aon:outputLabel for="IncomeDetail_price" value="#{bundle.aon_price}" />
 				</f:facet>
 				<aon:outputText value="#{to.price}"
-					rendered="#{formList}">
+					rendered="#{formList or !aonRole.purchaseOperator}">
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="IncomeDetail_price" 
-					value="#{controller.to.price}" rendered="#{formEdit}"
+					value="#{controller.to.price}" rendered="#{formEdit and aonRole.purchaseOperator}"
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
 					<aon:inputText id="IncomeDetail_price-New" 
-						value="#{controller.to.price}" rendered="#{formNew}"
+						value="#{controller.to.price}" rendered="#{formNew and aonRole.purchaseOperator}"
 						reRender="IncomeDetail_amount-New" 
 						required="true" size="5" />
 				</f:facet>
@@ -172,16 +176,16 @@
 					<aon:outputLabel for="IncomeDetail_discount" value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}"
-					rendered="#{formList}">
+					rendered="#{formList or !aonRole.purchaseOperator}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="IncomeDetail_discount" 
-					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
+					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit and aonRole.purchaseOperator}"
 					reRender="IncomeDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
 					<aon:inputText id="IncomeDetail_discount-New" 
-						value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew}"
+						value="#{controller.to.discountExpression.discountExpr}" rendered="#{formNew and aonRole.purchaseOperator}"
 						reRender="IncomeDetail_amount-New" 
 						required="true" size="5" />
 				</f:facet>

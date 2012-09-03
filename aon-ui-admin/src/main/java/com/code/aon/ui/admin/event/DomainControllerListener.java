@@ -13,23 +13,15 @@ public class DomainControllerListener extends ControllerAdapter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainControllerListener.class);
 
 	@Override
-	public void afterBeanSelected(ControllerEvent event)
+	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
 		try {		
-			dc.updateParentDomains();
-			dc.initWebmail( null );
+			dc.saveApplications();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
-	}
-	
-	@Override
-	public void afterEditSearch(ControllerEvent event)
-			throws ControllerListenerException {
-		DomainController dc = (DomainController) event.getController();
-		dc.updateParentDomains();
-	}
+	}	
 
 }

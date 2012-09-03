@@ -40,7 +40,7 @@
 			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
-				<value>/css/aio.css</value>
+				<value>#{aonResource.resolveLocal['/css/aio.css']}</value>
 			</list-entries>
 		</managed-property>
 	   <managed-property>
@@ -66,6 +66,10 @@
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_enterprise</from-outcome>
+			<to-view-id>/facelet/menu/enterprise.xhtml</to-view-id> 
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>menu_marketing</from-outcome>
 			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
@@ -128,8 +132,16 @@
 			<to-view-id>/facelet/menu/document.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_utilities</from-outcome>
-			<to-view-id>/facelet/menu/utilities.xhtml</to-view-id> 
+			<from-outcome>menu_configuration</from-outcome>
+			<to-view-id>/facelet/menu/configuration.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_garage</from-outcome>
+			<to-view-id>/facelet/menu/garage.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_academy</from-outcome>
+			<to-view-id>/facelet/menu/academy.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
 	
@@ -186,6 +198,10 @@
 			<value>#{customerAccount}</value>
 			<!-- aon-ui-project-->
 			<value>#{customerProjectListener}</value>
+			<!-- aon-ui-academy-->
+			<value>#{customerAbsenceChildListener}</value>
+			<value>#{customerAlumnLoanChildListener}</value>
+			<value>#{customerAlumnCourseChildListener}</value>
 		</list-entries>
 	</managed-bean>
 
@@ -244,6 +260,7 @@
 			<value>#{companyCertificateChildListener}</value>
 			<value>#{enterpriseActivityChildListener}</value>
 			<value>#{payrollWorkPlaceChildListener}</value>
+			<value>#{companyImagesChildListener}</value>
 			<!--  aon.ui.registry -->
 			<value>#{corporateIdentityChildListener}</value>			
 		</list-entries>
@@ -317,60 +334,19 @@
 			<value>#{enterpriseSearchEx}</value>			
 		</list-entries>
 	</managed-bean>
+	
+	<!-- ************ OFFER LISTENERS ******************* -->
+	<managed-bean>
+		<managed-bean-name>offerOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.audabridge -->
+			<value>#{audabridgeOfferControllerListener}</value>
+		</list-entries>
+	</managed-bean>	
 
-	<!-- Managed Bean que sustituyen a target y targetSearch -->
-	<!-- Hacen falta para se hagan busquedas avanzadas -->
-	<managed-bean>
-		<managed-bean-name>target</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.MarketingTargetController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.marketing.MarketingTarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>target</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Target_registry_name</value>
-		</managed-property>				
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{targetControllerListener}</value>
-				<value>#{targetSearch}</value>
-				<value>#{targetForm}</value>
-				<value>#{targetMediaListener}</value>				
-				<value>#{targetAddressListener}</value>
-				<value>#{targetRPayMethodChildListener}</value>				
-				<value>#{targetRBankChildListener}</value>
-				<value>#{targetNoteChildListener}</value>
-				<value>#{targetSegmentListener}</value>
-				<value>#{targetAddInfoListener}</value>	
-				<value>#{targetRAttachChildListener}</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>optionalListenerClasses</property-name>
-			<value>#{targetOptionalListeners}</value>
-		</managed-property>	
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>targetSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.event.MarketingTargetSearchListener
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!--  **** ROLE MANAGER DB **** -->
 	<managed-bean>
 		<managed-bean-name>aonRole</managed-bean-name>
@@ -379,6 +355,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************* CHANGE PASSWORD DB ***************** -->
+	<managed-bean>
+		<managed-bean-name>changePassword</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ChangeDBPasswordController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
 		
 	<managed-bean>
 		<managed-bean-name>domainSwitcherListeners</managed-bean-name>

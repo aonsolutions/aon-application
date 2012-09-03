@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -53,7 +52,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void startWebmail() {
 		try {
-			AuthPrincipal mailUser = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal mailUser = AonUtil.getAuthPrincipal();
 			if (mailUser != null) {
 	    		initDefault(mailUser);
 	    		initConfig(mailUser);
@@ -94,7 +93,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 
 	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		IMailAccount mailAccount = mailConfig.getDefaultMailAccount();
+		IMailAccount mailAccount = mailConfig.getDefaultMailAccount(false);
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{
@@ -211,10 +210,6 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		}
 		return null;
 	}
-	
-	public static boolean isConnectable() {
-		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
-	}	
 	
 	public void poll( ActionEvent event ) {
 		LOGGER.debug( "Connection ready: ", isReady() );

@@ -12,5 +12,4 @@ public class Hotel extends HotelDB implements IScopable {
 
 	private static final long serialVersionUID = 1L;
 
-
 }

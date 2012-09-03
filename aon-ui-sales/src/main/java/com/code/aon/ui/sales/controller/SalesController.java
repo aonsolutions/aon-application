@@ -1,5 +1,7 @@
 package com.code.aon.ui.sales.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
@@ -53,8 +55,8 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.sales.util.SalesEmailUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -193,6 +195,15 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
+	}
+	
+	public Double getSalesTotalAmount() throws ManagerBeanException {
+		double salesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Sales s = (Sales) to;
+			salesTotalAmount += getSalesTotalPrice(s);
+		}
+		return salesTotalAmount;
 	}
 
 	public boolean isCustomerReadOnly() throws ManagerBeanException {
@@ -405,6 +416,10 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	public double getSalesTotalPrice() throws ManagerBeanException {
 		Sales sales = (Sales)this.getModel().getRowData();
+		return getSalesTotalPrice(sales);
+	}
+	
+	public double getSalesTotalPrice(Sales sales) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
 	}
 
@@ -517,14 +532,14 @@ public class SalesController extends BasicController implements ISalesConstants 
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			emailUtil.initMessageController(messageController, (Sales) getTo());
 			messageController.setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}	
 

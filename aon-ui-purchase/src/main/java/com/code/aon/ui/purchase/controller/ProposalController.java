@@ -64,14 +64,6 @@ public class ProposalController extends BasicController {
 		return list;
 	}
 	
-	private List<ITransferObject> getWorkplaceDepartments() throws ManagerBeanException {
-		IManagerBean wdBean = BeanManager.getManagerBean(WorkplaceDepartment.class);
-		Criteria wdCriteria = new Criteria();
-		wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), ((Proposal)getTo()).getWorkPlace().getId());
-		wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
-		return wdBean.getList(wdCriteria);
-	}
-	
 	public List<Integer> getDepartmentsItemIds() throws ManagerBeanException{
 		List<Integer> list = new LinkedList<Integer>();
 		Proposal proposal = ((Proposal)getTo()); 
@@ -81,12 +73,20 @@ public class ProposalController extends BasicController {
 				WorkplaceDepartment wd = (WorkplaceDepartment) to;
 				catalogueIds.add(wd.getCatalogue().getId());
 			}
+			if(catalogueIds.isEmpty()){
+				String msg = "El departamento se ha desactivado.";
+				AonUtil.addErrorMessage(msg);
+				catalogueIds.add(-1);
+			}
 			IManagerBean catalogueItemBean = BeanManager.getManagerBean(CatalogueItem.class);
 			Criteria deptCriteria = new Criteria();
 			deptCriteria.addInExpression(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueIds);
 			List<Integer> itemIds = new LinkedList<Integer>();
 			for (ITransferObject ito : catalogueItemBean.getList(deptCriteria)) {
 				itemIds.add(((CatalogueItem)ito).getItem().getId());
+			}
+			if(itemIds.isEmpty()){
+				itemIds.add(-1);
 			}
 			IManagerBean itemSupplierBean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria itemSupCriteria = new Criteria();
@@ -124,12 +124,22 @@ public class ProposalController extends BasicController {
 		return this.departmentItemFilter;
 	}
 	
+	private List<ITransferObject> getWorkplaceDepartments() throws ManagerBeanException {
+		return getWorkplaceDepartments((Proposal) getTo(), false);
+	}
+	
 	private List<ITransferObject> getWorkplaceDepartments(Proposal proposal){
+		return getWorkplaceDepartments(proposal, true);
+	}
+	private List<ITransferObject> getWorkplaceDepartments(Proposal proposal, boolean  filterDepartment){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), proposal.getWorkPlace().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID), proposal.getDepartment().getId());
+			if( filterDepartment){
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID), proposal.getDepartment().getId());
+			}
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
 			return bean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los productos";

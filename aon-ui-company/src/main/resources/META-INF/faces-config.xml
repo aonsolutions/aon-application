@@ -9,7 +9,7 @@
 			<var>companyBundle</var>
 		</resource-bundle>
 	</application>
-
+ 
 	<!-- ************** EXTERNAL COLLECTIONS (RELOCATE) ****************** -->
 	<managed-bean>
 		<managed-bean-name>companyCollections</managed-bean-name>
@@ -555,6 +555,10 @@
 			<value>companyImages</value>
 		</managed-property>
 		<managed-property>
+			<property-name>type</property-name>
+			<value>#{registryCollections.registryAttachmentTypes[1].value}</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
@@ -562,6 +566,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>company</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -834,16 +842,16 @@
 			<value>enterpriseMedia</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
-		</managed-property>
-		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>enterprise</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryMedia_mediaType,RegistryMedia_administrative desc,RegistryMedia_commercial desc,RegistryMedia_technical desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -1196,10 +1204,6 @@
 			<value>10</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
-		</managed-property>
-		<managed-property>
 			<property-name>type</property-name>
 			<value>#{registryCollections.registryAttachmentTypes[5].value}</value>
 		</managed-property>
@@ -1210,6 +1214,10 @@
 		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>enterprise</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>

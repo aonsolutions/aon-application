@@ -1,16 +1,25 @@
 package com.code.aon.jaas.vendor.jboss;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.management.ObjectName;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
+import com.code.aon.jaas.auth.spi.db.User;
+import com.code.aon.jaas.auth.spi.db.Util;
 import com.code.aon.jaas.client.ast.IOption;
 import com.code.aon.jaas.ldap.AuthInfo;
 import com.code.aon.jaas.ldap.SecurityLdap;
@@ -59,7 +68,6 @@ public class LdapLoginModule extends JBossLoginModule {
 	 * 
 	 * @param domain
 	 */
-	@SuppressWarnings("unchecked")
 	protected void load(String domain) {
 		SecurityLdap ldap;
 		try {
@@ -71,4 +79,56 @@ public class LdapLoginModule extends JBossLoginModule {
 		}
 	}
 
+	@Override
+	protected void validateLoggedUsers() throws LoginException {
+		super.validateLoggedUsers();
+		AuthPrincipal principal = (AuthPrincipal) getIdentity();
+		updatePrincipal(principal);
+	}
+	
+	private void updatePrincipal( AuthPrincipal principal ) {
+		Properties properties = null;
+		String domainName = principal.getDomain();
+		String applicationName = StringUtils.substringAfter( principal.getContext(), "/" );
+		try {
+			ObjectName oname = new ObjectName(this.objectName);
+			Object[] params = { domainName, applicationName };
+			String[] sig = { String.class.getName(), String.class.getName() };
+			properties = (Properties) getMBeanServer().invoke(oname, "getConnectionProperties", params, sig);
+		} catch (Throwable th) {
+			LOGGER.error( "Error getting connection properties", th );
+		}		
+		if ( properties != null ) {
+			Connection connection = null;
+			try {
+				Util dbUtil = new Util(properties);
+				connection = dbUtil.createConnection(null);
+				Integer domainId = dbUtil.getDomainId(domainName);
+				if ( domainId != null ) {
+					principal.setDomainId(domainId);
+				} else {
+					LOGGER.error("Domain {} not found", domainName);
+				}
+				User user = dbUtil.getUser(domainId, principal.getShortName());
+				if ( user != null ) {
+					principal.setUserId(user.getId());
+				} else {
+					LOGGER.error("User {} not found in domain {}", principal.getShortName(), domainId);
+				}
+				Integer applicationId = dbUtil.getApplicationId(applicationName);
+				if ( applicationId != null ) {
+					principal.setApplicationId(applicationId);
+				} else {
+					LOGGER.error("Application {} not found", applicationName);
+				}
+			} catch (SQLException ex) {
+				LOGGER.error("Query failed", ex);
+			} catch (ClassNotFoundException e) {
+				LOGGER.error("JDBC driver not found", e);
+			} finally {
+				DbUtils.closeQuietly(connection);
+			}
+		}
+	}
+	
 }

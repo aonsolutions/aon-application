@@ -4,11 +4,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -23,8 +26,9 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ProjectReservationRoom;
+import com.esferalia.aon.pms.enumeration.ReservationCheckStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
-import com.esferalia.aon.ui.pms.util.ReportUtils;
+import com.esferalia.aon.ui.pms.util.PmsReportManager;
 
 public class ReservationInOutController implements ICollectionProvider {
 	
@@ -33,9 +37,18 @@ public class ReservationInOutController implements ICollectionProvider {
 	private Date fromDate;
 	private Date toDate;
 	private Integer shortOption;
-	
+	private ReservationCheckStatus[] checkStatuses;
+
 	private DataModel model;
 	private List<ListItem> list;
+	
+	
+	public ReservationCheckStatus[] getCheckStatuses() {
+		return checkStatuses;
+	}
+	public void setCheckStatuses(ReservationCheckStatus[] checkStatuses) {
+		this.checkStatuses = checkStatuses;
+	}
 	
 	public List<ListItem> getList() {
 		return list;
@@ -79,10 +92,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-	public void onEditSearch(ActionEvent event) {
-		onInit(event);
-	}
-
+	
 	public void onSelect(ActionEvent event) {
 		ProjectReservationController controller = (ProjectReservationController) AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
 		controller.setBackAction(IPmsConstants.RESERVATION_IO_LIST_NAME);
@@ -104,7 +114,7 @@ public class ReservationInOutController implements ICollectionProvider {
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{
-		String select = ReportUtils.getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), shortOption);
+		String select = PmsReportManager.getInstance().getReservationInOutSQL(ReservationStatus.CANCELLED, getHotel(), isCheckin(), getCheckStatuses(), shortOption);
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createSQLQuery(select);
 		query.setDate("start", new java.sql.Date(getFromDate().getTime()));
@@ -119,6 +129,35 @@ public class ReservationInOutController implements ICollectionProvider {
 		}
 		setList(list);
 		setModel(new ListDataModel(getList()));
+	}
+	
+	public List<SelectItem> getAbbreviatedReservationCheckStatuses() {
+		LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for (ReservationCheckStatus status : ReservationCheckStatus.values()) {
+			String name = status.getName(locale);
+			if (status == ReservationCheckStatus.NO_CHECK) {
+				name = "No";
+				SelectItem item = new SelectItem(status, name);
+				list.add(item);
+			} else if (status == ReservationCheckStatus.CHECK_IN) {
+				name = "In";
+				SelectItem item = new SelectItem(status, name);
+				list.add(item);
+			} else if (status == ReservationCheckStatus.CHECK_OUT && !isCheckin()) {
+				name = "Out";
+				SelectItem item = new SelectItem(status, name);
+				list.add(item);
+			} 
+		}
+		if (isCheckin()) {
+			ReservationCheckStatus[] defaultCheckStatuses = {ReservationCheckStatus.NO_CHECK};
+			setCheckStatuses(defaultCheckStatuses);
+		} else {
+			ReservationCheckStatus[] defaultCheckStatuses = {ReservationCheckStatus.NO_CHECK, ReservationCheckStatus.CHECK_IN};
+			setCheckStatuses(defaultCheckStatuses);
+		}
+		return list;
 	}
 
 	@SuppressWarnings("rawtypes")

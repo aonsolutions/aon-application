@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="batchDocumentList">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{registryBundle.registry_batch_document}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
+				<ui:define name="toolbarContent">	
+					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
+						action="batchDocument_form"
+						actionListener="#{batchDocument.onAddDocuments}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_accept}" />				
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="batchDocument_search"
+						actionListener="#{corporateIdentityAttach.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}" >
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:div styleClass="aon-toolbar">
+					<aon:commandButton title="#{bundle.aon_check_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+						value="#{bundle.aon_check_all}"
+						ajaxSingle="true" reRender="documentDiv"
+						actionListener="#{batchDocument.checkAll}"/>	
+					<aon:commandButton title="#{bundle.aon_uncheck_all}"
+						styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+						value="#{bundle.aon_uncheck_all}"
+						ajaxSingle="true" reRender="documentDiv"
+						actionListener="#{batchDocument.checkNone}" />				
+				</aon:div>					
+	
+				<aon:div id="documentDiv" >
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{corporateIdentityAttach}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:define name="columns">
+						
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-40">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Included_Row_checked"
+									value="#{batchDocument.rowChecked}"
+									ajaxSingle="true" />	
+							</aon:column>
+						
+							<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/listContent.xhtml" >
+								<ui:param name="skipAddToBatch" value="#{true}" />
+							</ui:include>
+		
+						</ui:define>
+					</ui:decorate>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

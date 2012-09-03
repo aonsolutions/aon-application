@@ -161,7 +161,7 @@ public class SMSCommunicationController implements IMarketingConstants {
 		sms.setUsername(username);
 		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 		sms.setOrganization(companyController.obtainCompany().getAlias());
-		String domainName = UserUtils.getInstance().getPrincipal().getDomain();
+		String domainName = AonUtil.getAuthPrincipal().getDomain();
 		sms.setDomainName(domainName);
 		sms.reset(event);
 		try {

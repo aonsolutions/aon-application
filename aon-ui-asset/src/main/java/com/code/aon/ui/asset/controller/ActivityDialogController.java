@@ -29,7 +29,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.WeekDay;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.common.controller.LoggedUser;
@@ -264,7 +263,7 @@ public class ActivityDialogController extends EmailParentController{
 	}
 	
 	public String getLogin(){
-		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		return user.getShortName();
 	}
 	
@@ -343,7 +342,7 @@ public class ActivityDialogController extends EmailParentController{
 		setNew(false);
 		
 //		from field
-		AuthPrincipal user = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal user = AonUtil.getAuthPrincipal();
 		String domain = user.getDomain();
 		String login = user.getShortName();
 		IMailAccount mailAccount;

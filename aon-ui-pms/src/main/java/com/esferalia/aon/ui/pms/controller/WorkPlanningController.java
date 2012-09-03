@@ -11,6 +11,8 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.asset.AssetActivity;
+import com.code.aon.asset.enumeration.ActivityStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -18,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
@@ -76,12 +79,20 @@ public class WorkPlanningController implements ICollectionProvider {
 	}
 	
 	private RoomWorkPlanning obtainRoomOperation(ProjectReservationRoomDetail reservationRoomDetail, Room room) throws ManagerBeanException {
+		if(isBlockedRoom(room, getDate())){
+			return RoomWorkPlanning.BLOCKED;
+		}
 		if(reservationRoomDetail!=null){
 			if(reservationRoomDetail.isFirstNight()){
 				return RoomWorkPlanning.CHECKIN;
 			} else {
-				long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
-				return days%3==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+				try {
+					long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
+					Integer sheetChangingDays = reservationRoomDetail.getRoom().getHotel().getSheetChanging();
+					return days%sheetChangingDays==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+				} catch (IllegalArgumentException e){
+					AonUtil.addErrorMessage("Fechas incongruentes en la reserva " + reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getProject().getId());
+				}
 			}
 		} else {
 			ProjectReservationRoomDetail previousReservationRoomDetail = obtainActivity(room, DateUtils.addDays(getDate(), -1));
@@ -91,6 +102,15 @@ public class WorkPlanningController implements ICollectionProvider {
 			}
 		}
 		return RoomWorkPlanning.FREE;
+	}
+	
+	private boolean isBlockedRoom(Room room, Date date) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AssetActivity.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_ASSET_ID), room.getAsset().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE), date);
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.ASSET_ACTIVITY_STATUS), ActivityStatus.BUSY);
+		return bean.getCount(criteria)>0;
 	}
 	
 	public void onSearch(ActionEvent event) throws ManagerBeanException{

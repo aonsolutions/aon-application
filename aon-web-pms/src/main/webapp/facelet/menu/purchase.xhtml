@@ -34,7 +34,7 @@
 											</aon:commandLink>
 										</aon:div>
 									</c:if>
-									<c:if test="#{aonRole.config}">
+									<c:if test="#{aonRole.config and aonRole.purchaseOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="payMethod-purchase" 
 												action="payMethod-purchase" 
@@ -94,7 +94,7 @@
 											value="#{warehouseBundle.warehouse_income_module}" />
 									</aon:div>
 								</c:if>
-								<c:if test="#{aonRole.financeOperator}">
+								<c:if test="#{aonRole.purchaseOperator or aonRole.financeOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoiceManagement"
 											action="purchaseInvoice_search"
@@ -117,11 +117,13 @@
 					
 					<aon:panelGroup>
 					
-						<ui:include src="/facelet/menu/generalProduct.xhtml" >
-							<ui:param name="category" value="purchase" />
-						</ui:include>
+						<c:if test="#{aonRole.config and aonRole.purchaseOperator}">
+							<ui:include src="/facelet/menu/generalProduct.xhtml" >
+								<ui:param name="category" value="purchase" />
+							</ui:include>
+						</c:if>
 					
-						<c:if test="#{aonRole.statisticsOperator}">
+						<c:if test="#{aonRole.statisticsOperator or aonRole.purchaseOperator}">
 							<aon:panelGrid id="group_purchase_reports"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">		

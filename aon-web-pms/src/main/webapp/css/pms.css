@@ -109,6 +109,10 @@
 	background-color: #FFA54F;
 	display: block;
 }
+.pms-blocked-cell {
+	background-color: #808080;
+	display: block;
+}
 .pms-available-cell {
 	background-color: #FFFFFF;
 	display: block;
@@ -116,4 +120,3 @@
 .aon-icon-calc{
 	background:transparent url(images/aon-icon/aon-icon-calc.png) scroll left center no-repeat;	
  }
-

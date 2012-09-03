@@ -76,7 +76,13 @@
 		<managed-bean-class>com.code.aon.ui.common.controller.DomainResolver</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
-
+	
+	<!-- ***************** FAILED LOGIN ******************** --> 
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.FailedLogin</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
 
 	<!-- *************************************** -->
 	<!-- ************ NAVIGATION *************** -->
@@ -85,6 +91,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
+			<to-view-id>/</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>start</from-outcome>
 			<to-view-id>/</to-view-id>
 			<redirect />
 		</navigation-case>

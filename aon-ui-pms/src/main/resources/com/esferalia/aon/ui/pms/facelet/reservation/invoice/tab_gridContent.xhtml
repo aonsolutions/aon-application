@@ -6,7 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100">
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_date}" />
 		</f:facet>
@@ -16,7 +16,7 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
 		<f:facet name="header">
 			<aon:outputText value="#{financeBundle.finance_invoice_number}" />
 		</f:facet>
@@ -24,7 +24,7 @@
 	</aon:column>
 
 	<c:if test="#{showReservation}">
-		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100">
+		<aon:column styleClass="aon-editDataTable-dateColumn aon-width-80">
 			<f:facet name="header">
 				<aon:outputText value="#{pmsBundle.pms_reservation_id}" />
 			</f:facet>
@@ -39,23 +39,22 @@
 		<aon:outputText value="#{to.registryName}" />
 	</aon:column>
 
-	<aon:column alias="Invoice.registryDocument"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_company_document}" />
 		</f:facet>
 		<aon:outputText value="#{to.registryDocument}" />
 	</aon:column>
 
-	<aon:column alias="Invoice.service"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{pmsBundle.pms_source}" />
 		</f:facet>
-		<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.service}" />
+		<aon:outputText value="#{pmsBundle.pms_reservation}" rendered="#{!to.service and !to.advance}" />
 		<aon:outputText value="#{pmsBundle.pms_service}" rendered="#{to.service}" />
+		<aon:outputText value="#{pmsBundle.pms_advance}" rendered="#{to.advance}" />
 		<c:if test="#{showGoToReservation}">
-			<aon:commandLink id="posShiftReservationLink" immediate="true"
+			<aon:commandLink id="reservationLink" immediate="true"
 				styleClass="aon-button-goto"
 				style="padding-right: 20px;" 
 				value="&#160;"  
@@ -63,51 +62,35 @@
 				actionListener="#{controller.onLoadReservation}"
 				action="reservation_form"
 				reRender="aonContent">
-				<!--  
-				<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
-					<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic aon-width-70, aon-noborder aon-bold aon-text-left">
-						<f:facet name="header">
-							<aon:outputText value="#{purchaseBundle.purchase_purchase}" />
-						</f:facet>
-						<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number} " />
-						<aon:outputText value="#{to.purchaseDetail.purchase.referenceCode}" />
-					</aon:panelGrid>
-				</rich:toolTip>
-				-->
 			</aon:commandLink>
 		</c:if>
 	</aon:column>
 
-	<aon:column alias="Invoice.rectificationType, Invoice.advance"
-		styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_type}" />
 		</f:facet>
-		<aon:div  rendered="#{to.rectifier}">
+		<aon:outputText value="#{financeBundle.finance_invoice}"
+			rendered="#{!to.rectifier and !to.rectified}" />
+		<aon:div rendered="#{to.rectifier}">
 			<aon:outputText value="#{to.rectificationType}" />
-			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
-				<aon:outputFormat styleClass="aon-bold aon-label-error"
-					value="#{financeBundle.finance_invoice_rectifier_message}" >
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+				<aon:outputFormat value="#{financeBundle.finance_invoice_rectifier_message}" styleClass="aon-bold aon-label-error">
 					<f:param value="#{to.rectificationInvoice.referenceCode}" />
 				</aon:outputFormat>
 			</rich:toolTip>
 		</aon:div>
 		<aon:div rendered="#{to.rectified}">
 			<aon:outputText value="#{to.rectificationType}" />
-			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250" >
-				<aon:outputFormat styleClass="aon-bold"
-					value="#{financeBundle.finance_invoice_rectified_message}" >
+			<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="top-left" followMouse="true" showDelay="250">
+				<aon:outputFormat value="#{financeBundle.finance_invoice_rectified_message}" styleClass="aon-bold">
 					<f:param value="#{to.rectificationInvoicesString}" />
 				</aon:outputFormat>
 			</rich:toolTip>
 		</aon:div>
-		<aon:outputText rendered="#{!to.rectifier and !to.rectified and to.advance}"
-			value="#{pmsBundle.pms_advance}" />
-		<aon:outputText rendered="#{!to.rectifier and !to.rectified and !to.advance}"
-			value="#{financeBundle.finance_invoice}" />
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-130">
 		<f:facet name="header">
 			<aon:outputText value="#{configBundle.config_pay_method}" />
 		</f:facet>
@@ -116,7 +99,16 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-numberColumn">
+	<c:if test="#{showFinanceStatus}">
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{financeBundle.finance_checking_finance_status_abbrv}" />
+			</f:facet>
+			<aon:outputText value="#{to.invoiceFinanceStatus}"/>
+		</aon:column>
+	</c:if>
+
+	<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_total}" />
 		</f:facet>
@@ -125,15 +117,14 @@
 		</aon:outputText>
 	</aon:column>
 
-	<aon:column
-		styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
+	<aon:column	styleClass="aon-editDataTable-textColumn aon-width-60 aon-vertical-align-top">
 		<f:facet name="header">
 			<aon:outputText value="&#160;" />
 		</f:facet>
 		<c:if test="#{!skipRectifyButton}">
 			<aon:commandButton id="reservationInvoice-rectify"
 				value="&#160;" title="#{pmsBundle.pms_to_return}"
-				rendered="#{!to.rectified and !to.rectifier}"
+				rendered="#{to.noRectification and (!to.advance or !reservation.to.invoiced) and (aonRole.financeOperator or (to.service and to.allCommercialProducts))}"
 				actionListener="#{controller.onRectifyInvoiceShow}"
 				reRender="showRectificationWindow"
 				styleClass="aon-finding-toolbar-item aon-icon-removed">
@@ -144,8 +135,9 @@
 		<aon:htmlCommandLink id="reservationInvoice-report"
 			value="&#160;&#160;&#160;&#160;&#160;&#160;" title="#{bundle.aon_report}"
 			action="#{report.onExecute}" target="_blank"
-			actionListener="#{controller.onPrintInvoice}" styleClass="aon-icon-pdf">
-			<f:param name="reportKey" value="saleInvoice" />
+			actionListener="#{controller.onPrintInvoice}"
+			styleClass="aon-icon-pdf">
+			<f:param name="reportKey" value="selectedInvoice" />
 		</aon:htmlCommandLink>
 	</aon:column>
 

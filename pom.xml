@@ -11,11 +11,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>4.5.1</jasperReportsVersion>
 		<jasperreportsMavenPluginVersion>1.0-beta-3</jasperreportsMavenPluginVersion>
-<!-- 
-		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJdtCompiler</jasperreportsMavenPluginCompiler>
- -->
 		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
 	</properties>
 
@@ -23,12 +21,10 @@
 		<!-- PARENT MODULES -->
 		<module>aon-web-parent</module>
 
-		<!-- LIB MODULES 
+		<!-- LIB MODULES -->
 		<module>aon-external-libs</module>
-		-->
 	
 		<!-- MAVEN PLUGINS -->
-		<module>aon.access</module>
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>
 		<module>aon.mock.entity.maven.plugin</module>
@@ -48,6 +44,7 @@
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
+		<module>aon-jaas</module>
 		<module>aon-common</module>
 		<module>aon-common-ldap</module>
 		<module>aon-report</module>
@@ -101,8 +98,10 @@
 		<module>aon-tas</module>
 		<module>aon.test.entity</module>
 		<module>aon-pms</module>
+		<module>aon-academy</module>    
 
 		<!-- UI MODULES -->
+    <module>aon-ui-academy</module>
 		<module>aon-ui-audabridge</module>
 		<module>aon-ui-company</module>
 		<module>aon-ui-config</module>
@@ -137,6 +136,9 @@
 		<module>aon-ui-document</module>
 		<module>aon-ui-pms</module>
 
+		<!-- GWT MODULES -->
+		<module>aon-gwt-payroll</module>
+
 		<!-- GENERATED -->
 		<module>aon-audabridge-api</module>
 	  	<module>aon-pms-api</module>
@@ -150,7 +152,6 @@
 		<module>aon-stat</module>
 
 		<!-- WEB MODULES -->
-<!-- 		
 		<module>aon-desktop</module>
 		<module>aon-web-payroll</module>
 		<module>aon-web-smb</module>
@@ -170,17 +171,14 @@
 		<module>aon-web-webmail</module>
 		<module>aon-web-document</module>
 		<module>aon-web-pms</module>
- -->
 		<module>aon-web-aio</module>
 
-		<!-- GWT MODULES 
+		<!-- GWT MODULES -->
 		<module>aon-gwt-employee</module>
-		-->
-		
-		<!-- WS MODULES 
+
+		<!-- WS MODULES -->
 		<module>aon-ws-gps</module>
-		-->
-		
+
 		<!-- OTHER -->
 		<module>aon-payroll-ctsql2mysql</module>
 		<module>aon-common-resources</module>
@@ -204,6 +202,9 @@
 		<module>aon-web-ebackoffice</module>
 		<module>aon-web-ecommerce</module>
 -->
+<!-- 
+		<module>aon.python</module>
+ -->
 	</modules>
 
 	<scm>
@@ -378,6 +379,17 @@
                         </snapshots>
                         <releases>
                                 <enabled>false</enabled>
+                        </releases>
+		</pluginRepository>
+
+		<pluginRepository>
+			<id>aon.external.free</id>
+			<url>http://dev.esferalia.com/maven2_repositories/external_free</url>
+                        <snapshots>
+                                <enabled>false</enabled>
+                        </snapshots>
+                        <releases>
+                                <enabled>true</enabled>
                         </releases>
 		</pluginRepository>
 

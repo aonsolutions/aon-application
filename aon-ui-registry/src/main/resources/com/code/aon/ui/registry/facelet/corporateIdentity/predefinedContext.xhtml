@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 			
 	<aon:panelGrid columns="4" styleClass="aon-panelGrid-formatting"
@@ -15,6 +16,8 @@
 				<aon:commandLink action="corporateIdentity_fax"
 					actionListener="#{corporateIdentity.onInit}">
 					<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-fax.png']}" />
+					<f:setPropertyActionListener value="#{true}"
+						target="#{corporateIdentity.showBackButton}"  />										
 				</aon:commandLink>
 			</aon:div>
 		</aon:div>
@@ -27,6 +30,8 @@
 				<aon:commandLink action="corporateIdentity_letter"
 					actionListener="#{corporateIdentity.onInit}">
 					<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-letter.png']}" />
+					<f:setPropertyActionListener value="#{true}"
+						target="#{corporateIdentity.showBackButton}"  />										
 				</aon:commandLink>
 			</aon:div>
 		</aon:div>
@@ -39,6 +44,8 @@
 				<aon:commandLink action="corporateIdentity_label"
 					actionListener="#{corporateIdentity.onInit}">
 					<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-label.png']}" />
+					<f:setPropertyActionListener value="#{true}"
+						target="#{corporateIdentity.showBackButton}"  />															
 				</aon:commandLink>
 			</aon:div>
 		</aon:div>
@@ -51,6 +58,8 @@
 				<aon:commandLink action="corporateIdentity_receipt"
 					actionListener="#{corporateIdentity.onInit}">
 					<h:graphicImage url="#{aonResource.resolve['/images/aon-icon-big/aon-icon-big-receipt.png']}" />
+					<f:setPropertyActionListener value="#{true}"
+						target="#{corporateIdentity.showBackButton}"  />															
 				</aon:commandLink>
 			</aon:div>
 		</aon:div>

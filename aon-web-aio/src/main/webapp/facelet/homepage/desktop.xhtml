@@ -23,44 +23,6 @@
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div id="desktopDiv1">
-						<c:if test="#{webmail.logged}">
-							<aon:div styleClass="aon-portlet">
-								<aon:div styleClass="aon-portlet-title">
-									<aon:outputLink value="/aon-webmail?aonDesktop=true" target="aonWebMail">
-										<aon:outputText value="#{webmailBundle.webmail_main}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
-									</aon:outputLink>
-								</aon:div>
-								<aon:div styleClass="aon-portlet-body">
-									<aon:dataTable id="mailSummaryList"
-										value="#{desktop.mailSummaryModel}" var="to"
-										columnClasses="aon-table-portlet-column"
-										rowClasses="aon-table-portlet-row"
-										styleClass="aon-width-170 aon-table-portlet">
-	
-										<aon:column styleClass="aon-text-left" >
-											<aon:outputText value="#{to.name}"/>
-										</aon:column>
-	
-										<aon:column styleClass="aon-text-right" >
-											<aon:outputText value="#{to.unreadMessageCount}"/>
-										</aon:column>
-	
-									</aon:dataTable>
-								</aon:div>
-							</aon:div>
-						</c:if>
-
-						<c:if test="#{!webmail.logged}">
-							<aon:div styleClass="aon-portlet">
-								<aon:div styleClass="aon-portlet-title">
-									<aon:outputText value="#{webmailBundle.webmail_main}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
-								</aon:div>
-								<aon:div styleClass="aon-portlet-body">
-									<aon:outputText value="#{webmailBundle.webmail_connect_error}"/>
-								</aon:div>
-							</aon:div>
-						</c:if>
-						
 						<c:if test="#{desktop.taskHolderAvailable}">
 							<aon:div styleClass="aon-portlet">
 								<aon:div styleClass="aon-portlet-title">
@@ -68,7 +30,6 @@
 										action="task_list"
 										actionListener="#{task.onLaunch}">
 										<aon:outputText value="#{bundle.aon_tasks}" 
-											style="cursor: default;" 
 											styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
 									</aon:commandLink>
 								</aon:div>
@@ -95,11 +56,11 @@
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">								
 								<aon:div styleClass="aon-portlet-title-buttons">
-									<aon:commandLink actionListener="#{notice.onReset}" action="notice_form">
+									<aon:commandLink id="notice-reset" actionListener="#{notice.onReset}" action="notice_form">
  										<aon:outputText value="&#160;" styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
-								<aon:commandLink actionListener="#{notice.onSearch}" action="notice_list">
+								<aon:commandLink id="notice-search" actionListener="#{notice.onSearch}" action="notice_list">
 									<aon:outputText value="#{groupwareBundle.aon_notice}" styleClass="aon-portlet-title-text aon-icon aon-icon-alarms"/>
 								</aon:commandLink>
 							</aon:div>
@@ -130,11 +91,11 @@
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
 								<aon:div styleClass="aon-portlet-title-buttons">
-									<aon:commandLink actionListener="#{note.onReset}" action="note_form">
+									<aon:commandLink id="note-reset" actionListener="#{note.onReset}" action="note_form">
  										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
-								<aon:commandLink actionListener="#{note.onSearch}" action="note_list">
+								<aon:commandLink id="note-search" actionListener="#{note.onSearch}" action="note_list">
 									<aon:outputText value="#{groupwareBundle.aon_note}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
 								</aon:commandLink>	
 							</aon:div>
@@ -154,34 +115,129 @@
 								</aon:dataTable>
 							</aon:div>
 						</aon:div>
+
+						<aon:div styleClass="aon-portlet">
+							<aon:div styleClass="aon-portlet-title">
+								<aon:div styleClass="aon-portlet-title-buttons">
+									<aon:commandLink id="favorite-reset" actionListener="#{favorite.onReset}" action="favorite_form">
+ 										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+									</aon:commandLink>
+								</aon:div>
+								<aon:commandLink id="favorite-search" actionListener="#{favorite.onSearch}" action="favorite_list">
+									<aon:outputText value="#{groupwareBundle.aon_favorites}" styleClass="aon-portlet-title-text aon-icon aon-icon-favorite"/>
+								</aon:commandLink>	
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+								<aon:dataTable id="desktopFavoriteList"
+									value="#{favorite.model}" var="to" rows="5"
+									columnClasses="aon-table-portlet-column"
+									rowClasses="aon-table-portlet-row"
+									styleClass="aon-width-170 aon-table-portlet">
+
+									<aon:column>
+										<h:outputLink target="_blank" value="#{to.url}">
+											<aon:outputText value="#{to.description}"/>	
+										</h:outputLink>	
+									</aon:column>			
+
+								</aon:dataTable>
+							</aon:div>
+						</aon:div>
+						
 					</aon:div>
 
-					<aon:div>
-
-						<aon:componentGroup
-							family="javax.faces.Command"
-							rendered="#{aonRole.guest}"
-							method="#{aonRole.doNothing}">
-				
-							<h:panelGrid styleClass="aon-width-all aon-vertical-align-top"
-								headerClass="aon-direct-access-panel aon-icon-optionFavorite">
-								<f:facet name="header">
-									<h:panelGrid style="height: 20px;" columns="3"
-										columnClasses="aon-nowrap,aon-width-all," >
-										<aon:outputText value="#{auditBundle.audit_favorite_module}" />
-										<aon:outputText value="&#160;" />
-										<aon:commandLink id="favorite" immediate="true"
-											value="&#160;" title="#{bundle.aon_editing}"
-											action="actionFavorite" actionListener="#{actionFavorite.onInit}"
-											styleClass="aon-icon-edit" />
-									</h:panelGrid>						
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:dynamicInclude value="#{actionFavorite.template}" />
-								</aon:div>
+					<aon:div styleClass="aon-width-all">
+						<c:if test="#{domainSwitcher.childDomain}">
+							<h:panelGrid columns="2" styleClass="aon-width-all aon-margin-bottom"
+								style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
+								columnClasses="aon-width-50 aon-vertical-align-top
+											,aon-width-auto aon-vertical-align-top">
+											
+								<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+									<h:commandLink action="start" actionListener="#{domainSwitcher.onParentDomain}">
+									
+										<!--
+											a4j:mediaOutput duplicado un poco mas abajo, cuando el link esta deshabilitado 
+										 -->
+										<a4j:mediaOutput
+											mimeType="#{parentDomain.mimeTypeName}"
+											cacheable="false" element="img" 
+											value="aon-parent-logo" 
+											style="height:60px;"
+											createContent="#{parentDomain.createLogoContent}">
+										</a4j:mediaOutput>
+									</h:commandLink>
+								</c:if>
+								
+								<c:if test="#{!domainSwitcher.parentDomainUserInChildDomain}">
+										<!--
+											a4j:mediaOutput duplicado un poco mas arriba, cuando el link esta habilitado 
+										 -->
+									<a4j:mediaOutput
+										mimeType="#{parentDomain.mimeTypeName}"
+										cacheable="false" element="img" 
+										value="aon-parent-logo" 
+										style="height:60px;"
+										createContent="#{parentDomain.createLogoContent}">
+									</a4j:mediaOutput>
+								</c:if>
+									
+								<h:panelGrid styleClass="aon-padding-left aon-width-all">
+									<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
+									<aon:outputText value="#{parentDomain.phone}"/>								
+									<aon:outputText value="#{parentDomain.email}"/>
+								</h:panelGrid>
+	
 							</h:panelGrid>
-			
-						</aon:componentGroup>		
+						</c:if>
+
+						<c:if test="#{!domainSwitcher.childDomain and domainSwitcher.domainCount > 0}">
+							<aon:div styleClass="aon-portlet">
+								<aon:div styleClass="aon-portlet-title">
+									<aon:div styleClass="aon-portlet-title-buttons">
+										<aon:commandLink id="newDomainDesktop" actionListener="#{adminNewDomain.onInit}" action="newDomain_form">
+												<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
+										</aon:commandLink>
+									</aon:div>
+									<aon:outputText value="#{configBundle.config_domain_module}" styleClass="aon-portlet-title-text aon-icon aon-icon-company"/>
+								</aon:div>
+								<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+									<ui:include src="/com/code/aon/ui/config/facelet/domain/selection_listContent.xhtml" >
+										<ui:param name="domainSwitcherRows" value="15" />
+										<aon:methodParam name="rowSelectorAction" default="start" resolve="false" />										
+									</ui:include>
+								</aon:div>
+							</aon:div>
+						</c:if>
+						
+						<c:if test="#{!domainSwitcher.parentDomain or !domainSwitcher.domainManagementAvailable}">
+							<aon:componentGroup
+								family="javax.faces.Command"
+								rendered="#{aonRole.guest}"
+								method="#{aonRole.doNothing}">
+					
+								<h:panelGrid styleClass="aon-width-all aon-vertical-align-top"
+									headerClass="aon-direct-access-panel aon-icon-optionFavorite">
+									<f:facet name="header">
+										<h:panelGrid style="height: 20px;" columns="3"
+											columnClasses="aon-nowrap,aon-width-all," >
+											<aon:outputText value="#{auditBundle.audit_favorite_module}" />
+											<aon:outputText value="&#160;" />
+											<aon:commandLink id="favorite" immediate="true"
+												value="&#160;" title="#{bundle.aon_editing}"
+												action="actionFavorite" actionListener="#{actionFavorite.onInit}"
+												styleClass="aon-icon-edit" />
+										</h:panelGrid>						
+									</f:facet>
+									<aon:div styleClass="aon-direct-access-list">
+										<h:panelGrid styleClass="aon-width-all " columns="2"
+											columnClasses="aon-width-half aon-padding-righter,aon-width-half">
+											<aon:dynamicInclude value="#{actionFavorite.template}" />
+										</h:panelGrid>
+									</aon:div>
+								</h:panelGrid>
+							</aon:componentGroup>
+						</c:if>		
 
 					</aon:div>
 
@@ -215,29 +271,6 @@
 							    </aon:outputLink>
 							</aon:div>
 						</aon:div>
-						
-<!-- 						
-						<aon:div styleClass="aon-support">
-							<aon:div styleClass="aon-support-title">
-								<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-esferalia-logo.png']}" />
-								<aon:div>
-									<aon:outputText style="text-transform:uppercase;" value="#{bundle.aon_support_title}" />
-								</aon:div>
-							</aon:div>
-							
-							<aon:div styleClass="aon-support-telephone">
-								<aon:div styleClass="aon-support-telephone-internal">
-									<aon:outputText value="#{bundle.aon_support_telephone_number}" />
-								</aon:div>
-							</aon:div>		
-							
-							<aon:div styleClass="aon-support-mail">
-								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html">	
-										<aon:outputText value="#{bundle.aon_support_send_email}" />
-							    </aon:outputLink>
-							</aon:div>
-						</aon:div>
- -->						
 						<!-- fin soporte -->
 					</aon:div>
 					

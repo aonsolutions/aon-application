@@ -43,7 +43,8 @@
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="PosShift_startTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
-							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							value="#{posShiftSearch.startTimeFrom}"
+							resetTimeOnDateSelect="true"
 							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -52,7 +53,8 @@
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_startTime-To"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
-							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							value="#{posShiftSearch.startTimeTo}"
+							resetTimeOnDateSelect="true"
 							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -65,7 +67,8 @@
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="PosShift_endTime-From"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
-							valueChangeListener="#{posShift.addGreaterThanOrEqualExpression}"
+							value="#{posShiftSearch.endTimeFrom}"
+							resetTimeOnDateSelect="true"
 							defaultTime="00:00:00"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
@@ -74,10 +77,11 @@
 							styleClass="aon-italic aon-margin-right" value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="PosShift_endTime-To"
 							size="20" inputSize="16" renderAsPopup="true" enableManualInput="true"
-							valueChangeListener="#{posShift.addLessThanOrEqualExpression}"
+							value="#{posShiftSearch.endTimeTo}"
+							resetTimeOnDateSelect="true"
 							defaultTime="23:59:59"
 							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_timestamp2_pattern}"
+							popupDateFormat="#{bundle.aon_timestamp2_pattern}" 
 							/>
 					</aon:div>
 						

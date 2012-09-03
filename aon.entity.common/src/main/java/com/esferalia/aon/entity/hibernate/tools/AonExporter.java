@@ -56,7 +56,7 @@ public class AonExporter extends GenericExporter{
 				isDomainContainer = true;
 			}
 		}
-		if ( "ProfileDB".equals(pojo.getDeclarationName()) ) {
+		if ( "ProfileDB".equals(pojo.getDeclarationName()) || "ProfileRoleDB".equals(pojo.getDeclarationName())) {
 			isDomainContainer = false;
 		}
 		additionalContext.put("hasProjectPrimaryKeyJoinColumn", hasProjectPrimaryKeyJoinColumn(pojo) );	
@@ -158,6 +158,27 @@ public class AonExporter extends GenericExporter{
 
 	static {
 		map = new HashMap<String, String>();
+
+		// AON ACADEMY
+		map.put("Absence","com.code.aon.academy.Absence");
+		map.put("AlumnLoan","com.code.aon.academy.AlumnLoan");
+		map.put("AcademicSkill","com.code.aon.academy.AcademicSkill");
+		map.put("AcademicYear","com.code.aon.academy.AcademicYear");	
+		map.put("Course","com.code.aon.academy.Course");
+		map.put("CourseAcademicSkill","com.code.aon.academy.CourseAcademicSkill");
+		map.put("CourseAlumn","com.code.aon.academy.CourseAlumn");
+		map.put("CourseEvaluation","com.code.aon.academy.CourseEvaluation");
+		map.put("CourseInstructor","com.code.aon.academy.CourseInstructor");
+		map.put("CourseLevel","com.code.aon.academy.CourseLevel");		
+		map.put("CourseObservation","com.code.aon.academy.CourseObservation");
+		map.put("CourseSchedule","com.code.aon.academy.CourseSchedule");
+		map.put("CourseSubject","com.code.aon.academy.CourseSubject");
+		map.put("EvaluationObservation","com.code.aon.academy.EvaluationObservation");
+		map.put("Mark","com.code.aon.academy.Mark");
+		map.put("Observation","com.code.aon.academy.Observation");
+		map.put("Qualification","com.code.aon.academy.Qualification");
+		map.put("QualitySkill","com.code.aon.academy.QualitySkill");
+		
 		// AON ACCOUNT
 		map.put("Account","com.code.aon.account.Account");
 		
@@ -202,7 +223,8 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionDenied","com.code.aon.audit.ActionDenied");
 		map.put("ActionEntry","com.code.aon.audit.ActionEntry");
 		map.put("ActionFavorite","com.code.aon.audit.ActionFavorite");
-		map.put("DomainApplicationModule","com.code.aon.audit.DomainApplicationModule");		
+		map.put("DomainApplicationModule","com.code.aon.audit.DomainApplicationModule");
+		map.put("ProfileActionDenied","com.code.aon.audit.ProfileActionDenied");
 		map.put("ProfileModuleDenied","com.code.aon.audit.ProfileModuleDenied");		
 		map.put("Session","com.code.aon.audit.Session");
 
@@ -226,9 +248,12 @@ public class AonExporter extends GenericExporter{
 		map.put("OfferDetail","com.code.aon.commercial.OfferDetail");
 		map.put("OfferDetailCommission","com.code.aon.commercial.OfferDetailCommission");
 		map.put("OfferTerm","com.code.aon.commercial.OfferTerm");
-		map.put("ProjectCommercial","com.code.aon.commercial.ProjectCommercial");		
+		map.put("ProjectCommercial","com.code.aon.commercial.ProjectCommercial");
+		map.put("Question","com.code.aon.commercial.Question");
+		map.put("QuestionValue","com.code.aon.commercial.QuestionValue");		
 		map.put("Target","com.code.aon.commercial.Target");
 		map.put("TargetItem","com.code.aon.commercial.TargetItem");
+		map.put("TargetProfile","com.code.aon.commercial.TargetProfile");
 		map.put("TargetSeller","com.code.aon.commercial.TargetSeller");
 		map.put("TargetSupplier","com.code.aon.commercial.TargetSupplier");
 
@@ -289,6 +314,8 @@ public class AonExporter extends GenericExporter{
 		//AON-FISCAL  	
 		map.put("Mod347","com.code.aon.fiscal.Mod347");
 		map.put("Mod347Detail","com.code.aon.fiscal.Mod347Detail");
+		map.put("Mod349","com.code.aon.fiscal.Mod349");
+		map.put("Mod349Detail","com.code.aon.fiscal.Mod349Detail");
 		map.put("ProfessionalRetention","com.code.aon.fiscal.ProfessionalRetention");
 		map.put("Renting","com.code.aon.fiscal.Renting");
 		map.put("RentingDetail","com.code.aon.fiscal.RentingDetail");
@@ -339,14 +366,11 @@ public class AonExporter extends GenericExporter{
 		map.put("ActionTarget","com.code.aon.marketing.ActionTarget");
 		map.put("MarketingCampaign","com.code.aon.marketing.MarketingCampaign");
 		map.put("MarketingAction","com.code.aon.marketing.MarketingAction");
-		map.put("Question","com.code.aon.marketing.Question");
-		map.put("QuestionValue","com.code.aon.marketing.QuestionValue");
 		map.put("Survey","com.code.aon.marketing.Survey");
 		map.put("SurveyQuestion","com.code.aon.marketing.SurveyQuestion");
 		map.put("SurveyResponse","com.code.aon.marketing.SurveyResponse");
 		map.put("SurveyResponseDetail","com.code.aon.marketing.SurveyResponseDetail");
 		map.put("SurveyWorkflow","com.code.aon.marketing.SurveyWorkflow");
-		map.put("TargetProfile","com.code.aon.marketing.TargetProfile");
 		map.put("Template","com.code.aon.marketing.Template");
 		
 		//AON-MESSAGING
@@ -436,6 +460,7 @@ public class AonExporter extends GenericExporter{
 		map.put("ProjectType","com.code.aon.project.ProjectType");
 
 		//AON-PMS
+        map.put("FinancePos","com.esferalia.aon.pms.FinancePos");		
         map.put("Hotel","com.esferalia.aon.pms.Hotel");
         map.put("Pos","com.esferalia.aon.pms.Pos");
         map.put("PosShift","com.esferalia.aon.pms.PosShift");
@@ -466,6 +491,7 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistryAddInfo","com.code.aon.registry.RegistryAddInfo");
 		map.put("RegistryAddress","com.code.aon.registry.RegistryAddress");
 		map.put("RegistryAttachment","com.code.aon.registry.RegistryAttachment");
+		map.put("RegistryAttachmentTag","com.code.aon.registry.RegistryAttachmentTag");
 		map.put("RegistryDirStaff","com.code.aon.registry.RegistryDirStaff");
 		map.put("RegistryBank","com.code.aon.registry.RegistryBank");
 		map.put("RegistryMedia","com.code.aon.registry.RegistryMedia");
@@ -475,6 +501,7 @@ public class AonExporter extends GenericExporter{
 		map.put("RegistrySegment","com.code.aon.registry.RegistrySegment");
 		map.put("Relationship","com.code.aon.registry.Relationship");
 		map.put("Segment","com.code.aon.registry.Segment");
+		map.put("Tag","com.code.aon.registry.Tag");
 
 		//AON-SALES  
 		map.put("Sales","com.code.aon.sales.Sales");

@@ -43,45 +43,12 @@
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
-				<!--  
-					<aon:outputLabel value="#{bundle.aon_start_date}" />
-					<aon:div>
-						<aon:outputLabel for="Fan_startDate-From" styleClass="aon-form-date-label"
-							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="Fan_startDate-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					
-						<aon:outputLabel for="Fan_startDate-To" styleClass="aon-form-date-label"
-							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="Fan_startDate-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</aon:div>
-				
-					<aon:outputLabel value="#{bundle.aon_end_date}" />
-					<aon:div>
-						<aon:outputLabel for="Fan_endDate-From" styleClass="aon-form-date-label"
-							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="Fan_endDate-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					
-						<aon:outputLabel for="Fan_endDate-To" styleClass="aon-form-date-label"
-							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="Fan_endDate-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}"/>
-					</aon:div>
-				-->
 										
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		
 	</ui:define>
 	

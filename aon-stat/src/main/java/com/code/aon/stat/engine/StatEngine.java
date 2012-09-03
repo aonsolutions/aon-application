@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -20,6 +22,24 @@ import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 
 public class StatEngine {
+	
+	private List<Integer> currentUserWorkPlacesIds;
+
+	public StatEngine() {
+	}
+	public StatEngine(List<Integer> currentUserWorkPlacesIds) {
+		this.currentUserWorkPlacesIds = currentUserWorkPlacesIds;
+	}
+
+	private String getCurrentUserWorkPlacesIdsList() {
+		String ids = "";
+		ids = StringUtils.join(currentUserWorkPlacesIds, ",");
+		return ids;
+	}
+
+	private void addCurrentUserWorkPlacesSQLClause(StringBuffer stmt) {
+		stmt.append( " AND id.workplace IN ("+getCurrentUserWorkPlacesIdsList() + ")" );
+	}
 
 	public Collection<Stat> getYearStats(StatParams params)
 			throws ManagerBeanException {
@@ -42,17 +62,21 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY YEAR(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date) DESC");
 
 			ps = HibernateUtil.getSQLConnection().prepareStatement(
-					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
+					stmt.toString(), 
+					ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
@@ -60,16 +84,18 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 
 			rs = ps.executeQuery();
 			List<Stat> stats = new LinkedList<Stat>();
 			while (rs.next()) {
 				Stat stat = new Stat();
-				// stat.setExtra(rs.getInt(1));
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(1));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -101,8 +127,7 @@ public class StatEngine {
 		for (int i = 0; i < 12; i++) {
 			stats.add(i, new Stat());
 			stats.get(i).setKey(i);
-			stats.get(i).setName(
-					Month.getMonthByValue(i).getName(params.getLocale()));
+			stats.get(i).setName(Month.getMonthByValue(i).getName(params.getLocale()));
 		}
 
 		PreparedStatement ps = null;
@@ -124,6 +149,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY MONTH(i.issue_date)");
 
@@ -141,23 +171,22 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
 
-				Stat stat = stats.get((Month.getMonthByValue(rs.getInt(1) - 1))
-						.getValue());
-				stat.setKey(rs.getInt(1));
-				stat.setName(Month.getMonthByValue(rs.getInt(1) - 1).getName(
-						params.getLocale()));
+				Stat stat = stats.get((Month.getMonthByValue(rs.getInt(1) - 1)).getValue());
+				stat.setKey(rs.getInt(1)-1);
+				stat.setName(Month.getMonthByValue(rs.getInt(1) - 1).getName(params.getLocale()));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(stat.getNumInvoice() + count);
 				stat.setAmount(stat.getAmount() + amount);
-				stat.setAverageAmount(CommonUtil.round(stat.getAmount()
-						/ stat.getNumInvoice()));
-				stats.set(Month.getMonthByValue(rs.getInt(1) - 1).getValue(),
-						stat);
+				stat.setAverageAmount(CommonUtil.round(stat.getAmount() / stat.getNumInvoice()));
+				stats.set(Month.getMonthByValue(rs.getInt(1) - 1).getValue(), stat);
 
 			}
 			return stats;
@@ -202,6 +231,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY DAY(i.issue_date)");
 			stmt.append(" ORDER BY DAY(i.issue_date)");
 
@@ -219,6 +253,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 			SimpleDateFormat format = new SimpleDateFormat();
 			format.applyPattern("dd - MM - yyyy");
 
@@ -232,7 +269,7 @@ public class StatEngine {
 				// stat.setExtra(rs.getInt(1));
 				stat.setName(format.format(date));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -281,6 +318,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
 
@@ -296,13 +338,16 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -352,6 +397,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY c.id");
 			stmt.append(" ORDER BY c.name");
 
@@ -359,8 +409,7 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
+				ps.setDate(1, new java.sql.Date(params.getFromDate()
 								.getTime()));
 			}
 			if (params.getToDate() != null) {
@@ -368,6 +417,9 @@ public class StatEngine {
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 
 			rs = ps.executeQuery();
@@ -377,7 +429,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(2));
 				stat.setName(rs.getString(3));
 				int count = rs.getInt(4);
-				double amount = rs.getInt(5);
+				double amount = rs.getDouble(5);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -431,6 +483,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
@@ -451,6 +508,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
+			}
 
 			rs = ps.executeQuery();
 			List<Stat> stats = new LinkedList<Stat>();
@@ -459,7 +519,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -515,6 +575,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY r.id");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
@@ -535,13 +600,16 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -596,6 +664,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY YEAR(i.issue_date),c.id");
 
@@ -616,13 +689,16 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -676,6 +752,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
@@ -683,15 +764,16 @@ public class StatEngine {
 					stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
 			if (params.getFromDate() != null) {
-				ps
-						.setDate(1, new java.sql.Date(params.getFromDate()
-								.getTime()));
+				ps.setDate(1, new java.sql.Date(params.getFromDate().getTime()));
 			}
 			if (params.getToDate() != null) {
 				ps.setDate(2, new java.sql.Date(params.getToDate().getTime()));
 			}
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
+			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
 			}
 			rs = ps.executeQuery();
 
@@ -703,7 +785,7 @@ public class StatEngine {
 						params.getLocale())
 						+ " " + rs.getInt(4));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -756,6 +838,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY MONTH(i.issue_date)");
 			stmt.append(" ORDER BY YEAR(i.issue_date),MONTH(i.issue_date)");
 
@@ -777,6 +864,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Stat stat = new Stat();
@@ -784,7 +874,7 @@ public class StatEngine {
 						params.getLocale())
 						+ " " + rs.getInt(4));
 				int count = rs.getInt(2);
-				double amount = rs.getInt(3);
+				double amount = rs.getDouble(3);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -830,6 +920,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY r.id,r.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,r.id,r.name");
 
@@ -847,6 +942,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 
 			rs = ps.executeQuery();
 			List<Stat> stats = new LinkedList<Stat>();
@@ -855,7 +953,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -909,6 +1007,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
@@ -929,13 +1032,16 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(4, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(5, new Integer(params.getWorkPlace().getId()));
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Stat stat = new Stat();
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -983,6 +1089,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY p.id,p.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,p.id,p.name");
 
@@ -1000,6 +1111,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 
 			rs = ps.executeQuery();
 			List<Stat> stats = new LinkedList<Stat>();
@@ -1008,7 +1122,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1057,6 +1171,11 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				stmt.append(" AND i.type = ?");
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				stmt.append(" AND id.workplace = ?");
+			} else {
+				addCurrentUserWorkPlacesSQLClause(stmt);
+			}
 			stmt.append(" GROUP BY c.id,c.name");
 			stmt.append(" ORDER BY SUM(id.taxable_base) DESC,c.id,c.name");
 
@@ -1074,6 +1193,9 @@ public class StatEngine {
 			if (params.getInvoiceType() != null) {
 				ps.setInt(3, new Integer(params.getInvoiceType()));
 			}
+			if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null){
+				ps.setInt(4, new Integer(params.getWorkPlace().getId()));
+			}
 
 			rs = ps.executeQuery();
 			List<Stat> stats = new LinkedList<Stat>();
@@ -1082,7 +1204,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1171,7 +1293,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1254,7 +1376,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1338,7 +1460,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1431,7 +1553,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1465,11 +1587,11 @@ public class StatEngine {
 		try {
 			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
-			stmt.append(" FROM offer_detail od  ");
-			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
+			stmt.append(" FROM  offer o");
 			stmt.append(" INNER JOIN target t ON (o.target = t.registry)");
 			stmt.append(" INNER JOIN registry r ON (t.registry = r.id)");
-			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("od.domain"));
+			stmt.append(" INNER JOIN offer_detail od ON (od.offer = o.id)");
+			stmt.append(" WHERE " + DomainManager.getSQLWhereClause("o.domain"));
 			
 			if (params.getFromDate() != null) {
 				stmt.append(" AND o.issue_date >= ?");
@@ -1516,7 +1638,7 @@ public class StatEngine {
 				stat.setKey(rs.getInt(1));
 				stat.setName(rs.getString(2));
 				int count = rs.getInt(3);
-				double amount = rs.getInt(4);
+				double amount = rs.getDouble(4);
 				stat.setNumInvoice(count);
 				stat.setAmount(amount);
 				stat.setAverageAmount(CommonUtil.round(amount / count));
@@ -1540,5 +1662,5 @@ public class StatEngine {
 			}
 		}
 	}
-
+	
 }

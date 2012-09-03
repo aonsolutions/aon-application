@@ -1,6 +1,5 @@
 package com.code.aon.ui.audit.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.faces.context.ExternalContext;
@@ -15,16 +14,14 @@ import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.IDomainChangeListener;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.util.AonUtil;
 
-public class AuditDomainChangeListener implements IDomainChangeListener, Serializable {
+public class AuditDomainChangeListener implements IDomainChangeListener {
 
-	private static final long serialVersionUID = -7806308122004034352L;
-	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditDomainChangeListener.class);
 
 	@Override
@@ -74,7 +71,7 @@ public class AuditDomainChangeListener implements IDomainChangeListener, Seriali
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request, Integer domain ) {
 		try {
 			LOGGER.info( "Domain {}", domain );
-			AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			LOGGER.info( "Principal {}", principal );
 			Application application = AuditManager.getApplication(request.getContextPath());
 			LOGGER.info( "Application {}", application );

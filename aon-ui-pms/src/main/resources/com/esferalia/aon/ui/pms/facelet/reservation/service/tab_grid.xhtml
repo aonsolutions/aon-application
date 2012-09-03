@@ -22,25 +22,21 @@
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:commandLink id="Service-selectButton"
-					styleClass="aon-table-row-link" value="&#160;"
-					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{reservation.active and (!reservation.to.crs or reservation.to.roomAssignedCount > 0)}"
+				<aon:commandButton id="Service-selectButton"
+					styleClass="aon-editDataTable-button aon-table-row-link"
+					rendered="#{reservation.reservationPermission.selectReservationServiceAllowed}"
 					actionListener="#{controller.onSelect}"
 					reRender="showServiceDetailWindow"
-					onkeyup="#{dataTableId}KeyUp(this)"
-					onfocus="#{dataTableId}SelectRow(this)"
-					onblur="#{dataTableId}DeselectRow(this)"
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
 					<f:setPropertyActionListener target="#{controller.showServiceDetailWindow}"
 						value="#{true}" />
-				</aon:commandLink>
+				</aon:commandButton>
 				<f:facet name="footer">
 					<aon:div>
 						<aon:commandButton
 							id="Service-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							rendered="#{!reservation.to.crs and reservation.active}" 
+							rendered="#{reservation.reservationPermission.newReservationServiceAllowed}" 
 							actionListener="#{controller.onReset}"
 							reRender="showServiceDetailWindow"
 							accesskey="#{bundle.aon_key_new_line}" 

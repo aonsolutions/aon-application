@@ -74,7 +74,7 @@ public class AccountEntryFinanceWriter {
 		recordingTo.setBalancingConcept(fBatch.getDescription());
 		recordingTo.setSecurityLevel((fBatch.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : fBatch.getSecurityLevel());
 		List <?> details = fBatch.getDetailList();
-		recordingTo.setFBatchDetailList( (List<FinanceBatchDetail>) details );
+		recordingTo.setFBatchDetailList((List<FinanceBatchDetail>)details);
 		return recordFBatch(recordingTo, fBatch, null);
 	}
 
@@ -111,7 +111,7 @@ public class AccountEntryFinanceWriter {
 	private AccountEntry insertFBatchDetails(FinanceRecordingTo recordingTo, AccountEntry entry) throws ManagerBeanException {
 		double balancingAmount = 0.0;
 		// Primer Apunte
-		for (FinanceBatchDetail fbatchDetail: recordingTo.getFBatchDetailList()) {
+		for (FinanceBatchDetail fbatchDetail : recordingTo.getFBatchDetailList()) {
 			balancingAmount += fbatchDetail.getAmount();
 			insertFBatchDetailEntryDetail(recordingTo, entry, fbatchDetail);
 		}

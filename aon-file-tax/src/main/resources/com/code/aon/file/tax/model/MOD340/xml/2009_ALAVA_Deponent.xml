@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<register name="Deponent">
+<register name="DEPONENT">
  <field name="type" value="1" format="Numeric" pattern="9(1)" />
  <field name="modelo" value="340" format="Numeric" pattern="9(3)" />
  <field name="ejercicio" value="bean" bean="DEPONENT" property="year" format="Numeric" pattern="9(4)" />

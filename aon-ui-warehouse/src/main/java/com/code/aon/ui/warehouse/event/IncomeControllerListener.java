@@ -50,8 +50,10 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
-		incomeDetailController.onReset(null);
+		if(!(AonUtil.getRoleManager().isWarehouseOperator() && !AonUtil.getRoleManager().isPurchaseOperator())){
+			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+			incomeDetailController.onReset(null);
+		}
 	}
 	
 	@Override

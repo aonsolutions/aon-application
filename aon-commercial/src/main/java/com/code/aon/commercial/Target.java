@@ -29,6 +29,7 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
 	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
+	private Set<TargetProfile> profiles = new HashSet<TargetProfile>();
 	
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
 	public Set<TargetItem> getItems() {
@@ -65,6 +66,15 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	public void setDocuments(Set<RegistryAttachment> documents) {
 		this.documents = documents;
 	}	
+
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
+	public Set<TargetProfile> getProfiles() {
+		return profiles;
+	}
+
+	public void setProfiles(Set<TargetProfile> profiles) {
+		this.profiles = profiles;
+	}
 	
 	@Transient
 	public boolean isTaxFree() {

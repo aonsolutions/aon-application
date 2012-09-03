@@ -61,6 +61,14 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
+	private boolean showConfirmWindow;
+	
+	public boolean isShowConfirmWindow() {
+		return showConfirmWindow;
+	}
+	public void setShowConfirmWindow(boolean showConfirmWindow) {
+		this.showConfirmWindow = showConfirmWindow;
+	}
 
     public List<SelectItem> getAddresses() {
 		return addresses;
@@ -160,6 +168,15 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
+	}
+	
+	public Double getIncomesTotalAmount() throws ManagerBeanException {
+		double incomesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Income i = (Income) to;
+			incomesTotalAmount += getIncomeTotalPrice(i);
+		}
+		return incomesTotalAmount;
 	}
 
 	public boolean isPending(){
@@ -345,6 +362,10 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public double getIncomeTotalPrice() throws ManagerBeanException {
 		Income income = (Income)this.getModel().getRowData();
+		return getIncomeTotalPrice(income);
+	}
+
+	public double getIncomeTotalPrice(Income income) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(income, income.getSupplier());
 	}
 
@@ -367,7 +388,27 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		getPurchaseTransferManager().setPurchaseList(purchaseBean.getList(criteria));
 	}
 
+	public boolean isTransferedGreatherThanPending() {
+		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
+		boolean transferedGreatherThanPending = false;
+		while (iterator.hasNext() && !transferedGreatherThanPending) {
+			PurchaseDetail purchaseDetail = iterator.next();
+			if(purchaseDetail.getTransfered() > purchaseDetail.getPendingQuantity()){
+				transferedGreatherThanPending = true;
+			}
+		}
+		return transferedGreatherThanPending;
+	}
+
 	public void onPurchaseTransfer(ActionEvent event) throws ManagerBeanException {
+		if(isTransferedGreatherThanPending()){
+			setShowConfirmWindow(true);
+		} else {
+			confirmPurchaseTrasfer(event);
+		}
+	}
+	
+	public void confirmPurchaseTrasfer(ActionEvent event) throws ManagerBeanException{
 		Iterator<PurchaseDetail> iterator = getPurchaseTransferManager().getCheckedDetails().iterator();
 		while (iterator.hasNext()) {
 			PurchaseDetail purchaseDetail = iterator.next();
@@ -376,10 +417,11 @@ public class IncomeController extends BasicController implements IWarehouseConst
 				incomeManager.transferIncomeDetail((Income)this.getTo(), purchaseDetail, getWarehouse());
 			}
 		}
-
 		refresh(null);
 		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
+		setShowPurchaseTransferWindow(false);
+		setPurchaseTransferManager(null);
 	}
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {

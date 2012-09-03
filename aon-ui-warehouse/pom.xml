@@ -31,7 +31,7 @@
 				<dependencies>
 					<dependency>
 						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>jasperreports</artifactId>
+						<artifactId>${jasperReportsArtifact}</artifactId>
 						<version>${jasperReportsVersion}</version>
 					</dependency>
 					<dependency>
@@ -39,11 +39,11 @@
 						<artifactId>slf4j-jcl</artifactId>
 						<version>1.5.11</version>
 					</dependency>
-                                        <dependency>
-                                                <groupId>com.code.aon</groupId>
-                                                <artifactId>aon.warehouse</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.warehouse</artifactId>
+						<version>${project.version}</version>
+					</dependency>
  				</dependencies>
 			</plugin>
 		</plugins>
@@ -177,6 +177,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.tas</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>					
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.warehouse</artifactId>

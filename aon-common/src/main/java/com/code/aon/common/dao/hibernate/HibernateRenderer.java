@@ -15,8 +15,10 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AssociationType;
@@ -28,6 +30,9 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.dao.CriteriaAdapter;
+import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -42,6 +47,7 @@ import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.ast.RelationalType;
+import com.code.aon.ql.ast.SubQueryExpression;
 
 /**
  * Expression visitor that obtains an SQL WHERE clause.
@@ -105,7 +111,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	/**
 	 * Field criteria
 	 */
-	private org.hibernate.Criteria criteria;
+	private CriteriaAdapter criteria;
 
 	/**
 	 *  The projection list.
@@ -128,6 +134,11 @@ public class HibernateRenderer implements CriterionVisitor {
 	private String fullIdentifier;
 
 	/**
+	 * Store sub query of the expression.
+	 */
+	private DetachedCriteria subQuery;
+	
+	/**
 	 * Store exceptions in Criterion constructor.
 	 */
 	private Exception exception;
@@ -144,7 +155,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	 * @param sessionFactory 
 	 * @param pojo
 	 */
-	public HibernateRenderer(org.hibernate.Criteria criteria, SessionFactory sessionFactory, String pojo) {
+	public HibernateRenderer(CriteriaAdapter criteria, SessionFactory sessionFactory, String pojo) {
 		this.criteria = criteria;
 		this.typeResolver = new TypeResolver(pojo, sessionFactory);
 		this.classMetaData = typeResolver.getClassMetdata();
@@ -477,6 +488,30 @@ public class HibernateRenderer implements CriterionVisitor {
 					this.criterion = Restrictions.geProperty(propertyId, secondePropertyId);
 					break;
 			}
+		} else if ( expression.getRightExpression() instanceof SubQueryExpression ) {
+			switch ( type ) {
+				case LESS_THAN:
+					this.criterion = Property.forName(propertyId).ltAll(this.subQuery);
+					break;
+				case GREATER_THAN:
+					this.criterion = Property.forName(propertyId).gtAll(this.subQuery);
+					break;
+				case EQUAL:
+					this.criterion = Property.forName(propertyId).eqAll(this.subQuery);
+					break;
+				case NOT_EQUAL:
+					this.criterion = Property.forName(propertyId).ne(this.subQuery);
+					break;
+				case LESS_THAN_OR_EQUAL:
+					this.criterion = Property.forName(propertyId).leAll(this.subQuery);
+					break;
+				case GREATER_THAN_OR_EQUAL:
+					this.criterion = Property.forName(propertyId).geAll(this.subQuery);
+					break;					
+				case IN:
+					this.criterion = Property.forName(propertyId).in(this.subQuery);
+					break;
+			}
 		} else {
 			Object value = this.literal;
 			switch ( type ) {
@@ -591,5 +626,15 @@ public class HibernateRenderer implements CriterionVisitor {
 		}
 		return result;
 	}
-		
+
+	@Override
+	public void visitSubQueryExpression(SubQueryExpression sq) {
+		try {
+			this.subQuery = CriteriaUtilities.toDetachedCriteria(sq.getCriteria(),
+					sq.getProjectionList(), typeResolver.getSessionFactory(), sq.getPojo());
+		} catch (DAOException e) {
+			this.exception = new Exception("Error en la subquery", e);
+		}
+	}
+	
 }

@@ -294,4 +294,20 @@ public enum Country implements IResourceable, IStringEnum {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
     
+    public boolean isEuropeanUnionMember() {
+		return this == Country.DE || this == Country.AT || this == Country.BE
+				|| this == Country.BG || this == Country.CY
+				|| this == Country.DK || this == Country.SI
+				|| this == Country.EE || this == Country.FI
+				|| this == Country.FR || this == Country.GR
+				|| this == Country.GB || this == Country.NL
+				|| this == Country.HU || this == Country.IT
+				|| this == Country.IE || this == Country.LV
+				|| this == Country.LT || this == Country.LU
+				|| this == Country.MT || this == Country.PL
+				|| this == Country.PT || this == Country.CZ
+				|| this == Country.SK || this == Country.RO
+				|| this == Country.SE || this == Country.ES;
+    }
+    
 }

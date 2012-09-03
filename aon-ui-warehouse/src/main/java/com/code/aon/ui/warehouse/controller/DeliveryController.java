@@ -1,5 +1,9 @@
 package com.code.aon.ui.warehouse.controller;
 
+import static com.code.aon.ui.company.controller.CompanyParentController.DELIVERY_TEMPLATE_PARAM;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
@@ -15,9 +19,11 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -43,6 +49,7 @@ import com.code.aon.sales.bridge.DeliveryManager;
 import com.code.aon.sales.bridge.SalesTransferManager;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -51,8 +58,8 @@ import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -179,6 +186,15 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		this.invoiceDate = invoiceDate;
 	}
 	
+	public Double getDeliveriesTotalAmount() throws ManagerBeanException {
+		double deliveriesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Delivery d = (Delivery) to;
+			deliveriesTotalAmount += getDeliveryTotalPrice(d);
+		}
+		return deliveriesTotalAmount;
+	}
+
 	public boolean isCustomerReadOnly() {
 		Delivery delivery = (Delivery)this.getTo();
 		return (delivery.getProject() != null && delivery.getProject().getId() != null);
@@ -386,6 +402,10 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 
 	public double getDeliveryTotalPrice() throws ManagerBeanException {
 		Delivery delivery = (Delivery)this.getModel().getRowData();
+		return getDeliveryTotalPrice(delivery) ;
+	}
+	
+	private double getDeliveryTotalPrice(Delivery delivery) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(delivery, delivery.getCustomer());
 	}
 
@@ -457,14 +477,14 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			emailUtil.initMessageController(messageController, (Delivery) getTo());
 			messageController.setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}	
 
@@ -474,6 +494,15 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
 		}
+	}
+	
+	public String getReportTemplate() throws ManagerBeanException {
+		CompanyController controller = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+		ApplicationParameter appParam = controller.obtainApplicationParameter(DELIVERY_TEMPLATE_PARAM);
+		if ( appParam != null ) {
+			return appParam.getValue();
+		}
+		return DELIVERY_CONTROLLER_NAME;
 	}
 
 }

@@ -1,0 +1,37 @@
+package com.code.aon.jaas.auth;
+
+/**
+ * Login constants of <code>com.code.aon.jaas.auth.spi</code> 
+ * 
+ * @author Consulting & Development. Iñaki Ayerbe - 11-nov-2004
+ * @since 1.0
+ */
+public interface IConstants {
+	
+	String SESSION_MANAGER_OBJECT_NAME = "jboss.admin:service=AonSessionManager";
+	
+	String MAIN_DEPLOYER_OBJECT_NAME = "jboss.admin:service=AonMainDeployer";
+
+	/** Separator between shortName and Domain. */
+	String IDENTITY_SEPARATOR = "@";
+	
+	/** Separator between Domain and Context. */
+	String CONTEXT_SEPARATOR = "/";
+
+	/** Default role of any user. */
+	String DEFAULT_ROLE = "User";
+	
+	/** Default domain IP. */
+	String DEFAULT_DOMAIN_IP = "127.0.0.1";
+	
+	/** Default domain name. */
+	String DEFAULT_DOMAIN_NAME = "localhost";
+	
+	String BASE64_ENCODING = "BASE64";
+	
+	String CONFIG_RESOURCE_NAME = "deployed.xml";
+	
+    /** Default Config Resource name. */
+	String DEFAULT_CONFIG_RESOURCE_NAME = "/conf/aon.workspace/" + CONFIG_RESOURCE_NAME;
+
+}

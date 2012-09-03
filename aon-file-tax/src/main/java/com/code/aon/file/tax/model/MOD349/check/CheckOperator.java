@@ -2,36 +2,24 @@ package com.code.aon.file.tax.model.MOD349.check;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.tax.model.MOD349.data.Operator;
 
-/**
- * Checks Operator object data
- * 
- * @author Consulting & Development. Iñigo GAyarre - 08/02/2007
- * @since 1.0
- *
- */
 public class CheckOperator extends Check {
 
-	/**
-	 * Parses data
-	 * 
-	 * @param operator the object to parse
-	 * @param exceptions errors founds
-	 * @return true if no errors
-	 */
 	public static boolean parse(Operator operator,ArrayList<Exception> exceptions){
 		boolean status = true;
 		if (operator.getCountry()==null){
 			exceptions.add( new Fd0Exception( getMessage("ERROR_OPERATOR_1") ,operator.toString()) );
 			status = false;
 		}
-		if (operator.getCode()==null){
+		if (operator.getDocument()==null){
 			exceptions.add( new Fd0Exception( getMessage("ERROR_OPERATOR_2") ,operator.toString()) );
 			status = false;
 		}
-		if (!isValidComunitaryCode(operator.getCountry(), operator.getCode())){
+		if (!isValidComunitaryCode(operator.getCountry(), operator.getDocument())){
 			exceptions.add( new Fd0Exception( getMessage("ERROR_OPERATOR_6") ,operator.toString()) );
 			status = false;
 		}
@@ -43,9 +31,13 @@ public class CheckOperator extends Check {
 			exceptions.add( new Fd0Exception( getMessage("ERROR_OPERATOR_4") ,operator.toString()) );
 			status = false;
 		}else{
-			if (!operator.getKey().equals("A") &&
-					!operator.getKey().equals("E") &&
-					!operator.getKey().equals("T")){
+			if (!operator.getKey().equals("E") &&
+				!operator.getKey().equals("M") &&
+				!operator.getKey().equals("H") &&
+				!operator.getKey().equals("A") &&
+				!operator.getKey().equals("T") &&
+				!operator.getKey().equals("S") &&
+				!operator.getKey().equals("I")){
 				exceptions.add( new Fd0Exception( getMessage("ERROR_OPERATOR_5") ,operator.toString()) );
 				status = false;
 			}			
@@ -53,86 +45,36 @@ public class CheckOperator extends Check {
 		return status;
 	}
 
-	private static boolean isValidComunitaryCode(String country , String code){
-		int longitud = code.length();
-		try{
-			if (country.equals("DE") && longitud == 9 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("AT") && longitud == 9 ){
-				return true;
-			}else if( country.equals("BE") && longitud == 9 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("CY") && longitud == 9 ){
-				return true;
-			}else if( country.equals("DK") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("SI") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("EE") && longitud == 9 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("FI") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("FR") && longitud == 11 ){
-				return true;
-			}else if( country.equals("EL") && longitud == 9 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("GB") && (longitud == 5 || longitud == 9 || longitud == 12) ){
-				return true;
-			}else if( country.equals("NL") && longitud == 12 ){
-				return true;
-			}else if( country.equals("HU") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("IT") && longitud == 11 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("IE") && longitud == 8 ){
-				return true;
-			}else if( country.equals("LV") && longitud == 11 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("LT") && (longitud == 9 || longitud == 12) ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("LU") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("MT") && longitud == 8 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("PL") && longitud == 10 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("PT") && longitud == 9 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("CZ") && (longitud == 8 || longitud == 9 || longitud == 10 )){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("SK") && (longitud == 9 || longitud == 10) ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("SE") && longitud == 12 ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("BG") && (longitud == 9 || longitud == 10) ){
-				Double.parseDouble( code );
-				return true;
-			}else if( country.equals("RO") && longitud == 10 ){
-				Double.parseDouble( code );
-				return true;
-			}
-			return false;
-		}catch (Exception nfe){
-			return false;
-		}
+	private static boolean isValidComunitaryCode(String country , String doc){
+		int len = doc.length();
+		if (
+				( "DE".equals(country) && StringUtils.isNumeric(doc) 		&& len==9 ) 
+			||  ( "AT".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==9 ) 
+			||  ( "BE".equals(country) && StringUtils.isNumeric(doc) 		&& (len==9 || len==10 )) 
+			||  ( "BG".equals(country) && StringUtils.isNumeric(doc) 		&& (len==9 || len==10)) 
+			||  ( "CY".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==9 ) 
+			||  ( "DK".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "SI".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "EE".equals(country) && StringUtils.isNumeric(doc) 		&& len==9 ) 
+			||  ( "FI".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "FR".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==11 ) 
+			||  ( "EL".equals(country) && StringUtils.isNumeric(doc) 		&& len==9 ) 
+			||  ( "GB".equals(country) && StringUtils.isAlphanumeric(doc) 	&& (len==5 || len == 9 || len == 12) ) 
+			||  ( "NL".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==12 ) 
+			||  ( "HU".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "IT".equals(country) && StringUtils.isNumeric(doc) 		&& len==11 ) 
+			||  ( "IE".equals(country) && StringUtils.isAlphanumeric(doc) 	&& len==8 ) 
+			||  ( "LV".equals(country) && StringUtils.isNumeric(doc) 		&& len==11 ) 
+			||  ( "LT".equals(country) && StringUtils.isNumeric(doc) 		&& (len==9 || len == 12) ) 
+			||  ( "LU".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "MT".equals(country) && StringUtils.isNumeric(doc) 		&& len==8 ) 
+			||  ( "PL".equals(country) && StringUtils.isNumeric(doc) 		&& len==10 ) 
+			||  ( "PT".equals(country) && StringUtils.isNumeric(doc) 		&& len==9 ) 
+			||  ( "CZ".equals(country) && StringUtils.isNumeric(doc) 		&& (len==8 || len == 9 || len == 10 )) 
+			||  ( "SK".equals(country) && StringUtils.isNumeric(doc) 		&& (len==9 || len == 10) ) 
+			||  ( "RO".equals(country) && StringUtils.isNumeric(doc) 		&& (len>=2 && len<=10)) 
+			||  ( "SE".equals(country) && StringUtils.isNumeric(doc) 		&& len==12 ) ) return true;
+		return false;
 	}
 
 }

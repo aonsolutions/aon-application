@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -17,16 +18,19 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
+import com.esferalia.aon.pms.ProjectReservation;
 import com.esferalia.aon.pms.ReservationRequest;
 import com.esferalia.aon.pms.ReservationRequestRoom;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.pms.reservation.AvailableRoomStay;
 import com.esferalia.aon.pms.reservation.ReservationRequestManager;
 
-public class ReservationRequestRoomController extends LinesController {
+public class ReservationRequestRoomController extends LinesController implements IPmsConstants {
 
 	private Map<Integer,List<AvailableRoomStay>> availableRoomStayMap;
 
@@ -147,6 +151,42 @@ public class ReservationRequestRoomController extends LinesController {
 				getAvailableRoomStayMap().remove(requestRoom.getId());
 			}
 		}
+	}
+
+	public void onLoadRoomReservation(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
+			Integer reservationId = null;
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), room.getCrsCode());
+			for (ITransferObject ito : reservationBean.getList(criteria)) {
+				ProjectReservation reservation = (ProjectReservation)ito;
+				reservationId = reservation.getId();
+				break;
+			}
+
+			if (reservationId != null) {
+				BasicController reservationController = (BasicController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_CONTROLLER_NAME);
+				reservationController.onLoad(event, reservationId, RESERVATION_REQUEST_FORM_NAME, null);
+			} else {
+				String msg = "La Reserva no se encuentra disponible en este momento.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		}
+	}
+
+	public String getReservationPage() throws ManagerBeanException {
+		String page = "";
+		if (getModel().isRowAvailable()) {
+			ReservationRequestRoom room = (ReservationRequestRoom)this.getModel().getRowData();
+			IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CRS_CODE), room.getCrsCode());
+			page = (reservationBean.getCount(criteria) > 0) ? RESERVATION_FORM_NAME : "";
+		}
+		return page;
 	}
 
 }

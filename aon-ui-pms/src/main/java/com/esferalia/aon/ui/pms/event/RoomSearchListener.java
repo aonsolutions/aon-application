@@ -20,6 +20,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.Room;
 import com.esferalia.aon.ui.pms.controller.IPmsConstants;
 import com.esferalia.aon.ui.pms.controller.PmsCollectionsController;
+import com.esferalia.aon.ui.pms.controller.RoomController;
 
 public class RoomSearchListener extends ControllerSearchListener {
 
@@ -44,26 +45,18 @@ public class RoomSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setHotel(null);
-		setItem(null);
-	}
-	
-	@Override
-	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		if (getHotel() != null && getHotel().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
-		}
-		if (getItem() != null && getItem().getId() != null) {
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
-		}
+		setHotel((Hotel)BeanManager.getManagerBean(Hotel.class).createNewTo());
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+
+		((RoomController)getController()).clearCheckedRooms();
 	}
 	
 	public List<SelectItem> getHotelRoomItems() throws ManagerBeanException {
 		if (getHotel() != null && getHotel().getId() != null) {
 			return getHotelRoomItems(getHotel());
 		}
-		PmsCollectionsController collectionsController = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
-		return collectionsController.getRoomItems(); 
+		PmsCollectionsController pmsCollections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
+		return pmsCollections.getRoomItems(); 
 	}
 	
 	private List<SelectItem> getHotelRoomItems(Hotel hotel) throws ManagerBeanException {
@@ -93,4 +86,14 @@ public class RoomSearchListener extends ControllerSearchListener {
 		return roomItems;
 	}
 
+	@Override
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		if (getHotel() != null && getHotel().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_HOTEL_ID), getHotel().getId());			
+		}
+		if (getItem() != null && getItem().getId() != null) {
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ROOM_ITEM_ID), getItem().getId());			
+		}
+	}
+	
 }

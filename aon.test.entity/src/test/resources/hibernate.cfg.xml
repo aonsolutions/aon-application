@@ -130,6 +130,8 @@
     	<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
     	<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
     	<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
+		<mapping class="com.code.aon.registry.Tag"/>		    	
     	<mapping class="com.code.aon.config.Bank"/>
     	<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
     	<mapping class="com.esferalia.aon.calendar.Calendar"/>

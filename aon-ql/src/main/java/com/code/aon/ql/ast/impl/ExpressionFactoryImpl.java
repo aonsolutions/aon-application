@@ -1,5 +1,7 @@
 package com.code.aon.ql.ast.impl;
 
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.AbstractExpressionFactory;
 import com.code.aon.ql.ast.BetweenExpression;
 import com.code.aon.ql.ast.ConstantExpression;
@@ -11,6 +13,7 @@ import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.ast.RelationalType;
+import com.code.aon.ql.ast.SubQueryExpression;
 
 /**
  * Provides different implementations of <code>Expression</code>.
@@ -81,4 +84,10 @@ public class ExpressionFactoryImpl extends AbstractExpressionFactory {
         return new BetweenExpressionImpl(left, minor, major);
     }
 
+	@Override
+	public SubQueryExpression newSubQueryExpression(String pojo,
+			Criteria criteria, ProjectionList projectionList) {
+		return new SubQueryExpressionImpl(pojo, criteria, projectionList);
+	}
+    
 }

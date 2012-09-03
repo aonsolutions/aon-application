@@ -1,9 +1,13 @@
 package com.code.aon.webmail.db;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -31,6 +35,17 @@ public class Contact extends ContactDB implements IContact {
 	private Boolean contactGroup;
 	
 	private List<Contact> contacts;
+	
+	private Set<ContactDetail> details = new HashSet<ContactDetail>();
+
+	@OneToMany(mappedBy = "contact", cascade={CascadeType.REMOVE})
+	public Set<ContactDetail> getDetails() {
+		return details;
+	}
+
+	public void setDetails(Set<ContactDetail> details) {
+		this.details = details;
+	}
 
 	@Override
 	@Transient

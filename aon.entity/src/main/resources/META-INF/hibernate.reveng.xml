@@ -23,26 +23,8 @@
 	<!--  **************** -->
 	<!--  TABLAS DE ACADEMY -->
 	<!--  **************** -->
-	<table-filter match-name="absence" exclude="true" />
-	<table-filter match-name="academic_skill" exclude="true" />
-	<table-filter match-name="academic_year" exclude="true" />
-	<table-filter match-name="alumn_loan" exclude="true" />
-	<table-filter match-name="course" exclude="true" />
-	<table-filter match-name="course_academicskill" exclude="true" />
-	<table-filter match-name="course_alumn" exclude="true" />
-	<table-filter match-name="course_evaluation" exclude="true" />
-	<table-filter match-name="course_instructor" exclude="true" />
-	<table-filter match-name="course_level" exclude="true" />
-	<table-filter match-name="course_observation" exclude="true" />
-	<table-filter match-name="course_schedule" exclude="true" />
-	<table-filter match-name="course_subject" exclude="true" />
 	<table-filter match-name="customer_segment" exclude="true" />
-	<table-filter match-name="evaluation_observation" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
-	<table-filter match-name="mark" exclude="true" />
-	<table-filter match-name="observation" exclude="true" />
-	<table-filter match-name="qualification" exclude="true" />
-	<table-filter match-name="quality_skill" exclude="true" />
 
 	<!--  **************** -->
 	<!--  TABLAS DE ECOMMERCE -->
@@ -67,9 +49,10 @@
 	<!--  PAYROLL -->
 	<table-filter match-name="salary_data" exclude="true" />
 	
-	<!--  *********************************** -->
-	<!--  *********** AON-ACCOUNT *********** -->
-	<!--  *********************************** -->
+	<table name="absence">
+		<column name="evaluation" type="int"/>
+		<column name="comments" type="text" />
+	</table>
 
 	<table name="account">
 		<column name="entryEnabled" type="boolean" />
@@ -403,6 +386,31 @@
 		<column name="description_decorable" type="boolean" />
 	</table>
 
+	<table name="course">
+		<column name="alumn_limit" type="int" />
+		<column name="status" type="com.code.aon.academy.enumeration.CourseStatus" />
+	</table>
+
+	<table name="course_alumn">
+		<column name="status" type="com.code.aon.academy.enumeration.CourseAlumnStatus" />
+	</table>
+	
+	<table name="course_academicskill" class="com.esferalia.aon.entity.master.CourseAcademicSkill" >
+		<column name="weight" type="int" />
+	</table>
+
+	<table name="course_evaluation">
+		<column name="quantity" type="int" />
+	</table>
+	
+	<table name="course_instructor">
+		<column name="type" type="com.code.aon.academy.enumeration.InstructorType" />
+	</table>
+
+	<table name="course_schedule">
+		<column name="day_of_week" type="com.code.aon.common.enumeration.WeekDay" />
+	</table>
+
 	<table name="creditor">
 		<primary-key>
 			<key-column name="registry" property="id" type="java.lang.Integer"/>
@@ -453,8 +461,6 @@
 	</table>
 
 	<table name="domain">
-		<meta attribute="extra-import">com.code.aon.common.domain.IDomainPojo</meta>
-		<meta attribute="implements">IDomainPojo&lt;Domain&gt;</meta>
 		<meta attribute="aon-constructor">this.active = true;</meta>
 		<column name="type" type="com.code.aon.config.enumeration.DomainType" />
 		<foreign-key constraint-name="FK_DOMAIN_PARENT">
@@ -495,6 +501,11 @@
 			<many-to-one property="activity" />
 		</foreign-key>
 	</table>
+	
+	<table name="evaluation_observation">
+		<column name="evaluation" type="int"/>
+		<column name="comments" type="text" />
+	</table>	
 
 	<table name="fan_batch">
 		<column name="liquidation_type" type="com.esferalia.aon.payroll.enumeration.LiquidationType"/>
@@ -528,6 +539,13 @@
 		<column name="rdocument_type" type="com.code.aon.registry.enumeration.DocumentType" property="registryDocumentType"/>
 		<column name="status" property="financeStatus" type="com.code.aon.finance.enumeration.FinanceStatus"/>
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
+		<foreign-key constraint-name="FK_FINANCE_FINANCE">
+			<many-to-one property="financeGroup"/>
+		</foreign-key>
+	</table>
+
+	<table name="finance_pos">
+		<column name="xml_response" type="text"/>
 	</table>
 
 	<table name="finance_tracking">
@@ -550,6 +568,23 @@
 		<column name="second_quarter_amount" type="java.lang.Double"/>
 		<column name="third_quarter_amount" type="java.lang.Double"/>
 		<column name="fourth_quarter_amount" type="java.lang.Double"/>
+	</table>
+
+	<table name="fs_mod349" class="com.esferalia.aon.entity.master.Mod349">
+		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
+		<column name="status" type="com.code.aon.fiscal.enumeration.Mod349Status"/>
+		<column name="comments" type="text"/>
+		<column name="year" type="java.lang.Integer"/>
+		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
+	</table>
+
+	<table name="fs_mod349_detail" class="com.esferalia.aon.entity.master.Mod349Detail">
+		<column name="type" type="com.code.aon.fiscal.enumeration.Mod349Type"/>
+		<column name="country" type="com.code.aon.common.enumeration.Country"/>
+		<column name="amount" type="java.lang.Double"/>
+		<column name="rectified_year" type="java.lang.Integer"/>
+		<column name="rectified_period" type="com.code.aon.fiscal.enumeration.Period"/>		
+		<column name="rectified_amount" type="java.lang.Double"/>
 	</table>
 
 	<table name="fs_prof_retention" class="com.esferalia.aon.entity.master.ProfessionalRetention">
@@ -621,6 +656,7 @@
 	</table>
 
 	<table name="hotel">
+		<column name="sheet_changing" property="sheetChanging" type="java.lang.Integer"/>
 		<foreign-key constraint-name="FK_HOTEL_SERVICE_CATALOGUE">
 			<many-to-one property="serviceCatalogue" />
 		</foreign-key>
@@ -629,6 +665,9 @@
 		</foreign-key>
 		<foreign-key constraint-name="FK_HOTEL_ITEM_NO_SHOW">
 			<many-to-one property="itemNoShow" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_HOTEL_ITEM_PENALTY">
+			<many-to-one property="itemPenalty" />
 		</foreign-key>
 	</table>
 
@@ -717,8 +756,13 @@
 		<column name="descendient_count" type="java.lang.Integer"/>
 		<column name="contract_type" exclude="true"/>
 		<column name="ceuta_melilla" exclude="true"/>
-		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
-		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
+		<column name="annual_remuneration" type="java.lang.Double"/>
+		<column name="deduccibles_expenses" type="java.lang.Double"/>
+		<column name="spousal_support" type="java.lang.Double"/>
+		<column name="food_annuity" type="java.lang.Double"/>
+		<column name="request_irpf" type="java.lang.Double"/>
+  		<column name="irregular_18_2_reduction" property="irregular18_2Reduction" type="java.lang.Double"/>
+		<column name="irregular_18_3_reduction" property="irregular18_3Reduction" type="java.lang.Double"/>
 	</table>
 
 	<table name="irpf_data_ascendants">
@@ -832,13 +876,25 @@
 	</table>
 	
 	<table name="mail_account">
-		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
+		<column name="incoming_security" property="incomingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
+		<column name="outgoing_security" property="outgoingSecurity" type="com.code.aon.webmail.enumeration.ConnectionSecurity"/>
 		<column name="replyto_mail" property="replyToMail" />
 		<column name="incoming_port" type="int"/>
 		<column name="outgoing_port" type="int"/>
 		<column name="password" property="passwordString"/>
 		<foreign-key constraint-name="FK_MAIL_ACCOUNT_USER">
 			<many-to-one property="user"/>
+		</foreign-key>        
+	</table>
+	
+	<table name="mark">
+		<column name="evaluation" type="int"/>
+		<column name="mark" type="java.lang.Double"/>
+		<foreign-key constraint-name="FK_MARK_ALUMN">
+			<many-to-one property="alumn"/>
+		</foreign-key>        
+		<foreign-key constraint-name="FK_MARK_SUBJECT">
+			<many-to-one property="subject"/>
 		</foreign-key>        
 	</table>
 	
@@ -933,7 +989,7 @@
 	
 	<table name="question">
 		<column name="question_text" property="text" />
-		<column name="type" type="com.code.aon.marketing.enumeration.QuestionType"/>
+		<column name="type" type="com.code.aon.commercial.enumeration.QuestionType"/>
 		<column name="argument" type="text"/>
 	</table>
 	
@@ -1056,6 +1112,7 @@
 			<key-column name="project" property="id" type="java.lang.Integer"/>
 		</primary-key>
 		<column name="booking_holder" type="com.esferalia.aon.pms.enumeration.BookingHolder"/>
+		<column name="check_status" type="com.esferalia.aon.pms.enumeration.ReservationCheckStatus"/>
 		<column name="status" type="com.esferalia.aon.pms.enumeration.ReservationStatus"/>
 		<column name="comments" type="text"/>
 		<column name="remarks" type="text"/>
@@ -1158,6 +1215,12 @@
 		<column name="type" property="registryAttachmentType" type="com.code.aon.registry.enumeration.RegistryAttachmentType" />
 		<column name="mimeType" type="com.code.aon.common.enumeration.MimeType" />
 	</table>
+
+	<table name="rattach_tag" class="com.esferalia.aon.entity.master.RegistryAttachmentTag" >
+		<foreign-key constraint-name="FK_RATTACH_TAG_RATTACH">
+			<many-to-one property="attachment" />
+		</foreign-key>
+	</table>	
 
 	<table name="rbank" class="com.esferalia.aon.entity.master.RegistryBank">
 		<column name="bank_account" type="com.code.aon.config.BankAccount"/>
@@ -1313,7 +1376,6 @@
 	</table>
 	
 	<table name="signature">
-		<column name="source" type="com.code.aon.webmail.enumeration.MailSource"/>
 		<column name="signature" type="text"/>
 		<foreign-key constraint-name="FK_SIGNATURE_USER">
 			<many-to-one property="user"/>
@@ -1452,6 +1514,7 @@
 	<table name="user">
 		<column name="enterprise" exclude="true"/>
 		<column name="registry" exclude="true"/>
+		<column name="toolbar" type="com.code.aon.config.enumeration.Toolbar"/>
 		<foreign-key constraint-name="FK_USER_ENTERPRISE">
 			<many-to-one exclude="true"/>
 		</foreign-key>

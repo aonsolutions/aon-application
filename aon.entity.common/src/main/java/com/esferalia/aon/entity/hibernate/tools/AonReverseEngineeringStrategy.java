@@ -38,7 +38,7 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		}
 		return className;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public String foreignKeyToEntityName(String keyname,
@@ -59,11 +59,11 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 	public boolean excludeForeignKeyAsManytoOne(String keyname,
 			TableIdentifier fromTable, List fromColumns,
 			TableIdentifier referencedTable, List referencedColumns) {
-		if (!"profile".equals(fromTable.getName()) ) {
+		if (!"profile".equals(fromTable.getName()) && !"profile_role".equals(fromTable.getName()) ) {
 			Column column = (Column) fromColumns.get(0);
 			if ("domain".equals(column.getName()) && "domain".equals(referencedTable.getName()) ) {
 				return true;
-			}			
+			}
 		}
 		return super.excludeForeignKeyAsManytoOne(keyname, fromTable, fromColumns,
 				referencedTable, referencedColumns);
@@ -117,6 +117,15 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		}
 		String type = super.columnToHibernateTypeName(table, columnName, sqlType, length, precision, scale, nullable, generatedIdentifier); 
 		return type;
+	}
+
+	/*
+	 *  Se sobrecarga este metodo porque hay un campo en la tabla offer que se llama version, y de no ser asi lo controla el hibernate.
+	 *
+	 */
+	@Override
+	public boolean useColumnForOptimisticLock(TableIdentifier identifier, String column) {
+		return false;
 	}
 
 }

@@ -232,6 +232,10 @@
     <param-value>ALL</param-value>
   </context-param>
   <context-param>
+    <param-name>com.code.aon.skipLdap</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
     <param-name>org.ajax4jsf.GLOBAL_RESOURCE_URI_PREFIX</param-name>
     <param-value>richFaces3.3.3.Final/</param-value>
   </context-param>
@@ -268,6 +272,14 @@
     <filter-name>BackDoorAuthenticationFilter</filter-name>
     <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
+  
+	<!-- DOMAIN MANAGER CONFIGURATION  -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.domain.ServletContextDomainListener
+       </listener-class>
+    </listener>
+  
   <listener>
     <listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
   </listener>

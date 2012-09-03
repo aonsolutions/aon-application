@@ -65,6 +65,9 @@ public interface IWebMailConstants {
 	String INVALID_NAME = "ldap_invalid_name";
 	String ID_USED = "ldap_id_used";
 	
+	String MAIL_ACCOUNT_TITLE = "webmail_mailAccount_full";
+	String SIGNATURE_TITLE = "webmail_signature_full";
+	
 	String CONTACT_DUPLICATED = "webmail_contact_duplicated";
 	String CONTACT_USED = "webmail_contact_used";
 	String NOT_SERVER_CONNECTED = "webmail_not_server_conected";

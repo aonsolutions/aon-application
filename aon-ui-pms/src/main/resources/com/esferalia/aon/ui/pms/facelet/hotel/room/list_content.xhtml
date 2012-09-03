@@ -5,7 +5,17 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
  
-	<aon:column alias="Room.asset.name" >
+	<aon:column styleClass="aon-editDataTable-iconColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{controller.checkedCount}" />
+		</f:facet>
+		<aon:selectBooleanCheckbox id="RoomCheck"
+			value="#{controller.rowChecked}"
+			valueChangeListener="#{controller.rowSelected}"
+			reRender="aonContent" />	
+	</aon:column>
+
+	<aon:column alias="Room.asset.name">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_number}" />
 		</f:facet>
@@ -19,7 +29,7 @@
 		<aon:outputText value="#{to.hotel.workPlace.description}" />
 	</aon:column>
 
-	<aon:column alias="Room.item.product.code" >
+	<aon:column alias="Room.item.product.code">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_type}" />
 		</f:facet>

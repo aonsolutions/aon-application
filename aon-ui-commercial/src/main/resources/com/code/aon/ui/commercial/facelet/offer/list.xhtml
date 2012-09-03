@@ -31,6 +31,13 @@
 							<aon:outputText value="#{offer.offerTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
+							<f:facet name="footer">
+								<aon:div style="float:right">
+									<aon:outputText style="text-align:right" value="#{offer.offersTotalAmount}" >
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
+							</f:facet>
 						</aon:column>
 						
 						<c:if test="#{company.EInvoice}">

@@ -46,7 +46,6 @@
 					<aon:outputLabel for="DomainApplication_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="DomainApplication_active"
-						disabled="#{!adminMain.config.editDomainApplicationActive}"
 						value="#{domainApplication.to.active}" />
 					
 				</aon:panelGrid>
@@ -65,18 +64,12 @@
 							</ui:include>
 	                    </aon:panelTab>
 	                    
-						<aon:panelTab name="modules"
-							label="#{adminBundle.admin_modules}">
-							<ui:include src="/com/code/aon/ui/admin/facelet/domainApplicationModule/grid.xhtml" >
-								<ui:param name="controller" value="#{domainApplicationModule}" />
-							</ui:include>
-	                    </aon:panelTab>
-
 						<aon:panelTab name="profiles"
 							label="#{adminBundle.admin_profiles}">
 
 							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
 								<ui:param name="controller" value="#{domainApplicationProfile}" />
+								<ui:param name="skipDomainColumn" value="#{adminDomain.parentDomain == null}" />
 								<ui:param name="rows" value="10" />	
 							</ui:include>
 								
@@ -85,12 +78,7 @@
 						<aon:panelTab name="systemProfiles"
 							label="#{adminBundle.admin_systemProfiles}">
 
-							<ui:include src="/com/code/aon/ui/admin/facelet/profile/grid.xhtml" >
-								<ui:param name="controller" value="#{applicationProfile}" />
-								<ui:param name="skipProfileEdit" value="#{true}" />
-								<ui:param name="skipDomainColumn" value="#{true}" />
-								<ui:param name="skipDeniedModulesColumn" value="#{true}" />
-							</ui:include>								
+							<ui:include src="/com/code/aon/ui/admin/facelet/applicationProfile/grid.xhtml" />
 
 	                    </aon:panelTab>	                    
 

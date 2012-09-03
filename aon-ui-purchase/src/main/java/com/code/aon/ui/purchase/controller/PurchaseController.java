@@ -1,6 +1,8 @@
 package com.code.aon.ui.purchase.controller;
 
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,8 +57,8 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -223,6 +225,15 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
+	}
+	
+	public Double getPurchasesTotalAmount() throws ManagerBeanException {
+		double purchasesTotalAmount = 0.0; 
+		for(ITransferObject to: this.getWrappedList()){
+			Purchase p = (Purchase) to;
+			purchasesTotalAmount += getPurchaseTotalPrice(p);
+		}
+		return purchasesTotalAmount;
 	}
 
 	public boolean isInIncome() throws ManagerBeanException {
@@ -401,6 +412,10 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public double getPurchaseTotalPrice() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getModel().getRowData();
+		return getPurchaseTotalPrice(purchase);
+	}
+
+	public double getPurchaseTotalPrice(Purchase purchase) throws ManagerBeanException {
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
 	}
 
@@ -490,17 +505,17 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean("purchaseReport");
+		PurchaseReportManager purchaseReportManager = (PurchaseReportManager) AonUtil.getRegisteredBean(PURCHASE_REPORT_CONTROLLER_NAME);
 		purchaseReportManager.setValued(true);
-		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
-		if (webmailController.isLogged()) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
 			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 			messageController.initNewMessage();
 			fireBeforeEmailSend(event, getTo());
 			emailUtil.initMessageController(messageController, (Purchase) getTo(), getMoreRecipients());
 			messageController.setShowNewMessageWindow(true);
 		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
 	}		
 	

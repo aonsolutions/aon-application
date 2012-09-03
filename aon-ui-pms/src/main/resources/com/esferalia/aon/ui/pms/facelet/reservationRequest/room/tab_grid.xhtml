@@ -98,17 +98,21 @@
 				<aon:outputText value="#{to.adults}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_adults" 
 					value="#{controller.to.adults}" rendered="#{formEdit}"
-					required="true" size="2" maxlength="3" />
+					required="true" size="2" maxlength="3">
+					<f:validateLongRange minimum = "1" />
+				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ReservationRequestRoom_adults-New" 
 						value="#{controller.to.adults}" rendered="#{formNew}"
-						required="true" size="2" maxlength="3" />
+						required="true" size="2" maxlength="3">
+						<f:validateLongRange minimum = "1" />
+					</aon:inputText>
 				</f:facet>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_babies" value="#{pmsBundle.pms_children} 0-6 #{bundle.aon_years}" />
+					<aon:outputLabel for="ReservationRequestRoom_babies" value="#{pmsBundle.pms_children} 0-5 #{bundle.aon_years}" />
 				</f:facet>
 				<aon:outputText value="#{to.babies}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_babies" 
@@ -123,7 +127,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
-					<aon:outputLabel for="ReservationRequestRoom_children" value="#{pmsBundle.pms_children} 6-12 #{bundle.aon_years}" />
+					<aon:outputLabel for="ReservationRequestRoom_children" value="#{pmsBundle.pms_children} 6-11 #{bundle.aon_years}" />
 				</f:facet>
 				<aon:outputText value="#{to.children}" rendered="#{formList}" />
 				<aon:inputText id="ReservationRequestRoom_children" 
@@ -302,7 +306,17 @@
 					<f:facet name="header">
 						<aon:outputText value="#{pmsBundle.pms_reservation} #{pmsBundle.pms_crs}" />
 					</f:facet>
-					<aon:outputText value="#{reservationData.crsCode}" />
+					<aon:div>
+						<aon:outputText value="#{reservationData.crsCode}" />
+						<aon:commandLink id="reservationLink"
+							styleClass="aon-button-goto" style="padding-right: 20px;" 
+							value="&#160;" immediate="true"
+							rendered="#{!empty reservationData.crsCode}" 
+							actionListener="#{controller.onLoadRoomReservation}"
+							action="#{controller.getReservationPage}"
+							reRender="aonContent">
+						</aon:commandLink>
+					</aon:div>  
 				</aon:column>
 
 				<aon:column styleClass="aon-editDataTable-textColumn aon-bold aon-subTable-column">

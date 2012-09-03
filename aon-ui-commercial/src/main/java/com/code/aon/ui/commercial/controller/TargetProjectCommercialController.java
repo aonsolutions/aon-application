@@ -49,5 +49,14 @@ public class TargetProjectCommercialController extends BasicController {
 		projectBean.onBack(event);
 		initializeModel();
 	}
+
+	public void onResetTargetProject( ActionEvent event ) throws ManagerBeanException {	
+		BasicController projectBean = (BasicController) AonUtil.getRegisteredBean(TARGET_PROJECT_COMMERCIAL_CONTROLLER_NAME);
+		projectBean.onReset(event);
+		IController targetController = FormUtil.getController(TARGET_CONTROLLER_NAME);
+		Target target = (Target) targetController.getTo();
+		ProjectCommercial project = (ProjectCommercial) projectBean.getTo();
+		project.setTarget(target);
+	}
 	
 }

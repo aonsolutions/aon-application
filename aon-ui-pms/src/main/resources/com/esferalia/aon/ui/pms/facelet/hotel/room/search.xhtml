@@ -7,25 +7,20 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
 		<aon:form id="roomSearch">
-			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_room_module}" />
+				<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 				<ui:param name="controller" value="#{room}" />
 			</ui:include>
-				
+
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{room}" />
-
 				<ui:define name="searchContent">
-					
 					<ui:include src="/com/esferalia/aon/ui/pms/facelet/hotel/room/search_content.xhtml" />
-						
 				</ui:define>
 			</ui:decorate>				
 		</aon:form>
-		
 	</ui:define>
 </ui:composition>

@@ -22,8 +22,6 @@ public interface IMarketingConstants {
 	
 	String CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME = "campaignActionTarget";
 	
-	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
-	
 	String COMMUNICATION_CENTER_CONTROLLER_NAME = "communicationCenter";
 	
 	String CAMPAIGN_CONTROLLER_NAME = "marketingCampaign";
@@ -35,33 +33,25 @@ public interface IMarketingConstants {
 	// ************************************************************
 
 	String ACTION_EXPORT = "marketing_action_export";
-
-	String QUESTION = "marketing_question";
 	
 	String SURVEY = "marketing_survey";
 	
-	String RESPONSE = "marketing_response";
-	
-	String TARGET_WITHOUT_EMAIL = "marketing_target_without_email";
+	String TARGET_WITHOUT_COMMERCIAL_EMAIL = "marketing_target_without_commercial_email";
 	
 	String TARGET_SEND_EMAIL_ERROR = "marketing_target_send_email_error";
 	
 	String TARGET_EMAIL_SENT = "marketing_target_email_sent";
+	
+	String TARGET_INVALID_EMAIL = "marketing_target_invalid_email";
+
+	String TARGET_SEND_BULK_EMAIL_ERROR = "marketing_target_send_bulk_email_error";
+	
+	String TARGET_BULK_EMAIL_SENT = "marketing_target_bulk_email_sent";
 	
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
 
 	String SHOW_PHONE_ACTION_MEDIA_TYPE = "showPhoneActionMediaType";
-
-	// ************************************************************
-	// REPORT
-	// ************************************************************
-	
-	String MARKETING_TARGET_LIST_DETAIL_EXCEL = "marketingTargetListDetailExcel";
-	
-	String MARKETING_TARGET_LIST_DETAIL = "marketingTargetListDetail";
-	
-	String MARKETING_TARGET_LIST = "marketingTargetList";	
 	
 }

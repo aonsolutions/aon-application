@@ -8,10 +8,10 @@
 	<aon:div id="#{controller.beanName}Div" >
 		<ui:param name="innerToolbar" value="#{true}" />	
 		<c:if test="#{controller.to == null}">
-			<ui:include src="/com/code/aon/ui/admin/facelet/profile/list.xhtml" />
+			<ui:include src="/com/code/aon/ui/admin/facelet/profile/gridList.xhtml" />
 		</c:if>
 		<c:if test="#{controller.to != null}">
-			<ui:include src="/com/code/aon/ui/admin/facelet/profile/form.xhtml" />
+			<ui:include src="/com/code/aon/ui/admin/facelet/profile/gridForm.xhtml" />
 		</c:if>
 	</aon:div>
 

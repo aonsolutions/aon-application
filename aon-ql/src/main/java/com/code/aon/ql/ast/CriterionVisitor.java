@@ -86,5 +86,11 @@ public interface CriterionVisitor {
 	 * @param projectionList Projection visited.
 	 */
 	void visitProjectionList( ProjectionList projectionList );
-	
+
+	/**
+	 * Method to be invoked from a <code>SubQueryExpression</code>. 
+	 * @param expression Expresión visited.
+	 */
+	void visitSubQueryExpression( SubQueryExpression expression );
+
 }

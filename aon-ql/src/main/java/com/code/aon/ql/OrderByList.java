@@ -126,16 +126,14 @@ public class OrderByList implements Criterion {
 	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-        Iterator<Order> i = getOrders().iterator();
-        boolean hasNext = i.hasNext();
-        while (hasNext) {
-        	buf.append( i.next() );
-            hasNext = i.hasNext();
-            if (hasNext)
-                buf.append(", ");
-        }		
+		for( int i = 0; i < this.orders.size(); i++) {
+			if ( i > 0 ) {
+				buf.append(",");
+			}
+			buf.append(this.orders.get(i));
+		}
 		return buf.toString();
-	}
+	}	
 
 	@Override
 	public boolean equals(Object obj) {

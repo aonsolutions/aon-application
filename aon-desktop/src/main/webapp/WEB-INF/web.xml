@@ -219,6 +219,13 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
+	<!-- DOMAIN MANAGER CONFIGURATION  -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.domain.ServletContextDomainListener
+       </listener-class>
+    </listener>
+
 	<!-- Listener, that enables Concurrent Sessions per User. -->
 	<listener>
 		<listener-class>

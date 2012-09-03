@@ -1,6 +1,10 @@
 package com.code.aon.ui.purchase.controller;
 
+import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
+
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,11 +37,13 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -55,7 +61,6 @@ public class PurchaseOrderController {
 	private List<GroupDetail> proposalDetailList;
 	private int productIndex;
 	private int detailIndex;
-	private Criteria purchasePrintcriteria = new Criteria();
 	
 	private CompanyCollectionsController companyCollections;
 	
@@ -257,6 +262,7 @@ public class PurchaseOrderController {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
+		List<Integer> purchaseIds = new LinkedList<Integer>();
 		try {
 			try {
 				HibernateUtil.setBeginTransaction(false);
@@ -264,11 +270,10 @@ public class PurchaseOrderController {
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
 				PurchaseUtils utils = new PurchaseUtils();
-				purchasePrintcriteria = null;
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), pg.getComments());
-						addToPurchaseCriteria(purchase);
+						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
@@ -277,7 +282,6 @@ public class PurchaseOrderController {
 						}
 					}
 				}
-				FormUtil.getController("purchasePrint").setCriteria(purchasePrintcriteria);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -296,14 +300,11 @@ public class PurchaseOrderController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-	}
-	
-	private void addToPurchaseCriteria(Purchase purchase) throws ExpressionException {
-		if(purchasePrintcriteria==null){
-			purchasePrintcriteria = new Criteria();
-			purchasePrintcriteria.addEqualExpression("purchase.id", purchase.getId());
-		} else {
-			purchasePrintcriteria.addOrExpression("purchase.id", purchase.getId().toString());
+		IController purchsePrint = FormUtil.getController(PURCHASE_PRINT_CONTROLLER_NAME);
+		purchsePrint.clearCriteria();
+		if (! purchaseIds.isEmpty() ) {
+			String alias = purchsePrint.getFieldName(IEntityAlias.PURCHASE_ID);
+			purchsePrint.getCriteria().addInExpression(alias, purchaseIds);			
 		}
 	}
 	
@@ -330,15 +331,18 @@ public class PurchaseOrderController {
 	
 	public List<SelectItem> getItemSuppliers(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		Item item = ((ProposalDetail)getDetailModel().getRowData()).getItem();
+		ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), item.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), proposalDetail.getItem().getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
 			for (ITransferObject ito : bean.getList(criteria)) {
 				ItemSupplier is = (ItemSupplier) ito;
-				SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
-				list.add(i);
+				if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+					SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+					list.add(i);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg =  "******** Error getting item suppliers. ";
@@ -353,21 +357,28 @@ public class PurchaseOrderController {
 			return ((CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME)).getDepartments();
 		} else {
 			List<SelectItem> list = new LinkedList<SelectItem>();
-			IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
-			criteria.addOrder(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID));
-			for (ITransferObject ito : bean.getList(criteria)) {
+			IManagerBean wdBean = BeanManager.getManagerBean(WorkplaceDepartment.class);
+			Criteria wdCriteria = new Criteria();
+			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getParams().getWorkPlace().getId());
+			wdCriteria.addEqualExpression(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), Boolean.TRUE);
+			wdCriteria.addOrder(wdBean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID));
+			IManagerBean dBean = BeanManager.getManagerBean(Department.class);
+			Criteria dCriteria = new Criteria();
+			List<Integer> idList = new LinkedList<Integer>();
+			for (ITransferObject ito : wdBean.getList(wdCriteria)) {
 				WorkplaceDepartment wd = (WorkplaceDepartment)ito;
-				SelectItem item = new SelectItem(wd.getDepartment(), wd.getDepartment().getName());
+				idList.add(wd.getDepartment().getId());
+			}
+			dCriteria.addInExpression(dBean.getFieldName(IEntityAlias.DEPARTMENT_ID), idList);
+			for (ITransferObject ito : dBean.getList(dCriteria)) {
+				Department d = (Department)ito;
+				SelectItem item = new SelectItem(d, d.getName());
 				list.add(item);
 			}
 			return list;
 		}
 	}
 	
-
 	/**************************************************/
 	/**************************************************/
 	

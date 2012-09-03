@@ -273,14 +273,17 @@ public class CertificateWriter {
 		DistribucionJornada jornada = null;
 		Periodo periodo = null;
 		List<Periodo> listaPeriodos = new ArrayList<Periodo>();
-		for (Period p : getPeriodList(detail.getContract())) {
-			String diasTp = getContractDataExpression(detail.getContract(), p, ContextVariable.CONTRACT_DAYS);
-			String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContextVariable.WEEK_DAYS);
-			if(diasTp!=null || diasSemanaTp!=null){
-				if(isIrregular(detail.getContract(), p)){
-					addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
-				} else {
-					addPeriod(REGULAR_VALUE, p, diasSemanaTp, listaPeriodos, periodo);
+		List<Period> existingPeriods = getPeriodList(detail.getContract());
+		if(existingPeriods!=null){
+			for (Period p : getPeriodList(detail.getContract())) {
+				String diasTp = getContractDataExpression(detail.getContract(), p, ContextVariable.CONTRACT_DAYS);
+				String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContextVariable.WEEK_DAYS);
+				if(diasTp!=null || diasSemanaTp!=null){
+					if(isIrregular(detail.getContract(), p)){
+						addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
+					} else {
+						addPeriod(REGULAR_VALUE, p, diasSemanaTp, listaPeriodos, periodo);
+					}
 				}
 			}
 		}

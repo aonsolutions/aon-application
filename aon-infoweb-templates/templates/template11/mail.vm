@@ -58,11 +58,11 @@ function messageHTML($php_from, $php_namefrom, $php_to, $php_nameto, $php_subjec
 
 function authMail($php_from, $php_namefrom, $php_to, $php_nameto, $php_subject, $php_message) {
         /*  Configuration  */
-        $php_smtpServer = "smtp.aonsolutions.es"; //ip accepted as well
+        $php_smtpServer = "smtp.esferalia.es"; //ip accepted as well
         $php_port = "25"; // should be 25 by default
         $php_timeout = "30"; //typical timeout. try 45 for slow servers
-        $php_username = "julio@aonsolutions.es"; //the login for your smtp
-        $php_password = "Garcia"; //the pass for your smtp
+        $php_username = "contacto@esferalia.es"; //the login for your smtp
+        $php_password = "to2009"; //the pass for your smtp
         $php_localhost = "127.0.0.1"; //this seems to work always
         $php_newLine = "\r\n"; //var just for nelines in MS
         $php_secure = 0; //change to 1 if you need a secure connect

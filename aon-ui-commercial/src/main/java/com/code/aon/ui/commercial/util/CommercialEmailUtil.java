@@ -36,7 +36,7 @@ public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercial
 		String[] emails = null;
 		Target target = offer.getTarget();
 		if ( target != null ) {
-			emails = getEmails(target.getRegistry());
+			emails = getAdministrativeEmails(target.getRegistry());
 		}
 		initMessageController(messageController, emails, getEmailBody(offer));
 		messageController.setSubject( getEmailSubject(offer) );

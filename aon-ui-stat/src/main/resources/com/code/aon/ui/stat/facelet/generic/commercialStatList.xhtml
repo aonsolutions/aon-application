@@ -6,7 +6,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
 
 	<aon:form id="monthStat">
 			<ui:decorate
@@ -164,4 +167,5 @@
 			<aon:dataScroller2 for="yearsStats" showNote="true" />
 		</aon:div>
 	</aon:form>
+	</ui:define>
 </ui:composition>

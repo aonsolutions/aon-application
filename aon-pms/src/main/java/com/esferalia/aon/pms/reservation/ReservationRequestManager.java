@@ -144,13 +144,13 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (requestRoom.getChildren() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("12"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("11"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getChildren());
 		}
 		if (requestRoom.getBabies() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("6"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("5"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getBabies());
 		}
 
@@ -347,19 +347,24 @@ public class ReservationRequestManager implements IReservationConstants {
 		if (requestRoom.getChildren() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("12"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("11"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getChildren());
 		}
 		if (requestRoom.getBabies() > 0) {
 			guestCounts.addNewGuestCount();
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAgeQualifyingCode(CHD);
-			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("6"));
+			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setAge(new BigInteger("5"));
 			guestCounts.getGuestCountArray(guestCounts.sizeOfGuestCountArray()-1).setCount(requestRoom.getBabies());
 		}
 
 		PaymentInstructions paymentInstructions = PaymentInstructions.Factory.newInstance();
 		if (request.isAgencyHolder() && request.getAgency() != null && request.getAgency().getId() != null) {
-			paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.VOUCHER);
+			String payment = getReservationUtils().obtainCustomerCode(request.getAgency(), BOOKING_PAYMENT);
+			if (payment != null && !payment.equalsIgnoreCase(VOUCHER)) {
+				paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.POS);
+			} else {
+				paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.VOUCHER);
+			}
 		} else {
 			paymentInstructions.addNewPaymentInstruction().setPaymentMethodType(PaymentMethodType.POS);
 		}

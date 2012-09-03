@@ -64,7 +64,7 @@
 		<!-- AON-CUSTOMER Mapping files -->		
 		<mapping class="com.code.aon.customer.Customer"/>
 						
-		<!-- AON-COMMERCIAL Mapping files -->
+		<!-- AON-COMMERCIAL Mapping files -->	
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
@@ -77,10 +77,13 @@
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.ProjectCommercial"/>		
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
+		<mapping class="com.code.aon.commercial.Question"/>
+		<mapping class="com.code.aon.commercial.QuestionValue"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>		
+		<mapping class="com.code.aon.commercial.TargetProfile"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
 		<!-- AON-COMPANY Mapping files -->
@@ -120,15 +123,11 @@
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.MarketingCampaign"/>
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
-		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
-		<mapping class="com.code.aon.marketing.Question"/>
-		<mapping class="com.code.aon.marketing.QuestionValue"/>
 		<mapping class="com.code.aon.marketing.Survey"/>
 		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
 		<mapping class="com.code.aon.marketing.SurveyResponse"/>
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
-		<mapping class="com.code.aon.marketing.TargetProfile"/>
 		<mapping class="com.code.aon.marketing.Template"/>	
 		
 		<!-- AON-MESSAGING Mapping files -->
@@ -166,6 +165,7 @@
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
@@ -174,6 +174,7 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
+		<mapping class="com.code.aon.registry.Tag"/>
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>

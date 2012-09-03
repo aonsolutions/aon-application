@@ -264,7 +264,7 @@
 				<textFieldExpression><![CDATA[$R{report_guests_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-59" mode="Opaque" x="637" y="0" width="145" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-59" mode="Opaque" x="672" y="0" width="110" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -318,6 +318,21 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-59" mode="Opaque" x="637" y="0" width="35" height="22" forecolor="#FFFFFF" backcolor="#999999"/>
+				<box leftPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{report_status}
+]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -469,7 +484,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textFieldExpression><![CDATA[$F{projectReservationRoom}.getAdults()+$F{projectReservationRoom}.getChildren()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-53" x="637" y="0" width="145" height="14"/>
+				<reportElement key="textField-53" x="672" y="0" width="110" height="14"/>
 				<box leftPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -479,7 +494,7 @@ $R{report_direct_client})]]></textFieldExpression>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{projectReservation}.getRemarks()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{projectReservation}.getComments()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-53" x="85" y="0" width="64" height="14" isPrintWhenDetailOverflows="true"/>
@@ -497,6 +512,19 @@ $R{report_direct_client})]]></textFieldExpression>
 ($F{projectReservation}.isAgencyHolder()?$F{projectReservation}.getAgency().getRegistry().getPayMethod().getPayment().getName():
 ($F{projectReservation}.isCompanyHolder()?$F{projectReservation}.getCompany().getRegistry().getPayMethod().getPayment().getName():"")
 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-53" x="637" y="0" width="35" height="14"/>
+				<box leftPadding="3" rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#999999"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projectReservation}.getCheckStatus().getAbbreviateName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

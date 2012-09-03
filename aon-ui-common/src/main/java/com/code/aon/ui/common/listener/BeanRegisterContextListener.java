@@ -15,9 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.bean.BeanConfigManager;
 import com.code.aon.common.bean.BeanConfigParser;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.Classpath;
+import com.code.aon.ui.common.hibernate.DefaultSessionFactoryNameProvider;
 
 /**
  * BeanRegisterContextListener is used to parse the configuration file bean-config.xml. 
@@ -66,6 +67,9 @@ public class BeanRegisterContextListener implements ServletContextListener {
 	 * @param sce the ServletContextEvent
 	 */
 	public void contextInitialized(ServletContextEvent sce) {
+		HibernateUtil.setSessionFactoryNameProvider(DefaultSessionFactoryNameProvider.getInstance());
+		// Tomcat, empty numbers and booleans as null
+		System.setProperty("org.apache.el.parser.COERCE_TO_ZERO", "false");
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
 	        URL[] urls = Classpath.search(cl, "META-INF/", CONFIG_FILE);

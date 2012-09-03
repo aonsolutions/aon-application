@@ -76,6 +76,7 @@ public class RectificationInvoicingManager {
 		rectifier.setComments(cause);
 		rectifier.setScope(invoice.getScope());
 		rectifier.setService(invoice.isService());
+		rectifier.setAdvance(invoice.isAdvance());
 		rectifier.setRectificationType(rectificationtype);
 		rectifier.setRectificationInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -144,13 +145,8 @@ public class RectificationInvoicingManager {
 				rectifierDetail.setRetentionPercent(invoiceRetentionTax.getPercentage());
 				rectifierDetail.setRetentionQuota(CommonUtil.round(invoiceRetentionTax.getQuota() * (-1)));
 			}
-
-			rectifierDetail.getInvoice().setUpdateEnabled(false);
 			invoiceDetailBean.insert(rectifierDetail);
 		}
-
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		rectifier = (Invoice)invoiceBean.update(rectifier);
 	}
 
 	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {
@@ -171,7 +167,7 @@ public class RectificationInvoicingManager {
 			rectifierFinance.setAmount(CommonUtil.round(0 - finance.getTotalAmount()));
 			rectifierFinance.setExpenses(0);
 			rectifierFinance.setConcept(rectifier.getDocumentNumber()); 
-			rectifierFinance.setDueDate(finance.getDueDate());
+			rectifierFinance.setDueDate(rectifier.getIssueDate());
 			rectifierFinance.setPayMethod(finance.getPayMethod());
 			rectifierFinance.setBank(finance.getBank());
 			rectifierFinance.setBankAccount(finance.getBankAccount());

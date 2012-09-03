@@ -21,9 +21,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{advanceInvoice}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
-	
 				<ui:define name="searchContent">
-
 					<aon:outputText value="&#160;"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox for="ProjectReservation_guestReservationSearch" 
@@ -38,10 +36,10 @@
 					<aon:outputText value="&#160;"/>
 
 					<c:if test="#{pmsCollections.currentUserHotelsCount > 1}">
-						<aon:outputLabel for="ProjectReservation_hotel_id"
+						<aon:outputLabel for="ProjectReservation_hotelReservation_id"
 							value="#{pmsBundle.pms_hotel}" />
-						<aon:selectOneMenu id="ProjectReservation_hotel_id"
-							value="#{advanceInvoiceSearch.hotel}">
+						<aon:selectOneMenu id="ProjectReservation_hotelReservation_id"
+							value="#{advanceInvoiceSearch.hotelReservation}">
 							<f:selectItem itemLabel="-" value="#{null}" />		
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
 						</aon:selectOneMenu>
@@ -80,12 +78,14 @@
 					</aon:div>
 
 					<c:if test="#{!advanceInvoiceSearch.guestReservationSearch}">
-						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-							<ui:param name="lookupTo" value="#{advanceInvoiceSearch.agency}" />
-							<ui:param name="lookupLabel" value="#{pmsBundle.pms_agency}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-						
+						<aon:outputLabel for="ProjectReservation_agency"
+							value="#{pmsBundle.pms_agency}" />
+						<aon:selectOneMenu id="ProjectReservation_agency" 
+							value="#{advanceInvoiceSearch.agency}">
+							<f:selectItem itemLabel="-" value="#{null}" />		
+							<f:selectItems value="#{pmsCollections.agencies}" />
+						</aon:selectOneMenu>
+
 						<aon:outputLabel for="ProjectReservation_tariff"
 							value="#{productBundle.product_tariff}"/>
 						<aon:selectOneMenu id="ProjectReservation_tariff" 
@@ -93,18 +93,10 @@
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{pmsCollections.tariffs}" />
 						</aon:selectOneMenu>
-						
 					</c:if>
-
-					
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					
 				</ui:define>
 			</ui:decorate>
+
 		</aon:form>
-		
-		<aon:lookupButtonPopup lookup="#{customerLookup}" />
-		
 	</ui:define>
 </ui:composition>

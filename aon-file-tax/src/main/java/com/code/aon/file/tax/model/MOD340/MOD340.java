@@ -7,29 +7,30 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.file.format.core.DiskRegisterLoader;
 import com.code.aon.file.format.model.AbstractFileFiller;
+import com.code.aon.file.tax.model.MOD340.data.Deponent;
+import com.code.aon.file.tax.model.MOD340.data.Invoice;
 
 public class MOD340  extends AbstractFileFiller{
 
-	private static String DEPONENT = "DEPONENT";
-	private static String ISSUED = "ISSUED";
-	private static String RECEIVED = "RECEIVED";
-	private static String INVESTMENT = "INVESTMENT";
-	private static String INTRACOMMUNITARY = "INTRACOMMUNITARY";
+	public static String DEPONENT = "DEPONENT";
+	public static String ISSUED = "ISSUED";
+	public static String RECEIVED = "RECEIVED";
+	public static String INVESTMENT = "INVESTMENT";
+	public static String INTRACOMMUNITARY = "INTRACOMMUNITARY";
 	
-	private IMOD340Provider provider;
+	private Deponent deponent;
+	private List<Invoice> invoices;
 	
-	public MOD340(IMOD340Provider provider, PrintWriter writer) throws FileNotFoundException, UnsupportedEncodingException {
+	public MOD340(MOD340Format format, PrintWriter writer, Deponent deponent, List<Invoice> invoices ) throws FileNotFoundException, UnsupportedEncodingException {
 		super(writer);
-		if (provider == null)  {
-			throw new IllegalArgumentException("provider can not be null!");
+		if (format == null)  {
+			throw new IllegalArgumentException("Format can not be null!");
 		}
-		this.provider = provider;
-		
-		MOD340Format format = provider.getFormat();
 		InputStream input = MOD340.class.getResourceAsStream(format.getDeponentMetadataResource());
 		DiskRegisterLoader.load(input, manager);
 
@@ -44,55 +45,34 @@ public class MOD340  extends AbstractFileFiller{
 
 		input = MOD340.class.getResourceAsStream(format.getIntracommunitaryMetadataResource());
 		DiskRegisterLoader.load(input, manager);
+		
+		this.deponent = deponent; 	
+		this.invoices = invoices;
 
 	}
 
-	public ArrayList<Exception> create() {
+	private ArrayList<Exception> createDeponent( Deponent deponent) {
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put(MOD340.DEPONENT, provider.getDeponent());
-		createLine("Deponent", properties);
-		fillIssuedInvoices(properties,provider);
-		fillReceivedInvoices(properties,provider);
-		fillInvestmentInvoices(properties,provider);
-		fillIntracommunitaryInvoices(properties,provider);
-		output.flush();
+		properties.put(MOD340.DEPONENT, deponent );
+		createLine(MOD340.DEPONENT, properties);
+		return exceptions;
+	}
+	
+	private ArrayList<Exception> createInvoice ( Invoice invoice ) {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(invoice.getType(), invoice);
+		createLine(invoice.getType(), properties);
 		return exceptions;
 	}
 
-	private void fillIssuedInvoices(Map<String, Object> properties,IMOD340Provider provider) {
-		provider.initializeIssuedInvoices();
-		while (provider.hasNextIssuedInvoice()) {
-			properties.put(MOD340.ISSUED, provider.getNextIssueInvoice());
-			createLine("IssuedInvoice", properties);
+	@Override
+	public ArrayList<Exception> create() {
+		ArrayList<Exception> ex = createDeponent(this.deponent);
+		for (Invoice invoice : invoices ) {
+			ex.addAll( createInvoice(invoice));
 		}
-		provider.finalizeIssuedInvoices();
-	}
-
-	private void fillReceivedInvoices(Map<String, Object> properties,IMOD340Provider provider) {
-		provider.initializeReceivedInvoices();
-		while (provider.hasNextReceivedInvoice()) {
-			properties.put(MOD340.RECEIVED, provider.getNextReceivedInvoice());
-			createLine("ReceivedInvoice", properties);
-		}
-		provider.finalizeReceivedInvoices();
-	}
-
-	private void fillInvestmentInvoices(Map<String, Object> properties,IMOD340Provider provider) {
-		provider.initializeInvestmentInvoices();
-		while (provider.hasNextInvestmentInvoice()) {
-			properties.put(MOD340.INVESTMENT, provider.getNextInvestmentInvoice());
-			createLine("InvestmentInvoice", properties);
-		}
-		provider.finalizeInvestmentInvoices();
-	}
-
-	private void fillIntracommunitaryInvoices(Map<String, Object> properties,IMOD340Provider provider) {
-		provider.initializeIntracommunitaryInvoices();
-		while (provider.hasNextIntracommunitaryInvoice()) {
-			properties.put(MOD340.INTRACOMMUNITARY, provider.getNextIntracommunitaryInvoice());
-			createLine("IntracommunitaryInvoice", properties);
-		}
-		provider.finalizeIntracommunitaryInvoices();
+		output.flush();
+		return ex;
 	}
 
 }

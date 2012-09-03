@@ -1,9 +1,11 @@
 package com.code.aon.ui.config.util;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.BasicPrincipal;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
@@ -30,11 +32,9 @@ public class UserUtils {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserUtils.class);
 	
-	private User loggedUser;
+	private Boolean passwordExpired;
 	
-	public AuthPrincipal getPrincipal() {
-		return BasicPrincipal.getAuthPrincipal();
-	}
+	private User loggedUser;
 
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
@@ -44,10 +44,11 @@ public class UserUtils {
 	}
 	
 	private User resolveUser() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		String q = "SELECT u FROM User u  WHERE u.login = '" + getPrincipal().getShortName() + "'";
-		if (getPrincipal().getDomainId() != null) {
-			q = q + " AND u.domain = " + getPrincipal().getDomainId();
+		String q = "SELECT u FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
+		if (principal.getDomainId() != null) {
+			q = q + " AND u.domain = " + principal.getDomainId();
 		}
 		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
 		List<?> queryList = query.list();
@@ -83,12 +84,22 @@ public class UserUtils {
 	public List<Scope> getCurrentUserScopes() {
 		List<Scope> scopes = new LinkedList<Scope>();
 		try {
-			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
-			criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
-			for (ITransferObject ito : userScopeBean.getList(criteria)) {
-				scopes.add(((UserScope)ito).getScope());
+			// Si el usuario pertenece a un dominio padre, pero el dominio activo es hijo,
+			// se habilitan todos los scopes del hijo.
+			if (DomainManager.isParentDomainUserInChildDomain()) {
+				IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
+				Criteria criteria = new Criteria();
+				for (ITransferObject ito : scopeBean.getList(criteria)) {
+					scopes.add((Scope) ito);
+				}
+			} else {
+				IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
+				criteria.addOrder(userScopeBean.getFieldName(IEntityAlias.USER_SCOPE_SCOPE_DESCRIPTION));
+				for (ITransferObject ito : userScopeBean.getList(criteria)) {
+					scopes.add(((UserScope)ito).getScope());
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error scopes related with the user" + getLoggedUser().getLogin(), e);
@@ -106,10 +117,51 @@ public class UserUtils {
 				scopeExpression = ExpressionUtilities.getOrExpression(scopeExpression, expression);
 			}
 		}
-
 		if (scopeExpression != null) {
 			criteria.addExpression(scopeExpression);
 		}
 	}	
 
+	
+	public Expression getNullableScopeExpression( String resolvedAlias ) throws ManagerBeanException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String nullAlias = StringUtils.substringBeforeLast(resolvedAlias, ".");
+		Expression exp = ExpressionUtilities.getNullExpression(nullAlias);
+		if (user != null) {
+			List<Scope> list = getCurrentUserScopes();
+			if (! list.isEmpty() ) {
+				String ljAlias = getLeftJoinAlias(resolvedAlias);
+				for( ITransferObject to : list ) {
+					Scope scope = (Scope) to;
+					Expression scopeExp = ExpressionUtilities.getEqualExpression(ljAlias, scope.getId());
+					exp = ExpressionUtilities.getOrExpression(exp, scopeExp);					
+				}
+			}
+		}
+		return exp;
+	}
+	
+	private String getLeftJoinAlias( String alias ) {
+		String ljAlias = alias;
+		int index = StringUtils.lastIndexOf(alias, '.');
+		if ( index != -1 ) {
+			ljAlias = StringUtils.substring(alias, 0, index) + "<" + StringUtils.substring(alias, index+1); 
+		}
+		return ljAlias;
+	}
+
+
+	public boolean isPasswordExpired() {
+		if ( passwordExpired == null ) {
+			passwordExpired = Boolean.FALSE;
+			User user = getLoggedUser();
+			if ( user != null ) {
+				if ( user.getPasswordExpiration() != null ) {
+					passwordExpired = new Date().after(user.getPasswordExpiration());
+				}
+			}		
+		}
+		return passwordExpired;
+	}
+	
 }

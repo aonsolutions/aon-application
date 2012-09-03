@@ -33,7 +33,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
     private Item item;
 	private Bank bank;
 	private FinanceStatus[] financeStatuses;
-	private List<PayMethod> payMethods;
+	private PayMethod[] payMethods;
 	
 	public String getDefaultType() {
 		return defaultType;
@@ -83,16 +83,19 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		this.financeStatuses = financeStatuses;
 	}
 	
-	public List<PayMethod> getPayMethods() {
+	public PayMethod[] getPayMethods() {
+		if (payMethods == null) {
+			payMethods = new PayMethod[]{EMPTY_PAYMETHOD};
+		}	
 		return payMethods;
 	}
 
-	public void setPayMethods(List<PayMethod> payMethods) {
+	public void setPayMethods(PayMethod[] payMethods) {
 		this.payMethods = payMethods;
 	}
 	
 	public int getPayMethodsSize() {
-		return this.payMethods.size();
+		return ArrayUtils.getLength(payMethods);
 	}	
 
 	public List<Integer> getPayMethodsIds() {
@@ -148,8 +151,7 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		setBank((Bank)BeanManager.getManagerBean(Bank.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
-		setPayMethods(new LinkedList<PayMethod>());
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 	}
 	
 	@Override
@@ -183,15 +185,15 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	}	
 
 	public void onAddPayMethod(ActionEvent event) {
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
 	}
 
 	public void onRemovePayMethod(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
-		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getPayMethods().remove(index);
-		if (getPayMethods().isEmpty()) {
-			getPayMethods().add(EMPTY_PAYMETHOD);
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));
+		this.payMethods = (PayMethod[]) ArrayUtils.remove(this.payMethods, index);
+		if ( ArrayUtils.isEmpty(this.payMethods) ) {
+			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		}
 	}
 

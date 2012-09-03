@@ -20,6 +20,8 @@ public class Criteria implements Criterion {
 
 	private static final long serialVersionUID = -716927155526751780L;
 
+	private boolean skipDomainFilter;
+	
 	private Expression expression;
 
 	private OrderByList orderByList;
@@ -235,6 +237,19 @@ public class Criteria implements Criterion {
 		Expression expression = ExpressionUtilities.getInExpression(identifier, data);
 		addExpression(expression);
 	}
+
+	/**
+	 * Adds a in expression to this Criteria (a in b).
+	 * 
+	 * @param identifier
+	 *            The left side of the operation.
+	 * @param expression
+	 *            The right side of the operation.
+	 */
+	public void addInExpression(String identifier, Expression expr) {
+		Expression expression = ExpressionUtilities.getInExpression(identifier, expr);
+		addExpression(expression);
+	}
 	
 	/**
 	 * Adds this identifier to the order list.
@@ -280,9 +295,14 @@ public class Criteria implements Criterion {
 		return ( getOrderByList() == null ) && ( getExpression() == null );
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ql.ast.Criterion#accept(com.code.aon.ql.ast.CriterionVisitor)
-	 */
+	public boolean isSkipDomainFilter() {
+		return skipDomainFilter;
+	}
+
+	public void setSkipDomainFilter(boolean skipDomainFilter) {
+		this.skipDomainFilter = skipDomainFilter;
+	}
+
 	public void accept(CriterionVisitor visitor) {
 		visitor.visitCriteria(this);
 	}
@@ -302,6 +322,7 @@ public class Criteria implements Criterion {
 			buf.append("orderList=");
 			buf.append( orderByList );
 		}
+		buf.append(",skipDomainFilter=").append(skipDomainFilter);
 		buf.append("]");
 		return buf.toString();
 	}

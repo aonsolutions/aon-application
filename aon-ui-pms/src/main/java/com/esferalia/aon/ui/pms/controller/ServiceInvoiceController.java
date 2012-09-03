@@ -29,6 +29,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -51,8 +52,10 @@ import com.esferalia.aon.pms.enumeration.ReservationStatus;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo;
 import com.esferalia.aon.pms.invoicing.ReservationInvoiceTo.HotelService;
 import com.esferalia.aon.pms.invoicing.ReservationInvoicing;
+import com.esferalia.aon.ui.pms.IPmsMessages;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
-public class ServiceInvoiceController extends BasicController implements ICalculableContainer {
+public class ServiceInvoiceController extends BasicController implements IPmsConstants, ICalculableContainer {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInvoiceController.class);
 
@@ -116,18 +119,6 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		return this.currentReservationFilter;
 	}
 
-	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
-		setReservationInvoiceTo(new ReservationInvoiceTo());
-		fillInvoiceData();
-		ProjectReservation reservation = (ProjectReservation)event.getNewValue();
-		if( reservation != null && reservation.getId() != null ){
-			getReservationInvoiceTo().setHotel(reservation.getHotel());
-			fillHotelData();
-			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
-			onNewService(null);
-		}
-	}
-	
 	public void onLoad(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), new Date());
@@ -136,31 +127,43 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	@Override
 	public void onReset(ActionEvent event) {
-		setNew(true);
 		try {
-			setProjectReservation((ProjectReservation) BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
-			setReservationInvoiceTo(new ReservationInvoiceTo());
-			fillInvoiceData();
+			PmsUtils pmsUtils = new PmsUtils();
+			if (!pmsUtils.isUserPosOpen()) {
+				String msg = "No se puede Facturar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			setNew(true);
+			setProjectReservation((ProjectReservation)BeanManager.getManagerBean(ProjectReservation.class).createNewTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
+			getReservationInvoiceTo().setHotel(obtainHotel());
+			fillHotelData();
+			onNewService(null);
 		} catch (ManagerBeanException ex) {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
 	}
 
-	private void fillInvoiceData() throws ManagerBeanException {
-		getReservationInvoiceTo().setHotel(obtainHotel());
-		fillHotelData();
-		getReservationInvoiceTo().setDirectCustomer(true);
-		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
-		onNewService(null);
-	}
-
 	private Hotel obtainHotel() throws ManagerBeanException {
-		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(IPmsConstants.COLLECTIONS_CONTROLLER_NAME);
-		List<SelectItem> hotelList = collections.getCurrentUserHotels();
+		PmsCollectionsController collections = (PmsCollectionsController)AonUtil.getRegisteredBean(COLLECTIONS_CONTROLLER_NAME);
+		List<SelectItem> hotelList = collections.getCurrentUserServiceHotels();
 		return (hotelList.size() > 0) ? (Hotel)hotelList.get(0).getValue() : null;
 	}
 
+	public void onReservationChanged(LookupChangeEvent event) throws ManagerBeanException{
+		ProjectReservation reservation = (ProjectReservation)event.getNewValue();
+		if (reservation != null && reservation.getId() != null) {
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
+			getReservationInvoiceTo().setHotel(reservation.getHotel());
+			fillHotelData();
+
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+			onNewService(null);
+		}
+	}
+	
 	public void onInvoiceHotelChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			getReservationInvoiceTo().setHotel((Hotel)event.getNewValue());
@@ -174,6 +177,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 	private void fillHotelData() throws ManagerBeanException {
 		getReservationInvoiceTo().setSeries(obtainHotelInvoiceSeries());
 		getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
+		getReservationInvoiceTo().getRegistry().setId(getReservationInvoiceTo().getHotel().getCustomer().getRegistry().getId());
 		getReservationInvoiceTo().setRoom(null);
 		getReservationInvoiceTo().setGuest(null);
 	}
@@ -192,12 +196,12 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SCOPE_ID), getReservationInvoiceTo().getHotel().getScope().getId());
-		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_ACTIVE), true);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		if (rectification) {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_RECTIFICATION), true);
 		} else {
-			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), new Boolean(true));
+			criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), true);
 		}
 		return seriesBean.getList(criteria);
 	}
@@ -281,6 +285,25 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		getReservationInvoiceTo().getAddress().setProvince(StringUtils.abbreviate(reservationGuest.getProvince(), 45));
 	}
 
+	public List<SelectItem> getServiceTypes() {
+		List<SelectItem> serviceTypes = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(ProductType.SERVICE, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_SERVICES));
+		serviceTypes.add(item);
+		item = new SelectItem(ProductType.COMMERCIAL_PRODUCT, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DEPOSITS));
+		serviceTypes.add(item);
+		item = new SelectItem(ProductType.EXTERNAL_WORK, AonUtil.getMessage(IPmsMessages.BUNDLE_KEY, IPmsMessages.PMS_DAMAGES));
+		serviceTypes.add(item);
+		return serviceTypes;
+	}
+
+	public void onInvoiceServiceTypeChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
+			getReservationInvoiceTo().setServiceType((ProductType)event.getNewValue());
+			getReservationInvoiceTo().setServices(new LinkedList<HotelService>());
+			onNewService(null);
+		}
+	}
+
 	public void onNewService(ActionEvent event) {
 		try {
 			double quantity = 1;
@@ -328,6 +351,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			Criteria criteria = new Criteria();
 			String alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_CATALOGUE_ID);
 			criteria.addEqualExpression(alias, getReservationInvoiceTo().getHotel().getServiceCatalogue().getId());
+			alias = catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_TYPE);
+			criteria.addEqualExpression(alias, getReservationInvoiceTo().getServiceType());
 			criteria.addOrder(catalogueItemBean.getFieldName(IEntityAlias.CATALOGUE_ITEM_ITEM_PRODUCT_NAME));
 			for (ITransferObject ito : catalogueItemBean.getList(criteria)) {
 				CatalogueItem catalogueItem = (CatalogueItem)ito;
@@ -362,8 +387,7 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	public void onNewFinance(ActionEvent event) {
 		Finance finance = new Finance();
-		double amount = CommonUtil.round(getServicesAmount() - getFinancesAmount());
-		finance.setAmount(amount);
+		finance.setAmount(CommonUtil.round(getServicesAmount() - getFinancesAmount()));
 		getReservationInvoiceTo().getFinances().add(finance);
 	}
 
@@ -393,9 +417,11 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 				if (getReservationInvoiceTo().getRoom() != null) {
 					reservation = getReservationInvoiceTo().getRoom().getProjectReservationRoom().getProjectReservation();
 				}
+				getReservationInvoiceTo().setComments(obtainInvoiceComments(getReservationInvoiceTo().getServices()));
+				getReservationInvoiceTo().setDirectCustomer(true);
 
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
-				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation, true);
+				Invoice invoice = reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
 				onEditSearch(event);
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.INVOICE_ID), invoice.getId());
@@ -409,6 +435,16 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		}
 	}
 
+	private String obtainInvoiceComments(List<HotelService> services) {
+		String comments = "";
+		for (HotelService service: services) {
+			if (StringUtils.isNotEmpty(service.getItem().getDescription())) {
+				comments += service.getItem().getProduct().getName() + " - "+ service.getItem().getDescription() + "\n";
+			}
+		}
+		return comments;
+	}
+
 	private boolean validateInvoice() {
 		if (!isFinancesAmountOk()) {
 			String msg = "El importe de los Pagos no coincide con el importe de la Reserva.";
@@ -416,7 +452,26 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			throw new AbortProcessingException(msg);
 		}
 
+		if (!isPayMethodOk()) {
+			String msg = "La Forma de Pago es obligatoria.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+
 		return isServicesDatesOk();
+	}
+
+	public boolean isFinancesAmountOk() {
+		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
+	}
+
+	public boolean isPayMethodOk() {
+		for (Finance finance : getReservationInvoiceTo().getFinances()) {
+			if (finance.getPayMethod() == null && finance.getTotalAmount() != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean isServicesDatesOk() {
@@ -445,10 +500,6 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 		return true;
 	}
 
-	public boolean isFinancesAmountOk() {
-		return CommonUtil.round(getServicesAmount() - getFinancesAmount()) == 0;
-	}
-
 	public void onRectifyInvoiceShow(ActionEvent event) {
 		if (!model.isRowAvailable()) {
 			setShowRectificationWindow(false);
@@ -457,8 +508,15 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 			throw new AbortProcessingException(msg);
 		}
 		try {
+			PmsUtils pmsUtils = new PmsUtils();
+			if (!pmsUtils.isUserPosOpen()) {
+				setShowRectificationWindow(false);
+				String msg = "No se puede Abonar. El Usuario no ha abierto la Caja.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			setInvoiceToRectificate((Invoice)getModel().getRowData());
-			setReservationInvoiceTo(new ReservationInvoiceTo());
+			setReservationInvoiceTo(new ReservationInvoiceTo(true));
 			getReservationInvoiceTo().setHotel(obtainRectificationHotel());
 			getReservationInvoiceTo().setSeries(obtainHotelRectificationSeries());
 			getReservationInvoiceTo().setNumber(obtainSeriesMaxNumber(getReservationInvoiceTo().getSeries()));
@@ -499,8 +557,8 @@ public class ServiceInvoiceController extends BasicController implements ICalcul
 
 	public void onPrintInvoice(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			BasicController controller = (BasicController) ((IController)AonUtil.getRegisteredBean(IPmsConstants.SALE_INVOICE_CONTROLLER_NAME));
-			controller.select(event, ((Invoice)getModel().getRowData()).getId());
+			SelectedInvoiceController controller = (SelectedInvoiceController) AonUtil.getRegisteredBean(SELECTED_INVOICE_CONTROLLER_NAME);
+			controller.setTo((Invoice)getModel().getRowData());
 		}
 	}
 

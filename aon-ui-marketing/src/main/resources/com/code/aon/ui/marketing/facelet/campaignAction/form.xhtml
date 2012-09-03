@@ -20,8 +20,8 @@
 				<ui:param name="controller" value="#{campaignAction}" />
 				<ui:param name="skipSearchButton" value="true" />	
 				<ui:define name="beforeSpinToolbarContent">
-					<aon:htmlCommandLink id="campaignActionReport-excel-report"
-						value="#{bundle.aon_listing}" target="_blank" action="#{campaignActionReport.onExcelReport}"
+					<aon:htmlCommandLink id="campaignActionReport-excel-hssf-report"
+						value="#{bundle.aon_listing}" target="_blank" actionListener="#{campaignActionReport.onExcelReport}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
 					</aon:htmlCommandLink>
 				</ui:define>
@@ -35,6 +35,11 @@
 						rendered="#{!campaignAction.new}" value="#{bundle.aon_id}" />
 					<aon:inputText id="Action_id" value="#{campaignAction.to.id}"
 						rendered="#{!campaignAction.new}" size="15" disabled="true" />
+						
+					<aon:outputLabel for="Action_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Action_description" value="#{campaignAction.to.description}"
+						required="true" size="32" maxLength="64" />		
 
 					<aon:outputLabel for="Action_mediaType"
 						value="#{marketingBundle.marketing_action_media_type}" />

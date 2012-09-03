@@ -11,18 +11,23 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Category;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddInfo;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.Relationship;
 import com.code.aon.registry.Segment;
+import com.code.aon.registry.Tag;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
@@ -185,6 +190,14 @@ public class RegistryCollectionsController {
 	}
 	
     public List<SelectItem> getSegments() throws ManagerBeanException{
+    	return getSegments(false);
+    }
+
+    public List<SelectItem> getSegmentIds() throws ManagerBeanException{
+    	return getSegments(true);
+    }
+    
+    private List<SelectItem> getSegments( boolean onlyId ) throws ManagerBeanException{
     	List<SelectItem> segments = new LinkedList<SelectItem>();
     	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
     	Criteria criteria = new Criteria();
@@ -192,8 +205,11 @@ public class RegistryCollectionsController {
     	Iterator<?> iter = segmentBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Segment segment = (Segment)iter.next();
-    		SelectItem item = new SelectItem(segment.getId(), segment.getName());
-    		segments.add(item);
+    		if ( onlyId ) {
+    			segments.add(new SelectItem(segment.getId(), segment.getName()));
+    		} else {
+    			segments.add(new SelectItem(segment, segment.getName()));	
+    		}
     	}
     	return segments;
     }
@@ -252,7 +268,7 @@ public class RegistryCollectionsController {
 	public List<SelectItem> getCategories() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
-		Criteria criteria = new Criteria();
+		Criteria criteria = getDomainCriteria(categoryBean.getFieldName(IEntityAlias.CATEGORY_DOMAIN));
 		criteria.addOrder(categoryBean.getFieldName(IEntityAlias.CATEGORY_NAME));
 		Iterator<?> iter = categoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -282,6 +298,34 @@ public class RegistryCollectionsController {
     		addInfos.add(addInfo);
     	}
     	return addInfos;
+    }
+ 
+    public List<SelectItem> getTags() throws ManagerBeanException {
+    	List<SelectItem> tags = new LinkedList<SelectItem>();
+    	IManagerBean tagBean = BeanManager.getManagerBean(Tag.class);
+    	Criteria criteria = getDomainCriteria(tagBean.getFieldName(IEntityAlias.TAG_DOMAIN));
+    	criteria.addOrder(tagBean.getFieldName(IEntityAlias.TAG_NAME));
+    	Iterator<?> iter = tagBean.getList(criteria).iterator();
+    	while(iter.hasNext()){
+    		Tag tag = (Tag) iter.next();
+    		SelectItem item = new SelectItem(tag, tag.getName());
+    		tags.add(item);
+    	}
+    	return tags;
+    }    
+    
+    private Criteria getDomainCriteria( String alias ) {
+    	Criteria criteria = new Criteria();
+    	criteria.setSkipDomainFilter(true);
+    	Integer domainId = DomainManager.getCurrentDomain();
+    	Expression expression = ExpressionUtilities.getEqualExpression(alias, domainId);
+    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+    	if ( parentDomainId != null ) {
+    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, parentDomainId);
+    		expression = ExpressionUtilities.getOrExpression(expression, expr2);
+    	}
+    	criteria.addExpression(expression);
+    	return criteria;
     }
     
 }

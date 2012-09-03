@@ -1,10 +1,16 @@
 package com.code.aon.ui.registry.controller;
 
+import static com.code.aon.ui.registry.controller.IRegistryConstants.BUNDLE_NAME;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.INVALID_EMAIL;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.validator.EmailValidator;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -12,7 +18,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class RegistryMediaController extends LinesController {
@@ -37,6 +46,19 @@ public class RegistryMediaController extends LinesController {
 			// Nada. Devuelve la colleción vacia.
 		}
 		return addresses;
+	}
+
+	@Override
+	protected void accept() {
+		RegistryMedia media = (RegistryMedia) getTo();
+		if ( MediaType.EMAIL.equals(media.getMediaType()) ) {
+			if ( ! EmailValidator.getInstance().isValid(media.getValue()) ) {
+				String message = AonUtil.getMessage(BUNDLE_NAME, INVALID_EMAIL, media.getValue());
+				AonUtil.addErrorMessage(message);
+				throw new AbortProcessingException(message);
+			}
+		}
+		super.accept();
 	}
 
 }

@@ -9,6 +9,8 @@ import antlr.RecognitionException;
 import antlr.TokenStreamException;
 import antlr.collections.AST;
 
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.antlr.ExpressionBuilder;
 import com.code.aon.ql.antlr.QlLexer;
 import com.code.aon.ql.antlr.QlParser;
@@ -21,6 +23,7 @@ import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.ast.RelationalType;
+import com.code.aon.ql.ast.SubQueryExpression;
 
 /**
  * Clase que facilita la formación de objectos del tipo <code>Expression</code>.
@@ -427,6 +430,28 @@ public class ExpressionUtilities {
 	@SuppressWarnings("rawtypes")
 	public static RelationalExpression getInExpression(String identifier, Collection data) {
 		return getRelationalExpression(identifier, data, RelationalType.IN);
+	}
+
+	/**
+	 * Returns an in expression for the given identifier and data.
+	 * 
+	 * @param identifier
+	 * @param expression
+	 * @return a <code>RelationalExpression</code>.
+	 */
+	public static RelationalExpression getInExpression(String identifier, Expression expression) {
+		return getRelationalExpression(identifier, expression, RelationalType.IN);
+	}
+	
+	/**
+	 * Returns a SubQuery expression for the given identifier and data.
+	 * 
+	 * @param identifier
+	 * @param data
+	 * @return a <code>RelationalExpression</code>.
+	 */
+	public static SubQueryExpression getSubQueryExpression(Class<?> pojoClass, Criteria criteria, ProjectionList projectionList) {
+		return EXPRESSION_FACTORY.newSubQueryExpression(pojoClass.getName(), criteria, projectionList);
 	}
 	
 	/**

@@ -77,10 +77,10 @@ public class CompanyLogoServlet extends HttpServlet {
 		try {
 			String server = req.getServerName();
 			String context = req.getContextPath();
-			boolean skipLdap = BooleanUtils.toBoolean(getServletConfig().getInitParameter(SKIP_LDAP)); 
+			boolean skipLdap = BooleanUtils.toBoolean(getServletContext().getInitParameter(SKIP_LDAP)); 
 			Properties dbProperties = DataSourceUtil.getDBProperties(server, context, skipLdap);
 			if (! dbProperties.isEmpty() ) {
-				CompanyDisplay companyDisplay = new CompanyDisplay(dbProperties);
+				CompanyDisplay companyDisplay = new CompanyDisplay(server, skipLdap, dbProperties);
 				if ( companyDisplay.isLogoDefined() ) {
 					IAttachment logo = companyDisplay.getLogo();
 					MimeType type = getMimeType(logo);

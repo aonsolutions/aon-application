@@ -1,6 +1,5 @@
 package com.code.aon.ui.form.event;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 /**
  * The Class ControllerListenerSupport.
  */
-public class ControllerListenerSupport implements Serializable {
+public class ControllerListenerSupport {
 
 	/** Indica la lista de clases que escuchan al Controlador. */
 	private List<IControllerListener> listeners;

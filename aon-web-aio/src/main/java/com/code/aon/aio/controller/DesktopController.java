@@ -1,7 +1,11 @@
 package com.code.aon.aio.controller;
 
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
-import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
+
+import static com.code.aon.ui.audit.controller.IAuditConstants.ACTION_DENIED_CONTROLLER_NAME;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENCE;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
+import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
+import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -11,8 +15,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,12 +36,13 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.aio.DesktopNoticeSummary;
 import com.code.aon.aio.TaskInfo;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.BasicPrincipal;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.groupware.Note;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -53,12 +56,21 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.audit.controller.ActionDeniedController;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.customer.controller.ICustomerConstants;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.GroupwareUtils;
+import com.code.aon.ui.groupware.controller.NoteController;
+import com.code.aon.ui.purchase.controller.IPurchaseConstants;
+import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.WebMailController;
-import com.code.aon.webmail.bean.AonFolder;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.esferalia.aon.entity.IEntityAlias;
 
 
@@ -67,12 +79,12 @@ public class DesktopController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
 
 	private static final int UPDATE_CONNECTION_TIMEOUT = 5000;
+
+	private static final String NOTE_CONTROLLER_NAME = "note";
 	
     private ListDataModel recentNoteModel;
     
     private List<DesktopNoticeSummary> noticeSummaryList;
-
-    private List<AonFolder> mailSummaryModel;
     
     private List<TaskInfo> taskSummaryModel;
     
@@ -84,40 +96,49 @@ public class DesktopController {
 
     public DesktopController() {
 		try {
-			updateRecentNoteModel();
-			updateNoticeSummaryModel();
-			initWebmail();
+	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			updateRecentNoteModel(principal);
+			updateNoticeSummaryModel(principal);
 			initTask();
+			initGarage();
+			initAcademy();
 	    } catch (ManagerBeanException e) {
+	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
 	        throw new AbortProcessingException("Error initing desktop models", e);
 		}
     }
 
-	public void updateNoticeSummaryModel() {
+	public void updateNoticeSummaryModel( AuthPrincipal principal ) {
         this.noticeSummaryList = new LinkedList<DesktopNoticeSummary>();
         NoticeType[] noticeTypes = NoticeType.values();
         for (int i=0; i<noticeTypes.length; i++) {
             DesktopNoticeSummary summary = new DesktopNoticeSummary(noticeTypes[i]);
             noticeSummaryList.add(summary);
         }
-
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar to = new GregorianCalendar();
         to.set(Calendar.HOUR_OF_DAY, 23);
         to.set(Calendar.MINUTE, 59);
         to.set(Calendar.SECOND, 59);
-        AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-        String select = "select notice.type, count(*) " +
-                        "from Notice as notice, Alarm as alarm " +
-                        "where notice.id = alarm.sourceId " +
-                        "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
-                        "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
-                        "and alarm.user = " + principal.getUserId() + " " +
-                        "and alarm.alarmDate < '" + formatter.format(to.getTime()) + "' " +
-                        "group by notice.type " +
-                        "order by notice.type";
-        Iterator<?> iterator = this.createQuery(select).iterator();
+        String select = "select notice.type, count(*) " 
+                        +" from Notice as notice, Alarm as alarm " 
+                        +" where notice.id = alarm.sourceId " 
+                        +" and " + DomainManager.getSQLWhereClause("alarm.domain")  
+                        +" and alarm.source = :source "  
+                        +" and alarm.status = :status "  
+                        +" and alarm.user = :user "   
+                        +" and alarm.alarmDate < :alarmDate "
+                        +" group by notice.type " 
+                        +" order by notice.type";
+        
+    	String name = HibernateUtil.getSessionFactoryName();
+        Session session = HibernateUtil.getSession(name);
+        Query query = session.createQuery(select);
+        query.setInteger("source", AlarmSource.NOTICE.ordinal());
+        query.setInteger("status", AlarmStatus.PENDING.ordinal());
+        query.setInteger("user", principal.getUserId());
+        query.setDate("alarmDate", to.getTime());
+        Iterator<?> iterator = query.list().iterator();
         while (iterator.hasNext()) {
             Object[] obj = (Object[])iterator.next();
             NoticeType noticeType = (NoticeType)obj[0];
@@ -133,18 +154,9 @@ public class DesktopController {
         return noticeSummaryList;
     }
 
-    private List<?> createQuery(String select) {
-    	String name = HibernateUtil.getSessionFactoryName();
-        Session session = HibernateUtil.getSession(name);
-        Query query = session.createQuery(select);
-        return query.list();
-    }
-
-    private void updateRecentNoteModel() throws ManagerBeanException {
+    private void updateRecentNoteModel( AuthPrincipal principal ) throws ManagerBeanException {
     	IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
-    	Criteria criteria = new Criteria();
-    	AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
-    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), principal.getUserId());
+    	Criteria criteria = new Criteria();    	criteria.addEqualExpression(noteBean.getFieldName(IEntityAlias.NOTE_OWNER_ID), principal.getUserId());
     	criteria.addOrder(noteBean.getFieldName(IEntityAlias.NOTE_DATE), false);
     	this.recentNoteModel = new ListDataModel(noteBean.getList(criteria));
     }
@@ -156,9 +168,9 @@ public class DesktopController {
 	public void onRefresh( ActionEvent event ) {
 		LOGGER.info( "Desktop Refresh" );
 		try {
-			updateRecentNoteModel();
-			updateNoticeSummaryModel();
-			updateMailSummaryModel();
+	        AuthPrincipal principal = AonUtil.getAuthPrincipal();
+			updateRecentNoteModel(principal);
+			updateNoticeSummaryModel(principal);
 			updateTaskSummaryModel();
 	    } catch (ManagerBeanException e) {
 	    	LOGGER.error( e.getMessage(), e );
@@ -223,36 +235,6 @@ public class DesktopController {
 		}
 		return bigLogo;
 	}	
-
-	private void initWebmail() {
-		try {
-			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			if ( wmc.isLogged() ) {
-				updateMailSummaryModel();				
-			}
-		} catch (Throwable th) {
-			LOGGER.error("Error on Webmail init", th);
-		}
-	}
-
-    private void updateMailSummaryModel() {
-		WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	if ( wmc.isLogged() ) {
-    		AonFolder folder = wmc.getServer().getAonFolder( INBOX_FOLDER_NAME );
-    		if ( folder != null ) {
-    			mailSummaryModel = new LinkedList<AonFolder>();
-    			mailSummaryModel.add(folder);
-    		}    		
-    	}
-    }
-    
-    public List<AonFolder> getMailSummaryModel() {
-		if ( mailSummaryModel != null ) {
-			WebMailController wmc = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			wmc.isReady();
-		}
-		return mailSummaryModel;
-    }
 
 	private void initTask() {
 		try {
@@ -343,5 +325,53 @@ public class DesktopController {
     	return this.taskSummaryModel;
     }
 
+    public void onSelectNote(ActionEvent event) throws ManagerBeanException{
+        NoteController noteController = (NoteController)FormUtil.getController(NOTE_CONTROLLER_NAME);
+        Note note = (Note)recentNoteModel.getRowData();
+        Criteria criteria = new Criteria();
+        try {
+            criteria.addEqualExpression(noteController.getFieldName(IEntityAlias.NOTE_ID), note.getId());
+            noteController.setCriteria(criteria);
+            noteController.onSearch(null);
+            noteController.getModel().setRowIndex(0);
+            noteController.onSelect(null);
+        } catch (ManagerBeanException e) {
+            throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
+        }
+    }
+    
+	public boolean isHideHeaderContent() {
+		CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
+		boolean hide = companyController.isHideHeaderContent();
+		if (! hide) {
+			if ( UserUtils.getInstance().isPasswordExpired() ) {
+				companyController.setHideHeaderContent(true);
+				return true;
+			}			
+		}
+		return hide;
+	}
+ 
+	private void initGarage() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		if (! adc.isDeniedModule(Module.GARAGE.getName()) ) {
+			AonUtil.setBeanValue(ConfigConstants.SERIES, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IFinanceConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ICommercialConstants.OFFER_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.DELIVERY_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IWarehouseConstants.INCOME_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(ISalesConstants.SALES_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+			AonUtil.setBeanValue(IPurchaseConstants.PURCHASE_CONTROLLER_NAME, SHOW_TAS_DATA, Boolean.TRUE);
+		}
+	}
 
+	private void initAcademy() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		if (! adc.isDeniedModule(Module.ACADEMY.getName()) ) {
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_ABSENCE, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_LOAN, Boolean.TRUE);
+			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_COURSE, Boolean.TRUE);
+		}
+	}
+	
 }

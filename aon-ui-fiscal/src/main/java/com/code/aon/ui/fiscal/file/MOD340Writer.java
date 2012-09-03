@@ -7,22 +7,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.file.format.model.Fd0Exception;
-import com.code.aon.file.tax.model.MOD340.IMOD340Provider;
 import com.code.aon.file.tax.model.MOD340.MOD340;
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD340.data.Deponent;
-import com.code.aon.file.tax.model.MOD340.data.IntracommunitaryInvoice;
-import com.code.aon.file.tax.model.MOD340.data.InvestmentInvoice;
 import com.code.aon.file.tax.model.MOD340.data.Invoice;
-import com.code.aon.file.tax.model.MOD340.data.IssuedInvoice;
-import com.code.aon.file.tax.model.MOD340.data.ReceivedInvoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.fiscal.model340.Model340Parameters;
@@ -32,21 +31,12 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
+public class MOD340Writer implements IFinanceConstants{
 
 	private Model340Parameters params;
 	private MOD340Format format;
 	private Company company;
 	private SimpleDateFormat formatter;
-
-	private PreparedStatement issuedPreparedStatement = null;
-	private ResultSet issuedResultSet = null;
-	private PreparedStatement receivedPreparedStatement = null;
-	private ResultSet receivedResultSet = null;
-	private PreparedStatement investmentPreparedStatement = null;
-	private ResultSet investmentResultSet = null;
-	private PreparedStatement intracommunitaryPreparedStatement = null;
-	private ResultSet intracommunitaryResultSet = null;
 
 	public MOD340Writer(Model340Parameters params,MOD340Format format) {
 		this.params = params;	
@@ -71,19 +61,126 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 	}
 
 	public void createMOD340(PrintWriter writer ) throws ManagerBeanException {
+		PreparedStatement invoicesPs = null;
+		ResultSet invoicesRs = null;
+		PreparedStatement taxPs = null;
+		ResultSet taxRs = null;
+		PreparedStatement sumPs = null;
+		ResultSet sumRs = null;
 		try {
-			MOD340 mod340 = new MOD340(this,writer);
-			List<Exception> exceptions = mod340.create();
-			if (exceptions != null && exceptions.size() > 0 ) {
-				throw new ManagerBeanException("Se han producido errores durante la generación del modelo");	
+			Deponent deponent = getDeponent();
+			String sessionName = HibernateUtil.getSessionFactoryName();
+			StringWriter stmt = new StringWriter();
+			stmt.append(" SELECT i.id invoice_id");
+			stmt.append(", i.type type");
+			stmt.append(",i.transaction transaction");
+			stmt.append(",i.investment investment");
+			stmt.append(",i.tax_date tax_date");
+			stmt.append(",i.issue_date issue_date");
+			stmt.append(",i.reference_code reference_code");
+			stmt.append(",i.series series");
+			stmt.append(",i.number number");
+			stmt.append(",i.rdocument rdocument");
+			stmt.append(",i.rdocument_country rdocument_country");
+			stmt.append(",i.rname rname");
+			stmt.append(",i.rectification_type rectification_type");
+			stmt.append(",i.rectification_invoice rectification_invoice");
+			stmt.append("  FROM invoice i ");
+			stmt.append(" WHERE ");
+			stmt.append( DomainManager.getSQLWhereClause("i.domain") );
+			appendParams(stmt);
+			stmt.append(" ORDER BY i.series,i.number");
+			invoicesPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			
+			stmt = new StringWriter();
+			stmt.append(" SELECT count(DISTINCT it.percentage) ");
+			stmt.append("  FROM invoice_tax it ");
+			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
+			stmt.append("  WHERE id.invoice = ?");
+			stmt.append("  AND it.tax_type = 1"); // Solo IVA
+			sumPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
+
+			stmt = new StringWriter();
+			stmt.append(" SELECT it.tax_type tax_type");
+			stmt.append(",it.percentage percentage");
+			stmt.append(",it.surcharge surcharge");
+			stmt.append(",it.vat_deduction_type vat_deduction_type");
+			stmt.append(",it.withholding_type withholding_type");
+			stmt.append(",it.deductible_quota deductible_quota");
+			stmt.append(",SUM(id.taxable_base) taxable_base");
+			stmt.append(",SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) quota");
+			stmt.append(",SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) surcharge_quota ");
+			stmt.append("  FROM invoice_tax it ");
+			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
+			stmt.append("  WHERE id.invoice = ?");
+			stmt.append("  AND it.tax_type = 1"); // Solo IVA
+			stmt.append("  GROUP BY id.invoice,it.percentage,it.surcharge");
+			taxPs  = HibernateUtil.getSQLConnection(sessionName).prepareStatement( stmt.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);			
+			appendParams(invoicesPs);
+			invoicesRs = invoicesPs.executeQuery();
+			List<Invoice> invoices = new LinkedList<Invoice>();
+			while (invoicesRs.next()) {
+				Integer id = invoicesRs.getInt("invoice_id");
+				sumPs.setInt(1, id);
+				sumRs = sumPs.executeQuery();
+				int numTaxes = 1;
+				if (sumRs.next()) {
+					numTaxes = sumRs.getInt(1);	
+				}
+				sumRs.close();
+				taxPs.setInt(1, id);
+				taxRs = taxPs.executeQuery();
+				while (taxRs.next()) {
+					Invoice inv = fillInvoice( invoicesRs );
+					inv.setRegisterCount(numTaxes);
+					inv.setOperation(numTaxes > 1?"C":"");
+					double taxableBase = taxRs.getDouble("taxable_base");
+					double quota = taxRs.getDouble("quota");
+					double surchargeQuota = taxRs.getDouble("surcharge_quota");
+					inv.setTaxableBase(taxRs.getDouble("taxable_base"));
+					inv.setPercent(taxRs.getDouble("percentage"));
+					inv.setQuota(quota);
+					
+					inv.setSurchargePercent(taxRs.getDouble("surcharge"));
+					inv.setSurchargeQuota(surchargeQuota);
+					
+					double total = CommonUtil.round( taxableBase + quota + surchargeQuota);
+					inv.setTotal(total);
+					inv.setCostTaxableBase(0);
+					inv.setDeductibleQuota(taxRs.getDouble("deductible_quota"));
+					deponent.setTotalTaxableBase( CommonUtil.round(deponent.getTotalTaxableBase() + taxableBase ));
+					deponent.setTotalInvoice( CommonUtil.round(deponent.getTotalInvoice() + total));
+					deponent.setTotalQuota( CommonUtil.round(deponent.getTotalQuota() + quota));
+					deponent.setTotalRegister( CommonUtil.round(deponent.getTotalRegister() + 1 ));
+					invoices.add(inv);
+				}
+				taxRs.close();
 			}
+			System.out.println(" Total Registros ..: " + deponent.getTotalRegister() );
+			System.out.println(" Total Base Imp. ..: " + deponent.getTotalTaxableBase() );
+			System.out.println(" Total Cuota ......: " + deponent.getTotalQuota() );
+			System.out.println(" Total ............: " + deponent.getTotalInvoice() );
+			
+			MOD340 mod340 = new MOD340(this.format,writer,deponent,invoices);
+			mod340.create();
+			
+			sumPs.close();
+			taxPs.close();
+			invoicesRs.close();
+			invoicesPs.close();
 		} catch (IOException e) {
-			throw new ManagerBeanException(e);
+			finalize(taxPs, taxRs);
+			finalize(invoicesPs, invoicesRs);
+			throw new Fd0Exception("ERROR", e.getMessage());
+		} catch (SQLException e) {
+			finalize(taxPs, taxRs);
+			finalize(invoicesPs, invoicesRs);
+			e.printStackTrace();
+			throw new Fd0Exception("ERROR", e.getMessage());
 		}
 	}
 
-	@Override
-	public Deponent getDeponent() throws Fd0Exception{
+	private Deponent getDeponent() throws Fd0Exception{
 		try {
 			Deponent deponent = new  Deponent();
 			deponent.setYear(params.getYear());
@@ -105,203 +202,57 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 			deponent.setComplementary(null);
 			deponent.setReplacement(null);
 			deponent.setPreviousNumber(null);
-			deponent.setTotalRegister(0); // TODO
-			deponent.setTotalTaxableBase(0); // TODO
-			deponent.setTotalQuota(0); // TODO
-			deponent.setTotalInvoice(0); // TODO
+			deponent.setTotalRegister( 0 ); 
+			deponent.setTotalTaxableBase(0);
+			deponent.setTotalQuota(0);
+			deponent.setTotalInvoice(0);
 			return deponent;
 		} catch (ManagerBeanException e) {
 			throw new Fd0Exception("ERROR", e.getMessage());
 		}
 	}
 
-	@Override
-	public MOD340Format getFormat() {
-		return format;
+	private void appendParams(StringWriter stmt) {
+		if (params.getFromDate() != null) {
+			stmt.append(" AND i.issue_date >= ?");
+		}
+		if (params.getToDate() != null) {
+			stmt.append(" AND i.issue_date <= ?");
+		}
 	}
-
-	// **************************
-	// ******* ISSUED ***********
-	// **************************
-	@Override
-	public void initializeIssuedInvoices() throws Fd0Exception {
-		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			issuedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.type = 1")
-				, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			if (params.getFromDate() != null) {
-				issuedPreparedStatement.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
-			}
-			if (params.getToDate() != null) {
-				issuedPreparedStatement.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
-			}
-			issuedResultSet = issuedPreparedStatement.executeQuery();
-		} catch (SQLException e) {
-			finalize(issuedPreparedStatement, issuedResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
+	
+	private void appendParams(PreparedStatement ps) throws SQLException {
+		int i = 0;
+		if (params.getFromDate() != null) {
+			ps.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
+		}
+		if (params.getToDate() != null) {
+			ps.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
 		}
 	}
 
-	@Override
-	public boolean hasNextIssuedInvoice() throws Fd0Exception {
-		return hasNext(issuedPreparedStatement,issuedResultSet);
-	}
-
-	@Override
-	public IssuedInvoice getNextIssueInvoice() throws Fd0Exception {
-		try {
-			IssuedInvoice inv = new IssuedInvoice();
-			fillInvoice(inv,issuedResultSet);
+	private Invoice fillInvoice(ResultSet rs) throws SQLException {
+		Invoice inv = new Invoice();
+		InvoiceType type = InvoiceType.values()[rs.getInt("type")];
+		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt("transaction")];
+		boolean investment = rs.getInt("investment") == 1;
+		if ( type == InvoiceType.SALES) {
+			inv.setType(MOD340.ISSUED);
 			inv.setInvoiceCount(1); 
-			inv.setRegisterCount(0); // TODO Número de Registros
 			inv.setFirstInvoiceNumber("");
 			inv.setLastInvoiceNumber("");
-			inv.setCorrectedInvoiceNumber("");
-			inv.setSurchargePercent(issuedResultSet.getDouble(13));
-			inv.setSurchargeQuota(issuedResultSet.getDouble(19));
-			return inv;
-		} catch (SQLException e) {
-			finalize(issuedPreparedStatement,issuedResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public void finalizeIssuedInvoices() throws Fd0Exception {
-		finalize(issuedPreparedStatement,issuedResultSet);
-	}
-
-	// **************************
-	// ******* RECEIVED ***********
-	// **************************
-	@Override
-	public void initializeReceivedInvoices() throws Fd0Exception {
-		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			receivedPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.type != 1"), 
-				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			if (params.getFromDate() != null) {
-				receivedPreparedStatement.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
-			}
-			if (params.getToDate() != null) {
-				receivedPreparedStatement.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
-			}
-			receivedResultSet = receivedPreparedStatement.executeQuery();
-		} catch (SQLException e) {
-			finalize(receivedPreparedStatement, receivedResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public boolean hasNextReceivedInvoice() throws Fd0Exception {
-		return hasNext(receivedPreparedStatement,receivedResultSet);
-	}
-	
-	@Override
-	public ReceivedInvoice getNextReceivedInvoice() throws Fd0Exception {
-		try {
-			ReceivedInvoice inv = new ReceivedInvoice();
-			fillInvoice(inv,receivedResultSet);
-			inv.setInvoiceCount(1); 
-			inv.setRegisterCount(0); // TODO Número de Registros
-			inv.setFirstInvoiceNumber("");
-			inv.setLastInvoiceNumber("");
-			inv.setDeductibleQuota(receivedResultSet.getDouble(16));
-			return inv;
-		} catch (SQLException e) {
-			finalize(receivedPreparedStatement,receivedResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public void finalizeReceivedInvoices() throws Fd0Exception {
-	}
-
-	// **************************
-	// ******* INVESTMENT *******
-	// **************************
-
-	@Override
-	public void initializeInvestmentInvoices() throws Fd0Exception {
-		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			investmentPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.investment = 1"), 
-				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			if (params.getFromDate() != null) {
-				investmentPreparedStatement.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
-			}
-			if (params.getToDate() != null) {
-				investmentPreparedStatement.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
-			}
-			investmentResultSet = investmentPreparedStatement.executeQuery();
-		} catch (SQLException e) {
-			finalize(investmentPreparedStatement, investmentResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public boolean hasNextInvestmentInvoice() throws Fd0Exception {
-		return hasNext(investmentPreparedStatement,investmentResultSet);
-	}
-	@Override
-	public InvestmentInvoice getNextInvestmentInvoice() throws Fd0Exception {
-		try {
-			InvestmentInvoice inv = new InvestmentInvoice();
-			fillInvoice(inv,investmentResultSet);
-			inv.setYearProrate(0); 
-			inv.setYearRegularization(0);
-			inv.setDeliveryInvoice("");
-			inv.setDoneRegularization(0);
-			inv.setInvestementDate("000000");
-			inv.setInvestementName("");
-			return inv;
-		} catch (SQLException e) {
-			finalize(investmentPreparedStatement,investmentResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public void finalizeInvestmentInvoices() throws Fd0Exception {
-		finalize(investmentPreparedStatement,investmentResultSet);
-	}
-	
-	// **************************
-	// *** INVTRACOMMUNITARY ****
-	// **************************
-	
-	
-	@Override
-	public void initializeIntracommunitaryInvoices() throws Fd0Exception {
-		try {
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			intracommunitaryPreparedStatement = HibernateUtil.getSQLConnection(sessionName).prepareStatement(getStatement("i.transaction = 1"), 
-				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			int i = 0;
-			if (params.getFromDate() != null) {
-				intracommunitaryPreparedStatement.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
-			}
-			if (params.getToDate() != null) {
-				intracommunitaryPreparedStatement.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
-			}
-			intracommunitaryResultSet = intracommunitaryPreparedStatement.executeQuery();
-		} catch (SQLException e) {
-			finalize(intracommunitaryPreparedStatement, intracommunitaryResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
-	}
-	@Override
-	public boolean hasNextIntracommunitaryInvoice() throws Fd0Exception {
-		return hasNext(intracommunitaryPreparedStatement,intracommunitaryResultSet);
-	}
-	@Override
-	public IntracommunitaryInvoice getNextIntracommunitaryInvoice() throws Fd0Exception {
-		try {
-			IntracommunitaryInvoice inv = new IntracommunitaryInvoice();
-			fillInvoice(inv,intracommunitaryResultSet);
+			inv.setRectifiedInvoiceNumber("");
+		} else if (investment) {
+				inv.setType(MOD340.INVESTMENT);
+				inv.setYearProrate(0); 
+				inv.setYearRegularization(0);
+				inv.setDeliveryInvoice("");
+				inv.setDoneRegularization(0);
+				inv.setInvestementDate("00000000");
+				inv.setInvestementName("");
+		} else if ( transaction == InvoiceTransactionType.INTRACOMMUNITY) {
+			inv.setType(MOD340.INTRACOMMUNITARY);
 			inv.setIntracommunitaryType("A");
-			InvoiceType type = InvoiceType.values()[intracommunitaryResultSet.getInt(1)];
 			inv.setDeclaredKey(type == InvoiceType.SALES?"D":"R");
 			inv.setCountryKey("");
 			inv.setOperationPeriod(0);
@@ -310,89 +261,44 @@ public class MOD340Writer implements IMOD340Provider, IFinanceConstants{
 			inv.setCity("");
 			inv.setZip("");
 			inv.setOther("");
-			return inv;
-		} catch (SQLException e) {
-			finalize(receivedPreparedStatement,receivedResultSet);
-			throw new Fd0Exception("ERROR", e.getMessage());
+		} else {
+			inv.setType(MOD340.RECEIVED);
+			inv.setInvoiceCount(1); 
+			inv.setFirstInvoiceNumber("");
+			inv.setLastInvoiceNumber("");
 		}
-	}
-	@Override
-	public void finalizeIntracommunitaryInvoices() throws Fd0Exception {
-		finalize(intracommunitaryPreparedStatement,intracommunitaryResultSet);
-	}
-
-	// **************************
-
-	private String getStatement(String where) {
-			StringWriter stmt = new StringWriter();
-			stmt.append(" SELECT i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.series,i.number,i.rdocument,i.rname ");
-			stmt.append("  ,it.tax_type,it.percentage,it.surcharge,it.vat_deduction_type,it.withholding_type,it.deductible_quota");
-			stmt.append("  ,SUM(id.taxable_base) ");
-			stmt.append("  ,SUM( IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) ) ) TAX");
-			stmt.append("  ,SUM( IF(it.surcharge_quota != 0,it.surcharge_quota,ROUND(id.taxable_base * it.surcharge / 100, 2) ) ) RE ");
-			stmt.append("  FROM invoice_tax it ");
-			stmt.append("  INNER JOIN invoice_detail id ON (it.invoice_detail = id.id) ");
-			stmt.append("  INNER JOIN invoice i ON (id.invoice = i.id) ");
-			stmt.append(" WHERE ");
-			stmt.append( DomainManager.getSQLWhereClause("it.domain") );
-			stmt.append(" AND ");
-			stmt.append(where);
-			if (params.getFromDate() != null) {
-				stmt.append(" AND i.issue_date >= ?");
-			}
-			if (params.getToDate() != null) {
-				stmt.append(" AND i.issue_date <= ?");
-			}
-			stmt.append(" GROUP BY i.type,i.transaction,i.investment,i.tax_date,i.issue_date,i.reference_code,i.rdocument,i.rname ");
-			stmt.append("  ,it.tax_type,it.percentage,it.surcharge,it.vat_deduction_type,it.withholding_type,it.deductible_quota ");
-			return stmt.toString();
-	}
-	
-	private void fillInvoice(Invoice inv,ResultSet rs) throws SQLException {
+		
 		inv.setYear( params.getYear());
 		inv.setPeriod(params.getPeriodString());
 		inv.setCode(getCompany().getDocument());
-		inv.setDocument(rs.getString(9));
-		inv.setName(rs.getString(10));
-		inv.setCountry("ES");
-		inv.setCountryKey("1");
-		inv.setCountryCode("");
-		inv.setCountryNif("");
-		inv.setOperation(" ");
-		inv.setIssueDate(getFormatter().format(rs.getDate(5)));
-		inv.setOperationDate(getFormatter().format(rs.getDate(4)));
-		inv.setPercent(rs.getDouble(12));
-		inv.setTaxableBase(rs.getDouble(17));
-		double quota = rs.getDouble(18);
-		inv.setQuota(quota);
-		inv.setTotal(quota); // TODO total factura
-		inv.setCostTaxableBase(0);
-		inv.setInvoiceNumber(rs.getString(6));
-		String series = rs.getString(7);
-		int number = rs.getInt(8);
-		InvoiceType type = InvoiceType.values()[rs.getInt(1)];
+		String document = rs.getString("rdocument");
+		inv.setName(rs.getString("rname"));
+		inv.setCountry(rs.getString("rdocument_country"));
+		Country c = Country.valueOf(inv.getCountry());
+		if (c == Country.ES) {
+			inv.setCountryKey("1");
+			inv.setCountryCode("ES");
+			inv.setDocument(document);
+		} else {
+			if (c.isEuropeanUnionMember()) {
+				inv.setCountryKey("2");
+				inv.setCountryCode(c == Country.GR ?"EL" : c.getValue());
+				inv.setCountryNif(document);
+			} else {
+				// No se si esto está bien.
+				inv.setCountryKey("4");
+				inv.setCountryCode(c.getValue());
+				inv.setCountryNif(document);
+			}
+		}
+		inv.setIssueDate(getFormatter().format(rs.getDate("issue_date")));
+		inv.setOperationDate(getFormatter().format(rs.getDate("tax_date")));
+		inv.setInvoiceNumber(rs.getString("reference_code"));
+		String series = rs.getString("series");
+		int number = rs.getInt("number");
 		String documentNumber = FinanceUtil.getDocumentNumber(type, series, number);
 		inv.setDocumentNumber(documentNumber);
-	}
-
-	private boolean hasNext(PreparedStatement ps, ResultSet rs) {
-		try {
-			return rs.next();
-		} catch (SQLException e) {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e1) {
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e1) {
-				}
-			}
-			throw new Fd0Exception("ERROR", e.getMessage());
-		}
+		return inv;
 	}
 
 	private void finalize(PreparedStatement ps,ResultSet rs) {

@@ -13,8 +13,8 @@ public class BalanceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	@Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-		Balance balance = (Balance) evt.getTo();
-		balance.setRemovable(true);
+		//Balance balance = (Balance) evt.getTo();
+		//balance.setRemovable(true);
     }
 	
 	@Override

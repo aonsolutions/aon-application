@@ -9,6 +9,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.product.Item;
+import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.registry.IAddress;
@@ -17,9 +18,11 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationGuest;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
 import com.esferalia.aon.pms.reservation.IReservationConstants;
+import com.esferalia.aon.pms.reservation.ReservationUtils;
 
 public class ReservationInvoiceTo implements IReservationConstants {
 
+	private boolean service;
 	private Date issueDate;
 	private Hotel hotel;
 	private String series;
@@ -30,16 +33,32 @@ public class ReservationInvoiceTo implements IReservationConstants {
 	private Registry registry;
 	private IAddress address;
 	private String comments;
+	private ProductType serviceType;
+	private boolean earlyCheckOut;
+	private Date earlyCheckOutDate;
+	private int penaltyDays;
+	private double penaltyAmount;
 	private List<HotelService> services;
 	private List<Finance> finances;
 
-	public ReservationInvoiceTo() {
+	public ReservationInvoiceTo(boolean service) {
+		setService(service);
+		setDirectCustomer(service);
 		setIssueDate(new Date());
 		setRegistry(new Registry());
 		setAddress(new InvoiceAddress());
 		setComments(null);
+		setServiceType(ProductType.SERVICE);
 		setServices(new LinkedList<HotelService>());
 		setFinances(new LinkedList<Finance>());
+	}
+
+	public boolean isService() {
+		return service;
+	}
+
+	public void setService(boolean service) {
+		this.service = service;
 	}
 
 	public Date getIssueDate() {
@@ -120,6 +139,46 @@ public class ReservationInvoiceTo implements IReservationConstants {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public ProductType getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(ProductType serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public boolean isEarlyCheckOut() {
+		return earlyCheckOut;
+	}
+
+	public void setEarlyCheckOut(boolean earlyCheckOut) {
+		this.earlyCheckOut = earlyCheckOut;
+	}
+
+	public Date getEarlyCheckOutDate() {
+		return earlyCheckOutDate;
+	}
+
+	public void setEarlyCheckOutDate(Date earlyCheckOutDate) {
+		this.earlyCheckOutDate = earlyCheckOutDate;
+	}
+
+	public int getPenaltyDays() {
+		return penaltyDays;
+	}
+
+	public void setPenaltyDays(int penaltyDays) {
+		this.penaltyDays = penaltyDays;
+	}
+
+	public double getPenaltyAmount() {
+		return penaltyAmount;
+	}
+
+	public void setPenaltyAmount(double penaltyAmount) {
+		this.penaltyAmount = penaltyAmount;
 	}
 
 	public List<HotelService> getServices() {
@@ -216,8 +275,9 @@ public class ReservationInvoiceTo implements IReservationConstants {
 			this.taxableBase = taxableBase;
 		}
 
-		public double getTotal() {
-			return CommonUtil.round(taxableBase * (1 + (item.getProduct().getVat().getPercentage() / 100)));
+		public double getTotal() throws ManagerBeanException {
+			ReservationUtils reservationUtils = new ReservationUtils();
+			return CommonUtil.round(taxableBase * (1 + (reservationUtils.getTaxPercentage(item.getProduct().getVat(), getIssueDate()) / 100)));
 		}
 
 

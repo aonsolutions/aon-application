@@ -129,31 +129,31 @@ public class TasStatEngineController {
 			BasicController c = null;
 			String action = null;
 			if (detail.isProject()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.PROJECT_TAS_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.PROJECT_TAS_CONTROLLER_NAME);
 				action = IStatConstants.PROJECT_TAS_FORM;
 			} else if (detail.isOffer()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.OFFER_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.OFFER_CONTROLLER_NAME);
 				action = IStatConstants.OFFER_FORM;
 			} else if (detail.isSales()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.SALES_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.SALES_CONTROLLER_NAME);
 				action = IStatConstants.SALES_FORM;
 			} else if (detail.isPurchase()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.PURCHASE_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.PURCHASE_CONTROLLER_NAME);
 				action = IStatConstants.PURCHASE_FORM;
 			} else if (detail.isDelivery()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.DELIVERY_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.DELIVERY_CONTROLLER_NAME);
 				action = IStatConstants.DELIVERY_FORM;
 			} else if (detail.isIncome()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.INCOME_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.INCOME_CONTROLLER_NAME);
 				action = IStatConstants.INCOME_FORM;
 			} else if (detail.isSaleInvoice()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.SALES_INVOICE_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.SALES_INVOICE_CONTROLLER_NAME);
 				action = IStatConstants.SALES_INVOICE_FORM;
 			} else if (detail.isPurchaseInvoice()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.PURCHASE_INVOICE_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.PURCHASE_INVOICE_CONTROLLER_NAME);
 				action = IStatConstants.PURCHASE_INVOICE_FORM;
 			} else if (detail.isExpenseInvoice()) {
-				c = (BasicController) FormUtil.getController(IStatConstants.EXPENSE_INVOICE_CONTROLLER);
+				c = (BasicController) FormUtil.getController(IStatConstants.EXPENSE_INVOICE_CONTROLLER_NAME);
 				action = IStatConstants.EXPENSE_INVOICE_FORM;
 			}
 			if (c != null) {

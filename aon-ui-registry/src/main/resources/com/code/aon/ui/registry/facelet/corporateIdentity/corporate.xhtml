@@ -26,11 +26,8 @@
 			
 			<aon:div styleClass="aon-scroll-area">
 			
-				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+				<ui:include src="/com/code/aon/ui/registry/facelet/documentManager/tab_grid.xhtml">
 					<ui:param name="controller" value="#{corporateIdentityAttach}" />
-					<ui:param name="sortColumns" value="#{true}" />
-					<ui:param name="skipLineEdition" value="#{!aonRole.admin}" />
-					<ui:param name="skipResetButton" value="#{!aonRole.admin}" />
 				</ui:include>
 				
 			</aon:div>

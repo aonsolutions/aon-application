@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.company.WorkPlace;
 
 public class StatParams {
 	
@@ -17,7 +18,7 @@ public class StatParams {
 	private Locale locale;
 	private Integer invoiceType;
 	private OfferStatus[] offerStatuses;
-	
+	private WorkPlace workPlace;
 	
 	public Integer getInvoiceType() {
 		return invoiceType;
@@ -80,6 +81,12 @@ public class StatParams {
 	}
 	public void setOfferStatuses(OfferStatus[] offerStatuses) {
 		this.offerStatuses = offerStatuses;
+	}
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
 	}
 	
 	

@@ -62,6 +62,25 @@
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						</c:if>					
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
+							<ui:param name="signController" value="#{expenseInvoiceSigner}" />
+							<ui:param name="skipSignButton" value="#{expenseInvoice.new or expenseInvoice.to.signed or (!certificate.signable) or (!expenseInvoice.attachmentAvailable)}" />
+							<ui:param name="skipCancelSignButton" value="#{expenseInvoice.new or (!expenseInvoice.to.signed) or (!expenseInvoice.attachmentAvailable)}" />
+							<ui:param name="signButtonReRender" value="expenseInvoiceForm" />
+						</ui:include>
+						
+						<rich:menuSeparator id="actionMenuSeparator" />
+						
+						<aon:menuItem id="newProject-button"
+							value="#{(projectButtonLabel!=null)?(projectButtonLabel):(projectBundle.project_project)}"
+							iconClass="aon-icon-statistics"
+							reRender="showNewProjectWindow"
+							actionListener="#{project.onReset}">
+							<f:setPropertyActionListener target="#{expenseInvoice.showNewProjectWindow}" 
+								value="#{true}" />							
+							<f:setPropertyActionListener target="#{project.to.registry}" 
+								value="#{expenseInvoice.to.registry}" />							
+						</aon:menuItem>
 						<aon:menuItem id="documents"
 							value="#{bundle.aon_documents}"
 							rendered="#{!expenseInvoice.new}"
@@ -69,13 +88,45 @@
 							reRender="showDocumentWindow">
 							<f:setPropertyActionListener target="#{expenseInvoice.showDocumentWindow}"
 								value="#{true}" />							
-						</aon:menuItem>												
-						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signMenuItem.xhtml">
-							<ui:param name="signController" value="#{expenseInvoiceSigner}" />
-							<ui:param name="skipSignButton" value="#{expenseInvoice.new or expenseInvoice.to.signed or (!certificate.signable) or (!expenseInvoice.attachmentAvailable)}" />
-							<ui:param name="skipCancelSignButton" value="#{expenseInvoice.new or (!expenseInvoice.to.signed) or (!expenseInvoice.attachmentAvailable)}" />
-							<ui:param name="signButtonReRender" value="expenseInvoiceForm" />
-						</ui:include>
+						</aon:menuItem>						
+						<aon:menuItem id="comments"
+							value="#{bundle.aon_comment}"
+							rendered="#{!expenseInvoice.new}"
+							iconClass="aon-icon-notes"
+							reRender="showCommentsWindow">
+							<f:setPropertyActionListener target="#{expenseInvoice.showCommentsWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						<aon:menuItem id="remarks"
+							value="#{bundle.aon_remark}"
+							rendered="#{!expenseInvoice.new}"
+							iconClass="aon-icon-notes"
+							reRender="showRemarksWindow">
+							<f:setPropertyActionListener target="#{expenseInvoice.showRemarksWindow}"
+								value="#{true}" />							
+						</aon:menuItem>		
+						
+						<c:if test="#{aonRole.accountingOperator}">
+							<rich:menuSeparator id="invoiceAddsMenuSeparator1" />
+							<aon:menuItem id="fiscalInformation"
+								value="#{financeBundle.finance_fiscal_information}"
+								rendered="#{!expenseInvoice.new}"
+								iconClass="aon-icon-info"
+								reRender="showFiscalInformationWindow">
+								<f:setPropertyActionListener target="#{expenseInvoice.showFiscalInformationWindow}"
+									value="#{true}" />							
+							</aon:menuItem>
+						</c:if>
+						
+						<rich:menuSeparator id="invoiceAddsMenuSeparator" />
+						<aon:menuItem id="audit-info"
+							value="#{bundle.aon_audit}"
+							rendered="#{!expenseInvoice.new}"
+							iconClass="aon-icon-audit"
+							reRender="showAuditInfoWindow">
+							<f:setPropertyActionListener target="#{expenseInvoice.showAuditInfoWindow}"
+								value="#{true}" />							
+						</aon:menuItem>	
 					</ui:define>
 				</ui:decorate>
 			</aon:div>
@@ -160,23 +211,6 @@
 									focus="Creditor_id" />
 							</c:if>
 						</aon:selectInputDate>
-						<c:if test="#{aonRole.accountingOperator}">
-							<aon:outputLabel for="Invoice_taxDate" styleClass="aon-margin-left aon-margin-right aon-italic"
-								value="#{financeBundle.finance_tax_date}" />
-							<aon:selectInputDate id="Invoice_taxDate"
-								value="#{expenseInvoice.to.taxDate}" required="true"
-								disabled="#{expenseInvoice.readOnly}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}"
-								inputStyle="#{expenseInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
-								<a4j:support ajaxSingle="true" event="oninputchange"
-									reRender="Invoice_taxDate"
-									focus="Creditor_id" />
-								<a4j:support ajaxSingle="true" event="onchanged"
-									reRender="Invoice_taxDate"
-									focus="Creditor_id" />
-							</aon:selectInputDate>
-						</c:if>
 					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
@@ -192,6 +226,27 @@
 						<aon:methodParam name="lookupChangeListener"
 							value="#{expenseInvoice.creditorData}" type="lookupChangeListener" />
 					</ui:include>
+					
+					<aon:outputLabel for="Invoice_taxDate" 
+						value="#{financeBundle.finance_tax_date}" />
+					<c:if test="#{aonRole.accountingOperator}">
+						<aon:selectInputDate id="Invoice_taxDate"
+							value="#{expenseInvoice.to.taxDate}" required="true" 
+							disabled="#{expenseInvoice.readOnly}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}"
+							inputStyle="#{expenseInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
+							<a4j:support ajaxSingle="true" event="oninputchange"
+								reRender="Invoice_taxDate"
+								focus="Creditor_id" />
+							<a4j:support ajaxSingle="true" event="onchanged"
+								reRender="Invoice_taxDate"
+								focus="Creditor_id" />
+						</aon:selectInputDate>
+					</c:if>
+					<c:if test="#{!aonRole.accountingOperator}">
+						<aon:outputText value="#{expenseInvoice.to.taxDate}" />
+					</c:if>
 
 					<aon:outputLabel for="Creditor_registry_document"
 						value="#{bundle.aon_company_document}" />
@@ -235,6 +290,10 @@
 								value="&#160;" />
 	 					</aon:panelGroup>
  					</aon:panelGroup>
+ 					
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}" />
+					<aon:outputText styleClass="aon-bold"
+						value="#{expenseInvoice.to.documentNumber}" />
 
 					<aon:outputLabel for="Invoice_registryAddress_id"
 						value="#{registryBundle.registry_address}" />
@@ -336,13 +395,11 @@
 					</aon:panelGrid>
 				</aon:div>
 
-				<aon:panelGrid columns="4" style="width: 100%;"
+				<aon:panelGrid columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:div>
+					<aon:div rendered="#{!empty expenseInvoice.to.comments}">
 						<aon:outputLabel for="Invoice_comments"
 							value="#{bundle.aon_comment}" />
 						<aon:div>
@@ -350,11 +407,12 @@
 								value="(#{bundle.aon_comment_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:inputTextarea id="Invoice_comments" cols="80" rows="3"
+					<aon:inputTextarea id="Invoice_comments" cols="145" rows="2"
+						rendered="#{!empty expenseInvoice.to.comments}"
 						disabled="#{expenseInvoice.readOnly}"
 						value="#{expenseInvoice.to.comments}" />
 
-					<aon:div>
+					<aon:div rendered="#{!empty expenseInvoice.to.remarks}">
 						<aon:outputLabel for="Invoice_remarks"
 							value="#{bundle.aon_remark}" />
 						<aon:div>
@@ -362,26 +420,13 @@
 								value="(#{bundle.aon_remark_description})" />
 						</aon:div>
 					</aon:div>
-					<aon:inputTextarea id="Invoice_remarks" cols="80" rows="3"
+					<aon:inputTextarea id="Invoice_remarks" cols="145" rows="2"
+						rendered="#{!empty expenseInvoice.to.remarks}"
 						disabled="#{expenseInvoice.readOnly}"
 						value="#{expenseInvoice.to.remarks}" />
 
 				</aon:panelGrid>
-
-				<aon:panelGrid columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-500,
-						aon-panelGrid-odd aon-width-100,
-						aon-panelGrid-even aon-width-auto">
-
-					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
-						rendered="#{!expenseInvoice.new}" />
-					<aon:outputText styleClass="aon-bold"
-						value="#{expenseInvoice.to.documentNumber}"
-						rendered="#{!expenseInvoice.new}" />
-
-				</aon:panelGrid>
-
+				
 				<ui:include	src="/com/code/aon/ui/finance/facelet/expenseInvoice/form_detail.xhtml">
 					<ui:param name="invoiceController" value="#{expenseInvoice}" />
 					<ui:param name="detailController" value="#{expenseInvoiceDetail}" />
@@ -431,6 +476,23 @@
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="expenseInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{expenseInvoiceSigner.onSign}" type="actionListener" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalNewProject.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+			<ui:param name="projectController" value="#{project}" />
+			<ui:param name="skipRegistryLookup" value="true" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalComments.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRemarks.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAuditInfo.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
+			<ui:param name="invoiceController" value="#{expenseInvoice}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

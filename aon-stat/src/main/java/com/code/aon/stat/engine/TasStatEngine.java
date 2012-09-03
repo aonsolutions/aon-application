@@ -324,6 +324,7 @@ public class TasStatEngine {
 			if (params.getFromDate() != null) {
 				ps.setDate(++i, new java.sql.Date(params.getFromDate().getTime()));
 			}
+			DomainManager.fillHostVariables(ps, ++i);
 			if (params.getToDate() != null) {
 				ps.setDate(++i, new java.sql.Date(params.getToDate().getTime()));
 			}

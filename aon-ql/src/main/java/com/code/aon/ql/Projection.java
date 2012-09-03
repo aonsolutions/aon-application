@@ -204,5 +204,10 @@ public class Projection implements Criterion {
 	public void accept(CriterionVisitor visitor) {
         visitor.visitProjection(this);
 	}
+
+	@Override
+	public String toString() {
+		return type.toString() + "(" + expression + ")";
+	}
 	
 }

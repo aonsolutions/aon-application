@@ -9,81 +9,90 @@
 		<aon:outputText styleClass="aon-icon-logo" 
 			style="padding-left: 20px; margin-left: 12px;" 
 			value="&#160;"/>
-		
-		<c:if test="#{aonRole.commercialOperator}">
-			<aon:commandLink id="marketing"
-				value="#{bundle.aon_module_marketing}"
-				action="menu_marketing" immediate="true"
-				styleClass="aon-top-menu-item" />
-			<aon:commandLink id="commercial"
-				value="#{bundle.aon_module_commercial}"
-				action="menu_commercial" immediate="true"
-				styleClass="aon-top-menu-item" />
+			
+		<c:if test="#{domainSwitcher.domainManagementAvailable}">
+			<c:if test="#{aonRole.admin}">
+				<aon:commandLink id="enterprise"
+					value="#{bundle.aon_module_enterprise}"
+					action="menu_enterprise" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
 		</c:if>
 
-		<aon:commandLink id="management" value="#{bundle.aon_module_management}" 
-			action="menu_management" 
-			immediate="true" styleClass="aon-top-menu-item"/>
+		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<c:if test="#{aonRole.commercialOperator}">
+				<aon:commandLink id="marketing"
+					value="#{bundle.aon_module_marketing}"
+					action="menu_marketing" immediate="true"
+					styleClass="aon-top-menu-item" />
+				<aon:commandLink id="commercial"
+					value="#{bundle.aon_module_commercial}"
+					action="menu_commercial" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
+			
+			<c:if test="#{aonRole.saleOperator or aonRole.purchaseOperator}">
+				<aon:commandLink id="management"
+					value="#{bundle.aon_module_management}" 
+					action="menu_management" immediate="true"
+					styleClass="aon-top-menu-item"/>
+			</c:if>
+			
+			<c:if test="#{aonRole.financeOperator}">
+				<aon:commandLink id="treasury"
+					value="#{bundle.aon_module_finance}"
+					action="menu_treasury" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
+			
+			<c:if test="#{aonRole.warehouseOperator}">
+				<aon:commandLink id="warehouse"
+					value="#{bundle.aon_module_warehouse}"
+					action="menu_warehouse" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
 
-<!-- 		
-		<c:if test="#{aonRole.saleOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
-			<aon:commandLink id="sales"
-				value="#{appBundle.menu_sales}"
-				action="menu_sales" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.purchaseOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
-			<aon:commandLink id="purchase"
-				value="#{appBundle.menu_purchase}"
-				action="menu_purchase" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.financeOperator}">
-			<aon:commandLink id="expenses"
-				value="#{productBundle.product_expense_module}"
-				action="menu_expenses" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
- -->
-		<c:if test="#{aonRole.financeOperator}">
-			<aon:commandLink id="treasury"
-				value="#{bundle.aon_module_finance}"
-				action="menu_treasury" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.warehouseOperator}">
-			<aon:commandLink id="warehouse"
-				value="#{bundle.aon_module_warehouse}"
-				action="menu_warehouse" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="groupware"
 				value="#{bundle.aon_module_groupware}"
 				action="menu_groupware" immediate="true"
 				styleClass="aon-top-menu-item" />
-		</c:if>
-		<c:if test="#{aonRole.accountingOperator}">
-			<aon:commandLink id="accounting"
-				value="#{bundle.aon_module_accounting}"
-				action="menu_accounting" immediate="true"
-				styleClass="aon-top-menu-item" />
+
+			<c:if test="#{aonRole.accountingOperator}">
+				<aon:commandLink id="accounting"
+					value="#{bundle.aon_module_accounting}"
+					action="menu_accounting" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
+			
 			<aon:commandLink id="fiscal"
 				value="#{bundle.aon_module_fiscal}"
 				action="menu_fiscal" immediate="true"
 				styleClass="aon-top-menu-item" />
+				
 			<aon:commandLink id="payroll"
 				value="#{bundle.aon_module_payroll}"
 				action="menu_payroll" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
+		
 		<aon:commandLink id="document"
 			value="#{bundle.aon_module_document}"
 			action="menu_document" immediate="true"
 			styleClass="aon-top-menu-item" />
-		<aon:commandLink id="utilities"
-			value="#{bundle.aon_utilities}"
-			action="menu_utilities" immediate="true"
+		
+		<aon:commandLink id="garage"
+			value="#{bundle.aon_module_garage}"
+			action="menu_garage" immediate="true"
+			styleClass="aon-top-menu-item" />
+
+		<aon:commandLink id="academy"
+			value="#{bundle.aon_module_academy}"
+			action="menu_academy" immediate="true"
+			styleClass="aon-top-menu-item" />
+		
+		<aon:commandLink id="configuration"
+			value="#{bundle.aon_module_configuration}"
+			action="menu_configuration" immediate="true"
 			styleClass="aon-top-menu-item" />
 
 		<rich:jQuery timing="onload"

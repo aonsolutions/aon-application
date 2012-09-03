@@ -14,7 +14,7 @@
 				<aon:selectOneMenu id="#{searchController.preffix}segments_segment_id"
 					value="#{searchController.segments[index]}">
 					<f:selectItem itemLabel="-" value="#{null}"/>
-					<f:selectItems value="#{registryCollections.segments}" />
+					<f:selectItems value="#{registryCollections.segmentIds}" />
 					<a4j:support event="onchange" reRender="segmentDiv"/>
 				</aon:selectOneMenu>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus"

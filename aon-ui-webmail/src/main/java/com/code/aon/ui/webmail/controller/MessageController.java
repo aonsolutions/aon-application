@@ -96,6 +96,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	private AonMessage parentMessage;
 	
+	private AonMessage sentMessage;
+	
 	private String messageContent;
 	
 	private Long draftMessageUID;
@@ -145,11 +147,15 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		return message;
 	}
 
-	public WebMailController getWebMailController() {
+	private WebMailController getWebMailController() {
 		if ( webMailController == null ) {
 	    	webMailController = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 		}
 		return webMailController;
+	}
+
+	private MailConfigController getMailConfig() {
+		return (MailConfigController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MAIL_CONFIG);
 	}
 	
 	/**
@@ -209,7 +215,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		initNewMessage();
 		parentMessage = message;
 		try {
-			recipientsTo = getReplyToRecipients(message, false); 
+			recipientsTo = getReplyToRecipients(message, true); 
 	       	subject = "Reply: "+message.getSubject();
 	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), getMessageContent(), REPLIED_MESSAGE, AonUtil.getCurrentLocale());
 	       	content += messageBody;
@@ -274,11 +280,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     }
 	
 	private void refreshDraftFolder() {
-    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
-    	if ( folderController.getFolder().isDraftFolder() ) {
-    		folderController.getFolder().close(false);
-    		folderController.refresh(null);
-    	}
+		if ( getMailConfig().isConnectable() ) {
+	    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
+	    	if ( folderController.getFolder().isDraftFolder() ) {
+	    		folderController.getFolder().close(false);
+	    		folderController.refresh(null);
+	    	}			
+		}
 	}
 	
 	private void finishMessage() {
@@ -401,44 +409,45 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	//***************************************************************
 	
 	private void storeMessage( AonServer server, AonMessage aonMessage, boolean draft ) {
-    	Message[] messages = new Message[1];
-		messages[0] = aonMessage.getMessage();
-		try {
-			messages[0].setFlag(Flag.SEEN, true);
-			String folderName = draft ? server.getDraftFolderName() : server.getSentFolderName();
-			AonFolder folder = server.getAonFolder(folderName);
-			folder.open(Folder.READ_WRITE);
-	    	Folder desfFolder = folder.getFolder();
-	    	desfFolder.appendMessages(messages);
-	    	desfFolder.expunge();
-	    	folder.close(false);		
-		} catch (MessagingException e) {
-			LOGGER.error( "Error setting contactName", e );
-			AonUtil.addErrorMessage(e.getMessage());
+		if ( server.isIMAP() ) {
+	    	Message[] messages = new Message[1];
+			messages[0] = aonMessage.getMessage();
+			try {
+				messages[0].setFlag(Flag.SEEN, true);
+				String folderName = draft ? server.getDraftFolderName() : server.getSentFolderName();
+				AonFolder folder = server.getAonFolder(folderName);
+				folder.open(Folder.READ_WRITE);
+		    	Folder desfFolder = folder.getFolder();
+		    	desfFolder.appendMessages(messages);
+		    	desfFolder.expunge();
+		    	folder.close(false);		
+			} catch (MessagingException e) {
+				LOGGER.error( "Error setting contactName", e );
+				AonUtil.addErrorMessage(e.getMessage());
+			}
 		}
 	}
 	
     public void onSend(ActionEvent event) {
-    	AonServer server = getWebMailController().getServer();
-    	AonMessage aonMessage = null;
+    	AonServer server = new AonServer(this.senderMailAccount);
     	try {
-	    	aonMessage = compoundMessage();
-    		server.sendMessage(aonMessage);
+	    	sentMessage = compoundMessage(server);
+    		server.sendMessage(sentMessage);
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
-			if ( aonMessage != null ) {
-	    		storeMessage(server, aonMessage, true);
+			if ( sentMessage != null ) {
+	    		storeMessage(server, sentMessage, true);
 				refreshDraftFolder();	    		
 			}
 			throw new AbortProcessingException(th);
 		}
     	try {	
-    		storeMessage(server, aonMessage, false);
+   			storeMessage(server, sentMessage, false);
 			if (parentMessage!=null){
 		    	parentMessage.getMessage().setFlag(Flag.ANSWERED, true);
 		    	parentMessage.getParent().getFolder().expunge();
 	    	}
-	    	deleteDraftMessage();
+	    	deleteDraftMessage( server );
     		refreshDraftFolder();
 		} catch (Throwable th) {
 			AonUtil.addErrorMessage(th.getMessage());
@@ -452,9 +461,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     	finishMessage();
     }
     
-    private void deleteDraftMessage() throws MessagingException {
-    	if ( this.draftMessageUID != null ) {
-    		AonServer server = getWebMailController().getServer();
+    private void deleteDraftMessage( AonServer server ) throws MessagingException {
+    	if ( (this.draftMessageUID != null) && server.isIMAP() ) {
     		AonFolder folder = server.getAonFolder(server.getDraftFolderName());
     		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
     		imapFolder.open(Folder.READ_WRITE);
@@ -470,14 +478,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     public void onSaveDraft(ActionEvent event) {
     	setErrorMessage(null);
     	try {
-	    	AonMessage aonMessage = compoundMessage();    		
-	    	AonServer server = getWebMailController().getServer();
+	    	AonServer server = getWebMailController().getServer();    		
+	    	AonMessage aonMessage = compoundMessage( server );    		
 	    	AonFolder dest = server.getAonFolder(server.getDraftFolderName());
 	    	Message[] messages = new Message[1];
     		messages[0] = aonMessage.getMessage();
     		messages[0].setFlag(Flag.DRAFT, true);
 	    	dest.open(Folder.READ_WRITE);
-	    	deleteDraftMessage();
+	    	deleteDraftMessage( server );
 	    	IMAPFolder desfFolder = (IMAPFolder) dest.getFolder();
 	    	AppendUID[] uids = desfFolder.appendUIDMessages(messages);
 	    	if (! ArrayUtils.isEmpty(uids) ) {
@@ -508,20 +516,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	/**
 	* Method for compounding the message.
 	 * @throws WebmailException 
+	 * @throws MessagingException 
 	 * @throws UnsupportedEncodingException 
 	*/
-	private AonMessage compoundMessage(
-			String recipientsTo,
-			String recipientsCC, 
-			String recipientsBCC,
-			String subject, 
-			String text, 
-			AonMessage parentAonMsg,
-			List<AonFile> fileList) 
-			throws MessagingException, WebmailException, UnsupportedEncodingException {
+	public AonMessage compoundMessage( AonServer server) throws WebmailException, MessagingException, UnsupportedEncodingException {
 		String personal = getPersonal( senderMailAccount );
 		Address from = new InternetAddress(senderMailAccount.getEmail(), personal);
-    	AonMessage newMessage = getWebMailController().getServer().createAonMessage( from );
+    	AonMessage newMessage = server.createAonMessage( from );
     	if (! StringUtils.isEmpty(senderMailAccount.getReplyToMail())) {
     		Address replyTo = new InternetAddress(senderMailAccount.getReplyToMail(), personal);
     		newMessage.getMessage().setReplyTo(new Address[]{replyTo});
@@ -529,11 +530,11 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        	if (! StringUtils.isEmpty(recipientsTo)) {
        		newMessage.setRecipientsTo(recipientsTo);
        	}
-       	if (! StringUtils.isEmpty(recipientsCC)) {       	
-       		newMessage.setRecipientsCc(recipientsCC);
+       	if (! StringUtils.isEmpty(recipientsCc)) {       	
+       		newMessage.setRecipientsCc(recipientsCc);
        	}
-       	if (! StringUtils.isEmpty(recipientsBCC)) {       	
-       		newMessage.setRecipientsBcc(recipientsBCC);
+       	if (! StringUtils.isEmpty(recipientsBcc)) {       	
+       		newMessage.setRecipientsBcc(recipientsBcc);
        	}
        	if (! StringUtils.isEmpty(subject)) {       	
        		newMessage.setSubject(subject);
@@ -542,14 +543,15 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
        	MimeMultipart mainPart = new MimeMultipart();
        	MimeBodyPart part = new MimeBodyPart();
+       	String text = AonMessageUtils.unparse_cid(content);
        	part.setContent( text, MimeType.MIME_HTML.getName() );
        	mainPart.addBodyPart(part);
-       	if (parentAonMsg!=null){
-	       	for( BodyPart related : parentAonMsg.getInlines() ) {
+       	if ( this.parentMessage != null ) {
+	       	for( BodyPart related : parentMessage.getInlines() ) {
 				mainPart.addBodyPart( (BodyPart) related );	       		
 	       	}
        	}
-		for ( AonFile file : fileList ) {
+		for ( AonFile file : newMsgFileList ) {
 			BodyPart bodyPart = WebmailUtil.getBodyPart(file);
 			mainPart.addBodyPart(bodyPart);
 		}       	
@@ -560,22 +562,19 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		newMessage.setSentDate( new Date() );
 		return newMessage; 
 	}
-
-	public AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {		
-    	AonMessage aonMessage = compoundMessage(
-    			recipientsTo,
-    			recipientsCc, 
-    			recipientsBcc,
-    			subject, 
-    			AonMessageUtils.unparse_cid(content),
-    			parentMessage,
-    			newMsgFileList
-    			);
-    	return aonMessage;
+	
+	private IMailAccount resolveMailAccount() {
+		IMailAccount mailAccount = null;
+		if ( getMailConfig().isConnectable() ) {
+			mailAccount = getWebMailController().getServer().getAccount();
+		} else {
+			mailAccount = getMailConfig().getDefaultMailAccount(true);
+		}
+		return mailAccount;
 	}
 	
 	public void initNewMessage(){
-		senderMailAccount = getWebMailController().getServer().getAccount();
+		senderMailAccount = resolveMailAccount();
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;
@@ -584,6 +583,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		updateContent(senderMailAccount);
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
+		sentMessage = null;
 		parentMessage = null;
 		messageContent = null;
 		loadContacts = true;
@@ -1095,8 +1095,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				setErrorMessage(null);
-	    		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-				return mailConfig.getContact().suggestionEmails(text);
+				return getMailConfig().getContact().suggestionEmails(text);
 			}
 		}
     	return Collections.emptyList();
@@ -1162,6 +1161,10 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void setSkipSignature(boolean skipSignature) {
 		this.skipSignature = skipSignature;
+	}
+
+	public AonMessage getSentMessage() {
+		return sentMessage;
 	}
 	
 }

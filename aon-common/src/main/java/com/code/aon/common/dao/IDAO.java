@@ -113,6 +113,18 @@ public interface IDAO {
 	Object getUniqueResult(Projection projection, Criteria criteria) throws DAOException;
 
 	/**
+	 * Return a {@link Object} that carries out the projection list and the criteria.
+	 * 
+	 * @param projectionList the Projection list.
+	 * @param criteria the criteria
+	 * 
+	 * @return The object.
+	 * 
+	 * @throws DAOException the DAO exception
+	 */
+	Object getUniqueResult(ProjectionList projectionList, Criteria criteria) throws DAOException;
+	
+	/**
 	 * Return a {@link List} that carries out the projection list and the criteria.
 	 * 
 	 * @param projectionList the Projection list.

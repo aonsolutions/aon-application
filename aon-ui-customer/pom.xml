@@ -102,7 +102,13 @@
 		    <version>5.0.8</version>
 			<scope>test</scope>
 		</dependency>
-		
+		<dependency>
+			<groupId>commons-javaflow</groupId>
+			<artifactId>commons-javaflow</artifactId>
+			<version>20060411</version>
+			<scope>test</scope>
+		</dependency>
+				
 	</dependencies>
 </project>
  

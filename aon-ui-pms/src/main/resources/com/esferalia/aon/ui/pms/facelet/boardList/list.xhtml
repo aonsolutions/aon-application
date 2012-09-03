@@ -22,7 +22,9 @@
 						value="#{bundle.aon_search}" 
 						action="boardList_list"
 						actionListener="#{boardList.onSearch}"
-						accesskey="#{bundle.aon_key_search}" />
+						accesskey="#{bundle.aon_key_search}"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<aon:htmlCommandLink id="boardList-excel-report"
 						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}"
 						value="&#160;" target="_blank" action="#{report.onExecute}"
@@ -45,7 +47,6 @@
 			</ui:decorate>
  
 			<aon:div styleClass="aon-scroll-area">
-			
 				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom " >
 					
 					<aon:panelGrid columns="8" 
@@ -55,6 +56,7 @@
 						<aon:outputLabel for="BoardList_hotel_id" styleClass="aon-bold aon-margin-left"
 							value="#{pmsBundle.pms_hotel}" />
 						<aon:selectOneMenu id="BoardList_hotel_id"
+							valueChangeListener="#{boardList.onHotelChanged}"
 							value="#{boardList.params.hotel}" >
 							<f:selectItem itemLabel=" - " itemValue="#{null}" />
 							<f:selectItems value="#{pmsCollections.currentUserHotels}" />
@@ -84,68 +86,83 @@
 								value="#{pmsBundle.pms_board_page_break}" />
 						</aon:div>
 					</aon:panelGrid>
+										
+					<aon:div styleClass="aon-margin-top"
+						rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" >
+						<aon:outputText styleClass="aon-bold aon-margin-left"
+							value="#{bundle.aon_total}:" />
+						<c:forEach items="#{boardList.boardsTotalList}" var="boardTotal">
+							<aon:outputText value="&#160;&#160;" />
+							<aon:outputText value="#{boardTotal.boardName}" 
+								styleClass="aon-bold" />
+							<aon:outputText value=" (" />
+							<aon:outputText value="#{boardTotal.count}" />
+							<aon:outputText value=")" />
+						</c:forEach>
+					</aon:div>
 					
 				</aon:div>
-			
+				
 				<aon:dataTable id="roomBoardList" value="#{boardList.model}" 
 					rendered="#{boardList.model!=null and boardList.model.rowCount > 0}" rows="20" var="to">
 						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_board}" />
 							</f:facet>
-							<aon:outputText value="#{to.item.product.name}" />
+							<aon:outputText value="#{to.boardName}" />
 						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_room}" />
 							</f:facet>
-							<aon:outputText value="#{to.projectReservationService.roomNumber}" />
+							<aon:outputText value="#{to.room}" />
 						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputText value="PAX" />
 							</f:facet>
-							<aon:outputText value="#{to.quantity}" >
-								<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
-							</aon:outputText>
+							<aon:outputText value="#{to.quantity}" />
 						</aon:column>
-						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_guest}" />
 							</f:facet>
-							<aon:outputText value="#{to.projectReservationService.projectReservation.guestFullName}" />
+							<aon:outputText value="#{to.guest}" />
 						</aon:column>
 						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkIn}" />
 							</f:facet>
-							<aon:outputText value="#{to.projectReservationService.projectReservation.startDate}" >
+							<aon:outputText value="#{to.startDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+						<aon:column styleClass="aon-editDataTable-dateColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputText value="#{pmsBundle.pms_checkOut}" />
 							</f:facet>
-							<aon:outputText value="#{to.projectReservationService.projectReservation.endDate}" >
+							<aon:outputText value="#{to.endDate}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
-						
+
 				</aon:dataTable>
 			
 				<aon:dataScroller2 for="roomBoardList" showNote="true" />
 				
 			</aon:div>
-
+			
 		</aon:form>
+		
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
 	</ui:define>
 </ui:composition>

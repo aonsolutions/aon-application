@@ -29,6 +29,8 @@ public interface IRegistryConstants {
 	
 	String REGISTRY_CATEGORY = "registry_category";
 	
+	String INVALID_EMAIL = "registry_invalid_email";
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************
@@ -44,5 +46,11 @@ public interface IRegistryConstants {
 	String PERSON_CONTROLLER_NAME = "person";
 	
 	String DOCUMENT_MANAGER_CONTROLLER_NAME = "documentManager";
+	
+	String CORPORATE_IDENTITY_ATTACHMENT_CONTROLLER_NAME = "corporateIdentityAttach";
+	
+	String CORPORATE_IDENTITY_SEARCH_CONTROLLER_NAME = "corporateIdentitySearch";
+	
+	String BATCH_DOCUMENT_CONTROLLER_NAME = "batchDocument";
 	
 }

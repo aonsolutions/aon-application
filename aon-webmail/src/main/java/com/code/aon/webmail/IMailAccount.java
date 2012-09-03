@@ -1,14 +1,13 @@
 package com.code.aon.webmail;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 
 
 public interface IMailAccount extends ITransferObject {
 
 	String DEFAULT_MAIL_ACCOUNT_NAME = "default";
-	
-	String getHost();
 	
 	String getName();
 	
@@ -22,17 +21,19 @@ public interface IMailAccount extends ITransferObject {
 	
 	String getPasswordString();
 	
+	String getProtocol();
+	
 	String getIncomingHost();
 
 	int getIncomingPort();
 
-	boolean isIncomingSsl();
+	ConnectionSecurity getIncomingSecurity();
 	
 	String getOutgoingHost();
 
 	int getOutgoingPort();
 
-	boolean isOutgoingSsl();
+	ConnectionSecurity getOutgoingSecurity();
 
 	boolean isOutgoingVerification();
 	
@@ -55,5 +56,7 @@ public interface IMailAccount extends ITransferObject {
 	ISignature getISignature();
 
 	void setISignature(ISignature signature);
+	
+	boolean isIMAP();
 	
 }

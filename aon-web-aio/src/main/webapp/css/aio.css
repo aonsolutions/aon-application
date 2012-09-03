@@ -24,7 +24,7 @@
 }
 	
 .aon-portlets-column2{
-	width:*;
+	width: auto;
 	vertical-align:top;
 	padding:5px;
 }
@@ -243,5 +243,7 @@
 	display:none;
 }
   
- 
+.aon-padding-righter {
+	padding-right:2em;
+}  
  

@@ -7,12 +7,13 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SalaryTemplate implements IResourceable {
 
-	DEFAULT("salaryExtended"),
+	DEFAULT("salary"),
 	
-	TEMPLATE1("salaryTemplate1"),
+	IDAZKIAK_ES("idazkiak_es"),
 	
-	TEMPLATE2("salary")
+	NOMINASTA("nominasta"),
 	
+	NOMINASTA_LDH("nominasta_ldh")
 	;      
 	
     private static final String BASE_NAME = "com.code.aon.company.i18n.messages";

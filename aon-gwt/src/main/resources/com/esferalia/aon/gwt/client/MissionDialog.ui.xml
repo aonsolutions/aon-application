@@ -1,0 +1,93 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.client'
+	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	
+	<ui:Style>
+
+		.form {
+			padding: 10px; 		
+		}
+
+		.label {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.labeltop {
+			margin-top:10x;
+			font-weight: bold;
+			padding: 1px 0.5em;
+			vertical-align: top;			
+			white-space: nowrap;
+			background-color: #F2F2F2;
+		}
+
+		.field {
+			padding: 1px 0.5em;
+		}
+		
+		.buttons {
+			padding-top: 10px; 		
+			text-align: right;
+		}
+
+		.info {
+		}
+
+		.warn {
+		}
+
+		.error {
+		}
+
+		.messages {
+			padding-left: 0.5em;
+			padding-bottom: 10px; 		
+		}
+		.form textarea {
+			resize: none;
+		}
+
+	</ui:Style>
+	<g:HTMLPanel styleName="{style.form}">
+		
+		<div class="{style.messages}" >
+			<g:Label styleName="{style.info}">Introduzca un nombre de misión</g:Label>
+		</div>
+
+		<g:Grid width="100%" >
+			<g:row>
+				<g:customCell styleName="{style.label}" ><g:Label text="Nombre" /></g:customCell>
+				<g:customCell styleName="{style.field}"><g:TextBox width="100%"/></g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}" ><g:Label text="Fecha Inicio" /></g:customCell>
+				<g:customCell styleName="{style.field}" ><datepicker:DateBox width="50%" /></g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell styleName="{style.label}" ><g:Label text="Fecha Fin" /></g:customCell>
+				<g:customCell styleName="{style.field}" ><datepicker:DateBox  width="50%" /></g:customCell>
+			</g:row>
+			<g:row >
+				<g:customCell styleName="{style.label}" ><g:Label text="Alias" /></g:customCell>
+				<g:customCell styleName="{style.field}" ><g:TextBox width="100%"/></g:customCell>
+			</g:row>
+			<g:row >
+				<g:customCell styleName="{style.labeltop}" ><g:Label text="Descripción" /></g:customCell>
+				<g:customCell styleName="{style.field}"  ><g:TextArea visibleLines="4" characterWidth="50" width="100%"  /></g:customCell>
+			</g:row>
+		</g:Grid>
+		
+		<div class="{style.buttons}">
+			<g:Button>Cancelar</g:Button>
+			<g:Button>Aceptar</g:Button>
+		</div>
+	
+	</g:HTMLPanel>
+
+
+</ui:UiBinder>

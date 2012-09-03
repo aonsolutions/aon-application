@@ -20,9 +20,15 @@
 							<goal>wsimport</goal>
 						</goals>
 						<configuration>
+<!-- 						
 							<wsdlUrls>
 								<wsdlUrl>http://audabridge.audatex.es/AudaBridge/services/AudaBridge?wsdl</wsdlUrl>
 							</wsdlUrls>
+ -->
+ 							<wsdlDirectory>src/main/wsdl</wsdlDirectory>
+							<wsdlFiles>
+         						<wsdlFile>AudaBridge.wsdl</wsdlFile>
+							</wsdlFiles>
 							<packageName>com.code.aon.audabridge</packageName>
 						</configuration>
 					</execution>

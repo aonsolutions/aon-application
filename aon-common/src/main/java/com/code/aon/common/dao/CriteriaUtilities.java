@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.io.StringWriter;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 
 import com.code.aon.common.dao.hibernate.HibernateRenderer;
 import com.code.aon.common.dao.sql.DAOException;
@@ -93,8 +95,8 @@ public class CriteriaUtilities {
 	 * @throws DAOException
 	 */
 	public static org.hibernate.Criteria toHibernateCriteria(Criteria criteria,
-			Session session, DAOConstantsEntry daoEntry) throws DAOException {
-		return toHibernateCriteria(criteria, null, session, daoEntry);
+			Session session, String pojo) throws DAOException {
+		return toHibernateCriteria(criteria, null, session, pojo);
 	}
 
 	/**
@@ -111,16 +113,32 @@ public class CriteriaUtilities {
 	 */
 	public static org.hibernate.Criteria toHibernateCriteria(Criteria criteria,
 			ProjectionList projectionList, Session session,
-			DAOConstantsEntry daoEntry) throws DAOException {
+			String pojo) throws DAOException {
 
-		org.hibernate.Criteria hibernateCriteria = session
-				.createCriteria(daoEntry.getPojo());
+		CriteriaAdapter hibernateCriteria = CriteriaAdapter.asCriteria(session, pojo);
+		toHibernateCriteria(hibernateCriteria, criteria, projectionList, session.getSessionFactory(), pojo);
+		return hibernateCriteria.getCriteria();
+	}
+
+	public static DetachedCriteria toDetachedCriteria(Criteria criteria,
+			ProjectionList projectionList, SessionFactory factory,
+			String pojo) throws DAOException {
+
+		CriteriaAdapter hibernateCriteria = CriteriaAdapter.asDetachedCriteria(pojo);
+		toHibernateCriteria(hibernateCriteria, criteria, projectionList, factory, pojo);
+		return hibernateCriteria.getDetachedCriteria();
+	}
+
+	private static void toHibernateCriteria(
+			CriteriaAdapter hibernateCriteria, Criteria criteria,
+			ProjectionList projectionList, SessionFactory factory,
+			String pojo) throws DAOException {
 
 		boolean hasCriteria = (criteria != null) && (!criteria.isEmpty());
 		boolean hasProjections = (projectionList != null) && (!projectionList.isEmpty()); 
 		if ( hasCriteria || hasProjections ) {
 			HibernateRenderer hibernateRenderer = new HibernateRenderer(
-					hibernateCriteria, session.getSessionFactory(), daoEntry.getPojo());
+					hibernateCriteria, factory, pojo);
 			if ( hasCriteria ) {
 				criteria.accept(hibernateRenderer);
 			}
@@ -132,7 +150,6 @@ public class CriteriaUtilities {
 				throw new DAOException(exception.getMessage(), exception);
 			}
 		}
-		return hibernateCriteria;
 	}
-
+	
 }

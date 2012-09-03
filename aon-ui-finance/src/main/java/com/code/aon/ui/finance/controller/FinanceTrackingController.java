@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.Iterator;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -30,6 +31,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class FinanceTrackingController extends LinesController implements IFinanceConstants {
 
 	private AccountEntryFinanceWriter writer;
+	private FinanceTracking currentTracking;
 
 	public AccountEntryFinanceWriter getWriter() {
 		if(writer == null){
@@ -75,6 +77,9 @@ public class FinanceTrackingController extends LinesController implements IFinan
 			if (tracking.getType() == FinanceTrackingType.BATCHED || tracking.getType() == FinanceTrackingType.FRACTIONED) {
 				return false;
 			}
+			if (tracking.getFinance().getFinanceGroup() != null && tracking.getFinance().getFinanceGroup().getId() != null) {
+				return false;
+			}
 
 			if (FinanceTrackingWriter.isLastTracking(tracking)) {
 				if (tracking.getType() == FinanceTrackingType.SETTLED || !tracking.isRecorded()) {
@@ -101,11 +106,15 @@ public class FinanceTrackingController extends LinesController implements IFinan
 
 	public void undoTracking(ActionEvent event) throws ManagerBeanException {
 		FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
+		undoTracking(tracking);
+
+		this.onSearch(null);
+	}
+	
+	public void undoTracking(FinanceTracking tracking) throws ManagerBeanException {
 		getWriter().removeAccountEntryFinanceTracking(tracking);
 		updateFinanceStatus(tracking);
 		getManagerBean().remove(tracking);
-
-		this.onSearch(null);
 	}
 
 	private void updateFinanceStatus(FinanceTracking tracking) throws ManagerBeanException {
@@ -159,6 +168,10 @@ public class FinanceTrackingController extends LinesController implements IFinan
 				FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
 				fBatchController.setPayment(fBatch.isPayment());
 				fBatchController.onLoad(event, fBatch.getId(), FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+			} else {
+				String msg =  "Error al seleccionar la remesa. ";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);	
 			}
 		}
 	}
@@ -183,12 +196,29 @@ public class FinanceTrackingController extends LinesController implements IFinan
 			statementController.onLoad(event, statement, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
 		}
 	}
+	
+	public void onLoadFinanceGroup(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			currentTracking = (FinanceTracking)this.getModel().getRowData();
+			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
+			financeController.onLoad(event, currentTracking.getFinance().getFinanceGroup().getId(), FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackGroupTracking");
+		}
+	}
 
 	public void onBackTracking(ActionEvent event) throws ManagerBeanException {
 		FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 		financeController.refresh(event);
 
 		onSearch(event);
+	}
+	
+	public void onBackGroupTracking(ActionEvent event) throws ManagerBeanException {
+		FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
+		financeController.select(event, currentTracking.getFinance());
+		financeController.refresh(event);
+
+		onSearch(event);
+		currentTracking = null;
 	}
 
 }

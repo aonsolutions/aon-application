@@ -1,7 +1,5 @@
 package com.code.aon.ui.publisher.controller;
 
-import static com.code.aon.ui.common.ICommonConstants.LOGGED_USER_CONTROLLER_NAME;
-
 import java.io.File;
 import java.util.Properties;
 
@@ -14,7 +12,6 @@ import com.code.aon.common.DefaultLogger;
 import com.code.aon.common.ILogger;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ui.common.controller.LoggedUser;
 import com.code.aon.ui.publisher.util.FTPUtil;
 import com.code.aon.ui.publisher.util.PathUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -53,8 +50,7 @@ public class PublisherController implements IPublisherConstants {
 	
 	private String getDomain() {
 		if ( domain == null ) {
-			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LOGGED_USER_CONTROLLER_NAME);
-			AuthPrincipal principal = loggedUser.getPrincipal();
+			AuthPrincipal principal = AonUtil.getAuthPrincipal();
 			domain = PathUtil.getDomainSuffix(principal.getDomain());
 		}
 		return domain;

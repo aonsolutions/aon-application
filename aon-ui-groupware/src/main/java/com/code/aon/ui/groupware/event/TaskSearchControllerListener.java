@@ -14,7 +14,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
@@ -371,6 +370,11 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		TaskController controller = (TaskController) FormUtil.getController(IGroupWareConstants.TASK_CONTROLLER_NAME);
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
+			if (taskHolder == null || taskHolder.getId() == null) {
+				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg); 
+			}
 			String taskHolderAlias = getFieldName(IEntityAlias.TASK_TASK_HOLDER_ID);
 			Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
 			Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IEntityAlias.TASK_WORK_GROUP_ID));

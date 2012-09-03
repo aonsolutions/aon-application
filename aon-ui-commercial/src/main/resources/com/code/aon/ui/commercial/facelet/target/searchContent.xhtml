@@ -9,7 +9,7 @@
 
 	<aon:outputText value="" />
 	<aon:div styleClass="aon-width-600">
-		<aon:panelCollapsible expanded="true" label="#{commercialBundle.commercial_search_general}">
+		<aon:panelCollapsible expanded="true" label="#{bundle.aon_general}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchBasicContent.xhtml" />
 				<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
@@ -156,27 +156,28 @@
 		</c:if>
 
 		<c:if test="#{aonConfiguration.bean.target.showProfile}">	
-			<aon:panelCollapsible expanded="false" label="#{marketingBundle.marketing_target_profile}">
+			<aon:panelCollapsible expanded="false" label="#{commercialBundle.commercial_target_profile}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 					<aon:outputText value="#{bundle.aon_date}" />
 					<aon:div>
-						<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-From" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Target_profiles_lastUpdate-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-From"
+						<aon:selectInputDate id="Target_profiles_lastUpdate-From"
 							valueChangeListener="#{target.addGreaterThanOrEqualExpression}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 			
-						<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-To" styleClass="aon-form-date-label"
+						<aon:outputLabel for="Target_profiles_lastUpdate-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-To"
+						<aon:selectInputDate id="Target_profiles_lastUpdate-To"
 							valueChangeListener="#{target.addLessThanOrEqualExpression}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>					
 
-					<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{targetSearch.question}" />
+						<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
 					</ui:include>
 					
 					<aon:div styleClass="aon-padding-top">				
@@ -184,22 +185,22 @@
 					</aon:div>
 					<aon:div>
 						<aon:div styleClass="aon-padding-top">
-							<aon:outputLabel for="MarketingTarget_profiles_date-From" styleClass="aon-form-date-label"
+							<aon:outputLabel for="Target_profiles_date-From" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="MarketingTarget_profiles_date-From"
+							<aon:selectInputDate id="Target_profiles_date-From"
 								valueChangeListener="#{target.addGreaterThanOrEqualExpression}" 
 								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 							</aon:selectInputDate>
 				
-							<aon:outputLabel for="MarketingTarget_profiles_date-To" styleClass="aon-form-date-label"
+							<aon:outputLabel for="Target_profiles_date-To" styleClass="aon-form-date-label"
 								value="#{bundle.aon_date_to}:" />
-							<aon:selectInputDate id="MarketingTarget_profiles_date-To"
+							<aon:selectInputDate id="Target_profiles_date-To"
 								valueChangeListener="#{target.addLessThanOrEqualExpression}"
 								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 							</aon:selectInputDate>
 						</aon:div>
 						<aon:div styleClass="aon-padding-top">
-							<aon:inputText id="MarketingTarget_profiles_text" size="60"
+							<aon:inputText id="Target_profiles_text" size="60"
 								value="#{targetSearch.questionText}" />													
 						</aon:div>								
 					</aon:div>
@@ -218,7 +219,7 @@
 			</aon:panelCollapsible>
 		</c:if>		
 		
-		<c:if test="#{documentManager.show}">
+		<c:if test="#{aonRole.document}">
 			<aon:panelCollapsible expanded="false" label="#{bundle.aon_documents}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rattach/searchContent.xhtml" />

@@ -14,6 +14,8 @@ public interface IPurchaseConstants {
 	String PURCHASE_CONTROLLER_NAME = "purchase";
 	String PURCHASE_DETAIL_CONTROLLER_NAME = "purchaseDetail";
 	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
+	String PURCHASE_REPORT_CONTROLLER_NAME = "purchaseReport";
+	String PURCHASE_PRINT_CONTROLLER_NAME = "purchasePrint";
 	
 	// ************************************************************
 	// LISTENER

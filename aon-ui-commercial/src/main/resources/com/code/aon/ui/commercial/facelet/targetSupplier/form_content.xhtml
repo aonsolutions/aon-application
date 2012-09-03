@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.supplier}" />
+		<ui:param name="idRequired" value="#{true}" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{controller.supplierData}" type="lookupChangeListener" />
+	</ui:include>
+
+	<aon:outputLabel for="Supplier_registry_document" 
+		value="#{bundle.aon_company_document}" />
+	<aon:inputText id="Supplier_registry_document" 
+		value="#{controller.to.supplier.registry.document}"
+		disabled="true" size="10" />
+
+	<aon:outputLabel for="TargetSupplier_tariff" 
+		value="#{productBundle.product_tariff}" />
+	<aon:selectOneMenu id="TargetSupplier_tariff" 
+		value="#{controller.to.tariff}">
+		<f:selectItem itemLabel="-" itemValue="" />
+		<f:selectItems value="#{configCollections.tariffs}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="TargetSupplier_targetExternalCode" 
+		value="#{commercialBundle.commercial_target_supplier_customer_id}" />
+	<aon:inputText id="TargetSupplier_targetExternalCode" 
+		value="#{controller.to.targetExternalCode}"
+		size="10" />
+
+</ui:composition>

@@ -20,6 +20,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationDivert;
@@ -30,7 +31,16 @@ public class DivertController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DivertController.class);
 	
+	private boolean showDivertWindow;
 	private IControllerListener divertFilter;
+	
+	public boolean isShowDivertWindow() {
+		return showDivertWindow;
+	}
+	
+	public void setShowDivertWindow(boolean showDivertWindow) {
+		this.showDivertWindow = showDivertWindow;
+	}
 	
 	public IControllerListener getDivertedReservationFilter() {
 		if ( this.divertFilter == null ) {
@@ -45,7 +55,9 @@ public class DivertController extends BasicController {
 						}
 						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.BLOCKED);
 						controller.getCriteria().addNotEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_STATUS), ReservationStatus.CANCELLED);
-						controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+						if(! AonUtil.getRoleManager().isSaleOperator()){
+							controller.getCriteria().addGreaterThanOrEqualExpression(controller.getFieldName(IEntityAlias.PROJECT_RESERVATION_END_DATE), new Date());
+						}
 					} catch (ManagerBeanException e) {
 						LOGGER.error("Error filtering reservation", e);
 					}
@@ -70,7 +82,7 @@ public class DivertController extends BasicController {
 		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), new Boolean(true));
+		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
 		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), getScopeToExclude());
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {

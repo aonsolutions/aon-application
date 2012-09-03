@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.mail.Address;
@@ -14,7 +13,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +57,18 @@ public class PurchaseEmailUtil extends CompanyEmailUtil implements IPurchaseMess
 		return addresses;
 	}		
 	private String[] getEmails( Purchase purchase, List<String> moreRecipients ) throws ManagerBeanException {
-		List<String> emails = new ArrayList<String>(Arrays.asList(getEmails(purchase.getSupplier().getRegistry())));  
-		for( String e: moreRecipients ) {
-			if(!StringUtils.isEmpty(e)){
-				emails.add(e);
+		List<String> emails = new LinkedList<String>();
+		String[] emailArray = getAdministrativeEmails(purchase.getSupplier().getRegistry());
+		if (! ArrayUtils.isEmpty(emailArray) ) {
+			for( String email : emailArray ) {
+				if ( EmailValidator.getInstance().isValid(email) ) {
+					emails.add(email);
+				}
+			}
+		}
+		for( String email: moreRecipients ) {
+			if ( EmailValidator.getInstance().isValid(email) ) {
+				emails.add(email);
 			}
 		}
 		return emails.toArray(new String[emails.size()]);

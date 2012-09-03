@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
@@ -105,7 +104,7 @@ public class SpamController extends BasicLdap implements IWebMailConstants {
 	}
 	
 	private Name getUserDN() {
-		AuthPrincipal principal = BasicPrincipal.getAuthPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		return NameResolver.getUserDN( principal.getDomain(), principal.getShortName() );
 	}
 	

@@ -78,7 +78,7 @@
 	</subDataset>
 	<subDataset name="fill"/>
 	<queryString language="hql">
-		<![CDATA[FROM Salary WHERE Id=55418 OR Id=135790 OR Id=139736]]>
+		<![CDATA[FROM Salary WHERE Id=15246 OR Id=15226]]>
 	</queryString>
 	<field name="salary" class="com.esferalia.aon.payroll.Salary"/>
 	<variable name="payments" class="java.util.List">
@@ -191,7 +191,7 @@
 					</textField>
 				</frame>
 				<staticText>
-					<reportElement style="title" x="9" y="164" width="214" height="12"/>
+					<reportElement style="title" x="9" y="164" width="217" height="12"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -199,12 +199,12 @@
 					<text><![CDATA[Periodo de liquidación]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="title" x="9" y="178" width="214" height="12"/>
+					<reportElement style="title" x="4" y="178" width="226" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[java.text.MessageFormat.format("Del {0,date,d 'de' MMMM} al {1,date,d 'de' MMMM 'de' yyyy}", $F{salary}.getStartDate(), $F{salary}.getEndDate() )]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement style="title" x="227" y="164" width="20" height="12"/>
+					<reportElement style="title" x="230" y="164" width="20" height="12"/>
 					<box>
 						<bottomPen lineWidth="0.5"/>
 					</box>
@@ -212,7 +212,7 @@
 					<text><![CDATA[Días]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="title" x="227" y="178" width="20" height="12"/>
+					<reportElement style="title" x="230" y="178" width="20" height="12"/>
 					<textElement/>
 					<textFieldExpression><![CDATA[$F{salary}.getTimeUnits()]]></textFieldExpression>
 				</textField>
@@ -552,7 +552,7 @@
 				</frame>
 				<frame>
 					<reportElement style="label_box" x="115" y="60" width="65" height="14"/>
-					<textField>
+					<textField pattern="#,##0.00">
 						<reportElement style="amount" x="0" y="0" width="63" height="14">
 							<printWhenExpression><![CDATA[$V{total1} != 0.00]]></printWhenExpression>
 						</reportElement>

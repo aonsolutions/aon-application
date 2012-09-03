@@ -20,6 +20,7 @@ import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.ast.RelationalType;
+import com.code.aon.ql.ast.SubQueryExpression;
 
 /**
  * Visitante de expresiones destinado a obtener una expresion LDAP.
@@ -56,6 +57,10 @@ public class LdapRenderer implements CriterionVisitor {
 	}
 	
 	public void visitProjectionList(ProjectionList projectionList) {
+		throw new UnsupportedOperationException( "Projection not supported" );
+	}
+
+	public void visitSubQueryExpression(SubQueryExpression expression) {
 		throw new UnsupportedOperationException( "Projection not supported" );
 	}
 

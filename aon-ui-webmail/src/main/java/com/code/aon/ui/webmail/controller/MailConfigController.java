@@ -7,12 +7,18 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACC
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE_DB;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_WEBMAIL;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BUNDLE_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.CONNECT_PROPERTY;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.MAIL_ACCOUNT_TITLE;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SIGNATURE_TITLE;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.FacesException;
+import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -30,12 +36,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.IMailAccount;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonFolder;
 import com.code.aon.webmail.bean.AonServer;
+import com.code.aon.webmail.enumeration.ConnectionSecurity;
 
 public class MailConfigController {
 
@@ -62,6 +70,14 @@ public class MailConfigController {
 	private List<SelectItem> mailAccounts;
 	
 	private List<SelectItem> signatures;
+	
+	private List<SelectItem> connectionSecurities;
+	
+	private String mailAccountTitle;
+	
+	private String signatureTitle;
+	
+	private boolean skipDefaultAccountColumn;
 	
 	public MailConfigController() {
 		if ( AonUtil.isSkipLdap() ) {
@@ -167,33 +183,31 @@ public class MailConfigController {
 	
 	public boolean isMailAccountRemovable() {
 		IMailAccount account = (IMailAccount) getMailAccount().getTo();
+		if ( account.isEnterpriseAccount() ) {
+			return true;
+		}
 		if ( account.isDefault() ) {
 			return false;
 		}
-		if ( WebMailController.isConnectable() ) {
+		if ( isConnectable() ) {
 			WebMailController webmail = (WebMailController) AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 			if ( webmail.isLogged() ) {
-				return ObjectUtils.equals(webmail.getServer().getAccount(), account);
+				return ! ObjectUtils.equals(webmail.getServer().getAccount(), account);
 			}
 		}
 		return true;
 	}	
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void resetDefaults() throws ManagerBeanException {
-		List<IMailAccount> list = (List) getMailAccount().getModel().getWrappedData();
-		for (IMailAccount account : list) {
-			account.setDefaultAccount(false);
-			getMailAccount().getManagerBean().update(account);
-		}
-	}
-
 	public void onSetDefault(ActionEvent event) {
 		try {
-			resetDefaults();
-			IMailAccount account = getSelectMailAccount();
-			account.setDefaultAccount(true);
-			getMailAccount().getManagerBean().update(account);
+			IMailAccount currentAccount = getSelectMailAccount();
+			updateMailAccountList();
+			for( SelectItem item : getMailAccounts() ) {
+				IMailAccount account = (IMailAccount) item.getValue();
+				account.setDefaultAccount( ObjectUtils.equals(currentAccount, account) );
+				getMailAccount().getManagerBean().update(account);			
+			}
+			getMailAccount().initializeModel();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSetDefault exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -352,6 +366,17 @@ public class MailConfigController {
 		}
 		return mailAccounts.size() > 1;
 	}
+	
+	public int getMailAccountCount() {
+		if ( mailAccounts == null ) {
+			updateMailAccountList();
+		}
+		return mailAccounts.size();		
+	}
+
+	public void setMailAccounts(List<SelectItem> mailAccounts) {
+		this.mailAccounts = mailAccounts;
+	}
 
 	public List<SelectItem> getSignatures() {
 		return signatures;
@@ -361,8 +386,8 @@ public class MailConfigController {
 		this.signatures = getSignature().getSignatures();
 	}
 	
-	public IMailAccount getDefaultMailAccount() {
-		boolean connectDomainAccounts = AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY);
+	public IMailAccount getDefaultMailAccount( boolean skipConnectCheck ) {
+		boolean connectDomainAccounts = skipConnectCheck || AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY);
 		updateMailAccountList();
 		IMailAccount defaultAccount = null;
 		List<IMailAccount> list = new LinkedList<IMailAccount>();
@@ -382,5 +407,79 @@ public class MailConfigController {
 		}
 		return defaultAccount;
 	}
+	
+	public void onInitMailAccount( ActionEvent event ) throws ManagerBeanException {
+		setSkipDefaultAccountColumn(false);
+		setMailAccountTitle(null);
+		if ( getMailAccount() instanceof MailAccountDBController ) {
+			MailAccountDBController controller = (MailAccountDBController) getMailAccount();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getMailAccount().onSearch(event);
+	}
+
+	public void onInitSignature( ActionEvent event ) throws ManagerBeanException {
+		setSignatureTitle(null);
+		if ( getSignature() instanceof SignatureDBController ) {
+			SignatureDBController controller = (SignatureDBController) getSignature();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getSignature().onSearch(event);
+	}
+
+	public void onInitContact( ActionEvent event ) throws ManagerBeanException {
+		if ( getContact() instanceof ContactDBController ) {
+			ContactDBController controller = (ContactDBController) getContact();
+			controller.updateUser(UserUtils.getInstance().getLoggedUser());
+		}
+		getContact().onSearch(event);
+	}
+
+	public List<SelectItem> getConnectionSecurities() {
+		if (connectionSecurities == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			connectionSecurities = new LinkedList<SelectItem>();
+			for (ConnectionSecurity cs : ConnectionSecurity.values()) {
+				String name = cs.getName(locale);
+				SelectItem item = new SelectItem(cs, name);
+				connectionSecurities.add(item);
+			}
+		}
+		return connectionSecurities;
+	}
+
+	public String getMailAccountTitle() {
+		if ( mailAccountTitle == null ) {
+			return AonUtil.getMessage(BUNDLE_NAME, MAIL_ACCOUNT_TITLE);
+		}
+		return mailAccountTitle;
+	}
+
+	public void setMailAccountTitle(String mailAccountTitle) {
+		this.mailAccountTitle = mailAccountTitle;
+	}
+
+	public String getSignatureTitle() {
+		if ( signatureTitle == null ) {
+			return AonUtil.getMessage(BUNDLE_NAME, SIGNATURE_TITLE);
+		}
+		return signatureTitle;
+	}
+
+	public void setSignatureTitle(String signatureTitle) {
+		this.signatureTitle = signatureTitle;
+	}
+
+	public boolean isSkipDefaultAccountColumn() {
+		return skipDefaultAccountColumn;
+	}
+
+	public void setSkipDefaultAccountColumn(boolean skipDefaultAccountColumn) {
+		this.skipDefaultAccountColumn = skipDefaultAccountColumn;
+	}	
+
+	public boolean isConnectable() {
+		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
+	}	
 	
 }

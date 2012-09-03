@@ -29,7 +29,7 @@
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
 		</c:if>
-		<c:if test="#{!skipGoToButton}">
+		<c:if test="#{!skipGoToButtonEx}">
 			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
 				backAction="#{goToBackAction}"
 				backActionListener="#{goToBackActionListener}" />
@@ -56,7 +56,7 @@
 				controllerListener="#{lookupControllerListener}"
 				selectReRender="#{lookup_reRender}" />
 		</c:if>			
-		<c:if test="#{!skipNewButton}">
+		<c:if test="#{!skipNewButtonEx}">
 			<aon:lookupButton 
 				windowTitle="#{newButtonTitle}"
 				disabled="#{lookupDisabled}" actionType="new"

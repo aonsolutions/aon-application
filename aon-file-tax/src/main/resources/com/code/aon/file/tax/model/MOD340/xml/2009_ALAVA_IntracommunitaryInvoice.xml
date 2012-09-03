@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<register name="IntracommunitaryInvoice">
+<register name="INTRACOMMUNITARY">
 <!-- COMUN -->
  <field name="type" value="2" format="Numeric" pattern="9(1)" />
  <field name="modelo" value="340" format="Numeric" pattern="9(3)" />
@@ -16,13 +16,13 @@
  <field name="free1" value=" " format="Alphabetic" pattern="X(3)" />
  <field name="book" value="U" format="Alphabetic" pattern="X(1)" />
  <field name="operacion" value="bean" bean="INTRACOMMUNITARY" property="operation" format="AlphaNumeric" pattern="X(1)" />
- <field name="fecha_factura" value="bean" bean="INTRACOMMUNITARY" property="issueDate" format="AlphaNumeric" pattern="X(6)" />
- <field name="fecha_operacion" value="bean" bean="INTRACOMMUNITARY" property="operationDate" format="AlphaNumeric" pattern="X(6)" />
+ <field name="fecha_factura" value="bean" bean="INTRACOMMUNITARY" property="issueDate" format="AlphaNumeric" pattern="X(8)" />
+ <field name="fecha_operacion" value="bean" bean="INTRACOMMUNITARY" property="operationDate" format="AlphaNumeric" pattern="X(8)" />
  <field name="porcentaje" value="bean" bean="INTRACOMMUNITARY" property="percent" format="Numeric" pattern="9(3)V99" />
- <field name="base_imp" value="bean" bean="INTRACOMMUNITARY" property="taxableBase" format="Numeric" pattern="9(12)V99" />
- <field name="cuota" value="bean" bean="INTRACOMMUNITARY" property="quota" format="Numeric" pattern="9(12)V99" />
- <field name="total" value="bean" bean="INTRACOMMUNITARY" property="total" format="Numeric" pattern="9(12)V99" />
- <field name="base_imp_coste" value="bean" bean="INTRACOMMUNITARY" property="costTaxableBase" format="Numeric" pattern="9(12)V99" />
+ <field name="base_imp" value="bean" bean="INTRACOMMUNITARY" property="taxableBase" format="Numeric" pattern="S9(11)V99" />
+ <field name="cuota" value="bean" bean="INTRACOMMUNITARY" property="quota" format="Numeric" pattern="S9(11)V99" />
+ <field name="total" value="bean" bean="INTRACOMMUNITARY" property="total" format="Numeric" pattern="S9(11)V99" />
+ <field name="base_imp_coste" value="bean" bean="INTRACOMMUNITARY" property="costTaxableBase" format="Numeric" pattern="S9(11)V99" />
  <field name="numero_factura" value="bean" bean="INTRACOMMUNITARY" property="invoiceNumber" format="AlphaNumeric" pattern="X(40)" />
  <field name="numero_documento" value="bean" bean="INTRACOMMUNITARY" property="documentNumber" format="AlphaNumeric" pattern="X(18)" />
 <!-- INVERSION --> 

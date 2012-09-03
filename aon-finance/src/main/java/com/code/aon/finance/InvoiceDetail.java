@@ -35,14 +35,16 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 
 	private boolean updateEnabled;
 	private boolean taxDataInDetail;
+	private boolean skipServiceProcess;
 	private double vatPercent;
 	private double vatQuota;
 	private double retentionPercent;
 	private double retentionQuota;
 
 	public InvoiceDetail() {
-		this.updateEnabled = true;
-		this.taxDataInDetail = false;
+		setUpdateEnabled(true);
+		setTaxDataInDetail(false);
+		setSkipServiceProcess(false);
 	}
 
     public void setPrice(double price) {
@@ -71,6 +73,14 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 	}
 	public void setTaxDataInDetail(boolean taxDataInDetail) {
 		this.taxDataInDetail = taxDataInDetail;
+	}
+
+	@Transient
+	public boolean isSkipServiceProcess() {
+		return skipServiceProcess;
+	}
+	public void setSkipServiceProcess(boolean skipServiceProcess) {
+		this.skipServiceProcess = skipServiceProcess;
 	}
 
 	@Transient

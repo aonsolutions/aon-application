@@ -15,8 +15,18 @@ import com.esferalia.aon.pms.ProjectReservationServiceDetail;
 
 public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
-    @Override
-    public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+	@Override
+	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+    	((InvoiceDetail)evt.getTo()).setSkipServiceProcess(true);
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+    	((InvoiceDetail)evt.getTo()).setSkipServiceProcess(true);
+	}	
+
+	@Override
+	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
     	try {
     		if (invoiceDetail.getInvoice().isService()) {

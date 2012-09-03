@@ -107,43 +107,55 @@
 						</aon:column>
 	
 						<rich:columns styleClass="aon-editDataTable-textColumn aon-nopadding aon-nomargin" 
-							value="#{controller.rackActivityList}" var="rackActivity">
-							<aon:div styleClass="#{rackActivity.firstNight ? 'aon-padding-left' : ''}">
+							value="#{controller.rackActivityList}" var="rackTo">
+							<aon:div styleClass="#{rackTo.firstNight ? 'aon-padding-left' : ''}">
 								<aon:outputText value="&#160;" styleClass="pms-available-cell"
-									rendered="#{rackActivity.id == null}" />
+									rendered="#{rackTo.roomId == null}" />
+								<aon:outputText value="&#160;" styleClass="pms-blocked-cell"
+									rendered="#{rackTo.roomId != null and rackTo.reservationId == null}" />
+								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
+									rendered="#{rackTo.roomId != null and rackTo.reservationId == null}">
+									<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
+										<aon:outputText value="#{bundle.aon_status}:" />
+										<aon:outputText value="#{rackTo.roomStatus}" />
+
+										<aon:outputText value="#{bundle.aon_remark}:" />
+										<aon:outputText value="#{rackTo.roomComments}" />
+									</aon:panelGrid>
+								</rich:toolTip>
 								<aon:commandLink value="&#160;"
-									styleClass="#{(rackActivity.invoiced) ? ('pms-invoiced-cell') : ('pms-active-cell')} #{rackActivity.lastNight ? 'aon-border-right-black ' : ''}"
-									rendered="#{rackActivity.id != null}"
+									styleClass="#{rackTo.invoiced ? 'pms-invoiced-cell' : 'pms-active-cell'} #{rackTo.lastNight ? 'aon-border-right-black ' : ''}"
+									rendered="#{rackTo.roomId != null and rackTo.reservationId != null}"
 									actionListener="#{controller.onLoadReservation}"
 									action="reservation_form">
-									<f:param name="rackReservation" value="#{rackActivity.projectReservationRoom.projectReservation.id}"/>
+									<f:param name="rackReservation" value="#{rackTo.reservationId}"/>
 								</aon:commandLink>
 								<rich:toolTip showEvent="onmouseover" hideEvent="onmouseout" direction="auto" 
-									rendered="#{rackActivity.id != null}">
+									rendered="#{rackTo.roomId != null and rackTo.reservationId != null}">
 									<aon:panelGrid columns="2" columnClasses="aon-noborder aon-italic,aon-noborder aon-bold">
 										<aon:outputText value="#{pmsBundle.pms_room_number}:" />
-										<aon:outputText value="#{rackActivity.assetActivity.asset.name}" />
+										<aon:outputText value="#{to.asset.name}" />
 
 										<aon:outputText value="#{pmsBundle.pms_reservation_id}:" />
-										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.id}" />
+										<aon:outputText value="#{rackTo.reservationId}" />
 
 										<aon:outputText value="#{pmsBundle.pms_reservation_code}:" />
-										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.code}" />
+										<aon:outputText value="#{rackTo.reservationCode}" />
 
 										<aon:outputText value="#{pmsBundle.pms_checkIn}:" />
-										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.startDate}">
+										<aon:outputText value="#{rackTo.reservationStart}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</aon:outputText>
 
 										<aon:outputText value="#{pmsBundle.pms_checkOut}:" />
-										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.endDate}">
+										<aon:outputText value="#{rackTo.reservationEnd}">
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</aon:outputText>
 
 										<aon:outputText value="#{pmsBundle.pms_guest}:" />
-										<aon:outputText value="#{rackActivity.projectReservationRoom.projectReservation.guestFullName}" />
+										<aon:outputText value="#{rackTo.reservationGuest}" />
 									</aon:panelGrid>
 								</rich:toolTip>
 							</aon:div>

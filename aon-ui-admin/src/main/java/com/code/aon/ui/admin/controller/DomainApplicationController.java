@@ -1,5 +1,8 @@
 package com.code.aon.ui.admin.controller;
 
+import static com.code.aon.ui.admin.controller.IAdminConstants.APPLICATION_PROFILE_CONTROLLER_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,26 +10,30 @@ import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import com.code.aon.admin.Profile;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Application;
-import com.code.aon.config.ApplicationUser;
-import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.admin.UserApplicationInfo;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationController extends BasicController {
 	
 	private String selectedTab;
+	
+	private List<SelectItem> availableUsers;
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -42,65 +49,51 @@ public class DomainApplicationController extends BasicController {
 
 	public List<SelectItem> getProfiles() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		DomainApplication da = getDomainApplication();
-		IManagerBean bean = BeanManager.getManagerBean(Profile.class);
-		Criteria criteria = new Criteria();
-		Expression expr1 = ExpressionUtilities.getEqualExpression("Profile.domain<id", da.getDomain());
-		Expression expr2 = ExpressionUtilities.getNullExpression("Profile.domain");
-		Expression expr3 = ExpressionUtilities.getOrExpression(expr1, expr2);
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(IAdminConstants.DOMAIN_CONTROLLER_NAME);
-		Domain parent = dc.getDomain().getParent();
-		if ( (parent != null) && (parent.getId() != null) ) {
-			Expression expr4 = ExpressionUtilities.getEqualExpression("Profile.domain<id", parent.getId());
-			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr3, expr4));
-		} else {
-			criteria.addExpression(expr3);
-		}
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROFILE_APPLICATION_ID), da.getApplication().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.PROFILE_NAME));
-		List<ITransferObject> profiles = bean.getList(criteria);
-		if (! profiles.isEmpty() ) {
-			for( ITransferObject to : profiles ) {
-				Profile profile = (Profile) to;
-				SelectItem item = new SelectItem(profile, profile.getName() );
-				list.add(item);
-			}
+		for( ITransferObject to : UserApplicationInfo.getProfiles(getDomainApplication()) ) {
+			Profile profile = (Profile) to;
+			SelectItem item = new SelectItem(profile, profile.getName() );
+			list.add(item);
 		}		
 		return list;
 	}
-	
 
-	private Set<User> getRegisteredUsers() throws ManagerBeanException {
-		DomainApplication da = getDomainApplication();
-		Set<User> users = new HashSet<User>();
-		IManagerBean bean = BeanManager.getManagerBean(ApplicationUser.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_USER_DOMAIN_APPLICATION_ID), da.getId());
-		for (ITransferObject to : bean.getList(criteria)) {
-			ApplicationUser user = (ApplicationUser) to;
-			users.add(user.getUser());
+	private Set<Integer> getRegisteredUsers( Integer domainApplication ) {
+		Set<Integer> users = new HashSet<Integer>();
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		Query query = session.createQuery("SELECT au.user.id FROM ApplicationUser au WHERE au.domainApplication = ?");
+		query.setInteger(0, domainApplication);
+		for (Object id : query.list()) {
+			users.add( (Integer) id );
 		}
 		return users;
 	}	
-	
+		
 	public List<SelectItem> getAvailableUsers() throws ManagerBeanException {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(User.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.USER_ACTIVE), Boolean.TRUE);
-		criteria.addOrder(bean.getFieldName(IEntityAlias.USER_LOGIN));
-		List<ITransferObject> users = bean.getList(criteria);
+		return this.availableUsers;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<User> getActiveUsers( Integer domain ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
+		Session session = HibernateUtil.getSession(sessionFactoryName);
+		Query query = session.createQuery("FROM User u WHERE u.active = true and u.domain = ?");
+		query.setInteger(0, domain);
+		return query.list();
+	}
+	
+	public void updateAvailableUsers( Integer domain ) {
+		availableUsers = new LinkedList<SelectItem>();
+		List<User> users = getActiveUsers(domain);
 		if (! users.isEmpty() ) {
-			Set<User> registeredUsers = getRegisteredUsers();
-			for (ITransferObject to : users) {
-				User user = (User) to;
-				if (! registeredUsers.contains(user) ) {
+			Set<Integer> registeredUsers = getRegisteredUsers(getDomainApplication().getId());
+			for (User user : users) {
+				if (! registeredUsers.contains(user.getId()) ) {				
 					SelectItem item = new SelectItem(user, user.getLogin() );
-					list.add(item);									
+					availableUsers.add(item);									
 				}
 			}			
 		}
-		return list;
 	}		
 	
 	private Set<Application> getRegisteredApplications() throws ManagerBeanException {
@@ -131,6 +124,24 @@ public class DomainApplicationController extends BasicController {
 			}			
 		}
 		return list;
+	}
+	
+	private String getRoleList( IController controller ) throws ManagerBeanException {
+		if ( controller.getModel().isRowAvailable() ) {
+			Profile profile = (Profile) controller.getModel().getRowData();
+			return ApplicationProfileController.getRoleList(profile);
+		}
+		return null;
+	}	
+
+	public String getSystemRoleList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getRoleList(controller);
+	}
+	
+	public String getRoleList() throws ManagerBeanException {
+		IController controller = FormUtil.getController(DOMAIN_APPLICATION_PROFILE_CONTROLLER_NAME);
+		return getRoleList(controller);
 	}
 	
 }

@@ -31,15 +31,23 @@
 						</aon:column>
 
 						<aon:column alias="Hotel.code"
-							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							styleClass="aon-editDataTable-textColumn aon-width-100">
 							<f:facet name="header">
 								<aon:outputLabel value="#{bundle.aon_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.code}" />
 						</aon:column>
 
+						<aon:column alias="Hotel.workPlace.enterprise.registry.name"
+							styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputLabel value="#{companyBundle.company_enterprise}" />
+							</f:facet>
+							<aon:outputText value="#{to.workPlace.enterprise.registry.name}" />
+						</aon:column>
+
 						<aon:column alias="Hotel.scope.description"
-							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							styleClass="aon-editDataTable-textColumn aon-width-150">
 							<f:facet name="header">
 								<aon:outputLabel value="#{configBundle.config_scope}" />
 							</f:facet>

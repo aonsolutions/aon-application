@@ -28,6 +28,9 @@
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDirStaff" type="xs:boolean" use="required"/>
 			<xs:attribute name="showHistory" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAbsence" type="xs:boolean" use="required"/>
+			<xs:attribute name="showLoan" type="xs:boolean" use="required"/>
+			<xs:attribute name="showCourse" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

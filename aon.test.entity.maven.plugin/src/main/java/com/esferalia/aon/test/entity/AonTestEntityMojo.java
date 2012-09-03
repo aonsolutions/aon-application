@@ -395,7 +395,6 @@ public class AonTestEntityMojo extends AbstractMojo {
 		Class<?>[] parameters = method.getParameterTypes();
 		if (parameters == null) return false;
 		if (parameters.length != 1) return false;
-		if ("IDomainPojo".equals(parameters[0].getSimpleName())) return false;
 		return true;
 	}
 

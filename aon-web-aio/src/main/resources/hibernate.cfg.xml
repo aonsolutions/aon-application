@@ -6,11 +6,9 @@
 
 	<session-factory>
 
-		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
-<!-- 		
+		<property name="connection.provider_class">com.code.aon.ui.common.hibernate.C3P0ConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonMainDeployer</property>
- -->
-		<property name="connection.datasource">java:comp/env/jdbc/AonAio</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEnterprise</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="show_sql">false</property>
 
@@ -25,6 +23,26 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
+		<!-- AON-ACADEMY Mapping files -->
+		<mapping class="com.code.aon.academy.Absence"/>
+		<mapping class="com.code.aon.academy.AcademicSkill"/>
+		<mapping class="com.code.aon.academy.AcademicYear"/>
+		<mapping class="com.code.aon.academy.AlumnLoan"/>
+		<mapping class="com.code.aon.academy.Course"/>
+		<mapping class="com.code.aon.academy.CourseAcademicSkill"/>
+		<mapping class="com.code.aon.academy.CourseAlumn"/>
+		<mapping class="com.code.aon.academy.CourseEvaluation"/>
+		<mapping class="com.code.aon.academy.CourseInstructor"/>
+		<mapping class="com.code.aon.academy.CourseLevel"/>
+		<mapping class="com.code.aon.academy.CourseObservation"/>
+		<mapping class="com.code.aon.academy.CourseSchedule"/>
+		<mapping class="com.code.aon.academy.CourseSubject"/>
+		<mapping class="com.code.aon.academy.EvaluationObservation"/>
+		<mapping class="com.code.aon.academy.Mark"/>
+		<mapping class="com.code.aon.academy.Observation"/>
+		<mapping class="com.code.aon.academy.Qualification"/>
+		<mapping class="com.code.aon.academy.QualitySkill"/>
+		
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 
@@ -92,8 +110,11 @@
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
+		<mapping class="com.code.aon.commercial.Question"/>
+		<mapping class="com.code.aon.commercial.QuestionValue"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
+		<mapping class="com.code.aon.commercial.TargetProfile"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
@@ -160,6 +181,8 @@
 		<!-- AON-FISCAL Mapping files -->	
 		<mapping class="com.code.aon.fiscal.Mod347"/>
 		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
+		<mapping class="com.code.aon.fiscal.Mod349"/>
+		<mapping class="com.code.aon.fiscal.Mod349Detail"/>
 		<mapping class="com.code.aon.fiscal.ProfessionalRetention"/>
 		<mapping class="com.code.aon.fiscal.Renting"/>
 		<mapping class="com.code.aon.fiscal.RentingDetail"/>
@@ -195,16 +218,12 @@
 		<!-- AON-MARKETING Mapping files --> 
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.MarketingCampaign"/>
-		<mapping class="com.code.aon.marketing.MarketingAction"/>
-		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
-		<mapping class="com.code.aon.marketing.Question"/>
-		<mapping class="com.code.aon.marketing.QuestionValue"/>
+		<mapping class="com.code.aon.marketing.MarketingAction"/>	
 		<mapping class="com.code.aon.marketing.Survey"/>
 		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
 		<mapping class="com.code.aon.marketing.SurveyResponse"/>
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
-		<mapping class="com.code.aon.marketing.TargetProfile"/>
 		<mapping class="com.code.aon.marketing.Template"/>
 					
 		<!-- AON-PAYROLL Mapping files -->
@@ -301,6 +320,7 @@
 		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryAttachmentTag"/>
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
@@ -309,6 +329,7 @@
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
+		<mapping class="com.code.aon.registry.Tag"/>
 
 		<!-- AON-SALES Mapping files -->	
 		<mapping class="com.code.aon.sales.Sales"/>
@@ -319,6 +340,12 @@
 
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>
+
+		<!-- AON-TAS Mapping files -->	
+		<mapping class="com.code.aon.tas.Make"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.ProjectTas"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
 
 		<!-- AON-WAREHOUSE Mapping files -->		
 		<mapping class="com.code.aon.warehouse.Delivery"/>
@@ -332,6 +359,13 @@
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
+
+		<!-- AON-WEBINFO Mapping files -->
+		<mapping class="com.code.aon.infoweb.WebInfo"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPage"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageDetail"/>
+		<mapping class="com.code.aon.infoweb.WebInfoPageResource"/>
+		<mapping class="com.code.aon.infoweb.WebInfoStyle"/>
 		
 		<!-- AON-WEBMAIL Mapping files -->	
 		<mapping class="com.code.aon.webmail.db.Contact"/>

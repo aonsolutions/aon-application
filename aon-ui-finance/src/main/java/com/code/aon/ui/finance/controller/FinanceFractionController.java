@@ -138,6 +138,7 @@ public class FinanceFractionController implements IFinanceConstants {
 			targetFinance.setBank((targetFinance.getBank().getId() == null) ? null : targetFinance.getBank());
 			targetFinance.setInvoice((targetFinance.getInvoice().getId() == null) ? null : targetFinance.getInvoice());
 			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null) ? null : targetFinance.getPayMethod());
+			targetFinance.setFinanceGroup(targetFinance.getFinanceGroup().getId() == null ? null : targetFinance.getFinanceGroup());
 			financeBean.update(targetFinance);
 
 			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, list.size());
@@ -148,6 +149,7 @@ public class FinanceFractionController implements IFinanceConstants {
 				finance.setBank((finance.getBank().getId() == null) ? null : finance.getBank());
 				finance.setInvoice((finance.getInvoice().getId() == null) ? null : finance.getInvoice());
 				finance.setPayMethod((finance.getPayMethod().getId() == null) ? null : finance.getPayMethod());
+				finance.setFinanceGroup(null);
 				financeBean.insert(finance);
 
 				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, i+1, list.size());

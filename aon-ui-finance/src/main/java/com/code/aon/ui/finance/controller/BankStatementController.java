@@ -490,11 +490,20 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onImportFile(ActionEvent event) {
 		try {
+			int lotNumber = obtainLotNumber();
 			if (isAeb43()) {
-				importAeb43(obtainLotNumber());
+				importAeb43(lotNumber);
 			} else {
-				importCsv(obtainLotNumber());
+				importCsv(lotNumber);
 			}
+
+			BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+			searchListener.initData();
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_LOT_NUMBER), lotNumber);
+			setCriteria(criteria);
+			onSearch(null);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -535,21 +544,9 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 			line = reader.readLine();
 		}
-
-		if (bankStatement != null) {
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
-			setCriteria(criteria);
-			onSearch(null);
-		}
 	}
 
 	private RegistryBank importAeb43Header(String line) throws ManagerBeanException {
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
-		searchListener.initData();
-		searchListener.setFromDate(obtainDateAAMMDD(line.substring(20, 26)));
-		searchListener.setToDate(obtainDateAAMMDD(line.substring(26, 32)));
-
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IEntityAlias.REGISTRY_BANK_REGISTRY_ID), getRegistryBank().getRegistry().getId());
@@ -597,25 +594,15 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void importCsv(int lotNumber) throws ManagerBeanException, IOException {
-		BankStatement bankStatement = null;
 		LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(getAonFile().getFile())));
 		String line = reader.readLine();
 		while (line != null) {
-			bankStatement = importCsvData(line, lotNumber, (bankStatement == null));
+			importCsvData(line, lotNumber);
 			line = reader.readLine();
-		}
-
-		if (bankStatement != null) {
-			setCsvToDate(bankStatement.getOperationDate());
-
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IEntityAlias.BANK_STATEMENT_REGISTRY_BANK_ID), getRegistryBank().getId());
-			setCriteria(criteria);
-			onSearch(null);
 		}
 	}
 
-	private BankStatement importCsvData(String line, int lotNumber, boolean firstLine) throws ManagerBeanException {
+	private BankStatement importCsvData(String line, int lotNumber) throws ManagerBeanException {
 		String delim = ";";
 		int pos = 1;
 		Date date = null;
@@ -631,19 +618,17 @@ public class BankStatementController extends BasicController implements IFinance
 			} else if (stk.hasMoreTokens()) {
 				description += token;
 			} else {
-				amount = Double.parseDouble(token.replace(",", "."));
+				token = token.replace(",", ".");
+				while (token.indexOf('.') != token.lastIndexOf('.')) {
+					token = token.replaceFirst("[.]", "");
+				}
+				amount = Double.parseDouble(token);
 				if (amount < 0) {
 					payment = true;
 					amount = amount * (-1);
 				}
 			}
 			pos++;
-		}
-
-		if (firstLine) {
-			BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
-			searchListener.initData();
-			searchListener.setFromDate(date);
 		}
 
 		BankStatement bankStatement = new BankStatement();
@@ -662,11 +647,6 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatement.setSecurityLevel(isConfidential() ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		bankStatement.setStatus(StatementStatus.PENDING);
 		return (BankStatement)getManagerBean().insert(bankStatement);
-	}
-
-	private void setCsvToDate(Date toDate) {
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
-		searchListener.setToDate(toDate);
 	}
 
 	private Date obtainDateAAMMDD(String date) {

@@ -62,7 +62,7 @@ public class AonUserController implements ILdapConstants, IAonObjectClasses, IDe
 	private String confirmPassword;
 	
 	public AonUserController() {
-		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		domain = principal.getDomain();
 		passwordExpired = calculatePasswordExpired( principal.getShortName() );
 		contactsEnabled = calculateContactsEnabled( principal.getShortName() );

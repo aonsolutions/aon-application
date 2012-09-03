@@ -1,126 +1,55 @@
 package com.code.aon.file.tax.model.MOD349.data;
 
-/**
- * The operator
- * 
- * @author Consulting & Development. Iñigo GAyarre - 08/02/2007
- * @since 1.0
- * 
- */
 public class Operator {
 
-	/**
-	 * The country
-	 */
 	private String country;
-
-	/**
-	 * The code
-	 */
-	private String code;
-
-	/**
-	 * The name
-	 */
+	private String document;
 	private String name;
-
-	/**
-	 * The key
-	 */
 	private String key;
+	private Double amount;
 
-	/**
-	 * The base quantity
-	 */
-	private Double base;
-
-	/**
-	 * @return the base
-	 */
-	public Double getBase() {
-		return base;
+	public Double getAmount() {
+		return amount;
+	}
+	public void setAmount(Double amount) {
+		this.amount = amount;
 	}
 
-	/**
-	 * @param base
-	 *            the base to set
-	 */
-	public void setBase(Double base) {
-		this.base = base;
+	public String getDocument() {
+		return document;
+	}
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	/**
-	 * @return the country
-	 */
 	public String getCountry() {
 		return country;
 	}
-
-	/**
-	 * @param country
-	 *            the country to set
-	 */
 	public void setCountry(String country) {
 		this.country = country;
 	}
 
-	/**
-	 * @return the key
-	 */
 	public String getKey() {
 		return key;
 	}
-
-	/**
-	 * @param key
-	 *            the key to set
-	 */
 	public void setKey(String key) {
 		this.key = key;
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
-
-	/**
-	 * @param name
-	 *            the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	public String toString() {
 		String description = "OPERATOR ";
-		description += "CUONTRY ";
+		description += "Pais: ";
 		description += country == null ? "NULL " : "'" + country + "'";
-		description += "CODE ";
-		description += code == null ? "NULL " : "'" + code + "''";
-		description += "NAME ";
+		description += " Doc.: ";
+		description += document == null ? "NULL " : "'" + document + "''";
+		description += " Nombre: ";
 		description += name == null ? "NULL " : "'" + name + "'; ";
 		return description;
 	}

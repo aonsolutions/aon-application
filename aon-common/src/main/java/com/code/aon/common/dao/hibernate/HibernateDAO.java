@@ -168,7 +168,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			}
 
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, session, this.entry);
+					.toHibernateCriteria(criteria, session, this.entry.getPojo());
 			if (offset != -1) {
 				hibernateCriteria.setFirstResult(offset);
 			}
@@ -381,10 +381,15 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 
 	@Override
 	public Object getUniqueResult(Projection projection, Criteria criteria) throws DAOException {
+		return getUniqueResult(new ProjectionList(projection), criteria);
+	}
+	
+	@Override
+	public Object getUniqueResult(ProjectionList projectionList, Criteria criteria) throws DAOException {
         Session session = sessionManager.getSession();
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, new ProjectionList(projection), session, this.entry);
+					.toHibernateCriteria(criteria, projectionList, session, this.entry.getPojo());
 			return hibernateCriteria.uniqueResult();
 		} catch (HibernateException he) {
 			if (he.getCause() != null) {
@@ -403,7 +408,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
         Session session = sessionManager.getSession();
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
-					.toHibernateCriteria(criteria, projectionList, session, this.entry);
+					.toHibernateCriteria(criteria, projectionList, session, this.entry.getPojo());
 			return hibernateCriteria.list();
 		} catch (HibernateException he) {
 			if (he.getCause() != null) {

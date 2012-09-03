@@ -28,11 +28,13 @@
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						action="corporateIdentity_receipt" actionListener="#{corporateIdentity.onClear}" 
 						immediate="true" accesskey="#{bundle.aon_key_remove}" />
-					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-						action="corporateIdentity_predefined"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true"
-						accesskey="#{bundle.aon_key_cancel}" /> 
+					<c:if test="#{corporateIdentity.showBackButton}">						
+						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
+							action="corporateIdentity_predefined"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</c:if> 
 				</ui:define>
 			</ui:decorate>
 			
