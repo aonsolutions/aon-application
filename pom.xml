@@ -21,9 +21,6 @@
 		<!-- PARENT MODULES -->
 		<module>aon-web-parent</module>
 
-		<!-- LIB MODULES -->
-		<module>aon-external-libs</module>
-	
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>
@@ -101,7 +98,7 @@
 		<module>aon-academy</module>    
 
 		<!-- UI MODULES -->
-    <module>aon-ui-academy</module>
+    		<module>aon-ui-academy</module>
 		<module>aon-ui-audabridge</module>
 		<module>aon-ui-company</module>
 		<module>aon-ui-config</module>
@@ -152,25 +149,6 @@
 		<module>aon-stat</module>
 
 		<!-- WEB MODULES -->
-		<module>aon-desktop</module>
-		<module>aon-web-payroll</module>
-		<module>aon-web-smb</module>
-		<module>aon-web-account</module>
-		<module>aon-web-asset</module>
-		<module>aon-web-commercial</module>
-		<module>aon-web-communicator</module>
-		<module>aon-web-consultant</module>
-		<module>aon-web-project</module>
-		<module>aon-web-enterprise</module>
-		<module>aon-web-finance</module>
-		<module>aon-web-fiscal</module>
-		<module>aon-web-gta</module>
-		<module>aon-web-infoweb</module>
-		<module>aon-web-manager</module>
-		<module>aon-web-publisher</module>
-		<module>aon-web-webmail</module>
-		<module>aon-web-document</module>
-		<module>aon-web-pms</module>
 		<module>aon-web-aio</module>
 
 		<!-- GWT MODULES -->
@@ -184,24 +162,6 @@
 		<module>aon-common-resources</module>
 		<module>tgc-ui-payroll</module>
 
-<!--
-		*************************************************************************************************************
-		MODULOS DESACTIVADOS TEMPORALMENTE, POR ESTAR INCLUIDOS DENTRO DE OTROS O PARA ACELERAR LA COMPILACION (CSM).
-		*************************************************************************************************************
-		<module>aon-cms</module>
-		<module>aon-ui-cms</module>
-		<module>aon-web-cms</module>
-		
-		******************
-		MODULOS DEPRECADOS 
-		******************
-
-		<module>aon-ebackoffice</module>
-		<module>aon-ui-ebackoffice</module>
-		<module>aon-ui-ecommerce</module>
-		<module>aon-web-ebackoffice</module>
-		<module>aon-web-ecommerce</module>
--->
 <!-- 
 		<module>aon.python</module>
  -->
