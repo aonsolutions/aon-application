@@ -20,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationRoomDetail;
@@ -85,9 +86,13 @@ public class WorkPlanningController implements ICollectionProvider {
 			if(reservationRoomDetail.isFirstNight()){
 				return RoomWorkPlanning.CHECKIN;
 			} else {
-				long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
-				Integer sheetChangingDays = reservationRoomDetail.getRoom().getHotel().getSheetChanging();
-				return days%sheetChangingDays==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+				try {
+					long days = CommonUtil.getDaysBetweenDates(reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getStartDate(), getDate());
+					Integer sheetChangingDays = reservationRoomDetail.getRoom().getHotel().getSheetChanging();
+					return days%sheetChangingDays==0?RoomWorkPlanning.SHEET_CHANGE:RoomWorkPlanning.CLEANING;
+				} catch (IllegalArgumentException e){
+					AonUtil.addErrorMessage("Fechas incongruentes en la reserva " + reservationRoomDetail.getProjectReservationRoom().getProjectReservation().getProject().getId());
+				}
 			}
 		} else {
 			ProjectReservationRoomDetail previousReservationRoomDetail = obtainActivity(room, DateUtils.addDays(getDate(), -1));
