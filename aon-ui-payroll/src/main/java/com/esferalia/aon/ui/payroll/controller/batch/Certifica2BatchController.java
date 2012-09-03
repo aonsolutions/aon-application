@@ -110,7 +110,11 @@ public class Certifica2BatchController extends BasicController {
 		Certifica2ListController listController = (Certifica2ListController) FormUtil.getController(IPayrollConstants.CERTIFICA2_LIST_CONTROLLER_NAME);
         checkAllSuspensionCauses(listController.getRemesableContracts(), listController.getCheckHandler().getCheckedList());
 		Iterator iterator = listController.getCheckHandler().getCheckedList().iterator();
+		
+		
+		
 		for(Certifica2ListController.RemesableContract remesable: listController.getRemesableContracts().values()){
+			Map<String, String> contractData = getContractDataMap(remesable.getContract());
 			Contract contract = (Contract) iterator.next();
             contract.setStatus(ContractStatus.BATCHED);
             contractBean.update(contract);
@@ -120,18 +124,30 @@ public class Certifica2BatchController extends BasicController {
 			certifica2BatchDetail.setCertifica2Batch((Certifica2Batch) getTo());
 			certifica2BatchDetail.setSuspensionCause(remesable.getSuspensionCause());
 			certifica2BatchDetail.setEnterpriseNif(remesable.getContract().getWorkPlace().getEnterprise().getRegistry().getDocument());
-			certifica2BatchDetail.setCcc(remesable.getContract().getEnterpriseCCC().getCcc());
 			certifica2BatchDetail.setDocument(remesable.getContract().getPerson().getRegistry().getDocument());
 			String name = remesable.getContract().getPerson().getName();
 			certifica2BatchDetail.setName(name.length()>9?name.substring(0, 8):name);
 			certifica2BatchDetail.setFirstSurname(remesable.getContract().getPerson().getFirstSurname());
 			certifica2BatchDetail.setSecondSurname(remesable.getContract().getPerson().getSecondSurname());
 			certifica2BatchDetail.setSsNumber(remesable.getContract().getPerson().getSocialSecurityNumber());
-			certifica2BatchDetail.setQuoteGroup(getContractDataMap(remesable.getContract()).get(ContextVariable.QUOTE_GROUP.getName()));
-			certifica2BatchDetail.setContractType(getContractDataMap(remesable.getContract()).get(ContextVariable.TC2.getName()));
+			String quoteGroup = contractData.get(ContextVariable.QUOTE_GROUP.getName());
+			certifica2BatchDetail.setQuoteGroup(quoteGroup!=null?quoteGroup:null);
+			String tc2 = contractData.get(ContextVariable.TC2.getName());
+			if(tc2!=null){
+				certifica2BatchDetail.setContractType(tc2);
+			} else {
+				String msg = "El contrato de "+remesable.getContract().getPerson().getFullName()+" no dispone de datos vigentes para el TC2";
+				AonUtil.addErrorMessage(msg);
+			}
 			certifica2BatchDetail.setContractDuration(differenceBetweenDates(remesable.getContract().getStartDate(), remesable.getContract().getEndDate()).toString());
 //			detalle.setContractDurationIndicator;
-			certifica2BatchDetail.setOccupationCode(getContractDataMap(remesable.getContract()).get(ContextVariable.CNO.getName()));
+			String occupation = contractData.get(ContextVariable.CNO.getName());
+			if(occupation!=null){
+				certifica2BatchDetail.setOccupationCode(occupation);
+			} else {
+				String msg = "El contrato de "+remesable.getContract().getPerson().getFullName()+" no dispone de datos vigentes para el CNO";
+				AonUtil.addErrorMessage(msg);
+			}
 //			detalle.setPublicAssociationCharge;
 //			detalle.setDedicationPercent;
 			certifica2BatchDetail.setEnterpriseStartDate(remesable.getContract().getStartDate());
@@ -152,13 +168,14 @@ public class Certifica2BatchController extends BasicController {
         onSearchContracts(event);
 	}
 
+
 	protected Map<String, String> getContractDataMap(Contract contract) {
 		Map<String, String> map = new HashMap<String, String>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
+			criteria.addNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE));
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
 				if(data.getExpression()!=null){
@@ -167,6 +184,7 @@ public class Certifica2BatchController extends BasicController {
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, que siga generando el fichero
+			AonUtil.addErrorMessage("Imposible obtener los datos de contrato");
 		}
 		return map;
 	}
