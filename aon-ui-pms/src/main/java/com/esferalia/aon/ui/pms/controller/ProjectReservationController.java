@@ -34,6 +34,7 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryPayMethod;
@@ -514,6 +515,16 @@ public class ProjectReservationController extends BasicController implements IPm
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
 			}
+			if (isReservationAlreadyInvoiced(reservation)) {
+				reservation.setStatus(ReservationStatus.INVOICED);
+				accept(event);
+				setSelectedTab(INVOICE);
+
+				setShowInvoiceWindow(false);
+				String msg = "La Reserva ya estaba Facturada.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			setReservationInvoiceTo(new ReservationInvoiceTo(false));
 			getReservationInvoiceTo().setIssueDate(reservation.getStartDate());
 			fillInvoiceData(reservation);
@@ -521,6 +532,17 @@ public class ProjectReservationController extends BasicController implements IPm
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	private boolean isReservationAlreadyInvoiced(ProjectReservation reservation) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_PROJECT_ID), reservation.getId());
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_TYPE), InvoiceType.SALES);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_RECTIFICATION_TYPE), RectificationType.NONE);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_ADVANCE), false);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IEntityAlias.INVOICE_SERVICE), false);
+		return (invoiceBean.getCount(criteria) > 0);
 	}
 
 	private void fillInvoiceData(ProjectReservation reservation) throws ManagerBeanException {
