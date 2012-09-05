@@ -1,6 +1,7 @@
 package com.code.aon.ui.audabridge.event;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.ui.audabridge.IAudaBridgeConstants;
 import com.code.aon.ui.audabridge.controller.AudabridgeOfferController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -14,17 +15,21 @@ public class AudabridgeOfferControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Offer offer = (Offer) event.getController().getTo();
-		AudabridgeOfferController c = (AudabridgeOfferController) 
-			AonUtil.getRegisteredBean(IAudaBridgeConstants.AUDABRIDGE_OFFER_CONTROLLER);
-		c.setOffer(offer);
+		if (offer.getType() == OfferType.AUDATEX) {
+			AudabridgeOfferController c = (AudabridgeOfferController) 
+					AonUtil.getRegisteredBean(IAudaBridgeConstants.AUDABRIDGE_OFFER_CONTROLLER);
+				c.setOffer(offer);
+		}
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Offer offer = (Offer) event.getController().getTo();
-		AudabridgeOfferController c = (AudabridgeOfferController) 
+		if (offer.getType() == OfferType.AUDATEX) {
+			AudabridgeOfferController c = (AudabridgeOfferController) 
 			AonUtil.getRegisteredBean(IAudaBridgeConstants.AUDABRIDGE_OFFER_CONTROLLER);
-		c.setOffer(offer);
-		c.onCreateAssessment(null);
+			c.setOffer(offer);
+			c.onCreateAssessment(null);
+		}
 	}
 }
