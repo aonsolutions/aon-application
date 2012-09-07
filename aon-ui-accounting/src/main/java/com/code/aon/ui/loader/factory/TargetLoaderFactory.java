@@ -60,6 +60,7 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 			,new Column(CLP,"diasAlPrimerVto"				,0,6	,false	,null)
 			,new Column(CLP,"diasEntreVtos"					,0,6	,false	,null)
 			,new Column(CLP,"diasPago"						,2,8	,false	,null)
+			,new Column(CLP,"segmento"						,2,32	,false	,null)
 	};
 
 	private Map<String, Column[]> columns;
@@ -150,6 +151,9 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 		if (StringUtils.isNotBlank(loaded.getWeb())) {
 			insertRegistryMedia(target.getRegistry(),MediaType.WEB,loaded.getWeb());
 		}
+		if (StringUtils.isNotBlank(loaded.getSegmento())) {
+			insertRegistrySegment(target.getRegistry(),loaded.getSegmento());
+		}
 		RegistryBank rbank = null;
 		if (StringUtils.isNotBlank(loaded.getCuentaBanco())) {
 			rbank = insertRegistryBank(engine,params,target.getRegistry(),loaded);	
@@ -184,5 +188,4 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 		}
 		return null;
 	}
-	
 }

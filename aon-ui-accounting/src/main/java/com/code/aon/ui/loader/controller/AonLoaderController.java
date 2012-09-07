@@ -14,6 +14,7 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Session;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
@@ -21,10 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.domain.DomainManager;
-import com.code.aon.common.domain.ThreadDomainProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.finance.Invoice;
 import com.code.aon.ui.loader.Loader;
 import com.code.aon.ui.loader.LoaderParams;
@@ -38,8 +38,15 @@ public class AonLoaderController {
 	private AonFile aonFile;
 	private StringWriter logString;
 	private PrintWriter log;
-	private boolean enablePolling;
 
+	private boolean progressionPanelVisible;
+
+	public boolean isProgressionPanelVisible() {
+		return progressionPanelVisible;
+	}
+	public void setProgressionPanelVisible(boolean progressionPanelVisible) {
+		this.progressionPanelVisible = progressionPanelVisible;
+	}
 	public AonFile getAonFile() {
 		return this.aonFile;
 	}
@@ -62,13 +69,6 @@ public class AonLoaderController {
 	public String getLogString() {
 		return logString==null?null:logString.toString();
 	}
-	
-	public boolean isEnablePolling() {
-        return enablePolling;
-    }
-    public void setEnablePolling(boolean enablePolling) {
-        this.enablePolling = enablePolling;
-    }
 	
 	public void fileUploaded(UploadEvent event) {
 		try {
@@ -94,12 +94,66 @@ public class AonLoaderController {
 		setParams(new LoaderParams());
 		setLog( null );
 		logString = null;
+		
+		setProgressionPanelVisible(false);
 	}
 	
 	public void onLoad(ActionEvent event ) {
-        setEnablePolling( true );
-		LoaderThread thread = new LoaderThread();
-		thread.start();
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		logString = new StringWriter( );
+		setLog( new PrintWriter( logString ) );
+		Loader loader = new Loader(params);
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
+			loader.loadMetadata(input);
+			input = new ByteArrayInputStream(getAonFile().getData());
+			loader.validate(input);
+			input = new ByteArrayInputStream(getAonFile().getData());
+			loader.load(input,session);
+			HibernateUtil.commitTransaction(sessionName);
+			AonUtil.addInfoMessage("Carga de datos finalizada!");
+		} catch (Exception e) {
+			LogPanelController logger = LogPanelController.getInstance();
+			logger.finish();
+			AonUtil.addErrorMessage(e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+				getLog().println("<br/>");
+				getLog().println("Se deshacen las inserciones realizadas.");
+				getLog().println("<br/>");
+				getLog().println("<br/>");
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			String msg = "Error durante la carga de datos. ";
+			LOGGER.error(msg, e);
+			getLog().println(msg);
+			getLog().println("<br/>");
+			getLog().println(e.getMessage());
+			throw new AbortProcessingException(msg  + e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			setProgressionPanelVisible(false);
+	        loader.setFactoryManager(null);
+		}
+	}
+	
+	public void onShowPanel(ActionEvent event) {
+		setProgressionPanelVisible(true);
+	}
+	
+	public void onClosePanel(ActionEvent event) {
+		setProgressionPanelVisible(false);
 	}
 	
 	public void onHelp(ActionEvent event ) {
@@ -108,74 +162,12 @@ public class AonLoaderController {
 			ExternalContext ectx = ctx.getExternalContext();
 			HttpServletResponse response = (HttpServletResponse) ectx.getResponse();
 			response.setContentType( "text/html" );
-			Loader loader = new Loader(params,log);
+			Loader loader = new Loader(params);
 			loader.help(response.getWriter());
 			ctx.responseComplete();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new AbortProcessingException(e.getMessage());
 		}
-	}
-
-	private class LoaderThread extends Thread {
-		
-		private ThreadDomainProvider tdp;
-		
-		private LoaderThread() {
-			tdp = new ThreadDomainProvider(
-						this.getId(),
-						DomainManager.getCurrentDomain(),
-						AonUtil.getAuthPrincipal().getDomainId(),
-						DomainManager.isParentDomain(),
-						DomainManager.isDomainManagementAvailable()
-					);
-			DomainManager.addDomainProvider( tdp );
-		}
-		
-	    public void run() {
-			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-			boolean mustCloseSession = HibernateUtil.mustCloseSession();
-			String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
-			logString = new StringWriter( );
-			setLog( new PrintWriter( logString ) );
-			Loader loader = new Loader(params,log);
-			try {
-				HibernateUtil.setBeginTransaction(false);
-				HibernateUtil.setCloseSession(false);
-				HibernateUtil.beginTransaction(sessionName);
-				ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
-				loader.loadMetadata(input);
-				input = new ByteArrayInputStream(getAonFile().getData());
-				loader.validate(input);
-				input = new ByteArrayInputStream(getAonFile().getData());
-				loader.load(input);
-				HibernateUtil.commitTransaction(sessionName);
-			} catch (Exception e) {
-				try {
-					HibernateUtil.rollbackTransaction(sessionName);
-					getLog().println("<br/>");
-					getLog().println("Se deshacen las inserciones realizadas.");
-					getLog().println("<br/>");
-					getLog().println("<br/>");
-				} catch (DAOException daoe) {
-					String msg = "Unable to rollback transaction!";
-					LOGGER.error(msg, e);
-				}
-				String msg = "Error durante la carga de datos. ";
-				LOGGER.error(msg, e);
-				getLog().println(msg);
-				getLog().println("<br/>");
-				getLog().println(e.getMessage());
-				throw new AbortProcessingException(msg  + e.getMessage());
-			} finally {
-				HibernateUtil.closeSession(sessionName);
-				HibernateUtil.setCloseSession(mustCloseSession);
-				HibernateUtil.setBeginTransaction(mustBeginTransaction);
-		        setEnablePolling( false );
-		        DomainManager.removeDomainProvider( tdp );
-		        loader.setFactoryManager(null);
-			}
-	    }
-
 	}
 }
