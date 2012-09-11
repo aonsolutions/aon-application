@@ -1163,6 +1163,63 @@
 	</managed-bean>
 	
 	<!-- ========================================================== -->
+	<!-- ======================= REPORT =========================== -->
+	<!-- ========================================================== -->
+	<managed-bean>
+		<managed-bean-name>courseDetailPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.CourseDetailListPrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>alumnPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.AlumnPrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>markPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.MarkPrinter</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>markTemplatePrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.MarkTemplatePrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>absenceTemplatePrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.AbsenceTemplatePrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseAbsenceTemplatePrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.CourseAbsenceTemplatePrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>alumnObservationPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.AlumnObservationPrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>pendingAlumnLoanPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.PendingAlumnLoanPrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseEvaluationPrinter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.print.CourseEvaluationPrinter</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ========================================================== -->
 	<!-- ======================= LOOKUP =========================== -->
 	<!-- ========================================================== -->
 	
