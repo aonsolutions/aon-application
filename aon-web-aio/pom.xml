@@ -812,6 +812,8 @@
 											<require>mysql-connector-java</require>
 											<require>slf4j</require>
 											
+											<require>libxslt</require>
+											
 										</requires>
 
 										<mappings>
@@ -863,6 +865,21 @@
 												</sources>
 											</mapping>
 											<mapping>
+												<directory>/tmp/aon-aio-tomcat_${buildNumber}</directory>
+												<filemode>755</filemode>
+												<username>tomcat</username>
+												<groupname>tomcat</groupname>
+												<sources>
+													<source>
+														<includes>
+															<include>server.xsl</include>
+															<include>context.xsl</include>
+														</includes>
+														<location>src/main/scripts/</location>
+													</source>
+												</sources>
+											</mapping>
+											<mapping>
 												<directory>/usr/share/java/tomcat6/</directory>
 												<filemode>755</filemode>
 												<username>tomcat</username>
@@ -896,7 +913,7 @@
 										</mappings>
 										
 										<postinstallScriptlet>
-											<scriptFile>src/main/scripts/postinstall</scriptFile>
+											<scriptFile>src/main/scripts/postinstall.sh</scriptFile>
 											<fileEncoding>utf-8</fileEncoding>
 										</postinstallScriptlet>
 									</configuration>
