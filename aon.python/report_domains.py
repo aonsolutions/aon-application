@@ -45,41 +45,52 @@ class ListDomains(object):
                 for domain in domains:
                     domain_name = domain[1]
                     
+                    # DATABASE        
                     print schema[0] + "|",
                     
-                    if domain[7] == None or domain[7] == "1":
+                    # ACTIVO
+                    if domain[7] == None or domain[7] == 1:
                         print "|",
                     else:
-                        print "NO" + "|",
-
+                        print "NO|",
+                        
+                    #ID DOMINIO
                     print str(domain[0])+ "|",
+                    
+                    #NOMBRE DOMINIO
                     print domain[1] + "|",
                     
+                    #DOMINIO PADRE
                     if domain[2] == None:
                         print "|",
                     else:
                         print str(domain[2]) + "|",
-
+                    
+                    #ALMACENAMIENTO
                     if domain[3] == None:
-                        print "0" + "|",
+                        print "0|",
                     else:
                         print str(domain[3]) + "|",
                         
+                    #USUARIOS
                     if domain[4] == None:
-                        print "0" + "|",
+                        print "0|",
                     else:
                         print str(domain[4]) + "|",
                         
-                    if domain[5] == None or domain[5] == "0":
-                        print "NO" + "|",
+                    #MULTIDOMINIO
+                    if domain[5] == None or domain[5] == 0:
+                        print "|",
                     else:
-                        print "SI" + "|",
+                        print "SI|",
                         
+                    #CREADOR
                     if domain[6] == None:
-                        print " " + "|",
+                        print "|",
                     else:
-                        print str(domain[4]) + "|",
+                        print str(domain[6]) + "|",
                         
+                    #EXTENSIONES
                     mod = conn.cursor()
                     mod.execute("SELECT module FROM `"+schema[0]+"`.domain_application_module WHERE domain = %s",(str(domain[0]),))
                     modules = mod.fetchall()
