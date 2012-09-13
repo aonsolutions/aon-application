@@ -125,6 +125,18 @@ public class Loader implements ILoaderEngine {
 				raiseException(0, "No existen datos en el canal de entrada");
 			}
 			log("Meta: Metadata loaded!");
+			
+			if (params.getWorkPlace() == null && getColumns().containsKey( ILoaderFactory.FRA ) ) {
+				raiseException(0, "Si se desea cargar facturas, hay que definir el centro de trabajo");
+			}
+			if (params.getCategory() == null && getColumns().containsKey( ILoaderFactory.FRA ) ) {
+				raiseException(0, "Si se desea cargar facturas, hay que definir la categoría");
+			}
+			if (params.getAccountPeriod() == null && ( getColumns().containsKey( ILoaderFactory.ASI ) || getColumns().containsKey( ILoaderFactory.FRA ) )) {
+				raiseException(0, "Si se desea cargar asientos contables o facturas , hay que definir el ejercicio contable");
+			}
+			
+			
 		} catch (UnsupportedEncodingException e) {
 			raiseException(0, "La codificación no es válida");
 		} catch (IOException e) {

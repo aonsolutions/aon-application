@@ -26,17 +26,7 @@
 						rendered="#{aonLoader.aonFile.size > 0}"
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
-<!-- 					
-					<aon:commandButton id="execute" 
-						value="#{accountingBundle.aon_loader_load}"
-						actionListener="#{aonLoader.onLoad}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						rendered="#{aonLoader.aonFile.size > 0}"
-						reRender="poll,execute,paramsGrid"
-						focus="scrollTo"
-						onclick="if (!confirm('Se va a cargar  el contenido del archivo. Desea continuar?')){ return false;}"/>
- -->
-						
+
 					<aon:htmlCommandLink  id="help" target="_new" 
 						value="#{bundle.aon_help}"
 						actionListener="#{aonLoader.onHelp}"
@@ -71,7 +61,7 @@
 					<aon:panelGrid  columns="2" style="width:90%; margin:10px;">
 				
 						<aon:outputLabel for="aonLoader_workPlace" value="#{companyBundle.company_workplace}" />
-						<aon:selectOneMenu id="aonLoader_workPlace" value="#{aonLoader.params.workPlace}" required="true">
+						<aon:selectOneMenu id="aonLoader_workPlace" value="#{aonLoader.params.workPlace}">
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>
 	
@@ -81,12 +71,12 @@
 						</aon:selectOneMenu>
 		
 						<aon:outputLabel for="aonLoader_product_category" value="#{productBundle.product_category}" />
-						<aon:selectOneMenu id="aonLoader_product_category" value="#{aonLoader.params.category}" required="true">
+						<aon:selectOneMenu id="aonLoader_product_category" value="#{aonLoader.params.category}" >
 							<f:selectItems value="#{productCollections.categories}" />
 						</aon:selectOneMenu>
 	
 						<aon:outputLabel for="aonLoader_accountPeriod" value="#{accountingBundle.accounting_period}" />
-						<aon:selectOneMenu id="aonLoader_accountPeriod" required="true"
+						<aon:selectOneMenu id="aonLoader_accountPeriod" 
 							value="#{aonLoader.params.accountPeriod}">
 							<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 						</aon:selectOneMenu>
@@ -123,7 +113,7 @@
 						<aon:form>
 							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 								actionListener="#{aonLoader.onStart}"
-								immediate="true" reRender="showNewMessageWindow">
+								immediate="true">
 								<rich:componentControl for="showNewMessageWindow" operation="hide"
 									event="onclick" />
 							</aon:commandButton>
@@ -133,13 +123,15 @@
 						<aon:commandButton id="launch"
 							value="Pulse para Comenzar la carga"
 							styleClass="aon-icon-accept"
+							disabled="#{!aonLoader.loadPressed}"
 							style="padding-left: 15px;"
 							actionListener="#{aonLoader.onLoad}"
-							reRender="#{sendButtonReRender}" >
+							reRender="paramsGrid">
 							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
 						</aon:commandButton>
 					</aon:form>
 				</rich:modalPanel>
+				<ui:param name="closeButtonReRender" value="showNewMessageWindow" />
 				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
 					<ui:param name="logPanelTitle" value="#{accountingBundle.aon_loader_module}" />
 				</ui:include>		
