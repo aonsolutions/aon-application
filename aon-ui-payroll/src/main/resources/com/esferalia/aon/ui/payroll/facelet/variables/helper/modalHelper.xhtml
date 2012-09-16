@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="variableHelperModalContainer#{helperSuffix}">
 		<c:if test="#{controller.handler.modalHelperPanelVisible}">
-			<rich:modalPanel id="variableHelperModalPanel" minHeight="600"
+			<rich:modalPanel id="variableHelperModalPanel" minHeight="650"
 				minWidth="900" showWhenRendered="true" zindex="100">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -32,6 +32,7 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
+									<!--  
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="variableHelperCancel"
 											value="#{bundle.aon_cancel}"
@@ -41,27 +42,65 @@
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
 									</aon:div>
+									-->
 									
-									<aon:editDataTable id="variableHelperList"
-										value="#{controller.handler.variableHelperModel}" var="to" rows="20" >
-										<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer#{helperSuffix},#{container}"
-											actionListener="#{controller.handler.onSelectVariableHelp}" />
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputLabel 
-													value="#{payrollBundle.payroll_salary_expression}" />
-											</f:facet>
-											<aon:outputText value="#{to.name}" />
-										</aon:column>  
-										<aon:column styleClass="aon-editDataTable-textColumn">
-											<f:facet name="header">
-												<aon:outputLabel 
-													value="#{bundle.aon_description}" />
-											</f:facet>
-											<aon:outputText value="#{to.description}" />
-										</aon:column>  
-									</aon:editDataTable>
-									<aon:dataScroller2 for="variableHelperList" showNote="false" />
+									<aon:div styleClass="aon-panelGrid-search">
+										<aon:div styleClass="aon-panelGrid-search-info">
+											<aon:outputText value="#{bundle.aon_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+										</aon:div>
+										<aon:panelGrid columns="1">
+											<aon:selectManyCheckbox id="variablefilter_type" layout="lineDirection"
+												value="#{controller.handler.variableScopeFilter}" >
+												<!--  
+												<f:selectItem itemLabel="Sistema" itemValue="0" />
+												<f:selectItem itemLabel="Contexto" itemValue="1" />
+												-->
+												<f:selectItems value="#{controller.handler.filterVariableScopes}" />
+												<a4j:support 
+													event="onchange"
+													reRender="variableHelperContainer"
+													eventsQueue="variableFilterKeyUp"
+													requestDelay="500"
+													ajaxSingle="true"
+													ignoreDupResponses="true"
+													limitToList="true"/>
+											</aon:selectManyCheckbox>
+											<aon:inputText id="variableFilter_suggestText" size="150" value="#{controller.handler.filter}">
+												<a4j:support 
+													event="onkeyup"
+													reRender="variableHelperContainer"
+													eventsQueue="variableFilterKeyUp"
+													requestDelay="500"
+													ajaxSingle="true"
+													ignoreDupResponses="true"
+													limitToList="true"/>
+											</aon:inputText>
+										</aon:panelGrid>	
+									</aon:div>
+									
+									<aon:div id="variableHelperContainer">
+										<aon:editDataTable id="variableHelperList"
+											rendered="#{controller.handler.variableHelperModel.rowCount > 0}"
+											value="#{controller.handler.variableHelperModel}" var="to" rows="20" >
+											<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer#{helperSuffix},#{container}"
+												actionListener="#{controller.handler.onSelectVariableHelp}" />
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputLabel 
+														value="#{payrollBundle.payroll_salary_expression}" />
+												</f:facet>
+												<aon:outputText value="#{to.name}" />
+											</aon:column>  
+											<aon:column styleClass="aon-editDataTable-textColumn">
+												<f:facet name="header">
+													<aon:outputLabel 
+														value="#{bundle.aon_description}" />
+												</f:facet>
+												<aon:outputText value="#{to.description}" />
+											</aon:column>  
+										</aon:editDataTable>
+										<aon:dataScroller2 for="variableHelperList" showNote="true" />
+									</aon:div>
 									
 								</aon:div>
 							</aon:div>

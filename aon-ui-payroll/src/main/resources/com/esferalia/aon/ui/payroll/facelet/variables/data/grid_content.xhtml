@@ -8,7 +8,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-160">
 		<f:facet name="header">
 			<aon:outputLabel for="#{controller.beanName}_name"
 				value="#{bundle.aon_name}" />
@@ -25,7 +25,7 @@
 				rendered="#{controller.handler.data.id!=null}"
 				actionListener="#{controller.handler.onShowVariableNameHelp}"
 				reRender="variableHelperModalContainer#{helperSuffix}"
-				styleClass="aon-icon-commandButton aon-icon-question"/>
+				styleClass="aon-icon-commandButton aon-button-goto"/>
 		</aon:div>
 		<f:facet name="footer">
 			<aon:div rendered="#{formNew}" > 
@@ -41,7 +41,7 @@
 					rendered="#{controller.handler.data.id==null}"
 					actionListener="#{controller.handler.onShowVariableNameHelp}"
 					reRender="variableHelperModalContainer#{helperSuffix}"
-					styleClass="aon-icon-commandButton aon-icon-question"/>
+					styleClass="aon-icon-commandButton aon-button-goto"/>
 			</aon:div>
 		</f:facet>
 	</aon:column>
