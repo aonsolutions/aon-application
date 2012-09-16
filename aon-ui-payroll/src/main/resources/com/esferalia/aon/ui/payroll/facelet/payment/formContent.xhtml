@@ -10,8 +10,6 @@
 	
 	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.paymentConcept}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-		<ui:param name="idRequired" value="#{true}" />
 	</ui:include>
 
 	<aon:outputLabel for="ContractPayment_startDate" value="#{bundle.aon_start_date}" />
@@ -37,7 +35,7 @@
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
-		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItem itemValue="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
 -->

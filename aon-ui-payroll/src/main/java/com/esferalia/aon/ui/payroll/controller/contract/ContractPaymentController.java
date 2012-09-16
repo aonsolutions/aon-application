@@ -63,7 +63,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	}
 	
 	public boolean isReadOnly(){
-		if(this.getPaymentsModel().getRowCount()>0){
+		if(this.getPaymentsModel().isRowAvailable() && this.getPaymentsModel().getRowCount()>0){
 			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()!=ExpressionScope.CONTRACT;
 		}
 		return true;
@@ -210,7 +210,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			}
 			paymentsModel = new ListDataModel(list);
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible inicializar lar percepciones";
+			String msg = "Imposible inicializar las percepciones";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
