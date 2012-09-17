@@ -1779,15 +1779,17 @@ INSERT INTO `system_payment` (`domain`,`type`,`payment_concept`,`description`,`d
   (@Domain,NULL,(SELECT id FROM payment_concept WHERE code = 'INDEM' and domain = @Domain),NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
 
 INSERT INTO `tax` (`domain`,`name`,`tax_type`,`percentage`,`surcharge`,`start_date`,`vat_deduction_type`,`withholding_type`) VALUES 
-  (@Domain,'GENERAL',1,18.000,4.000,'2010-07-01',0,0),
-  (@Domain,'REDUCIDO',1,8.000,1.000,'2010-07-01',0,0),
+  (@Domain,'GENERAL',1,21.000,4.000,'2012-09-01',0,0),
+  (@Domain,'REDUCIDO',1,10.000,1.000,'2012-09-01',0,0),
   (@Domain,'SUPERREDUCIDO',1,4.000,0.500,'2000-01-01',0,0),
   (@Domain,'SIN IVA',1,0.000,0.000,'2000-01-01',0,0),
   (@Domain,'IRPF',2,15.000,0.000,'2000-01-01',0,0);
 
 INSERT INTO `tax_detail` (`domain`,`tax`,`start_date`,`end_date`,`value`,`surcharge`) VALUES 
   (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='GENERAL'),'2000-01-01','2010-06-30',16.000,4.000),
-  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='REDUCIDO'),'2000-01-01','2010-06-30',7.000,1.000);
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='REDUCIDO'),'2000-01-01','2010-06-30',7.000,1.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='GENERAL'),'2010-07-01','2012-08-31',18.000,4.000),
+  (@Domain,(SELECT id FROM `tax` WHERE `domain`= @Domain AND `name`='REDUCIDO'),'2010-07-01','2012-08-31',8.000,1.000);
 
 INSERT INTO `warehouse` (`domain`,`name`,`workplace`) VALUES 
   (@Domain,'PRINCIPAL',NULL);
