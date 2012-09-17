@@ -180,14 +180,12 @@ public class PosFinanceController extends BasicController implements IPmsConstan
 	}
 
 	public List<SelectItem> getFinanceBatchList() throws ManagerBeanException {
-		PosFinanceSearchListener searchListener = (PosFinanceSearchListener)AonUtil.getRegisteredBean(POS_FINANCE_SEARCH_LISTENER_NAME);
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_PAYMENT), false);
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.TODO);
 		criteria.addEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_FINANCE_BATCH_TYPE), FinanceBatchType.NONE);
-		criteria.addGreaterThanOrEqualExpression(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ISSUE_DATE), searchListener.getEndDate());
-		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ID));
+		criteria.addOrder(fBatchBean.getFieldName(IEntityAlias.FINANCE_BATCH_ID), false);
 		List<SelectItem> fBatchList = new LinkedList<SelectItem>();
 		for (ITransferObject ito : fBatchBean.getList(criteria)) {
 			FinanceBatch fBatch = (FinanceBatch)ito;

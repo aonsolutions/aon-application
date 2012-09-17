@@ -40,8 +40,7 @@
 						value="#{pmsBundle.pms_to_invoice}"	immediate="#{true}" 
 						rendered="#{reservation.reservationPermission.invoiceAllowed}"
 						iconClass="aon-icon-favorite"
-						actionListener="#{reservation.onInvoiceShow}"
-						reRender="showInvoiceWindow">
+						actionListener="#{reservation.onInvoiceShow}">
 						<f:setPropertyActionListener target="#{reservation.showInvoiceWindow}"
 							value="#{true}" />
 					</aon:menuItem>

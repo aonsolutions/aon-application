@@ -96,6 +96,10 @@ public class ProjectReservationPermission {
 		return DateUtils.addDays(reservation.getEndDate(), 1).before(date);
 	}
 
+	public boolean isCheckInable(Date date) throws ManagerBeanException {
+		return reservation.isNoCheck() && isInHouse(date) && !getReservationUtils().isPendingRoomAssignation(reservation);
+	}
+
 	private boolean isCheckOutDay(Date date) {
 		return reservation.getEndDate().before(date) && DateUtils.addDays(reservation.getEndDate(), 1).after(date);
 	}
@@ -123,7 +127,7 @@ public class ProjectReservationPermission {
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		return reservation.isActive() && reservation.isNoCheck() && isInHouse(now) && !getReservationUtils().isPendingRoomAssignation(reservation);
+		return (reservation.isActive() || reservation.isInvoiced()) && isCheckInable(now);
 	}
 
 	public boolean isCheckOutAllowed() {
