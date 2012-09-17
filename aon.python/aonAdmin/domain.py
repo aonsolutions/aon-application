@@ -544,7 +544,8 @@ class newDomain:
             domain.insert(conn)
             conn.commit()
             self.__load_domain_default_values(domain)
-            domain.insert_user_scope(conn)
+            if domain.get_domain_type().is_parent():
+                domain.insert_user_scope(conn)
             if self.__arguments.is_verbose_enabled():
                 print "Commiting Transaction ..... ",
             conn.commit()
