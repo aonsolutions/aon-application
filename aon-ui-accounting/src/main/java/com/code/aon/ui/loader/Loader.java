@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -21,6 +20,7 @@ import javax.faces.event.AbortProcessingException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +28,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
 
 public class Loader implements ILoaderEngine {
@@ -45,7 +46,6 @@ public class Loader implements ILoaderEngine {
 	private static final String METADATA_MARK_1 = "1";
 	private static final String SEPARATOR_KEY = "Separador";
 	private static final String ENCODING_KEY = "Codificacion";
-	private PrintWriter log;
 	private LoaderParams params;
 	private LoaderFactoryManager factoryManager;
 	private Map<String, Map<String, Integer>> ids;
@@ -55,8 +55,7 @@ public class Loader implements ILoaderEngine {
 	private String sep = "|";
 	private Map<String, Column[]> columns;
 	
-	public Loader(LoaderParams params,PrintWriter log) {
-		this.log = log;
+	public Loader(LoaderParams params) {
 		this.params = params;
 		this.factoryManager = new LoaderFactoryManager(this);
 	}
@@ -135,9 +134,8 @@ public class Loader implements ILoaderEngine {
 	}
 	
 	public void log( String msg  ) {
-		log.print( msg );
-		log.print( "<br/>" );
-		log.flush();
+		LogPanelController logger = LogPanelController.getInstance();
+		logger.info(msg);
 	}
 	
 	private void parseMetaMark0(int line,String subLine) throws AonException {
@@ -262,8 +260,9 @@ public class Loader implements ILoaderEngine {
 		}
 	}
 	
-	public void load(InputStream input) throws AonException {
+	public void load(InputStream input,Session session) throws AonException {
 		int i = 0;
+		getParams().setBytesRead(0L);
 		try {
 			ids = new HashMap<String, Map<String,Integer>>();
 			int errors = 0;
@@ -274,6 +273,7 @@ public class Loader implements ILoaderEngine {
 			while (reader.ready()) {
 				++i;
 				String line = reader.readLine();
+				getParams().addBytes( line.length() );
 				if (!StringUtils.isBlank(line)) {
 					String mark = line.substring(0,1);
 					if (!METADATA_MARK_0.equals(mark) && !METADATA_MARK_1.equals(mark) ) {
@@ -292,6 +292,8 @@ public class Loader implements ILoaderEngine {
 						}
 						if (i%50 == 0) {
 							log("" + i + " líneas insertadas");
+							session.flush();
+							session.clear();
 						}
 					} else {
 						log ( "Skipping metadata line " + i);

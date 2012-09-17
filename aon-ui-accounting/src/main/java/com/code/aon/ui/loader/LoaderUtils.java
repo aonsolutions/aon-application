@@ -17,6 +17,7 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Segment;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class LoaderUtils {
@@ -126,6 +127,22 @@ public class LoaderUtils {
 			retentionAccount = getAccountingUtil().obtainDefaultAccount(DefaultAccounts.PAID_RETENTION_ACCOUNT);
 		}
 		return retentionAccount;
+	}
+
+	public Segment ensureSegment(String segmento) throws ManagerBeanException {
+		IManagerBean bankBean = BeanManager.getManagerBean(Segment.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(bankBean.getFieldName( IEntityAlias.SEGMENT_NAME) , segmento);
+		List<ITransferObject> list = bankBean.getList(c);
+		if (list != null && list.size() > 0) {
+			return (Segment) list.get(0);	
+		} 
+		if (StringUtils.isNotBlank(segmento)) {
+			Segment segment = new Segment();
+			segment.setName(segmento);
+			return (Segment) bankBean.insert(segment);
+		}
+		return null;
 	}
 
 }

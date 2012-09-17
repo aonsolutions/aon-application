@@ -1,7 +1,9 @@
 package com.code.aon.ui.loader.factory;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +21,8 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.RegistryPayMethod;
+import com.code.aon.registry.RegistrySegment;
+import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.LoaderParams;
@@ -29,6 +33,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class RegistryLoaderFactory {
 	
 	private LoaderUtils loaderUtils;
+	private Map<String,Segment> segments = new HashMap<String, Segment>();
 	
 	protected LoaderUtils getLoaderUtils() {
 		if (loaderUtils == null) {
@@ -58,8 +63,10 @@ public class RegistryLoaderFactory {
 		address.setAddress3(loaded.getDireccion3());
 		address.setZip(loaded.getCp());
 		address.setCity(loaded.getCiudad());
-		GeoZone geozone = ensureGeoZone(loaded.getPais(),loaded.getProvincia(),loaded.getNombreProvincia() );
-		address.setGeozone(geozone);
+		if (StringUtils.isNotBlank( loaded.getProvincia())) {
+			GeoZone geozone = ensureGeoZone(loaded.getPais(),loaded.getProvincia(),loaded.getNombreProvincia() );
+			address.setGeozone(geozone);
+		}
 		bean.insert(address);		
 	}
 	
@@ -123,6 +130,19 @@ public class RegistryLoaderFactory {
 			rPayMethod.setPayment(payMethod);
 		}
 		bean.insert(rPayMethod);
+	}
+	
+	public void insertRegistrySegment(Registry registry,String segmento) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistrySegment.class);
+		RegistrySegment rSegment = new RegistrySegment();
+		rSegment.setRegistry(registry);
+		Segment segment = segments.get(segmento);
+		if (segment == null) {
+			segment = getLoaderUtils().ensureSegment(segmento);
+			segments.put(segmento, segment);
+		}
+		rSegment.setSegment(segment);
+		bean.insert(rSegment);
 	}
 
 }

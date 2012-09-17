@@ -18,6 +18,8 @@ public class LoaderParams {
 	private WorkPlace workPlace;
 	private ProductCategory category;
 	private Period accountPeriod;
+	private Long bytesRead;
+	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIME_FORMATTER = new SimpleDateFormat("hh:mm:ss");
 	private static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,##0.00");
@@ -28,6 +30,12 @@ public class LoaderParams {
 		NUMBER_FORMATTER.setDecimalFormatSymbols(dfs);	
 	}
 
+	public Long getBytesRead() {
+		return bytesRead;
+	}
+	public void setBytesRead(Long bytesRead) {
+		this.bytesRead = bytesRead;
+	}
 	public Scope getScope() {
 		return scope;
 	}
@@ -73,6 +81,9 @@ public class LoaderParams {
 	}
 	public DecimalFormat getNumberFormatter() {
 		return NUMBER_FORMATTER; 
+	}
+	public void addBytes(int length) {
+		setBytesRead( getBytesRead() + bytesRead);
 	}
 	
 }

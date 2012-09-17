@@ -6,6 +6,25 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+		<ui:param name="innerToolbar" value="true" />
+		<ui:param name="toolbarID" value="#{controller.beanName}Toolbar" />
+		<ui:define name="toolbarContent">
+			<aon:selectOneMenu value="#{markPrinter.printOption}"
+				styleClass="aon-form-selectOneMenu-field">
+				<f:selectItems value="#{markPrinter.printOptions}" />
+			</aon:selectOneMenu>
+			
+			<aon:htmlCommandLink id="alumnMarkList-report"
+				value="#{bundle.aon_report}"
+				target="_blank" action="#{report.onExecute}"
+				styleClass="aon-finding-toolbar-item aon-icon-pdf"
+				accesskey="#{bundle.aon_key_print}">
+				<f:param name="reportKey" value="alumnMarkList" />
+			</aon:htmlCommandLink>
+		</ui:define>
+	</ui:decorate>
 
 	<aon:div styleClass="aon-margin-bottom">
 		<aon:panelGrid columns="2">

@@ -11,13 +11,6 @@
 
 	<ui:define name="content">
 
-	 	<a4j:region>
-        	<h:form>
-            	<a4j:poll id="poll" interval="500" enabled="#{aonLoader.enablePolling}" 
-            		reRender="poll,execute,messagesContainer" focus="scrollTo"/>
-        	</h:form>
-    	</a4j:region>
-
 		<aon:form id="aonLoaderForm">
 
     		<ui:decorate
@@ -27,15 +20,23 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_form}" />
 
 				<ui:define name="toolbarContent">
+					<aon:commandButton id="execute"
+						value="#{accountingBundle.aon_loader_load}"
+						actionListener="#{aonLoader.onShowPanel}"
+						rendered="#{aonLoader.aonFile.size > 0}"
+						reRender="showNewMessageWindow"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
+<!-- 					
 					<aon:commandButton id="execute" 
 						value="#{accountingBundle.aon_loader_load}"
 						actionListener="#{aonLoader.onLoad}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						rendered="#{aonLoader.aonFile.size > 0}"
-						disabled="#{aonLoader.enablePolling}"
 						reRender="poll,execute,paramsGrid"
 						focus="scrollTo"
-						onclick="if (!confirm('Se va a cargar  el contenido del archivo. Desea continuar?')) return false;"/>
+						onclick="if (!confirm('Se va a cargar  el contenido del archivo. Desea continuar?')){ return false;}"/>
+ -->
+						
 					<aon:htmlCommandLink  id="help" target="_new" 
 						value="#{bundle.aon_help}"
 						actionListener="#{aonLoader.onHelp}"
@@ -101,27 +102,49 @@
 							</aon:div>
 						</c:if>
 					</aon:panelGrid>
-	
-					<aon:div id="messagesContainer" rendered="#{aonLoader.enablePolling or aonLoader.logString != null}"  
-							style="height:300px;
-								   overflow: auto; 
-								   background-color:#444444; 
-								   color: #DDDDDD;
-								   font-family: Monospace;
-								   margin: 10px; 
-								   padding: 10px;">
-						<aon:outputText value ="#{aonLoader.logString}" escape="false"/>
-						<aon:inputText id="scrollTo" value="&#160;" size="1" style="border: solid white 0px; background-color:#444444; "/>
-						<aon:outputText value ="Procesando ...." rendered="#{aonLoader.enablePolling}"/>
-					</aon:div>
 				</c:if>
 			</aon:div>
-
 		</aon:form>
 		
-<!-- 		
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
- -->
+		<aon:panelGroup id="showNewMessageWindow">
+			<c:if test="#{aonLoader.progressionPanelVisible}">
+				<aon:valueParam name="windowHeight" default="50" />
+				<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
+					showWhenRendered="#{aonLoader.progressionPanelVisible}"
+					minHeight="70" height="#{windowHeight}" width="250" >
+					
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="Confirme, por favor." />
+						</aon:div>
+					</f:facet>
+					
+					<f:facet name="controls">
+						<aon:form>
+							<aon:commandButton type="button" styleClass="aon-popupWindow-close"
+								actionListener="#{aonLoader.onStart}"
+								immediate="true" reRender="showNewMessageWindow">
+								<rich:componentControl for="showNewMessageWindow" operation="hide"
+									event="onclick" />
+							</aon:commandButton>
+						</aon:form>
+					</f:facet>				
+					<aon:form>	
+						<aon:commandButton id="launch"
+							value="Pulse para Comenzar la carga"
+							styleClass="aon-icon-accept"
+							style="padding-left: 15px;"
+							actionListener="#{aonLoader.onLoad}"
+							reRender="#{sendButtonReRender}" >
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+						</aon:commandButton>
+					</aon:form>
+				</rich:modalPanel>
+				<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+					<ui:param name="logPanelTitle" value="#{accountingBundle.aon_loader_module}" />
+				</ui:include>		
+			</c:if>
+		</aon:panelGroup>
+		
 	</ui:define>
-
 </ui:composition>

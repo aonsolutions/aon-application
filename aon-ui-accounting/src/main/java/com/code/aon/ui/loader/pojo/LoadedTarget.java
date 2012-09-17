@@ -8,6 +8,7 @@ public class LoadedTarget extends LoadedRegistry{
 	public Integer re;
 	public Integer transaccion;
 	public Integer retencion;
+	public String segmento;
 	
 	public Integer getRe() {
 		return re;
@@ -38,6 +39,12 @@ public class LoadedTarget extends LoadedRegistry{
 	}
 	public boolean isWithholding() {
 		return (getRetencion()==null?false:(getRetencion() == 1));
+	}
+	public String getSegmento() {
+		return segmento;
+	}
+	public void setSegmento(String segmento) {
+		this.segmento = segmento;
 	}
 	
 }
