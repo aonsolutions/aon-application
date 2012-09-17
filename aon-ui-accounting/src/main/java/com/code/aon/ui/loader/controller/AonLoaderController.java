@@ -40,12 +40,19 @@ public class AonLoaderController {
 	private PrintWriter log;
 
 	private boolean progressionPanelVisible;
+	private boolean loadPressed;
 
 	public boolean isProgressionPanelVisible() {
 		return progressionPanelVisible;
 	}
 	public void setProgressionPanelVisible(boolean progressionPanelVisible) {
 		this.progressionPanelVisible = progressionPanelVisible;
+	}
+	public boolean isLoadPressed() {
+		return loadPressed;
+	}
+	public void setLoadPressed(boolean loadPressed) {
+		this.loadPressed = loadPressed;
 	}
 	public AonFile getAonFile() {
 		return this.aonFile;
@@ -95,10 +102,12 @@ public class AonLoaderController {
 		setLog( null );
 		logString = null;
 		
+		setLoadPressed(false);
 		setProgressionPanelVisible(false);
 	}
 	
 	public void onLoad(ActionEvent event ) {
+		LogPanelController logger = LogPanelController.getInstance();
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName(Invoice.class.getName());
@@ -110,7 +119,6 @@ public class AonLoaderController {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
-			
 			ByteArrayInputStream input = new ByteArrayInputStream(getAonFile().getData());
 			loader.loadMetadata(input);
 			input = new ByteArrayInputStream(getAonFile().getData());
@@ -118,9 +126,7 @@ public class AonLoaderController {
 			input = new ByteArrayInputStream(getAonFile().getData());
 			loader.load(input,session);
 			HibernateUtil.commitTransaction(sessionName);
-			AonUtil.addInfoMessage("Carga de datos finalizada!");
 		} catch (Exception e) {
-			LogPanelController logger = LogPanelController.getInstance();
 			logger.finish();
 			AonUtil.addErrorMessage(e.getMessage());
 			try {
@@ -143,17 +149,21 @@ public class AonLoaderController {
 			HibernateUtil.closeSession(sessionName);
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			setProgressionPanelVisible(false);
 	        loader.setFactoryManager(null);
+	        setLoadPressed(false);
 		}
 	}
 	
 	public void onShowPanel(ActionEvent event) {
 		setProgressionPanelVisible(true);
+		setLoadPressed(true);
+		LogPanelController logger = LogPanelController.getInstance();
+		logger.reset();
 	}
 	
 	public void onClosePanel(ActionEvent event) {
 		setProgressionPanelVisible(false);
+		setLoadPressed(false);		
 	}
 	
 	public void onHelp(ActionEvent event ) {

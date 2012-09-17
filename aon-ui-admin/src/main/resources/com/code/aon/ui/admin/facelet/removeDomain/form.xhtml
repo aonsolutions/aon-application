@@ -22,7 +22,7 @@
 						actionListener="#{adminRemoveDomain.onRemove}"
 						reRender="domainFormContainer"
 						disabled="#{adminRemoveDomain.domain == null}"
-						onclick="if (!confirm('#{bundle.aon_remove} #{adminRemoveDomain.domain.description}?'))  return false;"
+						onclick="if (!confirm('#{bundle.aon_remove}?'))  return false;"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 				</ui:define>
 			</ui:decorate>

@@ -1,6 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +27,10 @@ import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.ast.RelationalType;
+import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
+import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -34,6 +40,7 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
@@ -55,7 +62,52 @@ public abstract class AbstractVariableHandler {
 	private boolean isNew;
 	
 	private IController controller;
+	
+	private String suggestAlias;
+	private String filter;
+	private Integer[] variableScopeFilter;
+	
+	public String getSuggestAlias() {
+		return suggestAlias;
+	}
+
+	public void setSuggestAlias(String suggestAlias) {
+		this.suggestAlias = suggestAlias;
+	}
+
+	public String getFilter() {
+		return filter;
+	}
+
+	public void setFilter(String filter) {
+		this.filter = filter;
+	}
 		
+	public Integer[] getVariableScopeFilter() {
+		return variableScopeFilter;
+	}
+
+	public void setVariableScopeFilter(Integer[] variableScopeFilter) {
+		this.variableScopeFilter = variableScopeFilter;
+	}
+	
+	private boolean isSystemVariableScopeFilter() {
+		return Arrays.asList(getVariableScopeFilter()).contains(0);
+	}
+
+	private boolean isContextVariableScopeFilter() {
+		return Arrays.asList(getVariableScopeFilter()).contains(1);
+	}
+	
+	public List<SelectItem> getFilterVariableScopes(){
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(0, "Sistema");
+		types.add(item);
+		item = new SelectItem(1, "Contexto");
+		types.add(item);
+		return types;
+	}
+
 	public AbstractVariableHandler(IController controller) {
 		this.controller = controller;
 	}
@@ -107,6 +159,7 @@ public abstract class AbstractVariableHandler {
 	public DataModel getVariablesModel() {
 		return variablesModel;
 	}
+
 	public void setVariablesModel(DataModel variablesModel) {
 		this.variablesModel = variablesModel;
 	}
@@ -360,46 +413,88 @@ public abstract class AbstractVariableHandler {
 		this.occupationType = occupationType;
 	}
 	public DataModel getVariableHelperModel() {
-		if(variableHelperModel == null){
+//		if(variableHelperModel == null){
 			variableHelperModel = new ListDataModel(getVariableHelpList());
-		}
+//		}
 		return variableHelperModel;
 	}
 	public void setVariableHelperModel(DataModel variableHelperModel) {
 		this.variableHelperModel = variableHelperModel;
 	}
+//	@Override
+//	public DataModel getModel() throws ManagerBeanException {
+//		this.clearCriteria();
+//		if (model == null || StringUtils.isBlank(getFilter())) {
+//			initializeModel();
+//		} else {
+//			Expression exp;
+//			try {
+//				exp = ExpressionUtilities.getExpression(getFilter(), getFieldName(suggestAlias));
+//				updateTextExpression(exp);
+//				getCriteria().addExpression(exp);
+//			} catch (ExpressionException e) {
+//				throw new ManagerBeanException(e.getMessage(), e);
+//			}
+//		}
+//		this.onSearch(null);
+//		return super.getModel();
+//	}
+	
+	private void updateTextExpression( Expression expression ) {
+		RelationalExpressionImpl re = (RelationalExpressionImpl) expression;
+		re.setType(RelationalType.LIKE);
+		ConstantExpressionImpl ce = (ConstantExpressionImpl) re.getRightExpression();
+		ce.setData( "%" + ce.getData().toString().toLowerCase() + "%" );
+	}
 	private List<SimpleVariable> getVariableHelpList() {
 		List<SimpleVariable> list = new LinkedList<SimpleVariable>();
-		if(isExpressionHelp()){
-			// system data variables
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
-				Criteria criteria = new Criteria();
-				
-				//TODO ¿Utilizar las fechas del pojo activo?
-				Date date = new Date();
-				
-				String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
-				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
-				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
-				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
-				for (ITransferObject to: bean.getList(criteria)) {
-					SystemData data = (SystemData) to;
-					SimpleVariable sv = new SimpleVariable();
-					sv.setName(data.getName());
-					sv.setDescription(data.getComments());
-					list.add(sv);		
+//		if(isExpressionHelp()){
+			if(isSystemVariableScopeFilter()){				
+				try {
+					IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
+					Criteria criteria = new Criteria();
+					criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.SYSTEM_DATA_START_DATE),new Date());
+					String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
+					Expression ex1 = ExpressionUtilities.getNullExpression(alias);
+					Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,new Date());
+					criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
+					if (StringUtils.isNotBlank(getFilter())) {
+						Expression exp1;
+						Expression exp2;
+						try {
+							exp1 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_COMMENTS));
+							updateTextExpression(exp1);
+							exp2 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_NAME));
+							updateTextExpression(exp2);
+							criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+						} catch (ExpressionException e) {
+							throw new ManagerBeanException(e.getMessage(), e);
+						}
+					}
+					for (ITransferObject to: bean.getList(criteria)) {
+						SystemData data = (SystemData) to;
+						SimpleVariable sv = new SimpleVariable();
+						sv.setName(data.getName());
+						sv.setDescription(data.getComments());
+						list.add(sv);		
+					}
+				} catch (ManagerBeanException e) {
+					String msg = "Imposible mostrar las variables del sistema(" + e.getMessage() +")";
+					LOGGER.error(msg);
 				}
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible mostrar las variables del sistema(" + e.getMessage() +")";
-				LOGGER.error(msg);
 			}
-		}
-		for(ContextVariable v: ContextVariable.values()){
-			SimpleVariable sv = new SimpleVariable();
-			sv.setName(v.getName());
-			sv.setDescription(v.getDescription(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
-			list.add(sv);
+//		}
+		if(isContextVariableScopeFilter()){
+			for(ContextVariable v: ContextVariable.values()){
+				SimpleVariable sv = new SimpleVariable();
+				sv.setName(v.getName());
+				sv.setDescription(v.getDescription(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
+				if(StringUtils.isBlank(getFilter()) 
+						|| StringUtils.contains(sv.getDescription().toLowerCase(), getFilter().toLowerCase())
+						|| StringUtils.contains(sv.getName().toLowerCase(),getFilter().toLowerCase())){
+					list.add(sv);
+				}
+			}
 		}
 		return list;
 	}
@@ -414,6 +509,8 @@ public abstract class AbstractVariableHandler {
 		setVariableHelperModel(null);
 		setModalHelperPanelVisible(true);
 		setExpressionHelp(false);
+		Integer[] types = {0, 1};
+		setVariableScopeFilter( types );
 	}
 	public void onShowVariableExpressionHelp(ActionEvent event) {
 		setVariableHelperModel(null);
@@ -425,7 +522,7 @@ public abstract class AbstractVariableHandler {
 	}
 	public void onSelectVariableHelp(ActionEvent event) {
 		onCancelVariableHelp(event);
-		String var = ((SimpleVariable) getVariableHelperModel().getRowData()).getName();
+		String var = ((SimpleVariable) variableHelperModel.getRowData()).getName();
 		if(isExpressionHelp()){
 			getData().setExpression((getData().getExpression()==null?"":getData().getExpression()) +" "+ var);
 		} else {

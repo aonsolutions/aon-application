@@ -72,13 +72,13 @@
 						value="#{payrollBundle.payroll_salary_irpf_expression}" />
 					<aon:div id="PaymentConcept_taxation">
 						<aon:selectOneMenu id="PaymentConcept_irpf_taxation"  
-							value="#{paymentConcept.taxation}">
+							value="#{paymentConcept.to.taxation}">
 							<f:selectItems value="#{payrollCollections.taxationTypes}" />
 							<a4j:support event="onchange" reRender="PaymentConcept_taxation" ajaxSingle="true" />
 						</aon:selectOneMenu>
 						<br />
 						<aon:inputTextarea id="PaymentConcept_irpf_expression" cols="60" rows="5" maxlength="128"
-							rendered="#{paymentConcept.taxation=='MANUAL'}"
+							rendered="#{paymentConcept.to.taxation=='MANUAL'}"
 							value="#{paymentConcept.to.irpfExpression}">
 							<f:validateLength maximum="128"/>
 							<a4j:region>
@@ -105,13 +105,13 @@
 						value="#{payrollBundle.payroll_salary_quote_expression}" />
 					<aon:div id="PaymentConcept_quote">
 						<aon:selectOneMenu id="PaymentConcept_quote_quote"  
-							value="#{paymentConcept.quote}">
+							value="#{paymentConcept.to.quote}">
 							<f:selectItems value="#{payrollCollections.quoteTypes}" />
 							<a4j:support event="onchange" reRender="PaymentConcept_quote" ajaxSingle="true" />
 						</aon:selectOneMenu>
 						<br />
 						<aon:inputTextarea id="PaymentConcept_quote_expression" cols="60" rows="5" maxlength="128"
-							rendered="#{paymentConcept.quote=='MANUAL'}"
+							rendered="#{paymentConcept.to.quote=='MANUAL'}"
 							value="#{paymentConcept.to.quoteExpression}">
 							<f:validateLength maximum="128"/>
 							<a4j:region>

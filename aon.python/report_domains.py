@@ -21,7 +21,7 @@ class ListDomains(object):
         try: 
             
             system_domain_modules = ("MARKETING","COMERCIAL","GESTION","TESORERIA"
-                               ,"ALMACEN","EXPEDIENTES","CONTABILIDAD","FISCAL","LABORAL","DOCUMENTAL")
+                               ,"ALMACEN","EXPEDIENTES","CONTABILIDAD","FISCAL","LABORAL","DOCUMENTAL","GARAGE","ACADEMY")
             
             conn = self.__arguments.get_connection(nodatabase=True)
             
@@ -32,36 +32,69 @@ class ListDomains(object):
             cur.execute(stmt)
             schemas = cur.fetchall()
             
-            print "DATABASE|ID DOMINIO|DOMINIO PADRE|NOMBRE DOMINIO|ALMACENAMIENTO|USUARIOS|MULTIDOMINIO|EXTENSIONES|",
+            print "DATABASE|ACTIVO|ID DOMINIO|NOMBRE DOMINIO|DOMINIO PADRE|ALMACENAMIENTO|USUARIOS|MULTIDOMINIO|CREADOR|EXTENSIONES|",
             for dm  in system_domain_modules:
                 print dm + "|",
             print
             
             for schema in schemas:
                 dom_cur = conn.cursor()
-                stmt = "SELECT id,name,parent,maxTotalDocumentSize,maxDefinedUsers,domainManagement FROM `"+schema[0]+"`.`domain` ORDER BY `parent`,`name`";
+                stmt = "SELECT id,name,parent,maxTotalDocumentSize,maxDefinedUsers,domainManagement,owner,active FROM `"+schema[0]+"`.`domain` ORDER BY `parent`,`name`";
                 dom_cur.execute(stmt)
                 domains = dom_cur.fetchall()
                 for domain in domains:
                     domain_name = domain[1]
-                    print schema[0] + "|"+ str(domain[0])+ "|" + domain[1] + "|" + str(domain[2])+ "|",
+                    
+                    # DATABASE        
+                    print schema[0] + "|",
+                    
+                    # ACTIVO
+                    if domain[7] == None or domain[7] == 1:
+                        print "|",
+                    else:
+                        print "NO|",
+                        
+                    #ID DOMINIO
+                    print str(domain[0])+ "|",
+                    
+                    #NOMBRE DOMINIO
+                    print domain[1] + "|",
+                    
+                    #DOMINIO PADRE
+                    if domain[2] == None:
+                        print "|",
+                    else:
+                        print str(domain[2]) + "|",
+                    
+                    #ALMACENAMIENTO
                     if domain[3] == None:
-                        print "0" + "|",
+                        print "0|",
                     else:
                         print str(domain[3]) + "|",
+                        
+                    #USUARIOS
                     if domain[4] == None:
-                        print "0" + "|",
+                        print "0|",
                     else:
                         print str(domain[4]) + "|",
-                    if domain[5] == None:
-                        print "0" + "|",
-                    else:
-                        print str(domain[5]) + "|",
                         
+                    #MULTIDOMINIO
+                    if domain[5] == None or domain[5] == 0:
+                        print "|",
+                    else:
+                        print "SI|",
+                        
+                    #CREADOR
+                    if domain[6] == None:
+                        print "|",
+                    else:
+                        print str(domain[6]) + "|",
+                        
+                    #EXTENSIONES
                     mod = conn.cursor()
                     mod.execute("SELECT module FROM `"+schema[0]+"`.domain_application_module WHERE domain = %s",(str(domain[0]),))
                     modules = mod.fetchall()
-                    domain_modules = ["NO","NO","NO","NO","NO","NO","NO","NO","NO","NO"]
+                    domain_modules = ["NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO","NO"]
                     for module in modules:
                         domain_modules[module[0]] = "SI"
                     mod.close

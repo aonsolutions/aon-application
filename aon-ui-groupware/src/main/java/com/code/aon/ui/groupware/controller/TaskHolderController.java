@@ -12,11 +12,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.User;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
@@ -40,6 +44,10 @@ public class TaskHolderController extends RegistryController {
 		try {
 			IManagerBean userBean = BeanManager.getManagerBean(User.class);
 			Criteria criteria = new Criteria();
+			
+			String alias = userBean.getFieldName(IEntityAlias.USER_DOMAIN);
+			addParentDomainExpression(criteria,alias);
+			
 			criteria.addEqualExpression(userBean.getFieldName(IEntityAlias.USER_ACTIVE),true);
 			List<?> list = userBean.getList(criteria);
 			List<User> users = (List<User>) list;
@@ -62,6 +70,18 @@ public class TaskHolderController extends RegistryController {
 		}
 		return userItems;		 
 	}
+	private void addParentDomainExpression(Criteria criteria, String alias) {
+		criteria.setSkipDomainFilter(true);
+		Integer domainId = DomainManager.getCurrentDomain();
+		Expression domainExpression = ExpressionUtilities.getEqualExpression(alias, domainId);
+    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+    	if ( parentDomainId != null ) {
+    		Expression parentDomainExpression = ExpressionUtilities.getEqualExpression(alias, parentDomainId);
+    		domainExpression = ExpressionUtilities.getOrExpression(domainExpression, parentDomainExpression);	
+    	}
+    	criteria.addExpression(domainExpression);
+	}
+
 	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
 		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 

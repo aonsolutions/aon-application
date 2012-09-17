@@ -111,10 +111,12 @@ public class CompanyImagesController extends RegistryAttachController implements
 	
 	public void update(RegistryAttachment attachment ) {
 		byte[] data = getAonFile().getData();
-		if ( (width != image.getWidth()) || (height != image.getHeight()) ) {
-			BufferedImage newImage = ImageUtil.scale(image, width, height);
-			String format = (getAonFile().getMimeType() != null) ? getAonFile().getMimeType().getExtension() : null;
-			data = ImageUtil.getImage(newImage, format);
+		if ( image != null ) {
+			if ( (width != image.getWidth()) || (height != image.getHeight()) ) {
+				BufferedImage newImage = ImageUtil.scale(image, width, height);
+				String format = (getAonFile().getMimeType() != null) ? getAonFile().getMimeType().getExtension() : null;
+				data = ImageUtil.getImage(newImage, format);
+			}			
 		}
 		attachment.setData(data);
 		MimeType mimeType = CompanyImagesController.getMimeType(getAonFile().getFileName(), data);

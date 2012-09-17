@@ -33,6 +33,7 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 		super.beforeBeanAdded(event);
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
+		imagesController.init(attach.getData());
 		imagesController.update(attach);	
 	}
 
@@ -42,6 +43,15 @@ public class CompanyImagesControllerListener extends RegistryAttachControllerLis
 		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
 		RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 		imagesController.update(attach);	
+	}
+
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		super.afterBeanCreated(event);
+		CompanyImagesController imagesController = (CompanyImagesController)event.getController();
+		imagesController.setImage(null);
+		imagesController.setAonFile(new AonFile());
 	}	
-		
+	
 }
