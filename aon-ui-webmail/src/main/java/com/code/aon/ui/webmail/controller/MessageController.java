@@ -1166,5 +1166,17 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	public AonMessage getSentMessage() {
 		return sentMessage;
 	}
+
+	public void onSendEmail(ActionEvent event) {
+		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
+		if (mailConfig.getMailAccountCount() > 0) {
+			initNewMessage();
+			FacesContext context = FacesContext.getCurrentInstance();
+			Object email = context.getExternalContext().getRequestParameterMap().get("email");
+			setRecipientsTo(email.toString());
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
+		}
+	}
 	
 }

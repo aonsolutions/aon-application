@@ -2,11 +2,9 @@ package com.code.aon.ui.registry.controller;
 
 import static com.code.aon.ui.registry.controller.IRegistryConstants.BUNDLE_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.REGISTRY_DOCUMENT_ERROR;
-import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CONFIG;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ClassUtils;
@@ -24,9 +22,6 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
-import com.code.aon.ui.webmail.controller.MailConfigController;
-import com.code.aon.ui.webmail.controller.MessageController;
 
 public class RegistryController extends BasicController {
 
@@ -175,19 +170,6 @@ public class RegistryController extends BasicController {
 	public boolean isNaturalType() {
 		IRegistry iRegistry = (IRegistry) getTo();
 		return iRegistry.getRegistry().getType().equals(RegistryType.NATURAL);
-	}
-
-	public void onSendEmail(ActionEvent event) {
-		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
-		if (mailConfig.getMailAccountCount() > 0) {
-			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-			messageController.initNewMessage();
-			FacesContext context = FacesContext.getCurrentInstance();
-			Object email = context.getExternalContext().getRequestParameterMap().get("email");
-			messageController.setRecipientsTo(email.toString());
-		} else {
-			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
-		}
 	}
 
 	public void onChangeRegistryType(ActionEvent event) {
