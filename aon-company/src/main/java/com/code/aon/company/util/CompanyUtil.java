@@ -17,9 +17,9 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyUtil {
 
-	private static GeoZone companyGeoZone;
+	private GeoZone companyGeoZone;
 
-	public static GeoZone getCompanyGeoZone() throws ManagerBeanException {
+	public GeoZone getCompanyGeoZone() throws ManagerBeanException {
 		if (companyGeoZone == null) {
 			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
 			Iterator<?> iterator = companyBean.getList(null).iterator();
