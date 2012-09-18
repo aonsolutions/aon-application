@@ -11,12 +11,21 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 
 public class RegistryAddressControllerListener extends ControllerAdapter implements IRegistryConstants {
 
+	private CompanyUtil companyUtil;
+
+	public CompanyUtil getCompanyUtil() {
+		if (companyUtil == null) {
+			companyUtil = new CompanyUtil();
+		}
+		return companyUtil;
+	}
+
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			RegistryAddress to = (RegistryAddress)event.getController().getTo();
 			to.setStreetType(StreetType.CL);
-			to.setGeozone(CompanyUtil.getCompanyGeoZone());
+			to.setGeozone(getCompanyUtil().getCompanyGeoZone());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

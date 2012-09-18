@@ -28,7 +28,8 @@ public class RegistryFormListener extends ControllerAdapter {
 	private RegistryMedia cellular;
 	private RegistryMedia fax;
 	private RegistryMedia email;
-	private RegistryMedia web;	
+	private RegistryMedia web;
+	private CompanyUtil companyUtil;
 	
 	public RegistryAddress getMainAddress() {
 		return mainAddress;
@@ -77,7 +78,14 @@ public class RegistryFormListener extends ControllerAdapter {
 	public void setWeb(RegistryMedia web) {
 		this.web = web;
 	}
-	
+
+	public CompanyUtil getCompanyUtil() {
+		if (companyUtil == null) {
+			companyUtil = new CompanyUtil();
+		}
+		return companyUtil;
+	}
+
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		initDocument(getRegistry(event));
@@ -86,7 +94,7 @@ public class RegistryFormListener extends ControllerAdapter {
 		getMainAddress().setAddressType(AddressType.MAIN);
 		getMainAddress().setStreetType(StreetType.CL);
 		try {
-			getMainAddress().setGeozone(CompanyUtil.getCompanyGeoZone());
+			getMainAddress().setGeozone(getCompanyUtil().getCompanyGeoZone());
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
