@@ -51,10 +51,12 @@
 						<f:selectItems value="#{corporateIdentityAttach.domainScopes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputText value="#{bundle.aon_document_download_url}" />
-					<aon:outputLink target="_blank" value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
-						<aon:outputText value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
-				    </aon:outputLink>				
+					<c:if test="#{!corporateIdentityAttach.new}" >
+						<aon:outputText value="#{bundle.aon_document_download_url}" />
+						<aon:outputLink target="_blank" value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
+							<aon:outputText value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
+					    </aon:outputLink>
+					</c:if>
 			
 				</aon:panelGrid>
 			</aon:div>
