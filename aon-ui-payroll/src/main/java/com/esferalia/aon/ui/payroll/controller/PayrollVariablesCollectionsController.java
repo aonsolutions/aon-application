@@ -25,11 +25,11 @@ public class PayrollVariablesCollectionsController {
 		for( ContractType p : ContractType.values() ) {
 			List<SelectItem> subList = new ArrayList<SelectItem>();
 			for( ContractCode c : p.getCodes() ) {
-				String name = c.getName(locale);
+				String name = getAbbreviatedSelectItemLabel(c.getName(locale));
 				SelectItem item = new SelectItem(c, name);
 				subList.add(item);			
 			}
-			SelectItemGroup group = new SelectItemGroup(p.getName(locale), p.getName(locale), false, subList.toArray(new SelectItem[0]));
+			SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(p.getName(locale)), p.getName(locale), false, subList.toArray(new SelectItem[0]));
 			list.add(group);
 		}
 		return list;
@@ -51,8 +51,15 @@ public class PayrollVariablesCollectionsController {
 	
 	private String getFormattedSelectItemLabel(String name) {
 		if(name.length()>20){
-//			name = name.substring(0, 80)+"\r\n &#13; "+name.substring(80, name.length());
-			name = name.substring(0, 20)+" &#13;&#10; "+name.substring(20, name.length());
+//			return name.substring(0, 80)+"\r\n &#13; "+name.substring(80, name.length());
+			return name.substring(0, 20)+" &#13;&#10; "+name.substring(20, name.length());
+		}
+		return name;
+	}
+
+	private String getAbbreviatedSelectItemLabel(String name) {
+		if(name.length()>NAME_LENGHT_80){
+			return name.substring(0, NAME_LENGHT_80)+"...";
 		}
 		return name;
 	}
@@ -74,7 +81,7 @@ public class PayrollVariablesCollectionsController {
 		for( QuoteGroup p : QuoteGroup.values() ) {
 			String name = p.getName(locale);
 //			SelectItem item = new SelectItem(p, getFormattedSelectItemLabel(name), null, false, false);
-			SelectItem item = new SelectItem(p, name);
+			SelectItem item = new SelectItem(p, getAbbreviatedSelectItemLabel(name));
 			list.add(item);			
 		}
 		return list;
@@ -85,7 +92,7 @@ public class PayrollVariablesCollectionsController {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for( OccupationType p : OccupationType.values() ) {
 			String name = p.getName(locale);
-			SelectItem item = new SelectItem(p, name);
+			SelectItem item = new SelectItem(p, getAbbreviatedSelectItemLabel(name));
 			list.add(item);			
 		}
 		return list;

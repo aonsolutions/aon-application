@@ -8,16 +8,16 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:div rendered="#{formEdit}" style="display: inline;" >
-		<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
-			title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_free_text_cancel):(payrollBundle.payroll_variable_free_text)}" 
-			value="&#160;" ajaxSingle="true"
-			rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
-			reRender="variableHelperModalContainer#{helperSuffix}"
-			actionListener="#{controller.handler.onSelectExpressionEditor}"
-			styleClass="aon-icon-commandButton #{(controller.handler.data.enableExpressionEditor)?('aon-icon-cancel'):('aon-icon-edit')}"/>
-	</aon:div>
-	<aon:div rendered="#{formEdit or formNew}" style="display: inline;" >
+	<aon:panelGrid rendered="#{formEdit or formNew}" columns="2" columnClasses="aon-noborder, aon-noborder">
+		<aon:div rendered="#{formEdit}" style="display: inline;" >
+			<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
+				title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				value="&#160;" ajaxSingle="true"
+				rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
+				reRender="variableHelperModalContainer#{helperSuffix}, #{container}"
+				actionListener="#{controller.handler.onSelectExpressionEditor}"
+				styleClass="aon-icon-commandButton #{(controller.handler.data.enableExpressionEditor)?('aon-icon-cancel'):('aon-icon-edit')}"/>
+		</aon:div>
 			
 		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='DOUBLE'}"
@@ -26,9 +26,9 @@
 		</aon:inputText>
 	
 		<rich:inputNumberSpinner id="#{inputTextId}_INTEGER#{editorSuffix}"
-			rendered="#{variableType=='INTEGER'}"
+			rendered="#{variableType=='INTEGER'}" 
 			value="#{controller.handler.expression}" inputSize="4" >
-  		</rich:inputNumberSpinner>
+		</rich:inputNumberSpinner>
 	
 		<h:selectBooleanCheckbox id="#{inputTextId}_BOOLEAN#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='BOOLEAN'}"
@@ -40,6 +40,13 @@
 			value="#{controller.handler.expression}" maxlength="128" size="32" >
 			<f:validateLength maximum="128"/>		
 		</aon:inputText>
+
+		<aon:selectInputDate id="#{inputTextId}_DATE#{editorSuffix}" required="#{required}" 
+			rendered="#{variableType=='DATE'}" 
+			inputSize="10" renderAsPopup="true" enableManualInput="true"
+			value="#{controller.handler.expression}" 
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
 	
 		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='EXPRESSION'}" 
@@ -87,7 +94,7 @@
 			<f:validateLength maximum="128"/>
 		</aon:inputText>
 	
-	</aon:div>
+	</aon:panelGrid>
 	
 	<aon:div rendered="#{formList}" >
 		<aon:outputText rendered="#{variableType=='DOUBLE'}" value="#{data.doubleExpression}" >
@@ -96,14 +103,17 @@
 	
 		<aon:outputText rendered="#{variableType=='INTEGER'}" value="#{data.expression}" />
 	
-		<aon:outputText value="&#160;"  
+		<aon:outputText rendered="#{variableType=='BOOLEAN'}" value="&#160;"  
 			styleClass="#{(data.expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
-			style="padding-bottom: 5px;"
-			rendered="#{variableType=='BOOLEAN'}"/>
+			style="padding-bottom: 5px;" />
 	
-		<aon:outputText rendered="#{variableType=='STRING'}" styleClass="aon-italic" 
-			value="#{data.expression}" />
-	
+		<aon:outputText rendered="#{variableType=='STRING'}" styleClass="aon-italic" value="#{data.expression}" />
+
+		<aon:outputText rendered="#{variableType=='DATE'}"  value="#{data.expression}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+		
 		<aon:outputText rendered="#{variableType=='EXPRESSION'}" value="#{data.expression}" />
 	
 		<aon:outputText rendered="#{variableType=='TABLE'}" value="#{data.expression}" />

@@ -1,8 +1,9 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,10 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +44,6 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
@@ -178,9 +181,10 @@ public abstract class AbstractVariableHandler {
 	}
 	public void onSelectVariable(ActionEvent event) {
 		initEditor();
-		setData((VariableData) getVariablesModel().getRowData());
-		getData().checkVariableNature();
+		setData(new VariableData());
+		getData().setVariableData( ((VariableData) getVariablesModel().getRowData()).getVariableData() );
 		getData().setSelected(true);
+		getData().checkVariableNature();
 		getData().setEnableExpressionEditor(getData().isExpressionValue());
 		handleEditorExpression();
 	}
@@ -188,9 +192,20 @@ public abstract class AbstractVariableHandler {
 	public void onSaveVariable(ActionEvent event) {
 		handleDataExpression();
 		try {
-			getVariableManagerBean().insertOrUpdate((ITransferObject) getData().getVariableData());
+			IVariableData data = null;
+			if(isNew()){
+				data = ((VariableData) getData()).getVariableData(); 
+			} else {
+				data = ((VariableData) getVariablesModel().getRowData()).getVariableData(); 
+			}
+			data.setName(getData().getName());
+			data.setExpression(getData().getExpression());
+			data.setStartDate(getData().getStartDate());
+			data.setEndDate(getData().getEndDate());
+			ITransferObject d = getVariableManagerBean().insertOrUpdate((ITransferObject) data);
+			d.toString();
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible guardar la variable del contrato (" + e.getMessage() +")";
+			String msg = "Imposible guardar la variable (" + e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
@@ -208,9 +223,10 @@ public abstract class AbstractVariableHandler {
 	}
 	public void onRemoveVariable(ActionEvent event) {
 		try {
-			getVariableManagerBean().remove((ITransferObject) getData().getVariableData());
+			IVariableData data = ((VariableData) getVariablesModel().getRowData()).getVariableData();
+			getVariableManagerBean().remove((ITransferObject) data);
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible borrar la variable del contrato (" + e.getMessage() +")";
+			String msg = "Imposible borrar la variable (" + e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
@@ -226,8 +242,7 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	public void onSelectExpressionEditor(ActionEvent event) {
-		VariableData data = (VariableData)getVariablesModel().getRowData();
-		data.setEnableExpressionEditor(!data.isEnableExpressionEditor());
+		getData().setEnableExpressionEditor(!getData().isEnableExpressionEditor());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -360,8 +375,6 @@ public abstract class AbstractVariableHandler {
 	private String getStringExpression(Object expression) {
 		if (expression instanceof Enum<?>) {
 			if (expression instanceof IResourceable) {
-//				Enum<?> v = (Enum<?>) expression;
-//				return v.toString();
 				if (expression instanceof IStringEnum) {
 					IStringEnum v = (IStringEnum) expression;
 					return "\""+v.getValue()+"\"";
@@ -370,6 +383,12 @@ public abstract class AbstractVariableHandler {
 					return "\""+v.toString()+"\"";
 				}
 			}
+		}
+		if (expression instanceof Date) {
+			Date date = (Date) expression;
+			AonUtil.getMessage("aon_date_pattern");
+			String pattern = AonUtil.getMessage("aon_date_pattern");
+			return new SimpleDateFormat(pattern).format(date);
 		}
 		return expression.toString();
 	}
@@ -413,32 +432,17 @@ public abstract class AbstractVariableHandler {
 		this.occupationType = occupationType;
 	}
 	public DataModel getVariableHelperModel() {
-//		if(variableHelperModel == null){
+		if(variableHelperModel == null){
 			variableHelperModel = new ListDataModel(getVariableHelpList());
-//		}
+		}
 		return variableHelperModel;
 	}
 	public void setVariableHelperModel(DataModel variableHelperModel) {
 		this.variableHelperModel = variableHelperModel;
 	}
-//	@Override
-//	public DataModel getModel() throws ManagerBeanException {
-//		this.clearCriteria();
-//		if (model == null || StringUtils.isBlank(getFilter())) {
-//			initializeModel();
-//		} else {
-//			Expression exp;
-//			try {
-//				exp = ExpressionUtilities.getExpression(getFilter(), getFieldName(suggestAlias));
-//				updateTextExpression(exp);
-//				getCriteria().addExpression(exp);
-//			} catch (ExpressionException e) {
-//				throw new ManagerBeanException(e.getMessage(), e);
-//			}
-//		}
-//		this.onSearch(null);
-//		return super.getModel();
-//	}
+	public void onEmptyVariableHelperModel(ActionEvent event) {
+		this.variableHelperModel = null;
+	}
 	
 	private void updateTextExpression( Expression expression ) {
 		RelationalExpressionImpl re = (RelationalExpressionImpl) expression;
@@ -448,42 +452,41 @@ public abstract class AbstractVariableHandler {
 	}
 	private List<SimpleVariable> getVariableHelpList() {
 		List<SimpleVariable> list = new LinkedList<SimpleVariable>();
-//		if(isExpressionHelp()){
-			if(isSystemVariableScopeFilter()){				
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
-					Criteria criteria = new Criteria();
-					criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.SYSTEM_DATA_START_DATE),new Date());
-					String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
-					Expression ex1 = ExpressionUtilities.getNullExpression(alias);
-					Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,new Date());
-					criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
-					if (StringUtils.isNotBlank(getFilter())) {
-						Expression exp1;
-						Expression exp2;
-						try {
-							exp1 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_COMMENTS));
-							updateTextExpression(exp1);
-							exp2 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_NAME));
-							updateTextExpression(exp2);
-							criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
-						} catch (ExpressionException e) {
-							throw new ManagerBeanException(e.getMessage(), e);
-						}
+//		if(isExpressionHelp() && isSystemVariableScopeFilter()){
+		if( isSystemVariableScopeFilter() ){				
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
+				Criteria criteria = new Criteria();
+				criteria.addLessThanOrEqualExpression( bean.getFieldName(IEntityAlias.SYSTEM_DATA_START_DATE), new Date() );
+				String alias = bean.getFieldName(IEntityAlias.SYSTEM_DATA_END_DATE);
+				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
+				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,new Date());
+				criteria.addExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
+				if (StringUtils.isNotBlank(getFilter())) {
+					Expression exp1;
+					Expression exp2;
+					try {
+						exp1 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_COMMENTS));
+						updateTextExpression(exp1);
+						exp2 = ExpressionUtilities.getExpression(getFilter().toLowerCase(), bean.getFieldName(IEntityAlias.SYSTEM_DATA_NAME));
+						updateTextExpression(exp2);
+						criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));
+					} catch (ExpressionException e) {
+						throw new ManagerBeanException(e.getMessage(), e);
 					}
-					for (ITransferObject to: bean.getList(criteria)) {
-						SystemData data = (SystemData) to;
-						SimpleVariable sv = new SimpleVariable();
-						sv.setName(data.getName());
-						sv.setDescription(data.getComments());
-						list.add(sv);		
-					}
-				} catch (ManagerBeanException e) {
-					String msg = "Imposible mostrar las variables del sistema(" + e.getMessage() +")";
-					LOGGER.error(msg);
 				}
+				for (ITransferObject to: bean.getList(criteria)) {
+					SystemData data = (SystemData) to;
+					SimpleVariable sv = new SimpleVariable();
+					sv.setName(data.getName());
+					sv.setDescription(data.getComments());
+					list.add(sv);		
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Imposible mostrar las variables del sistema(" + e.getMessage() +")";
+				LOGGER.error(msg);
 			}
-//		}
+		}
 		if(isContextVariableScopeFilter()){
 			for(ContextVariable v: ContextVariable.values()){
 				SimpleVariable sv = new SimpleVariable();
@@ -511,6 +514,7 @@ public abstract class AbstractVariableHandler {
 		setExpressionHelp(false);
 		Integer[] types = {0, 1};
 		setVariableScopeFilter( types );
+		setFilter(null);
 	}
 	public void onShowVariableExpressionHelp(ActionEvent event) {
 		setVariableHelperModel(null);
@@ -586,37 +590,18 @@ public abstract class AbstractVariableHandler {
 			}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
 				;
 			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.BOOLEAN){
-//				getData().setExpression( Boolean.valueOf(getData().getExpression()) );
 				;
 			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.INTEGER){
 				;
 			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.DOUBLE){
 				getData().setExpression( String.valueOf(CommonUtil.round(Double.parseDouble(getData().getExpression()))) );
+			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.STRING){
+				;
+			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.DATE){
+				;
 			}
 		}
 	}
-	
-//	private boolean isExpression(AbstractVariableData data) {
-//		ExpressionContext e = new ExpressionContext();
-//		Calendar start = Calendar.getInstance();
-//		Calendar end = Calendar.getInstance();
-//		start.set(2011, 11, 1);
-//		end.set(2011, 11, 30);
-//		
-//		
-//		for(AbstractVariableData d: (List<AbstractVariableData>)getVariablesModel().getWrappedData()){
-//			e.addVariable(d.getName(), d.getExpression(), d.getStartDate(), d.getEndDate());
-//		}
-//		try {
-//			List<ITimedObject<Object>> list = e.eval(data.getExpression(), data.getStartDate(), data.getEndDate());
-//			list.isEmpty();
-//		} catch (ExpressionException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		
-//		return false;
-//	}
 	
 	public class SimpleVariable {
 		private String name;
@@ -640,7 +625,13 @@ public abstract class AbstractVariableHandler {
 		private boolean enableExpressionEditor;
 		private boolean expressionValue;
 		private boolean selected;
-		private IVariableData variableData;
+		private IVariableData oldData;
+		
+		private Integer id;
+		private String name;
+		private String expression;
+		private Date startDate;
+		private Date endDate;
 		
 		public boolean isEnableExpressionEditor() {
 			return enableExpressionEditor;
@@ -667,11 +658,16 @@ public abstract class AbstractVariableHandler {
 		}
 
 		public IVariableData getVariableData() {
-			return variableData;
+			return oldData;
 		}
 
 		public void setVariableData(IVariableData variableData) {
-			this.variableData = variableData;
+			this.oldData = variableData;
+			endDate = variableData.getEndDate();
+			startDate = variableData.getStartDate();
+			expression = variableData.getExpression();
+			id = variableData.getId();
+			name = variableData.getName();
 		}
 
 		public ContextVariable getVariable(){
@@ -706,7 +702,9 @@ public abstract class AbstractVariableHandler {
 			}
 
 			setExpressionValue(false);
-			if(getVariable()==ContextVariable.CNO && CNO.getCnoByValue(getExpression())==null ){
+			if( StringUtils.isBlank(getExpression()) ){
+				setExpressionValue(false);
+			}else if(getVariable()==ContextVariable.CNO && CNO.getCnoByValue(getExpression())==null ){
 				setExpressionValue(true);
 			}else if(getVariable()==ContextVariable.TC2 && ContractCode.getContractCodeByValue(getExpression())==null ){
 				setExpressionValue(true);
@@ -736,6 +734,15 @@ public abstract class AbstractVariableHandler {
 					Double.parseDouble(getExpression());
 					setExpressionValue(false);
 				} catch (NumberFormatException e) {
+					setExpressionValue(true);
+				}
+			}else if(getVariable()!=null && getVariable().getType()==VariableType.DATE){
+				String pattern = AonUtil.getMessage("aon_date_pattern");
+				try {
+					String[] patterns = {pattern};
+					DateUtils.parseDate(getExpression(), patterns);
+					setExpressionValue(false);
+				} catch (ParseException e1) {
 					setExpressionValue(true);
 				}
 			}
@@ -769,62 +776,79 @@ public abstract class AbstractVariableHandler {
 
 		@Override
 		public Date getEndDate() {
-			return getVariableData().getEndDate();
+			return endDate;
 		}
 
 		@Override
 		public String getExpression() {
-			return getVariableData().getExpression();
+			return expression;
 		}
 
 		@Override
 		public Integer getId() {
-			return getVariableData().getId();
+			return id;
 		}
 
 		@Override
 		public String getName() {
-			return getVariableData().getName();
+			return name;
 		}
 
 		@Override
 		public Date getStartDate() {
-			return getVariableData().getStartDate();
+			return startDate;
 		}
 
 		@Override
 		public void setEndDate(Date endDate) {
-			getVariableData().setEndDate(endDate);
+			this.endDate = endDate;
 		}
 
 		@Override
 		public void setExpression(String expression) {
-			getVariableData().setExpression(expression);
+			this.expression = expression;
 		}
 
 		@Override
 		public void setId(Integer id) {
-			getVariableData().setId(id);
+			this.id = id;
 		}
 
 		@Override
 		public void setName(String name) {
-			getVariableData().setName(name);
+			this.name = name;
 		}
 
 		@Override
 		public void setStartDate(Date startDate) {
-			getVariableData().setStartDate(startDate);
+			this.startDate = startDate;
 		}
 
 		@Override
 		public ExpressionScope getScope() {
-			return getVariableData().getScope();
+			return null;
 		}
 
 		@Override
 		public boolean isReadOnly() {
-			return getVariableData().isReadOnly();
+			return false;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (this == obj) return true;
+			if (obj.getClass() != getClass()) return false;
+			final VariableData o = (VariableData) obj;
+			if (o.getId() == null && getId() == null) {
+				return new EqualsBuilder()
+					.append(this.name, o.name)
+					.append(this.startDate, o.startDate)
+					.append(this.endDate, o.endDate)
+					.append(this.expression, o.expression)
+					.isEquals();
+			}
+			return ObjectUtils.equals(getId(), o.getId());		
 		}
 		
 	}

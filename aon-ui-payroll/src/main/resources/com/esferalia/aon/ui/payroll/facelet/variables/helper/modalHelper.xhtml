@@ -32,17 +32,6 @@
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
-									<!--  
-									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="variableHelperCancel"
-											value="#{bundle.aon_cancel}"
-											reRender="variableHelperModalContainer#{helperSuffix},#{container}"
-											actionListener="#{controller.handler.onCancelVariableHelp}"
-											immediate="true"
-											styleClass="aon-finding-toolbar-item aon-icon-cancel">
-										</aon:commandButton>
-									</aon:div>
-									-->
 									
 									<aon:div styleClass="aon-panelGrid-search">
 										<aon:div styleClass="aon-panelGrid-search-info">
@@ -51,14 +40,11 @@
 										<aon:panelGrid columns="1">
 											<aon:selectManyCheckbox id="variablefilter_type" layout="lineDirection"
 												value="#{controller.handler.variableScopeFilter}" >
-												<!--  
-												<f:selectItem itemLabel="Sistema" itemValue="0" />
-												<f:selectItem itemLabel="Contexto" itemValue="1" />
-												-->
 												<f:selectItems value="#{controller.handler.filterVariableScopes}" />
 												<a4j:support 
-													event="onchange"
+													event="onclick"
 													reRender="variableHelperContainer"
+													actionListener="#{controller.handler.onEmptyVariableHelperModel}"
 													eventsQueue="variableFilterKeyUp"
 													requestDelay="500"
 													ajaxSingle="true"
@@ -69,6 +55,7 @@
 												<a4j:support 
 													event="onkeyup"
 													reRender="variableHelperContainer"
+													actionListener="#{controller.handler.onEmptyVariableHelperModel}"
 													eventsQueue="variableFilterKeyUp"
 													requestDelay="500"
 													ajaxSingle="true"
@@ -82,7 +69,8 @@
 										<aon:editDataTable id="variableHelperList"
 											rendered="#{controller.handler.variableHelperModel.rowCount > 0}"
 											value="#{controller.handler.variableHelperModel}" var="to" rows="20" >
-											<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer#{helperSuffix},#{container}"
+											<aon:rowSelector toggleOnClick="#{true}" 
+												reRender="variableHelperModalContainer#{helperSuffix},#{container}"
 												actionListener="#{controller.handler.onSelectVariableHelp}" />
 											<aon:column styleClass="aon-editDataTable-textColumn">
 												<f:facet name="header">
@@ -99,7 +87,7 @@
 												<aon:outputText value="#{to.description}" />
 											</aon:column>  
 										</aon:editDataTable>
-										<aon:dataScroller2 for="variableHelperList" showNote="true" />
+										<aon:dataScroller2 for="variableHelperList" showNote="false" />
 									</aon:div>
 									
 								</aon:div>
