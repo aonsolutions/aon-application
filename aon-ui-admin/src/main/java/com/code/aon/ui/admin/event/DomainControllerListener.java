@@ -18,6 +18,7 @@ public class DomainControllerListener extends ControllerAdapter {
 		DomainController dc = (DomainController) event.getController();
 		try {		
 			dc.saveApplications();
+			dc.updateDomainApplication();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

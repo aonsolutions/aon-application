@@ -43,6 +43,13 @@
 							value="#{adminDomain.to.active}" />								
 					</c:if>				
 
+					<aon:outputLabel for="DomainApplication_auditLevel"
+						value="#{auditBundle.audit_audit_level}" />
+					<aon:selectOneMenu id="DomainApplication_auditLevel" 
+						value="#{adminDomain.domainApplication.auditLevel}">
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>	
+
 					<c:if test="#{domainSwitcher.domainManagementAvailable}" >
 						<aon:outputLabel for="Domain_subDomainSuffix"
 							value="#{adminBundle.admin_domain_subDomainSuffix}" />
