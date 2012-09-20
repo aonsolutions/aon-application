@@ -3,25 +3,28 @@ package com.code.aon.faces.component.richfaces.lookup.suggestText;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 
 public class HtmlLookupSuggestText extends HtmlLookupBasicInput {
 
-    private String suggestAlias;
+    private String[] suggestAlias;
     
     private Boolean matchBeginOnly;    
     
 	private Object[] _state;    
 
-	public String getSuggestAlias() {
+	public String[] getSuggestAlias() {
     	if (null != this.suggestAlias) {
             return this.suggestAlias;
         }
     	ValueExpression _vb = getValueExpression(SUGGEST_ALIAS);
-        return ((_vb != null) ? (String)_vb.getValue(getFacesContext().getELContext()) : null);
+    	String value = ((_vb != null) ? (String)_vb.getValue(getFacesContext().getELContext()) : null);
+    	return StringUtils.split(value, ",");
 	}	
 
-	public void setSuggestAlias(String suggestAlias) {
+	public void setSuggestAlias(String[] suggestAlias) {
 		this.suggestAlias = suggestAlias;
 	}
 
@@ -47,7 +50,7 @@ public class HtmlLookupSuggestText extends HtmlLookupBasicInput {
   	public void restoreState(FacesContext context, Object value) {  
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
-  		suggestAlias = (String) this._state[1];
+  		suggestAlias = (String[]) this._state[1];
   		matchBeginOnly = (Boolean) this._state[2];
   	}  
    

@@ -18,6 +18,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +104,7 @@ public class RichLookupBean {
 
 	private ITransferObject suggestedTo;
 	
-	private String suggestAlias;
+	private String[] suggestAliases;
 
 	/**
 	 * The Constructor.
@@ -818,25 +819,37 @@ public class RichLookupBean {
 		removeControllerListener();
 	}
 
-	public String getSuggestAlias() {
-		if ( suggestAlias == null ) {
+	public String[] getSuggestAliases() {
+		if ( suggestAliases == null ) {
 			OrderByList list = getController().getOrderList();
 			if ( (list != null) && (!list.getOrders().isEmpty()) ) {
-				this.suggestAlias = list.getOrders().get(0).getExpression().getName();
+				this.suggestAliases = new String[ list.getOrders().size() ];
+				for( int i = 0; i < this.suggestAliases.length; i++ )  {
+					this.suggestAliases[i] = list.getOrders().get(i).getExpression().getName();
+				}
 			}
 		}
-		return suggestAlias;
+		return suggestAliases;
 	}
 
 	public void setSuggestAlias(String alias) {
-		this.suggestAlias = getController().resolveAlias(alias);
+		String[] values = StringUtils.split(alias, ",");
+		this.suggestAliases = new String[values.length];
+		for( int i = 0; i < values.length; i++ ) {
+			this.suggestAliases[i] = getController().resolveAlias(values[i]);	
+		}
 	}
 	
-	private String getSuggestAlias( HtmlLookupSuggestText st ) {
-		if (! StringUtils.isEmpty(st.getSuggestAlias()) ) {
-			return getController().resolveAlias(st.getSuggestAlias());
+	private String[] getSuggestAliases( HtmlLookupSuggestText st ) {
+		if (! ArrayUtils.isEmpty(st.getSuggestAlias()) ) {
+			String[] list = st.getSuggestAlias();
+			String[] aliases = new String[list.length];
+			for( int i = 0; i < list.length; i++ ) {
+				aliases[i] = getController().resolveAlias(list[i]);	
+			}
+			return aliases;
 		}
-		return getSuggestAlias();
+		return getSuggestAliases();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -848,9 +861,11 @@ public class RichLookupBean {
 					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();					
 					setBindings( st );
 					getController().onEditSearch(null);
-					String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%"; 
-					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(st), search);
-					getController().getCriteria().addExpression(exp);
+					String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%";
+					for( String alias : getSuggestAliases(st) ) {
+						Expression exp = ExpressionUtilities.getLikeExpression(alias, search);
+						getController().getCriteria().addOrExpression(exp);						
+					}
 					onSearch(null);
 					if (getModel().getRowCount() > 0) {
 						return (List<ITransferObject>) getModel().getWrappedData();

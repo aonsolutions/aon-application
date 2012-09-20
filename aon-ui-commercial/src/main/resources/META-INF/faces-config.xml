@@ -1105,6 +1105,10 @@
 			<value>Target_registry_name</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Target_registry_name,Target_registry_document</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/commercial/facelet/target/listBasic.xhtml</value>
 		</managed-property>
