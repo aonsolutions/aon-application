@@ -92,7 +92,7 @@ public class AonDomainMerger {
 	private static final AonInternalReference INVOICE_DETAIL_REFERENCES = new AonInternalReference(
 			"invoice_detail", "source", "source_id"
 			, new Integer[] {1,2,3,4,8}
-			, new String[] {"purchase_detail","sales_detail","delivery_detail","income_detail","offer_deetail"});
+			, new String[] {"purchase_detail","sales_detail","delivery_detail","income_detail","offer_detail"});
 	private static final AonInternalReference ALARM_REFERENCES = new AonInternalReference(
 			"alarm", "source", "source_id"
 			, new Integer[] {0,1,3,4}
