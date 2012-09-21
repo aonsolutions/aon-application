@@ -6,7 +6,9 @@
 
 	<ui:define name="content">
 		<aon:form id="actionDenied">
-			<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" />
+			<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
+				<ui:param name="controller" value="#{actionDenied}" />
+			</ui:include>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>

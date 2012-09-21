@@ -17,6 +17,7 @@ public interface IAdminConstants {
 	String USER_SCOPE_EX_CONTROLLER_NAME = "userScopeEx";
 	String USER_WORK_GROUP_EX_CONTROLLER_NAME = "userWorkGroupEx";
 	String DOMAIN_APPLICATION_MODULE_CONTROLLER_NAME = "domainApplicationModule";
+	String PROFILE_ACTION_DENIED_CONTROLLER_NAME = "profileActionDenied";
 	
 	// Properties
 	String ADVANCED_MODE_USER = "advancedMode_user";
