@@ -171,7 +171,16 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 		String taskHolderAlias = getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID);
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
-			criteria.addEqualExpression(taskHolderAlias, taskHolder.getId() );
+			if (taskHolder == null) {
+				// No va a encontrar nada.
+				criteria.addNullExpression(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID);
+				
+				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+				AonUtil.addErrorMessage(msg);
+				
+			} else {
+				criteria.addEqualExpression(taskHolderAlias, taskHolder.getId() );	
+			}
 		} else {
 			if (getTaskHolder() != null) {
 				criteria.addEqualExpression( taskHolderAlias, getTaskHolder().getId() ); 	

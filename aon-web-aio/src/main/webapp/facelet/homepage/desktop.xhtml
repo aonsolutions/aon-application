@@ -184,8 +184,14 @@
 									
 								<h:panelGrid styleClass="aon-padding-left aon-width-all">
 									<aon:outputText style="font-size: 1.2em;" styleClass="aon-bold" value="#{parentDomain.name}"/>
-									<aon:outputText value="#{parentDomain.phone}"/>								
-									<aon:outputText value="#{parentDomain.email}"/>
+									<aon:outputText value="#{parentDomain.phone}"/>						
+									<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+										ajaxSingle="true" reRender="showNewMessageWindow"
+										value="#{parentDomain.email}"
+										actionListener="#{webmailMessage.onSendEmail}" >
+										<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+										<f:param name="email" value="#{parentDomain.email}" />
+									</aon:commandLink>
 								</h:panelGrid>
 	
 							</h:panelGrid>
@@ -265,10 +271,14 @@
 								</aon:div>
 							</aon:div>
 							<aon:div style="font-weight: bold;">
-								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html"
-									style="color:#888888; text-decoration:none;">
-									<aon:outputText value="#{bundle.aon_support_send_email}" />
-							    </aon:outputLink>
+								<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+									ajaxSingle="true" reRender="showNewMessageWindow"
+									value="#{bundle.aon_support_send_email}"
+									style="color:#888888; text-decoration:none;"
+									actionListener="#{webmailMessage.onSendEmail}" >
+									<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+									<f:param name="email" value="#{bundle.aon_support_send_email}" />
+								</aon:commandLink>							    
 							</aon:div>
 						</aon:div>
 						<!-- fin soporte -->
@@ -279,5 +289,7 @@
 		</aon:div>
 
 	</aon:form>
+	
+	<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
 </ui:composition>

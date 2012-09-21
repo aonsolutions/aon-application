@@ -10,6 +10,9 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
@@ -20,6 +23,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
+import com.code.aon.config.DomainApplication;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
@@ -29,6 +33,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainController extends BasicController {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainController.class);
 	
 	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;	
 	
@@ -37,6 +43,8 @@ public class DomainController extends BasicController {
 	private DomainModuleInfo documental;
 
 	private List<DomainApplicationInfo> applicationInfos;
+	
+	private DomainApplication domainApplication; 
 	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
@@ -55,6 +63,7 @@ public class DomainController extends BasicController {
 	}
 
 	public void onInit( ActionEvent event ) {
+		initDomainApplication();
 		getAdmin().resetTermsOfServiceAccepted();
 	}
 	
@@ -128,5 +137,39 @@ public class DomainController extends BasicController {
 	public boolean isShowApplications() {
 		return this.aioInfo.isChecked();
 	}
+
+
+	private void initDomainApplication() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+			Criteria criteria = new Criteria();
+			Integer appId = AonUtil.getAuthPrincipal().getApplicationId();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_DOMAIN), getDomain().getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), appId);
+			List<ITransferObject> list = bean.getList(criteria);
+			if (! list.isEmpty() ) {
+				this.domainApplication = (DomainApplication) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
+	}	
+
+	public void updateDomainApplication() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+			bean.update(domainApplication);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}				
+	}
+
+	public DomainApplication getDomainApplication() {
+		return domainApplication;
+	}
+
+	public void setDomainApplication(DomainApplication domainApplication) {
+		this.domainApplication = domainApplication;
+	}	
 	
 }

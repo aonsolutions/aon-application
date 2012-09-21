@@ -23,12 +23,20 @@ public class SelectedMenuController {
 
 	private static final String SELECTED_CLASS = "aon-top-menu-item-select";
 	
-	public String getLastMenuAction() {
+	private static final String ON_MENU_SELECT = "onMenuSelect";
+	
+	private static final String ON_MENU_RESET = "onMenuReset";
+	
+	private String getLastMenuAction() {
 		UIViewRoot root = FacesContext.getCurrentInstance().getViewRoot();
 		return (String) root.getAttributes().get( SELECTED_MENU_ATTRIBUTE );
 	}
+	
+	public void onMenuReset( ActionEvent event ) {
+		setLastMenuAction(null);
+	}
 
-	public void setLastMenuAction(String lastAction) {
+	private void setLastMenuAction(String lastAction) {
 		UIViewRoot root = FacesContext.getCurrentInstance().getViewRoot();
 		if ( lastAction == null ) {
 			root.getAttributes().remove( SELECTED_MENU_ATTRIBUTE );
@@ -37,11 +45,11 @@ public class SelectedMenuController {
 		}
 	}
 	
-	private void addActionListener( UICommand command ) {
+	private void addActionListener( UICommand command, String action ) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
         ExpressionFactory f = ctx.getApplication().getExpressionFactory();
         MethodExpression me = f.createMethodExpression(ctx.getELContext(),
-        		"#{" + CONTROLLER_NAME + ".onMenuSelect}", null, FaceletUtil.ACTION_LISTENER_SIG);
+        		"#{" + CONTROLLER_NAME + "." + action + "}", null, FaceletUtil.ACTION_LISTENER_SIG);
         ActionListener listener = new MethodExpressionActionListener(me);
         command.addActionListener(listener);
 	}
@@ -58,7 +66,7 @@ public class SelectedMenuController {
 	public void updateCommands( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			UICommand command = (UICommand) component;
-			addActionListener(command);
+			addActionListener(command, ON_MENU_SELECT);
 			MethodExpression expression = command.getActionExpression();
 			if ( expression != null ) {
 				String action = expression.getExpressionString();
@@ -68,9 +76,15 @@ public class SelectedMenuController {
 					String styleClass = commandLink.getStyleClass();
 					styleClass = StringUtils.join(new String[]{SELECTED_CLASS, styleClass}, " ");
 					commandLink.setStyleClass(styleClass);
-					setLastMenuAction(null);
 				}				
 			}
+		}
+	}
+
+	public void updateCommandsToReset( UIComponent component, UIComponent parent ) {
+		if ( component.isRendered() && (UICommand.class.isAssignableFrom(component.getClass())) ) {
+			UICommand command = (UICommand) component;
+			addActionListener(command, ON_MENU_RESET);
 		}
 	}
 	

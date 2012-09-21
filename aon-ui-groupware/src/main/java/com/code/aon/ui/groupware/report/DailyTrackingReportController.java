@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.enumeration.DailyTrackingReportType;
 import com.code.aon.groupware.report.dailyTracking.DailyTrackingReportEngine;
 import com.code.aon.groupware.report.dailyTracking.DailyTrackingReportParams;
@@ -62,12 +63,21 @@ public class DailyTrackingReportController implements ICollectionProvider {
 
 	public void onResetReportSearch(ActionEvent event) {
 		try {
+			if (!isMonitor()) {
+				TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
+				if (taskHolder == null) {
+					String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
+			
 			setParams( new DailyTrackingReportParams() );
 			getParams().setRegistry( (Registry) BeanManager.getManagerBean(Registry.class).createNewTo());
 			loadProjects(null);
 			loadActivityTypes(null);
 		} catch (ManagerBeanException e) {
-			String msg = "Error al inicializar los par√°metros para el informe.";
+			String msg = "Error al inicializar los par·metros para el informe.";
 			LOGGER.error(msg, e);
 			throw new AbortProcessingException(msg,e);
 		}

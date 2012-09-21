@@ -2,6 +2,8 @@ package com.code.aon.ui.groupware.event;
 
 import java.util.Date;
 
+import javax.faces.event.AbortProcessingException;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -33,6 +35,11 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
 			DailyTracking dt = (DailyTracking) trackingController.getTo(); 
 			dt.setTrackingDate(new Date());
 			dt.setTrackingDuration(new Double(1));
+			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
+			if (taskHolder == null) {
+				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+				throw new ControllerListenerException(msg);
+			}
 			dt.setTaskHolder( getGroupwareUtils().getCurrentTaskHolder() );
 			try {
 				trackingController.loadProjects(null);
@@ -60,7 +67,14 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     		IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
     		if(!trackingController.isMonitor()){
     			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
-    			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID), taskHolder.getId() );
+    			if (taskHolder == null) {
+    				// No va a encontrar nada.
+    				trackingController.getCriteria().addNullExpression(dailyTrackingBean.getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID));
+    				String msg = "No existe un usuario de tareas vinculado a la cuenta de acceso. Cree un usuario y vincule la cuenta de acceso.";
+    				AonUtil.addErrorMessage(msg);
+    			} else {
+    				trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IEntityAlias.DAILY_TRACKING_TASK_HOLDER_ID), taskHolder.getId() );	
+    			}
     		}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);

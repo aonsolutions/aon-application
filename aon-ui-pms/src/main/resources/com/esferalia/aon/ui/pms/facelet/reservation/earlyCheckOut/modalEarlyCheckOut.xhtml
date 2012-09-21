@@ -79,11 +79,11 @@
 											popupDateFormat="#{bundle.aon_date_pattern}">
 											<a4j:support ajaxSingle="true" event="oninputchange"
 												actionListener="#{controller.onCheckOutDateChanged}"
-												reRender="invoiceFinancesDiv"
+												reRender="ProjectReservation_earlyCheckOutPenalty,invoiceFinancesDiv"
 												focus="ProjectReservation_earlyCheckOutPenalty" />
 											<a4j:support ajaxSingle="true" event="onchanged"
 												actionListener="#{controller.onCheckOutDateChanged}"
-												reRender="invoiceFinancesDiv"
+												reRender="ProjectReservation_earlyCheckOutPenalty,invoiceFinancesDiv"
 												focus="ProjectReservation_earlyCheckOutPenalty" />
 										</aon:selectInputDate>
 
@@ -107,9 +107,7 @@
 											valueChangeListener="#{controller.onCheckOutPenaltyChanged}"
 											reRender="invoiceFinancesDiv">
 											<f:selectItem itemLabel="-" value="#{null}" />
-											<f:selectItem itemLabel="0 - 0.00 EUR." itemValue="0" />
-											<f:selectItem itemLabel="1 - #{controller.reservation.oneNightPenaltyPrice} EUR."  itemValue="1" />
-											<f:selectItem itemLabel="2 - #{controller.reservation.twoNightPenaltyPrice} EUR." itemValue="2" />
+											<f:selectItems value="#{controller.checkOutPenaltyDays}" />
 										</aon:selectOneMenu>
 
 									</aon:panelGrid>

@@ -345,6 +345,10 @@
 			<value>Seller_registry_name</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Seller_registry_name,Seller_registry_document</value>
+		</managed-property>			
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/seller/facelet/seller/listBasic.xhtml</value>
 		</managed-property>

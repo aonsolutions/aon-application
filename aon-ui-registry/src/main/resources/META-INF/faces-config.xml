@@ -366,7 +366,11 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Registry_name</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Registry_name,Registry_document</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/registry/facelet/lookup/registry/list.xhtml</value>
@@ -412,7 +416,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>
-			<value>Person_registry_name</value>
+			<value>Person_registry_name,Person_registry_document</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>

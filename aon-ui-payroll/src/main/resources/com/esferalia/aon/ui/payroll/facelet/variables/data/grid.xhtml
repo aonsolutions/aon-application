@@ -15,15 +15,6 @@
 			<ui:include 
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_filter.xhtml" />
 		</c:if>
-	
-		<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
-			columnClasses="aon-panelGrid-even  aon-width-auto">
-			<aon:div>
-				<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
-				<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
-					styleClass="aon-bold"/>
-			</aon:div>
-		</aon:panelGrid>	
 		
 		<aon:editDataTable id="#{controller.beanName}VariablesList"
 			value="#{controller.handler.variablesModel}" var="to" rows="20" >
@@ -62,6 +53,8 @@
 				<aon:valueParam name="formList" value="#{to!=controller.handler.data}" />
 				<aon:valueParam name="formEdit" value="#{to==controller.handler.data}" />
 				<aon:valueParam name="formNew" value="#{to==null and controller.handler.new}" />
+				<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
+				
 			</ui:include>
 			
 			<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
@@ -74,19 +67,19 @@
 				<aon:div rendered="#{to==controller.handler.data}">			
 					<aon:commandButton id="paymentVarSave"
 						title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
-						reRender="#{container}"
+						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onSaveVariable}"
 						styleClass="aon-editDataTable-button aon-icon-accept" />
 					<aon:commandButton id="paymentVarCancel"
 						title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-						reRender="#{container}"
+						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onCancelVariable}"
 						immediate="true"
 						styleClass="aon-editDataTable-button aon-icon-cancel" />
 					<aon:commandButton id="paymentVarRemove"
 						title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
 						rendered="#{controller.handler.data.id!=null}"
-						reRender="#{container}"
+						reRender="#{controller.beanName}VarContainer, #{container}"
 						actionListener="#{controller.handler.onRemoveVariable}"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
@@ -96,13 +89,13 @@
 						<aon:commandButton id="paymentVarSave-New"
 							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 							rendered="#{to==null and controller.handler.new}"
-							reRender="#{container}"
+							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onSaveVariable}"
 							styleClass="aon-editDataTable-button aon-icon-accept" />
 						<aon:commandButton id="paymentVarCancel-New"
 							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
 							rendered="#{to==null and controller.handler.new}"
-							reRender="#{container}"
+							reRender="#{controller.beanName}VarContainer, #{container}"
 							actionListener="#{controller.handler.onCancelVariable}"
 							immediate="true"
 							styleClass="aon-editDataTable-button aon-icon-cancel" />

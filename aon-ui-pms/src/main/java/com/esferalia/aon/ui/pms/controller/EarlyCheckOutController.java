@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.role.BasicRoleManager;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -190,7 +193,7 @@ public class EarlyCheckOutController implements IPmsConstants {
 			if (usedServicesMap.containsKey(vat)) {
 				amount += usedServicesMap.get(vat).doubleValue();
 			}
-			usedServicesMap.put(vat, CommonUtil.round(amount));
+			usedServicesMap.put(vat, CommonUtil.round(amount, 4));
 		}
 		return usedServicesMap;
 	}
@@ -251,6 +254,19 @@ public class EarlyCheckOutController implements IPmsConstants {
 			AonUtil.addErrorMessage(ex.getMessage());
 			throw new AbortProcessingException(ex.getMessage(), ex);
 		}
+	}
+
+	public List<SelectItem> getCheckOutPenaltyDays() throws ManagerBeanException {
+		NumberFormat formatter = new DecimalFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_price_pattern"));
+		List<SelectItem> penaltyDays = new LinkedList<SelectItem>();
+		penaltyDays.add(new SelectItem("0", "0 - 0,00 EUR."));
+		if (DateUtils.addDays(getReservationInvoiceTo().getEarlyCheckOutDate(), 1).compareTo(getReservation().getEndDate()) <= 0) {
+			penaltyDays.add(new SelectItem("1", "1 - " + formatter.format(getReservation().getOneNightPenaltyPrice()) + " EUR."));
+		}
+		if (DateUtils.addDays(getReservationInvoiceTo().getEarlyCheckOutDate(), 2).compareTo(getReservation().getEndDate()) <= 0) {
+			penaltyDays.add(new SelectItem("2", "2 - " + formatter.format(getReservation().getTwoNightPenaltyPrice()) + " EUR."));
+		}
+		return penaltyDays;
 	}
 
 	public List<PaymentSummaryTo> getReturns() {

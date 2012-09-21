@@ -1352,6 +1352,10 @@
 			<value>Enterprise_registry_name</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Enterprise_registry_name,Enterprise_registry_document</value>
+		</managed-property>				
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/company/facelet/enterprise/listBasic.xhtml</value>
 		</managed-property>

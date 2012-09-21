@@ -11,8 +11,6 @@ import com.code.aon.groupware.enumeration.DailyTrackingReportType;
 
 public class DailyTrackingReportEngine {
 
-	private static final String AND = " AND ";
-	
 	private static final String USER_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
 		+ " thd.id as userId, thr.name as userName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost)"
 		+ " FROM DailyTracking dt " 
@@ -30,7 +28,7 @@ public class DailyTrackingReportEngine {
 			+ " inner join dt.jobType as job";
 	
 	private static final String CUSTOMER_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
-			+ " reg.id as registryId, reg.name as registryName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost))"
+			+ " reg.id as registryId, reg.name as registryName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost)"
 			+ " FROM DailyTracking dt " 
 			+ " left outer join dt.registry as reg";
 	
