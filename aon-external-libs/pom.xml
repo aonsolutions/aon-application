@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>7.0-SNAPSHOT</version>
+		<version>6.76</version>
 		<relativePath>../aon-web-parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -12,9 +12,9 @@
 	<name>AON EXTERNAL LIBS</name>
 
 	<scm>
-		<url>http://dev.esferalia.com/websvn/wsvn/aon-external-libs</url>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</connection>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-external-libs</developerConnection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.76.x/aon-external-libs</url>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.76.x/aon-external-libs</connection>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.76.x/aon-external-libs</developerConnection>
 	</scm>
 
 	<dependencies>
