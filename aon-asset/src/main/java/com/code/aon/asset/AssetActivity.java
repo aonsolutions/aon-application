@@ -5,10 +5,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.esferalia.aon.entity.master.AssetActivityDB;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name="asset_activity")

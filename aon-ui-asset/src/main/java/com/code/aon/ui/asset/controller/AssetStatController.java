@@ -253,7 +253,7 @@ public class AssetStatController {
 				criteria.addOrder(identifier);
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER);
 				criteria.addOrder(identifier);
 			}
 		} else if(getDateRange().equals("MONTH")){
@@ -262,7 +262,7 @@ public class AssetStatController {
 				criteria.addEqualExpression(identifier, getAssetName());
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER);
 				criteria.addEqualExpression(identifier, getUserName());
 			}
 //			criteria.addEqualExpression(identifier, getName());
@@ -274,7 +274,7 @@ public class AssetStatController {
 				criteria.addEqualExpression(identifier, getAssetName());
 			}
 			if(getStatType().equals("USER")){
-				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO);
+				identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER);
 				criteria.addEqualExpression(identifier, getUserName());
 			}
 			identifier = assetActivityBean.getFieldName(IEntityAlias.ASSET_ACTIVITY_DATE);

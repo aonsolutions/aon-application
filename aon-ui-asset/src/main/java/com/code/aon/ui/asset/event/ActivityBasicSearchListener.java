@@ -78,7 +78,7 @@ public class ActivityBasicSearchListener extends ControllerSearchListener{
 		String name = user.getShortName();
 		
 		setAsset(((ActivityBasicController)getController()).getAsset());
-		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_WHO), name);
+		criteria.addGreaterThanOrEqualExpression(getController().getFieldName(IEntityAlias.ASSET_ACTIVITY_HOLDER), name);
 		ActivityStatus[] defaultActivityStatus = {ActivityStatus.BUSY};
 		setActivityStatuses(defaultActivityStatus);
 	}

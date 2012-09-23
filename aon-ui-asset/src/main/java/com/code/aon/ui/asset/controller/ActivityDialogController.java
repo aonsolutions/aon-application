@@ -448,10 +448,10 @@ public class ActivityDialogController extends EmailParentController{
 					if(isSelectedDay(cal)){
 						AssetActivity to = new AssetActivity();
 						to.setDate(cal.getTime());
-//						to.setFromTime(getFromTime());
-//						to.setToTime(getToTime());
-//						to.setHolder(getWho());
-//						to.setComments(getWhy());
+						to.setFromTime(getFromTime());
+						to.setToTime(getToTime());
+						to.setHolder(getWho());
+						to.setComments(getWhy());
 						to.setAsset(getAsset());
 						if(isRequest()){
 							to.setStatus(ActivityStatus.BUSY);
