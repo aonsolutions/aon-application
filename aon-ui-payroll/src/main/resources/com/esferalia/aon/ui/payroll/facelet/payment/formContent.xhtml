@@ -10,6 +10,9 @@
 	
 	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.paymentConcept}" />
+		<ui:param name="idRequired" value="#{!aonRole.config or !aonRole.admin}" />
+		<ui:param name="skipNewButton" value="#{!aonRole.admin}" />
+		<ui:param name="lookupReRender" value="#{controller.beanName}MenuGrid" />
 	</ui:include>
 
 	<aon:outputLabel for="ContractPayment_startDate" value="#{bundle.aon_start_date}" />
@@ -31,13 +34,13 @@
 		</c:if>
 	</aon:selectOneMenu>
 
-<!--  
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
 		<f:selectItem itemValue="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
+<!--  
 -->
 
 <!--  
@@ -74,13 +77,17 @@
 		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 	
-	<c:if test="#{!aonRole.sysAdmin}">
+	<c:if test="#{!aonRole.admin}">
 		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:outputText id="ContractPayment_amount"  
-			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" />
+		<aon:outputText rendered="#{!aonRole.config}"  
+			value="#{controller.to.paymentConcept.expression}" />
+		<aon:inputText id="ContractPayment_amount" rendered="#{aonRole.config}"
+			value="#{controller.to.expression}" size="64" maxlength="128">
+			<f:validateDoubleRange />
+		</aon:inputText>
 	</c:if>
 	
-	<c:if test="#{aonRole.sysAdmin}">
+	<c:if test="#{aonRole.admin}">
 		<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
 			value="#{controller.to.expression}" >
@@ -153,7 +160,7 @@
 	</c:if>
 	
 	<c:if test="#{!skipResult}">
-		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<aon:outputText value="#{payrollBundle.payroll_result}" />
 		<h:panelGrid columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}"
 				title="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" 

@@ -20,34 +20,36 @@
 
 		<c:if test="#{!controller.new}" >
 		
-			<aon:div styleClass="aon-margin-top">
-				<aon:dataTable columns="2" value="#{domainApplication.to}">
-					
-					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_roles}" />
-						</f:facet>
-						<a4j:repeat value="#{controller.roles}" var="profileRole">
-							<aon:div>
-								<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
-								<aon:outputText value="#{profileRole.label}" />
-							</aon:div>
-						</a4j:repeat>
-					</aon:column>				
-	
-					<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top" >
-						<f:facet name="header">
-							<aon:outputText value="#{adminBundle.admin_modules_denied}" />
-						</f:facet>
-						<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
-							<aon:div>
-								<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
-								<aon:outputText value="#{profileDeniedModule.label}" />
-							</aon:div>
-						</a4j:repeat>
-					</aon:column>					
-				</aon:dataTable>
-			</aon:div>
+			<aon:panelTabSet selectedTab="#{controller.selectedTab}" >
+			               
+				<aon:panelTab name="roles" label="#{adminBundle.admin_roles}">
+					<a4j:repeat value="#{controller.roles}" var="profileRole">
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{profileRole.checked}" />								
+							<aon:outputText value="#{profileRole.label}" />
+						</aon:div>
+					</a4j:repeat>
+				</aon:panelTab>
+			               
+				<aon:panelTab name="deniedModules" label="#{adminBundle.admin_modules_denied}">
+					<a4j:repeat value="#{controller.deniedModules}" var="profileDeniedModule">
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{profileDeniedModule.checked}" />								
+							<aon:outputText value="#{profileDeniedModule.label}" />
+						</aon:div>
+					</a4j:repeat>
+				</aon:panelTab>
+			
+				<aon:panelTab name="deniedOptions"
+					label="#{auditBundle.audit_option_denied_module}">
+					<ui:include src="/com/code/aon/ui/audit/facelet/action/deniedContent.xhtml" >
+						<ui:param name="skipUserLookup" value="#{true}" />						
+						<ui:param name="skipDeniedContentToolbar" value="#{true}" />
+						<ui:param name="controller" value="#{profileActionDenied}" />
+					</ui:include>
+				</aon:panelTab>
+	                    			
+			</aon:panelTabSet>
 
 		</c:if>		
 

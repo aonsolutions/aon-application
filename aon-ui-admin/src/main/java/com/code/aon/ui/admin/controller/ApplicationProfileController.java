@@ -39,6 +39,16 @@ public class ApplicationProfileController extends LinesController {
 	
 	private List<SelectTransferObject<Module,ProfileModuleDenied>> deniedModules;
 	
+	private String selectedTab;
+	
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+	
 	public List<SelectTransferObject<ApplicationRole, ProfileRole>> getRoles() {
 		return roles;
 	}

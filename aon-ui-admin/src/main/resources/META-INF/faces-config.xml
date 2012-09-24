@@ -378,6 +378,13 @@
 		</managed-property>
 	</managed-bean>		
 
+	<!-- ************* PROFILE ACTION DENIED ***************** -->
+	<managed-bean>
+		<managed-bean-name>profileActionDenied</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.admin.controller.ProfileActionDeniedController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>
