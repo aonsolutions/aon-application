@@ -1306,13 +1306,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public String initialAction(){
 		try {
-			if(getRowCount()==1){
-				initializeModel();
+			initializeModel();
+			if(getRowCount()==0){
+				onReset(null);
+				return formAction();
+			} else if(getRowCount()==1){
 				getModel().setRowIndex(0);
 				select(null);
 				return formAction();
 			} else if(getRowCount()<LIMIT){
-				initializeModel();
 				return listAction();
 			} else {
 				return searchAction();
