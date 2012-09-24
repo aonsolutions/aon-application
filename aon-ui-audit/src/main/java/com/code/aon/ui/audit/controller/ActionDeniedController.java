@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionDenied;
 import com.code.aon.audit.DomainApplicationModule;
+import com.code.aon.audit.ProfileActionDenied;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -35,6 +35,7 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -67,7 +68,7 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	private User user;
 	
-	private  List<ActionDenied> deniedActions;
+	private  Map<String,ActionDenied> deniedActions;
 	
 	private List<ApplicationOption> options;
 	
@@ -139,7 +140,7 @@ public class ActionDeniedController implements IAuditConstants {
 			for( ApplicationOption option : this.selected ) {
 				map.put( option.getAction(), option );
 			}
-			for( ActionDenied actionDenied : this.deniedActions ) {
+			for( ActionDenied actionDenied : this.deniedActions.values() ) {
 				String action = actionDenied.getAction().getName();
 				if ( map.containsKey(action) ) {
 					map.remove(action);
@@ -161,19 +162,50 @@ public class ActionDeniedController implements IAuditConstants {
 		}		
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<ActionDenied> getDeniedActions( User user ) {
+	private Map<String,ActionDenied> getUserDeniedActions( User user ) {
+		Map<String,ActionDenied> map = new HashMap<String, ActionDenied>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_DENIED_USER_ID), user.getId());
 			Application application = getAuditController().getApplication();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
-			return (List) bean.getList(criteria);
+			for( ITransferObject to :  bean.getList(criteria) ) {
+				ActionDenied ad = (ActionDenied) to;
+				map.put(ad.getAction().getName(), ad);
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading actions denied", e);
 		}
-		return null;		
+		return map;		
+	}
+
+	private Map<String,ProfileActionDenied> getProfileDeniedActions( User user ) {
+		Map<String,ProfileActionDenied> map = new HashMap<String, ProfileActionDenied>();
+		List<Integer> profiles = getProfiles(user);
+		if ( profiles != null ) {
+			try {			
+				IManagerBean bean = BeanManager.getManagerBean(ProfileActionDenied.class);
+				Criteria criteria = new Criteria();
+				criteria.setSkipDomainFilter(true);
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID), profiles);
+				for( ITransferObject to :  bean.getList(criteria) ) {
+					ProfileActionDenied pad = (ProfileActionDenied) to;
+					map.put(pad.getAction().getName(), pad);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.error( "Error loading profile actions denied", e);
+			}
+		}
+		return map;		
+	}
+	
+	private Map<String,ITransferObject> getDeniedActions( User user ) {
+		Map<String,ITransferObject> map = new HashMap<String, ITransferObject>();
+		map.putAll(getUserDeniedActions(user));
+		map.putAll(getProfileDeniedActions(user));
+		return map;
 	}
 	
 	private Map<String,Module> getEnabledModules( User user ) {
@@ -221,22 +253,22 @@ public class ActionDeniedController implements IAuditConstants {
 		return this.deniedActionsMap.values();
 	}
 	
-	private List<ApplicationOption> getOptions( List<ActionDenied> deniedActions ) {
+	private List<ApplicationOption> getOptions( Map<String,? extends ITransferObject> deniedActions ) {
 		List<ApplicationOption> list = new ArrayList<ApplicationOption>();
 		if (! deniedActions.isEmpty() ) {
 			Map<String,ApplicationOption> options = getOptionController().getOptionMap();
-			for( ITransferObject to : deniedActions ) {
-				String action = ((ActionDenied) to).getAction().getName();
+			for( Map.Entry<String,? extends ITransferObject> entry : deniedActions.entrySet() ) {
+				String action = entry.getKey();
 				ApplicationOption option = options.get(action);
 				if ( (option != null) && (!isDeniedOption(option)) ) {
 					list.add(option);
 				} else {
 					try {
-						IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
-						bean.remove(to);
+						IManagerBean bean = BeanManager.getManagerBean(entry.getValue().getClass());
+						bean.remove(entry.getValue());
 						LOGGER.warn( "ActionDenied removed, action {}", action );
 					} catch (ManagerBeanException e) {
-						LOGGER.error( "Error removing action denied " + to, e);
+						LOGGER.error( "Error removing action denied " + entry.getValue(), e);
 					}
 				}
 			}
@@ -260,16 +292,13 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	public void init( User user ) {
 		setUser(user);
-		this.deniedActions = getDeniedActions( getUser() );
-		List<ApplicationOption> deniedList = getOptions( this.deniedActions );
+		this.deniedActions = getUserDeniedActions( getUser() );
+		List<ApplicationOption> profileDeniedOptions = getOptions( getProfileDeniedActions(user) );
+		this.selected = getOptions( this.deniedActions );
+		this.selected.removeAll(profileDeniedOptions);
 		this.options = new ArrayList<ApplicationOption>( getOptions(true) );
-		this.selected = new LinkedList<ApplicationOption>();
-		for( ApplicationOption option : this.options ) {
-			if ( deniedList.contains(option) ) {
-				this.selected.add(option);
-			}
-		}
-		this.options.removeAll(deniedList);		
+		this.options.removeAll(profileDeniedOptions);
+		this.options.removeAll(this.selected);		
 	}
 	
 	private String getAction( UICommand command ) {
@@ -332,12 +361,24 @@ public class ActionDeniedController implements IAuditConstants {
 		return query.list();
 	}
 	
-	private Map<String,Module> getDeniedModules() {
+	private List<Integer> getProfiles( User user ) {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain(), user.getId(), principal.getApplicationId());
+		if (applicationUser == null ) {
+			applicationUser = AdminUtil.getApplicationUser(principal, DomainManager.getCurrentDomain());
+		}
+		List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
+		if ( (profiles != null) && (!profiles.isEmpty()) ) {
+			return profiles;
+		}
+		return null;
+	}
+	
+	private Map<String,Module> getDeniedModules( User user ) {
 		Map<String,Module> deniedModules = new HashMap<String, Module>();
 		try {			
-			Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal(), DomainManager.getCurrentDomain());
-			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
-			if ( (profiles != null) && (!profiles.isEmpty()) ) {
+			List<Integer> profiles = getProfiles(user);
+			if ( profiles != null ) {
 				for( Integer profile : profiles ) {
 					List<Module> list = getProfileDeniedModules(profile);
 					if ( list != null ) {
@@ -357,7 +398,7 @@ public class ActionDeniedController implements IAuditConstants {
 		this.deniedModulesMap = new HashMap<String, ApplicationCategory>();
 		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, MODULES_ENABLED) ) {
 			Map<String,Module> enabledModules = getEnabledModules(user);
-			Map<String,Module> deniedModules = getDeniedModules();
+			Map<String,Module> deniedModules = getDeniedModules(user);
 			for( ApplicationCategory category : getOptionController().getCategories() ) {
 				if (! ArrayUtils.contains(SKIP_CATEGORIES, category.getAlias()) ) {
 					boolean denied = true;
