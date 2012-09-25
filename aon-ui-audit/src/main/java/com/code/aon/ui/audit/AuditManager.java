@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.Query;
@@ -22,6 +23,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
@@ -53,12 +55,12 @@ public class AuditManager implements IAuditConstants {
 		return null;
 	}
 	
-	public static User getUser( Integer userId ) {
+	private static User getUser( Integer userId ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
 		return (User) HibernateUtil.getSession(sessionFactoryName).get(User.class, userId);
 	}
 	
-	public static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
+	private static void insertSession( HttpSession httpSession, Session session, AuditLevel level ) throws ManagerBeanException {
 		IManagerBean sessionBean = BeanManager.getManagerBean(Session.class);
 		sessionBean.insert( session );
 		LOGGER.info( "Session inserted {}", session );
@@ -117,7 +119,7 @@ public class AuditManager implements IAuditConstants {
 		LOGGER.debug( "ActionEntry inserted {}", ae );
 	}
 
-	public static AuditLevel getAuditLevel( Application application, int domain ) throws ManagerBeanException {
+	private static AuditLevel getAuditLevel( Application application, int domain ) throws ManagerBeanException {
 		AuditLevel level = AuditLevel.NONE;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
 		String q = "SELECT dp FROM DomainApplication dp  "
@@ -133,4 +135,32 @@ public class AuditManager implements IAuditConstants {
 		return level;
 	}	
 	
+	public static void insertLoginAudit( HttpSession httpSession, HttpServletRequest request, Integer domain, AuthPrincipal principal ) {
+		try {
+			LOGGER.info( "Domain {}", domain );
+			LOGGER.info( "Principal {}", principal );
+			Application application = AuditManager.getApplication(request.getContextPath());
+			LOGGER.info( "Application {}", application );
+			User user = AuditManager.getUser( principal.getUserId() );
+			if ( user != null ) {
+				LOGGER.info( "User {}", user );		
+				AuditLevel level = AuditManager.getAuditLevel(application, domain );
+				if ( level != AuditLevel.NONE ) {
+					Session session = new Session();
+					session.setDomain( domain );
+					session.setApplication( application );
+					session.setUser( user );
+					session.setSessionId( httpSession.getId() );
+					session.setStartDate( new Date(httpSession.getCreationTime()) );
+					session.setRemoteAddress( request.getRemoteAddr() );
+					session.setRemoteHost( request.getRemoteHost() );
+					insertSession( httpSession, session, level );				
+				}
+			} else {
+				LOGGER.error( "User {} not found", principal.getShortName() );
+			}
+		} catch ( Throwable th ) {
+			LOGGER.error( "Error login audit", th );
+		}
+	}	
 }

@@ -183,19 +183,21 @@ public class ActionDeniedController implements IAuditConstants {
 
 	private Map<String,ProfileActionDenied> getProfileDeniedActions( User user ) {
 		Map<String,ProfileActionDenied> map = new HashMap<String, ProfileActionDenied>();
-		List<Integer> profiles = getProfiles(user);
-		if ( profiles != null ) {
-			try {			
-				IManagerBean bean = BeanManager.getManagerBean(ProfileActionDenied.class);
-				Criteria criteria = new Criteria();
-				criteria.setSkipDomainFilter(true);
-				criteria.addInExpression(bean.getFieldName(IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID), profiles);
-				for( ITransferObject to :  bean.getList(criteria) ) {
-					ProfileActionDenied pad = (ProfileActionDenied) to;
-					map.put(pad.getAction().getName(), pad);
+		if ( AonUtil.isBeanValue(ACTION_DENIED_CONTROLLER_NAME, PROFILE_DENIED_ACTIONS_ENABLED) ) {
+			List<Integer> profiles = getProfiles(user);
+			if ( profiles != null ) {
+				try {			
+					IManagerBean bean = BeanManager.getManagerBean(ProfileActionDenied.class);
+					Criteria criteria = new Criteria();
+					criteria.setSkipDomainFilter(true);
+					criteria.addInExpression(bean.getFieldName(IEntityAlias.PROFILE_ACTION_DENIED_PROFILE_ID), profiles);
+					for( ITransferObject to :  bean.getList(criteria) ) {
+						ProfileActionDenied pad = (ProfileActionDenied) to;
+						map.put(pad.getAction().getName(), pad);
+					}
+				} catch (ManagerBeanException e) {
+					LOGGER.error( "Error loading profile actions denied", e);
 				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error loading profile actions denied", e);
 			}
 		}
 		return map;		

@@ -215,6 +215,7 @@
 	<audit:config version="1.0" xmlns:audit="http://www.esferalia.com/audit">
 		<audit:actionDenied
 			modulesEnabled="true" 
+			profileDeniedActionsEnabled="true"
 		/>
 	</audit:config>
 		
