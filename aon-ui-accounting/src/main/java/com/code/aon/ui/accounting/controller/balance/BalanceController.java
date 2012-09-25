@@ -20,29 +20,25 @@ public class BalanceController extends BasicController {
 		Balance balance = (Balance) getTo();
 		Integer id = balance.getId();
 		try {
-			if (id >= 1 && id <= 5) {
-				defaults.reloadBalance(balance,id);
-			} else {
-				// TODO ÑAPA!!
-				int type = 0;
-				if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN")) {
-					type = 1;	
-				} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN")) {
-					type = 2;	
-				} else if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN (ABREVIADO)")) {
-					type = 3;	
-				} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN (ABREVIADA)")) {
-					type = 4;	
-				} else if (StringUtils.equals(balance.getName(),"ESTADO DE CAMBIOS EN EL PATRIMONIO NETO (ABREVIADO)")) {
-					type = 5;	
-				}
-				if (type == 0) {
-					String msg = "No existe un balance preconfigurado para el código " + id;
-					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(msg);
-				}
-				defaults.reloadBalance(balance,type);
+			// TODO ÑAPA!!
+			int type = 0;
+			if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN")) {
+				type = 1;	
+			} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN")) {
+				type = 2;	
+			} else if (StringUtils.equals(balance.getName(),"BALANCE DE SITUACIÓN (ABREVIADO)")) {
+				type = 3;	
+			} else if (StringUtils.equals(balance.getName(),"CUENTA DE EXPLOTACIÓN (ABREVIADA)")) {
+				type = 4;	
+			} else if (StringUtils.equals(balance.getName(),"ESTADO DE CAMBIOS EN EL PATRIMONIO NETO (ABREVIADO)")) {
+				type = 5;	
 			}
+			if (type == 0) {
+				String msg = "No existe un balance preconfigurado para el código " + id;
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+			defaults.reloadBalance(balance,type);
 			
 			super.onEditSearch(event);
 			super.onSearch(event);
