@@ -26,15 +26,6 @@
 	<table-filter match-name="customer_segment" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
 
-	<!--  **************** -->
-	<!--  TABLAS DE ECOMMERCE -->
-	<!--  **************** -->
-	<table-filter match-name="ec_catalogue" exclude="true" />
-	<table-filter match-name="ec_config" exclude="true" />
-	<table-filter match-name="ec_offer_pay_info" exclude="true" />
-	<table-filter match-name="ec_paymethod" exclude="true" />
-	<table-filter match-name="ec_target" exclude="true" />
-	
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
 	<!--  ************** -->
@@ -816,6 +807,8 @@
 		<column name="description" type="text"/>
 	</table>
 		
+	<table name="item_addinfo" class="com.esferalia.aon.entity.master.ItemAddInfo" />
+	
 	<table name="item_alternative">
 		<column name="priority" type="java.lang.Integer" />
 		<foreign-key constraint-name="FK_ITEM_ALTERNATIVE_ITEM">
