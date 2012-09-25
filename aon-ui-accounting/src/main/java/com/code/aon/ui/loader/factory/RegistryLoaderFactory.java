@@ -63,7 +63,7 @@ public class RegistryLoaderFactory {
 		address.setAddress3(loaded.getDireccion3());
 		address.setZip(loaded.getCp());
 		address.setCity(loaded.getCiudad());
-		if (StringUtils.isNotBlank( loaded.getProvincia())) {
+		if (StringUtils.isNotBlank( loaded.getProvincia()) || StringUtils.isNotBlank( loaded.getNombreProvincia())) {
 			GeoZone geozone = ensureGeoZone(loaded.getPais(),loaded.getProvincia(),loaded.getNombreProvincia() );
 			address.setGeozone(geozone);
 		}
@@ -73,12 +73,19 @@ public class RegistryLoaderFactory {
 	public GeoZone ensureGeoZone(String pais, String provincia, String nombreProvincia) throws ManagerBeanException {
 		IManagerBean geozoneBean = BeanManager.getManagerBean(GeoZone.class);
 		Criteria c = new Criteria();
-		c.addEqualExpression(geozoneBean.getFieldName( IEntityAlias.GEO_ZONE_CODE) , provincia);
+		String p = null;
+		if (StringUtils.isNotBlank(provincia)) {
+			c.addEqualExpression(geozoneBean.getFieldName( IEntityAlias.GEO_ZONE_CODE) , provincia);
+			p = provincia;
+		} else if (StringUtils.isNotBlank(nombreProvincia)) {
+			c.addEqualExpression(geozoneBean.getFieldName( IEntityAlias.GEO_ZONE_NAME) , nombreProvincia);
+			p = nombreProvincia;
+		}
 		List<ITransferObject> list = geozoneBean.getList(c);
 		if (list != null && list.size() > 0) {
 			return (GeoZone) list.get(0);	
 		}
-		return null;
+		throw new ManagerBeanException("No es posible encontrar la provincia '" + p + "'.");
 	}
 
 	public void insertRegistryMedia(Registry registry, MediaType type, String value) throws ManagerBeanException {

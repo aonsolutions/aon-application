@@ -861,10 +861,19 @@ public class RichLookupBean {
 					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();					
 					setBindings( st );
 					getController().onEditSearch(null);
-					String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%";
-					for( String alias : getSuggestAliases(st) ) {
-						Expression exp = ExpressionUtilities.getLikeExpression(alias, search);
-						getController().getCriteria().addOrExpression(exp);						
+					String[] aliases = getSuggestAliases(st);
+					if (! ArrayUtils.isEmpty(aliases) ) {
+						Expression expr = null;
+						String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%";
+						for( String alias : aliases ) {
+							if ( expr == null ) {
+								expr = ExpressionUtilities.getLikeExpression(alias, search);	
+							} else {
+								Expression expr2 = ExpressionUtilities.getLikeExpression(alias, search);
+								expr = ExpressionUtilities.getOrExpression(expr, expr2);
+							}						
+						}	
+						getController().getCriteria().addExpression(expr);
 					}
 					onSearch(null);
 					if (getModel().getRowCount() > 0) {

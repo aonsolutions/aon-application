@@ -86,8 +86,7 @@ class AonServletUtils {
 	}
 
 	protected static Connection getConnection() {
-		String sessionFactory = HibernateUtil
-				.getSessionFactoryName(Salary.class.getName());
+		String sessionFactory = HibernateUtil.getSessionFactoryName();
 		return HibernateUtil.getSQLConnection(sessionFactory);
 	}
 

@@ -30,7 +30,7 @@ public class AdminUtil {
 		return (Integer) query.uniqueResult();
 	}
 		
-	private static Integer getApplicationUser( Integer domain, Integer user, Integer application ) {
+	public static Integer getApplicationUser( Integer domain, Integer user, Integer application ) {
 		Integer domainApplication = getDomainApplication(domain, application);
 		if ( domainApplication != null ) {
 			Query query = getQuery("SELECT id FROM ApplicationUser au WHERE au.active = true and au.domainApplication = ? and au.user = ?");
