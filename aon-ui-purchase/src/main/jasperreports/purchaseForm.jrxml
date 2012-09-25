@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -42,6 +42,7 @@
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="comments" class="java.lang.String"/>
 	<field name="project" class="com.code.aon.project.Project"/>
+	<field name="itemReturn" class="java.lang.Boolean"/>
 	<variable name="currentPurchase" class="com.code.aon.purchase.Purchase">
 		<variableExpression><![CDATA[(com.code.aon.purchase.Purchase)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -407,7 +408,8 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{purchase_module}.toUpperCase()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{purchase_module}.toUpperCase()
++ ($F{itemReturn}?(" ("+$R{purchase_proposal_item_return}+")"):"")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-118" x="390" y="26" width="58" height="23"/>

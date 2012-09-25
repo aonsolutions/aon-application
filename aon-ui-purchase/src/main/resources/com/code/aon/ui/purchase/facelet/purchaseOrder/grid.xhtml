@@ -117,6 +117,12 @@
 								<f:selectItem itemLabel=" - " itemValue="null" />
 								<f:selectItems value="#{purchaseOrder.availableDepartments}" />
 							</aon:selectOneMenu>
+								
+							<aon:outputText value="&#160;" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="itemReturn" value="#{purchaseOrder.params.itemReturn}" />
+								<aon:outputLabel for="itemReturn" value="#{purchaseBundle.purchase_proposal_item_return}" />
+							</aon:div>
 							
 							<aon:outputText value="&#160;" />
 							<aon:commandButton id="search" ignoreDupResponses="true"

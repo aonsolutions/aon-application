@@ -1171,7 +1171,13 @@
 	</table>
 	
 	<table name="proposal" >
+		<column name="item_return" type="boolean" />
 		<column name="status" type="com.code.aon.purchase.enumeration.ProposalStatus" />
+		<column name="transfer_status" type="com.code.aon.purchase.enumeration.ProposalTransferStatus"/>
+		<column name="transfer_proposal" property="transferProposal" />
+		<foreign-key constraint-name="FK_PROPOSAL_TRANSFER_PROPOSAL">
+			<many-to-one property="transferProposal"/>
+		</foreign-key>
 	</table>
 	
 	<table name="proposal_detail" >

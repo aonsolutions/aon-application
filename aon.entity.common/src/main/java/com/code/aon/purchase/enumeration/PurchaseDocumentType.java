@@ -18,7 +18,13 @@ public enum PurchaseDocumentType implements IResourceable {
     /**
      * SAMPLE
      */
-    SAMPLE;
+    SAMPLE,
+
+    /**
+     * ITEM_RETURN
+     */
+    ITEM_RETURN;
+
 
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";

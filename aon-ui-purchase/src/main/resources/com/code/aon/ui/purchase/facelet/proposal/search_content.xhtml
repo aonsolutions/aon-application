@@ -45,5 +45,11 @@
 	<aon:selectManyCheckbox value="#{searchController.proposalStatuses}">
 		<f:selectItems value="#{purchaseCollections.proposalStatuses}"/>
 	</aon:selectManyCheckbox>
+	
+	<aon:outputText value="&#160;" />
+	<aon:div>
+		<aon:selectBooleanCheckbox id="itemReturn" value="#{searchController.itemReturn}" />
+		<aon:outputLabel for="itemReturn" value="#{purchaseBundle.purchase_proposal_item_return}" />
+	</aon:div>
 							
 </ui:composition>

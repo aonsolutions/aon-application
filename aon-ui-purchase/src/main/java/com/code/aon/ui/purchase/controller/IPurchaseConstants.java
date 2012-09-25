@@ -3,6 +3,7 @@ package com.code.aon.ui.purchase.controller;
 public interface IPurchaseConstants {
 	
 	String COLLECTIONS_CONTROLLER_NAME = "purchaseCollections";
+	String PURCHASE_BUNDLE_NAME = "purchaseBundle";
 	
 	
 	// ************************************************************
@@ -26,5 +27,7 @@ public interface IPurchaseConstants {
 	// NAVIGATION
 	// ************************************************************
 	String PURCHASE_FORM_NAME = "purchase_form";
+
+
 	
 }

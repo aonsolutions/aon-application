@@ -6,6 +6,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 
 public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -32,8 +33,11 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 	}
 
 	private void checkPurchaseDetail(PurchaseDetail purchaseDetail) throws ManagerBeanVetoListenerException {
-		if (purchaseDetail.getQuantity() < 0) {
+		if (purchaseDetail.getQuantity() < 0 && purchaseDetail.getPurchase().getDocumentType()!=PurchaseDocumentType.ITEM_RETURN) {
 			throw new ManagerBeanVetoListenerException("La Cantidad del Pedido no puede ser negativa.");
+		}
+		if (purchaseDetail.getQuantity() > 0 && purchaseDetail.getPurchase().getDocumentType()==PurchaseDocumentType.ITEM_RETURN) {
+			throw new ManagerBeanVetoListenerException("La Cantidad a devolver del Pedido no puede ser positiva.");
 		}
 
 		if (purchaseDetail.getDelivered() == 0) {

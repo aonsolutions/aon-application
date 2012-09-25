@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.product.Item;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -25,6 +26,8 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	private WorkPlace workPlace;
 
 	private PurchaseStatus[] purchaseStatuses;
+	
+	private PurchaseDocumentType[] purchaseDocumentTypes;
 	
 	private Item item;
 	
@@ -56,6 +59,15 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		this.purchaseStatuses = purchaseStatuses;
 	}
 	
+	public PurchaseDocumentType[] getPurchaseDocumentTypes() {
+		return purchaseDocumentTypes;
+	}
+
+	public void setPurchaseDocumentTypes(
+			PurchaseDocumentType[] purchaseDocumentTypes) {
+		this.purchaseDocumentTypes = purchaseDocumentTypes;
+	}
+
 	public Item getItem() {
 		return item;
 	}
@@ -70,6 +82,8 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		PurchaseStatus[] defaultPurchaseStatus = {PurchaseStatus.PENDING};
 		setPurchaseStatuses(defaultPurchaseStatus);
+		PurchaseDocumentType[] defaultCosumentTypes = {PurchaseDocumentType.NORMAL};
+		setPurchaseDocumentTypes(defaultCosumentTypes);
 		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 	}
 	
@@ -88,6 +102,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 		if (!ArrayUtils.isEmpty(getPurchaseStatuses())) {
 			String status = getController().resolveAlias(IEntityAlias.PURCHASE_STATUS);
 			addEnumToCriteria(criteria, status, getPurchaseStatuses());
+		}
+		if (!ArrayUtils.isEmpty(getPurchaseDocumentTypes())) {
+			String type = getController().resolveAlias(IEntityAlias.PURCHASE_DOCUMENT_TYPE);
+			addEnumToCriteria(criteria, type, getPurchaseDocumentTypes());
 		}
 		if ((getItem() != null) && (getItem().getId() != null)) {
 			criteria.addEqualExpression("Purchase.lines.item.id", getItem().getId());

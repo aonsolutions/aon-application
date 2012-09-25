@@ -2,9 +2,7 @@ package com.code.aon.ui.purchase.controller;
 
 import static com.code.aon.ui.purchase.controller.IPurchaseConstants.PURCHASE_PRINT_CONTROLLER_NAME;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,9 +34,9 @@ import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.ProposalStatus;
+import com.code.aon.purchase.enumeration.ProposalTransferStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -150,6 +148,8 @@ public class PurchaseOrderController {
 				+ (getParams().getEndDate() != null ? " AND ProposalDetail.proposal.issueDate <= :endDate" : "")
 				+ workPlaceClause
 				+ ((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ? " AND ProposalDetail.proposal.department = :departmentId"  : "")
+				+ " AND ProposalDetail.proposal.itemReturn = :itemReturn"
+				+ " AND ProposalDetail.proposal.transferStatus <> " + ProposalTransferStatus.TRANSFER_PENDING.ordinal()
 				+ " GROUP BY ProposalDetail.item"
 				+ " ORDER BY ProposalDetail.item.product.name";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
@@ -166,6 +166,7 @@ public class PurchaseOrderController {
 		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
 			query.setInteger("departmentId", getParams().getDepartment().getId());
 		}
+		query.setBoolean("itemReturn", getParams().isItemReturn());
 		itemGroupList = new LinkedList<ItemGroup>(); 
 		for( Object o: query.list() ){
 			Object[] ob = (Object[]) o;
@@ -207,6 +208,8 @@ public class PurchaseOrderController {
 			if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
 			}
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ITEM_RETURN), getParams().isItemReturn());
+			criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_TRANSFER_STATUS), ProposalTransferStatus.TRANSFER_PENDING);
 			criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_WORK_PLACE_ID));
 			list = bean.getList(criteria);
 		}
@@ -226,6 +229,8 @@ public class PurchaseOrderController {
 		if((getParams().getDepartment() != null && getParams().getDepartment().getId() != null ) ){
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID), getParams().getDepartment().getId());
 		}
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_ITEM_RETURN), getParams().isItemReturn());
+		criteria.addNotEqualExpression(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_TRANSFER_STATUS), ProposalTransferStatus.TRANSFER_PENDING);
 		criteria.addOrder(bean.getFieldName(IEntityAlias.PROPOSAL_DETAIL_PROPOSAL_DEPARTMENT_ID));
 		int groupIndex = -1;
 		Supplier supplier = null;
@@ -253,6 +258,7 @@ public class PurchaseOrderController {
 			gd.setChecked(true);
 			gd.setGroupIndex(groupIndex);
 			purchaseGroup.getDetailList().add(gd);
+			purchaseGroup.setItemReturn(getParams().isItemReturn());
 			purchaseGroup.setTotalAmount(purchaseGroup.getTotalAmount()+(gd.getProposalDetail().getItem().getPrice()*gd.getProposalDetail().getQuantity()));
 		}
 	}
@@ -272,7 +278,8 @@ public class PurchaseOrderController {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
-						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), pg.getComments());
+						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), 
+								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, pg.getComments());
 						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
@@ -415,7 +422,14 @@ public class PurchaseOrderController {
 		private List<GroupDetail> detailList;
 		private Double totalAmount;
 		private String comments;
+		private boolean itemReturn;
 		
+		public boolean isItemReturn() {
+			return itemReturn;
+		}
+		public void setItemReturn(boolean itemReturn) {
+			this.itemReturn = itemReturn;
+		}
 		public String getComments() {
 			return comments;
 		}
@@ -519,6 +533,7 @@ public class PurchaseOrderController {
 		private WorkplaceDepartment workplaceDepartment;
 		private Department department;
 		private ProposalStatus status;
+		private boolean itemReturn;
 		
 		public Date getStartDate() {
 			return startDate;
@@ -556,7 +571,13 @@ public class PurchaseOrderController {
 		public void setStatus(ProposalStatus status) {
 			this.status = status;
 		}
-
+		
+		public boolean isItemReturn() {
+			return itemReturn;
+		}
+		public void setItemReturn(boolean itemReturn) {
+			this.itemReturn = itemReturn;
+		}
 		public Criteria getProposalStatusCriteria() throws ManagerBeanException {
 			IManagerBean bean = BeanManager.getManagerBean(ProposalDetail.class);
 			Criteria criteria = new Criteria();

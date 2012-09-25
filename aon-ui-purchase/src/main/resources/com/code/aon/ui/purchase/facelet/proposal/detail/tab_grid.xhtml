@@ -23,7 +23,7 @@
 				<aon:commandLink id="ProposalDetail-selectButton"
 					styleClass="aon-table-row-link" value="&#160;"
 					immediate="true" ajaxSingle="true" requestDelay="100"
-					rendered="#{to.pending}"
+					rendered="#{to.pending and !proposal.transferProcessed}"
 					actionListener="#{proposalDetail.onSelect}"
 					onkeyup="#{dataTableId}KeyUp(this)"
 					onfocus="#{dataTableId}SelectRow(this)"
@@ -34,7 +34,7 @@
 						<aon:commandButton
 							id="ProposalDetail-resetButton" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 							styleClass="aon-editDataTable-button aon-icon-reset"
-							rendered="#{!proposal.processed}" 
+							rendered="#{!proposal.processed and !proposal.transferProcessed}" 
 							actionListener="#{proposalDetail.onReset}"
 							accesskey="#{bundle.aon_key_new_line}" 
 							focus="#{(focusOnAdd != null)?(focusOnAdd):''}" />
@@ -81,12 +81,22 @@
 				</aon:outputText>
 				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
 					value="#{to.quantity}" required="true">
-					<f:validateDoubleRange minimum="0.0" />
+					<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
+						<f:validateDoubleRange minimum="0.0" />
+					</c:if>
+					<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
+						<f:validateDoubleRange maximum="0.0" />
+					</c:if>
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
 						value="#{controller.to.quantity}" required="true">
-						<f:validateDoubleRange minimum="0.0" />
+						<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
+							<f:validateDoubleRange minimum="0.0" />
+						</c:if>
+						<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
+							<f:validateDoubleRange maximum="0.0" />
+						</c:if>
 					</aon:inputText>
 				</f:facet>
 			</aon:column>

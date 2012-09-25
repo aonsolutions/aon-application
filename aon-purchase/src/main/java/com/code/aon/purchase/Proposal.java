@@ -7,7 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.esferalia.aon.entity.master.ProposalDB;
 
 @Entity
@@ -24,6 +26,11 @@ public class Proposal extends ProposalDB {
 	}
 	public void setLines(Set<ProposalDetail> lines) {
 		this.lines = lines;
+	}
+	
+	@Transient
+	public boolean isPending(){
+		return this.getStatus()==ProposalStatus.PENDING;
 	}
 
 }

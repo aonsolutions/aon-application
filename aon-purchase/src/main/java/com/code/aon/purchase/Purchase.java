@@ -28,6 +28,7 @@ import com.code.aon.config.IBankAccountContainer;
 import com.code.aon.config.IPayMethod;
 import com.code.aon.config.PayMethod;
 import com.code.aon.product.strategy.ICalculableContainer;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.PurchaseDB;
@@ -88,7 +89,10 @@ public class Purchase extends PurchaseDB implements IHeaderObject, ICalculableCo
 	public PayMethod getPayment() {
 		return getPayMethod();
 	}
-
+	@Transient
+	public boolean isItemReturn() {
+		return getDocumentType()==PurchaseDocumentType.ITEM_RETURN;
+	}
 	@Transient
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
