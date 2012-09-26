@@ -17,6 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationUser;
 import com.code.aon.config.Domain;
+import com.code.aon.config.DomainApplication;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.SelectTransferObject;
 import com.code.aon.ui.admin.UserApplicationInfo;
@@ -52,7 +53,7 @@ public class DomainApplicationUserController extends LinesController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<ApplicationUserProfile> getApplicationUserProfiles( ApplicationUser user ) throws ManagerBeanException  {
+	private static List<ApplicationUserProfile> getApplicationUserProfiles( ApplicationUser user ) throws ManagerBeanException  {
 		if ( user != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 			Criteria criteria = new Criteria();
@@ -63,7 +64,7 @@ public class DomainApplicationUserController extends LinesController {
 		return Collections.emptyList();
 	}
 	
-	private ApplicationUserProfile get( List<ApplicationUserProfile> list, Profile profile ) {
+	private static ApplicationUserProfile get( List<ApplicationUserProfile> list, Profile profile ) {
 		if ( list != null ) {
 			for( ApplicationUserProfile aup : list ) {
 				if ( profile.equals(aup.getProfile()) ) {
@@ -75,31 +76,40 @@ public class DomainApplicationUserController extends LinesController {
 	}
 	
 	public void updateUserProfiles() throws ManagerBeanException {
-		this.userProfiles = new LinkedList<SelectTransferObject<Profile,ApplicationUserProfile>>();
+		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);
+		this.userProfiles = loadUserProfiles( dac.getDomainApplication(), getApplicationUser() );
+	}
+
+	public static List<SelectTransferObject<Profile,ApplicationUserProfile>> loadUserProfiles( DomainApplication da, ApplicationUser applicationUser ) throws ManagerBeanException {
+		List<SelectTransferObject<Profile,ApplicationUserProfile>> list = new LinkedList<SelectTransferObject<Profile,ApplicationUserProfile>>();
 		List<ApplicationUserProfile> profiles = null;
-		if (! isNew() ) {
-			profiles = getApplicationUserProfiles(getApplicationUser());
+		if ( (applicationUser != null) && (applicationUser.getId() != null) ) {
+			profiles = getApplicationUserProfiles(applicationUser);
 		}
-		DomainApplicationController dac = (DomainApplicationController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_CONTROLLER_NAME);		
-		for( ITransferObject to : UserApplicationInfo.getProfiles(dac.getDomainApplication()) ) {
+		for( ITransferObject to : UserApplicationInfo.getProfiles(da) ) {
 			Profile profile = (Profile) to;
 			SelectTransferObject<Profile,ApplicationUserProfile> item = new SelectTransferObject<Profile, ApplicationUserProfile>(profile);
 			item.setTo( get(profiles, profile) );
-			this.userProfiles.add(item);
+			list.add(item);
 		}		
+		return list;
 	}
 	
 	public String getProfileList() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
-			ApplicationUser user = (ApplicationUser) getSelectedTO();
-			List<ApplicationUserProfile> profiles = getApplicationUserProfiles(user);
-			if (! profiles.isEmpty() ) {
-				String[] profileNames = new String[profiles.size()];
-				for( int i = 0; i < profileNames.length; i++ ) {
-					profileNames[i] = profiles.get(i).getProfile().getName();
-				}
-				return StringUtils.join(profileNames, ", ");
+			return getProfileList( (ApplicationUser) getSelectedTO() );
+		}
+		return null;
+	}
+	
+	public static String getProfileList( ApplicationUser user ) throws ManagerBeanException {
+		List<ApplicationUserProfile> profiles = getApplicationUserProfiles(user);
+		if (! profiles.isEmpty() ) {
+			String[] profileNames = new String[profiles.size()];
+			for( int i = 0; i < profileNames.length; i++ ) {
+				profileNames[i] = profiles.get(i).getProfile().getName();
 			}
+			return StringUtils.join(profileNames, ", ");
 		}
 		return null;
 	}
@@ -114,9 +124,12 @@ public class DomainApplicationUserController extends LinesController {
 	}
 	
 	public void insertUserProfiles() throws ManagerBeanException {
+		insertUserProfiles( getApplicationUser(), this.userProfiles );
+	}
+
+	public static void insertUserProfiles( ApplicationUser user, List<SelectTransferObject<Profile,ApplicationUserProfile>> userProfiles ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
-		ApplicationUser user = getApplicationUser();
-		for( SelectTransferObject<Profile,ApplicationUserProfile> item : this.userProfiles ) {
+		for( SelectTransferObject<Profile,ApplicationUserProfile> item : userProfiles ) {
 			if ( item.isChecked() ) {
 				if ( item.getTo() == null ) {
 					ApplicationUserProfile aup = new ApplicationUserProfile();
@@ -130,8 +143,8 @@ public class DomainApplicationUserController extends LinesController {
 			}			
 		}
 	}
-
-	public void removeUserProfiles( ApplicationUser appUser ) throws ManagerBeanException {
+	
+	public static void removeUserProfiles( ApplicationUser appUser ) throws ManagerBeanException {
 		List<ApplicationUserProfile> profiles = getApplicationUserProfiles( appUser );
 		IManagerBean bean = BeanManager.getManagerBean(ApplicationUserProfile.class);
 		for( ApplicationUserProfile aup : profiles ) {

@@ -57,7 +57,7 @@ public class DomainApplicationController extends BasicController {
 		return list;
 	}
 
-	private Set<Integer> getRegisteredUsers( Integer domainApplication ) {
+	private static Set<Integer> getRegisteredUsers( Integer domainApplication ) {
 		Set<Integer> users = new HashSet<Integer>();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
 		Session session = HibernateUtil.getSession(sessionFactoryName);
@@ -74,7 +74,7 @@ public class DomainApplicationController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<User> getActiveUsers( Integer domain ) {
+	private static List<User> getActiveUsers( Integer domain ) {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
 		Session session = HibernateUtil.getSession(sessionFactoryName);
 		Query query = session.createQuery("FROM User u WHERE u.active = true and u.domain = ?");
@@ -83,17 +83,22 @@ public class DomainApplicationController extends BasicController {
 	}
 	
 	public void updateAvailableUsers( Integer domain ) {
-		availableUsers = new LinkedList<SelectItem>();
+		availableUsers = loadAvailableUsers(domain, getDomainApplication()); 
+	}		
+
+	public static List<SelectItem> loadAvailableUsers( Integer domain, DomainApplication da ) {
+		List<SelectItem> list= new LinkedList<SelectItem>();
 		List<User> users = getActiveUsers(domain);
 		if (! users.isEmpty() ) {
-			Set<Integer> registeredUsers = getRegisteredUsers(getDomainApplication().getId());
+			Set<Integer> registeredUsers = getRegisteredUsers(da.getId());
 			for (User user : users) {
 				if (! registeredUsers.contains(user.getId()) ) {				
 					SelectItem item = new SelectItem(user, user.getLogin() );
-					availableUsers.add(item);									
+					list.add(item);									
 				}
 			}			
 		}
+		return list;
 	}		
 	
 	private Set<Application> getRegisteredApplications() throws ManagerBeanException {

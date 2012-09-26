@@ -30,7 +30,9 @@
 		<module>aon-alias-maven-plugin</module>
 		<module>aon-maven-plugin</module>
 		<module>aon.mock.entity.maven.plugin</module>
+		<!--
 		<module>aon.test.entity.maven.plugin</module>
+		-->
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>
