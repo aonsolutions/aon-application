@@ -8,6 +8,8 @@
 		<ui:param name="lookupBean" value="#{domainLookup}" />
 		<ui:param name="lookupLabel" value="#{companyBundle.company_enterprise}" />
 		<ui:param name="searchButtonTitle" value="#{companyBundle.company_enterprise_selection}" />
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.description} (#{lto.name})"/>
 		<ui:param name="skipNewButton" value="#{true}" />
 		<ui:param name="skipGoToButton" value="#{true}" />
 	</ui:include>
