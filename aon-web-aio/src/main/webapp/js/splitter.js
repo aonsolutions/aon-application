@@ -216,7 +216,7 @@ var splitterCounter = 0;
 			.insertAfter(A).addClass(opts.barClass).addClass(opts.barStateClass)
 			.append(focuser).attr({unselectable: "on"})
 			.css({position: "absolute",	"user-select": "none", "-webkit-user-select": "none",
-				"-khtml-user-select": "none", "-moz-user-select": "none", "z-index": "100"})
+				"-khtml-user-select": "none", "-moz-user-select": "none", "z-index": "80"})
 			.bind("mousedown"+opts.eventNamespace, startSplitMouse)
 			.bind("mouseover"+opts.eventNamespace, function(){
 				$(this).addClass(opts.barHoverClass);

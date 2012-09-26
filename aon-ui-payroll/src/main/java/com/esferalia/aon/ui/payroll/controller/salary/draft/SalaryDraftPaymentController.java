@@ -56,7 +56,7 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 		cp.setContract((Contract) master.getTo());
 		super.onAccept(event);
-		reset(false);
+		reset(true);
 	}
 
 	public void onRemove(ActionEvent event) {

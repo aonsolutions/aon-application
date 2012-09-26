@@ -25,14 +25,16 @@
 								<aon:outputText value="#{payrollBundle.labor_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="integral" 
-										action="#{enterprise.initialAction}" 
-										value="#{payrollBundle.menu_integral}">
-										<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>							
+								<c:if test="#{companyCollections.currentUserEnterprisesCount > 0}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="integral" 
+											action="#{enterprise.initialAction}" 
+											value="#{payrollBundle.menu_integral}">
+											<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
+											<aon:actionListener method="#{enterprise.onEditSearch}" />
+										</aon:commandLink>
+									</aon:div>
+								</c:if>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryDraft" action="salaryDraft_search"
@@ -140,6 +142,13 @@
 										actionListener="#{fanBatch.onEditSearch}"
 										value="#{payrollBundle.payroll_fanBatchWizard_module}" />
 								</aon:div>
+<!--
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fanBatchTest" 
+										actionListener="#{fanBatchTest.onInit}"
+										value="Chequeo de fichero FAN" />
+								</aon:div>
+-->
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -160,7 +169,7 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="certifica2Batch"
 										action="certifica2Batch_search"
-										value="#{payrollBundle.certifica2BatchWizard_module}" >
+										value="#{payrollBundle.payroll_certifica2BatchWizard_module}" >
 										<aon:actionListener method="#{certifica2Batch.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
@@ -348,7 +357,7 @@
 									<aon:commandLink id="contractMode"
 										actionListener="#{contractModel.onReset}"
 										action="contractOption_list" 
-										value="#{payrollBundle.contract_mode_module}">
+										value="#{payrollBundle.payroll_contract_mode_module}">
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">

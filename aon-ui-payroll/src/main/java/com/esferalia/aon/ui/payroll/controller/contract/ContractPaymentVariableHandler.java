@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +50,9 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 		try {
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
-			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
+			if(StringUtils.isNotBlank(payment.getExpression()) || StringUtils.isNotBlank(payment.getPaymentConcept().getExpression()) ){
 				dataList = new LinkedList<IVariableData>();
-				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
+				Set<String> vl = ExpressionContext.getVariables(StringUtils.isBlank(payment.getExpression())?payment.getPaymentConcept().getExpression():payment.getExpression());
 				List<IVariableData> undefined = new LinkedList<IVariableData>();
 				if(!vl.isEmpty()){
 					ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(year, month, payment.getSalaryType());
@@ -100,12 +101,10 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 			String msg = "Imposible cargar las variables del contrato (" + e.getCause()+": "+e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getCause()+": "+e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
 		}
 	}
 	

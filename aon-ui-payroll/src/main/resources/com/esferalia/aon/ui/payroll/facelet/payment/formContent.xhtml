@@ -10,7 +10,7 @@
 	
 	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.paymentConcept}" />
-		<ui:param name="idRequired" value="#{!aonRole.config or !aonRole.admin}" />
+		<ui:param name="idRequired" value="#{!aonRole.config and !aonRole.admin}" />
 		<ui:param name="skipNewButton" value="#{!aonRole.admin}" />
 		<ui:param name="lookupReRender" value="#{controller.beanName}MenuGrid" />
 	</ui:include>
@@ -33,6 +33,7 @@
 			<f:selectItems value="#{commonCollections.months}"  />
 		</c:if>
 	</aon:selectOneMenu>
+
 
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
@@ -77,86 +78,133 @@
 		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 	
-	<c:if test="#{!aonRole.admin}">
-		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:outputText rendered="#{!aonRole.config}"  
-			value="#{controller.to.paymentConcept.expression}" />
-		<aon:inputText id="ContractPayment_amount" rendered="#{aonRole.config}"
-			value="#{controller.to.expression}" size="64" maxlength="128">
-			<f:validateDoubleRange />
-		</aon:inputText>
+	<c:if test="#{controller.to.paymentConcept.id!=null}">
+			<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+			<aon:outputText value="#{controller.to.paymentConcept.expression}" />
 	</c:if>
 	
-	<c:if test="#{aonRole.admin}">
-		<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
-			value="#{controller.to.expression}" >
-			<f:validateLength maximum="128"/>
-			<c:if test="#{!contextDisabled}">
-				<a4j:region>
-					<rich:suggestionbox id="ContractPayment_expression_suggestion"
-						for="ContractPayment_expression"
-						onselect="suggestionBoxActive=false;"
-						suggestionAction="#{controller.expressionContext}" var="exp"
-						similarityGroupingId=""
-						tokens=" +-/*%()"
-						fetchValue="#{exp.name}"
-						immediate="true" limitToList="true" ajaxSingle="true"
-						eventsQueue="ContractPayment_expressionSug" ignoreDupResponses="true"
-						requestDelay="100" width="500" height="200"
-						nothingLabel="#{bundle.aon_search_no_results}">
-						<aon:column>
-							<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
-							<aon:outputText value=" (#{exp.expression})"/>
-						</aon:column>
-					</rich:suggestionbox>
-				</a4j:region>
+	<c:if test="#{controller.to.paymentConcept.id==null}">
+		<c:if test="#{!aonRole.admin}">
+			<c:if test="#{!aonRole.config}">
+				<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+				<aon:outputText value="#{controller.to.paymentConcept.expression}" />
 			</c:if>
-		</aon:inputTextarea>
+			<c:if test="#{aonRole.config}">
+				<aon:outputLabel for="ContractPayment_amount" value="#{bundle.aon_amount}" />
+				<aon:inputText id="ContractPayment_amount" 
+					value="#{controller.to.expression}" size="64" maxlength="128">
+					<f:validateDoubleRange />
+					<a4j:support event="onchange" reRender="ContractPayment_irpf-amount, ContractPayment_quote-amount" ajaxSingle="true" />
+				</aon:inputText>
 		
-		<aon:outputLabel for="ContractPayment_irpf_expression"
-			value="#{payrollBundle.payroll_salary_irpf_expression}" />
-		<aon:inputTextarea id="ContractPayment_irpf_expression" cols="60"
-			rows="3" maxlength="128" value="#{controller.to.irpfExpression}">
-			<f:validateLength maximum="128" />
-			<a4j:region>
-				<rich:suggestionbox id="ContractPayment_irpf_expression_suggestion"
-					for="ContractPayment_irpf_expression"
-					onselect="suggestionBoxActive=false;"
-					suggestionAction="#{controller.expressionContext}" var="exp"
-					similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
-					immediate="true" limitToList="true" ajaxSingle="true"
-					eventsQueue="ContractPayment_irpf_expressionSug"
-					ignoreDupResponses="true" requestDelay="100" width="500"
-					height="100" nothingLabel="#{bundle.aon_search_no_results}">
-					<aon:column>
-						<aon:outputText value="#{exp}" styleClass="aon-bold" />
-					</aon:column>
-				</rich:suggestionbox>
-			</a4j:region>
-		</aon:inputTextarea>
-
-		<aon:outputLabel for="ContractPayment_quote_expression"
-			value="#{payrollBundle.payroll_salary_quote_expression}" />
-		<aon:inputTextarea id="ContractPayment_quote_expression" cols="60"
-			rows="3" maxlength="128" value="#{controller.to.quoteExpression}">
-			<f:validateLength maximum="128" />
-			<a4j:region>
-				<rich:suggestionbox id="ContractPayment_quote_expression_suggestion"
-					for="ContractPayment_quote_expression"
-					onselect="suggestionBoxActive=false;"
-					suggestionAction="#{controller.expressionContext}" var="exp"
-					similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
-					immediate="true" limitToList="true" ajaxSingle="true"
-					eventsQueue="ContractPayment_quote_expressionSug"
-					ignoreDupResponses="true" requestDelay="100" width="500"
-					height="100" nothingLabel="#{bundle.aon_search_no_results}">
-					<aon:column>
-						<aon:outputText value="#{exp}" styleClass="aon-bold" />
-					</aon:column>
-				</rich:suggestionbox>
-			</a4j:region>
-		</aon:inputTextarea>
+				<aon:outputLabel for="ContractPayment_irpf_taxation"
+					value="#{payrollBundle.payroll_salary_irpf_expression}" />
+				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
+					value="#{controller.to.taxation}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{payrollCollections.taxationTypes}" />
+				</aon:selectOneMenu>
+		
+				<aon:outputLabel for="ContractPayment_quote_quote"
+					value="#{payrollBundle.payroll_salary_quote_expression}" />
+				<aon:selectOneMenu id="ContractPayment_quote_quote"  
+					value="#{controller.to.quote}">
+					<f:selectItem itemLabel=" - " itemValue="#{null}" />
+					<f:selectItems value="#{payrollCollections.quoteTypes}" />
+				</aon:selectOneMenu>
+			</c:if>
+		</c:if>
+		
+		<c:if test="#{aonRole.admin}">
+			<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
+			<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
+				value="#{controller.to.expression}" >
+				<f:validateLength maximum="128"/>
+				<c:if test="#{!contextDisabled}">
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_expression_suggestion"
+							for="ContractPayment_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId=""
+							tokens=" +-/*%()"
+							fetchValue="#{exp.name}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_expressionSug" ignoreDupResponses="true"
+							requestDelay="100" width="500" height="200"
+							nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+								<aon:outputText value=" (#{exp.expression})"/>
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</c:if>
+			</aon:inputTextarea>
+			
+			<aon:outputLabel for="ContractPayment_irpf_expression"
+				value="#{payrollBundle.payroll_salary_irpf_expression}" />
+			<aon:div id="ContractPayment_taxation">
+				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
+					value="#{controller.to.taxation}">
+					<f:selectItems value="#{payrollCollections.taxationTypes}" />
+					<a4j:support event="onchange" reRender="ContractPayment_taxation" ajaxSingle="true" />
+				</aon:selectOneMenu>
+				<br />
+				<aon:inputTextarea id="ContractPayment_irpf_expression" cols="60"
+					rendered="#{controller.to.taxation=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.to.irpfExpression}">
+					<f:validateLength maximum="128" />
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_irpf_expression_suggestion"
+							for="ContractPayment_irpf_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_irpf_expressionSug"
+							ignoreDupResponses="true" requestDelay="100" width="500"
+							height="100" nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}" styleClass="aon-bold" />
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputTextarea>
+			</aon:div>
+		
+			<aon:outputLabel for="ContractPayment_quote_expression"
+				value="#{payrollBundle.payroll_salary_quote_expression}" />
+			<aon:div id="ContractPayment_quote">
+				<aon:selectOneMenu id="PaymentConcept_quote_quote"  
+					value="#{controller.to.quote}">
+					<f:selectItems value="#{payrollCollections.quoteTypes}" />
+					<a4j:support event="onchange" reRender="ContractPayment_quote" ajaxSingle="true" />
+				</aon:selectOneMenu>
+				<br />
+				<aon:inputTextarea id="ContractPayment_quote_expression" cols="60"
+					rendered="#{controller.to.quote=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.to.quoteExpression}">
+					<f:validateLength maximum="128" />
+					<a4j:region>
+						<rich:suggestionbox id="ContractPayment_quote_expression_suggestion"
+							for="ContractPayment_quote_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractPayment_quote_expressionSug"
+							ignoreDupResponses="true" requestDelay="100" width="500"
+							height="100" nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}" styleClass="aon-bold" />
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputTextarea>
+			</aon:div>
+		
+		</c:if>
 	</c:if>
 	
 	<c:if test="#{!skipResult}">

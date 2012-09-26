@@ -23,6 +23,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -34,11 +35,25 @@ public abstract class ContractDetailVariableController extends BasicController i
 	private boolean modalPanelVisible;
 	private boolean searchCurrent;
 	private Date inactiveDate;
+	private boolean quoteExpressionEdition;
+	private boolean irpfExpressionEdition;
 	
 	public abstract AbstractVariableHandler getHandler() ;
 	public abstract SalaryType getSalaryType() ;
 	public abstract String getExpression();
 	
+	public boolean isQuoteExpressionEdition() {
+		return quoteExpressionEdition;
+	}
+	public void setQuoteExpressionEdition(boolean quoteExpressionEdition) {
+		this.quoteExpressionEdition = quoteExpressionEdition;
+	}
+	public boolean isIrpfExpressionEdition() {
+		return irpfExpressionEdition;
+	}
+	public void setIrpfExpressionEdition(boolean irpfExpressionEdition) {
+		this.irpfExpressionEdition = irpfExpressionEdition;
+	}
 	public Date getInactiveDate() {
 		return inactiveDate;
 	}
@@ -66,9 +81,11 @@ public abstract class ContractDetailVariableController extends BasicController i
 	}
 	
 	public void onSave(ActionEvent event) {
-		super.onAccept(event);
-		reset(false);
+		super.accept(event);
+		reset(true);
 		adjustMainDataFilter();
+		getHandler().initializeVariables(event);
+		onReloadExpression(event);
 	}
 	
 	@Override
@@ -112,7 +129,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 		tree.setSearchCurrent(false);
 		tree.setInactiveLastPeriod(InactiveLastPeriod.MANUAL);
 		tree.setInactiveDate(getInactiveDate());
-		tree.reloadTreeMainData(null);
+//		tree.reloadTreeMainData(null);
 	}
 	
 	public List<SelectItem> getConcepts() {
@@ -157,6 +174,9 @@ public abstract class ContractDetailVariableController extends BasicController i
 		this.year = year;
 	}
 	public Double getResult() {
+//		if(result == null){
+			calculateResult();
+//		}
 		return result;
 	}
 	public void setResult(Double result) {
@@ -164,6 +184,10 @@ public abstract class ContractDetailVariableController extends BasicController i
 	}
 	
 	public void onReloadExpression(ActionEvent event){
+		initializeVariables(event);
+	}
+	
+	private void calculateResult() {
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -188,13 +212,22 @@ public abstract class ContractDetailVariableController extends BasicController i
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
 			LOGGER.error("error evaluating expression.");
+		} catch (UndefinedVariablesException e) {
+			result = null;
 		} catch (ExpressionException e) {
 			result = null;
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
 			LOGGER.error("error evaluating expression.");
 		}
-		initializeVariables(event);
+	}
+	
+	public void onSelectQuoteExpressionEdition(ActionEvent event){
+		setQuoteExpressionEdition(!isQuoteExpressionEdition());
+	}
+	
+	public void onSelectIrpfExpressionEdition(ActionEvent event){
+		setIrpfExpressionEdition(!isIrpfExpressionEdition());
 	}
 	
 	

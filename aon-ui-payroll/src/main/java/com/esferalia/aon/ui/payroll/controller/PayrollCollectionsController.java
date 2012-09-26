@@ -14,6 +14,7 @@ import javax.faces.model.SelectItemGroup;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.registry.enumeration.StreetType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.AgeCollective;
 import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
@@ -61,17 +62,21 @@ import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.payroll.enumeration.WorkingDayType;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class PayrollCollectionsController {
+	
+	private final int NAME_LENGHT_80 = 80;
 
 	private List<SelectItem> contractDurations;
 	private List<SelectItem> contractWorkingDays;
 	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
 	private List<SelectItem> deductionTypes;
+	private List<SelectItem> bonusTypes;
 	private List<SelectItem> salaryTypes;
 	
 	private List<SelectItem> contractCodes;
@@ -126,6 +131,13 @@ public class PayrollCollectionsController {
 	private List<SelectItem> workingDayTypes;
 	private List<SelectItem> ageCollectives;
 	
+	private String getAbbreviatedSelectItemLabel(String name) {
+		if(name.length()>NAME_LENGHT_80){
+			return name.substring(0, NAME_LENGHT_80)+"...";
+		}
+		return name;
+	}
+	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -150,6 +162,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return deductionTypes;
+	}
+	
+	public List<SelectItem> getBonusTypes() {
+		if (bonusTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			bonusTypes = new LinkedList<SelectItem>();
+			for( BonusType bonusType : BonusType.values() ) {
+				String name = bonusType.getName(locale);
+				SelectItem item = new SelectItem(bonusType, name);
+				bonusTypes.add(item);			
+			}
+		}
+		return bonusTypes;
 	}
 	
 	public List<SelectItem> getSalaryTypes() {
@@ -320,7 +345,7 @@ public class PayrollCollectionsController {
 			QuoteGroup[] models = QuoteGroup.values();
 			for (QuoteGroup cm : models) {
 				String name = cm.getFullName(locale);
-				SelectItem item = new SelectItem(cm, name);
+				SelectItem item = new SelectItem(cm, getAbbreviatedSelectItemLabel(name));
 				quoteGroups.add(item);
 			}
 		}
@@ -334,7 +359,7 @@ public class PayrollCollectionsController {
 			OccupationType[] types = OccupationType.values();
 			for (OccupationType t : types) {
 				String name = t.getFullName(locale);
-				SelectItem item = new SelectItem(t, name);
+				SelectItem item = new SelectItem(t, getAbbreviatedSelectItemLabel(name));
 				occupationTypes.add(item);
 			}
 		}
@@ -698,10 +723,10 @@ public class PayrollCollectionsController {
 			List<SelectItem> subList = new ArrayList<SelectItem>();
 			for( ContractCode c : p.getCodes() ) {
 				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
+				SelectItem item = new SelectItem(c, getAbbreviatedSelectItemLabel(name));
 				subList.add(item);			
 			}
-			SelectItemGroup group = new SelectItemGroup(p.getName(locale), p.getName(locale), false, subList.toArray(new SelectItem[0]));
+			SelectItemGroup group = new SelectItemGroup(getAbbreviatedSelectItemLabel(p.getName(locale)), p.getName(locale), false, subList.toArray(new SelectItem[0]));
 			list.add(group);
 		}
 		return list;
@@ -712,9 +737,11 @@ public class PayrollCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			taxationTypes = new LinkedList<SelectItem>();
 			for( TaxationType p : TaxationType.values() ) {
-				String name = p.getName(locale);
-				SelectItem item = new SelectItem(p, name);
-				taxationTypes.add(item);			
+				if(!(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin() && p==TaxationType.MANUAL)){
+					String name = p.getName(locale);
+					SelectItem item = new SelectItem(p, name);
+					taxationTypes.add(item);			
+				}
 			}
 		}
 		return taxationTypes;
@@ -725,9 +752,11 @@ public class PayrollCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			quoteTypes = new LinkedList<SelectItem>();
 			for( QuoteType p : QuoteType.values() ) {
-				String name = p.getName(locale);
-				SelectItem item = new SelectItem(p, name);
-				quoteTypes.add(item);			
+				if(!(AonUtil.getRoleManager().isConfig() && !AonUtil.getRoleManager().isAdmin() && (p==QuoteType.IPREM_EXCESS || p==QuoteType.MANUAL))){
+					String name = p.getName(locale);
+					SelectItem item = new SelectItem(p, name);
+					quoteTypes.add(item);			
+				}
 			}
 		}
 		return quoteTypes;
@@ -803,8 +832,9 @@ public class PayrollCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			liquidationTypes = new LinkedList<SelectItem>();
 			for( LiquidationType type : LiquidationType.values() ) {
+				String value = type.getValue();
 				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
+				SelectItem item = new SelectItem(type, value + " - " + name);
 				liquidationTypes.add(item);			
 			}
 		}

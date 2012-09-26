@@ -173,6 +173,13 @@ public abstract class AbstractVariableHandler {
 		this.undefinedVariablesModel = undefinedVariablesModel;
 	}
 	
+	public int getTotalVariablesCount(){
+		int total = 0;
+		total += getVariablesModel()!=null?getVariablesModel().getRowCount():0;
+		total += getUndefinedVariablesModel()!=null?getUndefinedVariablesModel().getRowCount():0;
+		return total;
+	}
+	
 	public void onResetVariable(ActionEvent event) {
 		setNew(true);
 		resetVariable();
@@ -182,7 +189,7 @@ public abstract class AbstractVariableHandler {
 	public void onSelectVariable(ActionEvent event) {
 		initEditor();
 		setData(new VariableData());
-		getData().setVariableData( ((VariableData) getVariablesModel().getRowData()).getVariableData() );
+		getData().setVariableData( ((VariableData) getVariablesModel().getRowData()) );
 		getData().setSelected(true);
 		getData().checkVariableNature();
 		getData().setEnableExpressionEditor(getData().isExpressionValue());
@@ -571,6 +578,7 @@ public abstract class AbstractVariableHandler {
 			try {
 				Double.parseDouble(data.getExpression());
 			} catch (NumberFormatException e) {
+				LOGGER.error("NumberFormatException on expression value");
 			}
 		}
 	}
