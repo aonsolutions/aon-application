@@ -113,7 +113,14 @@
 										value="&#160;" title="#{bundle.aon_confidential}"
 										rendered="#{!purchase.pending and purchase.to.confidential}" />
 								</c:if>
-
+								
+								<aon:outputText value="(" 
+									rendered="#{proposal.to.itemReturn}" styleClass="aon-margin-left" />
+								<aon:outputText value="#{purchaseBundle.purchase_proposal_item_return}" 
+									rendered="#{proposal.to.itemReturn}" styleClass="aon-bold" />
+								<aon:outputText value=")" 
+									rendered="#{proposal.to.itemReturn}" styleClass="aon-margin-right" />
+								
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{purchase.to.status}" />
 								<aon:outputText styleClass="aon-italic aon-margin-left"

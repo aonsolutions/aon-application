@@ -22,6 +22,7 @@ import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.ProposalDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
+import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -30,7 +31,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseUtils {
 
-	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, String comments) throws ManagerBeanException {
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, PurchaseDocumentType documentType, String comments) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		Purchase pur = new Purchase();
 		pur.setNumberOfPayments(1);
@@ -41,6 +42,7 @@ public class PurchaseUtils {
 		pur.setWorkPlace(workPlace);
 		pur.setIssueDate(new Date());
 		pur.setStatus(PurchaseStatus.PENDING);
+		pur.setDocumentType(documentType);
 		pur.setRegistryAddress(supplier.getRegistry().getDefaultAddress());
 		pur.setSecurityLevel(SecurityLevel.OFFICIAL);
 		String serie = obtainWorkPlaceSerie(workPlace);

@@ -17,7 +17,7 @@ import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 
 public class PayrollVariablesCollectionsController {
 
-	
+	private final int NAME_LENGHT_80 = 80;	
 	
 	public List<?> getTc2List() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -46,8 +46,6 @@ public class PayrollVariablesCollectionsController {
 		}
 		return list;
 	}
-	
-	private final int NAME_LENGHT_80 = 80;
 	
 	private String getFormattedSelectItemLabel(String name) {
 		if(name.length()>20){

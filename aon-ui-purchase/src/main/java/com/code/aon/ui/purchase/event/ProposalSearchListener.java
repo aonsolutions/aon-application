@@ -28,8 +28,17 @@ public class ProposalSearchListener extends ControllerSearchListener {
 	
 	private WorkPlace workPlace;
 	private Department department;
+	private boolean itemReturn;
 	private ProposalStatus[] proposalStatuses;
-			
+
+	public boolean isItemReturn() {
+		return itemReturn;
+	}
+
+	public void setItemReturn(boolean itemReturn) {
+		this.itemReturn = itemReturn;
+	}
+
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
@@ -61,6 +70,7 @@ public class ProposalSearchListener extends ControllerSearchListener {
 		setDepartment(new Department());
 		ProposalStatus[] defaultProposalStatus = {ProposalStatus.PENDING, ProposalStatus.PARTIAL_PROCESSED};
 		setProposalStatuses(defaultProposalStatus);
+		setItemReturn(false);
 	}
 	
 	@Override
@@ -79,6 +89,7 @@ public class ProposalSearchListener extends ControllerSearchListener {
 			String status = getController().resolveAlias(IEntityAlias.PROPOSAL_STATUS);
 			addEnumToCriteria(criteria, status, getProposalStatuses());
 		}
+		criteria.addEqualExpression(getFieldName(IEntityAlias.PROPOSAL_ITEM_RETURN), isItemReturn());			
 	}	
 	
 	public List<SelectItem> getDepartments() {

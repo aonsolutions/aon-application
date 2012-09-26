@@ -32,7 +32,6 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.SystemPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -162,48 +161,65 @@ public class ContractPaymentController extends ContractDetailVariableController 
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void initializePaymentModel() {
 		try {
-			IManagerBean sBean = BeanManager.getManagerBean(SystemPayment.class);
-			IManagerBean aBean = BeanManager.getManagerBean(AgreementPayment.class);
-			IManagerBean cBean = BeanManager.getManagerBean(ContractPayment.class);
 			IController master = FormUtil.getController("contract");
 			Contract contract = (Contract) master.getTo();
-			Criteria sCriteria = new Criteria();
-			sCriteria.addOrder(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_START_DATE), false);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE), new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE));
-			sCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
-			Criteria aCriteria = null;
+			
+			// system payments
+			IManagerBean spBean = BeanManager.getManagerBean(SystemPayment.class);
+			Criteria spCriteria = new Criteria();
+			spCriteria.addOrder(spBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_START_DATE), false);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(spBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(spBean.getFieldName(IEntityAlias.SYSTEM_PAYMENT_END_DATE));
+			spCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			
+			// agreement payments
+			IManagerBean apBean = BeanManager.getManagerBean(AgreementPayment.class);
+			Criteria apCriteria = null;
 			if(contract.getAgreementLevelCategory()!=null){
-				aCriteria = new Criteria();
-				aCriteria.addEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-				aCriteria.addOrder(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
-				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-				expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
-				aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				apCriteria = new Criteria();
+				apCriteria.addEqualExpression(apBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+				apCriteria.addOrder(apBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_START_DATE), false);
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(apBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(apBean.getFieldName(IEntityAlias.AGREEMENT_PAYMENT_END_DATE));
+				apCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			}
-			Criteria cCriteria = new Criteria();
-			cCriteria.addEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
-			cCriteria.addOrder(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
+			
+			// contract payments
+			IManagerBean cpBean = BeanManager.getManagerBean(ContractPayment.class);
+			Criteria cpCriteria = new Criteria();
+			cpCriteria.addEqualExpression(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			cpCriteria.addOrder(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_START_DATE), false);
 			if(isSearchCurrent()){
-				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-				expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
-				cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
+				cpCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 			} else {
 				if(getInactiveDate()!=null){
-					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
-					expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
-					cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
+					expr2 = ExpressionUtilities.getNullExpression(cpBean.getFieldName(IEntityAlias.CONTRACT_PAYMENT_END_DATE));
+					cpCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
 			}
-			List<?> sl = sBean.getList(sCriteria);
-			List<?> al = aCriteria!=null?aBean.getList(aCriteria):new LinkedList<ITransferObject>();
-			List<?> cl = cBean.getList(cCriteria);
-			HierarchyPayments payments = new HierarchyPayments( ((List<IContractPayment>) cl).iterator(), ((List<IContractPayment>) al).iterator(), ((List<IContractPayment>) sl).iterator());
 			List<IContractPayment> list = new LinkedList<IContractPayment>();
-			for (IContractPayment p: payments) {
+			List<ITransferObject> systemPayments = spBean.getList(spCriteria);
+			List<ITransferObject> agreementPayments = apCriteria!=null?apBean.getList(apCriteria):new LinkedList<ITransferObject>();
+			List<ITransferObject> contractPayments = cpBean.getList(cpCriteria);
+			for (ITransferObject to: contractPayments) {
+				IContractPayment p = (IContractPayment) to;
+				if(p.getScope()!=ExpressionScope.SYSTEM || (p.getScope()==ExpressionScope.SYSTEM && isSystemPaymentVisible(p))){
+					list.add(p);
+				}
+			}
+			for (ITransferObject to: agreementPayments) {
+				IContractPayment p = (IContractPayment) to;
+				if(p.getScope()!=ExpressionScope.SYSTEM || (p.getScope()==ExpressionScope.SYSTEM && isSystemPaymentVisible(p))){
+					list.add(p);
+				}
+			}
+			for (ITransferObject to: systemPayments) {
+				IContractPayment p = (IContractPayment) to;
 				if(p.getScope()!=ExpressionScope.SYSTEM || (p.getScope()==ExpressionScope.SYSTEM && isSystemPaymentVisible(p))){
 					list.add(p);
 				}
@@ -282,9 +298,8 @@ public class ContractPaymentController extends ContractDetailVariableController 
 
 	@Override
 	public String getExpression() {
-		return ((ContractPayment) getTo()).getExpression() != null ? 
-				((ContractPayment) getTo()).getExpression()
-				: ((ContractPayment) getTo()).getPaymentConcept().getExpression();
+		ContractPayment cp = ((ContractPayment) getTo());
+		return StringUtils.isNotBlank(cp.getExpression()) ? cp.getExpression() : cp.getPaymentConcept().getExpression();
 	}
 		
 }

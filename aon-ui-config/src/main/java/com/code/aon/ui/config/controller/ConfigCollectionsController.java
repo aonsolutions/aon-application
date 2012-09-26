@@ -414,9 +414,11 @@ public class ConfigCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			toolbars = new LinkedList<SelectItem>();
 			for (Toolbar toolbar : Toolbar.values()) {
-				String name = toolbar.getName(locale);
-				SelectItem item = new SelectItem(toolbar, name);
-				toolbars.add(item);
+				if ( toolbar != Toolbar.ESFERALIA_WEBMAIL ) {
+					String name = toolbar.getName(locale);
+					SelectItem item = new SelectItem(toolbar, name);
+					toolbars.add(item);
+				}
 			}
 		}
 		return toolbars;

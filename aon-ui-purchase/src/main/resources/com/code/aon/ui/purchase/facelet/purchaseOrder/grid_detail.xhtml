@@ -29,18 +29,18 @@
 			<h:panelGrid columns="4" style="font-size: 0.9em; width: 100%;"
 				cellpadding="0" cellspacing="0" border="0"
 				columnClasses="
-					aon-noborder,
-					aon-noborder,
-					aon-noborder,
-					aon-noborder
+					aon-width-250 aon-text-left aon-noborder,
+					aon-width-90 aon-text-left aon-noborder,
+					aon-width-auto aon-text-left aon-noborder,
+					aon-width-60 aon-text-left aon-noborder
 					" >
 				
-					<aon:div styleClass="aon-width-300 aon-editDataTable-textColumn">
+					<aon:div>
 						<aon:outputText value="#{detail.proposal.workPlace.description}" />
 						<aon:outputText value=" (#{detail.proposal.department.name})" />
 					</aon:div>
 					
-					<aon:div styleClass="aon-width-120 aon-editDataTable-textColumn aon-noborder">
+					<aon:div>
 						<aon:outputText value="#{bundle.aon_quantity}:" />
 						<aon:outputText value="#{detail.quantity}"
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}">
@@ -52,7 +52,7 @@
 						</aon:inputText>
 					</aon:div>
 					
-					<aon:div styleClass="aon-width-auto aon-editDataTable-textColumn aon-noborder">
+					<aon:div>
 						<aon:outputText value="#{supplierBundle.supplier_supplier}:" />
 						<aon:outputText value="#{detail.supplier.registry.fullName}"
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}" />
@@ -65,7 +65,7 @@
 							
 					</aon:div>
 				
-					<aon:div styleClass="aon-width-60  aon-noborder">
+					<aon:div>
 						<aon:outputText value="&#160;" title="#{detail.proposal.remarks}" 
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and !(empty detail.proposal.remarks)}" 
 							styleClass="aon-editDataTable-button aon-icon-info" />

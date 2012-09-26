@@ -26,15 +26,6 @@
 	<table-filter match-name="customer_segment" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
 
-	<!--  **************** -->
-	<!--  TABLAS DE ECOMMERCE -->
-	<!--  **************** -->
-	<table-filter match-name="ec_catalogue" exclude="true" />
-	<table-filter match-name="ec_config" exclude="true" />
-	<table-filter match-name="ec_offer_pay_info" exclude="true" />
-	<table-filter match-name="ec_paymethod" exclude="true" />
-	<table-filter match-name="ec_target" exclude="true" />
-	
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
 	<!--  ************** -->
@@ -816,6 +807,8 @@
 		<column name="description" type="text"/>
 	</table>
 		
+	<table name="item_addinfo" class="com.esferalia.aon.entity.master.ItemAddInfo" />
+	
 	<table name="item_alternative">
 		<column name="priority" type="java.lang.Integer" />
 		<foreign-key constraint-name="FK_ITEM_ALTERNATIVE_ITEM">
@@ -1171,7 +1164,13 @@
 	</table>
 	
 	<table name="proposal" >
+		<column name="item_return" type="boolean" />
 		<column name="status" type="com.code.aon.purchase.enumeration.ProposalStatus" />
+		<column name="transfer_status" type="com.code.aon.purchase.enumeration.ProposalTransferStatus"/>
+		<column name="transfer_proposal" property="transferProposal" />
+		<foreign-key constraint-name="FK_PROPOSAL_TRANSFER_PROPOSAL">
+			<many-to-one property="transferProposal"/>
+		</foreign-key>
 	</table>
 	
 	<table name="proposal_detail" >

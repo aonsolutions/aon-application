@@ -62,4 +62,9 @@
 		<f:selectItems value="#{purchaseCollections.purchaseStatuses}"/>
 	</aon:selectManyCheckbox>							
 
+	<aon:outputText value="#{bundle.aon_type}"/>
+	<aon:selectManyCheckbox value="#{searchController.purchaseDocumentTypes}">
+		<f:selectItems value="#{purchaseCollections.documentTypes}"/>
+	</aon:selectManyCheckbox>							
+
 </ui:composition>

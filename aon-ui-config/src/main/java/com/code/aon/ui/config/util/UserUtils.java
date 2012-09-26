@@ -20,6 +20,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -39,6 +40,7 @@ public class UserUtils {
 	public User getLoggedUser() {
 		if (this.loggedUser == null) {
 			this.loggedUser = resolveUser();
+			updateUser(this.loggedUser);
 		}
 		return loggedUser;
 	}
@@ -162,6 +164,18 @@ public class UserUtils {
 			}		
 		}
 		return passwordExpired;
+	}
+	
+	private void updateUser( User user ) {
+		if ( user.getToolbar() == Toolbar.ESFERALIA_WEBMAIL ) {
+			user.setToolbar(Toolbar.ACENS);
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(User.class);
+				bean.update(user);
+			} catch (ManagerBeanException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}		
 	}
 	
 }

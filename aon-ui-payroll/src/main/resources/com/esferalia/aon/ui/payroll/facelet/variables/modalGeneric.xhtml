@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="#{controller.beanName}ModalContainer">
 		<c:if test="#{controller.modalPanelVisible}">
-			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="#{aonRole.sysAdmin?800:600}" 
-				minWidth="999" showWhenRendered="true" >
+			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="#{controller.handler.totalVariablesCount>0?650:400}" 
+				minWidth="#{controller.handler.totalVariablesCount>0?999:700}" showWhenRendered="true" style="overflow:auto;" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{popupWindowTitle}" />
@@ -40,7 +40,7 @@
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
 										<aon:commandButton id="#{controller.beanName}Cancel"
-											value="#{bundle.aon_cancel}"
+											value="#{(controller.to.id!=null)?(bundle.aon_back):(bundle.aon_cancel)}"
 											reRender="#{controller.beanName}ModalContainer,#{container}"
 											actionListener="#{controller.onCancel}"
 											immediate="true"
@@ -61,15 +61,18 @@
 										<ui:insert name="gridContent"/>
 									</aon:div>
 									
-									<ui:include 
-										src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
-										<ui:param name="controller" value="#{controller}" />
-										<ui:param name="helperSuffix" value="-Modal" />
-									</ui:include>
+									<c:if test="#{controller.handler.totalVariablesCount>0}">
+										<ui:include 
+											src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+											<ui:param name="controller" value="#{controller}" />
+											<ui:param name="helperSuffix" value="-Modal" />
+											<ui:param name="container" value="#{controller.beanName}ModalContainer" />
+										</ui:include>
 									
-									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-										<ui:insert name="afterVariablesContent"/>
-									</aon:div>
+										<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+											<ui:insert name="afterVariablesContent"/>
+										</aon:div>
+									</c:if>
 									
 								</aon:div>
 							</aon:div>

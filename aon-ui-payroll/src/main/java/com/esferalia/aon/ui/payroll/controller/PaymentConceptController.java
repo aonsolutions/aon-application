@@ -8,10 +8,6 @@ import com.esferalia.aon.payroll.enumeration.TaxationType;
 
 public class PaymentConceptController extends AbstractConceptController {
 
-	
-	
-	
-
 	private void obtainQuoteType() {
 		PaymentConcept pc = ((PaymentConcept)getTo());
 		if(pc.getQuoteExpression()==null){
