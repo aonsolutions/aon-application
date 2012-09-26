@@ -359,7 +359,7 @@ public class ProposalController extends BasicController {
 			}
 			for(ITransferObject to: list){
 				ProposalDetail detail = (ProposalDetail) to;
-				detail.setQuantity(detail.getQuantity()*(-1));
+				detail.setQuantity(detail.getQuantity());
 				detail.setSupplier(getCompanySupplier());
 				bean.update(detail);
 			}

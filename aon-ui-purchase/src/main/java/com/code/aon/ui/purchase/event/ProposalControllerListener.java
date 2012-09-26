@@ -21,15 +21,15 @@ public class ProposalControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		setCurrentScope();
+		Proposal to = (Proposal) getController().getTo();
 		if(((ProposalController)getController()).getProposalType()==ProposalType.ITEM_RETURN){
-			Proposal to = (Proposal) getController().getTo();
 			to.setItemReturn(true);
 			to.setTransferStatus(ProposalTransferStatus.NO_TRANSFER);
-		}
-		if(((ProposalController)getController()).getProposalType()==ProposalType.TRANSFER){
-			Proposal to = (Proposal) getController().getTo();
+		} else if(((ProposalController)getController()).getProposalType()==ProposalType.TRANSFER){
 			to.setItemReturn(true);
 			to.setTransferStatus(ProposalTransferStatus.TRANSFER_PENDING);
+		} else {
+			to.setTransferStatus(ProposalTransferStatus.NO_TRANSFER);
 		}
 	}
 

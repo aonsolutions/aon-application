@@ -81,22 +81,12 @@
 				</aon:outputText>
 				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
 					value="#{to.quantity}" required="true">
-					<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
 						<f:validateDoubleRange minimum="0.0" />
-					</c:if>
-					<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
-						<f:validateDoubleRange maximum="0.0" />
-					</c:if>
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
 						value="#{controller.to.quantity}" required="true">
-						<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
 							<f:validateDoubleRange minimum="0.0" />
-						</c:if>
-						<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
-							<f:validateDoubleRange maximum="0.0" />
-						</c:if>
 					</aon:inputText>
 				</f:facet>
 			</aon:column>
