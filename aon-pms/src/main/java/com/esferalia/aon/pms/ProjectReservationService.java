@@ -50,7 +50,7 @@ public class ProjectReservationService extends ProjectReservationServiceDB {
 	}
 
 	@Transient
-	public ProjectReservationRoom getProjectReservationRoom() throws ManagerBeanException {
+	public ProjectReservationRoom getReservationRoom() throws ManagerBeanException {
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);

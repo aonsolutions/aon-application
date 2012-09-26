@@ -83,7 +83,7 @@
 										<a4j:repeat value="#{controller.reservationRooms}" var="availableServiceRoom"
 											rendered="#{!controller.new and reservation.to.roomAssignedCount > 0}">
 											<aon:commandLink styleClass="aon-dataTable-link-noicon aon-bold aon-nowrap"
-												style="color: #{(availableServiceRoom.id == controller.to.projectReservationRoom.id) ? ('blue') : ('black')}"
+												style="color: #{(availableServiceRoom.id == controller.to.reservationRoom.id) ? ('blue') : ('black')}"
 												value="#{availableServiceRoom.roomNumber}" immediate="true"
 												actionListener="#{controller.onAssignReservationRoom}">
 												<f:param name="availableServiceRoom" value="#{availableServiceRoom.id}"/>

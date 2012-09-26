@@ -155,7 +155,7 @@ public class ProjectReservationServiceController extends LinesController {
 			setServiceQuantity(0);
 			setServicePrice(0);
 		} else {
-			setServiceReservationRoom(reservationService.getProjectReservationRoom());
+			setServiceReservationRoom(reservationService.getReservationRoom());
 			IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 			Criteria criteria = new Criteria();
 			String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID);
