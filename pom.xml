@@ -15,6 +15,8 @@
 		<jasperReportsVersion>4.5.1</jasperReportsVersion>
 		<jasperreportsMavenPluginVersion>1.0-beta-3</jasperreportsMavenPluginVersion>
 		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
+
+        <maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
 	<modules>
@@ -417,6 +419,13 @@
         </pluginRepositories>
 
 	<build>
+        <extensions>
+            <extension>
+                <groupId>com.github.lkoskela</groupId>
+                <artifactId>maven-build-utils</artifactId>
+                <version>1.4</version>
+            </extension>
+        </extensions>
 		<plugins>
 
 			<plugin>
@@ -608,5 +617,9 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
+
 </project>

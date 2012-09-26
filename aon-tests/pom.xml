@@ -85,4 +85,9 @@
       </plugin>
     </plugins>
   </build>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
 </project>

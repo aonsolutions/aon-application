@@ -49,5 +49,10 @@
 			<version>1.4.3</version>
 		</dependency>		
 	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
 </project>
  

@@ -156,4 +156,9 @@
 		        <version>2.1.7</version>
 		</dependency>
 	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
 </project>
