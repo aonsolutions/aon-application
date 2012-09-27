@@ -63,14 +63,21 @@
 										<aon:outputLabel for="Proposal_workPlace-destination" value="#{companyBundle.company_workplace}" />
 										<aon:selectOneMenu id="Proposal_workPlace-destination" required="true" 
 											value="#{proposal.destinationWorkPlace}" >
-											<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-											<a4j:support event="onchange" reRender="Proposal_department-destination" ignoreDupResponses="true" ajaxSingle="true" />
-											<a4j:support event="oninputchanged" reRender="Proposal_department-destination" ignoreDupResponses="true" ajaxSingle="true" />
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
+											<f:selectItems value="#{proposal.destinationWorkPlaces}" />
+											<a4j:support event="onchange" reRender="Proposal_department-destination"
+												actionListener="#{proposal.onChangeDestinationWorkPlace}" 
+												ignoreDupResponses="true" ajaxSingle="true" />
+											<a4j:support event="oninputchanged" reRender="Proposal_department-destination" 
+												actionListener="#{proposal.onChangeDestinationWorkPlace}" 
+												ignoreDupResponses="true" ajaxSingle="true" />
 										</aon:selectOneMenu>
 							
 										<aon:outputLabel for="Proposal_department-destination" value="#{companyBundle.company_department}" />
-										<aon:selectOneMenu id="Proposal_department-destination" required="true" 
+										<aon:selectOneMenu id="Proposal_department-destination" required="true"
+											disabled="#{proposal.destinationDepartment!=null}"
 											value="#{proposal.destinationDepartment}" >
+											<f:selectItem itemLabel=" - " itemValue="#{null}" />
 											<f:selectItems value="#{proposal.destinationDepartments}" />
 										</aon:selectOneMenu>
 

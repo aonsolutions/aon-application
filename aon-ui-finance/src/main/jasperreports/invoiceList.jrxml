@@ -193,7 +193,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_company_document}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{invoice_number}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-4" mode="Opaque" x="181" y="0" width="177" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -284,7 +284,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{aon_document_number}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$R{aon_company_document}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -301,7 +301,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-9" x="506" y="0" width="49" height="12"/>
@@ -392,7 +392,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{documentNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{registryDocument}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

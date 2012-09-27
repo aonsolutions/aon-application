@@ -18,5 +18,10 @@ public class PmsUtils {
 		criteria.addNullExpression(posShiftBean.getFieldName(IEntityAlias.POS_SHIFT_END_TIME));
 		return (posShiftBean.getCount(criteria) > 0);
 	}
+	
+	public static Integer getWorkPlaceScopeToExclude() {
+		// Id del ambito de hoteles externos
+		return 107;
+	}
 
 }

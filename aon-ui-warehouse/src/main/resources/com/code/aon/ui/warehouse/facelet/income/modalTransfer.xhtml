@@ -57,18 +57,6 @@
 										reRender="showPurchaseTransferWindow,incomeForm,showConfirmWindow"
 										actionListener="#{income.onPurchaseTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
-<!--  
-										<c:if test="#{!income.quantityGreatherThanTransfered}">
-										</c:if>
-										<rich:componentControl for="purchaseTransferModalPanel"
-											event="onclick" operation="#{income.transferedGreatherThanPending?'none':'hide'}"/>																					
-										<f:setPropertyActionListener
-											target="#{income.showPurchaseTransferWindow}"
-											value="#{!income.transferedGreatherThanPending}" />
-										<f:setPropertyActionListener
-											target="#{income.purchaseTransferManager}"
-											value="#{null}" />
--->
 									</aon:commandButton>
 									<aon:commandButton id="purchaseTransfer-cancel"
 										value="#{bundle.aon_cancel}"
@@ -211,7 +199,7 @@
 												</f:facet>
 												<aon:inputText id="transfered"
 													value="#{to.transfered}" size="4"
-													valueChangeListener="#{income.purchaseTransferManager.onTransferedChanged}"
+													actionListener="#{income.purchaseTransferManager.onTransferedChanged}"
 													reRender="purchaseData,detailDataContainer" ajaxSingle="true" />	
 											</aon:column>
 	
@@ -220,7 +208,7 @@
 													<h:outputText value="&#160;" />
 												</f:facet>
 												<aon:outputText value="&#160;"
-													rendered="#{to.transfered > to.pendingQuantity}" 
+													rendered="#{income.purchaseTransferManager.transferedGreatherThanPending}" 
 													styleClass="aon-icon-commandButton aon-icon-errorwarning" 
 													title="#{warehouseBundle.warehouse_income_transfered_gt_quantity}" /> 
 											</aon:column>
