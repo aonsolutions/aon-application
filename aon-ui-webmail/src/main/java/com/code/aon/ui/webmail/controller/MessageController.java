@@ -394,6 +394,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     	f.setFile(item.getFile());
     	f.setFileName(item.getFileName());
     	f.setMimeType(f.resolveMimeType());
+    	LOGGER.info( "Uploaded file: {}", f );
     	errorMessage = getWebMailController().isValidFile(f); 
     	if ( errorMessage == null ) {
         	addAttachment( f );	
