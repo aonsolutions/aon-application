@@ -81,7 +81,7 @@
 				</ui:define>
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div id="itemDiv" styleClass="aon-scroll-area">
 				<c:if test="#{item.new}">
 					<ui:include src="/com/code/aon/ui/product/facelet/item/formNewContent.xhtml">
 						<ui:param name="controller" value="#{item}" />
@@ -125,7 +125,7 @@
 									label="#{productBundle.product_tariff_module}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/tariff/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemTariff}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -135,7 +135,7 @@
 									label="#{productBundle.product_catalogue_module}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemCatalogue}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -145,7 +145,7 @@
 									label="#{productBundle.product_item_supplier_module}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/supplier/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemSupplier}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -155,7 +155,7 @@
 									label="#{productBundle.product_alternative_items}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/alternative/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAlternative}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -165,17 +165,17 @@
 									label="#{productBundle.product_addInfo}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/addinfo/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAddInfo}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
 
-							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
+							<c:if test="#{aonConfiguration.bean.product.showAttachment and itemAttach.model.rowCount > 0}">
 								<aon:panelTab id="itemAttachPanelTab"
 									label="#{productBundle.product_attachment}">
 									<ui:include	src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
 										<ui:param name="controller" value="#{itemAttach}" />
-										<ui:param name="removeButtonReRender" value="itemTab" />
+										<ui:param name="removeButtonReRender" value="itemDiv" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
@@ -202,42 +202,42 @@
 				<ui:include src="/com/code/aon/ui/product/facelet/item/tariff/newTariffModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="tariffController" value="#{itemTariff}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showCatalogues}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/catalogue/newCatalogueModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="catalogueController" value="#{itemCatalogue}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/supplier/newSupplierModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="supplierController" value="#{itemSupplier}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/alternative/newAlternativeModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="alternativeController" value="#{itemAlternative}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showAddInfo}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/addinfo/newAddInfoModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="addInfoController" value="#{itemAddInfo}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{aonConfiguration.bean.product.showAttachment}">
 				<ui:include src="/com/code/aon/ui/product/facelet/item/attach/newAttachmentModal.xhtml">
 					<ui:param name="controller" value="#{item}" />
 					<ui:param name="attachmentController" value="#{itemAttach}" />
-					<ui:param name="modalReRender" value="itemTab" />
+					<ui:param name="modalReRender" value="itemDiv" />
 				</ui:include>
 			</c:if>
 		</c:if>
