@@ -139,6 +139,26 @@ public class ProposalController extends BasicController {
 		setDestinationWorkPlace(null);
 	}
 	
+	public List<SelectItem> getDestinationWorkPlaces() throws ManagerBeanException {
+		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
+		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
+		criteria.addNotEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID), getWorkPlaceScopeToExclude());
+		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
+		workPlaceBean.getList(criteria);
+		for(ITransferObject to: workPlaceBean.getList(criteria)){
+			WorkPlace workPlace = (WorkPlace)to;
+			workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+		}
+		return workPlaces;
+	}
+	
+	private Integer getWorkPlaceScopeToExclude() {
+		// Id del ambito de hoteles externos
+		return 107;
+	}
+	
 	public List<SelectItem> getDestinationDepartments() {
 		return getDepartments(getDestinationWorkPlace());
 	}
@@ -289,6 +309,26 @@ public class ProposalController extends BasicController {
 		}
 	}
 	
+	private Department obtainDestinationHotelDepartment() throws ManagerBeanException {
+		if(getDestinationWorkPlace()==null || getDestinationWorkPlace().getId()==null){
+			return null;
+		}
+		IManagerBean bean = BeanManager.getManagerBean(WorkplaceDepartment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_WORK_PLACE_ID), getDestinationWorkPlace().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_DEPARTMENT_ID), ((Proposal)getTo()).getDepartment().getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WORKPLACE_DEPARTMENT_ACTIVE), true);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(list.size() > 0){
+			return ((WorkplaceDepartment)list.get(0)).getDepartment();
+		} 
+		return null;
+	}
+	
+	public void onChangeDestinationWorkPlace(ActionEvent event) throws ManagerBeanException{
+		setDestinationDepartment( obtainDestinationHotelDepartment() );
+	}
+
 	public void onTransfer(ActionEvent event){
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
