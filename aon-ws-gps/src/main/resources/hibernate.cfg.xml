@@ -51,6 +51,7 @@
     	<mapping class="com.code.aon.product.CatalogueCategory"/>
     	<mapping class="com.code.aon.product.CatalogueItem"/>
     	<mapping class="com.code.aon.product.Item"/>
+    	<mapping class="com.code.aon.product.ItemAddInfo"/>
     	<mapping class="com.code.aon.product.ItemSupplier"/>
     	<mapping class="com.code.aon.product.Product"/>
     	<mapping class="com.code.aon.product.ProductCategory"/>
