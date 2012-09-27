@@ -18,9 +18,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{sellerBundle.seller_module}" />
 				<ui:param name="controller" value="#{seller}" />
-				
-				<ui:param name="showMoreMenu" value="#{true}" />
-				
+				<ui:param name="showMoreMenu" value="#{!seller.new}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{seller}" />
