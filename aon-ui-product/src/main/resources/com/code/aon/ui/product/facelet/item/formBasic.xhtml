@@ -25,8 +25,10 @@
 		value="#{controller.to.product.name}" required="true" size="70" maxlength="64" />
 
 	<aon:outputLabel for="Item_product_detail" value="#{productBundle.product_detail}" />
-	<aon:inputTextarea id="Item_product_detail" 
-		value="#{controller.to.description}" cols="72" rows="4" />
+ 	<aon:div style="margin-bottom: 0.5em;">
+		<aon:inputTextarea id="Item_product_detail"
+			value="#{controller.to.description}" cols="72" rows="4" />
+ 	</aon:div>
 
 	<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
 	<aon:div>

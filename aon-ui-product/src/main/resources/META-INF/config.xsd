@@ -30,6 +30,7 @@
 			<xs:attribute name="showAlternatives" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSuppliers" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
+			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAttachment" type="xs:boolean" use="required"/>
 			<xs:attribute name="showEcommerceData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showHistory" type="xs:boolean" use="required"/>

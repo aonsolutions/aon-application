@@ -106,6 +106,7 @@
 			showAlternatives="false"
 			showSuppliers="true"
 			showAccount="true"
+			showAddInfo="true"
 			showAttachment="false"
 			showEcommerceData="false"
 			showHistory="true"

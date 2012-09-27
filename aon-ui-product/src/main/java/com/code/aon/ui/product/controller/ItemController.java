@@ -12,6 +12,12 @@ import com.code.aon.ui.util.AonUtil;
 public class ItemController extends BasicController {
 
 	private String selectedTab;
+	private boolean showNewTariffWindow;
+	private boolean showNewCatalogueWindow;
+	private boolean showNewSupplierWindow;
+	private boolean showNewAlternativeWindow;
+	private boolean showNewAddInfoWindow;
+	private boolean showNewAttachmentWindow;
 	private ItemPricesManager pricesManager;
 
 	public String getSelectedTab() {
@@ -20,6 +26,54 @@ public class ItemController extends BasicController {
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShowNewTariffWindow() {
+		return showNewTariffWindow;
+	}
+
+	public void setShowNewTariffWindow(boolean showNewTariffWindow) {
+		this.showNewTariffWindow = showNewTariffWindow;
+	}
+
+	public boolean isShowNewCatalogueWindow() {
+		return showNewCatalogueWindow;
+	}
+
+	public void setShowNewCatalogueWindow(boolean showNewCatalogueWindow) {
+		this.showNewCatalogueWindow = showNewCatalogueWindow;
+	}
+
+	public boolean isShowNewSupplierWindow() {
+		return showNewSupplierWindow;
+	}
+
+	public void setShowNewSupplierWindow(boolean showNewSupplierWindow) {
+		this.showNewSupplierWindow = showNewSupplierWindow;
+	}
+
+	public boolean isShowNewAlternativeWindow() {
+		return showNewAlternativeWindow;
+	}
+
+	public void setShowNewAlternativeWindow(boolean showNewAlternativeWindow) {
+		this.showNewAlternativeWindow = showNewAlternativeWindow;
+	}
+
+	public boolean isShowNewAddInfoWindow() {
+		return showNewAddInfoWindow;
+	}
+
+	public void setShowNewAddInfoWindow(boolean showNewAddInfoWindow) {
+		this.showNewAddInfoWindow = showNewAddInfoWindow;
+	}
+
+	public boolean isShowNewAttachmentWindow() {
+		return showNewAttachmentWindow;
+	}
+
+	public void setShowNewAttachmentWindow(boolean showNewAttachmentWindow) {
+		this.showNewAttachmentWindow = showNewAttachmentWindow;
 	}
 
 	public ItemPricesManager getPricesManager() {
