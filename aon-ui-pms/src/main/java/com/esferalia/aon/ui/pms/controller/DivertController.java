@@ -84,7 +84,7 @@ public class DivertController extends BasicController {
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
-		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), PmsUtils.getWorkPlaceScopeToExclude());
+		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), getWorkPlaceScopeToExclude());
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {
 			Hotel hotel = (Hotel)ito;
@@ -92,6 +92,11 @@ public class DivertController extends BasicController {
 			list.add(item);
 		}
 		return list;
+	}
+	
+	private Integer getWorkPlaceScopeToExclude() {
+		// Id del ambito de hoteles externos
+		return 107;
 	}
 	
 }
