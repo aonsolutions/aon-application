@@ -1,5 +1,8 @@
 package com.code.aon.ui.infoweb.controller;
 
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.HOMEPAGE_ID_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.TEMPLATE_NAME_PARAM;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -41,11 +43,10 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.infoweb.util.PathUtil;
-import com.code.aon.ui.infoweb.velocity.VelocityConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class CompanyWebInfoStyleController extends BasicController implements VelocityConstants {
+public class CompanyWebInfoStyleController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyWebInfoStyleController.class.getName());
 
@@ -54,24 +55,6 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	public String template;
 	
 	public Integer homepage;
-	
-	private Map<String, ApplicationParameter> parameters;
-	
-	private void loadParameters() throws ManagerBeanException{
-		parameters = new TreeMap<String, ApplicationParameter>();
-		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		List<ITransferObject> list = managerBean.getList(null);
-		Iterator<ITransferObject> iter = list.iterator();
-		while (iter.hasNext()) {
-			ApplicationParameter appParam = (ApplicationParameter) iter.next();
-			parameters.put(appParam.getName(), appParam);
-		}
-	}
-	
-	public ApplicationParameter getParameter(String key) throws ManagerBeanException {
-		loadParameters();	
-		return parameters.get(key); 		
-	}
 	
 	@Override
 	public void onSelect(ActionEvent event){
@@ -215,49 +198,26 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 	}
 
 	public void onChangeTemplate(ActionEvent event) {
-    	//Guardar el template en constantes
-		try {
-			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = getParameter(TEMPLATE_NAME_PARAM);
-			if ( ap == null ) {
-				ap = new ApplicationParameter();	
-			}
-			ap.setName(TEMPLATE_NAME_PARAM);
-			ap.setValue(getTemplate());
-			apBean.insertOrUpdate( ap );
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+		ApplicationParameter ap = PublishParameterController.getParameter(TEMPLATE_NAME_PARAM);
+		if ( ap == null ) {
+			PublishParameterController.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
 		}
-		//Cargar valores del template actual
 		chargeValues();
     }
 
 	public void onChangeHomepage(ActionEvent event) {
-    	//Guardar la homepage en constantes
-		try {
-			IManagerBean apBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			ApplicationParameter ap = getParameter(HOMEPAGE_NAME_PARAM);
-			if ( ap == null ) {
-				ap = new ApplicationParameter();	
-			}
-			ap.setName(HOMEPAGE_NAME_PARAM);
-			ap.setValue( String.valueOf(getHomepage()) );
-			apBean.insertOrUpdate( ap );
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
+		ApplicationParameter ap = PublishParameterController.getParameter(HOMEPAGE_ID_PARAM);
+		if ( ap == null ) {
+			PublishParameterController.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
 		}
     }
 
 	public String getTemplate() {
 		if (template == null) {
-			try {
-				ApplicationParameter ap = getParameter(TEMPLATE_NAME_PARAM);
-				if ( ap != null ) {
-					template = ap.getValue();				
-					chargeValues();
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error( e.getMessage(), e );
+			ApplicationParameter ap = PublishParameterController.getParameter(TEMPLATE_NAME_PARAM);
+			if ( ap != null ) {
+				template = ap.getValue();				
+				chargeValues();
 			}
 		}
 		this.model.setRowIndex(0);
@@ -266,14 +226,10 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 
 	public Integer getHomepage() {
 		if (homepage == null) {
-			try {
-				homepage = 0;
-				ApplicationParameter ap = getParameter(HOMEPAGE_NAME_PARAM);
-				if ( ap != null ) {
-					homepage = Integer.parseInt(ap.getValue());				
-				}
-			} catch (ManagerBeanException e) {
-				LOGGER.error( e.getMessage(), e );
+			homepage = 0;
+			ApplicationParameter ap = PublishParameterController.getParameter(HOMEPAGE_ID_PARAM);
+			if ( ap != null ) {
+				homepage = Integer.parseInt(ap.getValue());				
 			}
 		}
 		return homepage;
