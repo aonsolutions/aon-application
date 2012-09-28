@@ -15,12 +15,7 @@
 					<f:facet name="header">
 						<aon:outputLabel for="ItemAttach_type" value="#{bundle.aon_type}" />
 					</f:facet>
-					<aon:outputText value="#{to.type}" rendered="#{formList}" />
-					<aon:selectOneMenu id="ItemAttach_type" rendered="#{formEdit}"
-						value="#{controller.to.type}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{itemAttach.typesList}" />
-					</aon:selectOneMenu>									
+					<aon:outputText value="#{to.type}" />
 					<f:facet name="footer">
 						<aon:selectOneMenu id="ItemAttach_type-New" rendered="#{formNew}"
 							value="#{controller.to.type}">
@@ -45,29 +40,6 @@
 						rendered="#{formNew}" size="40" />
 				</f:facet>
 			</aon:column>
- 
- <!--  
-			<c:if test="#{!skipCategoryColumn}"> 
-				<aon:column>
-					<f:facet name="header">
-						<aon:outputLabel for="ItemAttach_category" value="#{ItemBundle.registry_category}" />
-					</f:facet>
-					<aon:outputText value="#{to.category.name}" rendered="#{formList}" />
-					<aon:selectOneMenu id="ItemAttach_category" rendered="#{formEdit}"
-						value="#{controller.to.category}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{registryCollections.categories}" />
-					</aon:selectOneMenu>									
-					<f:facet name="footer">
-						<aon:selectOneMenu id="ItemAttach_category-New" rendered="#{formNew}"
-							value="#{controller.to.category}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{registryCollections.categories}" />
-						</aon:selectOneMenu>									
-					</f:facet>
-				</aon:column>
-			</c:if>
- -->
 			
 			<c:if test="#{!skipMimetypeColumn}">
 				<aon:column>
