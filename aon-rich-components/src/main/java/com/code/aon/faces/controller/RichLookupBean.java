@@ -841,8 +841,8 @@ public class RichLookupBean {
 	}
 	
 	private String[] getSuggestAliases( HtmlLookupSuggestText st ) {
-		if (! ArrayUtils.isEmpty(st.getSuggestAlias()) ) {
-			String[] list = st.getSuggestAlias();
+		if (! StringUtils.isEmpty(st.getSuggestAlias()) ) {
+			String[] list = StringUtils.split(st.getSuggestAlias(), ",");
 			String[] aliases = new String[list.length];
 			for( int i = 0; i < list.length; i++ ) {
 				aliases[i] = getController().resolveAlias(list[i]);	
@@ -850,7 +850,7 @@ public class RichLookupBean {
 			return aliases;
 		}
 		return getSuggestAliases();
-	}
+	}	
 
 	@SuppressWarnings("unchecked")
 	public List<ITransferObject> autocomplete( Object value, UIComponent component ) {
