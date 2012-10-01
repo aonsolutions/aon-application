@@ -12,7 +12,13 @@ public class PublishProperties {
 	
 	private String ftpPassword;
 	
-	private String domain;
+	private String previewPath;
+	
+	private String previewURL;
+	
+	private String publishPath;
+	
+	private String publishURL;
 
 	public String getFtpServer() {
 		return ftpServer;
@@ -38,12 +44,36 @@ public class PublishProperties {
 		this.ftpPassword = ftpPassword;
 	}
 	
-	public String getDomain() {
-		return domain;
+	public String getPreviewPath() {
+		return previewPath;
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public void setPreviewPath(String previewPath) {
+		this.previewPath = previewPath;
+	}
+
+	public String getPreviewURL() {
+		return previewURL;
+	}
+
+	public void setPreviewURL(String previewURL) {
+		this.previewURL = previewURL;
+	}
+
+	public String getPublishPath() {
+		return publishPath;
+	}
+
+	public void setPublishPath(String publishPath) {
+		this.publishPath = publishPath;
+	}
+
+	public String getPublishURL() {
+		return publishURL;
+	}
+
+	public void setPublishURL(String publishURL) {
+		this.publishURL = publishURL;
 	}
 
 	public Properties getFtpProperties() {

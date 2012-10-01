@@ -44,9 +44,24 @@
 					<aon:inputText id="FtpPassword" value="#{publishParameter.to.ftpPassword}"
 						size="20" required="true" />
 
-					<aon:outputLabel for="Domain"
-						value="#{infowebBundle.infoweb_domain_name}" />
-					<aon:inputText id="Domain" value="#{publishParameter.to.domain}"
+					<aon:outputLabel for="PreviewPath"
+						value="#{infowebBundle.infoweb_preview_path}" />
+					<aon:inputText id="PreviewPath" value="#{publishParameter.to.previewPath}"
+						size="60" required="true" />
+
+					<aon:outputLabel for="PreviewURL"
+						value="#{infowebBundle.infoweb_preview_url}" />
+					<aon:inputText id="PreviewURL" value="#{publishParameter.to.previewURL}"
+						size="60" required="true" />
+
+					<aon:outputLabel for="PublishPath"
+						value="#{infowebBundle.infoweb_publish_path}" />
+					<aon:inputText id="PublishPath" value="#{publishParameter.to.publishPath}"
+						size="60" required="true" />
+
+					<aon:outputLabel for="PublishURL"
+						value="#{infowebBundle.infoweb_pubish_url}" />
+					<aon:inputText id="PublishURL" value="#{publishParameter.to.publishURL}"
 						size="60" required="true" />
 
 				</aon:panelGrid>

@@ -1,9 +1,12 @@
 package com.code.aon.ui.infoweb.controller;
 
-import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DOMAIN_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.FTP_PASSWORD_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.FTP_SERVER_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.FTP_USER_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PREVIEW_PATH_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PREVIEW_URL_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PUBLISH_PATH_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PUBLISH_URL_PARAM;
 import static com.esferalia.aon.entity.IEntityAlias.APPLICATION_PARAMETER_NAME;
 
 import java.util.List;
@@ -91,7 +94,10 @@ public class PublishParameterController {
 		insertParameter(FTP_SERVER_PARAM, to.getFtpServer());
 		insertParameter(FTP_USER_PARAM, to.getFtpUser());
 		insertParameter(FTP_PASSWORD_PARAM, to.getFtpPassword());
-		insertParameter(DOMAIN_PARAM, to.getDomain());
+		insertParameter(PREVIEW_PATH_PARAM, to.getPreviewPath());
+		insertParameter(PREVIEW_URL_PARAM, to.getPreviewURL());
+		insertParameter(PUBLISH_PATH_PARAM, to.getPublishPath());
+		insertParameter(PUBLISH_URL_PARAM, to.getPublishURL());
 	}
 	
 	public PublishProperties getPublishProperties() {
@@ -99,7 +105,10 @@ public class PublishParameterController {
 		fp.setFtpServer(getValue(FTP_SERVER_PARAM));
 		fp.setFtpUser(getValue(FTP_USER_PARAM));
 		fp.setFtpPassword(getValue(FTP_PASSWORD_PARAM));
-		fp.setDomain(getValue(DOMAIN_PARAM));
+		fp.setPreviewPath(getValue(PREVIEW_PATH_PARAM));
+		fp.setPreviewURL(getValue(PREVIEW_URL_PARAM));
+		fp.setPublishPath(getValue(PUBLISH_PATH_PARAM));
+		fp.setPublishURL(getValue(PUBLISH_URL_PARAM));
 		return fp;
 	}
 	

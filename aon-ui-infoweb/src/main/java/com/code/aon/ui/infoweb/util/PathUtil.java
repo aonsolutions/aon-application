@@ -3,6 +3,7 @@ package com.code.aon.ui.infoweb.util;
 import java.io.File;
 
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
+import com.code.aon.ui.util.AonUtil;
 
 public class PathUtil implements VelocityConstants {
 
@@ -26,20 +27,13 @@ public class PathUtil implements VelocityConstants {
 		return new File( getCssPath(template), STYLE_TEMPLATE );
 	}
 
-	public static File getDomainsPath() {
-		return new File( DOMAINS_PATH );
-	}
-	
-	public static File getDomainPath( String domain ) {
-		return new File( getDomainsPath(), domain );
-	}
-
-	public static File getTempPath( String domain ) {
+	public static File getTempPath() {
 		return new File( TMP_PATH );
 	}
 	
-	public static File getPreviewPath( String domain) {
-		return new File( getTempPath(domain), PREVIEW_PREFIX + domain );
+	public static File getPreviewPath() {
+		String domain = AonUtil.getAuthPrincipal().getDomain();
+		return new File( getTempPath(), PREVIEW_PREFIX + domain );
 	}
 	
 }

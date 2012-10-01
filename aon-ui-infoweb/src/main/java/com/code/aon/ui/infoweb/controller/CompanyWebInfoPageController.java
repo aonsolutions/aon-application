@@ -260,14 +260,14 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.WEB_INFO_PAGE_NAME), pageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
-			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));
+			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, IInfoWebConstants.PAGE_DUPLICATED_NAME));
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException( message );
 		}
 		for( int i = 0; i < pageName.length(); i++ ) {
 			char c = pageName.charAt(i);
 			if (! isValidChar(c) ) {
-				String text = AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_invalid_character");
+				String text = AonUtil.getMessage(BUNDLE_NAME, PAGE_INVALID_CHARACTER);
 				String formatted = AonUtil.substituteParams(AonUtil.getCurrentLocale(), text, new Object[]{c});
 				FacesMessage message = new FacesMessage(formatted);
 				message.setSeverity(FacesMessage.SEVERITY_ERROR);				
