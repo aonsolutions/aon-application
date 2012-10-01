@@ -3,13 +3,17 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
 
 	<aon:outputLabel for="RegistryAddInfo_attribute" value="#{bundle.aon_name}" />
-	<aon:inputText id="RegistryAddInfo_attribute"
+	<rich:comboBox id="RegistryAddInfo_attribute"
+		directInputSuggestions="true"
+		suggestionValues="#{registryCollections.addInfoAttributes}"
 		value="#{controller.to.attribute}"
-		required="true" 
-		size="40" maxlength="32" />
+		required="true"
+		maxlength="32" width="250"	
+		inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif; font-size:1em;" />
 
 	<aon:outputLabel for="RegistryAddInfo_value" value="#{bundle.aon_value}" />
 	<aon:inputText id="RegistryAddInfo_value"

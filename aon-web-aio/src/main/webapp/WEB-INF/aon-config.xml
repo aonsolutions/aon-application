@@ -158,6 +158,7 @@
 			showAlternatives="true"
 			showSuppliers="true"
 			showAccount="true"
+			showAddInfo="true"
 			showAttachment="true"
 			showEcommerceData="false"
 			showHistory="true"

@@ -3,7 +3,6 @@ package com.code.aon.ui.product.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -26,14 +25,13 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.enumeration.AttachmentType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.ui.util.AonUtil;
 
 public class ItemAttachController extends LinesController {
 
@@ -41,7 +39,7 @@ public class ItemAttachController extends LinesController {
 
 	/** The uploaded file. */
 	private AonFile aonFile;
-
+	
 	private AttachmentType type;
 
 	private long maximumSize;
@@ -151,35 +149,25 @@ public class ItemAttachController extends LinesController {
 		context.responseComplete();
 	}
 
-	private List<SelectItem> typesList;
+
 	/**
 	 * Recupera los tipos de adjuntos
 	 * 
 	 * @return
 	 */
 	public List<SelectItem> getTypesList() {
-		if(typesList==null){
-		}
-		refreshTypeList();
-		return typesList;
-	}
-	
-	public void setTypesList(List<SelectItem> typesList) {
-		this.typesList = typesList;
-	}
-	
-	public void refreshTypeList(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		typesList = new LinkedList<SelectItem>();
-		boolean dis=false;
-		for (AttachmentType p : AttachmentType.values()) {
-			String name = p.getName(locale);
-			SelectItem item = new SelectItem(p, name,name,dis);
-			if((p.compareTo(AttachmentType.THUMBNAIL)==0 && !hasThumbnail())
-					|| p.compareTo(AttachmentType.THUMBNAIL)!=0){
+		Locale locale = AonUtil.getCurrentLocale();
+		List<SelectItem> typesList = new LinkedList<SelectItem>();
+		boolean hasThumbnail = hasThumbnail();
+		for (AttachmentType type : AttachmentType.values()) {
+			if ( (type != AttachmentType.THUMBNAIL) || 
+				( (type == AttachmentType.THUMBNAIL) && !hasThumbnail ) ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
 				typesList.add(item);
 			}
 		}
+		return typesList;
 	}
 	
 	public boolean hasThumbnail() {
@@ -187,18 +175,12 @@ public class ItemAttachController extends LinesController {
 			IManagerBean attachmentBean = BeanManager.getManagerBean(ItemAttachment.class);
 			Criteria criteria = new Criteria();
 			criteria.addExpression(getCriteria().getExpression());
-			criteria.addEqualExpression(getFieldName(IEntityAlias.ITEM_ATTACHMENT_TYPE),AttachmentType.THUMBNAIL);
-			Iterator<ITransferObject> iter = attachmentBean.getList(criteria).iterator();
-			return iter.hasNext();
+			criteria.addEqualExpression("ItemAttachment.type",AttachmentType.THUMBNAIL);
+			return attachmentBean.getCount(criteria) > 0;
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
-		return true;
+		return false;
 	}
 	
-	//*******************************
-	//*******************************
-	// FALTA CONTROLAR TAMAÑO DE THUMBNAIL, REDIMENSIONAR LA IMAGEN
-	//*******************************
-	//*******************************
 }

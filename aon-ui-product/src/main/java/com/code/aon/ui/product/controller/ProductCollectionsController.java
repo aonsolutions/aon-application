@@ -16,12 +16,15 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Catalogue;
 import com.code.aon.product.Item;
+import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class ProductCollectionsController {
@@ -222,5 +225,18 @@ public class ProductCollectionsController {
 		}
 		return expenseItems;
 	}
+
+    public List<String> getAddInfoAttributes() throws ManagerBeanException{
+    	List<String> addInfos = new LinkedList<String>();
+    	IManagerBean addInfoBean = BeanManager.getManagerBean(ItemAddInfo.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addOrder(addInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ATTRIBUTE));
+		Projection projection = Projection.group(addInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ATTRIBUTE));
+		for (Object ito : addInfoBean.getList(new ProjectionList(projection), criteria)) {
+    		String addInfo = (String)ito;
+    		addInfos.add(addInfo);
+    	}
+    	return addInfos;
+    }
 
 }

@@ -119,6 +119,17 @@ public class PurchaseTransferManager {
 		return detailList;
 	}
 
+	public void onTransferedChanged(ActionEvent event) {
+		PurchaseDetail purchaseDetail = (PurchaseDetail) getDetailModel().getRowData();
+		if(purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() < 0 ){
+			purchaseDetail.setTransfered(0);
+			// TODO revisar cuando el producto proviene de una devolucion (cantidades negativas del item)
+//		} else if(purchaseDetail.getPendingQuantity() < 0 
+//				&& (purchaseDetail.getPendingQuantity() > purchaseDetail.getTransfered() || purchaseDetail.getTransfered() > 0) ){
+		} else if( purchaseDetail.getPendingQuantity() < 0 ){
+			purchaseDetail.setTransfered(purchaseDetail.getPendingQuantity());
+		}
+	}
 	public void onTransferedChanged(ValueChangeEvent event) {
 		double value = (event.getNewValue()!=null) ? ((Double)event.getNewValue()).doubleValue() : 0;
 		selectDetailRow(value > 0);
@@ -260,6 +271,18 @@ public class PurchaseTransferManager {
 				detailChecks.remove(detail);
 			}
 		}
+	}
+	
+	public boolean isTransferedGreatherThanPending() {
+		return isTransferedGreatherThanPending((PurchaseDetail) getDetailModel().getRowData());
+	}
+	
+	public boolean isTransferedGreatherThanPending(PurchaseDetail purchaseDetail) {
+		if( (purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() > purchaseDetail.getPendingQuantity())
+				|| (purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() < purchaseDetail.getPendingQuantity()) ){
+			return true;
+		}
+		return false;
 	}
 
 }

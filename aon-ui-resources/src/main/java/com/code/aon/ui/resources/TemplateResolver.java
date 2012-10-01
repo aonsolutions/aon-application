@@ -34,9 +34,13 @@ public class TemplateResolver extends DefaultResourceResolver
             url = Thread.currentThread().getContextClassLoader().
                     getResource(path);
     		try {
-    			url = new URL(null, url.toExternalForm(), new DummyHandler() );
+    			if ( url != null ) {
+        			url = new URL(null, url.toExternalForm(), new DummyHandler() );    				
+    			} else {
+    				LOGGER.error( "Resource not found: " + path );
+    			}
     		} catch (MalformedURLException e) {
-    			LOGGER.error( "Error resolving url " + url, e );
+    			LOGGER.error( "Error resolving url " + path, e );
     		}           
         }
         return url;

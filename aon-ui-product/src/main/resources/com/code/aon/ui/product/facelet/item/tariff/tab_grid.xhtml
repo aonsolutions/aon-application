@@ -21,7 +21,8 @@
 					rendered="#{formList or formEdit}" />
 				<f:facet name="footer">
 					<aon:selectOneMenu id="ItemTariff_tariff-New"
-						value="#{controller.to.tariff}" rendered="#{formNew}">
+						value="#{controller.to.tariff}" rendered="#{formNew}"
+						required="true">
 						<f:selectItems value="#{configCollections.tariffs}" />
 					</aon:selectOneMenu>
 				</f:facet>

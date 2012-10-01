@@ -66,7 +66,7 @@ public class PurchaseUtils {
 		purDet.setItem(proposalDetail.getItem());
 		purDet.setDescription(proposalDetail.getItem().getProduct().getName());
 		purDet.setPrice(proposalDetail.getPrice());
-		purDet.setQuantity(proposalDetail.getQuantity());
+		purDet.setQuantity((proposalDetail.getProposal().isItemReturn()?-1:1)*proposalDetail.getQuantity());
 		purDet.setPrice(proposalDetail.getItem().getPrice());
 		purDet.setStatus(PurchaseDetailStatus.PENDING);
 		if(proposalDetail.getDiscountExpr()!=null){

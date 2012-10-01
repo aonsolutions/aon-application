@@ -26,6 +26,7 @@ import com.esferalia.aon.pms.Hotel;
 import com.esferalia.aon.pms.ProjectReservationDivert;
 import com.esferalia.aon.pms.enumeration.ReservationDivertStatus;
 import com.esferalia.aon.pms.enumeration.ReservationStatus;
+import com.esferalia.aon.ui.pms.util.PmsUtils;
 
 public class DivertController extends BasicController {
 	
@@ -79,24 +80,23 @@ public class DivertController extends BasicController {
 	}
 	
 	public List<SelectItem> getAvailableHotels() throws ManagerBeanException{
-		List<SelectItem> currentUserHotels = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<SelectItem>();
 		IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_ACTIVE), true);
-		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), getScopeToExclude());
+		criteria.addNotEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_SCOPE_ID), getWorkPlaceScopeToExclude());
 		criteria.addOrder(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_DESCRIPTION));
 		for (ITransferObject ito : hotelBean.getList(criteria)) {
 			Hotel hotel = (Hotel)ito;
 			SelectItem item = new SelectItem(hotel, hotel.getWorkPlace().getDescription());
-			currentUserHotels.add(item);
+			list.add(item);
 		}
-		return currentUserHotels;
+		return list;
 	}
 	
-	private Integer getScopeToExclude() {
+	private Integer getWorkPlaceScopeToExclude() {
 		// Id del ambito de hoteles externos
 		return 107;
 	}
 	
-
 }

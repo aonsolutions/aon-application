@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.enumeration.MimeType;
 
@@ -170,6 +171,17 @@ public class AonFile {
 			}
 		}
 		return mt;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				append("file", (file != null) ? file.getName() : null).
+				append("fileName", fileName).
+				append("key", key).
+				append("mimeType", mimeType).
+				append("size", (data != null) ? data.length : null).				
+				toString();
 	}	
 	
 }

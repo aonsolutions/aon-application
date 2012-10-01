@@ -65,6 +65,7 @@
 			showAlternatives="true"
 			showSuppliers="true"
 			showAccount="false"
+			showAddInfo="true"
 			showAttachment="true"
 			showEcommerceData="false"
 			showHistory="false"

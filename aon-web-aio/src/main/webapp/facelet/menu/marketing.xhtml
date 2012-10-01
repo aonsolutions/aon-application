@@ -136,6 +136,14 @@
 											<aon:actionListener method="#{webPageStyle.onLoad}" />
 										</aon:commandLink>
 									</aon:div>
+									<c:if test="#{aonRole.admin}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="publishParameter" 
+												action="publishParameter" 
+												actionListener="#{publishParameter.onInit}"
+												value="#{infowebBundle.infoweb_publish_parameters}" />
+										</aon:div>
+									</c:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="generator" 
 											action="generator" 

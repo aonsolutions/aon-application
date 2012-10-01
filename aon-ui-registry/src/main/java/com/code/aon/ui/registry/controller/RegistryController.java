@@ -28,31 +28,18 @@ public class RegistryController extends BasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryController.class);
 	
 	private String selectedTab;
-	
 	private boolean showNewFeeWindow;
-	
 	private boolean showNewProjectWindow;
-
 	private boolean showNewNoteWindow;
-	
 	private boolean showNewRelationshipWindow;
-
 	private boolean showNewRecordDataWindow;
-	
 	private boolean showNewSegmentWindow;
-	
 	private boolean showNewAddInfoWindow;
-
 	private boolean showNewDirStaffWindow;
-	
 	private boolean showNewTargetItemWindow;
-	
 	private boolean showNewTargetProfileWindow;
-	
 	private boolean showNewTargetSellerWindow;
-	
 	private boolean showNewTargetSupplierWindow;
-	
 	private boolean showNewDocumentWindow;
 
 	public String getSelectedTab() {

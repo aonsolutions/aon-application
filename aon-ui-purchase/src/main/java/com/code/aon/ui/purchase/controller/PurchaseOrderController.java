@@ -42,6 +42,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.purchase.event.PurchaseSearchListener;
 import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -311,7 +312,12 @@ public class PurchaseOrderController {
 		purchsePrint.clearCriteria();
 		if (! purchaseIds.isEmpty() ) {
 			String alias = purchsePrint.getFieldName(IEntityAlias.PURCHASE_ID);
-			purchsePrint.getCriteria().addInExpression(alias, purchaseIds);			
+			purchsePrint.getCriteria().addInExpression(alias, purchaseIds);
+			if(getParams().isItemReturn()){
+//				purchsePrint.getCriteria().addEqualExpression(purchsePrint.getFieldName(IEntityAlias.PURCHASE_DOCUMENT_TYPE), PurchaseDocumentType.ITEM_RETURN);
+				PurchaseSearchListener purchaseSearch = (PurchaseSearchListener) AonUtil.getRegisteredBean("purchasePrintSearch");
+				purchaseSearch.setPurchaseDocumentTypes(null);
+			}
 		}
 	}
 	

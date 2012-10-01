@@ -169,6 +169,16 @@
 											<aon:actionListener method="#{domainUser.onSearch}" />
 										</aon:commandLink>						
 									</aon:div>
+									<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="overloadUsers"
+												action="userOverload_list"
+												actionListener="#{adminMain.onInit}"
+												value="#{adminBundle.admin_overload_users}" >
+												<aon:actionListener method="#{userOverload.onSearch}" />
+											</aon:commandLink>						
+										</aon:div>
+									</c:if>
 									<c:if test="#{aonRole.sysAdmin}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="domainApplications"

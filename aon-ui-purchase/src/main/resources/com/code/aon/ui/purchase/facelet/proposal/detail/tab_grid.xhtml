@@ -51,6 +51,7 @@
 					<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupSelectType" value="list" />
 					<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
 					<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 					<ui:param name="lookupInputOnFocus" value="ProposalDetail_quantity" />
@@ -62,6 +63,7 @@
 						<ui:param name="lookupTo" value="#{proposalDetail.to.item}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupSelectType" value="list" />
 						<ui:param name="skipGoToButton" value="#{!aonRole.config}" />
 						<ui:param name="skipNewButton" value="#{!aonRole.config}" />
 						<ui:param name="lookupSuffix" value="-New" />
@@ -81,22 +83,12 @@
 				</aon:outputText>
 				<aon:inputText id="ProposalDetail_quantity" rendered="#{formEdit}"
 					value="#{to.quantity}" required="true">
-					<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
 						<f:validateDoubleRange minimum="0.0" />
-					</c:if>
-					<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
-						<f:validateDoubleRange maximum="0.0" />
-					</c:if>
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="ProposalDetail_quantity-New" rendered="#{formNew}"
 						value="#{controller.to.quantity}" required="true">
-						<c:if test="#{!proposal.to.itemReturn or proposal.transfer}">
 							<f:validateDoubleRange minimum="0.0" />
-						</c:if>
-						<c:if test="#{proposal.to.itemReturn and !proposal.transfer}">
-							<f:validateDoubleRange maximum="0.0" />
-						</c:if>
 					</aon:inputText>
 				</f:facet>
 			</aon:column>

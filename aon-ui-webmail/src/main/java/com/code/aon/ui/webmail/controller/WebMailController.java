@@ -200,8 +200,8 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	}
 
 	public String isValidFile( AonFile file ) {
-		String extension = FilenameUtils.getExtension( file.getFileName() );
-		if ( ! StringUtils.isEmpty(extension) && this.rejectedExtensions.contains(extension.toLowerCase()) ) {
+		String extension = StringUtils.lowerCase( FilenameUtils.getExtension(file.getFileName()) );
+		if ( ! StringUtils.isEmpty(extension) && this.rejectedExtensions.contains(extension) ) {
 			return "La extension del fichero " + file.getFileName() + " no esta permitida";
 		}
 		int size = (int) file.getFile().length();

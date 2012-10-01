@@ -35,22 +35,22 @@
 				<aon:outputText value="#{to.supplier.registry.fullName}"
 					rendered="#{formList}" />
 				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{itemSupplier.to.supplier}" />
+					<ui:param name="lookupTo" value="#{controller.to.supplier}" />
 					<ui:param name="idRequired" value="#{true}" />						
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<aon:methodParam name="lookupChangeListener"
-						value="#{itemSupplier.onSupplierChanged}" type="lookupChangeListener" />
+						value="#{controller.onSupplierChanged}" type="lookupChangeListener" />
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{itemSupplier.to.supplier}" />
+						<ui:param name="lookupTo" value="#{controller.to.supplier}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
 						<ui:param name="lookupSuffix" value="-New" />
 						<aon:methodParam name="lookupChangeListener"
-							value="#{itemSupplier.onSupplierChanged}" type="lookupChangeListener" />
+							value="#{controller.onSupplierChanged}" type="lookupChangeListener" />
 					</ui:include>
 				</f:facet>
 			</aon:column>
@@ -62,11 +62,11 @@
 				</f:facet>
 				<aon:outputText value="#{to.code}" rendered="#{formList}" />
 				<aon:inputText id="ItemSupplier_Code"
-					value="#{itemSupplier.to.code}" rendered="#{formEdit}" 
+					value="#{controller.to.code}" rendered="#{formEdit}" 
 					size="15" maxlength="15" />
 				<f:facet name="footer">
 					<aon:inputText id="ItemSupplier_Code-New"
-						value="#{itemSupplier.to.code}" rendered="#{formNew}"
+						value="#{controller.to.code}" rendered="#{formNew}"
 						size="15" maxlength="15" />
 				</f:facet>
 			</aon:column>
@@ -80,11 +80,11 @@
 					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText> 
 				<aon:inputText id="ItemSupplier_Price"
-					value="#{itemSupplier.to.price}" rendered="#{formEdit}" 
+					value="#{controller.to.price}" rendered="#{formEdit}" 
 					required="true" size="5"/>
 				<f:facet name="footer">
 					<aon:inputText id="ItemSupplier_Price-New"
-						value="#{itemSupplier.to.price}" rendered="#{formNew}"
+						value="#{controller.to.price}" rendered="#{formNew}"
 						required="true" size="5" />
 				</f:facet>
 			</aon:column>
@@ -97,13 +97,13 @@
 					</f:facet>
 					<aon:outputText value="#{to.workPlace.description}" rendered="#{formList}" />
 					<aon:selectOneMenu id="ItemSupplier_workPlace" rendered="#{formEdit}" 
-						value="#{itemSupplier.to.workPlace}">
+						value="#{controller.to.workPlace}">
 						<f:selectItem itemLabel=" - " itemValue="null" />
 						<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
 						<aon:selectOneMenu id="ItemSupplier_workPlace-New" rendered="#{formNew}" 
-							value="#{itemSupplier.to.workPlace}">
+							value="#{controller.to.workPlace}">
 							<f:selectItem itemLabel=" - " itemValue="null" />
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
 						</aon:selectOneMenu>

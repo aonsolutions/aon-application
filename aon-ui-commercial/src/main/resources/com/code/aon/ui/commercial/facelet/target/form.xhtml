@@ -13,9 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{target.bundle.commercial_target_module}" />
 				<ui:param name="controller" value="#{target}" />
-				<ui:param name="showMoreMenu" value="#{true}" />
-				<ui:define name="beforeSpinToolbarContent">
-				</ui:define>
+				<ui:param name="showMoreMenu" value="#{!target.new}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="showNotesButton" value="#{aonConfiguration.bean.target.showNote}" />

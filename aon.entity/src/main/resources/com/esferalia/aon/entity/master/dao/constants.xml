@@ -117,6 +117,11 @@
 	</bean>
 	
 	<!-- ** AON CONFIG  **************************************************** -->
+	<bean class="com.code.aon.config.ApplicationUser">
+		<alias names="active,domain,domainApplication_id,id,user_id,user_domain"/>
+		<hibernate names="active,domain,domainApplication.id,id,user.id,user.domain"/>
+	</bean>
+
 	<bean class="com.code.aon.config.UserWorkGroup">
 		<alias names="id,user_id,workGroup_id,user_name,workGroup_description"/>
 		<hibernate names="id,user.id,workGroup.id,user.name,workGroup.description"/>

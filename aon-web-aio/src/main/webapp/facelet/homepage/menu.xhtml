@@ -64,10 +64,12 @@
 					styleClass="aon-top-menu-item" />
 			</c:if>
 			
-			<aon:commandLink id="fiscal"
-				value="#{bundle.aon_module_fiscal}"
-				action="menu_fiscal" immediate="true"
-				styleClass="aon-top-menu-item" />
+			<c:if test="#{aonRole.fiscal}">
+				<aon:commandLink id="fiscal"
+					value="#{bundle.aon_module_fiscal}"
+					action="menu_fiscal" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
 				
 			<aon:commandLink id="payroll"
 				value="#{bundle.aon_module_payroll}"

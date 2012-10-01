@@ -11,7 +11,7 @@
 		<aon:menuItem id="fee-button"
 			value="#{(feeButtonLabel!=null)?(feeButtonLabel):(financeBundle.finance_fees_module)}"
 			reRender="showNewFeeWindow"
-			iconClass="aon-icon-fee"
+			iconClass="aon-icon-auxiliary"
 			actionListener="#{feeController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewFeeWindow}" value="#{true}" />							
 		</aon:menuItem>
@@ -65,7 +65,7 @@
 		<aon:menuItem id="addInfo-button"
 			value="#{(addInfoButtonLabel!=null)?(addInfoButtonLabel):(registryBundle.registry_addInfo)}"
 			reRender="showNewAddInfoWindow"
-			iconClass="aon-icon-data"
+			iconClass="aon-icon-addinfo"
 			actionListener="#{addInfoController.onReset}">
 			<f:setPropertyActionListener target="#{controller.showNewAddInfoWindow}" value="#{true}" />							
 		</aon:menuItem>

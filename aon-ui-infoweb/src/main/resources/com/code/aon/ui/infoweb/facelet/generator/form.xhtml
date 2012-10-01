@@ -22,12 +22,12 @@
 					</aon:div>
 		
 					<aon:div styleClass="aon-finding-toolbar-item-group" ajaxRendered="true">
-						<aon:commandButton id="generate"
+						<aon:commandButton id="generate"  reRender="aonStatus"
 							value="#{infowebBundle.infoweb_generate}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{generator.onGenerate}" immediate="true"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+							actionListener="#{generator.onGenerate}" immediate="true" >	
+							<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+						</aon:commandButton>								
 						<h:outputLink id="preview" value="#{generator.previewPage}" target="_blank"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 							rendered="#{generator.generated}" > 

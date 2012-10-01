@@ -13,9 +13,7 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_creditor_module}" />
 				<ui:param name="controller" value="#{creditor}" />
-				
-				<ui:param name="showMoreMenu" value="#{true}" />
-				
+				<ui:param name="showMoreMenu" value="#{!creditor.new}" />
 				<ui:define name="moreMenuContent">
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/toolbarMoreMenu.xhtml">
 						<ui:param name="controller" value="#{creditor}" />

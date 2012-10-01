@@ -151,6 +151,7 @@
 				<value>#{itemSearch}</value>
 				<value>#{itemControllerListener}</value>
 				<value>#{itemAttachChildListener}</value>				
+				<value>#{itemAddInfoListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -195,6 +196,25 @@
 				<map-entry>
 					<key>ItemAttachment_item_id</key>
                     <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemAddInfoListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>itemAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ItemAddInfo_item_id</key>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -352,6 +372,42 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ ITEM ADDINFO ************** -->
+	<managed-bean>
+		<managed-bean-name>itemAddInfo</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.ItemAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemAddInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ItemAddInfo_attribute</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>item.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ************ ITEM ALTERNATIVE ************* -->
 	<managed-bean>
 		<managed-bean-name>itemAlternative</managed-bean-name>

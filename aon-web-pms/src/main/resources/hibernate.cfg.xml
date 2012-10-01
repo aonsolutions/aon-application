@@ -184,6 +184,7 @@
 		<mapping class="com.code.aon.product.CatalogueCategory"/>
 		<mapping class="com.code.aon.product.CatalogueItem"/>
 		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAddInfo"/>
 		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemComposition"/>
@@ -243,14 +244,14 @@
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
 		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
-				
+
 		<!-- AON-AUDIT Mapping files -->
 		<mapping class="com.code.aon.audit.Action"/>
 		<mapping class="com.code.aon.audit.ActionDenied"/>
 		<mapping class="com.code.aon.audit.ActionEntry"/>
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Session"/>								
-				
+		<mapping class="com.code.aon.audit.Session"/>
+
 		<!-- AON-PMS Mapping files -->	
 		<mapping class="com.esferalia.aon.pms.FinancePos"/>
 		<mapping class="com.esferalia.aon.pms.Hotel"/>

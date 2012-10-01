@@ -5,8 +5,7 @@ public interface VelocityConstants {
 	String
 
 	//APLICATION CONSTANTS
-	TEMPLATE_NAME_PARAM			= "WEBINFO_TEMPLATE_NAME",
-	HOMEPAGE_NAME_PARAM			= "WEBINFO_HOMEPAGE_ID",
+	TMP_PATH					= "/tmp",
 	DOMAINS_PATH				= "/home/DOMAINS",
 	WEBSITE_PATH				= "WEBSITES",
 	RESOURCE_PATH				= "DOMAIN-RESOURCES",
@@ -20,8 +19,6 @@ public interface VelocityConstants {
 	CSSIMG_PATH					= "img",
 	IMAGES_PATH					= "images",
 	INDEX_TITLE					= "Inicio",
-
-	TEMPORAL_PATH				= "/home/COMMON-RESOURCES/aon-web-info/temporal",
 
 	//TEMPLATES CONSTANTS
 	TEMPLATE_PATH				= "/home/COMMON-RESOURCES/aon-web-info/templates",

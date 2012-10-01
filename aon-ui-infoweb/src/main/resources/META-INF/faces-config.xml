@@ -114,6 +114,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>publishParameter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.infoweb.controller.PublishParameterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>companyWebInfo</from-outcome>
@@ -130,6 +136,10 @@
 		<navigation-case>
 			<from-outcome>generator</from-outcome>
 			<to-view-id>/com/code/aon/ui/infoweb/facelet/generator/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>publishParameter</from-outcome>
+			<to-view-id>/com/code/aon/ui/infoweb/facelet/publishParameter/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

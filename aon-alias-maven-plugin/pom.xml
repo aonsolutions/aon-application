@@ -163,4 +163,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
 </project>

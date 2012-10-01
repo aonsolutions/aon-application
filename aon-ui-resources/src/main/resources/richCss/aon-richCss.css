@@ -918,11 +918,23 @@ color:#000;
 .aon-icon-segment{
 	background:transparent url(images/aon-icon/aon-icon-segment.png) scroll left center no-repeat;
 }
-.aon-icon-data{
-	background:transparent url(images/aon-icon/aon-icon-data.png) scroll left center no-repeat;
+.aon-icon-addinfo{
+	background:transparent url(images/aon-icon/aon-icon-addinfo.png) scroll left center no-repeat;
+}
+.aon-icon-tariff{
+	background:transparent url(images/aon-icon/aon-icon-tariff.png) scroll left center no-repeat;
+}
+.aon-icon-catalogue{
+	background:transparent url(images/aon-icon/aon-icon-catalogue.png) scroll left center no-repeat;
+}
+.aon-icon-alternative{
+	background:transparent url(images/aon-icon/aon-icon-alternative.png) scroll left center no-repeat;
 }
 .aon-icon-documents{
 	background:transparent url(images/aon-icon/aon-icon-documents.png) scroll left center no-repeat;
+}
+.aon-icon-data{
+	background:transparent url(images/aon-icon/aon-icon-data.png) scroll left center no-repeat;
 }
 
 /******* GROUP  **********/

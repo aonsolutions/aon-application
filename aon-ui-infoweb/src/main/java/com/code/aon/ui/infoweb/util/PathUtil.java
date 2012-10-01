@@ -2,16 +2,10 @@ package com.code.aon.ui.infoweb.util;
 
 import java.io.File;
 
-import com.code.aon.ui.infoweb.controller.IInfoWebConstants;
 import com.code.aon.ui.infoweb.velocity.VelocityConstants;
-import com.code.aon.ui.util.AonUtil;
 
 public class PathUtil implements VelocityConstants {
 
-	public static File getWebInfoProperties() {
-		return new File( IInfoWebConstants.WEB_INFO_PROPERTIES );
-	}
-	
 	public static File getTemplatesPath() {
 		return new File( TEMPLATE_PATH );
 	}
@@ -40,24 +34,12 @@ public class PathUtil implements VelocityConstants {
 		return new File( getDomainsPath(), domain );
 	}
 
-	public static File getWebSitesPath( String domain ) {
-		return new File( getDomainPath(domain), WEBSITE_PATH );
+	public static File getTempPath( String domain ) {
+		return new File( TMP_PATH );
 	}
 	
 	public static File getPreviewPath( String domain) {
-		return new File( getWebSitesPath(domain), PREVIEW_PREFIX + domain );
-	}
-
-	public static boolean isReadableDirectory( File directory ) {
-		if (!directory.exists()) {
-			AonUtil.addErrorMessage("No se ha encontrado el directorio '" + directory + "'");
-			return false;
-		}
-		if (!directory.canRead()) {
-			AonUtil.addErrorMessage("El directorio '" + directory + "' no tiene permiso de lectura");
-			return false;
-		}		
-		return true;
+		return new File( getTempPath(domain), PREVIEW_PREFIX + domain );
 	}
 	
 }

@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.audit</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
@@ -136,5 +136,10 @@
 			</exclusions>
 		</dependency>     
 	</dependencies>
+    <profiles>
+      	<profile>
+            <id>perform-stats</id>
+        </profile>
+    </profiles>
 </project>
 

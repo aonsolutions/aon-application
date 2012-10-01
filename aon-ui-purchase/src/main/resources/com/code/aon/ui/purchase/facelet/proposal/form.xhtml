@@ -74,7 +74,7 @@
 							title="#{purchaseBundle.purchase_proposal_transfer_undo}"  
 							actionListener="#{proposal.onUndoTransfer}"
 							reRender="proposalPanel"
-							rendered="#{proposal.to.pending and proposal.to.transferProposal.pending}" />
+							rendered="#{proposal.to.pending and proposal.to.transferProposal.pending and proposal.to.itemReturn}" />
 						
 					</aon:div>
 					
@@ -99,18 +99,18 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:outputLabel for="Proposal_workPlce" 
+					<aon:outputLabel for="Proposal_workPlace" 
 						value="#{companyBundle.company_workplace}" />
 					<aon:div>
 						<aon:outputText	value="#{proposal.to.workPlace.description}" styleClass="aon-bold"
 							rendered="#{!proposal.new}" />
-						<aon:selectOneMenu id="Proposal_workPlce" 
+						<aon:selectOneMenu id="Proposal_workPlace" 
 							value="#{proposal.to.workPlace}"
 							required="true" 
 							rendered="#{proposal.new}" >
 							<f:selectItems value="#{companyCollections.currentUserWorkPlaces}" />
-							<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" />
-							<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" />
+							<a4j:support event="onchange" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
+							<a4j:support event="oninputchanged" reRender="Proposal_department" ignoreDupResponses="true" ajaxSingle="true" />
 						</aon:selectOneMenu>
 					</aon:div>
 			
