@@ -2,16 +2,17 @@ package com.code.aon.common.dao;
 
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.HibernateRenderer;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ProjectionList;
-import com.code.aon.ql.ast.sql.SqlRenderer;
 import com.code.aon.ql.util.ExpressionException;
 
 /**
@@ -150,6 +151,26 @@ public class CriteriaUtilities {
 				throw new DAOException(exception.getMessage(), exception);
 			}
 		}
+	}
+
+	public static String toSQLString(Criteria criteria, boolean appendWhere, Map<String,Class<?>> pojoMapping,Map<String,String> tableMapping) {
+		if (criteria != null) {
+			StringBuffer buff = new StringBuffer();
+			if (criteria.getExpression() != null) {
+				if (appendWhere) {
+					buff.append(WHERE);
+				} else {
+					buff.append(AND);
+				}
+			}
+			StringWriter out = new StringWriter();
+			SqlRenderer renderer = new SqlRenderer(out,pojoMapping,tableMapping);
+			criteria.accept(renderer);
+			buff.append(out.toString());
+
+			return buff.toString();
+		}
+		return null;
 	}
 	
 }

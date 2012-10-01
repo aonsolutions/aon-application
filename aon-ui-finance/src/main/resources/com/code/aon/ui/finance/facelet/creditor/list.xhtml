@@ -31,23 +31,13 @@
 						<f:param name="reportKey" value="creditorReport" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="creditorDetailExcelReport-excel-report" value="&#160;" 
+					<aon:htmlCommandLink id="creditorDetailExcelReport-excel-report" 
+						value="#{bundle.aon_detailed_listing}" 
 						target="_new" rendered="#{!creditor.new}"
-						action="#{report.onExecute}"
+						actionListener="#{creditor.onDetailReport}"
 						disabled="#{creditor.to != null}"
 						accesskey="#{bundle.aon_key_print}"
 						styleClass="aon-finding-toolbar-item aon-icon-excel">
-						<f:param name="reportKey" value="creditorDetailExcelReport" />
-						<f:param name="outputFormat" value="MS Excel" />
-					</aon:htmlCommandLink>
-					<aon:htmlCommandLink id="creditorDetailReport-report" value="#{bundle.aon_detailed_listing}"
-						target="_new" rendered="#{!creditor.new}"
-						action="#{report.onExecute}"
-						disabled="#{creditor.to != null}"
-						accesskey="#{bundle.aon_key_print}"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf">
-						<f:param name="reportKey" value="creditorDetailReport" />
-						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>

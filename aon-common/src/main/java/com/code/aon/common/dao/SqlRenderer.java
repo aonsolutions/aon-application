@@ -1,13 +1,27 @@
-package com.code.aon.ql.ast.sql;
+package com.code.aon.common.dao;
 
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.persistence.Column;
+
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -24,58 +38,26 @@ import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
 import com.code.aon.ql.ast.SubQueryExpression;
 
-/**
- * Visitante de expresiones destinado a obtener una clausa WHERE de una
- * sentencia SQL.
- * 
- * @author Consulting & Development. Raúl Trepiana - 19-nov-2003
- * @since 1.0
- * 
- */
 public class SqlRenderer implements CriterionVisitor {
 	
-	private Map<String,String> tables; 
-	
-	/**
-	 * SQL ORDER BY.
-	 */
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");  
 	private static final String ORDER_BY = " ORDER BY ";
-
-	/**
-	 * SQL DESC.
-	 */
 	private static final String DESC = " DESC";
-
-	/**
-	 * Obtains a suitable <code>Logger</code>.
-	 */
 	private final static Logger LOGGER = LoggerFactory.getLogger(SqlRenderer.class);
-
-	/**
-	 * Where the result will be printed.
-	 */
 	private Writer out;
-
-	/**
-	 * Constructor giving a Writer where the result will be printed.
-	 * 
-	 * @param out
-	 *            A Writer where the result will be printed.
-	 */
+	private Map<String,String> tableMapping;
+	private Map<String,Class<?>> pojoMapping;
+	
 	public SqlRenderer(Writer out) {
 		this.out = out;
 	}
 
-	public SqlRenderer(Map<String,String> tables,Writer out) {
+	public SqlRenderer(Writer out,Map<String,Class<?>> pojoMapping,Map<String,String> tableMapping) {
 		this(out);
-		this.tables = tables;
+		this.pojoMapping = pojoMapping;
+		this.tableMapping = tableMapping;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitCriteria(com.code.aon.ql.Criteria)
-	 */
 	public void visitCriteria(Criteria criteria) {
 		if (criteria.getExpression() != null) {
 			criteria.getExpression().accept(this);
@@ -100,15 +82,14 @@ public class SqlRenderer implements CriterionVisitor {
 		write(" )");		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitOrderByList(com.code.aon.ql.OrderByList)
-	 */
 	public void visitOrderByList(OrderByList orderByList) {
-		write(ORDER_BY);
 		Iterator<Order> i = orderByList.getOrders().iterator();
+		boolean first = true;
 		while (i.hasNext()) {
+			if (first) {
+				write(ORDER_BY);
+				first = false;
+			}
 			Order order = (Order) i.next();
 			order.accept(this);
 			if (i.hasNext()) {
@@ -117,11 +98,6 @@ public class SqlRenderer implements CriterionVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitOrder(com.code.aon.ql.Order)
-	 */
 	public void visitOrder(Order order) {
 		order.getExpression().accept(this);
 		if (!order.isAscending()) {
@@ -129,11 +105,6 @@ public class SqlRenderer implements CriterionVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitLogicalOrExpression(com.code.aon.ql.ast.LogicalOrExpression)
-	 */
 	public void visitLogicalOrExpression(LogicalOrExpression expression) {
 		write("( ");
 		expression.getLeftExpression().accept(this);
@@ -142,11 +113,6 @@ public class SqlRenderer implements CriterionVisitor {
 		write(" )");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitLogicalAndExpression(com.code.aon.ql.ast.LogicalAndExpression)
-	 */
 	public void visitLogicalAndExpression(LogicalAndExpression expression) {
 		// write( " ");
 		expression.getLeftExpression().accept(this);
@@ -155,65 +121,30 @@ public class SqlRenderer implements CriterionVisitor {
 		// write( " ");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitNullExpression(com.code.aon.ql.ast.NullExpression)
-	 */
 	public void visitNullExpression(NullExpression expression) {
 		expression.getExpression().accept(this);
 		write(" is null ");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitNotNullExpression(com.code.aon.ql.ast.NotNullExpression)
-	 */
 	public void visitNotNullExpression(NotNullExpression expression) {
 		expression.getExpression().accept(this);
 		write(" is not null ");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitIdentExpression(com.code.aon.ql.ast.IdentExpression)
-	 */
-	public void visitIdentExpression(IdentExpression expression) {
-		if (tables==null){
-			write(expression.getName());	
-		} else {
-			String entity = expression.getName();
-			String column = entity.substring(entity.lastIndexOf('.')+1);
-			entity = entity.substring(0, entity.lastIndexOf('.'));
-			 
-			write(tables.containsKey(entity)?tables.get(entity) + column:expression.getName());	
-		}
-		
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitConstantExpression(com.code.aon.ql.ast.ConstantExpression)
-	 */
 	public void visitConstantExpression(ConstantExpression expression) {
 		if ( expression.getData().getClass().isEnum() ) {
 			Enum<?> en = (Enum<?>) expression.getData();
 			write("\'" + en.ordinal() + "\'");
 			
+		} else if ( expression.getData() instanceof Date ) {
+			Date date = (Date) expression.getData();
+			write("\'" + DATE_FORMATTER.format(date) + "\'");	
 		} else {
 			write("\'" + expression.getData() + "\'");	
 		}
 		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitBetweenExpression(com.code.aon.ql.ast.BetweenExpression)
-	 */
 	public void visitBetweenExpression(BetweenExpression expression) {
 		expression.getLeftExpression().accept(this);
 		write(" between ");
@@ -223,11 +154,6 @@ public class SqlRenderer implements CriterionVisitor {
 		write("  ");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitRelationalExpression(com.code.aon.ql.ast.RelationalExpression)
-	 */
 	public void visitRelationalExpression(RelationalExpression expression) {
 		expression.getLeftExpression().accept(this);
 
@@ -260,9 +186,19 @@ public class SqlRenderer implements CriterionVisitor {
 		expression.getRightExpression().accept(this);
 	}
 
-	/**
-	 * @param str
-	 */
+	public void visitIdentExpression(IdentExpression expression) {
+		if (pojoMapping == null){
+			write(expression.getName());	
+		} else {
+			String column = expression.getName();
+			try {
+				column = getSqlName(expression.getName());
+			} catch (DAOException e) {
+			}
+			write(column);
+		}
+	}
+
 	private void write(String str) {
 		try {
 			out.write(str);
@@ -271,4 +207,37 @@ public class SqlRenderer implements CriterionVisitor {
 		}
 	}
 
+	private String getSqlName(String alias) throws DAOException {
+		try {
+			String table = alias.substring(0 , alias.lastIndexOf('.') );
+			String property = alias.substring( alias.lastIndexOf('.') + 1 );
+
+			Class<? extends ITransferObject> pojoClass = (Class<? extends ITransferObject>) pojoMapping.get(table);				
+			IManagerBean bean = BeanManager.getManagerBean(pojoClass);
+			ITransferObject to = bean.createNewTo();
+			BeanUtilsBean bub = BeanUtilsBean.getInstance();
+			PropertyDescriptor pd = bub.getPropertyUtils().getPropertyDescriptor(to, property);
+			Method method = bub.getPropertyUtils().getReadMethod(pd);
+			Column columnAnnotation = method.getAnnotation(Column.class);
+			String columnName = property;
+			if (columnAnnotation != null) {
+				columnName = StringUtils.isEmpty(columnAnnotation.name())?property:columnAnnotation.name();	
+			}
+			String t = tableMapping.containsKey(table)?tableMapping.get(table):table;
+			String ret = t + "." + columnName; 
+			return ret;
+		} catch (SecurityException e) {
+			throw new DAOException(e.getMessage(),e);
+		} catch (NoSuchMethodException e) {
+			throw new DAOException(e.getMessage(),e);
+		} catch (ManagerBeanException e) {
+			throw new DAOException(e.getMessage(),e);
+		} catch (IllegalAccessException e) {
+			throw new DAOException(e.getMessage(),e);
+		} catch (InvocationTargetException e) {
+			throw new DAOException(e.getMessage(),e);
+		}
+	}
+	
+	
 }

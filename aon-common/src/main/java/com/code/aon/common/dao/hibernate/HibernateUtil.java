@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.domain.DomainEntityListener;
 
 /**
  * Hibernate utilities class.
@@ -418,7 +417,6 @@ public class HibernateUtil {
      * @param sessionFactoryName  
      * @return A java.sql.Connection.
      */
-    @Deprecated
 	public static Connection getSQLConnection( String sessionFactoryName ) {
 		return HibernateUtil.getSession(sessionFactoryName).connection();
 	}
