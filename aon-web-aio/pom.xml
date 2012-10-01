@@ -938,12 +938,11 @@
 			</dependencies>
 		</profile>
 		
-	</profiles>	
-	
-    <profiles>
       	<profile>
             <id>perform-stats</id>
         </profile>
-    </profiles>
+
+	</profiles>	
+	
 
 </project>
