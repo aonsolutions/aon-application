@@ -58,5 +58,7 @@ public interface IInfoWebConstants {
 	String PAGE_WITHOUT_DETAIL = "infoweb_page_without_detail";
 	
 	String IMAGE_COPY_ERROR = "infoweb_image_copy_error";
+
+	String NO_PUBLISH_PARAMETERS = "infoweb_no_publish_parameters";
 	
 }

@@ -2,6 +2,8 @@ package com.code.aon.ui.infoweb;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.ui.publisher.util.FTPUtil;
 
 public class PublishProperties {
@@ -76,6 +78,12 @@ public class PublishProperties {
 		this.publishURL = publishURL;
 	}
 
+	public boolean isEmpty() {
+		return StringUtils.isEmpty(ftpServer) || StringUtils.isEmpty(ftpUser) || StringUtils.isEmpty(ftpPassword)
+				|| StringUtils.isEmpty(previewPath) || StringUtils.isEmpty(previewURL)
+				|| StringUtils.isEmpty(publishPath) || StringUtils.isEmpty(publishURL);
+	}
+	
 	public Properties getFtpProperties() {
 		Properties properties = new Properties();
 		properties.put( FTPUtil.FTP_SERVER, ftpServer );

@@ -6,6 +6,7 @@ import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NOT
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DIRECTORY_NO_READABLE;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.HOMEPAGE_ID_PARAM;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.IMAGE_COPY_ERROR;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_PUBLISH_PARAMETERS;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PAGE_WITHOUT_DETAIL;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.PUBLISH_PARAMETER_CONTROLLER_NAME;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.TEMPLATE_NAME_PARAM;
@@ -155,6 +156,11 @@ public class GeneratorController extends BasicController implements VelocityCons
 		this.generated = false;
 		this.published = false;
 		try {
+			if ( this.publishProperties.isEmpty() ) {
+				log.error(AonUtil.getMessage(BUNDLE_NAME, NO_PUBLISH_PARAMETERS));
+				return;
+			}
+			
 			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
 			//Añadimos al contexto todo lo necesario para las paginas
