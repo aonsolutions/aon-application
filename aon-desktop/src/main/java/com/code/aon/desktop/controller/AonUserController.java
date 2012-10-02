@@ -77,22 +77,6 @@ public class AonUserController implements ILdapConstants, IAonObjectClasses, IDe
 	public User getTo() {
 		return user;
 	}
-	
-	private void changeDefaultMailAccountPassword( String userName, String newPassword ) {
-		Name accountsDN = NameResolver.getUserDefaultAccount( domain, userName );
-		BasicLdap ldap = new BasicLdap();
-		if ( ldap.exists(accountsDN, MAIL_ACCOUNT ) ) {
-			try {
-				ldap.getLdapSession().replaceAttribute(accountsDN, USER_PASSWORD_ATTRIBUTE, newPassword);
-			} catch (LdapException e) {
-				AonUtil.addErrorMessage("Error cambiando la contraseña de la cuenta de correo por defecto del usuario " + userName );
-			} finally {
-				ldap.closeSession();
-			}
-		} else {
-			AonUtil.addErrorMessage("No se ha encontrado la cuenta de correo por defecto del usuario " + userName );
-		}
-	}
 
 	private void updatePassword( String userName, String newPassword ) {
 		Name userDN = NameResolver.getUserDN( domain, userName );
@@ -176,8 +160,7 @@ public class AonUserController implements ILdapConstants, IAonObjectClasses, IDe
 			String message = AonUtil.addErrorMessageFromBundle( "securityBundle", "aon_security_new_passwd_error");
 			throw new AbortProcessingException( message );
 		}
-		updatePassword( user.getLogin(), newPassword );
-		changeDefaultMailAccountPassword( user.getLogin(), newPassword );				
+		updatePassword( user.getLogin(), newPassword );			
 		DomainController domainController = (DomainController) FormUtil.getController(DOMAIN_CONTROLLER_NAME);
 		domainController.flushAuthenticationCache( user.getLogin() );
 		setShowPasswordChangedWindow(true);
