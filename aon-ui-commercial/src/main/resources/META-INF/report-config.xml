@@ -20,27 +20,6 @@
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
-	<report id="targetListDetail" description="Target Detailed report ">
-		<template path="/com/code/aon/ui/commercial/report/targetDetail.jasper" />
-		<bean key="com.code.aon.commercial.Target" />
-		<criteria provider="#{target}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>
-	<report id="targetListDetailExcel" description="Target Detailed Excel report ">
-		<template path="/com/code/aon/ui/commercial/report/targetDetailExcel.jasper" />
-		<bean key="com.code.aon.commercial.Target" />
-		<criteria provider="#{target}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.report" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-		</params>
-	</report>
-
 	<!--  **********************************************************
 						OFFER 
 		  **********************************************************-->

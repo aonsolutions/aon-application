@@ -1,6 +1,9 @@
 package com.code.aon.ui.infoweb.controller;
 
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.DEFAULT_VALUE;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.HOMEPAGE_ID_PARAM;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_STYLE_FILE_IN_TEMPLATE;
+import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.NO_TEMPLATE_DIRECTORY;
 import static com.code.aon.ui.infoweb.controller.IInfoWebConstants.TEMPLATE_NAME_PARAM;
 
 import java.io.BufferedReader;
@@ -81,7 +84,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 
 		File f = PathUtil.getTemplatesPath();
 		if (!f.exists()) {
-			AonUtil.addErrorMessage("ERROR: No existe el directorio de plantillas. Contacte con su administrador."); 
+			AonUtil.addErrorMessage(NO_TEMPLATE_DIRECTORY); 
 		} else {
 			SelectItem item = new SelectItem("","");
 			templates.add(item);
@@ -109,7 +112,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 		criteria.addOrder(pageBean.getFieldName(IEntityAlias.WEB_INFO_PAGE_POSITION));
 		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
 		int default_id = 0;
-		SelectItem item = new SelectItem(default_id, "Por defecto");
+		SelectItem item = new SelectItem(default_id, DEFAULT_VALUE);
 		pages.add(item);
 		for (int i = 0; i < list.size(); i++) {
 			WebInfoPage page = (WebInfoPage)list.get(i);
@@ -155,7 +158,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 		Map<String,String> styleMap = new HashMap<String,String>();
 		File f = PathUtil.getStyleTemplate( getTemplate() );
 		if (!f.exists()) {
-			AonUtil.addErrorMessage("ERROR: No existe el fichero de estilos para esta plantilla. Contacte con su administrador."); 
+			AonUtil.addErrorMessage(NO_STYLE_FILE_IN_TEMPLATE); 
 		} else {
 			try {
 				BufferedReader br = new BufferedReader(new FileReader(f));
@@ -198,18 +201,12 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public void onChangeTemplate(ActionEvent event) {
-		ApplicationParameter ap = PublishParameterController.getParameter(TEMPLATE_NAME_PARAM);
-		if ( ap == null ) {
-			PublishParameterController.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
-		}
+		PublishParameterController.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
 		chargeValues();
     }
 
 	public void onChangeHomepage(ActionEvent event) {
-		ApplicationParameter ap = PublishParameterController.getParameter(HOMEPAGE_ID_PARAM);
-		if ( ap == null ) {
-			PublishParameterController.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
-		}
+		PublishParameterController.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
     }
 
 	public String getTemplate() {
