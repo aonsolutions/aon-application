@@ -17,7 +17,9 @@ public enum ContractCalendarEventType implements IResourceable {
 	NON_RECOVERABLE_HOURS,
 	HOLIDAYS,
 	WORKED_HOURS,
-	OVERTIME;
+	OVERTIME,
+	STRIKE,
+	ERE;
 	    
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
