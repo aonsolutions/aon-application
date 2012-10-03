@@ -122,8 +122,7 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		customer.setDeliveryGrouped(loaded.isDeliveryGrouped());
 		customer.setStatus(CustomerStatus.ACTIVE);
 		customer = (Customer) bean.insert(customer);
-		
-		
+
 		if (StringUtils.isNotBlank(loaded.getTipoVia())
 			|| StringUtils.isNotBlank(loaded.getDireccion())
 			|| StringUtils.isNotBlank(loaded.getNumero())
@@ -193,8 +192,11 @@ public class CustomerLoaderFactory extends RegistryLoaderFactory implements ILoa
 		List<ITransferObject> list = bean.getList(criteria); 
 		if ( list.size() > 0 ) {
 			if ( list.size() > 1 ) {
-				engine.log("WARNING: Más de un cliente activo con el número de documento " + loaded.getDocumento()+". Se intenta deduplicar por cuenta contable.");
-				return searchCustomerByAccount( params, loaded );	
+				engine.log("WARNING: Más de un cliente activo con el número de documento " + loaded.getDocumento()+".");
+				if (!StringUtils.isBlank(loaded.getCuenta())) {
+					engine.log("Se intenta deduplicar por cuenta contable.");
+					return searchCustomerByAccount( params, loaded );
+				}
 			}
 			return (Customer) list.get(0);
 		}

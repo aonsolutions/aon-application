@@ -115,7 +115,9 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 		return tipoDeduccionIva;
 	}
 	public VatDeductionType getVatDeductionType() {
-		return VatDeductionType.values()[getTipoDeduccionIva()];
+		return getTipoDeduccionIva()!=null
+				?VatDeductionType.values()[getTipoDeduccionIva()]
+				:VatDeductionType.WITH_RIGHT;
 	}
 	public void setTipoDeduccionIva(Integer tipoDeduccionIva) {
 		this.tipoDeduccionIva = tipoDeduccionIva;
@@ -172,7 +174,10 @@ public class LoadedInvoiceDetail implements ILoadedPojo{
 				laed.setDescripcionCuenta( "Hacienda Pública, IVA soportado." );
 			}
 		} 
-		double cuota = CommonUtil.round(getCuotaIva() + getCuotaRe(),2);
+		double cuota = CommonUtil.round(
+				(getCuotaIva()==null?0.0:getCuotaIva())
+				+(getCuotaRe()==null?0.0:getCuotaRe())
+				,2);
 		if (type == AccountEntryType.SALES_INVOICE) {
 			laed.setHaber(cuota);
 		} else {

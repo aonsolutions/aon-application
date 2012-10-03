@@ -151,6 +151,7 @@ public class FinanceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				throw new ManagerBeanException("Registry es nulo!");
 			}
 		}
+		finance.setDueDate(loaded.getFechaVto());
 		finance.setRegistry(registry);
 		finance.setScope(params.getScope());
 		finance.setFinanceStatus(FinanceStatus.PENDING);

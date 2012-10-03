@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.code.aon.ui.loader.factory.AccountEntryDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.AccountEntryLoaderFactory;
+import com.code.aon.ui.loader.factory.AccountInvoiceLoaderFactory;
 import com.code.aon.ui.loader.factory.CreditorLoaderFactory;
 import com.code.aon.ui.loader.factory.CustomerLoaderFactory;
 import com.code.aon.ui.loader.factory.FinanceLoaderFactory;
@@ -26,6 +27,7 @@ public class LoaderFactoryManager {
 		factories.add( new SupplierLoaderFactory(engine));
 		factories.add( new TargetLoaderFactory(engine));
 		factories.add( new InvoiceLoaderFactory(engine));
+		factories.add( new AccountInvoiceLoaderFactory(engine));
 		factories.add( new InvoiceDetailLoaderFactory(engine));
 		factories.add( new FinanceLoaderFactory(engine));
 		factories.add( new AccountEntryLoaderFactory(engine));
