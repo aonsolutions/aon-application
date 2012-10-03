@@ -11,11 +11,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.PayMethod;
 import com.code.aon.config.Tariff;
+import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.ui.config.util.UserUtils;
@@ -262,4 +265,24 @@ public class PmsCollectionsController {
 		return shifts;
 	}
 	
+	public List<SelectItem> getDirectPayMethods() throws ManagerBeanException {
+		List<PayMethodType> directPayMethods = new LinkedList<PayMethodType>();
+		directPayMethods.add(PayMethodType.CASH_BASIS);
+		directPayMethods.add(PayMethodType.DEBIT_CARD);
+		directPayMethods.add(PayMethodType.CREDIT_CARD);
+		directPayMethods.add(PayMethodType.BANK_TRANSFER);
+
+		List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getInExpression(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_TYPE), directPayMethods));
+		criteria.addOrder(payMethodBean.getFieldName(IEntityAlias.PAY_METHOD_NAME));
+		for (ITransferObject ito : payMethodBean.getList(criteria)) {
+			PayMethod pMethod = (PayMethod)ito;
+			SelectItem item = new SelectItem(pMethod, pMethod.getName());
+			payMethods.add(item);
+		}
+		return payMethods;
+	}
+
 }
