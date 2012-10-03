@@ -39,11 +39,15 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 	@Override
 	public List<Document> getEnterpriseDocuments() {
 		try {
+      initFacesContext();
+
 			Integer registryID = getEnterpriseID();
 			Connection connection = getConnection();
 			return getRegistryDocuments(registryID, connection);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} finally {
+			releaseFacesContext();			
 		}
 	}
 	
@@ -59,7 +63,7 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			return os.toString();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
-		}
+		} 
 	}
 	
 
