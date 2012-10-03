@@ -22,7 +22,8 @@ public class NumberValidation {
 		String lChLetraOriginal = "";
 		String lChLetraResultado = "";
 		cias = cias.toUpperCase();
-		String lChNumeroOriginal = cogerParteValida(cias);
+		String lChNumeroOriginal = cias.trim().replace(".", "");
+		
 		String letter = lChNumeroOriginal.substring(
 				lChNumeroOriginal.length() - 1, lChNumeroOriginal.length());
 		Integer lInNumeroResultado;
@@ -83,14 +84,6 @@ public class NumberValidation {
 		return text;
 	}
 
-	private static String cogerParteValida(String pChDni) {
-		String lChDniResultado;
-		lChDniResultado = "";
-		lChDniResultado = pChDni.trim();
-		lChDniResultado = lChDniResultado.replace(".", "");
-		return lChDniResultado;
-	}
-
 	
 	/**
 	 * Funcion que comprueba que los caracteres del dni (que son char)
@@ -99,10 +92,10 @@ public class NumberValidation {
 	 * @param pChNumero
 	 * @return
 	 */
-	private static Boolean checkDigits(String pChNumero) {
+	private static Boolean checkDigits(String value) {
 		int pos = 0;
-		while (pos < pChNumero.length()) {
-			if (pChNumero.charAt(pos) < '0' || pChNumero.charAt(pos) > '9') {
+		while (pos < value.length()) {
+			if (value.charAt(pos) < '0' || value.charAt(pos) > '9') {
 				return false;
 			}
 			pos++;
@@ -145,10 +138,10 @@ public class NumberValidation {
 	}
 	
 	/**
-	 * Valida el parametro pDato segun el tipo de mascara indicado.
+	 * Valida el parametro value segun el tipo de mascara indicado.
 	 * 
-	 * @param pDato
-	 * @param pMask
+	 * @param value
+	 * @param mask
 	 * @return
 	 */
 	public static final boolean validateMask(String value, String mask) {

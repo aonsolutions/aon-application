@@ -8,13 +8,19 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
-		<ui:param name="lookupTo" value="#{controller.contract}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-		<ui:param name="lookupReRender" value="contractLeaveForm" />
-		<aon:methodParam name="lookupChangeListener" 
-			value="#{controller.onContractChanged}" type="lookupChangeListener" />
-	</ui:include>
+	<c:if test="#{!controller.treeOutcome}">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{controller.contract}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupReRender" value="contractLeaveForm" />
+			<aon:methodParam name="lookupChangeListener" 
+				value="#{controller.onContractChange}" type="lookupChangeListener" />
+		</ui:include>
+	</c:if>
+	<c:if test="#{controller.treeOutcome}">
+		<aon:outputText value="#{bundle.aon_name}" />
+		<aon:outputText value="#{controller.contract.person.registry.fullName}" />
+	</c:if>
 	
 	<aon:outputLabel value="#{bundle.aon_document}" />
 	<aon:outputText rendered="#{controller.contract.id==null}" value="&#160;" />
@@ -25,7 +31,7 @@
 		<aon:outputText value="#{controller.contract.person.registry.documentCountry}" styleClass="aon-margin-left"/>
 	</aon:div>
 	
-	<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+	<aon:outputText value="#{payrollBundle.payroll_contract_period}"/>
 	<aon:outputText rendered="#{controller.contract.id==null}" value="&#160;" />
 	<aon:div rendered="#{controller.contract.id!=null}">
 		<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
@@ -43,13 +49,26 @@
 		</aon:outputText>
 	</aon:div>
 			
-	<aon:outputLabel value="#{payrollBundle.payroll_salary_ss_number}" />
+	<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" />
 	<aon:outputText value="#{controller.contract.person.socialSecurityNumber}" />
 	
-	<aon:outputLabel value="#{companyBundle.company_enterprise}" />
+	<aon:outputText value="#{companyBundle.company_enterprise}" />
 	<aon:outputText value="#{controller.contract.workPlace.enterprise.registry.fullName}" />
 	
-	<aon:outputLabel value="#{companyBundle.company_workplace}" />
+	<aon:outputText value="#{companyBundle.company_workplace}" />
 	<aon:outputText value="#{controller.contract.workPlace.description}" />
+	
+	<aon:outputText value="#{companyBundle.company_activity}" />
+	<aon:div>
+		<aon:outputText value="#{controller.contract.activity.description}" />
+		<aon:outputText value=" - " rendered="#{controller.contract.id!=null}" />
+		<aon:outputText value="(" rendered="#{controller.contract.id!=null}" />
+		<aon:outputText value="#{controller.contract.activity.cnae2009.code}" />
+		<aon:outputText value=") " rendered="#{controller.contract.id!=null}" />
+		<aon:outputText value="#{controller.contract.activity.cnae2009.title}" />
+	</aon:div>
+	
+	<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+	<aon:outputText value="#{controller.contract.enterpriseCCC.ccc}" />
 	
 </ui:composition>

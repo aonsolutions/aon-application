@@ -628,8 +628,9 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		ContractLeaveController controller = (ContractLeaveController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_LEAVE_CONTROLLER_NAME);
 		controller.setContract(c);
+		controller.onReset(event);
 		controller.initialize();
-		controller.setTreeOutcome(true);
+		controller.createLeaveReportSuggest();
 	}
 	
 	public void onEditPerson( ActionEvent event ) {

@@ -8,19 +8,18 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<rich:subTable id="leaveDetailList" var="detail" 
+	<rich:subTable id="leaveDetailList" var="detail"
+		style="background-color: #FBEDB6;" 
+		onRowMouseOut="this.style.backgroundColor='#FBEDB6'"
+		onRowMouseOver="this.style.backgroundColor='#C0C0C0'"
 		rendered="#{contractLeave.showDetail}" width="auto"
-		value="#{contractLeave.leaveDetailModel}" >
+		value="#{contractLeave.model}" >
 		
-		<aon:column colspan="1" styleClass="aon-noborder">
-			<aon:outputText value="&#160;" />
-		</aon:column>
-		
-		<rich:column colspan="7" 
-			style="padding: 0px; border: none;background-color: #FBEDB6;"
+		<rich:column colspan="9"  
+			style="padding: 0px; border: none;background-color: #{(contractLeave.model.rowIndex % 2==0)?('#FBEDB6'):('#FBF4D8')};"
 			styleClass="aon-width-all aon-noborder" >
 			
-			<h:panelGrid columns="9" style="font-size: 0.9em; width: 100%;"
+			<h:panelGrid columns="9" style="font-size: 0.9em; width: 100%;" 
 				cellpadding="0" cellspacing="0" border="0"
 				columnClasses="
 					aon-noborder,aon-noborder,aon-noborder,
@@ -65,12 +64,14 @@
 			
 		</rich:column> 
 		
-		<aon:column colspan="1" styleClass="aon-noborder">
+		<aon:column colspan="1" styleClass="aon-noborder"
+			style="background-color: #{(contractLeave.model.rowIndex % 2==0)?('#FBEDB6'):('#FBF4D8')};" >
 			<aon:outputText value="&#160;" />
 			<aon:commandLink id="leaveDetailList-selectButton"
-				styleClass="aon-table-row-link" value="#{bundle.aon_editing}"
+				title="#{bundle.aon_edit}"
+				styleClass="aon-icon-commandButton aon-icon-edit" 
 				requestDelay="100" ajaxSingle="true"
-				actionListener="#{contractLeave.onSelectLeaveDetail}">
+				actionListener="#{contractLeave.onSelect}">
 			</aon:commandLink>
 		</aon:column>
 		

@@ -45,6 +45,8 @@
 					action="contractLeave_form"
 					styleClass="aon-finding-toolbar-item aon-icon-copy">
 					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.treeOutcome}" value="#{true}" />
 				</aon:commandButton>
 				<aon:commandButton id="settle"
 					value="#{payrollBundle.payroll_settle_module}"

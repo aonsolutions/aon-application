@@ -15,7 +15,12 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-finding-subtitle-internal">
-				<aon:outputText value="&#160;" />
+				<c:if test="#{controller.new}">
+					<aon:outputText value="#{bundle.aon_reset}" />
+				</c:if>		
+				<c:if test="#{!controller.new}">
+					<aon:outputText value="#{bundle.aon_edit}" />
+				</c:if>
 			</aon:div>
 
 			<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
@@ -24,15 +29,16 @@
 					<aon:commandButton id="contractLeave-save"
 						title="#{bundle.aon_key_save_accelerator}"
 						value="#{bundle.aon_save}" reRender="contractLeaveForm"
+						rendered="#{controller.to!=null}"
 						action="contractLeave_form"
-						actionListener="#{controller.accept}"
+						actionListener="#{controller.onAccept}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_save}" />
 				</c:if>
 				<c:if test="#{!skipCancelButton}">			
 					<aon:confirmButton id="contractLeave-cancel"
 						title="#{bundle.aon_key_cancel_accelerator}"
-						value="#{bundle.aon_cancel}" reRender="#{cancelButtonReRender}"
+						value="#{bundle.aon_back}" reRender="#{cancelButtonReRender}"
 						rendered="#{controller.new}" immediate="true" 
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						confirmTitle="#{bundle.aon_confirm_title}"
@@ -45,7 +51,7 @@
 					<aon:confirmButton id="contractLeave-remove"
 						title="#{bundle.aon_key_remove_accelerator}"
 						value="#{bundle.aon_remove}" reRender="#{removeButtonReRender}"
-						rendered="#{!controller.new}" immediate="true"
+						rendered="#{!controller.new and controller.to!=null}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_remove_confirm}"

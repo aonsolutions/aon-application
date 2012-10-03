@@ -23,27 +23,29 @@
 					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-500">
 				
 					<aon:panelGrid columns="2" id="form_header" style="width:100%;">
-						<ui:include 
-							src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_header.xhtml" >
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_header.xhtml" >
 							<ui:param name="controller" value="#{contractLeave}" />
 						</ui:include>
 					</aon:panelGrid>
 
 					<aon:panelGrid columns="2" id="report_panel" style="width:100%;">
-						<c:if test="#{contractLeave.contract.id!=null}">
-							<ui:include 
-								src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_report.xhtml" />
+						<c:if test="#{contractLeave.contract.id!=null and contractLeave.to!=null}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_report.xhtml" />
 						</c:if>
 					</aon:panelGrid>
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div styleClass="aon-scroll-area" id="form_leaves">
-				<c:if test="#{contractLeave.leaveModel!=null}">
-					<ui:include 
-						src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
-				</c:if>
-			</aon:div>				
+			<c:if test="#{contractLeave.contract.id!=null}">
+				<aon:div styleClass="aon-scroll-area" id="form_leaves">
+					<aon:panel>
+						<f:facet name="header">
+							<aon:outputText value="#{payrollBundle.payroll_tracking}" />
+						</f:facet>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
+					</aon:panel>
+				</aon:div>
+			</c:if>				
 				
 		</aon:form>
 		
