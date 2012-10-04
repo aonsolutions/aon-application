@@ -12,6 +12,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -29,6 +28,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementExtra;
@@ -37,12 +37,14 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.payroll.enumeration.QuoteType;
+import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.controller.IPaymentHandler;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.contract.IVariablesHandler;
+import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 
-public class AgreementPaymentController extends LinesController implements IVariablesHandler {
+public class AgreementPaymentController extends LinesController implements IVariablesHandler, IPaymentHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementPaymentController.class.getName());
 
@@ -52,6 +54,8 @@ public class AgreementPaymentController extends LinesController implements IVari
 	private boolean quoteExpressionEdition;
 	private boolean irpfExpressionEdition;
 	private boolean enableExpressionEdition;
+	private TaxationType taxation;
+	private QuoteType quote;
 	
 	private List<String> paymentConcepts;
 	private DataModel paymentsModel;
@@ -62,11 +66,84 @@ public class AgreementPaymentController extends LinesController implements IVari
 	
 	private AgreementPaymentVariablesHandler handler;
 	
-	// Payments filter
+	// PERIOD FOR DATA FILTER
 	private boolean searchCurrent;
 	private Date inactiveDate;
 	
 	
+	@Override
+	public TaxationType getTaxation() {
+		if(taxation==null){
+			taxation = obtainTaxationType();
+		}
+		return taxation;
+	}
+
+	public void setTaxation(TaxationType taxation) {
+		this.taxation = taxation;
+		changeIrpfExpression();
+	}
+
+	@Override
+	public QuoteType getQuote() {
+		if(quote==null){
+			quote = obtainQuoteType();
+		}
+		return quote;
+	}
+
+	public void setQuote(QuoteType quote) {
+		this.quote = quote;
+		changeQuoteExpression();
+	}
+	
+	private void changeQuoteExpression() {
+		if(quote==QuoteType.QUOTE){
+			this.setQuoteExpression(this.getExpression());
+		}else if(quote==QuoteType.NO_QUOTE){
+			this.setQuoteExpression("0");
+		}else if(quote==QuoteType.IPREM_EXCESS){
+			this.setQuoteExpression(IPayrollConstants.IPREM_FORMMULA);
+		} else {
+			this.setQuoteExpression(null);
+		}
+	}
+
+	private void changeIrpfExpression() {
+		if(taxation==TaxationType.TAXED){
+			this.setIrpfExpression(this.getExpression());
+		}else if(taxation==TaxationType.NO_TAXED){
+			this.setIrpfExpression(IPayrollConstants.ZERO_VALUE);
+		} else {
+			this.setIrpfExpression(null);
+		}
+	}
+	
+	private QuoteType obtainQuoteType() {
+		if(this.getQuoteExpression()==null) {
+			return null;
+		} else if(this.getQuoteExpression().equals(this.getExpression())){
+			return QuoteType.QUOTE;
+		} else if(this.getQuoteExpression().equals(IPayrollConstants.ZERO_VALUE)){
+			return QuoteType.NO_QUOTE;
+		} else if(this.getQuoteExpression().equals(IPayrollConstants.IPREM_FORMMULA)){
+			return QuoteType.IPREM_EXCESS;
+		} else {
+			return QuoteType.MANUAL;
+		}
+	}
+	
+	private TaxationType obtainTaxationType() {
+		if(this.getIrpfExpression()==null){
+			return null;
+		} else if(this.getIrpfExpression().equals(this.getExpression())){
+			return TaxationType.TAXED;
+		} else if(this.getIrpfExpression().equals(IPayrollConstants.ZERO_VALUE)){
+			return TaxationType.NO_TAXED;
+		} else {
+			return TaxationType.MANUAL;
+		}
+	}
 	
 	public boolean isQuoteExpressionEdition() {
 		return quoteExpressionEdition;
@@ -296,38 +373,18 @@ public class AgreementPaymentController extends LinesController implements IVari
 		if(alp.getDescription().isEmpty()){
 			alp.setDescription(null);
 		}
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
+		super.accept(event);
 		try {
-			try {
-				HibernateUtil.setBeginTransaction(false);
-				HibernateUtil.setCloseSession(false);
-				HibernateUtil.beginTransaction(sessionName);
-				// BEGIN operaciones de la transaccion
-				super.onAccept(event);
+			if(getAgreementExtra()!=null){
 				saveAgreementExtra();
-				reset(false);
-				setPaymentsModel(null);
-				// FIN operaciones de la transaccion
-				HibernateUtil.getSession(sessionName).flush();
-				HibernateUtil.commitTransaction(sessionName);
-			} catch (Exception e) {
-				String msg = e.getMessage();
-				try {
-					HibernateUtil.rollbackTransaction(sessionName);
-				} catch (DAOException daoe) {
-					msg = "Unable to rollback transaction! (" + msg + ")";
-				}
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(e);
-			} finally {
-				HibernateUtil.closeSession(sessionName);
 			}
-		} finally {
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al guardar los datos de la EXTRA";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
+		reset(false);
+		setPaymentsModel(null);
 	}
 
 	public void onCancel(ActionEvent event) {
@@ -336,38 +393,16 @@ public class AgreementPaymentController extends LinesController implements IVari
 	}
 
 	public void onRemove(ActionEvent event) {
-		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-		boolean mustCloseSession = HibernateUtil.mustCloseSession();
-		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			try {
-				HibernateUtil.setBeginTransaction(false);
-				HibernateUtil.setCloseSession(false);
-				HibernateUtil.beginTransaction(sessionName);
-				// BEGIN operaciones de la transaccion
-				removeAgreementExtra();
-				super.onRemove(event);
-				reset(false);
-				setPaymentsModel(null);
-				// FIN operaciones de la transaccion
-				HibernateUtil.getSession(sessionName).flush();
-				HibernateUtil.commitTransaction(sessionName);
-			} catch (Exception e) {
-				String msg = e.getMessage();
-				try {
-					HibernateUtil.rollbackTransaction(sessionName);
-				} catch (DAOException daoe) {
-					msg = "Unable to rollback transaction! (" + msg + ")";
-				}
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(e);
-			} finally {
-				HibernateUtil.closeSession(sessionName);
-			}
-		} finally {
-			HibernateUtil.setCloseSession(mustCloseSession);
-			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			removeAgreementExtra();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al borrar los datos de la EXTRA";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
+		super.onRemove(event);
+		reset(false);
+		setPaymentsModel(null);
 	}
 	
 	public void onReset(ActionEvent event) {
@@ -392,10 +427,9 @@ public class AgreementPaymentController extends LinesController implements IVari
 	}
 	
 	private void saveAgreementExtra() throws ManagerBeanException {
-		if(getAgreementExtra()!=null){
-			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
-			setAgreementExtra((AgreementExtra) bean.insertOrUpdate(getAgreementExtra()));
-		}
+		IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+		bean.restoreNullSubPOJOs(getAgreementExtra());
+		setAgreementExtra((AgreementExtra) bean.insertOrUpdate(getAgreementExtra()));
 	}
 	
 	private void removeAgreementExtra() throws ManagerBeanException {
@@ -472,13 +506,56 @@ public class AgreementPaymentController extends LinesController implements IVari
 	@Override
 	public void initializeVariables(ActionEvent event) {
 		getHandler().initializeVariables(event);
+		AgreementPayment payment = (AgreementPayment) this.getTo();
+		setEnableExpressionEdition( StringUtils.isNotBlank(payment.getExpression()) );
 	}
 	@Override
 	public void resetVariable() {
 		getHandler().resetVariable();
 	}
 	
+	@Override
+	public String getExpression() {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		return StringUtils.isNotBlank(p.getExpression()) ? p.getExpression() : p.getPaymentConcept().getExpression();
+	}
+	@Override
+	public String getQuoteExpression() {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		return p.getQuoteExpression();
+	}
+	@Override
+	public String getIrpfExpression() {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		return p.getIrpfExpression();
+	}
+	@Override
+	public void setExpression(String expression) {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		p.setExpression(expression);
+	}
+	@Override
+	public void setQuoteExpression(String expression) {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		p.setQuoteExpression(expression);
+	}
+	@Override
+	public void setIrpfExpression(String expression) {
+		AgreementPayment p = ((AgreementPayment) getTo());
+		p.setIrpfExpression(expression);
+	}
 
+	@Override
+	public Month getMonth() {
+		
+		return null;
+	}
+
+	@Override
+	public Integer getYear() {
+
+		return null;
+	}
 	
 	
 }

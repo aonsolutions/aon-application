@@ -21,6 +21,7 @@ import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public abstract class ContractDetailVariableHandler extends AbstractVariableHandler {

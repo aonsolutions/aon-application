@@ -59,6 +59,7 @@ import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 
 public class ContractController extends BasicController implements IVariablesHandler {

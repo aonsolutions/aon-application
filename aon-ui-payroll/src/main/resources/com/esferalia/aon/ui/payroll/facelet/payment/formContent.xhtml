@@ -34,7 +34,6 @@
 		</c:if>
 	</aon:selectOneMenu>
 
-
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
@@ -56,7 +55,7 @@
 	<aon:outputLabel for="ContractPayment_salaryType" value="#{payrollBundle.payroll_salary_type}" />
 	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}">
 		<f:selectItems value="#{payrollCollections.salaryTypes}" />
-		<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" />
+		<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" ajaxSingle="#{true}" />
 	</aon:selectOneMenu>
 	
 <!--  
@@ -109,7 +108,7 @@
 				<aon:outputLabel for="ContractPayment_irpf_taxation"
 					value="#{payrollBundle.payroll_salary_irpf_expression}" />
 				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
-					value="#{controller.to.taxation}">
+					value="#{controller.taxation}">
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{payrollCollections.taxationTypes}" />
 				</aon:selectOneMenu>
@@ -117,7 +116,7 @@
 				<aon:outputLabel for="ContractPayment_quote_quote"
 					value="#{payrollBundle.payroll_salary_quote_expression}" />
 				<aon:selectOneMenu id="ContractPayment_quote_quote"  
-					value="#{controller.to.quote}">
+					value="#{controller.quote}">
 					<f:selectItem itemLabel=" - " itemValue="#{null}" />
 					<f:selectItems value="#{payrollCollections.quoteTypes}" />
 				</aon:selectOneMenu>
@@ -127,7 +126,7 @@
 		<c:if test="#{aonRole.admin}">
 			<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 			<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
-				value="#{controller.to.expression}" >
+				value="#{controller.expression}" >
 				<f:validateLength maximum="128"/>
 				<c:if test="#{!contextDisabled}">
 					<a4j:region>
@@ -155,14 +154,14 @@
 				value="#{payrollBundle.payroll_salary_irpf_expression}" />
 			<aon:div id="ContractPayment_taxation">
 				<aon:selectOneMenu id="ContractPayment_irpf_taxation"  
-					value="#{controller.to.taxation}">
+					value="#{controller.taxation}">
 					<f:selectItems value="#{payrollCollections.taxationTypes}" />
 					<a4j:support event="onchange" reRender="ContractPayment_taxation" ajaxSingle="true" />
 				</aon:selectOneMenu>
 				<br />
 				<aon:inputTextarea id="ContractPayment_irpf_expression" cols="60"
-					rendered="#{controller.to.taxation=='MANUAL'}"
-					rows="3" maxlength="128" value="#{controller.to.irpfExpression}">
+					rendered="#{controller.taxation=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.irpfExpression}">
 					<f:validateLength maximum="128" />
 					<a4j:region>
 						<rich:suggestionbox id="ContractPayment_irpf_expression_suggestion"
@@ -186,14 +185,14 @@
 				value="#{payrollBundle.payroll_salary_quote_expression}" />
 			<aon:div id="ContractPayment_quote">
 				<aon:selectOneMenu id="PaymentConcept_quote_quote"  
-					value="#{controller.to.quote}">
+					value="#{controller.quote}">
 					<f:selectItems value="#{payrollCollections.quoteTypes}" />
 					<a4j:support event="onchange" reRender="ContractPayment_quote" ajaxSingle="true" />
 				</aon:selectOneMenu>
 				<br />
 				<aon:inputTextarea id="ContractPayment_quote_expression" cols="60"
-					rendered="#{controller.to.quote=='MANUAL'}"
-					rows="3" maxlength="128" value="#{controller.to.quoteExpression}">
+					rendered="#{controller.quote=='MANUAL'}"
+					rows="3" maxlength="128" value="#{controller.quoteExpression}">
 					<f:validateLength maximum="128" />
 					<a4j:region>
 						<rich:suggestionbox id="ContractPayment_quote_expression_suggestion"

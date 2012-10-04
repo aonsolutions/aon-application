@@ -23,7 +23,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class PayrollUtils {
 	
-	
+	/**
+	 * Calculate the salary of the entire month of the param date
+	 * 
+	 * @param contract
+	 * @param date
+	 * @return
+	 */
 	public ISalary calculateSalary(Contract contract, Date date) {
 		Calendar startCal = Calendar.getInstance();
 		startCal.setTime(date);

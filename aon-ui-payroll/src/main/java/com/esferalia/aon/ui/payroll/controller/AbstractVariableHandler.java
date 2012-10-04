@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller.contract;
+package com.esferalia.aon.ui.payroll.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +49,6 @@ import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.ui.payroll.controller.PayrollVariablesCollectionsController;
 
 public abstract class AbstractVariableHandler {
 	
@@ -277,7 +276,7 @@ public abstract class AbstractVariableHandler {
 		initializeVariables(event);
 	}
 	
-	protected abstract void initializeVariables(ActionEvent event);
+	public abstract void initializeVariables(ActionEvent event);
 	
 	public abstract List<?> expressionContext(Object suggest); 
 	

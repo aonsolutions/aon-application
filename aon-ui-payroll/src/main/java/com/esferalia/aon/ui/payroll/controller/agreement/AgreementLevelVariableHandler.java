@@ -27,7 +27,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 
 public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 
@@ -38,7 +38,7 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 	}
 	
 	@Override
-	protected void initializeVariables(ActionEvent event) {
+	public void initializeVariables(ActionEvent event) {
 		setVariablesModel(null);
 		try {
 			AgreementLevel agreementLevel = ((AgreementLevel)getController().getTo());
