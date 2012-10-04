@@ -24,9 +24,6 @@
 					<ui:param name="skipFocusFirst" value="true" />
 
 					<ui:define name="toolbarActions">
-						<!--  
-						<aon:methodParam name="backAction" value="contract_form" />
-						-->
 						<aon:methodParam name="saveAction" value="contractCalendarEvent_form" />
 					</ui:define>
 					
@@ -41,47 +38,67 @@
 								value="#{true}" />
 						</aon:commandButton>
 					</ui:define>
-
-<!--  
-					<ui:define name="additionalToolbarContent">
-						<aon:commandButton id="multiple_tracking"
-							value="#{payrollBundle.payroll_multiple_tracking}"
-							immediate="#{true}" 
-							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-							actionListener="#{contractTracking.onMultipleTrackingShow}"
-							reRender="showMultipleTrackingWindow">
-							<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-					</ui:define>
--->					
 					
 				</ui:decorate>
 			</aon:div>	
 
 			<aon:div ajaxRendered="true" layout="none">
 
-				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
-					<aon:panelGrid columns="8" dir="true" width="100%">
+					<aon:panelGrid columns="4" dir="true" width="100%">
 						
-						<aon:outputLabel value="#{registryBundle.registry_person}" />
+						<aon:outputText value="#{bundle.aon_name}" />
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
-
-						<aon:outputLabel value="#{payrollBundle.payroll_enterprise}" />
+						
+						<aon:outputText value="#{companyBundle.company_enterprise}" />
 						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
-
-						<aon:outputLabel value="#{bundle.aon_start_date}" />
-						<aon:outputText value="#{contract.to.startDate}" style="margin-left: 5px;">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-
-						<aon:outputLabel value="#{bundle.aon_end_date}" />
-						<aon:outputText value="#{contract.to.endDate}" style="margin-left: 5px;">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
+						
+						<aon:outputText value="#{payrollBundle.payroll_contract_period}"/>
+						<aon:outputText rendered="#{contract.to.id==null}" value="&#160;" />
+						<aon:div rendered="#{contract.to.id!=null}">
+							<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+								value="#{bundle.aon_start_date}:" />
+							<aon:outputText value="#{contract.to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+								rendered="#{contract.to.endDate!=null}"
+								value="#{bundle.aon_end_date}:" />
+							<aon:outputText value="#{contract.to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
+						
+						<aon:outputText value="#{companyBundle.company_workplace}" />
+						<aon:outputText value="#{contract.to.workPlace.description}" />
+						
+						<aon:outputLabel value="#{bundle.aon_document}" />
+						<aon:outputText rendered="#{contract.to.id==null}" value="&#160;" />
+						<aon:div rendered="#{contract.to.id!=null}">
+							<aon:outputText value="#{contract.to.person.registry.documentType}" />
+							<aon:outputText value="#{contract.to.person.registry.document}" style="margin-left: 3px;"/>
+							<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic aon-margin-left"/>
+							<aon:outputText value="#{contract.to.person.registry.documentCountry}" styleClass="aon-margin-left"/>
+						</aon:div>
+						
+						<aon:outputText value="#{companyBundle.company_activity}" />
+						<aon:div>
+							<aon:outputText value="#{contract.to.activity.description}" />
+							<aon:outputText value=" - " rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="(" rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="#{contract.to.activity.cnae2009.code}" />
+							<aon:outputText value=") " rendered="#{contract.to.id!=null}" />
+							<aon:outputText value="#{contract.to.activity.cnae2009.title}" />
+						</aon:div>
+								
+						<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" />
+						<aon:outputText value="#{contract.to.person.socialSecurityNumber}" />
+						
+						<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+						<aon:outputText value="#{contract.to.enterpriseCCC.ccc}" />
+						
 					</aon:panelGrid>
 				</aon:div>
 

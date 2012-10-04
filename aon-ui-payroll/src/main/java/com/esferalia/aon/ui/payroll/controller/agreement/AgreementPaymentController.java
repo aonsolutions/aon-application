@@ -46,8 +46,12 @@ public class AgreementPaymentController extends LinesController implements IVari
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementPaymentController.class.getName());
 
-	private boolean modalPanelVisible;
 	private List<SelectItem> concepts;
+	private boolean modalPanelVisible;
+	
+	private boolean quoteExpressionEdition;
+	private boolean irpfExpressionEdition;
+	private boolean enableExpressionEdition;
 	
 	private List<String> paymentConcepts;
 	private DataModel paymentsModel;
@@ -62,6 +66,26 @@ public class AgreementPaymentController extends LinesController implements IVari
 	private boolean searchCurrent;
 	private Date inactiveDate;
 	
+	
+	
+	public boolean isQuoteExpressionEdition() {
+		return quoteExpressionEdition;
+	}
+	public void setQuoteExpressionEdition(boolean quoteExpressionEdition) {
+		this.quoteExpressionEdition = quoteExpressionEdition;
+	}
+	public boolean isIrpfExpressionEdition() {
+		return irpfExpressionEdition;
+	}
+	public void setIrpfExpressionEdition(boolean irpfExpressionEdition) {
+		this.irpfExpressionEdition = irpfExpressionEdition;
+	}
+	public boolean isEnableExpressionEdition() {
+		return enableExpressionEdition;
+	}
+	public void setEnableExpressionEdition(boolean enableExpressionEdition) {
+		this.enableExpressionEdition = enableExpressionEdition;
+	}
 	public Date getInactiveDate() {
 		return inactiveDate;
 	}
@@ -361,6 +385,10 @@ public class AgreementPaymentController extends LinesController implements IVari
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
 		
+	}
+	
+	public void onSelectExpressionEdition(ActionEvent event){
+		setEnableExpressionEdition( !isEnableExpressionEdition() );
 	}
 	
 	private void saveAgreementExtra() throws ManagerBeanException {

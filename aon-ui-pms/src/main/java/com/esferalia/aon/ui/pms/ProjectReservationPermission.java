@@ -122,7 +122,7 @@ public class ProjectReservationPermission {
 	}
 
 	public boolean isShowMoreMenuAllowed() {
-		return !reservation.isCancelled() && !reservation.isCheckOut();
+		return !reservation.isCancelled() && (reservation.isActive() || !reservation.isCheckOut());
 	}
 
 	public boolean isCheckInAllowed() throws ManagerBeanException {

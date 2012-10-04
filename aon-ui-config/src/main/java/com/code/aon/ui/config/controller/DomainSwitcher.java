@@ -25,6 +25,7 @@ import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.config.Domain;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
 
@@ -209,7 +210,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 		Map<String,Object> map = ec.getSessionMap();
 		for (String key: map.keySet()) {
 			String className = map.get(key).getClass().getName();
-			if (isRemovable(className)) {
+			if (isRemovable(key, className)) {
 				map.remove(key);
 				LOGGER.info("Element removed from session: [ key: {}, value class: {} ]", key, className);
 			}
@@ -224,24 +225,24 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 				+ " WHERE d.id = " + domainId
 				+ " AND d.active = 1";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		List<?> queryList = query
+		String name = (String) query
 				.addScalar("description", Hibernate.STRING)
-				.list();
-		Iterator<?> iterator = queryList.iterator();
-		if (iterator.hasNext()) {
-			String name = (String) iterator.next();
-			setDomainName(name);
-		}
+				.uniqueResult();
+		setDomainName(name);
 	}
 	
-	private boolean isRemovable(String className) {
+	private boolean isRemovable(String key, String className) {
 		return ((StringUtils.startsWith(className, "com.code.aon")  
-			&& !StringUtils.startsWith(className, "com.code.aon.audit.") 
+			&& !StringUtils.startsWith(key, "com.code.aon.audit.") 
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.audit.controller.ApplicationOptionController")
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.resources.bean.ResourceResolver")
 			&& !StringUtils.startsWith(className, "com.code.aon.ui.common.controller.LoggedUser")
 			&& !StringUtils.equals(className, this.getClass().getName()))
 			|| StringUtils.startsWith(className, "com.esferalia.aon") );
+	}
+	
+	public DomainType getType() {
+		return DomainType.values()[this.type];
 	}
 		
 }

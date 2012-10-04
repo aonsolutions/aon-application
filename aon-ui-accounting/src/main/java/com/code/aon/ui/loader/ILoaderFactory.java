@@ -14,6 +14,8 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	String FRA = "FRA";	// Facturas - Invoice
 	String DET = "DET";	// Lineas de facturas - InvoiceDetail
 	String VTO = "VTO";	// Vencimientos - Finance
+
+	String FRA_CTB = "FRACTB";	// Factura Contable
 	
 	String ASI = "ASI";	// Asientos - AccountEntry
 	String APU = "APU";	// Apuntes - AccountEntryDetail

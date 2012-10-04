@@ -19,7 +19,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -27,34 +26,26 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class ContractLeaveController extends BasicController {
 
 	private final int AVAILABLE_IT_LIST_SIZE = 10;
 	private final int RELAPSE_IT_LIST_SIZE = 10;
 	
+	private PayrollUtils utils;
 	private Contract contract;
 	private List<ITransferObject> leaveList;
-	private List<ITransferObject> leaveDetailList;
 	private DataModel leaveModel;
-	private DataModel leaveDetailModel;
-	private LeaveReportType leaveReportType;
-	private ContractLeaveDetail report;
-	private Boolean validCollegeNumber;
-	private Boolean validCias;
 	private Integer selectedLeaveIndex;
 	private boolean treeOutcome;
 
@@ -65,6 +56,15 @@ public class ContractLeaveController extends BasicController {
 		this.treeOutcome = treeOutcome;
 	}
 	
+	public PayrollUtils getUtils() {
+		if(utils==null){
+			utils = new PayrollUtils();
+		}
+		return utils;
+	}
+	public void setUtils(PayrollUtils utils) {
+		this.utils = utils;
+	}
 	public Contract getContract() {
 		return contract;
 	}
@@ -78,52 +78,28 @@ public class ContractLeaveController extends BasicController {
 		this.selectedLeaveIndex = selectedLeaveIndex;
 	}
 	public List<ITransferObject> getLeaveList() {
+		if( leaveList == null ){
+			buildLeaveList();
+		}
 		return leaveList;
 	}
 	public void setLeaveList(List<ITransferObject> leaveList) {
 		this.leaveList = leaveList;
 	}
 	public DataModel getLeaveModel() {
+		if ( leaveModel == null ){
+			leaveModel = new ListDataModel(getLeaveList());
+		}
 		return leaveModel;
 	}
 	public void setLeaveModel(DataModel leaveModel) {
 		this.leaveModel = leaveModel;
 	}
-	public DataModel getLeaveDetailModel() {
-		return leaveDetailModel;
-	}
-	public void setLeaveDetailModel(DataModel leaveDetailModel) {
-		this.leaveDetailModel = leaveDetailModel;
-	}
-	public List<ITransferObject> getLeaveDetailList() {
-		return leaveDetailList;
-	}
-	public void setLeaveDetailList(List<ITransferObject> leaveDetailList) {
-		this.leaveDetailList = leaveDetailList;
-	}
-	public LeaveReportType getLeaveReportType() {
-		return leaveReportType;
-	}
-	public void setLeaveReportType(LeaveReportType leaveReportType) {
-		this.leaveReportType = leaveReportType;
-	}
 	public Boolean getValidCollegeNumber() {
-		return validCollegeNumber;
-	}
-	public void setValidCollegeNumber(Boolean validCollegeNumber) {
-		this.validCollegeNumber = validCollegeNumber;
+		return checkCollegeNumber((ContractLeaveDetail) getTo());
 	}
 	public Boolean getValidCias() {
-		return validCias;
-	}
-	public void setValidCias(Boolean validCias) {
-		this.validCias = validCias;
-	}
-	public ContractLeaveDetail getReport() {
-		return report;
-	}
-	public void setReport(ContractLeaveDetail report) {
-		this.report = report;
+		return checkCiasNumber((ContractLeaveDetail) getTo());
 	}
 	
 	public ContractLeaveDetail getLastLeave(){
@@ -131,12 +107,14 @@ public class ContractLeaveController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
 			Criteria criteria = new Criteria();
 			ContractLeave leave = null;
-			leave = (ContractLeave) getLeaveList().get(0);
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				return (ContractLeaveDetail) list.get(0);
+			if( getLeaveList()!=null && !getLeaveList().isEmpty() ){
+				leave = (ContractLeave) getLeaveList().get(0);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
+				List<ITransferObject> list = bean.getList(criteria);
+				if( !list.isEmpty() ){
+					return (ContractLeaveDetail) list.get(0);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, no se sugiere ninguna informacion
@@ -145,34 +123,10 @@ public class ContractLeaveController extends BasicController {
 	}
 
 	public boolean isShowDetail() {
-		if(getSelectedLeaveIndex().equals(-1)){
+		if(getSelectedLeaveIndex()==null || getSelectedLeaveIndex().equals(-1)){
 			return false;
 		}
 		return getSelectedLeaveIndex().intValue()==getLeaveModel().getRowIndex();
-	}
-	
-	public boolean isLeaveSelected(){
-		if(getReport()==null){
-			return false;
-		} else if(getReport().getType()==null || getReport().getType()==LeaveReportType.LEAVE){
-			return true;
-		}
-//		return getReport().getType()==LeaveReportType.LEAVE;
-		return false;
-	}
-	
-	public boolean isDischargeSelected(){
-		if(getReport()==null){
-			return false;
-		}
-		return getReport().getType()==LeaveReportType.DISCHARGE;
-	}
-	
-	public boolean isConfirmSelected(){
-		if(getReport()==null){
-			return false;
-		}
-		return getReport().getType()==LeaveReportType.CONFIRM;
 	}
 	
 	public List<SelectItem> getAvailableITList() {
@@ -205,132 +159,90 @@ public class ContractLeaveController extends BasicController {
 		return relapseITList;
 	}
 	
-	private void buildLeaveList() throws ManagerBeanException{
-		IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), getContract().getId());
-		criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), false);
-		setLeaveList(bean.getList(criteria));
-		setLeaveModel(new ListDataModel(getLeaveList()));
-	}
-	
-	private void buildLeaveDetailList() throws ManagerBeanException{
-		if(getSelectedLeaveIndex()==null){
-			setSelectedLeaveIndex(0);
-		}
-		if(!getLeaveList().isEmpty()){
-			IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
+	private void buildLeaveList() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 			Criteria criteria = new Criteria();
-			ContractLeave leave = null;
-			leave = (ContractLeave) getLeaveList().get(getSelectedLeaveIndex());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
-			setLeaveDetailList(bean.getList(criteria));
-			setLeaveDetailModel(new ListDataModel(getLeaveDetailList()));
-		}
-	}
-
-	public void buildLeaveReport(boolean newReport) {
-		if(newReport){
-			if(getLeaveList()==null || getLeaveList().isEmpty()){
-				setReport(new ContractLeaveDetail());
-				getReport().setContractLeave(new ContractLeave());
-				getReport().getContractLeave().setParent(new ContractLeave());
-				
-				calculateBases();
-			} else {
-				ContractLeaveDetail detail = new ContractLeaveDetail();
-				ContractLeaveDetail lastLeave = getLastLeave();
-				if(lastLeave!=null && lastLeave.getType()!=LeaveReportType.DISCHARGE){
-					detail.setType(LeaveReportType.CONFIRM);
-					detail.setConfirmOrder(lastLeave.getConfirmOrder()==null?1:lastLeave.getConfirmOrder()+1);
-					detail.setContractLeave(lastLeave.getContractLeave());
-					detail.setCias(lastLeave.getCias());
-					detail.setCollegeNumber(lastLeave.getCollegeNumber());
-					detail.setStatus(lastLeave.getStatus());
-					detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),getLastLeave().getConfirmOrder()));
-				} else {
-					detail.setType(LeaveReportType.LEAVE);
-					detail.setContractLeave(new ContractLeave());
-					detail.getContractLeave().setParent(new ContractLeave());
-					detail.setCias(null);
-					detail.setCollegeNumber(null);
-					detail.setStatus(ContractLeaveStatus.PENDING);
-					detail.setDate(null);
-					calculateBases();
-				}
-				setReport(detail);
-			}
-		} else {
-			setReport((ContractLeaveDetail) this.getTo());
-		}
-		checkCiasNumber();
-		checkCollegeNumber();
-	}
-	
-	public void initialize() {
-		if(getContract()!=null && getContract().getId()!=null){
-			this.onReset(null);
-		}
-		try {
-			buildLeaveList();
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar los partes. [" + e.getMessage() + "]";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-		try {
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), getContract().getId());
+			criteria.addOrder(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), false);
+			setLeaveList(bean.getList(criteria));
+			setLeaveModel(null);
+			setSelectedLeaveIndex(0);
 			buildLeaveDetailList();
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible cargar los partes. [" + e.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		buildLeaveReport(true);
 	}
 	
-	public void calculateBases(){
-		// TODO obtener las bases del trabajador, 
-//		las de la nomina del mes anterior dividido por 30
-//		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
-		ISalary salary = getLastSalary();
-		if(salary==null){
-			salary = getCurrentSalary();
-		}
-		if(salary!=null){
-			getReport().getContractLeave().setDailyCgcBase(CommonUtil.round(salary.getCommonBase()/30, 2));
-			getReport().getContractLeave().setDailyCgpBase(CommonUtil.round(salary.getProfessionalBase()/30));
-			// TODO de donde se obtiene la base reguladora?
-			getReport().getContractLeave().setDailyRegBase(CommonUtil.round(salary.getCommonBase()/30));
-		}
-	}
-	
-	private ISalary getLastSalary() {
+	private void buildLeaveDetailList() {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), getContract().getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_END_DATE), false);
-			List<ITransferObject> list = bean.getList(criteria);
-			if(list!=null && !list.isEmpty()){
-				return (ISalary) list.get(0);
+			if(!getLeaveList().isEmpty() && getSelectedLeaveIndex()>-1){
+				ContractLeave leave = (ContractLeave) getLeaveList().get(getSelectedLeaveIndex());
+				this.clearCriteria();
+				this.getCriteria().addEqualExpression(this.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+				this.getCriteria().addOrder(this.getFieldName(IEntityAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
+				this.onSearch(null);
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible obtener la ultima nomina";
+			String msg = "Imposible cargar los partes. [" + e.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
-		return null;
+	}
+
+	public void initialize() {
+		setLeaveList(null);
+		setLeaveModel(null);
 	}
 	
-	private ISalary getCurrentSalary() {
-		try {
-			ISalaryCalculatorContext ctx = getContract().getSalaryCalculatorContext(CommonUtil.getYear(new Date()), Month.getMonthByValue(CommonUtil.getMonth(new Date())), SalaryType.SALARY);
-			return ctx.getSalaryProxy().getSalary();
-		} catch (SalaryException e) {
-			// sigue ...
+	public void createLeaveReportSuggest(){
+		ContractLeaveDetail lastLeave = getLastLeave();
+		ContractLeaveDetail detail = (ContractLeaveDetail) this.getTo();
+		if( detail!=null ){
+			if(lastLeave!=null && lastLeave.getType()!=LeaveReportType.DISCHARGE){
+				createNewConfirmReport(detail, lastLeave);
+			} else {
+				createNewLeaveReport(detail, lastLeave);
+			}
 		}
-		return null;
+	}
+	
+	private void createNewConfirmReport(ContractLeaveDetail detail, ContractLeaveDetail lastLeave){
+		detail.setType(LeaveReportType.CONFIRM);
+		detail.setConfirmOrder(lastLeave.getConfirmOrder()==null?1:lastLeave.getConfirmOrder()+1);
+		detail.setContractLeave(lastLeave.getContractLeave());
+		detail.getContractLeave().setParent(detail.getContractLeave().getParent()==null?new ContractLeave():detail.getContractLeave().getParent());
+		detail.setCias(lastLeave.getCias());
+		detail.setCollegeNumber(lastLeave.getCollegeNumber());
+		detail.setStatus(lastLeave.getStatus());
+		detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),lastLeave.getConfirmOrder()));
+	}
+	private void createNewLeaveReport(ContractLeaveDetail detail, ContractLeaveDetail lastLeave){
+		detail.setType(LeaveReportType.LEAVE);
+		detail.setContractLeave(new ContractLeave());
+		detail.getContractLeave().setParent(new ContractLeave());
+		detail.setCias(lastLeave!=null?lastLeave.getCias():null);
+		detail.setCollegeNumber(lastLeave!=null?lastLeave.getCollegeNumber():null);
+		detail.setStatus(ContractLeaveStatus.PENDING);
+		detail.setDate(new Date());
+		calculateBases(detail.getContractLeave());
+	}
+	
+	public void calculateBases(ContractLeave leave) {
+		// TODO obtener las bases del trabajador, 
+//		las de la nomina del mes anterior dividido por 30
+//		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
+		ISalary salary = getUtils().getBeforeDateSalary(getContract(), leave.getStartDate());
+		if(salary==null){
+			salary = getUtils().calculateSalary(getContract(), leave.getStartDate());
+		}
+		if(salary!=null){
+			leave.setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );
+			leave.setDailyCgpBase( CommonUtil.round(salary.getProfessionalBase()/salary.getTimeUnits()) );
+			leave.setDailyRegBase( CommonUtil.round(salary.getRawCommonBase()/salary.getTimeUnits()) );
+		}
 	}
 	
 	/*
@@ -347,19 +259,37 @@ public class ContractLeaveController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 		setLeaveList(null);
-		setLeaveDetailList(null);
 		setLeaveModel(null);
-		setLeaveDetailModel(null);
-		this.onReset(null);
 		setTreeOutcome(false);
 	}
 	
-	public void onContractChanged(LookupChangeEvent event) {
-		onInit(null);
+	public void onContractChange(LookupChangeEvent event) {
 		if(event.getNewValue()!=null){
 			setContract((Contract) event.getNewValue());
-		} 
-		initialize();
+			onReset(null);
+			initialize();
+			createLeaveReportSuggest();
+		} else {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+				setContract((Contract) bean.createNewTo());
+			} catch (ManagerBeanException e) {
+				String msg = "No se puede inicializar el lookup.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		}
+		setLeaveList(null);
+		setLeaveModel(null);
+	}
+	
+	public void onLeaveDateChange(ActionEvent event) {
+		ContractLeaveDetail detail = (ContractLeaveDetail) getTo();
+		if(existLeave(getContract(), detail.getDate()) && detail.getType()==LeaveReportType.LEAVE){
+			String msg = "Ya existe una incidencia de IT en la fecha indicada";
+			AonUtil.addErrorMessage(msg);
+			detail.setDate(new Date());
+		}
 	}
 	
 	public void onSearchContract(ActionEvent event) {
@@ -389,87 +319,86 @@ public class ContractLeaveController extends BasicController {
 	public void onSelectLeave(ActionEvent event) {
 		if(getSelectedLeaveIndex().intValue()==getLeaveModel().getRowIndex()){
 			setSelectedLeaveIndex(-1);
-			setLeaveDetailList(null);
-			setLeaveDetailModel(null);
 		} else {
 			setSelectedLeaveIndex(getLeaveModel().getRowIndex());
-			try {
-				buildLeaveDetailList();
-			} catch (ManagerBeanException e) {
-				String msg = "Imposible cargar los partes. [" + e.getMessage() + "]";
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg, e);
-			}
+			buildLeaveDetailList();
 		}
 	}
 	
-	public void onSelectLeaveDetail(ActionEvent event) {
-		this.onCancel(event);
-		ContractLeaveDetail detail = (ContractLeaveDetail) getLeaveDetailModel().getRowData();
-		try {
-			this.select(event, detail);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar el parte. [" + e.getMessage() + "]";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg, e);
-		}
-		buildLeaveReport(false);
-	}
-	
-	private Date getConfirmSuggestedDate(Date date, Integer confirmReportNumber) {
+	public Date getConfirmSuggestedDate(Date startDate, Integer confirmReportNumber) {
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		cal.setTime(startDate);
 		cal.add(Calendar.DAY_OF_YEAR, 3 + (((confirmReportNumber==null?0:confirmReportNumber)  * 7)));
 		return cal.getTime();
 	}
 	
 	public void onChangeConfirmOrder(ActionEvent event) {
-		getReport().setDate(getConfirmSuggestedDate(getReport().getContractLeave().getStartDate(), getReport().getConfirmOrder()-1));
-	}
-	
-	public void onChangeType(ActionEvent event) {
+		ContractLeaveDetail detail = (ContractLeaveDetail) this.getTo();
+		detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(), detail.getConfirmOrder()-1));
 		
 	}
 	
+	public void onChangeType(ActionEvent event) {
+		ContractLeaveDetail lastLeave = getLastLeave();
+		ContractLeaveDetail detail = (ContractLeaveDetail) this.getTo();
+		if( detail!=null ){
+			if(detail.getType()==LeaveReportType.CONFIRM){
+				createNewConfirmReport(detail, lastLeave);
+			} else if(detail.getType()==LeaveReportType.LEAVE){
+				createNewLeaveReport(detail, lastLeave);
+			} 
+		}
+	}
+	
 	public void onChangeCollegeNumber(ActionEvent event) {
-		checkCollegeNumber();
+		checkCollegeNumber((ContractLeaveDetail) this.getTo());
 	}
 	
 	public void onChangeCias(ActionEvent event) {
-		checkCiasNumber();
+		checkCiasNumber((ContractLeaveDetail) this.getTo());
 	}
 	
-	private void checkCollegeNumber(){
-		// El nº colegiado debe cumplir una mascara
-		// El nº colegiado corresponder con su digito de control
-		if (!StringUtils.isBlank(getReport().getCollegeNumber())) {
-			if (NumberValidation
-					.validCollegeNumberPattern(getReport().getCollegeNumber())
-					&& NumberValidation
-					.validCollegeNumberControlDigit(getReport().getCollegeNumber())) {
-				setValidCollegeNumber(true);
+	public Boolean checkCollegeNumber(ContractLeaveDetail detail){
+		if (detail!=null && !StringUtils.isBlank(detail.getCollegeNumber())) {
+			if (NumberValidation.validCollegeNumberPattern(detail.getCollegeNumber())
+					&& NumberValidation.validCollegeNumberControlDigit(detail.getCollegeNumber())) {
+				return true;
 			} else {
-				setValidCollegeNumber(false);
+				return false;
 			}
 		} else {
-			setValidCollegeNumber(null);
+			return null;
 		}
 	}
 	
-	private void checkCiasNumber(){
-		// El CIAS debe cumplir una mascara
-		// El CIAS debe corresponder con su digito de control
-		if (!StringUtils.isBlank(getReport().getCias())) {
-			if (NumberValidation.validCiasPattern(getReport().getCias())
-					&& NumberValidation.validCiasControlDigit(getReport()
-							.getCias())) {
-				setValidCias(true);
+	public Boolean checkCiasNumber(ContractLeaveDetail detail){
+		if (detail!=null && !StringUtils.isBlank(detail.getCias())) {
+			if (NumberValidation.validCiasPattern(detail.getCias())
+					&& NumberValidation.validCiasControlDigit(detail .getCias())) {
+				return true;
 			} else {
-				setValidCias(false);
+				return false;
 			}
 		} else {
-			setValidCias(null);
+			return null;
 		}
+	}
+	
+	private boolean existLeave(Contract contract, Date date) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_CONTRACT_ID), contract.getId());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_START_DATE), date);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE), date);
+			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_LEAVE_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			return bean.getCount(criteria)>0;
+		} catch (ManagerBeanException e) {
+			String msg = "Error al comprobar IT existente.";
+			AonUtil.addErrorMessage(msg);
+		}
+		return false;
 	}
 	
 	@Override
@@ -487,5 +416,26 @@ public class ContractLeaveController extends BasicController {
 		}
 		return super.getBackAction();
 	}
-
+	
+	@Override
+	public void accept(ActionEvent event) {
+		ContractLeaveDetail detail = (ContractLeaveDetail) this.getTo();
+		try {
+			if(detail.getContractLeave()!=null && detail.getContractLeave().getId()==null){
+				if(detail.getType()==LeaveReportType.LEAVE){
+					detail.getContractLeave().setContract(getContract());
+					detail.getContractLeave().setStartDate(detail.getDate());
+					IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
+					bean.restoreNullSubPOJOs(detail.getContractLeave());
+					detail.setContractLeave((ContractLeave) bean.insert(detail.getContractLeave()));
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al buscar los partes.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		super.accept(event);
+	}
+	
 }

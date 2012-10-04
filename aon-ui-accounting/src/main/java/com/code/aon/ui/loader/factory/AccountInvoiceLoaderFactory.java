@@ -1,86 +1,84 @@
 package com.code.aon.ui.loader.factory;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.account.Account;
-import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.accounting.AccountEntry;
 import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Country;
-import com.code.aon.config.Series;
-import com.code.aon.customer.Customer;
-import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.enumeration.InvoiceStatus;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.IRegistry;
-import com.code.aon.registry.Registry;
-import com.code.aon.registry.enumeration.DocumentType;
-import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.loader.Column;
 import com.code.aon.ui.loader.ILoaderEngine;
 import com.code.aon.ui.loader.ILoaderFactory;
 import com.code.aon.ui.loader.LoaderParams;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
-import com.code.aon.ui.loader.pojo.LoadedAccountEntry;
-import com.code.aon.ui.loader.pojo.LoadedAccountEntryDetail;
-import com.code.aon.ui.loader.pojo.LoadedCreditor;
-import com.code.aon.ui.loader.pojo.LoadedCustomer;
-import com.code.aon.ui.loader.pojo.LoadedInvoice;
-import com.code.aon.ui.loader.pojo.LoadedSupplier;
+import com.code.aon.ui.loader.pojo.LoadedAccountInvoice;
+import com.code.aon.ui.loader.pojo.LoadedInvoiceDetail;
 import com.esferalia.aon.entity.IEntityAlias;
 
-public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
+public class AccountInvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	private static final Column[] SUPPORTED_COLUMNS = {
-		 new Column(FRA,"id"			,0,6	,true	,null)
-		,new Column(FRA,"serie"			,2,5	,true	,null)
-		,new Column(FRA,"numero"		,0,8	,true	,null)
-		,new Column(FRA,"referencia"	,2,32	,true	,null)
-		,new Column(FRA,"idTitular"		,0,6	,true	,null)
-		,new Column(FRA,"cuenta"		,2,9	,true	,null)
-		,new Column(FRA,"documento"		,2,16	,true	,null)
-		,new Column(FRA,"tipoDocumento"	,0,1	,true	,new int[] {0,1,2,3,4,5})
-		,new Column(FRA,"paisDocumento"	,2,2	,true	,null)
-		,new Column(FRA,"razonSocial"	,2,128	,true	,null)
-		,new Column(FRA,"fechaFactura"	,3,10	,true	,null)
-		,new Column(FRA,"fechaIva"		,3,10	,false	,null)
-		,new Column(FRA,"tipo"			,0,1	,true	,new int[] {0,1,2,3})
-		,new Column(FRA,"inversion"		,0,1	,false	,new int[] {0,1})
-		,new Column(FRA,"transaccion"	,0,1	,false	,new int[] {0,1,2,3})
-		,new Column(FRA,"comentario"	,2,256	,false	,null)
-		,new Column(FRA,"baseImponible"	,1,17	,true	,null)
-		,new Column(FRA,"totalCuotaIVA"	,1,17	,true	,null)
-		,new Column(FRA,"totalCuotaIRPF",1,17	,true	,null)
-		,new Column(FRA,"totalFactura"	,1,17	,true	,null)
+		 new Column(FRA_CTB,"id"				,0,8	,true	,null)
+		,new Column(FRA_CTB,"serie"				,2,5	,false	,null)
+		,new Column(FRA_CTB,"numero"			,0,8	,false	,null)
+		,new Column(FRA_CTB,"referencia"		,2,32	,false	,null)
+		,new Column(FRA_CTB,"idTitular"			,0,6	,false	,null)
+		,new Column(FRA_CTB,"cuenta"			,2,9	,false	,null)
+		,new Column(FRA_CTB,"documento"			,2,16	,true	,null)
+		,new Column(FRA_CTB,"tipoDocumento"		,0,1	,true	,new int[] {0,1,2,3,4,5})
+		,new Column(FRA_CTB,"paisDocumento"		,2,2	,true	,null)
+		,new Column(FRA_CTB,"razonSocial"		,2,128	,true	,null)
+		,new Column(FRA_CTB,"fechaFactura"		,3,10	,true	,null)
+		,new Column(FRA_CTB,"fechaIva"			,3,10	,false	,null)
+		,new Column(FRA_CTB,"tipo"				,0,1	,true	,new int[] {0,1,2,3})
+		,new Column(FRA_CTB,"inversion"			,0,1	,false	,new int[] {0,1})
+		,new Column(FRA_CTB,"transaccion"		,0,1	,false	,new int[] {0,1,2,3})
+		,new Column(FRA_CTB,"comentario"		,2,256	,false	,null)
+		,new Column(FRA_CTB,"baseImponible1"	,1,17	,false	,null)
+		,new Column(FRA_CTB,"iva1"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"tipoDeduccionIva1"	,0,1	,false	,new int[] {0,1,2})
+		,new Column(FRA_CTB,"re1"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaIVA1"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaRE1"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"baseImponible2"	,1,17	,false	,null)
+		,new Column(FRA_CTB,"iva2"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"tipoDeduccionIva2"	,0,1	,false	,new int[] {0,1,2})
+		,new Column(FRA_CTB,"re2"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaIVA2"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaRE2"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"baseImponible3"	,1,17	,false	,null)
+		,new Column(FRA_CTB,"iva3"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"tipoDeduccionIva3"	,0,1	,false	,new int[] {0,1,2})
+		,new Column(FRA_CTB,"re3"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaIVA3"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaRE3"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"irpf"				,1,17	,false	,null)
+		,new Column(FRA_CTB,"cuotaIRPF"			,1,17	,false	,null)
+		,new Column(FRA_CTB,"tipoIrpf"			,0,1	,false	,new int[] {0,1,2,3,4})
+		,new Column(FRA_CTB,"totalFactura"		,1,17	,false	,null)
+		,new Column(FRA_CTB,"articulo"			,2,15	,false	,null)
+		,new Column(FRA_CTB,"concepto"			,2,64	,false	,null)
+		,new Column(FRA_CTB,"cuentaExplotacion"	,2,9	,false	,null)
+		,new Column(FRA_CTB,"cuentaIva"			,2,9	,false	,null)
+		,new Column(FRA_CTB,"cuentaIrpf"		,2,9	,false	,null)
+		,new Column(FRA_CTB,"fechaVto"			,3,32	,false	,null)
+		,new Column(FRA_CTB,"formaPago"			,2,32	,false	,null)
+		,new Column(FRA_CTB,"cuentaBanco"		,2,23	,false	,null)
 	};
 	
 	private ILoaderEngine engine;
 	private Map<String, Column[]> columns;
-	private AccountBridgeUtil accountBridgeUtil;
 
-	public InvoiceLoaderFactory() {
+	public AccountInvoiceLoaderFactory() {
 	}
-	public InvoiceLoaderFactory(ILoaderEngine engine) {
+	public AccountInvoiceLoaderFactory(ILoaderEngine engine) {
 		this.engine = engine;
-	}
-
-	private AccountBridgeUtil getAccountBridgeUtil() {
-		if (accountBridgeUtil == null) {
-			accountBridgeUtil = new AccountBridgeUtil();
-		}
-		return accountBridgeUtil;
 	}
 
 	public Map<String, Column[]> getColumns() {
@@ -89,17 +87,17 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	
 	@Override
 	public boolean accept(String obj) {
-		return StringUtils.equals(obj,FRA);
+		return StringUtils.equals(obj,FRA_CTB);
 	}
 
 	@Override
 	public boolean accept(Class<? extends ILoadedPojo> clazz) {
-		return ClassUtils.isAssignable(clazz, LoadedInvoice.class);
+		return ClassUtils.isAssignable(clazz, LoadedAccountInvoice.class);
 	}
 
 	@Override
 	public String getKey() {
-		return FRA;
+		return FRA_CTB;
 	}
 
 	@Override
@@ -108,8 +106,8 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 	}
 
 	@Override
-	public LoadedInvoice getTargetBean() {
-		return new LoadedInvoice();
+	public LoadedAccountInvoice getTargetBean() {
+		return new LoadedAccountInvoice();
 	}
 
 	@Override
@@ -120,7 +118,20 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 
 	@Override
 	public Integer insert(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
-		LoadedInvoice loaded = (LoadedInvoice) loadedPojo;
+		return insertInvoice(params,loadedPojo);
+	}
+
+	private Integer insertInvoice(LoaderParams params,ILoadedPojo loadedPojo) throws AonException {
+		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
+
+		Integer invoiceId = engine.insertAonEntity(params, loaded.getLoadedInvoice());
+		for (LoadedInvoiceDetail detail : loaded.getLoadedInvoiceDetails()) {
+			engine.insertAonEntity(params, detail);	
+		}
+		engine.insertAonEntity(params, loaded.getLoadedFinance());
+		return invoiceId; 
+		
+/*		
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Invoice invoice = new Invoice();
 		InvoiceType type = InvoiceType.values()[loaded.getTipo()];
@@ -146,25 +157,12 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		Date now = new Date();
 		invoice.setRemarks("Importada de fichero " + params.getDateFormatter().format(now) + " - " + params.getTimeFormatter().format(now));
 		invoice.setStatus(InvoiceStatus.PENDING);
-		invoice.setTaxableBase(loaded.getBaseImponible());
+		invoice.setTaxableBase(loaded.getTotalBaseImponible());
 		invoice.setVatQuota(loaded.getTotalCuotaIVA());
-		invoice.setRetentionQuota(loaded.getTotalCuotaIRPF()==null?0.0:loaded.getTotalCuotaIRPF());
+		invoice.setRetentionQuota(loaded.getCuotaIRPF()==null?0:loaded.getCuotaIRPF());
 		invoice.setTotal(loaded.getTotalFactura());
 		invoice.setUpdateEnabled(false);
 		invoice = (Invoice) bean.insert(invoice);
-		if (loaded.isFromLoadedInvoiceAccount() && StringUtils.isBlank(loaded.getCuenta())) {
-			Account account = null;
-			if (invoice.getType() == InvoiceType.SALES) {
-				account = getAccountBridgeUtil().obtainCustomerAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.PURCHASE) {
-				account = getAccountBridgeUtil().obtainSupplierAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.EXPENSES) {
-				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
-			} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
-				account = getAccountBridgeUtil().obtainCreditorAccount(invoice.getRegistry());
-			}
-			loaded.setCuenta(account.getCode());
-		}
 		if (StringUtils.isNotBlank(loaded.getCuenta())) {
 			invoice.setStatus(InvoiceStatus.SCORED);
 		}
@@ -174,8 +172,9 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			insertInvoiceAccountEntry(params,invoice, loaded);
 		} 
 		return invoice.getId();
+*/		
 	}
-
+/*
 	private Series ensureInvoiceSeries(LoaderParams params,String serie) throws ManagerBeanException {
 		if (StringUtils.isNotBlank(serie)) {
 			IManagerBean bean = BeanManager.getManagerBean(Series.class);
@@ -202,7 +201,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		return null;
 	}
 
-	private void insertInvoiceAccountEntry(LoaderParams params,Invoice invoice,LoadedInvoice loaded) throws AonException {
+	private void insertInvoiceAccountEntry(LoaderParams params,Invoice invoice,LoadedAccountInvoice loaded) throws AonException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 
 		LoadedAccountEntry loadedAccountEntry = loaded.getLoadedAccountEntry();
@@ -228,7 +227,7 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		engine.ensureAonEntity(params, loadedAccountEntryDetail);
 	}
 
-	private Registry obtainRegistry(LoaderParams params,InvoiceType type, LoadedInvoice loaded) throws AonException {
+	private Registry obtainRegistry(LoaderParams params,InvoiceType type, LoadedAccountInvoice loaded) throws AonException {
 		IRegistry r = null;
 		if ( type == InvoiceType.SALES ) {
 			LoadedCustomer loadedCustomer = loaded.getLoadedCustomer();
@@ -245,12 +244,13 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		return r.getRegistry();
 	}
-	
+*/	
 	@Override
 	public ITransferObject get(LoaderParams params, ILoadedPojo loadedPojo) throws AonException {
-		LoadedInvoice loaded = (LoadedInvoice) loadedPojo;
+		LoadedAccountInvoice loaded = (LoadedAccountInvoice) loadedPojo;
 		IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), loaded.getInvoiceType());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_SERIES), loaded.getSerie());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_NUMBER), loaded.getNumero());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), loaded.getFechaFactura());
@@ -260,5 +260,4 @@ public class InvoiceLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 		}
 		return null;
 	}
-	
 }

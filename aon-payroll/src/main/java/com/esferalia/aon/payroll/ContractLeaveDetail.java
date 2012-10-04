@@ -14,8 +14,18 @@ public class ContractLeaveDetail extends ContractLeaveDetailDB {
 	private static final long serialVersionUID = 1L;
 
 	@Transient
+	public boolean isLeave(){
+		return getType()==LeaveReportType.LEAVE;
+	}
+	
+	@Transient
 	public boolean isConfirm(){
 		return getType()==LeaveReportType.CONFIRM;
+	}
+	
+	@Transient
+	public boolean isDischarge(){
+		return getType()==LeaveReportType.DISCHARGE;
 	}
 	
 }

@@ -2,10 +2,10 @@ package com.code.aon.common.domain;
 
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 
@@ -18,6 +18,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	private List<IDomainChangeListener> listeners;
 	protected Integer domainId;
 	private boolean domainManagementAvailable;
+	protected int type;
 	private boolean parentDomain;
 	private Collection<Integer> domainFilter;
 	
@@ -31,7 +32,7 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		Integer oldDomainId = this.domainId;
 		fireBeforeDomainChanged(oldDomainId, domainId);
 		this.domainId = domainId;
-		initializeDomainManagementAvailable();
+		initializeDomain();
 		initializeDomainFilter();
 		fireAfterDomainChanged(oldDomainId, domainId);
 	}
@@ -73,25 +74,24 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 		}
 	}
 
-	private void initializeDomainManagementAvailable() {
+	private void initializeDomain() {
 		parentDomain = false;
 		domainManagementAvailable = false;
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(DOMAIN_CLASS_NAME);
-		String q = "SELECT d.parent,d.domainManagement FROM domain d"
+		String q = "SELECT d.parent,d.domainManagement,d.type FROM domain d"
 				+ " WHERE d.id = " + domainId
 				+ " AND d.active = 1";
 		SQLQuery query = HibernateUtil.getSession(sessionFactoryName).createSQLQuery(q);
-		List<?> queryList = query
+		Object[] arr = (Object[]) query
 				.addScalar("parent", Hibernate.INTEGER)
 				.addScalar("domainManagement", Hibernate.BOOLEAN)
-				.list();
-		Iterator<?> iterator = queryList.iterator();
-		
-		if (iterator.hasNext()) {
-			Object[] arr = (Object[]) iterator.next();
+				.addScalar("type", Hibernate.INTEGER)
+				.uniqueResult();
+		if (! ArrayUtils.isEmpty(arr) ) {
 			Integer parent = (Integer) arr[0]; 
 			parentDomain = (parent == null);
 			domainManagementAvailable = (Boolean) arr[1];
+			type = (Integer) arr[2];
 		}
 	}
 	

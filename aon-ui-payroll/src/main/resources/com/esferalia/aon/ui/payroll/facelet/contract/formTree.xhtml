@@ -33,7 +33,7 @@
 				</aon:commandButton>
 				<aon:commandButton 
 					value="#{payrollBundle.payroll_contractCalendarEvent}"
-					styleClass="aon-finding-toolbar-item aon-icon-calendar-exception"
+					styleClass="aon-finding-toolbar-item aon-icon-daily-tracking"
 					action="contractCalendarEvent_form" >
 					<f:setPropertyActionListener
 						target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
@@ -45,6 +45,8 @@
 					action="contractLeave_form"
 					styleClass="aon-finding-toolbar-item aon-icon-copy">
 					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.treeOutcome}" value="#{true}" />
 				</aon:commandButton>
 				<aon:commandButton id="settle"
 					value="#{payrollBundle.payroll_settle_module}"

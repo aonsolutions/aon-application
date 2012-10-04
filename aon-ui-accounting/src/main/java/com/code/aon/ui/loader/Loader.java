@@ -304,6 +304,8 @@ public class Loader implements ILoaderEngine {
 						}
 						if (i%50 == 0) {
 							log("" + i + " líneas insertadas");
+						}
+						if (i%10 == 0) {
 							session.flush();
 							session.clear();
 						}

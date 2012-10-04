@@ -12,27 +12,28 @@ import com.code.aon.registry.enumeration.DocumentType;
 
 public class LoadedInvoice implements ILoadedPojo{
 
-	public Integer id;
-	public String serie;
-	public Integer numero;
-	public String referencia;
-	public Integer idTitular;
-	public String cuenta;
-	public String documento;
-	public Integer tipoDocumento;
-	public String paisDocumento;
-	public String razonSocial;
-	public Date fechaFactura;
-	public Date fechaIva;
-	public Integer tipo;
-	public Integer inversion;
-	public Integer transaccion;
-	public String comentario;
-	public Double baseImponible;
-	public Double totalCuotaIVA;
-	public Double totalCuotaIRPF;
-	public Double totalFactura;
+	private Integer id;
+	private String serie;
+	private Integer numero;
+	private String referencia;
+	private Integer idTitular;
+	private String cuenta;
+	private String documento;
+	private Integer tipoDocumento;
+	private String paisDocumento;
+	private String razonSocial;
+	private Date fechaFactura;
+	private Date fechaIva;
+	private Integer tipo;
+	private Integer inversion;
+	private Integer transaccion;
+	private String comentario;
+	private Double baseImponible;
+	private Double totalCuotaIVA;
+	private Double totalCuotaIRPF;
+	private Double totalFactura;
 	
+	private boolean fromLoadedInvoiceAccount = false;
 	
 	@Override
 	public String getIdentifier() {
@@ -120,6 +121,9 @@ public class LoadedInvoice implements ILoadedPojo{
 	public Integer getTipo() {
 		return tipo;
 	}
+	public InvoiceType getInvoiceType() {
+		return InvoiceType.values()[getTipo()]; 
+	}
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
 	}
@@ -127,7 +131,7 @@ public class LoadedInvoice implements ILoadedPojo{
 		return inversion;
 	}
 	public boolean isInvestment() {
-		return inversion==1;
+		return inversion != null && inversion==1;
 	}
 	public void setInversion(Integer inversion) {
 		this.inversion = inversion;
@@ -136,7 +140,9 @@ public class LoadedInvoice implements ILoadedPojo{
 		return transaccion;
 	}
 	public InvoiceTransactionType getInvoiceTransactionType() {
-		return InvoiceTransactionType.values()[getTransaccion()]; 
+		return getTransaccion() != null
+				?InvoiceTransactionType.values()[getTransaccion()]
+				:InvoiceTransactionType.NATIONAL; 
 	}
 	public void setTransaccion(Integer transaccion) {
 		this.transaccion = transaccion;
@@ -151,7 +157,6 @@ public class LoadedInvoice implements ILoadedPojo{
 	public Double getBaseImponible() {
 		return baseImponible;
 	}
-
 	public void setBaseImponible(Double baseImponible) {
 		this.baseImponible = baseImponible;
 	}
@@ -159,7 +164,6 @@ public class LoadedInvoice implements ILoadedPojo{
 	public Double getTotalCuotaIVA() {
 		return totalCuotaIVA;
 	}
-
 	public void setTotalCuotaIVA(Double totalCuotaIVA) {
 		this.totalCuotaIVA = totalCuotaIVA;
 	}
@@ -167,7 +171,6 @@ public class LoadedInvoice implements ILoadedPojo{
 	public Double getTotalCuotaIRPF() {
 		return totalCuotaIRPF;
 	}
-
 	public void setTotalCuotaIRPF(Double totalCuotaIRPF) {
 		this.totalCuotaIRPF = totalCuotaIRPF;
 	}
@@ -175,11 +178,17 @@ public class LoadedInvoice implements ILoadedPojo{
 	public Double getTotalFactura() {
 		return totalFactura;
 	}
-
 	public void setTotalFactura(Double totalFactura) {
 		this.totalFactura = totalFactura;
 	}
 	
+	public boolean isFromLoadedInvoiceAccount() {
+		return fromLoadedInvoiceAccount;
+	}
+	public void setFromLoadedInvoiceAccount(boolean fromLoadedInvoiceAccount) {
+		this.fromLoadedInvoiceAccount = fromLoadedInvoiceAccount;
+	}
+
 	public LoadedCustomer getLoadedCustomer() {
 		LoadedCustomer loadedCustomer = new LoadedCustomer();
 		fillLoadedRegistry(loadedCustomer);

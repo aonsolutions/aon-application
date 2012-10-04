@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.writer.AccountEntryFinanceWriter;
@@ -27,6 +29,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
@@ -58,6 +61,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class FBatchController extends BasicController implements ICollectionProvider, IFinanceConstants {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchController.class.getName());
 
 	private Company company;
 	private boolean payment;
@@ -240,7 +245,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return criteria;
 	}
 
-	public void onSearchFinance(ActionEvent event) throws ManagerBeanException {
+	public void onSearchFinance(ActionEvent event)  {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
 		financeList.onSearch(event);
 	}
@@ -263,52 +268,117 @@ public class FBatchController extends BasicController implements ICollectionProv
         fBatchDetailController.onSearch(null);
     }
 
-	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
-        FinanceBatch fBatch = (FinanceBatch)getTo();
-        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
-            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
-            getManagerBean().update(fBatch);
-            setAebOutput(null);
-        }
+	public void onBatchSelected(ActionEvent event) {
+		
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		
+		FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
 
-        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-        FinanceListController financeController = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
-        Iterator<Finance> iterator = financeController.getCheckedFinances().iterator();
-        while (iterator.hasNext()) {
-			Finance finance = (Finance)financeBean.get(iterator.next().getId());
-			if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
-	            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
-				fBatchDetail.setFinance(finance);
-				fBatchDetail.setFinanceBatch(fBatch);
-	            fBatchDetail.setAmount(finance.getTotalAmount());
-	            fBatchDetail.setStatus(FinanceStatus.BATCHED);
-				financeBatchDetailBean.insert(fBatchDetail);
+	        FinanceBatch fBatch = (FinanceBatch)getTo();
+	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
+	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+	            getManagerBean().update(fBatch);
+	            setAebOutput(null);
+	        }
+
+	        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+	        Iterator<Finance> iterator = financeController.getCheckedFinances().iterator();
+	        int i = 0;
+	        while (iterator.hasNext()) {
+	        	i++;
+				Finance finance = (Finance)financeBean.get(iterator.next().getId());
+				if (finance.getFinanceStatus() == FinanceStatus.PENDING || finance.getFinanceStatus() == FinanceStatus.RETURNED) {
+		            FinanceBatchDetail fBatchDetail = new FinanceBatchDetail();
+					fBatchDetail.setFinance(finance);
+					fBatchDetail.setFinanceBatch(fBatch);
+		            fBatchDetail.setAmount(finance.getTotalAmount());
+		            fBatchDetail.setStatus(FinanceStatus.BATCHED);
+					financeBatchDetailBean.insert(fBatchDetail);
+				}
+				if (i % 20 == 0) {
+					session.flush();
+					session.clear();
+				}
+	        }
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			String msg = "Error al añadir vtos. a la remesa. ";
+			AonUtil.addErrorMessage(msg  + e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
 			}
-        }
-        financeController.clearCheckedFinances();
-        loadDetails();
-        onSearchFinance(event);
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+
+	        financeController.clearCheckedFinances();
+	        loadDetails();
+	        onSearchFinance(event);
+		}
+		
 	}
 
-	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
-        FinanceBatch fBatch = (FinanceBatch)getTo();
-        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
-            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
-            getManagerBean().update(fBatch);
-            setAebOutput(null);
-        }
-
-		IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+	public void onRemoveSelected(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName(Finance.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
         FBatchDetailController fBatchDetailController = (FBatchDetailController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator<?> iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
-        while(iterator.hasNext()){
-        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
-        	financeBatchDetailBean.remove(fBatchDetail);
-        }
-		fBatchDetailController.clearCheckedFinanceBatchDetails();
-        loadDetails();
-        onSearchFinance(event);
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+
+			FinanceBatch fBatch = (FinanceBatch)getTo();
+	        if (FinanceBatchStatus.TODO != fBatch.getFinanceBatchStatus()) {
+	            fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+	            getManagerBean().update(fBatch);
+	            setAebOutput(null);
+	        }
+	
+			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+			Iterator<?> iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
+	        int i = 0;
+	        while(iterator.hasNext()){
+	        	i++;
+	        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+	        	financeBatchDetailBean.remove(fBatchDetail);
+				if (i % 20 == 0) {
+					session.flush();
+					session.clear();
+				}
+	        }
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			String msg = "Error al quitar vtos. de la remesa. ";
+			AonUtil.addErrorMessage(msg  + e.getMessage());
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+			
+			fBatchDetailController.clearCheckedFinanceBatchDetails();
+	        loadDetails();
+	        onSearchFinance(event);
+		}
     }
 
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {

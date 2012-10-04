@@ -358,6 +358,9 @@
 
 	<table name="contract_leave">
 		<column name="type" type="com.esferalia.aon.payroll.enumeration.LeaveType"/>
+		<column name="daily_cgc_base" type="java.lang.Double"/>
+		<column name="daily_cgp_base" type="java.lang.Double"/>
+		<column name="daily_reg_base" type="java.lang.Double"/>
 		<column name="discharge_cause" type="com.esferalia.aon.payroll.enumeration.DischargeCause"/>
 		<foreign-key constraint-name="FK_CONTRACT_LEAVE_CONTRACT_LEAVE">
 			<many-to-one property="parent"/>

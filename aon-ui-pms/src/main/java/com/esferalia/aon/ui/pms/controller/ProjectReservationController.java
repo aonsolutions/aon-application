@@ -714,8 +714,10 @@ public class ProjectReservationController extends BasicController implements IPm
 				ReservationInvoicing reservationInvoicing = new ReservationInvoicing();
 				reservationInvoicing.invoice(getReservationInvoiceTo(), reservation);
 
-				reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
 				reservation.setStatus(ReservationStatus.INVOICED);
+				if (reservation.getCheckStatus() == ReservationCheckStatus.NO_CHECK) {
+					reservation.setCheckStatus(ReservationCheckStatus.CHECK_IN);
+				}
 				accept(event);
 				setSelectedTab(INVOICE);
 			}
@@ -808,7 +810,6 @@ public class ProjectReservationController extends BasicController implements IPm
 			if (!reservation.isCancelled()) {
 				ProjectReservation savedReservation = (ProjectReservation)getManagerBean().get(reservation.getId());
 				if (savedReservation.getStatus() != reservation.getStatus()) {
-					reservation.setCheckStatus(savedReservation.isActive() ? ReservationCheckStatus.NO_CHECK : ReservationCheckStatus.CHECK_IN);
 					reservation.setStatus(savedReservation.getStatus());
 					accept(event);
 				}

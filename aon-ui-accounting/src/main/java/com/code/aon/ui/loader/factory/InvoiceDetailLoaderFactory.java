@@ -206,12 +206,12 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 			invoiceTax.setInvoiceDetail(detail);
 			invoiceTax.setPercentage(loaded.getPorcentajeIva());
 			invoiceTax.setQuota(loaded.getCuotaIva());
-			if (!invoice.isSurcharge() && loaded.getRe() > 0) {
+			if (!invoice.isSurcharge() && loaded.getRe() != null && loaded.getRe() > 0) {
 				invoice.setDefaultTaxInfo(false);
 				invoice.setSurcharge(true);
 			}
-			invoiceTax.setSurcharge(loaded.getRe());
-			invoiceTax.setSurchargeQuota(loaded.getCuotaRe());
+			invoiceTax.setSurcharge(loaded.getRe() != null?loaded.getRe():0.0);
+			invoiceTax.setSurchargeQuota(loaded.getCuotaRe()!=null?loaded.getCuotaRe():0.0);
 			invoiceTax.setTaxType(TaxType.VAT);
 			invoiceTax.setVatDeductionType(loaded.getVatDeductionType());
 			invoiceTaxBean.insert(invoiceTax);
@@ -239,7 +239,7 @@ public class InvoiceDetailLoaderFactory implements ILoaderFactory<ILoadedPojo>{
 				vatAed = mergeAccountEntryDetail(vatAed,vatAccountEntryDetail);
 			}
 			
-			if (loaded.getPorcentajeIrpf() > 0) {
+			if (loaded.getPorcentajeIrpf() != null && loaded.getPorcentajeIrpf() > 0) {
 				if (!invoice.isWithholding()) {
 					invoice.setDefaultTaxInfo(false);
 					invoice.setWithholding(true);

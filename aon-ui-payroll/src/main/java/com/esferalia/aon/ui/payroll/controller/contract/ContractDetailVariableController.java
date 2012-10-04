@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -33,15 +35,32 @@ public abstract class ContractDetailVariableController extends BasicController i
 	
 	private List<SelectItem> concepts;
 	private boolean modalPanelVisible;
-	private boolean searchCurrent;
-	private Date inactiveDate;
+	
 	private boolean quoteExpressionEdition;
 	private boolean irpfExpressionEdition;
+	private boolean enableExpressionEdition;
+	
+	// PERIOD FOR DATA FILTER
+	private boolean searchCurrent;
+	private Date inactiveDate;
+	
+	// PERIOD FOR RESULT CALCULATION
+	private Month month;
+	private Integer year;
 	
 	public abstract AbstractVariableHandler getHandler() ;
 	public abstract SalaryType getSalaryType() ;
 	public abstract String getExpression();
+	protected abstract void initialiceConcepts();
+	protected abstract void completeCiteria();
+
 	
+	public boolean isEnableExpressionEdition() {
+		return enableExpressionEdition;
+	}
+	public void setEnableExpressionEdition(boolean enableExpressionEdition) {
+		this.enableExpressionEdition = enableExpressionEdition;
+	}
 	public boolean isQuoteExpressionEdition() {
 		return quoteExpressionEdition;
 	}
@@ -72,7 +91,11 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public void setModalPanelVisible(boolean modalPanelVisible) {
 		this.modalPanelVisible = modalPanelVisible;
 	}
-
+	
+	public void onSelectExpressionEdition(ActionEvent event){
+		setEnableExpressionEdition( !isEnableExpressionEdition() );
+	}
+	
 	public void onEdit(ActionEvent event) {
 		super.onSelect(event);
 		reset(true);
@@ -142,19 +165,11 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public void setConcepts(List<SelectItem> concepts) {
 		this.concepts = concepts;
 	}
-
-	protected abstract void initialiceConcepts();
-	protected abstract void completeCiteria();
 	
 	public Contract getContract(){
 		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		return (Contract) master.getTo();
 	}
-	
-	private Month month;
-	private Integer year;
-	private Double result;
-
 	public Month getMonth() {
 		if(month==null){
 			month = Month.getMonthByValue(CommonUtil.getMonth(new Date()));
@@ -174,20 +189,6 @@ public abstract class ContractDetailVariableController extends BasicController i
 		this.year = year;
 	}
 	public Double getResult() {
-//		if(result == null){
-			calculateResult();
-//		}
-		return result;
-	}
-	public void setResult(Double result) {
-		this.result = result;
-	}
-	
-	public void onReloadExpression(ActionEvent event){
-		initializeVariables(event);
-	}
-	
-	private void calculateResult() {
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -199,27 +200,30 @@ public abstract class ContractDetailVariableController extends BasicController i
 			endCal.set(Calendar.YEAR, year);
 			endCal.set(Calendar.MONTH, month.ordinal());
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(year, month, getSalaryType());
-			
+			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(startCal.getTime(), endCal.getTime(), getSalaryType());
 			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(getExpression(), startCal.getTime(), endCal.getTime());
-			if(list.isEmpty() || list.get(0).getValue()==null){
-				result = null;
-			} else {
-				result = new Double(list.get(0).getValue().toString());
+			if( !list.isEmpty() && list.get(0).getValue()!=null ){
+				return new Double(list.get(0).getValue().toString());
 			}
 		} catch (SalaryException e) {
-			result = null;
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
 			LOGGER.error("error evaluating expression.");
+			
 		} catch (UndefinedVariablesException e) {
-			result = null;
+			
 		} catch (ExpressionException e) {
-			result = null;
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
 			LOGGER.error("error evaluating expression.");
 		}
+		return null;
+	}
+	
+	public void onReloadExpression(ActionEvent event){
+		IExpression expression = (IExpression) this.getTo();
+		setEnableExpressionEdition( StringUtils.isNotBlank(expression.getExpression()) );
+		initializeVariables(event);
 	}
 	
 	public void onSelectQuoteExpressionEdition(ActionEvent event){
