@@ -78,12 +78,21 @@
 		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
 	</aon:panelGroup>
 	
-	<c:if test="#{controller.to.paymentConcept.id!=null}">
-			<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+	<c:if test="#{controller.to.paymentConcept.id!=null and !controller.enableExpressionEdition}">
+		<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:panelGrid columnClasses="aon-panelGrid-even aon-noborder aon-vertical-align-top, aon-panelGrid-even aon-noborder aon-vertical-align-top" columns="2">
 			<aon:outputText value="#{controller.to.paymentConcept.expression}" />
+			<aon:commandButton id="ContractPayment_expression_edit-button"
+				title="#{(controller.enableExpressionEdition)?(payrollBundle.payroll_variable_manual_edit_cancel):(payrollBundle.payroll_variable_manual_edit)}" 
+				value="&#160;" ajaxSingle="true"
+				rendered="#{aonRole.admin}"
+				reRender="#{controller.beanName}ModalForm"
+				actionListener="#{controller.onSelectExpressionEdition}"
+				styleClass="aon-icon-commandButton #{(controller.enableExpressionEdition)?('aon-icon-cancel'):('aon-icon-edit')}" />
+		</aon:panelGrid>
 	</c:if>
 	
-	<c:if test="#{controller.to.paymentConcept.id==null}">
+	<c:if test="#{controller.to.paymentConcept.id==null or controller.enableExpressionEdition}">
 		<c:if test="#{!aonRole.admin}">
 			<c:if test="#{!aonRole.config}">
 				<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
