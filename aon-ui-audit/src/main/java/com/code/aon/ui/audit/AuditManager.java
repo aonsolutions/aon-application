@@ -2,6 +2,7 @@ package com.code.aon.ui.audit;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,16 +14,21 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.User;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
@@ -163,4 +169,67 @@ public class AuditManager implements IAuditConstants {
 			LOGGER.error( "Error login audit", th );
 		}
 	}	
+
+	public static DomainType getDomainType( Integer domainId ) throws ManagerBeanException {
+		String sfn = HibernateUtil.getSessionFactoryName();
+		Query query = HibernateUtil.getSession(sfn).createQuery("SELECT d.type FROM Domain d WHERE d.id = ?");
+		query.setInteger(0, domainId);
+		return (DomainType) query.uniqueResult();
+	}
+	
+	public static boolean hasModule( Integer domainId, Integer applicationId, Module module ) throws ManagerBeanException {
+		Integer da = AdminUtil.getDomainApplication(domainId, applicationId);
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
+		Criteria criteria = new Criteria();
+		criteria.setSkipDomainFilter(true);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID), da);
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_MODULE), module);
+		return bean.getCount(criteria) > 0;
+	}	
+
+	public static List<Module> getVisibleModules( Integer domainId, Integer applicationId ) throws ManagerBeanException {
+		List<Module> list = new LinkedList<Module>();
+		DomainType type = AuditManager.getDomainType(domainId);
+		if ( DomainManager.isDomainManagementAvailable() && (type == DomainType.CONSULTANCY)) {
+			list.add(Module.FISCAL);
+			list.add(Module.PAYROLL);
+		} else {
+			list.add(Module.ACCOUNTING);
+			list.add(Module.COMMERCIAL);
+			list.add(Module.GROUPWARE);
+			list.add(Module.MANAGEMENT);
+			list.add(Module.MARKETING);
+			list.add(Module.TREASURY);
+			switch ( type ) {
+				case GARAGE:
+					list.add(Module.GARAGE);
+					list.add(Module.WAREHOUSE);
+					break;
+				case ACADEMY:
+					list.add(Module.ACADEMY);
+					list.add(Module.WAREHOUSE);
+					break;
+				case HOTEL:
+					list.add(Module.HOTEL);
+					list.add(Module.WAREHOUSE);
+					break;
+				case CONSULTANCY:
+					list.add(Module.FISCAL);
+					list.add(Module.PAYROLL);
+					break;
+			}
+			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+			if ( parentDomainId != null)  {
+				if (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY) {
+					if (AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
+						list.remove(Module.MANAGEMENT);
+						list.remove(Module.TREASURY);
+					}
+				}
+			}
+		}
+		list.add(Module.DOCUMENT);
+		return list;
+	}
+	
 }

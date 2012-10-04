@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.BeanManager;
@@ -22,6 +25,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class DomainApplicationInfo {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationInfo.class);
+	
 	private boolean checked;
 	
 	private Application application;
@@ -89,6 +94,15 @@ public class DomainApplicationInfo {
 		return null;
 	}
 
+	public void removeModuleInfo( DomainModuleInfo info ) throws ManagerBeanException {
+		this.applicationModules.remove(info);
+		IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
+		if ( info.getApplicationModule() != null ) {
+			damBean.remove(info.getApplicationModule());	
+			LOGGER.info( "Removed: {}", info.getApplicationModule() );
+		}			
+	}
+	
 	public void register() throws ManagerBeanException {
 		DomainApplication da = getDomainApplication();
 		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
@@ -103,6 +117,10 @@ public class DomainApplicationInfo {
 			da.setActive(true);
 			bean.update(da);
 		}
+		updateApplicationModules();
+	}
+	
+	public void updateApplicationModules() throws ManagerBeanException {
 		IManagerBean damBean = BeanManager.getManagerBean(DomainApplicationModule.class);
 		for( DomainModuleInfo dmi: getApplicationModules() ) {
 			DomainApplicationModule dam = dmi.getApplicationModule();
@@ -113,14 +131,16 @@ public class DomainApplicationInfo {
 					dam.setModule(dmi.getModule());
 					damBean.insert(dam);
 					dmi.setApplicationModule(dam);
+					LOGGER.info( "Added: {}", dam );
 				}
 			} else {
 				if ( dam != null ) {
 					damBean.remove(dam);
 					dmi.setApplicationModule(null);
+					LOGGER.info( "Removed: {}", dam );
 				}
 			}
-		}
+		}		
 	}
 
 	public void unregister() throws ManagerBeanException {
@@ -132,7 +152,7 @@ public class DomainApplicationInfo {
 		}
 	}
 	
-	private static Application getApplication( String name ) throws ManagerBeanException {
+	public static Application getApplication( String name ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Application.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.APPLICATION_NAME), name);
@@ -143,7 +163,7 @@ public class DomainApplicationInfo {
 		return null;
 	}
 
-	private static DomainApplication getDomainApplication( Domain domain, Application application ) throws ManagerBeanException {
+	public static DomainApplication getDomainApplication( Domain domain, Application application ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_APPLICATION_ID), application.getId());
@@ -166,6 +186,17 @@ public class DomainApplicationInfo {
 		}
 		return null;		
 	}
+
+	public void sortApplicationModules() {
+		final Locale locale = AonUtil.getCurrentLocale();
+    	Comparator<DomainModuleInfo> comparator = new Comparator<DomainModuleInfo>() {
+			@Override
+			public int compare(DomainModuleInfo o1, DomainModuleInfo o2) {
+				return o1.getModule().getName(locale).compareTo(o2.getModule().getName(locale));
+			}	    		
+		};
+    	Collections.sort( getApplicationModules(), comparator );					
+	}
 	
 	public static DomainApplicationInfo getApplicationInfos( Domain domain, String applicationName ) throws ManagerBeanException {
 		Application application = getApplication(applicationName);
@@ -184,14 +215,6 @@ public class DomainApplicationInfo {
 				}
 				modules.add(dmi);
 			}
-			final Locale locale = AonUtil.getCurrentLocale();
-	    	Comparator<DomainModuleInfo> comparator = new Comparator<DomainModuleInfo>() {
-				@Override
-				public int compare(DomainModuleInfo o1, DomainModuleInfo o2) {
-					return o1.getModule().getName(locale).compareTo(o2.getModule().getName(locale));
-				}	    		
-			};
-	    	Collections.sort( modules, comparator );			
 		}
 		dai.setApplicationModules(modules);
 		return dai;

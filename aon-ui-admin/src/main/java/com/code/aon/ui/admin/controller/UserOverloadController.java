@@ -1,6 +1,6 @@
 package com.code.aon.ui.admin.controller;
 
-import static com.code.aon.ui.config.controller.ConfigConstants.DOMAIN_SWITCHER;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,12 +19,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.ApplicationUser;
+import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.SelectTransferObject;
-import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -40,7 +40,7 @@ public class UserOverloadController extends BasicController {
 	
 	public UserOverloadController() {
 		List<Expression> list = new LinkedList<Expression>();
-		Expression expr = ExpressionUtilities.getEqualExpression("ApplicationUser.user.domain", getParentDomain());
+		Expression expr = ExpressionUtilities.getEqualExpression("ApplicationUser.user.domain", getParentDomain().getId());
 		list.add(expr);
 		setInitExpressions(list);
 		try {
@@ -51,9 +51,9 @@ public class UserOverloadController extends BasicController {
 		}
 	}
 	
-	private Integer getParentDomain() {
-		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
-		return ds.getParentDomain();		
+	private Domain getParentDomain() {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		return dc.getParentDomain();		
 	}
 
 	public List<SelectTransferObject<Profile, ApplicationUserProfile>> getUserProfiles() {
@@ -94,7 +94,7 @@ public class UserOverloadController extends BasicController {
 		super.onReset(event);
 		try {
 			updateUserProfiles();
-			updateAvailableUsers(getParentDomain());
+			updateAvailableUsers(getParentDomain().getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onReset ",e);
 			addMessage(e.getMessage());
@@ -107,7 +107,7 @@ public class UserOverloadController extends BasicController {
 		super.onSelect(event);
 		try {
 			updateUserProfiles();
-			updateAvailableUsers(getParentDomain());
+			updateAvailableUsers(getParentDomain().getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelect ",e);
 			addMessage(e.getMessage());

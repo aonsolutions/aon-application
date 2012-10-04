@@ -19,7 +19,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
@@ -28,6 +27,7 @@ import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -81,38 +81,65 @@ public class DomainController extends BasicController {
 		return applicationInfos;
 	}
 	
-	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
-		if (! DomainManager.isParentDomain() ) {
+	private boolean isConsultancyParent() throws ManagerBeanException {
+		Domain parent = getParentDomain();
+		return (parent != null) && (parent.getType()  == DomainType.CONSULTANCY);
+	}
+
+	private boolean hasModule( Domain domain, Module module ) throws ManagerBeanException {
+		Application application = DomainApplicationInfo.getApplication(AON_AIO_APPLICATION);
+		return AuditManager.hasModule(domain.getId(), application.getId(), module);			
+	}
+	
+	private List<Module> getDisabledModules() throws ManagerBeanException {
+		List<Module> list = new LinkedList<Module>();
+		Domain parent = getParentDomain();
+		if ( parent != null ) {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
 			criteria.setSkipDomainFilter(true);
-			Integer parentDomainId = AdminUtil.getParentDomain(DomainManager.getCurrentDomain());
-			Application application = appInfo.getDomainApplication().getApplication();
-			Integer da = AdminUtil.getDomainApplication(parentDomainId, application.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN), parentDomainId);
+			Application application = DomainApplicationInfo.getApplication(AON_AIO_APPLICATION);
+			Integer da = AdminUtil.getDomainApplication(parent.getId(), application.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN), parent.getId());
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID), da);
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
-				DomainModuleInfo info = appInfo.getModuleInfo(dam.getModule());
-				if ( info != null ) {
-					info.setApplicationModule(dam);
-					info.setChecked(true);
-					info.setDisabled(true);
-				}
+				list.add(dam.getModule());
+			}
+			if ( isConsultancyParent() ) {
+				list.remove(Module.DOCUMENT);
+				if ( hasModule(getParentDomain(), Module.FISCAL) ) {
+					list.add(Module.MANAGEMENT);
+					list.add(Module.TREASURY);									
+				}								
+			}
+		}
+		return list;
+	}	
+	
+	private void updateModules( DomainApplicationInfo appInfo ) throws ManagerBeanException {
+		List<Module> disabledModules = getDisabledModules();
+		for( Module module : disabledModules ) {
+			DomainModuleInfo info = appInfo.getModuleInfo(module);
+			if ( info == null ) {
+				info = new DomainModuleInfo(module);
+				appInfo.getApplicationModules().add(info);
+				LOGGER.debug( "Added: {}", module );
 			}			
+			info.setChecked(true);
+			info.setDisabled(true);
+			LOGGER.debug( "Checked and disabled: {}", info );
 		}
-		if ( getDomain().getType() != DomainType.GARAGE ) {
-			DomainModuleInfo garage = this.aioInfo.getModuleInfo(Module.GARAGE);
-			garage.setChecked(false);
-			appInfo.register();
-			appInfo.getApplicationModules().remove(garage);
+		List<Module> visibleModules = AuditManager.getVisibleModules(getDomain().getId(), appInfo.getApplication().getId());
+		for( int i = appInfo.getApplicationModules().size()-1; i >= 0; i-- ) {
+			DomainModuleInfo info =  appInfo.getApplicationModules().get(i);
+			if (! visibleModules.contains(info.getModule()) ) {
+				appInfo.removeModuleInfo(info);
+				LOGGER.debug( "Removed from list: {}", info );
+			}
 		}
-		if ( getDomain().getType() != DomainType.ACADEMY ) {
-			DomainModuleInfo academy = this.aioInfo.getModuleInfo(Module.ACADEMY);
-			academy.setChecked(false);
-			appInfo.register();
-			appInfo.getApplicationModules().remove(academy);
-		}
+		appInfo.updateApplicationModules();
+		appInfo.sortApplicationModules();
 	}
 
 	public void initApplicationInfos() throws ManagerBeanException {
@@ -137,7 +164,6 @@ public class DomainController extends BasicController {
 	public boolean isShowApplications() {
 		return this.aioInfo.isChecked();
 	}
-
 
 	private void initDomainApplication() {
 		try {
