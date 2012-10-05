@@ -336,6 +336,7 @@ public class ReservationManager implements IReservationConstants {
 						}
 					}
 				}
+				totalPax += totalAdults + totalChildren;
 
 				int adults = totalAdults / roomUnits;
 				int children = totalChildren / roomUnits;
