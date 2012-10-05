@@ -322,7 +322,23 @@ public class ReservationManager implements IReservationConstants {
 		for (int i=0; i<reservationType.getRoomStays().sizeOfRoomStayArray(); i++) {
 			RoomStay stay = reservationType.getRoomStays().getRoomStayArray(i);
 			if (stay.getRoomTypes() != null && stay.getRoomTypes().sizeOfRoomTypeArray() > 0) {
+				int totalAdults= 0;
+				int totalChildren= 0;
 				int roomUnits = stay.getRoomTypes().getRoomTypeArray(0).getNumberOfUnits();
+				if (stay.getGuestCounts() != null && stay.getGuestCounts().sizeOfGuestCountArray() > 0) {
+					for (int k=0; k<stay.getGuestCounts().sizeOfGuestCountArray(); k++) {
+						String type = stay.getGuestCounts().getGuestCountArray(k).getAgeQualifyingCode();
+						int guestCount = stay.getGuestCounts().getGuestCountArray(k).getCount();
+						if (type != null && type.equals(CHILDREN_COUNT)) {
+							totalChildren += guestCount;
+						} else {
+							totalAdults += guestCount;
+						}
+					}
+				}
+
+				int adults = totalAdults / roomUnits;
+				int children = totalChildren / roomUnits;
 				for (int j=0; j<roomUnits; j++) {
 					ProjectReservationRoom reservationRoom = new ProjectReservationRoom();
 					reservationRoom.setProjectReservation(reservation);
@@ -333,23 +349,8 @@ public class ReservationManager implements IReservationConstants {
 					if (stay.getRatePlans() != null && stay.getRatePlans().sizeOfRatePlanArray() > 0) {
 						reservationRoom.setTariff(getReservationUtils().obtainRoomTariff(reservation, stay.getRatePlans().getRatePlanArray(0)));
 					}
-					if (stay.getGuestCounts() != null && stay.getGuestCounts().sizeOfGuestCountArray() > 0) {
-						for (int k=0; k<stay.getGuestCounts().sizeOfGuestCountArray(); k++) {
-							String type = stay.getGuestCounts().getGuestCountArray(k).getAgeQualifyingCode();
-							int guestCount = stay.getGuestCounts().getGuestCountArray(k).getCount();
-							if ((guestCount > roomUnits) && (guestCount % roomUnits == 0)) {
-								guestCount = guestCount / roomUnits;
-							} else if (j > 0){
-								guestCount = 0;
-							}
-							if (type != null && type.equals(CHILDREN_COUNT)) {
-								reservationRoom.setChildren(guestCount);
-							} else {
-								reservationRoom.setAdults(guestCount);
-							}
-							totalPax += reservationRoom.getChildren() + reservationRoom.getAdults();
-						}
-					}
+					reservationRoom.setAdults((j==0) ? totalAdults - (adults * (roomUnits - 1)) : adults);
+					reservationRoom.setChildren((j==0) ? totalChildren - (children * (roomUnits - 1)) : children);
 					reservationRoom = (ProjectReservationRoom)reservationRoomBean.insert(reservationRoom);
 
 					if (stay.getServiceRPHs() != null) {
