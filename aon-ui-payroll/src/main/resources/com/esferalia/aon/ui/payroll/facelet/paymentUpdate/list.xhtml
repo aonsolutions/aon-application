@@ -6,6 +6,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -21,16 +22,23 @@
 						value="#{bundle.aon_accept}"
 						onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 						actionListener="#{paymentUpdate.onSave}" />
+						
+					<aon:outputText styleClass="aon-margin-left aon-margin-right" 
+						value="#{payrollBundle.payroll_contract_variables}:" />
+					<aon:selectOneMenu value="#{paymentUpdate.selectedVariable}" >
+						<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+						<f:selectItems value="#{paymentUpdate.availableVariables}"  />
+					</aon:selectOneMenu>
+					
 					<aon:commandButton id="paymentUpdate-refresh"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						value="#{payrollBundle.payroll_refresh}"
-						immediate="true"
-						onclick="if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) return false;"
+						onclick="if (#{paymentUpdate.selectedVariable!=null}) if (!confirm('#{payrollBundle.payroll_refresh_confirm}')) return false;"
 						actionListener="#{paymentUpdate.onSearch}" />
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="4" styleClass="aon-margin-bottom" width="100%;"
+				<aon:panelGrid columns="6" styleClass="aon-margin-bottom" width="100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150
 								,aon-panelGrid-even aon-width-auto
 								,aon-panelGrid-odd aon-width-150
@@ -38,6 +46,9 @@
 				
 					<aon:outputText value="#{companyBundle.company_enterprise}" />
 					<aon:outputText value="#{paymentUpdate.enterprise.registry.fullName}" />
+				
+					<aon:outputText value="#{companyBundle.company_workplace}" />
+					<aon:outputText value="#{paymentUpdate.workPlace.description}" />
 
 					<aon:outputText value="#{bundle.aon_date}"/>
 					<aon:div>
@@ -47,7 +58,8 @@
 					</aon:div>
 				</aon:panelGrid>
 
-				<aon:dataTable value="#{paymentUpdate.model}" var="to">
+				<aon:dataTable id="paymentUpdateData" styleClass="aon-width-auto" rendered="#{paymentUpdate.model.rowCount > 0}"
+					value="#{paymentUpdate.model}" var="to">
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{payrollBundle.payroll_employee_name}" />	
@@ -61,23 +73,24 @@
 						</aon:commandLink>
 					</aon:column>
 					
-					<c:forEach items="#{paymentUpdate.columns}" var="col">
-						<aon:column	
-							styleClass="aon-editDataTable-numberColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{col}" />
-							</f:facet>
-							
-							<aon:outputText value="&#160;" rendered="#{to.map[col] == null}" />
-							
-							<aon:outputText value="#{to.map[col].expression}" 
-								rendered="#{to.map[col] != null and to.map[col].readOnly}"/>
-							<aon:inputText rendered="#{to.map[col] != null and !to.map[col].readOnly}"
-								required="true"
-								value="#{to.map[col].expression}" size="10"/>
+					<aon:column	
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputText value="#{paymentUpdate.selectedVariable}" />
+						</f:facet>
+						
+						<aon:outputText value="&#160;" rendered="#{to.map[paymentUpdate.selectedVariable] == null}" />
+						
+						<aon:outputText 
+							rendered="#{to.map[paymentUpdate.selectedVariable] != null and to.map[paymentUpdate.selectedVariable].readOnly}"
+							value="#{to.map[paymentUpdate.selectedVariable].expression}" />
+						
+						<aon:inputText required="true"
+							rendered="#{to.map[paymentUpdate.selectedVariable] != null and !to.map[paymentUpdate.selectedVariable].readOnly}"
+							value="#{to.map[paymentUpdate.selectedVariable].expression}" size="10"/>
+
+					</aon:column>					
 	
-						</aon:column>					
-					</c:forEach>
 				</aon:dataTable>
 			</aon:div>
 		</aon:form>
