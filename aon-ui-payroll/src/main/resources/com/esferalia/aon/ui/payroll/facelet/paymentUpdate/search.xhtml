@@ -31,8 +31,17 @@
 								<ui:param name="lookupTo" value="#{paymentUpdate.enterprise}" />
 								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="lookupReRender" value="enterprise_workPlace" />
 							</ui:include>
 						</c:if>
+						
+						<aon:outputLabel for="enterprise_workPlace" styleClass="aon-margin-left aon-margin-right" 
+							value="#{companyBundle.company_workplace}" />
+						<aon:selectOneMenu id="enterprise_workPlace" disabled="#{paymentUpdate.enterprise.id==null}"
+							value="#{paymentUpdate.workPlace}" >
+							<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+							<f:selectItems value="#{paymentUpdate.workPlaces}"  />
+						</aon:selectOneMenu>
 						
 						<aon:outputText value="#{bundle.aon_date}"/>
 						<h:panelGrid columns="2">

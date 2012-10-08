@@ -47,6 +47,10 @@ public interface IReservationConstants {
 	String SERVICE_TYPE = "ServiceType";
 	String SERVICE_TYPE_ROOM = "H";
 
+	String ROOM_ALIAS = "ALIAS";
+	String SERVICE_ALIAS = "ALIAS";
+	String SERVICE_BREAKDOWN = "SERVICE_BREAKDOWN";
+
 	String SIRIUS = "SIRIUS";
 	String PLS = "PLS";
 	String EXT = "EXT";
@@ -54,6 +58,8 @@ public interface IReservationConstants {
 	String GP = "GP";
 	String ES = "ES";
 	String TR = "TR";
+	String YES = "YES";
+	String NO = "NO";
 	String CUST_PROFILE = "CustProfile";
 	String AVAILABILITY_QUERY_REQUEST = "AvailabilityQueryRequest";
 	String RESERVATION_BOOKING_REQUEST = "ReservationBookingRequest";

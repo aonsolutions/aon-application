@@ -208,11 +208,12 @@ public class ProjectReservationRoomController extends LinesController {
 	}
 
 	public List<SelectItem> getAvailableServicesList() throws ManagerBeanException {
+		ProjectReservationRoom reservationRoom = (ProjectReservationRoom)getTo();
 		List<ProjectReservationService> servicesList = new LinkedList<ProjectReservationService>();
 		IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
 		Criteria criteria = new Criteria();
 		String alias = reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_PROJECT_RESERVATION_ID);
-		criteria.addEqualExpression(alias, ((ProjectReservationRoom)getTo()).getProjectReservation().getId());
+		criteria.addEqualExpression(alias, reservationRoom.getProjectReservation().getId());
 		criteria.addNullExpression(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_ROOM_DETAIL));
 		criteria.addOrder(reservationServiceDetailBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_SERVICE_DETAIL_PROJECT_RESERVATION_SERVICE_ID));
 		for (ITransferObject ito : reservationServiceDetailBean.getList(criteria)) {
@@ -229,7 +230,7 @@ public class ProjectReservationRoomController extends LinesController {
 			serviceItemList.add(serviceItem);
 
 			int roomCount = reservationService.getProjectReservation().getRoomCount();
-			if ((isNew() && roomCount == 0) || (!isNew() && roomCount == 1)) {
+			if ((isNew() && roomCount == 0) || (!isNew() && (roomCount == 1 || reservationService.getProjectReservationRoom().equals(reservationRoom.getId())))) {
 				services[servicesList.indexOf(reservationService)] = reservationService.getId();
 			}
 		}

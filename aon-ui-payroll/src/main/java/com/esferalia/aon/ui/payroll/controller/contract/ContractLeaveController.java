@@ -236,7 +236,7 @@ public class ContractLeaveController extends BasicController {
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
 		ISalary salary = getUtils().getBeforeDateSalary(getContract(), leave.getStartDate());
 		if(salary==null){
-			salary = getUtils().calculateSalary(getContract(), leave.getStartDate());
+			salary = getUtils().calculateSalary(getContract(), leave.getStartDate()!=null?leave.getStartDate():new Date());
 		}
 		if(salary!=null){
 			leave.setDailyCgcBase( CommonUtil.round(salary.getCommonBase()/salary.getTimeUnits()) );

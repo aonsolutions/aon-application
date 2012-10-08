@@ -17,6 +17,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
@@ -35,12 +36,14 @@ import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.OptionGroup;
 import com.code.aon.ui.audit.event.UserLoookupListener;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -210,33 +213,76 @@ public class ActionDeniedController implements IAuditConstants {
 		return map;
 	}
 	
-	private Map<String,Module> getEnabledModules( User user ) {
-		Map<String,Module> enabledModules = new HashMap<String, Module>();
+	private Set<Module> getEnabledModuleList( boolean skipParentModules ) {
+		Set<Module> enabledModules = new HashSet<Module>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DomainApplicationModule.class);
 			Criteria criteria = new Criteria();
-			criteria.setSkipDomainFilter(true);
 			Integer appId = getAuditController().getApplication().getId();
 			Integer domainId = DomainManager.getCurrentDomain();
 			Integer domainApplication = AdminUtil.getDomainApplication(domainId, appId);
 			String alias = bean.getFieldName(IEntityAlias.DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
 			Expression expression = ExpressionUtilities.getEqualExpression(alias, domainApplication);
-	    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
-	    	if ( parentDomainId != null ) {
-	    		domainApplication = AdminUtil.getDomainApplication(parentDomainId, appId);
-	    		if ( domainApplication != null ) {
-		    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, domainApplication);
-		    		expression = ExpressionUtilities.getOrExpression(expression, expr2);	    			
-	    		}
-	    	}			
+			if (! skipParentModules) {
+		    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+		    	if ( parentDomainId != null ) {
+		    		domainApplication = AdminUtil.getDomainApplication(parentDomainId, appId);
+		    		if ( domainApplication != null ) {
+			    		Expression expr2 = ExpressionUtilities.getEqualExpression(alias, domainApplication);
+			    		expression = ExpressionUtilities.getOrExpression(expression, expr2);
+						criteria.setSkipDomainFilter(true);			    		
+		    		}
+		    	}							
+			}
 			criteria.addExpression(expression);
 			for( ITransferObject to : bean.getList(criteria) ) {
 				DomainApplicationModule dam = (DomainApplicationModule) to;
-				enabledModules.put( dam.getModule().getName(), dam.getModule() );
+				enabledModules.add( dam.getModule() );	
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading modules denied", e);
 		}
+		return enabledModules;		
+	}
+	
+	private Map<String,Module> getEnabledModules( User user ) {
+		Map<String,Module> enabledModules = new HashMap<String, Module>();
+		try {
+			Integer domainId = DomainManager.getCurrentDomain();
+			Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+			boolean consultancyParent = false;
+			if ( parentDomainId != null ) {
+				consultancyParent = (AuditManager.getDomainType(parentDomainId) == DomainType.CONSULTANCY);
+			}
+			boolean domainParentUser = ObjectUtils.equals( user.getDomain(), parentDomainId);
+			Set<Module> moduleSet = getEnabledModuleList(consultancyParent && (!domainParentUser));
+			if ( consultancyParent ) {
+				Integer applicationId = getAuditController().getApplication().getId();
+				if ( domainParentUser ) {
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {
+						moduleSet.add(Module.ACCOUNTING);
+						moduleSet.add(Module.MANAGEMENT);
+						moduleSet.add(Module.TREASURY);
+					}
+				} else {
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.FISCAL) ) {					
+						moduleSet.add(Module.MANAGEMENT);
+						moduleSet.add(Module.TREASURY);
+					}					
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.PAYROLL) ) {					
+						moduleSet.add(Module.PAYROLL);
+					}					
+					if ( AuditManager.hasModule(parentDomainId, applicationId, Module.DOCUMENT) ) {					
+						moduleSet.add(Module.DOCUMENT);
+					}					
+				}
+			}
+			for( Module module : moduleSet ) {
+				enabledModules.put( module.getName(), module );
+			}			
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error loading enabled modules for " + user, e);
+		}			
 		return enabledModules;		
 	}
 	

@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller.contract;
+package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import java.util.Collection;
 import java.util.Date;
@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 
 public class AgreementVariablesHandler extends AbstractVariableHandler{
 

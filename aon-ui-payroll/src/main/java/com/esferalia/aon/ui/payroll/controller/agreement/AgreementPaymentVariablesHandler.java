@@ -31,7 +31,7 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 
 public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 
@@ -42,7 +42,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	}
 
 	@Override
-	protected void initializeVariables(ActionEvent event) {
+	public void initializeVariables(ActionEvent event) {
 		AgreementPayment payment = (AgreementPayment)getController().getTo();
 		Agreement agreement = payment.getAgreement();
 		List<IVariableData> dataList;

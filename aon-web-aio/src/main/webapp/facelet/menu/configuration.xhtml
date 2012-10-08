@@ -169,7 +169,7 @@
 											<aon:actionListener method="#{domainUser.onSearch}" />
 										</aon:commandLink>						
 									</aon:div>
-									<c:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+									<c:if test="#{domainSwitcher.parentDomainUserInChildDomain or (aonRole.sysAdmin and domainSwitcher.childDomain)}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="overloadUsers"
 												action="userOverload_list"

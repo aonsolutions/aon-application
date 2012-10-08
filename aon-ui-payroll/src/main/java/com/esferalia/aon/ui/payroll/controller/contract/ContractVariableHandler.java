@@ -32,6 +32,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 
 public class ContractVariableHandler extends AbstractVariableHandler{
 	
@@ -41,7 +42,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 	
 	
 	@Override
-	protected void initializeVariables(ActionEvent event) {
+	public void initializeVariables(ActionEvent event) {
 		try {
 			Contract contract = ((Contract)getController().getTo());
 			setVariablesModel(null);

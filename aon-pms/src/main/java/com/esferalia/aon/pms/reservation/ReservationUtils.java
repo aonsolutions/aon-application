@@ -3,12 +3,16 @@ package com.esferalia.aon.pms.reservation;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.opentravel.ota.x2003.x05.AmountType;
 import org.opentravel.ota.x2003.x05.CommentType.Comment;
 import org.opentravel.ota.x2003.x05.ProfilesType.ProfileInfo;
 import org.opentravel.ota.x2003.x05.RatePlanType;
@@ -31,6 +35,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
+import com.code.aon.product.ItemAddInfo;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
@@ -170,7 +175,7 @@ public class ReservationUtils implements IReservationConstants {
     	IManagerBean assetActivityBean = BeanManager.getManagerBean(AssetActivity.class);
     	IManagerBean reservationRoomDetailBean = BeanManager.getManagerBean(ProjectReservationRoomDetail.class);
     	Date effectiveDate = fromDate;
-		while (effectiveDate.compareTo(toDate) < 0) {
+		while (effectiveDate.before(toDate)) {
 			AssetActivity assetActivity = new AssetActivity();
 			assetActivity.setAsset(room.getAsset());
 			assetActivity.setDate(effectiveDate);
@@ -273,7 +278,7 @@ public class ReservationUtils implements IReservationConstants {
     													ProjectReservationRoom reservationRoom, IPriceStrategy strategy) throws ManagerBeanException {
     	IManagerBean reservationServiceDetailBean = BeanManager.getManagerBean(ProjectReservationServiceDetail.class);
     	Date effectiveDate = fromDate;
-		while (effectiveDate.compareTo(toDate) < 0) {
+		while (effectiveDate.before(toDate)) {
 			ProjectReservationServiceDetail reservationServiceDetail = new ProjectReservationServiceDetail();
 			reservationServiceDetail.setProjectReservationService(reservationService);
 			reservationServiceDetail.setEffectiveDate(effectiveDate);
@@ -616,20 +621,25 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Item obtainRoomItem(ProjectReservation reservation, RoomTypeType roomType) throws ManagerBeanException, ReservationException {
-		Item item = obtainItem(roomType.getRoomTypeCode());
-		if (item != null) {
-			return item;
+		ItemAddInfo itemAddInfo = obtainItemAddInfo(null, ROOM_ALIAS, roomType.getRoomTypeCode());
+		if (itemAddInfo != null) {
+			return itemAddInfo.getItem();
 		} else {
-			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
-			for (ITransferObject ito : appParamBean.getList(criteria)) {
-				item = obtainItem(((ApplicationParameter)ito).getValue());
-				if (item != null) {
-					reservation.setRemarks("TIPO HABITACION DESCONOCIDO [" + roomType.getRoomTypeCode() + "]\n" + reservation.getRemarks());
-					reservation.setStatus(ReservationStatus.BLOCKED);
-
-					return item;
+			Item item = obtainItem(roomType.getRoomTypeCode());
+			if (item != null) {
+				return item;
+			} else {
+				IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_ROOM_ITEM);
+				for (ITransferObject ito : appParamBean.getList(criteria)) {
+					item = obtainItem(((ApplicationParameter)ito).getValue());
+					if (item != null) {
+						reservation.setRemarks("TIPO HABITACION DESCONOCIDO [" + roomType.getRoomTypeCode() + "]\n" + reservation.getRemarks());
+						reservation.setStatus(ReservationStatus.BLOCKED);
+	
+						return item;
+					}
 				}
 			}
 		}
@@ -637,21 +647,26 @@ public class ReservationUtils implements IReservationConstants {
 	}
 
 	public Item obtainServiceItem(ProjectReservation reservation, Service service) throws ManagerBeanException, ReservationException {
-		Item item = obtainItem(service.getServiceInventoryCode());
-		if (item != null) {
-			return item;
+		ItemAddInfo itemAddInfo = obtainItemAddInfo(null, SERVICE_ALIAS, service.getServiceInventoryCode());
+		if (itemAddInfo != null) {
+			return itemAddInfo.getItem();
 		} else {
-			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
-			for (ITransferObject ito : appParamBean.getList(criteria)) {
-				item = obtainItem(((ApplicationParameter)ito).getValue());
-				if (item != null) {
-					String serviceName = obtainServiceName(service);
-					reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + " - " + serviceName + "]\n" + reservation.getRemarks());
-					reservation.setStatus(ReservationStatus.BLOCKED);
-
-					return item;
+			Item item = obtainItem(service.getServiceInventoryCode());
+			if (item != null) {
+				return item;
+			} else {
+				IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(appParamBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), UNDEFINED_SERVICE_ITEM);
+				for (ITransferObject ito : appParamBean.getList(criteria)) {
+					item = obtainItem(((ApplicationParameter)ito).getValue());
+					if (item != null) {
+						String serviceName = obtainServiceName(service);
+						reservation.setRemarks("SERVICIO DESCONOCIDO [" + service.getServiceInventoryCode() + " - " + serviceName + "]\n" + reservation.getRemarks());
+						reservation.setStatus(ReservationStatus.BLOCKED);
+	
+						return item;
+					}
 				}
 			}
 		}
@@ -668,6 +683,22 @@ public class ReservationUtils implements IReservationConstants {
 		return null;
 	}
 
+	private ItemAddInfo obtainItemAddInfo(Item item, String attribute, String value) throws ManagerBeanException {
+		IManagerBean itemAddInfoBean = BeanManager.getManagerBean(ItemAddInfo.class);
+		Criteria criteria = new Criteria();
+		if (item != null) {
+			criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ITEM_ID), item.getId());
+		}
+		if (StringUtils.isNotEmpty(value)) {
+			criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_VALUE), value);
+		}
+		criteria.addEqualExpression(itemAddInfoBean.getFieldName(IEntityAlias.ITEM_ADD_INFO_ATTRIBUTE), attribute);
+		for (ITransferObject ito : itemAddInfoBean.getList(criteria)) {
+			return (ItemAddInfo)ito;
+		}
+		return null;
+	}
+
 	private String obtainServiceName(Service service) {
 		String comments = "";
 		if (service.getServiceDetails() != null && service.getServiceDetails().getComments() != null) {
@@ -679,6 +710,11 @@ public class ReservationUtils implements IReservationConstants {
 			}
 		}
 		return comments;
+	}
+
+	public boolean isServiceBreakdown(Item item) throws ManagerBeanException {
+		ItemAddInfo itemAddInfo = obtainItemAddInfo(item, SERVICE_BREAKDOWN, null);
+		return (itemAddInfo == null || itemAddInfo.getValue() == null) ? false : itemAddInfo.getValue().equals(YES);
 	}
 
 	public Tariff obtainRoomTariff(ProjectReservation reservation, RatePlanType ratePlan) throws ManagerBeanException, ReservationException {
@@ -711,6 +747,70 @@ public class ReservationUtils implements IReservationConstants {
 		}
 
 		return null;
+	}
+
+	public Map<Date, List<Double>> obtainPricesMap(ProjectReservation reservation, Service service, Date fromDate, Date toDate) throws ReservationException {
+		double serviceBase = 0;
+		Map<Date, List<Double>> pricesMap = new HashMap<Date, List<Double>>();
+		for (int i=0; i<service.sizeOfPriceArray(); i++) {
+			AmountType price = service.getPriceArray(i);
+			if (price.getEffectiveDate() != null) {
+				Date effectiveDate = DateUtils.truncate(price.getEffectiveDate().getTime(), Calendar.DATE);
+				List<Double> pricesList = pricesMap.get(effectiveDate);
+				if (pricesList == null) {
+					pricesList = new LinkedList<Double>();
+				}
+				for (int j=0; j<price.getNumberOfUnits(); j++) {
+					pricesList.add(price.getBase().getAmountBeforeTax().doubleValue());
+				}
+				pricesMap.put(effectiveDate, pricesList);
+			} else if (price.getTotal() != null) {
+				serviceBase = price.getTotal().getAmountBeforeTax().doubleValue();
+			}
+		}
+
+		if (pricesMap.size() > 0) {
+			for (Date date=DateUtils.addDays(fromDate, 1); date.before(toDate); date=DateUtils.addDays(date, 1)) {
+				if (!pricesMap.containsKey(date) && pricesMap.containsKey(DateUtils.addDays(date, -1))) {
+					pricesMap.put(date, pricesMap.get(DateUtils.addDays(date, -1)));
+				}
+			}
+
+			for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); date.before(toDate); date=DateUtils.addDays(date, 1)) {
+				for (Double price : pricesMap.get(date)) {
+					serviceBase = CommonUtil.round(serviceBase - price);
+				}
+			}
+			if (serviceBase != 0) {
+				throw new ReservationException("Service Price is not correctly defined for RPH " + service.getServiceRPH() + ".", reservation.getCrsCode(), 197);
+			}
+		} else {
+			List<Double> pricesList = new LinkedList<Double>();
+			pricesList.add(serviceBase);
+			pricesMap.put(fromDate, pricesList);
+		}
+
+		return pricesMap;
+	}
+
+	public int obtainPricesMapSize(Map<Date, List<Double>> pricesMap) {
+		int serviceQuantity = 0;
+		for (List<Double> prices : pricesMap.values()) {
+			serviceQuantity = (serviceQuantity < prices.size()) ? prices.size() : serviceQuantity;
+		}
+		return serviceQuantity;
+	}
+
+	public Map<Double, Integer> obtainQuantityPerPriceMap(List<Double> priceList) {
+		Map<Double, Integer> quantityPerPriceMap = new HashMap<Double, Integer>();
+		for (Double price : priceList) {
+			int quantity = 1;
+			if (quantityPerPriceMap.containsKey(price)) {
+				quantity = quantity + quantityPerPriceMap.get(price);
+			}
+			quantityPerPriceMap.put(price, quantity);
+		}
+		return quantityPerPriceMap;
 	}
 
 	public String getRequestMessageId(ReservationRequest request) {

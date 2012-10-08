@@ -1,5 +1,7 @@
 package com.code.aon.ui.admin;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.code.aon.audit.DomainApplicationModule;
 import com.code.aon.audit.enumeration.Module;
 
@@ -43,6 +45,16 @@ public class DomainModuleInfo {
 
 	public Module getModule() {
 		return module;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("module", module)
+			.append("checked", checked)
+			.append("disabled", disabled)
+			.append("applicationModule", applicationModule != null ? applicationModule.getId() : null)
+			.toString();
 	}
 	
 }

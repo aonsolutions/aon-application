@@ -7,7 +7,6 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +22,12 @@ import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.ui.payroll.controller.AbstractVariableHandler;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 
 public abstract class ContractDetailVariableController extends BasicController implements IVariablesHandler {
 	
@@ -35,10 +35,6 @@ public abstract class ContractDetailVariableController extends BasicController i
 	
 	private List<SelectItem> concepts;
 	private boolean modalPanelVisible;
-	
-	private boolean quoteExpressionEdition;
-	private boolean irpfExpressionEdition;
-	private boolean enableExpressionEdition;
 	
 	// PERIOD FOR DATA FILTER
 	private boolean searchCurrent;
@@ -53,26 +49,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public abstract String getExpression();
 	protected abstract void initialiceConcepts();
 	protected abstract void completeCiteria();
-
 	
-	public boolean isEnableExpressionEdition() {
-		return enableExpressionEdition;
-	}
-	public void setEnableExpressionEdition(boolean enableExpressionEdition) {
-		this.enableExpressionEdition = enableExpressionEdition;
-	}
-	public boolean isQuoteExpressionEdition() {
-		return quoteExpressionEdition;
-	}
-	public void setQuoteExpressionEdition(boolean quoteExpressionEdition) {
-		this.quoteExpressionEdition = quoteExpressionEdition;
-	}
-	public boolean isIrpfExpressionEdition() {
-		return irpfExpressionEdition;
-	}
-	public void setIrpfExpressionEdition(boolean irpfExpressionEdition) {
-		this.irpfExpressionEdition = irpfExpressionEdition;
-	}
 	public Date getInactiveDate() {
 		return inactiveDate;
 	}
@@ -92,9 +69,6 @@ public abstract class ContractDetailVariableController extends BasicController i
 		this.modalPanelVisible = modalPanelVisible;
 	}
 	
-	public void onSelectExpressionEdition(ActionEvent event){
-		setEnableExpressionEdition( !isEnableExpressionEdition() );
-	}
 	
 	public void onEdit(ActionEvent event) {
 		super.onSelect(event);
@@ -221,17 +195,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	}
 	
 	public void onReloadExpression(ActionEvent event){
-		IExpression expression = (IExpression) this.getTo();
-		setEnableExpressionEdition( StringUtils.isNotBlank(expression.getExpression()) );
 		initializeVariables(event);
-	}
-	
-	public void onSelectQuoteExpressionEdition(ActionEvent event){
-		setQuoteExpressionEdition(!isQuoteExpressionEdition());
-	}
-	
-	public void onSelectIrpfExpressionEdition(ActionEvent event){
-		setIrpfExpressionEdition(!isIrpfExpressionEdition());
 	}
 	
 	

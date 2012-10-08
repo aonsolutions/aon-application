@@ -2,6 +2,9 @@ package com.esferalia.aon.ui.payroll.controller;
 
 public interface IPayrollConstants {
 	
+	String ZERO_VALUE = "0";
+	String IPREM_FORMMULA = "EXCESO_IPREM";
+
 	// ************************************************************
 	// MESSAGES
 	// ************************************************************

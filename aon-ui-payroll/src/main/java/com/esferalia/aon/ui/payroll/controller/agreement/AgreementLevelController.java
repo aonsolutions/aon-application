@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.LinesController;
-import com.esferalia.aon.ui.payroll.controller.contract.IVariablesHandler;
+import com.esferalia.aon.ui.payroll.controller.IVariablesHandler;
 
 public class AgreementLevelController extends LinesController implements IVariablesHandler{
 
