@@ -39,16 +39,13 @@
 						</aon:panelGroup>
 					</c:if>
 					<aon:panelGroup>
-						<h:outputLink id="logout" styleClass="aon-header-logout-blue"
+						<aon:commandLink id="logout"
+							style="color: #0066FF;" styleClass="aon-header-logout-blue"
 							title="#{securityBundle.aon_login_user_logout}"
-							value="http://login.aonsolutions.es/">
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}"
-								style="color: #0066FF;">
-							</aon:outputText>
-							<a4j:support event="onclick"
-								ajaxSingle="true" immediate="true" bypassUpdates="true"
-								actionListener="#{aonConfiguration.logout}" />
-						</h:outputLink>
+							value="#{securityBundle.aon_login_user_logout}"
+							action="logout"
+							actionListener="#{aonConfiguration.logout}" >
+						</aon:commandLink>
 					</aon:panelGroup> 
 				</aon:form>
 			</aon:div>
