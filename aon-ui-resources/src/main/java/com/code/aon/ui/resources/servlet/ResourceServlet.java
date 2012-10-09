@@ -2,11 +2,6 @@ package com.code.aon.ui.resources.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.MimeResolver;
+import com.code.aon.ui.util.DownloadUtil;
 
 /**
  * Servlet class invoked whenever a field form needs a Resource.
@@ -37,19 +33,6 @@ public class ResourceServlet extends HttpServlet {
 	 * Logger initialization
 	 */
 	private final static Logger LOGGER = LoggerFactory.getLogger(ResourceServlet.class);
-
-	/**
-	 * One week in milliseconds.
-	 */
-	public static final long ONE_HUNDRED_DAYS_MILLIS = 8640000000L;
-
-	private static final int LAST_MODIFIED_YEAR = 2008;
-	
-	private static final int LAST_MODIFIED_MOTH = 7;
-	
-	private static final int LAST_MODIFIED_DAY = 14;
-	
-	private static final String MODIFY = calcModify();
 
 	/** The Constant PATTERN_INIT_PARAMETER. */
 	private static final String PATTERN_INIT_PARAMETER = "pattern";
@@ -103,13 +86,6 @@ public class ResourceServlet extends HttpServlet {
 	    	debug = Boolean.valueOf(debugValue);
 	    }
 	}
-	
-	private static final String calcModify() {
-		Date date = new GregorianCalendar( LAST_MODIFIED_YEAR, LAST_MODIFIED_MOTH, LAST_MODIFIED_DAY ).getTime();
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-		return sdf.format(date);
-	}	
 
 	private String getMimeType(String resource, byte[] data)
 			throws ServletException {
@@ -132,19 +108,7 @@ public class ResourceServlet extends HttpServlet {
 
 		// If we're not in debug mode, set cache headers
 		if ( (!debug) && resource.isCacheable() ) {
-			// We set two headers: Cache-Control and Expires.
-			// This combination lets browsers know that it is
-			// okay to cache the resource indefinitely.
-
-			// Set Cache-Control to "Public".
-			response.setHeader("Cache-Control", "Public");
-
-			response.setHeader("Last-Modified", MODIFY);
-
-			// Set Expires to current time + one year.
-			long currentTime = System.currentTimeMillis();
-
-			response.setDateHeader("Expires", currentTime + ONE_HUNDRED_DAYS_MILLIS);
+			DownloadUtil.setCacheable(response);
 		}
 	}
 

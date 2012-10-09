@@ -5,6 +5,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +34,19 @@ public class DownloadUtil implements ICommonConstants {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(DownloadUtil.class);
 
+	/**
+	 * One week in milliseconds.
+	 */
+	private static final long ONE_HUNDRED_DAYS_MILLIS = 8640000000L;
+
+	private static final int LAST_MODIFIED_YEAR = 2008;
+	
+	private static final int LAST_MODIFIED_MOTH = 7;
+	
+	private static final int LAST_MODIFIED_DAY = 14;
+	
+	private static final String MODIFY = calcModify();
+	
 	/**
 	 * Download attachment.
 	 *
@@ -98,6 +116,29 @@ public class DownloadUtil implements ICommonConstants {
 			response.setHeader("Content-Length", String.valueOf(size));	
 		}
 		return new BufferedOutputStream(response.getOutputStream());		
+	}
+
+	private static final String calcModify() {
+		Date date = new GregorianCalendar( LAST_MODIFIED_YEAR, LAST_MODIFIED_MOTH, LAST_MODIFIED_DAY ).getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(date);
+	}	
+	
+	public static void setCacheable( HttpServletResponse response ) {
+		// We set two headers: Cache-Control and Expires.
+		// This combination lets browsers know that it is
+		// okay to cache the resource indefinitely.
+
+		// Set Cache-Control to "Public".
+		response.setHeader("Cache-Control", "Public");
+
+		response.setHeader("Last-Modified", MODIFY);
+
+		// Set Expires to current time + one year.
+		long currentTime = System.currentTimeMillis();
+
+		response.setDateHeader("Expires", currentTime + ONE_HUNDRED_DAYS_MILLIS);
 	}
 	
 	/**

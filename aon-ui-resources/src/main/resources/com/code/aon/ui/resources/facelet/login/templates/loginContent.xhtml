@@ -14,7 +14,8 @@
 			<aon:div styleClass="aon-login-box-internal">
 				<form id="login" method="post" action="j_security_check">
 					<aon:div styleClass="aon-login-title">
-						<aon:outputText value=" / #{appBundle.aon_application_title}"/>
+						<aon:graphicImage value="#{customize.loginLogo}" />								
+						<aon:outputText value=" / #{customize.applicationTitle}"/>
 					</aon:div>
 					<aon:div styleClass="aon-login-box">
 						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
@@ -43,25 +44,21 @@
 							</aon:div>
 
 							<aon:div styleClass="aon-bold">
-								<aon:outputText value="#{bundle.aon_support_telephone_number}" />
+								<aon:outputText value="#{customize.supportTelephone}" />
 							</aon:div>
 							<aon:div>
-								<h:outputLink value="mailto:#{bundle.aon_support_send_email}" target="_blank" >
-									<aon:outputText value="#{bundle.aon_support_send_email}" />
+								<h:outputLink value="mailto:#{customize.supportEmail}" target="_blank" >
+									<aon:outputText value="#{customize.supportEmail}" />
 								</h:outputLink>
 							</aon:div>
 						</aon:div>							
 
 						<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
-							<aon:div styleClass="aon-login-info2">				
-								<aon:outputLink target="_blank" value="#{bundle.aon_solutions_url}" >
-									<aon:outputText value="#{bundle.aon_solutions}" />
-							    </aon:outputLink>
-								<aon:outputText value="#{bundle.aon_trademark}" />
-								<aon:outputText value="#{bundle.aon_esferalia} #{bundle.aon_networks}"
-								 	styleClass="aon-footer-company-label"/>
+							<aon:div styleClass="aon-login-info2">		
+								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />		
 							</aon:div>
 						</c:if>	
+						
 					</aon:div>
 				</form>
 			</aon:div>

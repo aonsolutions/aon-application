@@ -143,7 +143,7 @@ public class CompanyDisplay {
 				factory = configuration.buildSessionFactory();
 				StatelessSession session = factory.openStatelessSession();
 				Criteria companyCriteria = session.createCriteria(Company.class);
-				Integer domainId = DataSourceUtil.getDomain(session, host, skipLdap);
+				Integer domainId = DataSourceUtil.getDomain(session.connection(), host, skipLdap);
 				if (domainId != null) {
 					companyCriteria.add(Restrictions.eq("domain", domainId));	
 					List<?> companyList = companyCriteria.list();

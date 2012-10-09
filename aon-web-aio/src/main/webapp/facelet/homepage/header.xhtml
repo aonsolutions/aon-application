@@ -10,14 +10,16 @@
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-options aon-width-300">
 			
-			<aon:div style="margin-top: 10px">
+			<aon:div style="margin-top: 6px">
 				<aon:outputConnectionStatus id="aonStatus" layout="block"
 					startStyleClass="aon-outputConnectionStatus-start"
 					stopStyleClass="aon-outputConnectionStatus-stop"
 					onstart="resetStatusError();" />
 				<aon:div id="status_error" style="display: none"
 					styleClass="aon-outputConnectionStatus-failed" />
-				<aon:outputText value="/" styleClass="aon-header-title" />
+				<aon:graphicImage style="margin-left: 150px;"
+					value="#{customize.headerLogo}" />
+				<aon:outputText value="/" styleClass="aon-header-title-without-image" />
 				<aon:outputText value="#{domainSwitcher.domainName}"
 					styleClass="aon-nowrap aon-header-domain-title"/>
 			</aon:div>
