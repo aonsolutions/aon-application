@@ -10,7 +10,6 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.util.BeanServerUtil;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -52,7 +51,7 @@ public abstract class BasicChangePasswordController {
 
 	protected abstract boolean isCorrectPassword();
 	
-	public void acceptPassword(ActionEvent event) throws AonException {
+	public void acceptPassword(ActionEvent event) {
 		if (! isCorrectPassword() ) {
 			String message = AonUtil.addErrorMessageFromBundle( BUNDLE_NAME, PASSWORD_ERROR);
 			throw new AbortProcessingException( message );			
