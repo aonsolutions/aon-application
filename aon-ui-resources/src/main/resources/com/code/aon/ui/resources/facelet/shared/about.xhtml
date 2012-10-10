@@ -32,9 +32,10 @@
 	
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div styleClass="aon-popupWindow-content-internal">
-							<aon:div style="margin-top: 20px;">
-								<aon:outputText value=" / #{appBundle.aon_application_title}"
-									style="margin-left: 0px;" styleClass="aon-header-title" />							
+							<aon:div>
+								<aon:graphicImage value="#{customize.headerLogo}" />							
+								<aon:outputText value=" / #{customize.applicationTitle}"
+									styleClass="aon-header-title-without-image" />							
 							</aon:div>
 							<h:panelGrid styleClass="aon-margin-top" columnClasses="aon-version-label">
 								<c:if test="#{aonConfiguration.properties.applicationVersion != null}" >						
@@ -60,9 +61,7 @@
 								</aon:outputFormat>									
 							</h:panelGrid>	
 							<aon:div styleClass="aon-footer-box">
-								<aon:outputText value="#{bundle.aon_trademark}" />
-								<aon:outputText styleClass="aon-footer-company-label"
-									value="#{bundle.aon_esferalia} #{bundle.aon_networks}" />
+								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />
 							</aon:div>		
 						</aon:div>		
 					</aon:div>		

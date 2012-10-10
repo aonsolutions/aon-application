@@ -168,8 +168,8 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 		mod.addElement(CLAVE).addAttribute(NUMERO,"92").addAttribute(VALOR, declaration.isTaxRefundRegistry()?TRUE:FALSE );
 		mod.addElement(CLAVE).addAttribute(NUMERO,"93").addAttribute(VALOR, declaration.isTaxRefundRegistry()?FALSE:TRUE );
 		
-		String[] percents = new String[]{"4.0","8.0","18.0","7.0","16.0"};
-		int[] keys = new int[]{1,104,107,4,7};
+		String[] percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
+		int[] keys = new int[]{1,204,207,104,107,4,7};
 		for (int i = 0; i < percents.length; ++i ) {
 			Breakdown bd = declaration.getOutputVat().get(percents[i]);
 			if (bd != null) {
@@ -180,8 +180,8 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			}
 		}
 		
-		percents = new String[]{"0.5","1.0","4.0"};
-		keys = new int[]{10,13,16};
+		percents = new String[]{"0.5","1.4","5.2","1.0","4.0"};
+		keys = new int[]{10,213,216,13,16};
 		for (int i = 0; i < percents.length; ++i ) {
 			Breakdown bd = declaration.getSurcharge().get(percents[i]);
 			if (bd != null) {
@@ -192,8 +192,8 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 			}
 		}
 		
-		percents = new String[]{"4.0","8.0","18.0","7.0","16.0"};
-		keys = new int[]{19,122,125,22,25};
+		percents = new String[]{"4.0","10.0","21.0","8.0","18.0","7.0","16.0"};
+		keys = new int[]{19,222,225,122,125,22,25};
 		for (int i = 0; i < percents.length; ++i ) {
 			Breakdown bd = declaration.getIntracommunitary().get(percents[i]);
 			if (bd != null) {

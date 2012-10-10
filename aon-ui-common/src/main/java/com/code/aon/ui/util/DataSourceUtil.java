@@ -1,10 +1,13 @@
 package com.code.aon.ui.util;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
-import org.hibernate.StatelessSession;
 
 import com.code.aon.common.util.BasicPrincipal;
 import com.code.aon.common.util.ConnectionProvider;
@@ -42,16 +45,17 @@ public class DataSourceUtil {
     	return ConnectionProvider.getDBProperties(new AuthPrincipal(bp.getName()));
 	}	
  
-	public static Integer getDomain( StatelessSession session, String host, boolean skipLdap ) {
-		Long count = (Long) session.createQuery("SELECT count(id) FROM Domain").uniqueResult();
+	public static Integer getDomain( Connection connection, String host, boolean skipLdap ) throws SQLException {
+		ResultSetHandler<Object> h = new ScalarHandler();
+		QueryRunner run = new QueryRunner();
+		Long count = (Long) run.query( connection, "SELECT count(id) FROM domain", h); 
 		if ( count == 1 ) {
-			return (Integer) session.createQuery("SELECT id FROM Domain").uniqueResult();
+			return (Integer) run.query( connection, "SELECT id FROM domain", h);
 		}
 		String domainName = DomainResolver.getDomain(host, skipLdap);		
 		Integer domainId = null;
 		do {
-			Query query = session.createQuery("SELECT id FROM Domain d WHERE d.name = ?");
-			domainId = (Integer) query.setString(0, domainName).uniqueResult();
+			domainId = (Integer) run.query( connection, "SELECT id FROM domain WHERE name =?", h, domainName);
 			if ( domainId == null ) {
 				domainName = StringUtils.substringAfter(domainName, ".");	
 			}

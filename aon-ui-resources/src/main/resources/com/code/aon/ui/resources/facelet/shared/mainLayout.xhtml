@@ -21,7 +21,7 @@
 	
 	<ui:insert name="additionalHeadContent"/>
 	
-	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
+	<link rel="shortcut icon" type="image/x-icon" href="#{customize.favicon}" />
  	<ui:insert name="head" />
 </head>
 <body onbeforeunload="$('logout').onclick();">

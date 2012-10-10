@@ -101,9 +101,6 @@
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
 							<aon:outputText value="#{to.status}" />
-							<f:facet name="footer">
-								<aon:outputText value="#{bundle.aon_total}" />
-							</f:facet>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -113,13 +110,6 @@
 							<aon:outputText value="#{income.incomeTotalPrice}">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
-							<f:facet name="footer">
-								<aon:div style="float:right">
-									<aon:outputText style="text-align:right" value="#{income.incomesTotalAmount}" >
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-									</aon:outputText>
-								</aon:div>
-							</f:facet>
 						</aon:column>
 					</ui:define>
 				</ui:decorate>

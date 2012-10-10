@@ -12,17 +12,16 @@
 	<field name="depositBankControl" value="bean" bean="Declaration" property="depositBankControl" format="Numeric" pattern="9(2)" />
 	<field name="depositBankAccount" value="bean" bean="Declaration" property="depositBankAccount" format="Numeric" pattern="9(10)" />
 	<field name="withoutActivity" value="bean" bean="Declaration" property="withoutActivityString" format="AlphaNumeric" pattern="X" />
-	
-	<field name="baseOutputVat18" value="bean" bean="Declaration" property="outputVat(18.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
-	<field name="quotaOutputVat18" value="bean" bean="Declaration" property="outputVat(18.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
-	<field name="baseOutputVat8" value="bean" bean="Declaration" property="outputVat(8.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
-	<field name="quotaOutputVat8" value="bean" bean="Declaration" property="outputVat(8.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
+	<field name="baseOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
+	<field name="quotaOutputVat21" value="bean" bean="Declaration" property="outputVat(21.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
+	<field name="baseOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
+	<field name="quotaOutputVat10" value="bean" bean="Declaration" property="outputVat(10.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
 	<field name="baseOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
 	<field name="quotaOutputVat4" value="bean" bean="Declaration" property="outputVat(4.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
-	<field name="baseSurcharge4" value="bean" bean="Declaration" property="surcharge(4.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
-	<field name="quotaSurcharge4" value="bean" bean="Declaration" property="surcharge(4.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
-	<field name="baseSurcharge1" value="bean" bean="Declaration" property="surcharge(1.0).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
-	<field name="quotaSurcharge1" value="bean" bean="Declaration" property="surcharge(1.0).quota" format="StandardNumeric" pattern="S9(11)V99" />
+	<field name="baseSurcharge52" value="bean" bean="Declaration" property="surcharge(5.2).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
+	<field name="quotaSurcharge52" value="bean" bean="Declaration" property="surcharge(5.2).quota" format="StandardNumeric" pattern="S9(11)V99" />
+	<field name="baseSurcharge14" value="bean" bean="Declaration" property="surcharge(1.4).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
+	<field name="quotaSurcharge14" value="bean" bean="Declaration" property="surcharge(1.4).quota" format="StandardNumeric" pattern="S9(11)V99" />
 	<field name="baseSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).taxableBase" format="StandardNumeric" pattern="S9(12)V99" />
 	<field name="quotaSurcharge05" value="bean" bean="Declaration" property="surcharge(0.5).quota" format="StandardNumeric" pattern="S9(11)V99" />
 	<field name="baseIntracommunitary" value="bean" bean="Declaration" property="baseIntracommunitary" format="StandardNumeric" pattern="S9(12)V99" />

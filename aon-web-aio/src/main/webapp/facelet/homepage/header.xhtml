@@ -10,14 +10,16 @@
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-options aon-width-300">
 			
-			<aon:div style="margin-top: 10px">
+			<aon:div style="margin-top: 6px">
 				<aon:outputConnectionStatus id="aonStatus" layout="block"
 					startStyleClass="aon-outputConnectionStatus-start"
 					stopStyleClass="aon-outputConnectionStatus-stop"
 					onstart="resetStatusError();" />
 				<aon:div id="status_error" style="display: none"
 					styleClass="aon-outputConnectionStatus-failed" />
-				<aon:outputText value="/" styleClass="aon-header-title" />
+				<aon:graphicImage style="margin-left: 150px;"
+					value="#{customize.headerLogo}" />
+				<aon:outputText value="/" styleClass="aon-header-title-without-image" />
 				<aon:outputText value="#{domainSwitcher.domainName}"
 					styleClass="aon-nowrap aon-header-domain-title"/>
 			</aon:div>
@@ -37,16 +39,13 @@
 						</aon:panelGroup>
 					</c:if>
 					<aon:panelGroup>
-						<h:outputLink id="logout" styleClass="aon-header-logout-blue"
+						<aon:commandLink id="logout"
+							style="color: #0066FF;" styleClass="aon-header-logout-blue"
 							title="#{securityBundle.aon_login_user_logout}"
-							value="http://login.aonsolutions.es/">
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}"
-								style="color: #0066FF;">
-							</aon:outputText>
-							<a4j:support event="onclick"
-								ajaxSingle="true" immediate="true" bypassUpdates="true"
-								actionListener="#{aonConfiguration.logout}" />
-						</h:outputLink>
+							value="#{securityBundle.aon_login_user_logout}"
+							action="logout"
+							actionListener="#{aonConfiguration.logout}" >
+						</aon:commandLink>
 					</aon:panelGroup> 
 				</aon:form>
 			</aon:div>

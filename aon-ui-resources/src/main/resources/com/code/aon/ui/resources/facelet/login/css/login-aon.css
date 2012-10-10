@@ -56,10 +56,6 @@ input:focus{
 	text-align:center;
 	display: inline;
 	clear:both;
-	background:transparent url(images/login/aon-solutions.gif) left 51px no-repeat;
-	padding-left: 135px;
-	padding-top: 74px;
-	height:100%;
 }
 
 .aon-login-box{

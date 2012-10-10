@@ -793,6 +793,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	
 	private static java.sql.Date getMonthStartDate() {
 		Calendar calendar = Calendar.getInstance();
+		calendar.set( Calendar.YEAR, 2011);
+		calendar.set( Calendar.MONTH, 0);
 		calendar.set( Calendar.DAY_OF_MONTH, 1);
 		
 		return new java.sql.Date ( calendar.getTimeInMillis());

@@ -6,9 +6,8 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<aon:outputText styleClass="aon-icon-logo" 
-			style="padding-left: 20px; margin-left: 12px;" 
-			value="&#160;"/>
+		<aon:graphicImage style="margin-left: 6px;margin-right: 4px;"
+			value="#{customize.toolbarLogo}" />			
 			
 		<c:if test="#{domainSwitcher.domainManagementAvailable}">
 			<c:if test="#{aonRole.admin}">

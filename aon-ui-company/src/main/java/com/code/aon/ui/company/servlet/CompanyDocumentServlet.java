@@ -126,7 +126,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 				if ( configuration != null ) {
 					factory = configuration.buildSessionFactory();
 					StatelessSession session = factory.openStatelessSession();
-					Integer domainId = DataSourceUtil.getDomain(session, req.getServerName(), skipLdap);
+					Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
 					Criteria criteria = session.createCriteria(RegistryAttachment.class);
 					criteria.add(Restrictions.eq("domain", domainId));
 					if ( companyLogo ) {
@@ -174,6 +174,7 @@ public class CompanyDocumentServlet extends HttpServlet {
 				MimeType type = getMimeType(attachment);
 				String name = getName(attachment, type);
 				out = DownloadUtil.initDownload(res, name, type, attachment.getSize());
+				DownloadUtil.setCacheable(res);
 				InputStream in = new ByteArrayInputStream(attachment.getData());
 				IOUtils.copyLarge(in, out);
 			}
