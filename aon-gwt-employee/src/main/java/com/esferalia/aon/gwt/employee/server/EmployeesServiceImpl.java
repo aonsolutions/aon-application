@@ -535,8 +535,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					+ ContractColumns.WORKPLACE + " AND " + CONTRACT + "."
 					+ ContractColumns.PERSON + " = " + PERSON + "."+ PersonColumns.REGISTRY
 					
-//					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
-//					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )"
+					+ " AND ( " + CONTRACT + "." + ContractColumns.END_DATE + " IS NULL"
+					+ " OR " + CONTRACT + "." + ContractColumns.END_DATE + " >= ? )"
 					
 					+ " ORDER BY " + WORKPLACE + "." + WorkplaceColumns.ID 
 					+ " ," + PERSON + "." + PersonColumns.FIRST_SURNAME;
@@ -544,8 +544,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, registryID);
 			
-//			stmt.setDate(2, getMonthStartDate());
-//			rs = stmt.executeQuery();
+			stmt.setDate(2, getMonthStartDate());
+			rs = stmt.executeQuery();
 
 			EnterpriseHandler enterpriseHandler = new EnterpriseHandler();
 
@@ -793,6 +793,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	
 	private static java.sql.Date getMonthStartDate() {
 		Calendar calendar = Calendar.getInstance();
+		calendar.set( Calendar.YEAR, 2011);
+		calendar.set( Calendar.MONTH, 0);
 		calendar.set( Calendar.DAY_OF_MONTH, 1);
 		
 		return new java.sql.Date ( calendar.getTimeInMillis());
