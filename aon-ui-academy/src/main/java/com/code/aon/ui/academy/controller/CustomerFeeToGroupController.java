@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -79,8 +80,10 @@ public class CustomerFeeToGroupController extends GroupSelectionController {
 		fee.setWorkPlace(course.getWorkPlace());
 		for( ITransferObject to : courseAlumBean.getList(criteria) ) {
 			CourseAlumn courseAlumn = (CourseAlumn) to;
-			fee.setCustomer(courseAlumn.getCustomer());
-			customerFeeBean.insert(fee);
+			if ( courseAlumn.getStatus() == CourseAlumnStatus.ACTIVE ) {
+				fee.setCustomer(courseAlumn.getCustomer());
+				customerFeeBean.insert(fee);				
+			}
 		}
 	}
 
