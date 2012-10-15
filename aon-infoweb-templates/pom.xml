@@ -39,8 +39,8 @@
           </execution>
         </executions>
         <configuration>
-          <doCheck>true</doCheck>
-          <doUpdate>true</doUpdate>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
         </configuration>
       </plugin>
 
@@ -86,13 +86,12 @@
 	                            <release>${buildNumber}</release>
 				    <copyright>2009, esferalia Networks S.A</copyright>
 					<requires>
-						<require>aon-directory-client &gt;= 5.0.0-4</require>
 					</requires>
                                         <mappings>
                                                 <mapping>
 							<filemode>755</filemode>
-                                                        <username>jboss</username>
-                                                        <groupname>jboss</groupname>
+                                                        <username>tomcat</username>
+                                                        <groupname>tomcat</groupname>
                                                         <directory>/home/COMMON-RESOURCES/aon-web-info/templates</directory>
 							<sources>
 								<source>
@@ -101,10 +100,6 @@
 							</sources>
                                                 </mapping>
 					</mappings>
-                                       <postinstallScriptlet>
-                                                <scriptFile>src/main/scripts/postinstall</scriptFile>
-                                                <fileEncoding>utf-8</fileEncoding>
-                                        </postinstallScriptlet>
                                 </configuration>
 
 
