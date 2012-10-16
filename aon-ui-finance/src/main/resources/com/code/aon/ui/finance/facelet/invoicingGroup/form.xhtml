@@ -19,7 +19,6 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
-
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{invoicingGroup.to.parent}" />
 						<ui:param name="idRequired" value="#{true}" />						
@@ -27,7 +26,6 @@
 						<ui:param name="lookupDisabled" value="#{!invoicingGroup.new}" />
 						<ui:param name="lookupLabel" value="#{financeBundle.finance_invoicing_group}"/>
 					</ui:include>
-
 				</aon:panelGrid>
 
 				<c:if test="#{!invoicingGroup.new}">
@@ -39,7 +37,20 @@
 
 							<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 								<ui:param name="controller" value="#{invoicingGroupDetail}" />
+								<ui:param name="skipLineEdition" value="#{true}" />
 								<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+								<ui:define name="beginFormListContent">
+									<aon:commandLink id="#{dataTableId}-selectButton"
+										styleClass="aon-table-row-link" value="&#160;"
+										immediate="true" ajaxSingle="true" requestDelay="100"
+										actionListener="#{invoicingGroupDetail.onSelect}"
+										onkeyup="#{dataTableId}KeyUp(this)"
+										onfocus="#{dataTableId}SelectRow(this)"
+										onblur="#{dataTableId}DeselectRow(this)"
+										focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+									</aon:commandLink>
+								</ui:define>
+
 								<ui:define name="columns">
 									<aon:column>
 										<f:facet name="header">
@@ -66,6 +77,14 @@
 											</ui:include>
 										</f:facet>
 									</aon:column>								
+								</ui:define>
+								<ui:define name="endFormListContent">
+									<aon:commandLink id="customer_link" immediate="true"
+										styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+										value="&#160;" title="#{bundle.aon_go}"
+										actionListener="#{invoicingGroupDetail.onLoadCustomer}"
+										action="customer_form"
+										reRender="aonContent" />
 								</ui:define>
 							</ui:decorate>
 						</aon:panel>

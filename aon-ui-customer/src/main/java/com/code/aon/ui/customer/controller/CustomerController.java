@@ -6,16 +6,15 @@ import java.util.ResourceBundle;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.InvoicingGroup;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.stat.controller.RegistryStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
-/**
- * Controller used in the customer maintenance.
- */
-public class CustomerController extends RegistryController {
+public class CustomerController extends RegistryController implements ICustomerConstants {
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.ui.registry.i18n.messages";
     /** Message key prefix. */
@@ -41,6 +40,13 @@ public class CustomerController extends RegistryController {
 		RegistryStatEngineController controller =(RegistryStatEngineController)AonUtil.getRegisteredBean("registryStat");
 		controller.setRegistry(((Customer)this.getTo()).getRegistry());
 		controller.getRegistryData();
+	}
+
+	public void onLoadInvoicingGroup(ActionEvent event) throws ManagerBeanException {
+		if (getInvoicingGroup() != null && getInvoicingGroup().getId() != null) {
+			BasicController customerController = (BasicController)AonUtil.getRegisteredBean(INVOICING_GROUP_CONTROLLER_NAME);
+			customerController.onLoad(event, getInvoicingGroup().getId(), CUSTOMER_FORM_NAME, CUSTOMER_CONTROLLER_NAME + ".select");
+		}
 	}
 
 }

@@ -59,10 +59,17 @@ public interface IFinanceConstants {
 
 	String CASH_FLOW_FORECAST_CONTROLLER_NAME = "cashFlowForecast";
 
+	String INVOICING_GROUP_FORM_NAME = "invoicingGroup_form";
+	String INVOICING_GROUP_CONTROLLER_NAME = "invoicingGroup";
+	String INVOICING_GROUP_DETAIL_CONTROLLER_NAME = "invoicingGroupDetail";
+
 	String ACCOUNT_ENTRY_FORM_PAGE = "accountEntry_form";
 	String ACCOUNT_ENTRY_SEARCH_PAGE = "accountEntry_search";
 	String ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION = "accountEntry.onEditSearch";
 	
+	String TARGET_CONTROLLER_NAME = "target";
+	String CUSTOMER_CONTROLLER_NAME = "customer";
+	String SUPPLIER_CONTROLLER_NAME = "supplier";
 	String OFFER_FORM_NAME = "offer_form";
 	String OFFER_CONTROLLER_NAME = "offer";
 	String SALES_FORM_NAME = "sales_form";

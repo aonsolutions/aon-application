@@ -1012,7 +1012,7 @@
 	<!-- ************* INVOICING GROUP DETAIL ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoicingGroupDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.controller.InvoicingGroupDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
