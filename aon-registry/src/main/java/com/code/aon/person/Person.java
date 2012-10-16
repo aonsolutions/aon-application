@@ -6,6 +6,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.person.enumeration.Gender;
+import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.IRegistry;
 import com.esferalia.aon.entity.master.PersonDB;
 
@@ -14,6 +16,11 @@ import com.esferalia.aon.entity.master.PersonDB;
 public class Person extends PersonDB implements IRegistry {
 
 	private static final long serialVersionUID = 1L;
+	
+	public Person() {
+		setGender(Gender.UNKNOWN);
+		setMaritalStatus(MaritalStatus.UNKNOWN);
+	}
 
 	@Transient
 	public String getFullName() {
