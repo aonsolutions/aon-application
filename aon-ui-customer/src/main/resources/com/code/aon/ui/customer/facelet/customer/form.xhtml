@@ -82,7 +82,7 @@
 					</ui:include>								
 				</c:if>			
 				<c:if test="#{!customer.new}">
-					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					<aon:panelGrid id="dataTable" columns="4" styleClass="aon-width-all"
 						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
 							aon-panelGrid-odd aon-width-120,
@@ -93,8 +93,14 @@
 						</ui:include>
 					</aon:panelGrid>
 
-					<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
-						columns="2" style="width: 100%;"
+					<aon:div id="personInfoDiv">
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/formPersonContent.xhtml" >
+							<ui:param name="controller" value="#{customer}" />
+						</ui:include>
+					</aon:div>
+					
+					<aon:panelGrid id="infoDataTable"
+						styleClass="aon-margin-top aon-width-all" columns="2"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
 						<c:if test="#{aonConfiguration.bean.customer.showTariff}">

@@ -6,8 +6,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include
-		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" >
+		<c:if test="#{aonConfiguration.bean.customer.showPerson}">
+			<ui:param name="registryTypeReRender" value="personInfoDiv" />
+		</c:if>
+	</ui:include>
 
 	<aon:outputLabel for="Customer_scope_id" value="#{bundle.aon_scope}" />
 	<aon:selectOneMenu id="Customer_scope_id" value="#{controller.to.scope}">

@@ -79,6 +79,7 @@
 			showAbsence="false"
 			showLoan="false"
 			showCourse="false"			
+			showPerson="false"
 		/>
 	</customer:config>
 

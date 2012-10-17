@@ -27,7 +27,7 @@
 				<f:selectItems value="#{registryCollections.registryTypes}" />
 				<a4j:support event="onclick" focus="#{pojoName}_document"
 					actionListener="#{controller.onChangeRegistryType}"
-					reRender="#{pojoName}DocumentPanel" 
+					reRender="#{pojoName}DocumentPanel,#{registryTypeReRender}" 
 					ajaxSingle="true" />
 			</aon:selectOneRadio>
 		</c:if>

@@ -61,7 +61,8 @@
 			showHistory="false"
 			showAbsence="false"
 			showLoan="false"
-			showCourse="false"			
+			showCourse="false"
+			showPerson="false"			
 		/>
 	</customer:config>
 

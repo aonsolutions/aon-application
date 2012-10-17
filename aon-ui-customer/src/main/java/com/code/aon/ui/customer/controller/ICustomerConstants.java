@@ -27,5 +27,7 @@ public interface ICustomerConstants {
 	String SHOW_ABSENCE = "showAbsence";	
 	String SHOW_LOAN = "showLoan";
 	String SHOW_COURSE = "showCourse";
+	
+	String SHOW_PERSON = "showPerson";
 
 }

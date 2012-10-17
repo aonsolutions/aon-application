@@ -101,6 +101,12 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>customerPersonListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerPersonListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ****** Customer Observation ******** -->
 	<managed-bean>
 		<managed-bean-name>customerObservation</managed-bean-name>
