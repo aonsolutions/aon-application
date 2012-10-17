@@ -1174,7 +1174,9 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			initNewMessage();
 			FacesContext context = FacesContext.getCurrentInstance();
 			Object email = context.getExternalContext().getRequestParameterMap().get("email");
-			setRecipientsTo(email.toString());
+			if ( email != null ) {
+				setRecipientsTo(email.toString());	
+			}
 		} else {
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNTS);
 		}
