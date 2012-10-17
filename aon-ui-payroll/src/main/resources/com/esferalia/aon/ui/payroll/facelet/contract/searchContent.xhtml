@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
@@ -15,7 +16,16 @@
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{contractSearch.enterprise}" />
 			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupReRender" value="Contract_workPlace" />
 		</ui:include>
+	
+		<aon:outputLabel for="Contract_workPlace"  
+			value="#{companyBundle.company_workplace}" />
+		<aon:selectOneMenu id="Contract_workPlace" disabled="#{contractSearch.enterprise.id==null}"
+			value="#{contractSearch.workPlace}" >
+			<f:selectItem itemLabel=" - " itemValue="#{null}"  />
+			<f:selectItems value="#{contractSearch.workPlaces}"  />
+		</aon:selectOneMenu>
 	</c:if>
 									
 	<aon:outputLabel value="#{bundle.aon_start_date}" />
