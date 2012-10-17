@@ -10,7 +10,7 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
 		<ui:param name="sortColumns" value="#{true}" />
 		<ui:param name="skipLineEdition" value="#{!aonRole.documentManager}" />
-		<ui:param name="skipResetButton" value="#{!aonRole.documentManager}" />
+		<ui:param name="skipResetButton" value="#{(!aonRole.documentManager) or (documentManager.freeSpace &lt; 1)}" />
 	</ui:include>								
 
 </ui:composition>

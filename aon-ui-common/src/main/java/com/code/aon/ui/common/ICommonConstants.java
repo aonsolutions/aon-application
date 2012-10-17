@@ -32,7 +32,10 @@ public interface ICommonConstants {
 	String DOCUMENT_MAX_SIZE_ERROR = "aon_document_max_size_error";	
 	
 	/** The document size message. */
-	String DOCUMENT_SIZE_MESSAGE = "aon_document_size_message";	
+	String DOCUMENT_SIZE_MESSAGE = "aon_document_size_message";
+	
+	/** The used space message. */
+	String USED_SPACE_MESSAGE = "aon_used_space_message";
 	
 	/** The ID. */
 	String ID = "aon_id";

@@ -8,6 +8,7 @@ import static com.code.aon.ldap.ILdapConstants.MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE
 import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
 import static com.code.aon.ui.common.ICommonConstants.DOCUMENT_SIZE_MESSAGE;
 import static com.code.aon.ui.common.ICommonConstants.DOMAIN_RESOLVER_CONTROLLER_NAME;
+import static com.code.aon.ui.common.ICommonConstants.USED_SPACE_MESSAGE;
 
 import javax.naming.Name;
 
@@ -105,7 +106,8 @@ public class DocumentManager {
 		try {
 	    	String name = HibernateUtil.getSessionFactoryName();
 	        Session session = HibernateUtil.getSession(name);
-	        Query query = session.createQuery("select sum(length(data)) from RegistryAttachment");
+	        Query query = session.createQuery("select sum(length(data)) from RegistryAttachment ra WHERE ra.domain = ?");
+	        query.setInteger(0, DomainManager.getCurrentDomain());
 	        usedSpace = (Long) query.uniqueResult();
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error calculating free space", th);
@@ -114,7 +116,7 @@ public class DocumentManager {
 	}
 	
 	public long getFreeSpace() {
-		return Math.max( this.maxTotalDocumentSize - getUsedSpace(), 0);
+		return this.maxTotalDocumentSize - getUsedSpace();
 	}
 	
 	public long getMaximumDocumentSize() {
@@ -126,6 +128,20 @@ public class DocumentManager {
 		String freeSpace = FileUtils.byteCountToDisplaySize(getFreeSpace()); 
 		String maxSize = FileUtils.byteCountToDisplaySize(maxDocumentSize);
 		return AonUtil.getMessage(DEFAULT_BUNDLE, DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
+	}
+	
+	public String getFreeSpaceStyle() {
+		return ( getFreeSpace() <= 0 ) ? "color:red;font-style:bold;font-style:italic;" : "";
+	}
+
+	public String getUsedSpaceMessage() {
+		String usedSpace = FileUtils.byteCountToDisplaySize(getUsedSpace()); 
+		return AonUtil.getMessage(DEFAULT_BUNDLE, USED_SPACE_MESSAGE, usedSpace);
+	}
+	
+	public int getUsedSpaceInMB() {
+		int value = (int) (getUsedSpace() / MB_SIZE);
+		return value;
 	}
 	
 }

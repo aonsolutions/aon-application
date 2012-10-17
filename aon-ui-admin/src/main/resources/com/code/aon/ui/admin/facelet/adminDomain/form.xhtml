@@ -89,8 +89,9 @@
 							size="10" value="#{adminDomain.to.maxDefinedUsers}" >
 							<f:validateLongRange minimum="#{domainUser.minimumUserNumber}" />
 						</aon:inputText>
-						<aon:outputText styleClass="aon-margin-left"
-							value="#{domainUser.activeUsersMessage}"/>
+						<aon:outputFormat styleClass="aon-margin-left" value="#{adminBundle.admin_active_users}">
+							<f:param value="#{domainUser.numberOfActiveUsers}" />
+						</aon:outputFormat>							
 					</aon:div>
 				
 					<c:if test="#{!domainSwitcher.childDomain}" >
@@ -109,10 +110,17 @@
 									
 					<aon:outputLabel for="Domain_maxTotalDocumentSize"
 						value="#{adminBundle.admin_domain_maxTotalDocumentSize}" />
-					<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
-						disabled="#{!adminDomain.documental.checked}"
-						value="#{adminDomain.to.maxTotalDocumentSize}"
-						minValue="100" maxValue="1500" step="100" width="300" />
+					<h:panelGrid columns="2">
+						<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
+							label="#{adminBundle.admin_domain_maxTotalDocumentSize}"
+							disabled="#{!adminDomain.documental.checked}"
+							value="#{adminDomain.to.maxTotalDocumentSize}"
+							minValue="100" maxValue="1500" step="100" width="300" >
+							<f:validateLongRange minimum="#{documentManager.usedSpaceInMB}" />
+						</rich:inputNumberSlider>
+						<aon:outputText styleClass="aon-margin-left"
+							value="#{documentManager.usedSpaceMessage}" />
+					</h:panelGrid>
 
 				</aon:panelGrid>								
 

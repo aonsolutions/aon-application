@@ -233,19 +233,6 @@ public class DomainUserController extends BasicController {
 		}
         return 0;
 	}
-	
-	public String getActiveUsersMessage() {
-		return AonUtil.getMessage(BUNDLE_NAME, ACTIVE_USERS, getNumberOfActiveUsers());		
-	}
-
-	public String getDetailMessage() {
-		String message = getActiveUsersMessage();
-		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		if ( dc.getDomain().getMaxDefinedUsers() != null ) {
-			message += ", " + AonUtil.getMessage(BUNDLE_NAME, MAXIMUM_NUMBER_USERS, dc.getDomain().getMaxDefinedUsers());
-		}
-		return message;
-	}
 
 	public int getMinimumUserNumber() {
 		return Math.max(0, getNumberOfActiveUsers());
