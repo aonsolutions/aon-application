@@ -2,16 +2,13 @@ package com.code.aon.ui.purchase.util;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.faces.context.FacesContext;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Series;
@@ -27,11 +24,20 @@ import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class PurchaseUtils {
+	
+	private Supplier companySupplier;
 
 	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, PurchaseDocumentType documentType, String comments) throws ManagerBeanException {
+		return createPurchase(supplier, workPlace, department, documentType, comments, null); 
+	}
+	public Purchase createPurchase(Supplier supplier, WorkPlace workPlace, Department department, PurchaseDocumentType documentType, String comments, String remarks) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
 		Purchase pur = new Purchase();
 		pur.setNumberOfPayments(1);
@@ -49,10 +55,8 @@ public class PurchaseUtils {
 		pur.setSeries(serie);
 		pur.setNumber(obtainSeriesMaxNumber(serie));
 		pur.setScope(supplier.getScope());
-	    Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	    ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", locale); 
-		pur.setComments(bundle.getString("company_department") +": "+ department.getName()+". ");
-		pur.setComments(pur.getComments() + comments);
+	    pur.setComments(comments);
+		pur.setRemarks(remarks);
 		return (Purchase) bean.insert(pur);
 	}
 	public void insertPurchaseDetail(Purchase pur, ProposalDetail proposalDetail) throws ManagerBeanException {
@@ -106,6 +110,25 @@ public class PurchaseUtils {
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		criteria.addEqualExpression(seriesBean.getFieldName(IEntityAlias.SERIES_INVOICE), new Boolean(true));
 		return seriesBean.getList(criteria);
+	}
+	
+	public Supplier getCompanySupplier() {
+		if(companySupplier == null) {
+			Company company = (Company) ((CompanyController)FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME)).getTo();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_ID), company.getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					companySupplier = (Supplier) list.get(0);
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Error al obtener el proveedor de traspasos.";
+				AonUtil.addErrorMessage(msg);
+			}
+		}
+		return companySupplier;
 	}
 
 }

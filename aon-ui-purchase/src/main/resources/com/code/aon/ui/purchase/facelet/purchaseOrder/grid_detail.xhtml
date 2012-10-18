@@ -52,17 +52,23 @@
 						</aon:inputText>
 					</aon:div>
 					
-					<aon:div>
+					<aon:div sytleClass="aon-nowrap">
 						<aon:outputText value="#{supplierBundle.supplier_supplier}:" />
 						<aon:outputText value="#{detail.supplier.registry.fullName}"
 							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex}" />
+						<aon:div styleClass="aon-margin-left aon-nowrap" style="display:inline;"
+							rendered="#{purchaseOrder.detailIndex!=purchaseOrder.detailModel.rowIndex and purchaseOrder.returnedProduct}">
+							<aon:outputText value="(" />
+							<aon:outputText value="#{purchaseBundle.purchase_source}:" />
+							<aon:outputText value="#{detail.proposal.transferProposal.workPlace.description}" />
+							<aon:outputText value=")" />
+						</aon:div>
 						<aon:selectOneMenu 
 							value="#{detail.supplier}" 
 							rendered="#{purchaseOrder.detailIndex==purchaseOrder.detailModel.rowIndex}" >
 							<f:selectItem itemLabel=" - " itemValue="null" />
 							<f:selectItems value="#{purchaseOrder.itemSuppliers}" />
 						</aon:selectOneMenu>
-							
 					</aon:div>
 				
 					<aon:div>

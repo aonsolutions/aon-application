@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.company.Company;
 import com.code.aon.company.Department;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.WorkplaceDepartment;
@@ -27,9 +26,6 @@ import com.code.aon.purchase.ProposalDetail;
 import com.code.aon.purchase.enumeration.ProposalStatus;
 import com.code.aon.purchase.enumeration.ProposalTransferStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.supplier.Supplier;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -37,6 +33,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.purchase.util.PurchaseUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -49,9 +46,20 @@ public class ProposalController extends BasicController {
 	private ProposalType proposalType;
 	private WorkPlace destinationWorkPlace;
 	private Department destinationDepartment;
-	private Supplier companySupplier;
+	private PurchaseUtils utils;
 	private boolean showTransferWindow;
 	
+	public PurchaseUtils getUtils() {
+		if(utils == null) {
+			utils = new PurchaseUtils();
+		}
+		return utils;
+	}
+
+	public void setUtils(PurchaseUtils utils) {
+		this.utils = utils;
+	}
+
 	public ProposalType getProposalType() {
 		return proposalType;
 	}
@@ -84,25 +92,6 @@ public class ProposalController extends BasicController {
 		this.showTransferWindow = showTransferWindow;
 	}
 	
-	private Supplier getCompanySupplier() {
-		if(companySupplier == null){
-			Company company = (Company) ((CompanyController)FormUtil.getController(ICompanyConstants.COMPANY_CONTROLLER_NAME)).getTo();
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SUPPLIER_REGISTRY_ID), company.getId());
-				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					companySupplier = (Supplier) list.get(0);
-				}
-			} catch (ManagerBeanException e) {
-				String msg = "Error al obtener el proveedor de traspasos.";
-				AonUtil.addErrorMessage(msg);
-			}
-		}
-		return companySupplier;
-	}
-
 	public boolean isPending() {
 		Proposal proposal = (Proposal) getTo();
 		return proposal.getStatus()==ProposalStatus.PENDING;
@@ -145,6 +134,7 @@ public class ProposalController extends BasicController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ACTIVE), new Boolean(true));
 		criteria.addNotEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_SCOPE_ID), getWorkPlaceScopeToExclude());
+		criteria.addNotEqualExpression(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_ID), ((Proposal)getTo()).getWorkPlace().getId());
 		criteria.addOrder(workPlaceBean.getFieldName(IEntityAlias.WORK_PLACE_DESCRIPTION));
 		workPlaceBean.getList(criteria);
 		for(ITransferObject to: workPlaceBean.getList(criteria)){
@@ -296,7 +286,7 @@ public class ProposalController extends BasicController {
 	}
 	
 	public void onShowTransferWindow(ActionEvent event) throws ManagerBeanException{
-		if(getCompanySupplier()==null || getCompanySupplier().getId()==null){
+		if(getUtils().getCompanySupplier()==null || getUtils().getCompanySupplier().getId()==null){
 			String msg = "No se ha definido el proveedor para traspasos.";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
@@ -400,7 +390,7 @@ public class ProposalController extends BasicController {
 			for(ITransferObject to: list){
 				ProposalDetail detail = (ProposalDetail) to;
 				detail.setQuantity(detail.getQuantity());
-				detail.setSupplier(getCompanySupplier());
+				detail.setSupplier(getUtils().getCompanySupplier());
 				bean.update(detail);
 			}
 		} catch (ManagerBeanException e) {
@@ -455,7 +445,7 @@ public class ProposalController extends BasicController {
 				destinationProposalDetail.setPrice(detail.getPrice());
 				destinationProposalDetail.setQuantity(detail.getQuantity());
 				destinationProposalDetail.setStatus(detail.getStatus());
-				destinationProposalDetail.setSupplier(getCompanySupplier());
+				destinationProposalDetail.setSupplier(getUtils().getCompanySupplier());
 				bean.insert(destinationProposalDetail);
 			}
 		} catch (ManagerBeanException e) {

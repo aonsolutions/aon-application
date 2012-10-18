@@ -6,7 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -52,6 +55,7 @@ public class PurchaseOrderController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseOrderController.class.getName());
 	
+	private PurchaseUtils utils;
 	private OrderParams params;
 	private DataModel model;
 	private DataModel detailModel;
@@ -69,7 +73,16 @@ public class PurchaseOrderController {
 		}
 		return companyCollections;
 	}
-	
+
+	public PurchaseUtils getUtils() {
+		if(utils == null) {
+			utils = new PurchaseUtils();
+		}
+		return utils;
+	}
+	public void setUtils(PurchaseUtils utils) {
+		this.utils = utils;
+	}
 	public int getProductIndex() {
 		return productIndex;
 	}
@@ -270,6 +283,11 @@ public class PurchaseOrderController {
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		List<Integer> purchaseIds = new LinkedList<Integer>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		ResourceBundle companyBundle = ResourceBundle.getBundle("com.code.aon.ui.company.i18n.messages", locale); 
+		ResourceBundle purchaseBundle = ResourceBundle.getBundle("com.code.aon.ui.purchase.i18n.messages", locale); 
+		String comments = null;
+		String remarks = null;
 		try {
 			try {
 				HibernateUtil.setBeginTransaction(false);
@@ -279,14 +297,27 @@ public class PurchaseOrderController {
 				PurchaseUtils utils = new PurchaseUtils();
 				for(PurchaseGroup pg: purchaseGroupList){
 					if(pg.hasCheckedDetail()){
+						comments = companyBundle.getString("company_department") +": "+ pg.getDepartment().getName()+". ";
 						Purchase purchase = utils.createPurchase(pg.getSupplier(), pg.getWorkPlace(), pg.getDepartment(), 
-								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, pg.getComments());
+								pg.isItemReturn()?PurchaseDocumentType.ITEM_RETURN:null, comments + pg.getComments(), remarks);
 						purchaseIds.add(purchase.getId());
 						for(GroupDetail gd: pg.getDetailList()){
 							if(gd.isChecked()){
 								utils.insertPurchaseDetail(purchase, gd.getProposalDetail());
 								utils.updateProposalDetailStatus(gd.getProposalDetail().getId());
+								if(isReturnedProduct(gd.getProposalDetail())){
+									remarks = remarks==null?(purchaseBundle.getString("purchase_source") +": "):(remarks);
+									remarks += gd.getProposalDetail().getProposal().getTransferProposal().getWorkPlace().getDescription();
+									if( !(pg.getDepartment().getId().equals(gd.getProposalDetail().getProposal().getTransferProposal().getDepartment())) ){
+										remarks += "("+gd.getProposalDetail().getProposal().getTransferProposal().getDepartment().getName()+"). ";
+									}
+								}
 							}
+						}
+						if(remarks!=null){
+							purchase.setRemarks(remarks);
+							IManagerBean bean = BeanManager.getManagerBean(Purchase.class);
+							bean.update(purchase);
 						}
 					}
 				}
@@ -344,25 +375,41 @@ public class PurchaseOrderController {
 	
 	public List<SelectItem> getItemSuppliers(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
-		ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), proposalDetail.getItem().getId());
-			criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
-			for (ITransferObject ito : bean.getList(criteria)) {
-				ItemSupplier is = (ItemSupplier) ito;
-				if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
-					SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
-					list.add(i);
+		if( isReturnedProduct() ) {
+			SelectItem i = new SelectItem(getUtils().getCompanySupplier(), getUtils().getCompanySupplier().getRegistry().getFullName());
+			list.add(i);
+		} else {
+			ProposalDetail proposalDetail = (ProposalDetail)getDetailModel().getRowData();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(ItemSupplier.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_ITEM_ID), proposalDetail.getItem().getId());
+				criteria.addOrder(bean.getFieldName(IEntityAlias.ITEM_SUPPLIER_PRIORITY));
+				for (ITransferObject ito : bean.getList(criteria)) {
+					ItemSupplier is = (ItemSupplier) ito;
+					if(is.getWorkPlace()==null || is.getWorkPlace().getId().equals(proposalDetail.getProposal().getWorkPlace().getId())){
+						SelectItem i = new SelectItem(is.getSupplier(), is.getSupplier().getRegistry().getFullName());
+						list.add(i);
+					}
 				}
+			} catch (ManagerBeanException e) {
+				String msg =  "******** Error getting item suppliers. ";
+				LOGGER.error(msg, e);
+				AonUtil.addErrorMessage(msg + e.getMessage());
 			}
-		} catch (ManagerBeanException e) {
-			String msg =  "******** Error getting item suppliers. ";
-			LOGGER.error(msg, e);
-			AonUtil.addErrorMessage(msg + e.getMessage());
 		}
 		return list;
+	}
+	
+	public boolean isReturnedProduct(){
+		return isReturnedProduct((ProposalDetail)getDetailModel().getRowData());
+	}
+	
+	public boolean isReturnedProduct(ProposalDetail proposalDetail){
+		if( proposalDetail.getSupplier().getId().equals(getUtils().getCompanySupplier().getId()) ){
+			return true;
+		}
+		return false;
 	}
 
 	public List<SelectItem> getAvailableDepartments() throws ManagerBeanException{
