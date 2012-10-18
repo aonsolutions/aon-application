@@ -236,7 +236,7 @@
 					actionListener="#{controller.onLoadIncome}"
 					action="income_form"
 					reRender="aonContent">
-					<rich:toolTip value="#{controller.lineStatusInfo}" />
+					<rich:toolTip value="#{controller.lineStatusInfo}" direction="top-left" />
 				</aon:commandLink>
 				<aon:commandButton id="purchaseDetailProject" value="&#160;"
 					styleClass="#{(to.project != null and to.project.id == purchase.to.project.id) ? 
@@ -253,7 +253,7 @@
 				<aon:commandLink id="purchaseDetailProposalLink" immediate="true"
 					styleClass="aon-button-goto"
 					style="padding-right: 20px;" 
-					value="&#160;"  
+					value="&#160;" title="#{bundle.aon_go}"
 					rendered="#{to.proposalDetail!=null and to.proposalDetail.id!=null}" 
 					actionListener="#{controller.onLoadProposal}"
 					action="proposal_form"

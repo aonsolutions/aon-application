@@ -42,7 +42,7 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 
 		if (purchaseDetail.getDelivered() == 0) {
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
-		} else if (purchaseDetail.getDelivered() >= purchaseDetail.getQuantity()) {
+		} else if ( Math.abs(purchaseDetail.getDelivered()) >= Math.abs(purchaseDetail.getQuantity()) ) {
 			purchaseDetail.setQuantity(purchaseDetail.getDelivered());
 			purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
 		} else {

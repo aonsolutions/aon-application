@@ -123,11 +123,13 @@ public class PurchaseTransferManager {
 		PurchaseDetail purchaseDetail = (PurchaseDetail) getDetailModel().getRowData();
 		if(purchaseDetail.getPendingQuantity() > 0 && purchaseDetail.getTransfered() < 0 ){
 			purchaseDetail.setTransfered(0);
-			// TODO revisar cuando el producto proviene de una devolucion (cantidades negativas del item)
-//		} else if(purchaseDetail.getPendingQuantity() < 0 
-//				&& (purchaseDetail.getPendingQuantity() > purchaseDetail.getTransfered() || purchaseDetail.getTransfered() > 0) ){
-		} else if( purchaseDetail.getPendingQuantity() < 0 ){
-			purchaseDetail.setTransfered(purchaseDetail.getPendingQuantity());
+		} else if( purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() > 0 ){
+			purchaseDetail.setTransfered(0);
+		}
+		if( purchaseDetail.getTransfered()!=0 ){
+			detailChecks.add(purchaseDetail);
+		} else {
+			detailChecks.remove(purchaseDetail);
 		}
 	}
 	public void onTransferedChanged(ValueChangeEvent event) {

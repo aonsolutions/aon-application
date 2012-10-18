@@ -198,9 +198,10 @@
 													<h:outputText value="#{warehouseBundle.warehouse_income_quantity_transfer}" />
 												</f:facet>
 												<aon:inputText id="transfered"
-													value="#{to.transfered}" size="4"
-													actionListener="#{income.purchaseTransferManager.onTransferedChanged}"
-													reRender="purchaseData,detailDataContainer" ajaxSingle="true" />	
+													value="#{to.transfered}" size="4" >	
+													<a4j:support event="onchange" reRender="purchaseData,detailDataContainer" ajaxSingle="true" requestDelay="10"
+														actionListener="#{income.purchaseTransferManager.onTransferedChanged}" />
+												</aon:inputText>	
 											</aon:column>
 	
 											<aon:column>
