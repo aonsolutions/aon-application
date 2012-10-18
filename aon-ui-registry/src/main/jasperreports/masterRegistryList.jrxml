@@ -8,15 +8,15 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="logoImageFile" class="java.io.InputStream">
-		<parameterDescription><![CDATA[Logo Image File]]></parameterDescription>
-	</parameter>
 	<parameter name="printHeaders" class="java.lang.Boolean"/>
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
-	<field name="status" class="com.code.aon.common.enumeration.IResourceable"/>
-	<field name="registry" class="com.code.aon.registry.Registry"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="document" class="java.lang.String"/>
+	<field name="alias" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -181,7 +181,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getPhone()==null?"":$F{registry}.getPhone().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{phone}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-19" positionType="Float" mode="Opaque" x="366" y="0" width="93" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -195,7 +195,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getAlias()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{alias}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-20" positionType="Float" mode="Opaque" x="88" y="0" width="278" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -209,7 +209,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Opaque" x="0" y="0" width="35" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -237,7 +237,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{status}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-20" positionType="Float" mode="Opaque" x="35" y="0" width="53" height="11" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -251,7 +251,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getDocument()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{document}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -262,7 +262,7 @@
 		<band height="20" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
-				<reportElement key="textField-15" x="540" y="0" width="15" height="20"/>
+				<reportElement key="textField-15" x="508" y="0" width="47" height="20"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -275,7 +275,7 @@
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-16" x="0" y="0" width="540" height="20"/>
+				<reportElement key="textField-16" x="0" y="0" width="506" height="20"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

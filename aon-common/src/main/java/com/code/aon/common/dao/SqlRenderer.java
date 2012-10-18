@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -139,6 +140,20 @@ public class SqlRenderer implements CriterionVisitor {
 		} else if ( expression.getData() instanceof Date ) {
 			Date date = (Date) expression.getData();
 			write("\'" + DATE_FORMATTER.format(date) + "\'");	
+		} else if (expression.getData() instanceof List<?>) {
+			List<?> list = (List<?>) expression.getData();
+			if (!list.isEmpty()) {
+				StringBuffer buf = new StringBuffer();
+				for (Object o : list) {
+					if (buf.length() > 0) {
+						buf.append(',');
+					}
+					buf.append("\'");
+					buf.append(o);
+					buf.append("\'");
+				}
+				write("(" + buf.toString() + ")");
+			}
 		} else {
 			write("\'" + expression.getData() + "\'");	
 		}
@@ -209,6 +224,7 @@ public class SqlRenderer implements CriterionVisitor {
 
 	private String getSqlName(String alias) throws DAOException {
 		try {
+			alias = alias.replace('<', '.');
 			String table = alias.substring(0 , alias.lastIndexOf('.') );
 			String property = alias.substring( alias.lastIndexOf('.') + 1 );
 

@@ -8,15 +8,15 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="logoImageFile" class="java.io.InputStream">
-		<parameterDescription><![CDATA[Logo Image File]]></parameterDescription>
-	</parameter>
 	<parameter name="printHeaders" class="java.lang.Boolean"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
 	<field name="id" class="java.lang.Integer"/>
-	<field name="status" class="com.code.aon.common.enumeration.IResourceable"/>
-	<field name="registry" class="com.code.aon.registry.Registry"/>
-	<field name="advertising" class="com.code.aon.commercial.enumeration.Advertising"/>
+	<field name="document" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="alias" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="advertising" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -174,7 +174,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None">
-					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$R{target_advertising}]]></textFieldExpression>
@@ -195,7 +195,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getPhone()==null?"":$F{registry}.getPhone().getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{phone}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-19" positionType="Float" mode="Transparent" x="354" y="0" width="65" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -209,7 +209,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getAlias()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{alias}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-20" positionType="Float" mode="Transparent" x="76" y="0" width="278" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -223,7 +223,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getFullName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" positionType="Float" mode="Transparent" x="0" y="0" width="30" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -251,7 +251,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{status}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-20" positionType="Float" mode="Transparent" x="30" y="0" width="46" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -265,7 +265,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{registry}.getDocument()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{document}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-9" positionType="Float" mode="Transparent" x="504" y="0" width="50" height="11" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -279,7 +279,7 @@
 					<font fontName="SansSerif" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{advertising}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{advertising}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -290,7 +290,7 @@
 		<band height="20" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField evaluationTime="Report" isBlankWhenNull="false">
-				<reportElement key="textField-15" x="540" y="0" width="15" height="20"/>
+				<reportElement key="textField-15" x="504" y="0" width="51" height="20"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -303,7 +303,7 @@
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-16" x="0" y="0" width="540" height="20"/>
+				<reportElement key="textField-16" x="0" y="0" width="504" height="20"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -9,7 +9,7 @@
 	<report id="customerReport" description="Customer report ">
 		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
 		<bean key="com.code.aon.customer.Customer" />
-		<criteria provider="#{customer}"/>
+		<collection provider="#{customer}" forceRefresh="false"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -20,7 +20,7 @@
 	<report id="creditorReport" description="Creditor report ">
 		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
 		<bean key="com.code.aon.finance.Creditor" />
-		<criteria provider="#{creditor}"/>
+		<collection provider="#{creditor}" forceRefresh="false"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -32,7 +32,7 @@
 	<report id="supplierReport" description="Supplier report ">
 		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
 		<bean key="com.code.aon.supplier.Supplier" />
-		<criteria provider="#{supplier}"/>
+		<collection provider="#{supplier}" forceRefresh="false"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
@@ -43,10 +43,9 @@
 	<report id="sellerReport" description="Seller report ">
 		<template path="/com/code/aon/ui/registry/report/masterRegistryList.jasper" />
 		<bean key="com.code.aon.seller.Seller" />
-		<criteria provider="#{seller}"/>
+		<collection provider="#{seller}" forceRefresh="false"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.registry.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="title" value="#{seller.getReportTitle}" />

@@ -26,12 +26,14 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetProfile;
 import com.code.aon.commercial.TargetSeller;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.QuestionType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.product.Item;
@@ -185,6 +187,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			FacesContext faces = FacesContext.getCurrentInstance();
 			Connection c = HibernateUtil.getSQLConnection(sessionName);
 			String REGISTRY_BUNDLE = "registryBundle";
+			String COMMERCIAL_BUNDLE = "commercialBundle";
 			String select = "SELECT" 
 			+" r.id `" + AonUtil.getMessage("aon_id") + "`"
 			+",ELT(c.status+1"
@@ -192,6 +195,12 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",'"+AonUtil.getMessage("aon_inactive")+"'"
 			+",'"+AonUtil.getMessage("aon_blocked")+"'"
 				+") `" + AonUtil.getMessage("aon_status") + "`"
+				+",ELT(c.advertising+1"
+				+",'"+Advertising.ALLOWED.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+Advertising.AUTO_EXCLUSION.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+Advertising.DENIED.getName(AonUtil.getCurrentLocale())+"'"
+				+",'"+Advertising.ROBINSON.getName(AonUtil.getCurrentLocale())+"'"
+					+") `" + AonUtil.getMessage(COMMERCIAL_BUNDLE,"commercial_target_advertising") + "`"
 			+",ELT(r.type+1" 
 				+",'"+RegistryType.LEGAL.getName(AonUtil.getCurrentLocale())+"'"
 				+",'"+RegistryType.NATURAL.getName(AonUtil.getCurrentLocale())+"'"
@@ -222,6 +231,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			+",(SELECT rm5.value FROM rmedia rm5 WHERE r.id = rm5.registry  AND rm5.media = 5 LIMIT 1) `" + AonUtil.getMessage(REGISTRY_BUNDLE,"registry_web") + "`"
 			+" FROM " + masterTable +" c"
 			+" INNER JOIN registry r ON r.id = c.registry"
+			+" INNER JOIN scope scp ON c.scope = scp.id"
 			+" LEFT OUTER JOIN rmedia rm ON r.id = rm.registry"
 			+" LEFT OUTER JOIN raddress ra ON r.id = ra.registry AND ra.type = 0"
 			+" LEFT OUTER JOIN geozone gz ON ra.geozone = gz.id"
@@ -243,6 +253,7 @@ public class TargetController extends RegistryController implements ICommercialC
 
 			Map<String,String> tableMapping = new HashMap<String, String>();
 			tableMapping.put(mappingPrefix, "c");
+			tableMapping.put(mappingPrefix + ".scope", "scp");
 			tableMapping.put(mappingPrefix + ".registry", "r");
 			tableMapping.put(mappingPrefix + ".registry.addresses", "ra");
 			tableMapping.put(mappingPrefix + ".registry.medias", "rm");
@@ -263,6 +274,7 @@ public class TargetController extends RegistryController implements ICommercialC
 			
 			Map<String,Class<?>> pojoMapping = new HashMap<String, Class<?>>();
 			pojoMapping.put(mappingPrefix, pojoClass);
+			pojoMapping.put(mappingPrefix + ".scope", Scope.class);
 			pojoMapping.put(mappingPrefix + ".registry", Registry.class);
 			pojoMapping.put(mappingPrefix + ".registry.medias", RegistryMedia.class);
 			pojoMapping.put(mappingPrefix + ".registry.segments", RegistrySegment.class);
