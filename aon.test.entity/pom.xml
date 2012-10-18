@@ -82,7 +82,7 @@
 											aon.mock.entity.maven.plugin
 										</artifactId>
 										<versionRange>
-											[7.0-SNAPSHOT,)
+											[6.77,)
 										</versionRange>
 										<goals>
 											<goal>
@@ -103,7 +103,7 @@
 											aon.test.entity.maven.plugin
 										</artifactId>
 										<versionRange>
-											[7.0-SNAPSHOT,)
+											[6.77,)
 										</versionRange>
 										<goals>
 											<goal>
