@@ -128,7 +128,8 @@ public class ResourceServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 		try {
-			ResourceURI resource = new ResourceURI(req.getRequestURI(), req.getContextPath(), DEFAULT_PATTERN);
+			String uri = stripPathParameter(req.getRequestURI());
+			ResourceURI resource = new ResourceURI(uri, req.getContextPath(), DEFAULT_PATTERN);
 			InputStream in = resource.getInputStream(getServletContext(), basePath);
 			if (in == null) {
 				res.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -142,6 +143,13 @@ public class ResourceServlet extends HttpServlet {
 			LOGGER.error(th.getMessage(), th);
 			throw new ServletException(th.getMessage(), th);
 		}
+	}
+
+	private String stripPathParameter(String requestURI) {
+		if (StringUtils.contains(requestURI,';')) {
+			return StringUtils.substringBefore(requestURI, ";");
+		}
+		return requestURI;
 	}
 
 }
