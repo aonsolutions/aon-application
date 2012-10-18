@@ -157,7 +157,9 @@ public class AonMockEntityMojo extends AbstractMojo {
 				File file  = new File(packageDir, aonEntity + ".java");
 				FileWriter output = new FileWriter(file);
 				getLog().info(" Processing mock entity ..: " + aonPackage + "." + aonEntity + ".java");
-				tpl.process(additionalContext, output);			
+				tpl.process(additionalContext, output);
+				output.flush();
+				output.close();
 			}
 			if (isGenerateHibernateCfg()) {
 				Map<String, Object> additionalContext = new HashMap<String, Object>();
