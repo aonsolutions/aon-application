@@ -529,7 +529,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
 	<distributionManagement>
 		<repository>
 			<id>inhouse</id>
