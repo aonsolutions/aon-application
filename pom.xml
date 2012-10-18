@@ -197,9 +197,6 @@
 		<developer>
 			<id>eagirrezabal</id>
 		</developer>
-		<developer>
-			<id>vsantamaria</id>
-		</developer>
 	</developers>
 	<issueManagement>
 		<system>Bugzilla</system>
