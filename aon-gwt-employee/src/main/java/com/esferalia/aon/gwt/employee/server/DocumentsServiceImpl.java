@@ -56,6 +56,8 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 		IDocument2HtmlConverter converter = 
 				getDocument2HtmlConverter(doc);
 		try {
+      initFacesContext();
+
 			ByteArrayOutputStream os = 
 					new ByteArrayOutputStream();
 			converter.transform(doc, os, zoom);
@@ -63,6 +65,8 @@ public class DocumentsServiceImpl extends AonRemoteServiceServlet implements Doc
 			return os.toString();
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
+		}  finally {
+			releaseFacesContext();			
 		} 
 	}
 	
