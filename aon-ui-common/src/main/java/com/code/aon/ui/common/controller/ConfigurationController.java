@@ -1,7 +1,6 @@
 package com.code.aon.ui.common.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -59,16 +56,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private static final long serialVersionUID = -1159615075844874762L;
 	
 	private static final Locale SPANISH = new Locale("es");
-
-	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
-
-	private static final String APPLICATION_VERSION = "applicationVersion";
-	
-	private static final String BUILD_NUMBER = "buildNumber";
-	
-	private static final String BUILD_DATE = "buildDate";
-	
-	private static final String BUILD_REVISION = "buildRevision";
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 	
@@ -104,7 +91,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		if ( document != null ) {
 			bean = loadBeanConfiguration( document );
 		}		
-		initApplicationVersion();
+		initApplication();
 		this.locales = new LocaleElement[] {
 			new LocaleElement(SPANISH), new LocaleElement(Locale.ENGLISH) 
 		};
@@ -187,28 +174,9 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 * Calculate application version.
 	 * 
 	 */
-	private void initApplicationVersion() {
-		try {
-			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-			this.application = StringUtils.stripStart(ec.getRequestContextPath(), "/" );
-			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
-			Manifest m = new Manifest(in);
-			Attributes attrs = m.getMainAttributes();
-			String applicationVersion = attrs.getValue(IMPLEMENTATION_VERSION);
-			if (! StringUtils.isEmpty(applicationVersion)) {
-				getProperties().put(APPLICATION_VERSION, StringUtils.trim(applicationVersion) );
-				String buildNumber = StringUtils.trim( attrs.getValue(BUILD_NUMBER) );
-				getProperties().put(BUILD_NUMBER, buildNumber );
-				String buildDate = StringUtils.trim( attrs.getValue(BUILD_DATE) );
-				getProperties().put(BUILD_DATE, buildDate );
-				String buildRevision = StringUtils.trim( attrs.getValue(BUILD_REVISION) );
-				getProperties().put(BUILD_REVISION, buildRevision );
-			} else {
-				LOGGER.warn("Imposible determinar la versión");
-			}
-		} catch (Throwable e) {
-			LOGGER.warn("Imposible determinar la versión");
-		}
+	private void initApplication() {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		this.application = StringUtils.stripStart(ec.getRequestContextPath(), "/" );
 	}
 	
     /**

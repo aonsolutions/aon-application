@@ -1601,27 +1601,27 @@ color:#000;
 .aon-header-logout{
 	background:transparent url(images/aon-icon/aon-icon-logout.png) no-repeat scroll center left;
 	cursor:pointer;
-	padding:2px 6px 1px 18px;";
+	padding:2px 6px 1px 18px;
 	text-decoration: underline;
 }
 .aon-header-logout-blue{
 	background:transparent url(images/aon-icon/aon-icon-logout-blue.png) no-repeat scroll center left;
 	color: #0069B4;
 	cursor:pointer;
-	padding:2px 6px 1px 18px;";
+	padding:2px 6px 1px 18px;
 	text-decoration: underline;
 }
 .aon-header-domain{
 	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll left center no-repeat;
 	cursor:pointer;
-	padding:2px 6px 1px 18px;";
+	padding:2px 6px 1px 18px;
 	text-decoration: underline;
 }
 .aon-header-domain-blue{
 	background:transparent url(images/aon-icon/aon-icon-domain-change.png) scroll left center no-repeat;
 	color: #0069B4;
-cursor:pointer;
-	padding:2px 6px 1px 18px;";
+	cursor:pointer;
+	padding:2px 6px 1px 18px;
 	text-decoration: underline;
 }
 

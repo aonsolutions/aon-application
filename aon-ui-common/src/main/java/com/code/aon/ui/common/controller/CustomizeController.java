@@ -1,9 +1,15 @@
 package com.code.aon.ui.common.controller;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -22,12 +28,26 @@ import com.code.aon.ui.util.DataSourceUtil;
 
 public class CustomizeController {
 
-	private static final String AON_DOCUMENTS_PREFFIX = "aonDocuments/";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizeController.class.getName());
+	
+	private static final String AON_CUSTOMIZE_OEM = "AON_CUSTOMIZE_OEM";
+	
+	private static final String AON_CUSTOMIZE_TITLE = "AON_CUSTOMIZE_TITLE";
+	
+	private static final String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
 	
 	private static final String AON_CUSTOMIZE_ID = "AON_CUSTOMIZE_ID";
 	
+	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
+
+	private static final String BUILD_NUMBER = "buildNumber";
+	
+	private static final String BUILD_DATE = "buildDate";
+	
+	private static final String BUILD_REVISION = "buildRevision";
+
+	private static final String AON_DOCUMENTS_PREFFIX = "aonDocuments/";
+
 	private static final String FAVICON_NAME = "favicon.ico";
 	
 	private static final String FAVICON_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/favicon.ico']}");
@@ -43,6 +63,32 @@ public class CustomizeController {
 	private static final String TOOLBAR_LOGO_NAME = "aon-toolbar-logo";
 	
 	private static final String TOOLBAR_LOGO_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-icon/aon-icon-logo.png']}");
+	
+	private static final String STATUS_START_NAME = "aon-status-start";
+	
+	private static final String STATUS_START_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-start.gif']}");
+
+	private static final String STATUS_STOP_NAME = "aon-status-stop";
+	
+	private static final String STATUS_STOP_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-stop.png']}");
+
+	private static final String STATUS_FAILED_NAME = "aon-status-failed";
+	
+	private static final String STATUS_FAILED_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-failed.png']}");
+	
+	private static final String FONT_STYLE_DEFAULT = "black";
+	
+	private Integer domainId;
+	
+	private boolean oem;
+	
+	private String applicationVersion;
+	
+	private String buildNumber;
+	
+	private String buildDate;
+	
+	private String buildRevision;
 	
 	private Integer companyId;
 	
@@ -60,6 +106,14 @@ public class CustomizeController {
 	
 	private String toolbarLogo;
 	
+	private String fontStyle;
+	
+	private String statusStartStyle;
+	
+	private String statusStopStyle;
+	
+	private String statusFailedStyle;
+	
 	public CustomizeController() {
 		this.applicationTitle = AonUtil.getMessage("appBundle", "aon_application_title" );
 		this.supportTelephone = AonUtil.getMessage("aon_support_telephone_number" );
@@ -68,8 +122,40 @@ public class CustomizeController {
 		this.loginLogo = LOGIN_LOGO_DEFAULT;
 		this.headerLogo = HEADER_LOGO_DEFAULT;
 		this.toolbarLogo = TOOLBAR_LOGO_DEFAULT;
+		this.fontStyle = getColorStyle(FONT_STYLE_DEFAULT);
+		this.statusStartStyle = getBackgroundImageStyle(STATUS_START_DEFAULT);
+		this.statusStopStyle = getBackgroundImageStyle(STATUS_STOP_DEFAULT);
+		this.statusFailedStyle = getBackgroundImageStyle(STATUS_FAILED_DEFAULT);
+		initApplicationVersion();
 		init();
 	}
+
+	private String getColorStyle( String color ) {
+		return "color: " + color + " !important;";
+	}	
+	
+	private String getBackgroundImageStyle( String url ) {
+		return "background-image: url(" + url + ");";
+	}
+	
+	/**
+	 * Calculate application version.
+	 * 
+	 */
+	private void initApplicationVersion() {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
+			Manifest m = new Manifest(in);
+			Attributes attrs = m.getMainAttributes();
+			this.applicationVersion = StringUtils.trimToNull(attrs.getValue(IMPLEMENTATION_VERSION));
+			this.buildNumber = StringUtils.trimToNull( attrs.getValue(BUILD_NUMBER) );
+			this.buildDate = StringUtils.trimToNull( attrs.getValue(BUILD_DATE) );
+			this.buildRevision = StringUtils.trimToNull( attrs.getValue(BUILD_REVISION) );
+		} catch (Throwable e) {
+			LOGGER.warn("Imposible determinar la versión");
+		}
+	}	
 
 	private Connection getConnection( Properties dbProperties ) throws SQLException {
 		DbUtils.loadDriver(dbProperties.getProperty(Environment.DRIVER));
@@ -80,7 +166,18 @@ public class CustomizeController {
 		return connection;	
 	}
 	
-	private Integer getCompanyId( Connection connection, Integer domainId ) {
+	private String getValue( Connection connection, String name ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			return (String) run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, name);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return null;				
+	}
+	
+	private Integer getCompanyId( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			ResultSetHandler<Object> h = new ScalarHandler();
@@ -99,18 +196,19 @@ public class CustomizeController {
 	}
 	
 	private void updateApplicationTitle( Connection connection ) {
-		QueryRunner run = new QueryRunner();
-		try {
-			ResultSetHandler<Object> h = new ScalarHandler();
-			String value = (String) run.query( connection, "SELECT alias FROM registry WHERE id = ?", h, this.companyId);
-			if (! StringUtils.isEmpty(value) ) {
-				this.applicationTitle = value;
-			}
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}		
+		String value = getValue( connection, AON_CUSTOMIZE_TITLE);
+		if (! StringUtils.isEmpty(value) ) {
+			this.applicationTitle = value;
+		}
 	}
 
+	private void updateFontStyle( Connection connection ) {
+		String value = getValue( connection, AON_CUSTOMIZE_COLOR);
+		if (! StringUtils.isEmpty(value) ) {
+			this.fontStyle = getColorStyle(value);
+		}
+	}
+	
 	private void updateSupportTelephone( Connection connection ) {
 		QueryRunner run = new QueryRunner();
 		try {
@@ -137,6 +235,14 @@ public class CustomizeController {
 		}		
 	}
 
+	private String getStatusStyle( Connection connection, String name, String _default ) {
+		String ref = getImageRef(connection, name);
+		if (! StringUtils.isEmpty(ref) ) {
+			return getBackgroundImageStyle(ref);	
+		}
+		return _default;
+	}
+	
 	private String getImageRef( Connection connection, String name ) {
 		String ref = null;
 		QueryRunner run = new QueryRunner();
@@ -158,17 +264,11 @@ public class CustomizeController {
 			Properties dbProperties = DataSourceUtil.getDBProperties();
 			connection = getConnection(dbProperties);
 			if ( connection != null ) {
-				Integer domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
-				if (domainId != null) {
-					this.companyId = getCompanyId(connection, domainId);
-					if ( this.companyId != null ) {
-						updateApplicationTitle(connection);
-						updateSupportTelephone(connection);
-						updateSupportEmail(connection);
-						this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
-						this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
-						this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
-						this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, TOOLBAR_LOGO_NAME), this.toolbarLogo);
+				this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
+				if (this.domainId != null) {
+					this.oem = StringUtils.equals(getValue(connection, AON_CUSTOMIZE_OEM), Boolean.TRUE.toString());
+					if ( this.oem ) {
+						loadValues(connection);	
 					}
 				}
 			}
@@ -179,6 +279,39 @@ public class CustomizeController {
 		}
 	}
 	
+	private void loadValues( Connection connection ) {
+		this.companyId = getCompanyId(connection);
+		if ( this.companyId != null ) {
+			updateApplicationTitle(connection);
+			updateSupportTelephone(connection);
+			updateSupportEmail(connection);
+			updateFontStyle(connection);
+			this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
+			this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
+			this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
+			this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, TOOLBAR_LOGO_NAME), this.toolbarLogo);
+			this.statusStartStyle = getStatusStyle(connection, STATUS_START_NAME, this.statusStartStyle);
+			this.statusStopStyle = getStatusStyle(connection, STATUS_STOP_NAME, this.statusStopStyle);
+			this.statusFailedStyle = getStatusStyle(connection, STATUS_FAILED_NAME, this.statusFailedStyle);
+		}		
+	}
+	
+	public String getApplicationVersion() {
+		return applicationVersion;
+	}
+
+	public String getBuildNumber() {
+		return buildNumber;
+	}
+
+	public String getBuildDate() {
+		return buildDate;
+	}
+
+	public String getBuildRevision() {
+		return buildRevision;
+	}
+
 	public String getApplicationTitle() {
 		return this.applicationTitle;
 	}
@@ -211,4 +344,20 @@ public class CustomizeController {
 		return companyId != null;
 	}
 
+	public String getFontStyle() {
+		return fontStyle;
+	}
+
+	public String getStatusStartStyle() {
+		return statusStartStyle;
+	}
+
+	public String getStatusStopStyle() {
+		return statusStopStyle;
+	}
+
+	public String getStatusFailedStyle() {
+		return statusFailedStyle;
+	}
+	
 }

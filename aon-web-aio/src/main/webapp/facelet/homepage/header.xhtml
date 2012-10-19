@@ -12,15 +12,19 @@
 			
 			<aon:div style="margin-top: 6px">
 				<aon:outputConnectionStatus id="aonStatus" layout="block"
+					startStyle="#{customize.statusStartStyle}"
 					startStyleClass="aon-outputConnectionStatus-start"
+					stopStyle="#{customize.statusStopStyle}"
 					stopStyleClass="aon-outputConnectionStatus-stop"
 					onstart="resetStatusError();" />
-				<aon:div id="status_error" style="display: none"
+				<aon:div id="status_error"
+					style="#{customize.statusFailedStyle} display: none;"
 					styleClass="aon-outputConnectionStatus-failed" />
 				<aon:graphicImage style="margin-left: 150px;"
 					value="#{customize.headerLogo}" />
 				<aon:outputText value="/" styleClass="aon-header-title-without-image" />
 				<aon:outputText value="#{domainSwitcher.domainName}"
+					style="#{customize.fontStyle}"
 					styleClass="aon-nowrap aon-header-domain-title"/>
 			</aon:div>
 
@@ -33,14 +37,14 @@
 								title="#{configBundle.config_domain_module}"
 								value="#{configBundle.config_domain_module}"
 								styleClass="aon-header-domain-blue"
-								style="color: #0066FF;"
+								style="#{customize.fontStyle}"
 								actionListener="#{domainSwitcher.onEditSearch}"					
 								action="domain_list" />
 						</aon:panelGroup>
 					</c:if>
 					<aon:panelGroup>
 						<aon:commandLink id="logout"
-							style="color: #0066FF;" styleClass="aon-header-logout-blue"
+							style="#{customize.fontStyle}" styleClass="aon-header-logout"
 							title="#{securityBundle.aon_login_user_logout}"
 							value="#{securityBundle.aon_login_user_logout}"
 							action="logout"
@@ -68,8 +72,8 @@
 			<c:if test="#{!aonConfiguration.properties.hideApplicationVersion}">
 				<aon:outputFormat value="#{bundle.aon_version}"
 					styleClass="aon-version-label"
-					rendered="#{aonConfiguration.properties.applicationVersion != null}" >
-					<f:param value="#{aonConfiguration.properties.applicationVersion}" />
+					rendered="#{customize.applicationVersion != null}" >
+					<f:param value="#{customize.applicationVersion}" />
 				</aon:outputFormat>
 			</c:if>				
 			<ui:include src="#{userUtils.loggedUser.toolbar.template}" />

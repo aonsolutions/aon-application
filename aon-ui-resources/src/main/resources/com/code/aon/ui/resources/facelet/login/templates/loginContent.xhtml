@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
 	<aon:div styleClass="aon-login">
@@ -15,7 +16,8 @@
 				<form id="login" method="post" action="j_security_check">
 					<aon:div styleClass="aon-login-title">
 						<aon:graphicImage value="#{customize.loginLogo}" />								
-						<aon:outputText value=" / #{customize.applicationTitle}"/>
+						<aon:outputText style="#{customize.fontStyle}"
+							value=" / #{customize.applicationTitle}"/>
 					</aon:div>
 					<aon:div styleClass="aon-login-box">
 						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
@@ -56,6 +58,11 @@
 						<c:if test="#{!facesContext.externalContext.initParameterMap['com.code.aon.skipTradeMark']}" >
 							<aon:div styleClass="aon-login-info2">		
 								<ui:include src="/com/code/aon/ui/resources/facelet/shared/trademark.xhtml" />		
+								<aon:div rendered="#{customize.applicationVersion != null}" >						
+									<aon:outputFormat value="#{bundle.aon_about_version}" >
+										<f:param value="#{customize.applicationVersion}" />
+									</aon:outputFormat>
+								</aon:div>
 							</aon:div>
 						</c:if>	
 						
