@@ -850,6 +850,21 @@
 												</sources>
 											</mapping>
 											<mapping>
+												<directory>/var/lib/tomcat6/webapps/aon-aio/META-INF</directory>
+												<filemode>755</filemode>
+												<username>tomcat</username>
+												<groupname>tomcat</groupname>
+												<directoryIncluded>false</directoryIncluded>
+												<sources>
+													<source>
+													  <includes>
+															<include>MANIFEST.MF</include>
+														</includes>
+														<location>src/main/webapp/META-INF</location>
+													</source>
+												</sources>
+											</mapping>
+											<mapping>
 												<directory>/etc/tomcat6/</directory>
 												<configuration>true</configuration>
 												<filemode>755</filemode>
