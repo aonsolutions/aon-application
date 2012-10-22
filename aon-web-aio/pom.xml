@@ -77,6 +77,17 @@
 						</manifestEntries>
 					</archive>
 				</configuration>
+				<executions>
+            <execution>
+            <id>execution1</id>
+            <phase>package</phase>
+            <configuration>
+            </configuration>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
 			</plugin>
 
 			<!-- Para construir el RPM -->
@@ -835,6 +846,21 @@
 															<exclude>**/commons-dbutils*.jar</exclude>
 															<exclude>**/commons-lang*.jar</exclude>
 														</excludes>
+													</source>
+												</sources>
+											</mapping>
+											<mapping>
+												<directory>/var/lib/tomcat6/webapps/aon-aio/META-INF</directory>
+												<filemode>755</filemode>
+												<username>tomcat</username>
+												<groupname>tomcat</groupname>
+												<directoryIncluded>false</directoryIncluded>
+												<sources>
+													<source>
+													  <includes>
+															<include>MANIFEST.MF</include>
+														</includes>
+														<location>src/main/webapp/META-INF</location>
 													</source>
 												</sources>
 											</mapping>
