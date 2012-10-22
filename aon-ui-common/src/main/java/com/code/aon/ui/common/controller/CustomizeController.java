@@ -1,5 +1,10 @@
 package com.code.aon.ui.common.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
+
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,14 +34,6 @@ import com.code.aon.ui.util.DataSourceUtil;
 public class CustomizeController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizeController.class.getName());
-	
-	private static final String AON_CUSTOMIZE_OEM = "AON_CUSTOMIZE_OEM";
-	
-	private static final String AON_CUSTOMIZE_TITLE = "AON_CUSTOMIZE_TITLE";
-	
-	private static final String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
-	
-	private static final String AON_CUSTOMIZE_ID = "AON_CUSTOMIZE_ID";
 	
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 

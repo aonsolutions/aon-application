@@ -36,6 +36,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
@@ -201,17 +202,17 @@ public class CompanyWebInfoStyleController extends BasicController {
 	}
 
 	public void onChangeTemplate(ActionEvent event) {
-		PublishParameterController.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
+		AppParamUtil.insertParameter(TEMPLATE_NAME_PARAM, getTemplate());	
 		chargeValues();
     }
 
 	public void onChangeHomepage(ActionEvent event) {
-		PublishParameterController.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
+		AppParamUtil.insertParameter(HOMEPAGE_ID_PARAM, String.valueOf(getHomepage()));	
     }
 
 	public String getTemplate() {
 		if (template == null) {
-			ApplicationParameter ap = PublishParameterController.getParameter(TEMPLATE_NAME_PARAM);
+			ApplicationParameter ap = AppParamUtil.getParameter(TEMPLATE_NAME_PARAM);
 			if ( ap != null ) {
 				template = ap.getValue();				
 				chargeValues();
@@ -224,7 +225,7 @@ public class CompanyWebInfoStyleController extends BasicController {
 	public Integer getHomepage() {
 		if (homepage == null) {
 			homepage = 0;
-			ApplicationParameter ap = PublishParameterController.getParameter(HOMEPAGE_ID_PARAM);
+			ApplicationParameter ap = AppParamUtil.getParameter(HOMEPAGE_ID_PARAM);
 			if ( ap != null ) {
 				homepage = Integer.parseInt(ap.getValue());				
 			}

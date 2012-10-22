@@ -4,12 +4,16 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
+import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +24,17 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AdminUtil;
+import com.code.aon.company.Company;
 import com.code.aon.config.Application;
 import com.code.aon.config.Domain;
 import com.code.aon.config.DomainApplication;
 import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.DomainApplicationInfo;
 import com.code.aon.ui.admin.DomainModuleInfo;
 import com.code.aon.ui.audit.AuditManager;
+import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -44,7 +51,9 @@ public class DomainController extends BasicController {
 
 	private List<DomainApplicationInfo> applicationInfos;
 	
-	private DomainApplication domainApplication; 
+	private DomainApplication domainApplication;
+		
+	private boolean OEM;
 	
 	private AdminMainController getAdmin() {
 		return (AdminMainController) AonUtil.getRegisteredBean(ADMIN_CONTROLLER_NAME);
@@ -196,6 +205,31 @@ public class DomainController extends BasicController {
 
 	public void setDomainApplication(DomainApplication domainApplication) {
 		this.domainApplication = domainApplication;
+	}	
+	
+	public boolean isOEM() {
+		return OEM;
+	}
+
+	public void setOEM(boolean oEM) {
+		OEM = oEM;
+	}
+
+	public void initOEM() throws ManagerBeanException {
+		String value = AppParamUtil.getValue(AON_CUSTOMIZE_OEM);
+		this.OEM = StringUtils.equals(value, Boolean.TRUE.toString());
+	}
+
+	public void saveOEM() throws ManagerBeanException {
+		AppParamUtil.insertParameter(AON_CUSTOMIZE_OEM, String.valueOf(isOEM()) );
+		if ( isOEM() ) {
+			CompanyController cc = (CompanyController) AonUtil.getRegisteredBean(COMPANY_CONTROLLER_NAME);
+			Company company = cc.obtainCompany();
+			if ( (company != null) && (company.getId() != null) ) {
+				AppParamUtil.insertParameter(AON_CUSTOMIZE_ID, String.valueOf(company.getId()) );				
+			}
+		}
+
 	}	
 	
 }

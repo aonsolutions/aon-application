@@ -48,6 +48,7 @@ import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.infoweb.WebInfo;
 import com.code.aon.infoweb.WebInfoPage;
@@ -103,7 +104,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	private String getTemplate() {
 		String template = DEFAULT_TEMPLATE;
 		//Obtenemos el template seleccionado
-		ApplicationParameter ap = PublishParameterController.getParameter(TEMPLATE_NAME_PARAM);
+		ApplicationParameter ap = AppParamUtil.getParameter(TEMPLATE_NAME_PARAM);
 		if ( ap != null ) {
 			template = ap.getValue();				
 		}
@@ -117,7 +118,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 	 */
 	private int getHomepage() {
 		int homepage = 0;
-		ApplicationParameter ap = PublishParameterController.getParameter(HOMEPAGE_ID_PARAM);
+		ApplicationParameter ap = AppParamUtil.getParameter(HOMEPAGE_ID_PARAM);
 		if ( ap != null ) {
 			homepage = Integer.parseInt(ap.getValue());				
 		}

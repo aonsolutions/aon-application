@@ -87,5 +87,12 @@ public interface ICommonConstants {
 	/** Logout action listener. */
 	String ON_LOGOUT = "onLogout";
 	
+	String AON_CUSTOMIZE_OEM = "AON_CUSTOMIZE_OEM";
+	
+	String AON_CUSTOMIZE_ID = "AON_CUSTOMIZE_ID";
+	
+	String AON_CUSTOMIZE_TITLE = "AON_CUSTOMIZE_TITLE";
+	
+	String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
 	
 }

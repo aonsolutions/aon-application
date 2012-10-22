@@ -71,6 +71,11 @@
 							value="#{adminDomain.to.type}">
 							<f:selectItems value="#{adminCollections.domainTypes}" />
 						</aon:selectOneMenu>		
+
+						<aon:outputLabel for="Domain_oem"
+							value="#{adminBundle.admin_domain_oem}" />
+						<aon:selectBooleanCheckbox id="Domain_oem"
+							value="#{adminDomain.OEM}" />								
 					</c:if>
 					
 				</aon:panelGrid>
