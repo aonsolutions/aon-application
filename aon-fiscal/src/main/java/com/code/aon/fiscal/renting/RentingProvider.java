@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -101,6 +102,7 @@ public class RentingProvider {
 		Date dateTo = renting.getPeriod().getDueDate(renting.getYear());
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		List<String> lessorDocuments = new ArrayList<String>();
 		try {
 			StringWriter stmt = new StringWriter();
 			stmt.append("SELECT i.type,it.percentage,rdocument,i.rname,");
@@ -127,7 +129,11 @@ public class RentingProvider {
 			while (rs.next()) {
 				double rentingAmount = rs.getDouble(5);
 				double retention = rs.getDouble(6);
-				renting.setLessorCountAccumulated( CommonUtil.round(renting.getLessorCountAccumulated() + 1 ) );
+				String document = rs.getString(3);
+				if (!lessorDocuments.contains(document) ) {
+					lessorDocuments.add(document);
+					renting.setLessorCountAccumulated( CommonUtil.round(renting.getLessorCountAccumulated() + 1 ) );	
+				}
 				renting.setRentingAmountAccumulated(CommonUtil.round(renting.getRentingAmountAccumulated() + rentingAmount ) );
 				renting.setRetentionAccumulated( CommonUtil.round(renting.getRetentionAccumulated() + retention ) );
 			}
