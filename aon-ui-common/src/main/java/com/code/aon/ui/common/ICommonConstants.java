@@ -1,5 +1,6 @@
 package com.code.aon.ui.common;
 
+
 /**
  * @author ecastellano
  *
@@ -94,5 +95,19 @@ public interface ICommonConstants {
 	String AON_CUSTOMIZE_TITLE = "AON_CUSTOMIZE_TITLE";
 	
 	String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
+
+	String FAVICON_NAME = "favicon.ico";
+
+	String LOGIN_LOGO_NAME = "aon-login-logo";
+
+	String HEADER_LOGO_NAME = "aon-header-logo";
+
+	String TOOLBAR_LOGO_NAME = "aon-toolbar-logo";
+	
+	String STATUS_START_NAME = "aon-status-start";
+
+	String STATUS_STOP_NAME = "aon-status-stop";
+
+	String STATUS_FAILED_NAME = "aon-status-failed";
 	
 }

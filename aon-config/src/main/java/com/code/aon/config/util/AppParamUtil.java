@@ -57,8 +57,8 @@ public class AppParamUtil {
 		if ( ap == null ) {
 			ap = new ApplicationParameter();
 			ap.setName(name);
-			ap.setValue(value);
 		}
+		ap.setValue(value);		
 		return insertParameter(ap);
     }	
 

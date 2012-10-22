@@ -263,6 +263,7 @@
 			<value>#{enterpriseActivityChildListener}</value>
 			<value>#{payrollWorkPlaceChildListener}</value>
 			<value>#{companyImagesChildListener}</value>
+			<value>#{companyCustomizeChildListener}</value>
 			<!--  aon.ui.registry -->
 			<value>#{corporateIdentityChildListener}</value>			
 		</list-entries>
