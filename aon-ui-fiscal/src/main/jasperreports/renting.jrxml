@@ -22,7 +22,7 @@
 		<band height="40" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-13" x="0" y="1" width="430" height="17"/>
+				<reportElement key="textField-13" x="0" y="1" width="418" height="17"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -35,7 +35,7 @@
 				<textFieldExpression><![CDATA[$R{fiscal_renting_module}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-14" x="487" y="2" width="45" height="12"/>
+				<reportElement key="textField-14" x="465" y="2" width="67" height="12"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -48,7 +48,7 @@
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-47" x="445" y="2" width="42" height="13"/>
+				<reportElement key="textField-47" x="421" y="2" width="42" height="13"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

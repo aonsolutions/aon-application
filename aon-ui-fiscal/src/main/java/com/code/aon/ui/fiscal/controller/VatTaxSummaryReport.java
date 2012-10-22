@@ -263,7 +263,6 @@ public class VatTaxSummaryReport {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void toExcel(DynaReport dynaReport,String filename, Collection<?> c) {
 		HttpServletResponse response = null;
 		OutputStream out = null;

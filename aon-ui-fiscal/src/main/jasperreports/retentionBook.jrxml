@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="393"/>
+	<property name="ireport.x" value="304"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -97,7 +97,7 @@
 				<textFieldExpression><![CDATA[$R{retention_book_report}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-14" x="734" y="19" width="45" height="12"/>
+				<reportElement key="textField-14" x="716" y="19" width="63" height="12"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -170,7 +170,7 @@
 				<textFieldExpression><![CDATA[$P{params}.getToInvoiceDate()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-47" x="692" y="19" width="42" height="13"/>
+				<reportElement key="textField-47" x="672" y="19" width="42" height="13"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

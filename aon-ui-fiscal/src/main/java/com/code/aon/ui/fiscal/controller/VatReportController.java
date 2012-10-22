@@ -347,10 +347,9 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		return this.title;	
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<?> getCollection(boolean arg0) throws ManagerBeanException {
-		return (Collection) getModel().getWrappedData();
+		return (Collection<?>) getModel().getWrappedData();
 	}
 
 	@Override
