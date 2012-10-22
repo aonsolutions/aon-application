@@ -341,7 +341,7 @@ public class CustomizeController {
 	}
 
 	public boolean isCustomized() {
-		return companyId != null;
+		return this.oem;
 	}
 
 	public String getFontStyle() {
