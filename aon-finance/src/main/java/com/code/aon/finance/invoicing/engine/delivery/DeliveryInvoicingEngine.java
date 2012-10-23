@@ -3,16 +3,17 @@ package com.code.aon.finance.invoicing.engine.delivery;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
@@ -42,26 +43,34 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 	
 	private IInvoicingDAO invoicingDAO;
 	private IInvoicingFeedBack invoicingFeedBack;
+	private Session session;
 	
 	public IInvoicingDAO getInvoicingDAO() {
 		return invoicingDAO;
-	}
-
-	public IInvoicingFeedBack getInvoicingFeedBack() {
-		return invoicingFeedBack;
 	}
 
 	public void setInvoicingDAO(IInvoicingDAO invoicingDAO) {
 		this.invoicingDAO = invoicingDAO;
 	}
 
+	public IInvoicingFeedBack getInvoicingFeedBack() {
+		return invoicingFeedBack;
+	}
+
 	public void setInvoicingFeedBack(IInvoicingFeedBack invoicingFeedBack) {
 		this.invoicingFeedBack = invoicingFeedBack; 
 	}
 
-	@SuppressWarnings("unchecked")
+	public Session getHibernateSession() {
+		return session;
+	}
+
+	public void setHibernateSession(Session session) {
+		this.session = session; 
+	}
+
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
-		List deliveryList = obtainDeliveryList(createInvoicingCriteria(params), params);
+		List<ITransferObject> deliveryList = obtainDeliveryList(createInvoicingCriteria(params), params);
 		invoiceDeliveries(deliveryList, createInvoicingCriteria(params), params);
 	}
 
@@ -104,93 +113,82 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		return criteria;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Criteria completeCriteriaWithCustomerData(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
+	private Criteria completeCriteriaWithCustomerData(Criteria criteria, Customer customer) throws ManagerBeanException {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
-			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), params.getCustomer().getId());
-			InvoicingGroup group = getInvoicingGroup(params.getCustomer().getRegistry());
+		if (customer != null && customer.getId() != null) {
+			Expression expression = ExpressionUtilities.getEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), customer.getId());
+
+			InvoicingGroup group = getInvoicingGroupByParent(customer.getRegistry());
 			if (group != null) {
 				IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
-				Expression expr = null;
-				Criteria parentCriteria = new Criteria();
-				parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
-				Iterator iter = invoicingGroupDetailBean.getList(parentCriteria).iterator();
-				while (iter.hasNext()) {
-					InvoicingGroupDetail detail = (InvoicingGroupDetail)iter.next();
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), detail.getChild().getId()));
-				}
-
-				if (expr != null) {
-					criteria.addOrExpression(expr);
+				Criteria groupCriteria = new Criteria();
+				groupCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
+				for (ITransferObject ito : invoicingGroupDetailBean.getList(groupCriteria)) {
+					InvoicingGroupDetail detail = (InvoicingGroupDetail)ito;
+					Expression groupExp = ExpressionUtilities.getEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), detail.getChild().getId());
+					expression = ExpressionUtilities.getOrExpression(expression, groupExp);
 				}
 			}
+			criteria.addExpression(expression);
 		}
 		return criteria;
 	}
 
-	@SuppressWarnings("unchecked")
-	private InvoicingGroup getInvoicingGroup(Registry registry) throws ManagerBeanException {
+	private InvoicingGroup getInvoicingGroupByParent(Registry registry) throws ManagerBeanException {
 		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoicingGroupBean.getFieldName(IEntityAlias.INVOICING_GROUP_PARENT_ID), registry.getId());
-		Iterator iterator = invoicingGroupBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (InvoicingGroup)iterator.next();
+		for (ITransferObject ito : invoicingGroupBean.getList(criteria)) {
+			return (InvoicingGroup)ito;
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	private InvoicingGroupDetail getInvoicingGroupDetail(Registry registry) throws ManagerBeanException {
+	private InvoicingGroup getInvoicingGroupByChild(Registry registry) throws ManagerBeanException {
 		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IEntityAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
-		Iterator iterator = invoicingGroupDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (InvoicingGroupDetail)iterator.next();
+		for (ITransferObject ito : invoicingGroupDetailBean.getList(criteria)) {
+			return ((InvoicingGroupDetail)ito).getInvoicingGroup();
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List obtainDeliveryList(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
-		Map parentMap = new HashMap();
-		List parentDeliveryList = new LinkedList();
-		List childDeliveryList = new LinkedList();
+	private List<ITransferObject> obtainDeliveryList(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
+		Map<Integer, ITransferObject> parentMap = new HashMap<Integer, ITransferObject>();
+		List<ITransferObject> parentDeliveryList = new LinkedList<ITransferObject>();
+		List<ITransferObject> childDeliveryList = new LinkedList<ITransferObject>();
 
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
 		Criteria deliveryCriteria = new Criteria();
 		deliveryCriteria.addExpression(criteria.getExpression());
 		deliveryCriteria.setOrderByList(criteria.getOrderByList());
-		deliveryCriteria = completeCriteriaWithCustomerData(deliveryCriteria, params);
-		List deliveryList = deliveryBean.getList(deliveryCriteria);
-		Iterator iterator = deliveryList.iterator();
-		while (iterator.hasNext()) {
-			Delivery delivery = (Delivery)iterator.next();
-			InvoicingGroupDetail invoicingGroupDetail = getInvoicingGroupDetail(delivery.getCustomer().getRegistry());
-			if (invoicingGroupDetail != null) {
+		deliveryCriteria = completeCriteriaWithCustomerData(deliveryCriteria, params.getCustomer());
+		List<ITransferObject> deliveryList = deliveryBean.getList(deliveryCriteria);
+		for (ITransferObject ito : deliveryList) {
+			Delivery delivery = (Delivery)ito;
+			InvoicingGroup invoicingGroup = getInvoicingGroupByChild(delivery.getCustomer().getRegistry());
+			if (invoicingGroup != null) {
 				childDeliveryList.add(delivery);
-				if (!parentMap.containsKey(invoicingGroupDetail.getInvoicingGroup().getParent().getId())) {
+				if (!parentMap.containsKey(invoicingGroup.getParent().getId())) {
 					Criteria parentCriteria = new Criteria();
 					parentCriteria.addExpression(deliveryCriteria.getExpression());
-					parentCriteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), invoicingGroupDetail.getInvoicingGroup().getParent().getId());
+					parentCriteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_CUSTOMER_ID), invoicingGroup.getParent().getId());
 					if (deliveryBean.getCount(parentCriteria) == 0) {
 						Customer groupCustomer = new Customer();
-						groupCustomer.setId(invoicingGroupDetail.getInvoicingGroup().getParent().getId());
-						groupCustomer.setRegistry(invoicingGroupDetail.getInvoicingGroup().getParent());
+						groupCustomer.setId(invoicingGroup.getParent().getId());
+						groupCustomer.setRegistry(invoicingGroup.getParent());
 						Delivery groupDelivery = new Delivery();
 						groupDelivery.setCustomer(groupCustomer);
 						parentDeliveryList.add(groupDelivery);
-						parentMap.put(invoicingGroupDetail.getInvoicingGroup().getParent().getId(), groupDelivery);
+						parentMap.put(invoicingGroup.getParent().getId(), groupDelivery);
 					}
 				}
 			}
 		}
 
-		iterator = childDeliveryList.iterator();
-		while (iterator.hasNext()) {
-			Delivery delivery = (Delivery)iterator.next();
+		for (ITransferObject ito : childDeliveryList) {
+			Delivery delivery = (Delivery)ito;
 			deliveryList.remove(delivery);
 		}
 		deliveryList.addAll(parentDeliveryList);
@@ -198,10 +196,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		return orderDeliveryList(deliveryList);
 	}
 
-	@SuppressWarnings("unchecked")
-	private List orderDeliveryList(List deliveryList) {
-		class DeliveryComparator implements Comparator {
-			public int compare(Object o1, Object o2) {
+	private List<ITransferObject> orderDeliveryList(List<ITransferObject> deliveryList) {
+		class DeliveryComparator implements Comparator<ITransferObject> {
+			public int compare(ITransferObject o1, ITransferObject o2) {
 				if (o1 instanceof Delivery && o2 instanceof Delivery) {
 					Delivery delivery1 = (Delivery)o1;
 					String name1 = delivery1.getCustomer().getRegistry().getFullName();
@@ -217,22 +214,20 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		return deliveryList;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void invoiceDeliveries(List deliveryList, Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
+	private void invoiceDeliveries(List<ITransferObject> deliveryList, Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
 		int size = deliveryList.size();
 		getInvoicingFeedBack().setRowCount(size);
 		getInvoicingFeedBack().setCurrentRow(0);
 		int counter = params.getInvoiceNumber();
 		Invoice invoice = null;
 		Delivery previousDelivery = null;
-		List customerDeliveryList = new LinkedList();
-		Iterator iter = deliveryList.iterator();
+		List<Delivery> customerDeliveryList = new LinkedList<Delivery>();
 		int i = 0;
-		while(iter.hasNext()){
-			Delivery delivery = (Delivery)iter.next();
+		for (ITransferObject ito : deliveryList) {
+			Delivery delivery = (Delivery)ito;
 			counter = calculateNextNumber(params.getInvoiceSeries(), counter);
 
-			InvoicingGroup group = getInvoicingGroup(delivery.getCustomer().getRegistry());
+			InvoicingGroup group = getInvoicingGroupByParent(delivery.getCustomer().getRegistry());
 			if (group != null) {
 				if (previousDelivery == null || !previousDelivery.getCustomer().getId().equals(delivery.getCustomer().getId())) {
 					invoiceGroup(group, criteria, counter, params);
@@ -246,7 +241,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 					}
 					invoice = createInvoice(delivery, counter, params);
 					counter++;
-					customerDeliveryList = new LinkedList();
+					customerDeliveryList = new LinkedList<Delivery>();
 					getInvoicingDAO().insertInvoice(invoice);
 					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 				}
@@ -292,7 +287,6 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		return number;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void invoiceGroup(InvoicingGroup group, Criteria criteria, int counter, InvoicingParameters params) throws ManagerBeanException {
 		InvoicingParameters tmpParams = new InvoicingParameters();
 		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
@@ -308,14 +302,13 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		Criteria deliveryCriteria = new Criteria();
 		deliveryCriteria.addExpression(criteria.getExpression());
 		deliveryCriteria.setOrderByList(criteria.getOrderByList());
-		deliveryCriteria = completeCriteriaWithCustomerData(deliveryCriteria, tmpParams);
-		Iterator deliveryIter = deliveryBean.getList(deliveryCriteria).iterator();
-		if (deliveryIter.hasNext()) {
+		deliveryCriteria = completeCriteriaWithCustomerData(deliveryCriteria, tmpParams.getCustomer());
+		if (deliveryBean.getCount(deliveryCriteria) > 0) {
 			Invoice invoice = null;
 			Delivery previousDelivery = null;
-			List customerDeliveryList = new LinkedList();
-			while (deliveryIter.hasNext()) {
-				Delivery delivery = (Delivery)deliveryIter.next();
+			List<Delivery> customerDeliveryList = new LinkedList<Delivery>();
+			for (ITransferObject ito : deliveryBean.getList(deliveryCriteria)) {
+				Delivery delivery = (Delivery)ito;
 				counter = calculateNextNumber(params.getInvoiceSeries(), counter);
 				if (!isDeliveryGrouped(delivery, previousDelivery) || !delivery.getCustomer().isDeliveryGrouped()) {
 					// Se crea finance asociado al invoice anterior, que ya no tiene más detalles
@@ -325,7 +318,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 					}
 					invoice = createInvoice(group, delivery, counter, params);
 					counter++;
-					customerDeliveryList = new LinkedList();
+					customerDeliveryList = new LinkedList<Delivery>();
 					getInvoicingDAO().insertInvoice(invoice);
 					getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getReferenceCode());
 				}
@@ -439,9 +432,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
 		criteria.addOrder(deliveryDetailBean.getFieldName(IEntityAlias.DELIVERY_DETAIL_LINE));
-		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
+		List<ITransferObject> deliveryDetailList = deliveryDetailBean.getList(criteria);
+		for (ITransferObject ito : deliveryDetailList) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(deliveryDetail.getDelivery().getProject());
@@ -454,7 +447,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			invoiceDetail.setWorkPlace(delivery.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.DELIVERY);
 			invoiceDetail.setSourceId(deliveryDetail.getId());
-			invoiceDetail.getInvoice().setUpdateEnabled(lastDelivery && !iterator.hasNext());
+			invoiceDetail.getInvoice().setUpdateEnabled(lastDelivery && ((deliveryDetailList.lastIndexOf(deliveryDetail) + 1) == deliveryDetailList.size()));
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 		}

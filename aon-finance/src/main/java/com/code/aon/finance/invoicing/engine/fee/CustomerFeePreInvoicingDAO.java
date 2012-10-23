@@ -2,7 +2,6 @@ package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -27,9 +26,7 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerFeePreInvoicingDAO.class.getName());
 	
 	private List<PreInvoice> preInvoicingCollection;
-	
 	private PreInvoice currentPreInvoice;
-	
 	private IPriceStrategy priceStrategy;
 	
 	public CustomerFeePreInvoicingDAO(){
@@ -59,7 +56,6 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	public void createFinances(Invoice invoice, IPayMethod payMethod) {
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		return preInvoicingCollection;
 	}
@@ -75,9 +71,8 @@ public class CustomerFeePreInvoicingDAO implements IInvoicingDAO {
 	private Company obtainCompany() {
 		try {
 			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-			Iterator<ITransferObject> iterator = companyBean.getList(null, 0, 1).iterator();
-			if (iterator.hasNext()) {
-				return (Company) iterator.next();
+			for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
+				return (Company)ito;
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining company", e);

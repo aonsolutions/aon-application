@@ -2,7 +2,6 @@ package com.code.aon.finance;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -151,7 +150,10 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 	
 	@Transient
 	public IAddress getAddress() {
-		return(getAddresses().iterator().hasNext()?getAddresses().iterator().next():getRegistryAddress());
+		for (IAddress iAddress : getAddresses()) {
+			return iAddress;
+		}
+		return getRegistryAddress();
 	}
 	
 	@Transient
@@ -308,9 +310,8 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
 			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
 				return FinanceStatus.PENDING;
 			}
@@ -324,9 +325,8 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			Finance finance = (Finance)ito;
 			if (payMethodName == null) {
 				payMethodName = (finance.getPayMethod() != null) ? finance.getPayMethod().getName() : null;
 			}
