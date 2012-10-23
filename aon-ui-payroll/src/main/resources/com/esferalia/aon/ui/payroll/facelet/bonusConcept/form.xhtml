@@ -25,6 +25,14 @@
 						value="#{bundle.aon_id}" />
 					<aon:outputText id="BonusConcept_id" size="5" maxlength="5"
 						value="#{bonusConcept.to.id}" />
+						
+					<aon:outputLabel for="BonusConcept_type"
+						value="#{bundle.aon_type}" />
+					<aon:selectOneMenu id="BonusConcept_type" 
+						value="#{bonusConcept.to.type}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{payrollCollections.bonusTypes}" />
+					</aon:selectOneMenu>	
 
 					<aon:outputLabel for="BonusConcept_description"
 						value="#{bundle.aon_description}" />

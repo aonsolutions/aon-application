@@ -191,6 +191,10 @@
 			<many-to-one property="linkedBankStatementLink"/>
 		</foreign-key>
 	</table>
+	
+	<table name="bonus_concept">
+		<column name="type" type="com.esferalia.aon.salary.enumeration.BonusType"/>
+	</table>
 
 	<table name="calendar">
 		<column name="comments" type="text" />
