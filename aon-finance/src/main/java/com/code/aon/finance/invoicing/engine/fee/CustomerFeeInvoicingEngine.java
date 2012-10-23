@@ -161,9 +161,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		for (ITransferObject ito : feeList) {
 			CustomerFee customerFee = (CustomerFee)ito;
 			InvoicingGroup invoicingGroup = getInvoicingGroupByChild(customerFee.getCustomer().getRegistry());
-			customerFee.setDescription(obtainFeeDescription(customerFee, invoicingGroup, params));
+			customerFee.setInvoicingDescription(obtainFeeDescription(customerFee, invoicingGroup, params));
 			if (invoicingGroup != null) {
-				customerFee.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).get(invoicingGroup.getParent().getId()));
+				customerFee.setInvoicingCustomer((Customer)BeanManager.getManagerBean(Customer.class).get(invoicingGroup.getParent().getId()));
 			}
 		}
 		return orderFeeList(feeList);
@@ -188,10 +188,10 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			public int compare(ITransferObject o1, ITransferObject o2) {
 				if (o1 instanceof CustomerFee && o2 instanceof CustomerFee) {
 					CustomerFee fee1 = (CustomerFee)o1;
-					String name1 = fee1.getCustomer().getRegistry().getFullName();
+					String name1 = fee1.getInvoicingCustomer().getRegistry().getFullName();
 					Integer line1 = new Integer(fee1.getLine());
 					CustomerFee fee2 = (CustomerFee)o2;
-					String name2 = fee2.getCustomer().getRegistry().getFullName();
+					String name2 = fee2.getInvoicingCustomer().getRegistry().getFullName();
 					Integer line2 = new Integer(fee2.getLine());
 					return (name1.compareTo(name2) == 0) ? line1.compareTo(line2) : name1.compareTo(name2);
 				}
@@ -215,7 +215,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		int i = 0;
 		for (ITransferObject ito : feeList) {
 			CustomerFee customerFee = (CustomerFee)ito;
-			if (!previousCustomerId.equals(customerFee.getCustomer().getId())) {
+			if (!previousCustomerId.equals(customerFee.getInvoicingCustomer().getId())) {
 				if (invoice != null) {
 					invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
 					invoiceDetail.getInvoice().setUpdateEnabled(true);
@@ -236,7 +236,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 				number++;
 				detailLine = 0;
-				previousCustomerId = customerFee.getCustomer().getId();
+				previousCustomerId = customerFee.getInvoicingCustomer().getId();
 			}
 
 			invoiceDetail = createInvoiceDetail(customerFee, invoice, ++detailLine, params);
@@ -270,7 +270,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Invoice invoice = new Invoice();
 		invoice.setNumber(calculateNextNumber(params.getInvoiceSeries(), number));
 		invoice.setIssueDate(params.getInvoiceDate());
-		Registry registry = customerFee.getCustomer().getRegistry();
+		Registry registry = customerFee.getInvoicingCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
 		invoice.setRegistryDocumentType(registry.getDocumentType());
@@ -317,7 +317,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoiceDetail.setInvoice(invoice);
 		invoiceDetail.setLine(detailLine);
 		invoiceDetail.setItem(customerFee.getItem());
-        invoiceDetail.setDescription(customerFee.getDescription());
+        invoiceDetail.setDescription(customerFee.getInvoicingDescription());
         invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
 		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 4));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
