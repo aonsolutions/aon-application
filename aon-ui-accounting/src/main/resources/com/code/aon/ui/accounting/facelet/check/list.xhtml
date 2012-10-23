@@ -44,6 +44,7 @@
 							<aon:commandLink id="accountCheckFix" 
 								rendered="#{!to.fixed}" 
 								actionListener="#{accountCheck.onFix}"
+								action="#{accountCheck.fixAction}"
 								styleClass="aon-dataTable-link">
 								<aon:outputText value="#{to.fixActionLabel}" style="color:red;"/>
 							</aon:commandLink>

@@ -41,14 +41,17 @@
 					<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 				</aon:selectOneMenu>
 	
+		
 				<aon:outputText value="#{accountingBundle.accounting_check_list}" />
- 				<rich:dataList value="#{accountCheck.accountChecks}"
- 					var="check" rows="0">
-					<aon:div>
-						<aon:selectBooleanCheckbox id="check" value="#{check.enabled}"/>
-						<aon:outputLabel for="check" value="#{check.label}" />
-					</aon:div>
- 				</rich:dataList>	
+				<aon:div style="margin-left: 10px;">
+	 				<rich:dataList value="#{accountCheck.accountChecks}"
+	 					var="check" rows="0">
+						<aon:div>
+							<aon:selectBooleanCheckbox id="check" value="#{check.enabled}"/>
+							<aon:outputLabel for="check" value="#{check.label}" />
+						</aon:div>
+	 				</rich:dataList>	
+				</aon:div>
 			</aon:panelGrid>
 			
 		</aon:div>

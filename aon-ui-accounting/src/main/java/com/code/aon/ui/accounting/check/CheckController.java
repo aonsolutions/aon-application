@@ -14,6 +14,7 @@ import com.code.aon.ui.accounting.check.modules.account.AccountEnabledCheck;
 import com.code.aon.ui.accounting.check.modules.account.ParentEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountEntryCheck;
+import com.code.aon.ui.accounting.check.modules.account.invoice.DuplicatedInvoicesCheck;
 import com.code.aon.ui.accounting.check.modules.account.invoice.NoRecordedInvoiceCheck;
 import com.code.aon.ui.accounting.check.modules.balance.BalanceCheck;
 import com.code.aon.ui.util.AonUtil;
@@ -44,6 +45,7 @@ public class CheckController {
 			accountChecks.add( new UnbalancedAccountEntryCheck() );
 			accountChecks.add( new BalanceCheck() );
 			accountChecks.add( new NoRecordedInvoiceCheck() );
+			accountChecks.add( new DuplicatedInvoicesCheck() );
 		}
 		return accountChecks;
 	}

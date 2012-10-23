@@ -34,6 +34,7 @@ public interface IFinanceConstants {
 
 	String PURCHASE_INVOICE_FORM_NAME = "purchaseInvoice_form";
 	String PURCHASE_INVOICE_CONTROLLER_NAME = "purchaseInvoice";
+	String PURCHASE_INVOICE_LIST_NAME = "purchaseInvoice_list";
 	String PURCHASE_INVOICE_ADDRESS_CONTROLLER_NAME = "purchaseInvoiceAddress";
 	String PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME = "purchaseInvoiceDetail";
 	String PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME = "purchaseInvoiceFinance";
@@ -41,6 +42,7 @@ public interface IFinanceConstants {
 	
 	String EXPENSE_INVOICE_FORM_NAME = "expenseInvoice_form";
 	String EXPENSE_INVOICE_CONTROLLER_NAME = "expenseInvoice";
+	String EXPENSE_INVOICE_LIST_NAME = "expenseInvoice_list";
 	String EXPENSE_INVOICE_ADDRESS_CONTROLLER_NAME = "expenseInvoiceAddress";
 	String EXPENSE_INVOICE_DETAIL_CONTROLLER_NAME = "expenseInvoiceDetail";
 	String EXPENSE_INVOICE_FINANCE_CONTROLLER_NAME = "expenseInvoiceFinance";
@@ -48,6 +50,7 @@ public interface IFinanceConstants {
 
 	String UNDEDUCTIBLE_INVOICE_FORM_NAME = "undeductibleInvoice_form";
 	String UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME = "undeductibleInvoice";
+	String UNDEDUCTIBLE_INVOICE_LIST_NAME = "undeductibleInvoice_list";
 	String UNDEDUCTIBLE_INVOICE_ADDRESS_CONTROLLER_NAME = "undeductibleInvoiceAddress";
 	String UNDEDUCTIBLE_INVOICE_DETAIL_CONTROLLER_NAME = "undeductibleInvoiceDetail";
 	String UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME = "undeductibleInvoiceFinance";
