@@ -1,10 +1,12 @@
 package com.code.aon.finance.invoicing.engine.income;
 
-import java.util.Iterator;
 import java.util.List;
+
+import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -22,23 +24,31 @@ import com.esferalia.aon.entity.IEntityAlias;
 public class IncomeInvoicingEngine implements IInvoicingEngine {
 	
 	private IInvoicingDAO invoicingDAO;
-	
 	private IInvoicingFeedBack invoicingFeedBack;
+	private Session session;
 	
 	public IInvoicingDAO getInvoicingDAO() {
 		return invoicingDAO;
-	}
-
-	public IInvoicingFeedBack getInvoicingFeedBack() {
-		return invoicingFeedBack;
 	}
 
 	public void setInvoicingDAO(IInvoicingDAO invoicingDAO) {
 		this.invoicingDAO = invoicingDAO;
 	}
 
+	public IInvoicingFeedBack getInvoicingFeedBack() {
+		return invoicingFeedBack;
+	}
+
 	public void setInvoicingFeedBack(IInvoicingFeedBack invoicingFeedBack) {
 		this.invoicingFeedBack = invoicingFeedBack; 
+	}
+
+	public Session getHibernateSession() {
+		return session;
+	}
+
+	public void setHibernateSession(Session session) {
+		this.session = session; 
 	}
 
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
@@ -46,7 +56,7 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 
 	public void invoiceIncomeList(Invoice invoice, List<Income> incomeList) throws ManagerBeanException {
 		for (Income income : incomeList) {
-			boolean lastIncome = incomeList.indexOf(income) == (incomeList.size() - 1);
+			boolean lastIncome = (incomeList.indexOf(income) == (incomeList.size() - 1));
 			createInvoiceDetails(invoice, income, lastIncome);
 			getInvoicingDAO().updateSource(income);
 		}
@@ -59,9 +69,9 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_INCOME_ID), income.getId());
 		criteria.addOrder(incomeDetailBean.getFieldName(IEntityAlias.INCOME_DETAIL_LINE));
-		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
+		List<ITransferObject> incomeDetailList = incomeDetailBean.getList(criteria);
+		for (ITransferObject ito : incomeDetailList) {
+			IncomeDetail incomeDetail = (IncomeDetail)ito;
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
 			invoiceDetail.setProject(incomeDetail.getProject());
@@ -74,7 +84,7 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 			invoiceDetail.setWorkPlace(income.getWorkPlace());
 			invoiceDetail.setSource(InvoiceSource.INCOME);
 			invoiceDetail.setSourceId(incomeDetail.getId());
-			invoiceDetail.getInvoice().setUpdateEnabled(lastIncome && !iterator.hasNext());
+			invoiceDetail.getInvoice().setUpdateEnabled(lastIncome && ((incomeDetailList.lastIndexOf(incomeDetail) + 1) == incomeDetailList.size()));
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 		}

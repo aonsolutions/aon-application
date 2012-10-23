@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
@@ -31,7 +30,7 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
-	private static final String STMT =  "SELECT SUM(id.taxable_base)" 
+	private static final String STMT = "SELECT SUM(id.taxable_base)" 
 			+" FROM invoice_detail id"
 			+" INNER JOIN item it ON id.item = it.id"
 			+" INNER JOIN product pr ON it.product =  pr.id"
@@ -75,7 +74,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		if (invoice.getProject() == null && detail.getProject() != null && detail.getProject().getId() != null) {
 			invoice.setProject(detail.getProject());
 		}
-		updateInvoiceTotals(invoice, detail.isSkipServiceProcess() );
+		updateInvoiceTotals(invoice, detail.isSkipServiceProcess());
 		detail.setInvoice(invoice);
 	}
 	
@@ -196,9 +195,8 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
     	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID), id);
     	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
     	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-    	Iterator<ITransferObject> iter = taxDetailBean.getList(criteria).iterator();
-    	if (iter.hasNext()) {
-    		TaxDetail taxDetail = (TaxDetail)iter.next();
+    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+    		TaxDetail taxDetail = (TaxDetail)ito;
     		Tax tax = new Tax();
     		tax.setId(taxDetail.getTax().getId());
     		tax.setPercentage(taxDetail.getValue());
@@ -223,13 +221,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
 			if (!skipServiceProcess) {
-				invoice.setService( isServiceInvoice(invoice, taxableBase));	
+				invoice.setService(isServiceInvoice(invoice, taxableBase));	
 			}
 			invoiceBean.update(invoice);
 		}
 	}
 
-	private boolean isServiceInvoice(Invoice invoice, double invoiceTotal) throws ManagerBeanException {
+	private boolean isServiceInvoice(Invoice invoice, double invoiceTaxableBase) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -242,7 +240,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			if (rs.next()) {
 				serviceTaxableBase = rs.getDouble(1);	
 			}
-			return (serviceTaxableBase > (invoiceTotal / 2));  
+			return (serviceTaxableBase > CommonUtil.round(invoiceTaxableBase / 2));  
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage());
 		} finally {

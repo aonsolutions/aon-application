@@ -1,6 +1,5 @@
 package com.code.aon.finance;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -123,9 +122,8 @@ public class InvoiceDetail extends InvoiceDetailDB implements ICalculable, IStoc
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_ID), getId());
 			criteria.addOrder(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE));
-			Iterator<ITransferObject> iter = invoiceTaxBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				InvoiceTax invoiceTax = (InvoiceTax)iter.next();
+			for (ITransferObject ito : invoiceTaxBean.getList(criteria)) {
+				InvoiceTax invoiceTax = (InvoiceTax)ito;
 				TaxBreakDown taxBreakDown = new TaxBreakDown();
 				taxBreakDown.setBase(getTaxableBase());
 				taxBreakDown.setTaxType(invoiceTax.getTaxType());
