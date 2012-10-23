@@ -387,7 +387,7 @@ public class ReservationManager implements IReservationConstants {
 				if (breakdown) {
 					for (int j=0; j<totalQuantity; j++) {
 						ProjectReservationService reservationService = insertReservationService(reservation, service, item);
-						for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); date.before(toDate); date=DateUtils.addDays(date, 1)) {
+						for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); isServiceDateValid(date, toDate); date=DateUtils.addDays(date, 1)) {
 							if (pricesMap.containsKey(date)) {
 								double price = (pricesMap.get(date).size() > j) ? pricesMap.get(date).get(j) : 0;
 								ProjectReservationServiceDetail reservationServiceDetail = insertReservationServiceDetail(reservationService, date, 1, price);
@@ -397,7 +397,7 @@ public class ReservationManager implements IReservationConstants {
 					}
 				} else {
 					ProjectReservationService reservationService = insertReservationService(reservation, service, item);
-					for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); date.before(toDate); date=DateUtils.addDays(date, 1)) {
+					for (Date date=DateUtils.truncate(fromDate, Calendar.DATE); isServiceDateValid(date, toDate); date=DateUtils.addDays(date, 1)) {
 						if (pricesMap.containsKey(date)) {
 							Map<Double, Integer> quantityPerPriceMap = getReservationUtils().obtainQuantityPerPriceMap(pricesMap.get(date));
 							for (double price : quantityPerPriceMap.keySet()) {
@@ -422,6 +422,10 @@ public class ReservationManager implements IReservationConstants {
 		if (reservation.getTaxableBase() != totalTaxableBase) {
 			throw new ReservationException("Reservation Taxable Base does not match the sum of Services Taxable Bases", reservation.getCrsCode(), 197);
 		}
+	}
+
+	private boolean isServiceDateValid(Date serviceDate, Date reservationEndDate) {
+		return !DateUtils.isSameDay(serviceDate, reservationEndDate) && serviceDate.before(reservationEndDate);
 	}
 
 	private ProjectReservationService insertReservationService(ProjectReservation reservation, Service service, Item item) throws ManagerBeanException {
