@@ -17,15 +17,15 @@
 
 	<aon:outputLabel for="ContractPayment_startDate" value="#{bundle.aon_start_date}" />
 	<aon:selectInputDate id="ContractPayment_startDate" value="#{controller.to.startDate}" required="true"
-		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
 	
 	<aon:outputLabel for="ContractPayment_endDate" value="#{bundle.aon_end_date}" />
 	<aon:selectInputDate id="ContractPayment_endDate" value="#{controller.to.endDate}"
-		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
 
 	<aon:outputLabel for="ContractPayment_month" value="#{payrollBundle.payroll_salary_payment_month}" />
 	<aon:selectOneMenu id="ContractPayment_month" value="#{controller.to.month}">
-		<f:selectItem value="#{null}" itemLabel=" - " />
+		<f:selectItem itemLabel=" - " itemValue="#{null}" />
 		<c:if test="#{!skipCurrentMonth}">
 			<f:selectItem value="#{controller.currentMonth}"  />
 		</c:if>
@@ -40,8 +40,6 @@
 		<f:selectItem itemValue="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
-<!--  
--->
 
 <!--  
 	<aon:outputLabel for="ContractPayment_PaymentConcept" value="#{bundle.aon_concept}" />
@@ -53,9 +51,9 @@
 -->	
 
 	<aon:outputLabel for="ContractPayment_salaryType" value="#{payrollBundle.payroll_salary_type}" />
-	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}">
+	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}" >
 		<f:selectItems value="#{payrollCollections.salaryTypes}" />
-		<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" ajaxSingle="#{true}" />
+			<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" />
 	</aon:selectOneMenu>
 	
 <!--  
@@ -217,7 +215,7 @@
 	
 	<c:if test="#{!skipResult}">
 		<aon:outputText value="#{payrollBundle.payroll_result}" />
-		<h:panelGrid columns="4">
+		<aon:panelGrid id="resultPanel" columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}"
 				title="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" 
 				style="color:#{(controller.result!=null)?('black'):('red')};" >
@@ -238,7 +236,7 @@
 			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
 			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
 			</rich:inputNumberSpinner>
-		</h:panelGrid>
+		</aon:panelGrid>
 	</c:if>
 	
 </ui:composition>
