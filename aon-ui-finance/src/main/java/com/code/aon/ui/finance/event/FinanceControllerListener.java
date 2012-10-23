@@ -3,6 +3,9 @@ package com.code.aon.ui.finance.event;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
+import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
@@ -13,6 +16,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.BankAccount;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
@@ -20,6 +24,7 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.finance.controller.FinanceGroupListController;
@@ -78,6 +83,14 @@ public class FinanceControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		Finance finance = (Finance) controller.getTo(); 
+		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+	}
+	
+	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
 		FinanceController controller = (FinanceController)event.getController();
@@ -94,6 +107,23 @@ public class FinanceControllerListener extends ControllerAdapter {
 		FinanceController controller = (FinanceController)event.getController();
 		Finance finance = (Finance) controller.getTo(); 
 		controller.setShowBankManualInput(finance.getBank()!=null && finance.getBank().getId()!=null);
+		controller.setRegistryBank(null);
+		try {
+			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
+				for (SelectItem item : controller.getAllBanks()) {
+					RegistryBank rBank = (RegistryBank)item.getValue();
+					BankAccount bankAccount = rBank.getBankAccount();
+					if (bankAccount!= null) {
+						if (StringUtils.equals(finance.getBankAccount().getValue(), bankAccount.getValue())) {
+							controller.setRegistryBank(rBank);
+							break;
+						}
+					}
+				}
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 		try {
 			controller.setFinanceGroup(isFinanceGroup(finance));
 			if(controller.isFinanceGroup()){

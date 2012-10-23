@@ -77,6 +77,15 @@ public class FinanceController extends FinanceListController {
 	private boolean showBankManualInput;
 	private boolean showFinanceGroupWindow;
 	private boolean financeGroup;
+	private RegistryBank registryBank;
+	
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
 
 	public boolean isShowFinanceGroupWindow() {
 		return showFinanceGroupWindow;
@@ -94,7 +103,7 @@ public class FinanceController extends FinanceListController {
 		this.financeGroup = financeGroup;
 	}
 
-	public boolean isShowBankManualInput() {
+	public boolean isShowBankManualInput() throws ManagerBeanException {
 		return showBankManualInput;
 	}
 
@@ -302,6 +311,7 @@ public class FinanceController extends FinanceListController {
 			Finance finance = (Finance)getTo();
 			finance.setBank(new Bank());
 			finance.setBankAccount(new BankAccount());
+			setShowBankManualInput(false);
 		}
 	}
 
@@ -354,7 +364,13 @@ public class FinanceController extends FinanceListController {
 		}
 		return new LinkedList<SelectItem>();
 	}
-
+	public int getActiveBanksCount() throws ManagerBeanException {
+		return getActiveBanks().size();
+	}
+	public int getAllBanksCount() throws ManagerBeanException {
+		return getAllBanks().size();
+	}
+	
 	public boolean isPending() {
     	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
     }
