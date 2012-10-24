@@ -1,7 +1,5 @@
 package com.code.aon.finance;
 
-import java.util.Iterator;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -30,9 +28,8 @@ public class BankConcept extends BankConceptDB {
 							" and " + DomainManager.getSQLWhereClause("bankConceptAccount.domain");
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 	    	Query query = session.createQuery(select);
-			Iterator<?> iterator = query.list().iterator();
-			if (iterator.hasNext()) {
-				setAccount((Account)iterator.next());
+	    	for (Object obj : query.list()) {
+				setAccount((Account)obj);
 			}
 		}
 		return account;

@@ -1,12 +1,12 @@
 package com.code.aon.finance.invoicing.engine.fee;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
@@ -75,9 +75,8 @@ public class PreInvoiceDetail extends InvoiceDetail {
     	criteria.addEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_TAX_ID),id);
     	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_START_DATE), date);
     	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IEntityAlias.TAX_DETAIL_END_DATE), date);
-    	Iterator iter = taxDetailBean.getList(criteria).iterator();
-    	while (iter.hasNext()) {
-    		TaxDetail taxDetail = (TaxDetail)iter.next();
+    	for (ITransferObject ito : taxDetailBean.getList(criteria)) {
+    		TaxDetail taxDetail = (TaxDetail)ito;
     		Tax tax = new Tax();
     		tax.setId(taxDetail.getTax().getId());
     		tax.setPercentage(taxDetail.getValue());
@@ -91,9 +90,8 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	@SuppressWarnings("unchecked")
 	public List getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		Iterator iter = this.taxList.iterator();
-		while (iter.hasNext()) {
-			InvoiceTax invoiceTax = (InvoiceTax)iter.next();
+		for (ITransferObject ito : taxList) {
+			InvoiceTax invoiceTax = (InvoiceTax)ito;
 			TaxBreakDown taxBreakDown = new TaxBreakDown();
 			taxBreakDown.setBase(getTaxableBase());
 			taxBreakDown.setTaxType(invoiceTax.getTaxType());

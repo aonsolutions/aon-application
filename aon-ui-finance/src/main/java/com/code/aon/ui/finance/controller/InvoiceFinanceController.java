@@ -32,7 +32,15 @@ import com.code.aon.ui.util.AonUtil;
 public class InvoiceFinanceController extends LinesController implements IFinanceConstants {
 
 	private RegistryBank registryBank;
+	private boolean showBankManualInput;
 
+	public boolean isShowBankManualInput() throws ManagerBeanException {
+		return showBankManualInput;
+	}
+
+	public void setShowBankManualInput(boolean showBankManualInput) {
+		this.showBankManualInput = showBankManualInput;
+	}
 	public RegistryBank getRegistryBank() {
 		return registryBank;
 	}
@@ -77,6 +85,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 			finance.setBankAccount(new BankAccount());
 
 			setRegistryBank(null);
+			setShowBankManualInput(false);
 		}
 	}
 
@@ -129,6 +138,13 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 			return c.getActiveCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
+	}
+	
+	public int getActiveBanksCount() throws ManagerBeanException {
+		return getActiveBanks().size();
+	}
+	public int getAllBanksCount() throws ManagerBeanException {
+		return getAllBanks().size();
 	}
 
 	private boolean useRegistryBanks(boolean sales, PayMethodType payMethodType) {

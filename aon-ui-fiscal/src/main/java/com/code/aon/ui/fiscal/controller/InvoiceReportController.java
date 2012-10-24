@@ -55,7 +55,6 @@ public class InvoiceReportController {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public List<InvoiceReport> getInvoiceList(InvoiceReportParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;

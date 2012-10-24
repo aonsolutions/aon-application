@@ -138,6 +138,7 @@ public class AdminMainController implements IAdminConstants {
 				controller.select(event, DomainManager.getCurrentDomain());	
 			}
 			controller.initApplicationInfos();
+			controller.initOEM();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
@@ -189,6 +190,6 @@ public class AdminMainController implements IAdminConstants {
 		for( ITransferObject to : bean.getList(criteria) ) {
 			bean.remove(to);
 		}	
-	}	
+	}
 	
 }

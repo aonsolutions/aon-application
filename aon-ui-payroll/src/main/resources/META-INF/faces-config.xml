@@ -436,10 +436,6 @@
 			<property-name>beanName</property-name>
 			<value>contractDeduction</value>
 		</managed-property>
-		<managed-property>
-			<property-name>searchCurrent</property-name>
-			<value>true</value>
-		</managed-property>
 	</managed-bean>
 	<!-- ************ CONTRACT BONUS ************** -->
 	<managed-bean>
@@ -461,10 +457,6 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContractBonus_startDate</value>
-		</managed-property>
-		<managed-property>
-			<property-name>searchCurrent</property-name>
-			<value>true</value>
 		</managed-property>
 	</managed-bean>
 	<!-- ************ CONTRACT DATA ************** -->
@@ -1615,12 +1607,8 @@
 	<!-- ************ SYSTEM PAYMENT  ************** -->
 	<managed-bean>
 		<managed-bean-name>systemPayment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.SystemPaymentController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.esferalia.aon.payroll.SystemPayment</value>
@@ -1629,7 +1617,17 @@
 			<property-name>beanName</property-name>
 			<value>systemPayment</value>
 		</managed-property>
+	<!--  
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractPaymentSearchListener}</value>
+			</list-entries>
+		</managed-property>
+	-->
 	</managed-bean>
+	
 	<!-- ************ PaymentConcept ************** -->
 	<managed-bean>
 		<managed-bean-name>paymentConcept</managed-bean-name>

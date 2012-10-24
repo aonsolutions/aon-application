@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -162,10 +161,10 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 
 			getEngine().setInvoicingDAO(new CustomerFeeInvoicingDAO());
 			getEngine().setInvoicingFeedBack(getInvoicingFeedBack());
+			getEngine().setHibernateSession(HibernateUtil.getSession(sessionName));
 			
 			HibernateUtil.beginTransaction(sessionName);
 			getEngine().invoice(getParams());
-			HibernateUtil.getSession(sessionName).flush();					
 			HibernateUtil.commitTransaction(sessionName);
 
 			Collection<Invoice> invoicedList = getEngine().getInvoicingDAO().getCollection();
@@ -175,13 +174,15 @@ public class FeeInvoicingController implements IProgression, IFinanceConstants, 
 					recording = true;
 					invoicesToRecord = invoicedList.size();
 					recordingInvoice = 0;
-					Iterator<Invoice> iter = invoicedList.iterator();
-					while (iter.hasNext()) {
-						Invoice invoice = iter.next();
+					for (Invoice invoice : invoicedList) {
+						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
 						getAccountEntryInvoiceWriter().recordAndUpdateInvoice(invoice);
 						recordingInvoice++;
+						if (recordingInvoice % 20 == 0) {
+							HibernateUtil.getSession(sessionName).flush();
+							HibernateUtil.getSession(sessionName).clear();
+						}
 					}
-					HibernateUtil.getSession(sessionName).flush();
 					HibernateUtil.commitTransaction(sessionName);
 				}
 

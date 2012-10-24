@@ -1,5 +1,17 @@
 package com.code.aon.ui.common.controller;
 
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
+import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
+import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
+import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
+import static com.code.aon.ui.common.ICommonConstants.LOGIN_LOGO_NAME;
+import static com.code.aon.ui.common.ICommonConstants.STATUS_FAILED_NAME;
+import static com.code.aon.ui.common.ICommonConstants.STATUS_START_NAME;
+import static com.code.aon.ui.common.ICommonConstants.STATUS_STOP_NAME;
+import static com.code.aon.ui.common.ICommonConstants.TOOLBAR_LOGO_NAME;
+
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,14 +42,6 @@ public class CustomizeController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomizeController.class.getName());
 	
-	private static final String AON_CUSTOMIZE_OEM = "AON_CUSTOMIZE_OEM";
-	
-	private static final String AON_CUSTOMIZE_TITLE = "AON_CUSTOMIZE_TITLE";
-	
-	private static final String AON_CUSTOMIZE_COLOR = "AON_CUSTOMIZE_FONT_COLOR";
-	
-	private static final String AON_CUSTOMIZE_ID = "AON_CUSTOMIZE_ID";
-	
 	private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
 	private static final String BUILD_NUMBER = "buildNumber";
@@ -47,32 +51,18 @@ public class CustomizeController {
 	private static final String BUILD_REVISION = "buildRevision";
 
 	private static final String AON_DOCUMENTS_PREFFIX = "aonDocuments/";
-
-	private static final String FAVICON_NAME = "favicon.ico";
 	
 	private static final String FAVICON_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/favicon.ico']}");
-
-	private static final String LOGIN_LOGO_NAME = "aon-login-logo";
 	
 	private static final String LOGIN_LOGO_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/com/code/aon/ui/resources/facelet/login/css/images/login/aon-solutions.gif']}");
-
-	private static final String HEADER_LOGO_NAME = "aon-header-logo";
 	
 	private static final String HEADER_LOGO_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-solutions.png']}");
 
-	private static final String TOOLBAR_LOGO_NAME = "aon-toolbar-logo";
-	
 	private static final String TOOLBAR_LOGO_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-icon/aon-icon-logo.png']}");
-	
-	private static final String STATUS_START_NAME = "aon-status-start";
 	
 	private static final String STATUS_START_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-start.gif']}");
 
-	private static final String STATUS_STOP_NAME = "aon-status-stop";
-	
 	private static final String STATUS_STOP_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-stop.png']}");
-
-	private static final String STATUS_FAILED_NAME = "aon-status-failed";
 	
 	private static final String STATUS_FAILED_DEFAULT = (String) AonUtil.getValue("#{aonResource.resolve['/images/aon-header/aon-outputConnectionStatus-failed.png']}");
 	

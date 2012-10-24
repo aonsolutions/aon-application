@@ -1,7 +1,6 @@
 package com.code.aon.finance.event;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -149,15 +148,12 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
 		String andSeries = "";
-		String andId = "";
 		if (StringUtils.isEmpty(invoice.getSeries())) {
 			andSeries = "AND (invoice.series IS NULL OR invoice.series = '') ";
 		} else {
 			andSeries = "AND invoice.series = '" + invoice.getSeries() + "' ";
 		}
-		if (invoice.getId() != null) {
-			andId = "AND invoice.id <> " + invoice.getId();
-		}
+		String andId = (invoice.getId() != null) ? "AND invoice.id <> " + invoice.getId() : "";
 
 		String select = "SELECT invoice.id id " +
     					"FROM invoice as invoice " +
@@ -168,11 +164,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     					andId;
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
-        List<?> list = query
-    		.addScalar("id", Hibernate.INTEGER)
-        	.list();
-        Iterator<?> iterator = list.iterator();
-        if (iterator.hasNext()) {
+        List<?> list = query.addScalar("id", Hibernate.INTEGER).list();
+        if (!list.isEmpty()) {
 			throw new ManagerBeanVetoListenerException("Ya existe una Factura con esa Serie/Número.");
         }
 	}
@@ -187,13 +180,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 						"WHERE invoice.id = " + invoice.getId();
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
-        List<?> list = query
-    		.addScalar("issue_date", Hibernate.DATE)
-        	.addScalar("tax_date", Hibernate.DATE)
-        	.list();
-        Iterator<?> iterator = list.iterator();
-        if (iterator.hasNext()) {
-        	Object[] obj = (Object[])iterator.next();
+        List<?> list = query.addScalar("issue_date", Hibernate.DATE).addScalar("tax_date", Hibernate.DATE).list();
+        if (!list.isEmpty()) {
+        	Object[] obj = (Object[])list.get(0);
             Date issueDate= (Date) obj[0];
             Date taxDate= (Date) obj[1];
             if (!ObjectUtils.equals(issueDate, invoice.getIssueDate())) {
@@ -245,9 +234,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	private Company getCompany() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		Iterator<ITransferObject> iterator = companyBean.getList(null, 0, 1).iterator();
-		if (iterator.hasNext()) {
-			return (Company) iterator.next();
+		for (ITransferObject ito : companyBean.getList(null, 0, 1)) {
+			return (Company)ito;
 		}
 		return null;
 	}
@@ -267,9 +255,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			financeTrackingBean.remove((FinanceTracking) iter.next());
+		for (ITransferObject ito : financeTrackingBean.getList(criteria)) {
+			financeTrackingBean.remove((FinanceTracking)ito);
 		}
 	}
 
@@ -277,9 +264,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IEntityAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			financeBean.remove((Finance) iter.next());
+		for (ITransferObject ito : financeBean.getList(criteria)) {
+			financeBean.remove((Finance)ito);
 		}
 	}
 
@@ -287,9 +273,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail) iter.next();
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
 			invoiceDetail.setUpdateEnabled(false);
 			invoiceDetailBean.remove(invoiceDetail);
 		}
@@ -299,9 +284,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IEntityAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
-		if (iter.hasNext()) {
-			invoiceAddressBean.remove((InvoiceAddress) iter.next());
+		for (ITransferObject ito : invoiceAddressBean.getList(criteria)) {
+			invoiceAddressBean.remove((InvoiceAddress)ito);
 		}
 	}
 

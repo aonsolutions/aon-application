@@ -155,7 +155,7 @@
 					<aon:selectOneMenu id="Finance_payMethod_id"
 						value="#{finance.to.payMethod}"
 						valueChangeListener="#{finance.onPayMethodChanged}"
-						reRender="Finance_registryBank_id,Finance_bankAccount"
+						reRender="Finance_registryBank_id,Finance_bankAccount_panel"
 						disabled="#{!finance.pending and !finance.returned}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{configCollections.payMethods}" />
@@ -301,7 +301,7 @@
 
 					<aon:outputLabel for="Bank_idFinance"
 						value="#{configBundle.config_bank}" />
-					<aon:div id="Finance_bankAccount_panel">
+					<aon:div id="Finance_bankAccount_panel" styleClass="aon-nowrap">
 						<aon:panelGroup id="Finance_bankAccount" rendered="#{finance.showBankManualInput}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{finance.to.bank}" />
@@ -315,23 +315,34 @@
 								value="#{finance.to.bankAccount.office}"
 								disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
 								<f:validateLength minimum="4" maximum="4" />
+								<a4j:support event="onchange" reRender="createBankContainer" />
 							</aon:inputText>
 							<aon:inputText id="Finance_bankAccount_control"
 								value="#{finance.to.bankAccount.control}"
 								disabled="#{!finance.pending and !finance.returned}" size="1" maxlength="2">
 								<f:validateLength minimum="2" maximum="2" />
+								<a4j:support event="onchange" reRender="createBankContainer" />
 							</aon:inputText>
 							<aon:inputText id="Finance_bankAccount_account"
 								value="#{finance.to.bankAccount.account}"
 								disabled="#{!finance.pending and !finance.returned}" size="10" maxlength="10">
 								<f:validateLength minimum="10" maximum="10" />
+								<a4j:support event="onchange" reRender="createBankContainer" />
 							</aon:inputText>
+							<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
+								rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
+								reRender="Finance_bankAccount_panel"
+								styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
+								value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
+								<f:setPropertyActionListener target="#{finance.showBankManualInput}"
+									value="#{false}" />
+							</aon:commandLink>
 						</aon:panelGroup>
 						<aon:outputLabel for="Finance_registryBank_id"
 							value="&#160;" rendered="#{!finance.showBankManualInput}" />
 						<aon:selectOneMenu id="Finance_registryBank_id"
 							rendered="#{!finance.showBankManualInput}"
-							value="#{registryCollections.registryBank}" reRender="Finance_bankAccount"
+							value="#{finance.registryBank}" reRender="Finance_bankAccount"
 							valueChangeListener="#{finance.onRegistryBankChanged}"
 							disabled="#{!finance.pending and !finance.returned}">
 							<f:selectItem itemLabel="-" value="#{null}" />
@@ -345,18 +356,10 @@
 						<aon:commandLink id="bankAccount_show_manualInput" ajaxSingle="true"
 							rendered="#{!finance.showBankManualInput and (finance.pending or finance.returned)}"  
 							reRender="Finance_bankAccount_panel"
-							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;"
+							styleClass="aon-icon-edit-add aon-margin-left" style="padding-right: 20px;padding-top: 0px;"
 							value="&#160;" title="#{bundle.aon_edit}" >
 							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
 								value="#{true}" />
-						</aon:commandLink>
-						<aon:commandLink id="bankAccount_hide_manualInput" ajaxSingle="true"
-							rendered="#{finance.showBankManualInput and (finance.pending or finance.returned)}"  
-							reRender="Finance_bankAccount_panel"
-							styleClass="aon-icon-edit-end aon-margin-left" style="padding-right: 20px;"
-							value="&#160;" title="#{bundle.aon_key_cancel_line_description}" >
-							<f:setPropertyActionListener target="#{finance.showBankManualInput}"
-								value="#{false}" />
 						</aon:commandLink>
 					</aon:div>
 					

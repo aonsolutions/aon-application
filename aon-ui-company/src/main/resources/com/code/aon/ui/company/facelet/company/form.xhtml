@@ -249,6 +249,14 @@
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
+
+						<c:if test="#{companyCustomize.show}">
+							<aon:panelTab label="#{bundle.aon_oem}">
+								<ui:include src="/com/code/aon/ui/company/facelet/companyCustomize/tab_grid.xhtml">
+									<ui:param name="controller" value="#{companyCustomize}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 					</aon:panelTabSet>
 				</aon:div>
 			</c:if>

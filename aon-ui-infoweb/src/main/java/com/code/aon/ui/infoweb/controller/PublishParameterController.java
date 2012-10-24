@@ -22,6 +22,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.infoweb.PublishProperties;
 
@@ -31,52 +32,6 @@ public class PublishParameterController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PublishParameterController.class);
 	
 	private PublishProperties to;
-	
-	public static ApplicationParameter getParameter( String name ) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(APPLICATION_PARAMETER_NAME), name);
-			List<ITransferObject> list = bean.getList(criteria);
-			if (! list.isEmpty() ) {
-				return (ApplicationParameter) list.get(0);
-			}
-		} catch ( ManagerBeanException e ) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return null;
-	}
-	
-	public static ApplicationParameter insertParameter( String name, String value ) {
-		try {
-			ApplicationParameter ap = getParameter(name);
-			if ( ap == null ) {
-				ap = new ApplicationParameter();
-				ap.setName(name);
-			}
-			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
-			if ( StringUtils.isEmpty(value) ) {
-				if ( ap.getId() != null ) {
-					bean.remove(ap);
-				}
-			} else {
-				ap.setValue(value);
-				bean.insertOrUpdate( ap );
-			}
-			return ap;
-		} catch (ManagerBeanException e) {
-			LOGGER.error( e.getMessage(), e );
-		}
-		return null;
-    }	
-
-	private String getValue( String name ) {
-		ApplicationParameter ap = getParameter(name);
-		if ( ap != null ) {
-			return StringUtils.trimToNull(ap.getValue());
-		}
-		return null;
-	}
 	
 	public void onInit( ActionEvent event ) {
 		this.to = getPublishProperties();
@@ -91,24 +46,24 @@ public class PublishParameterController {
 	}
 
 	public void accept(ActionEvent event) {
-		insertParameter(FTP_SERVER_PARAM, to.getFtpServer());
-		insertParameter(FTP_USER_PARAM, to.getFtpUser());
-		insertParameter(FTP_PASSWORD_PARAM, to.getFtpPassword());
-		insertParameter(PREVIEW_PATH_PARAM, to.getPreviewPath());
-		insertParameter(PREVIEW_URL_PARAM, to.getPreviewURL());
-		insertParameter(PUBLISH_PATH_PARAM, to.getPublishPath());
-		insertParameter(PUBLISH_URL_PARAM, to.getPublishURL());
+		AppParamUtil.insertParameter(FTP_SERVER_PARAM, to.getFtpServer());
+		AppParamUtil.insertParameter(FTP_USER_PARAM, to.getFtpUser());
+		AppParamUtil.insertParameter(FTP_PASSWORD_PARAM, to.getFtpPassword());
+		AppParamUtil.insertParameter(PREVIEW_PATH_PARAM, to.getPreviewPath());
+		AppParamUtil.insertParameter(PREVIEW_URL_PARAM, to.getPreviewURL());
+		AppParamUtil.insertParameter(PUBLISH_PATH_PARAM, to.getPublishPath());
+		AppParamUtil.insertParameter(PUBLISH_URL_PARAM, to.getPublishURL());
 	}
 	
 	public PublishProperties getPublishProperties() {
 		PublishProperties fp = new PublishProperties();
-		fp.setFtpServer(getValue(FTP_SERVER_PARAM));
-		fp.setFtpUser(getValue(FTP_USER_PARAM));
-		fp.setFtpPassword(getValue(FTP_PASSWORD_PARAM));
-		fp.setPreviewPath(getValue(PREVIEW_PATH_PARAM));
-		fp.setPreviewURL(getValue(PREVIEW_URL_PARAM));
-		fp.setPublishPath(getValue(PUBLISH_PATH_PARAM));
-		fp.setPublishURL(getValue(PUBLISH_URL_PARAM));
+		fp.setFtpServer(AppParamUtil.getValue(FTP_SERVER_PARAM));
+		fp.setFtpUser(AppParamUtil.getValue(FTP_USER_PARAM));
+		fp.setFtpPassword(AppParamUtil.getValue(FTP_PASSWORD_PARAM));
+		fp.setPreviewPath(AppParamUtil.getValue(PREVIEW_PATH_PARAM));
+		fp.setPreviewURL(AppParamUtil.getValue(PREVIEW_URL_PARAM));
+		fp.setPublishPath(AppParamUtil.getValue(PUBLISH_PATH_PARAM));
+		fp.setPublishURL(AppParamUtil.getValue(PUBLISH_URL_PARAM));
 		return fp;
 	}
 	

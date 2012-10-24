@@ -8,9 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculable;
 import com.esferalia.aon.entity.master.CustomerFeeDB;
 
@@ -20,9 +23,31 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 
 	private static final long serialVersionUID = 113912434021805866L;
 
-    public void setPrice(double price) {
-        super.setPrice( CommonUtil.round(price, 4) );
+	private Customer invoicingCustomer;
+	private String invoicingDescription;
+
+    @Transient
+	public Customer getInvoicingCustomer() {
+		return (invoicingCustomer != null) ? invoicingCustomer : getCustomer();
     }
+    @Transient
+	public void setInvoicingCustomer(Customer invoicingCustomer) {
+    	this.invoicingCustomer = invoicingCustomer;
+    }
+
+    @Transient
+	public String getInvoicingDescription() {
+		return (StringUtils.isNotEmpty(invoicingDescription)) ? invoicingDescription : getDescription();
+    }
+    @Transient
+	public void setInvoicingDescription(String invoicingDescription) {
+    	this.invoicingDescription = invoicingDescription;
+    }
+
+	public void setPrice(double price) {
+        super.setPrice(CommonUtil.round(price, 4));
+    }
+
     @Transient
 	public Month getBillingDateMonth() {
     	if(getBillingDate() != null){
@@ -61,4 +86,5 @@ public class CustomerFee extends CustomerFeeDB implements ICalculable {
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
 	}
+
 }

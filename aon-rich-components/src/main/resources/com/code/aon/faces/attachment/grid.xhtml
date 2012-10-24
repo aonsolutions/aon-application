@@ -27,59 +27,8 @@
 			</aon:column>
  
  			<ui:insert name="additionalColumns"/>
-			 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-nowrap aon-width-120">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_fileupload_element}" />
-				</f:facet>
-				<aon:div id="#{controller.beanName}_attachFile">													
-					<aon:htmlCommandLink id="download" target="_blank"
-						onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
-						onmouseout="enableRowSelector();"						
-						rendered="#{formList and (to.data != null)}"
-						actionListener="#{controller.downloadAttachment}"
-						styleClass="aon-icon aon-icon-mail-save"
-						style="line-height:16px;margin-right:0;"
-						title="#{bundle.aon_fileupload_download}">
-						<f:param name="index" value="#{to.id}" />
-						<aon:outputText value="&#160;" />
-					</aon:htmlCommandLink>					
-					<a4j:region>
-						<aon:fileUpload rendered="#{formEdit}"
-							addControlLabel="#{bundle.aon_fileUpload_add}"
-							stopControlLabel="#{bundle.aon_fileUpload_stop}"
-							stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-							uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-							fileUploadListener="#{controller.fileUploaded}"
-							listWidth="110px" >
-							<f:facet name="label">
-								<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-							</f:facet>														
-							<a4j:support event="onuploadcomplete"
-								reRender="#{controller.beanName}_attachFile,#{controller.beanName}_description" />
-						</aon:fileUpload>
-					</a4j:region>	
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div id="#{controller.beanName}_attachFileNew">
-						<a4j:region>
-							<aon:fileUpload rendered="#{formNew}"
-								addControlLabel="#{bundle.aon_fileUpload_add}"
-								stopControlLabel="#{bundle.aon_fileUpload_stop}"
-								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
-								fileUploadListener="#{controller.fileUploaded}"
-								listWidth="110px" >
-								<f:facet name="label">
-									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
-								</f:facet>																										
-								<a4j:support event="onuploadcomplete"
-									reRender="#{controller.beanName}_attachFileNew,#{controller.beanName}_description-New" />
-							</aon:fileUpload>
-						</a4j:region>
-					</aon:div>
-				</f:facet>														
-			</aon:column>
+ 			
+ 			<ui:include src="/com/code/aon/faces/attachment/fileColumn.xhtml" />
 		
 		</ui:define>
 	</ui:decorate>

@@ -19,6 +19,7 @@ public class DomainControllerListener extends ControllerAdapter {
 		try {		
 			dc.saveApplications();
 			dc.updateDomainApplication();
+			dc.saveOEM();
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

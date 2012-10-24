@@ -1,7 +1,6 @@
 package com.code.aon.finance.invoicing.finance;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +63,8 @@ public class FinanceTrackingWriter {
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_TYPE), type);
 			criteria.addOrder(financeTrackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID),false);
-			Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria,0,1).iterator();
-			if(iter.hasNext()){
-				FinanceTracking tracking = (FinanceTracking)iter.next();
+			for (ITransferObject ito : financeTrackingBean.getList(criteria, 0, 1)) {
+				FinanceTracking tracking = (FinanceTracking)ito;
 				financeTrackingBean.remove(tracking);
 			}
 		} catch (ManagerBeanException e) {
@@ -79,9 +77,8 @@ public class FinanceTrackingWriter {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_FINANCE_ID), tracking.getFinance().getId());
 		criteria.addOrder(trackingBean.getFieldName(IEntityAlias.FINANCE_TRACKING_ID), false);
-		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			FinanceTracking financeTracking = (FinanceTracking)iterator.next();
+		for (ITransferObject ito : trackingBean.getList(criteria)) {
+			FinanceTracking financeTracking = (FinanceTracking)ito;
 			return financeTracking.getId().equals(tracking.getId());
 		}
 		return false;

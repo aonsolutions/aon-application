@@ -62,13 +62,6 @@
 					action="menu_accounting" immediate="true"
 					styleClass="aon-top-menu-item" />
 			</c:if>
-		</c:if>
-		
-		<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">
-			<aon:commandLink id="document"
-				value="#{bundle.aon_module_document}"
-				action="menu_document" immediate="true"
-				styleClass="aon-top-menu-item" />
 			
 			<c:if test="#{aonRole.fiscal}">
 				<aon:commandLink id="fiscal"
@@ -83,6 +76,13 @@
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
+		<c:if test="#{(domainSwitcher.type == 'CONSULTANCY') or (!domainSwitcher.domainManagementAvailable)}">
+			<aon:commandLink id="document"
+				value="#{bundle.aon_module_document}"
+				action="menu_document" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+		
 		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 			<aon:commandLink id="garage"
 				value="#{bundle.aon_module_garage}"
@@ -93,6 +93,7 @@
 				value="#{bundle.aon_module_academy}"
 				action="menu_academy" immediate="true"
 				styleClass="aon-top-menu-item" />
+
 		</c:if>
 		
 		<aon:commandLink id="configuration"

@@ -50,6 +50,8 @@ public interface ICompanyConstants {
 	
 	String COMPANY_IMAGES_CONTROLLER_NAME = "companyImages";
 	
+	String COMPANY_CUSTOMIZE_CONTROLLER_NAME = "companyCustomize";
+	
 	String ENTERPRISE_CONTROLLER_NAME = "enterprise";
 	
 	String ENTERPRISE_FORM_CONTROLLER_NAME = "enterpriseForm";

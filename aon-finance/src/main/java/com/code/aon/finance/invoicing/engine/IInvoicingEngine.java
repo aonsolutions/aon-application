@@ -1,5 +1,7 @@
 package com.code.aon.finance.invoicing.engine;
 
+import org.hibernate.Session;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingParameters;
@@ -15,5 +17,9 @@ public interface IInvoicingEngine {
 	public IInvoicingFeedBack getInvoicingFeedBack();
 	
 	public void setInvoicingFeedBack(IInvoicingFeedBack invoicingFeedBack);
+	
+	public Session getHibernateSession();
+	
+	public void setHibernateSession(Session session);
 	
 }

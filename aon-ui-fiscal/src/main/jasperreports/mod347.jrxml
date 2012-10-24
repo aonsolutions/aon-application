@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="304"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -83,7 +83,7 @@
 				<textFieldExpression><![CDATA[$R{fiscal_model_347_report_module}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField" positionType="Float" mode="Opaque" x="709" y="8" width="77" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement key="textField" positionType="Float" mode="Opaque" x="709" y="8" width="93" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box topPadding="3" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -132,7 +132,7 @@
 				<textFieldExpression><![CDATA[$R{fiscal_model_347_year}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0;-###0" isBlankWhenNull="true">
-				<reportElement key="textField-34" x="709" y="32" width="77" height="16"/>
+				<reportElement key="textField-34" x="709" y="32" width="93" height="16"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

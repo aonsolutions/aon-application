@@ -18,13 +18,13 @@ public enum LiquidationType implements IResourceable {
 	L12("L12"),
 	L13("L13"),
 	L15("L15"),
-	A70("L70"),
-	A71("L71"),
-	A72("L72"),
-	A73("L73"),
-	A74("L74"),
-	A75("L75"),
-	A76("L76"),
+	A70("A70"),
+	A71("A71"),
+	A72("A72"),
+	A73("A73"),
+	A74("A74"),
+	A75("A75"),
+	A76("A76"),
 	TP2("TP2")
 	;
 	

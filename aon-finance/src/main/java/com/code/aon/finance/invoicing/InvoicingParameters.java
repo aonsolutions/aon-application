@@ -23,7 +23,7 @@ public class InvoicingParameters {
 	private Date toDate;
 	private boolean confidential;
 	private WorkPlace workPlace;
-	
+
 	private Series invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
