@@ -7,7 +7,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.AdminUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -30,7 +29,7 @@ public class RoleManagerDB extends BasicRoleManager {
 
 	@Override
 	public void init() {
-		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal(), DomainManager.getCurrentDomain());
+		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());
 		updateApplicationUserRoles(applicationUser);
 		super.init();
 	}

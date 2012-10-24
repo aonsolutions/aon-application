@@ -37,7 +37,6 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.config.Application;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -410,14 +409,12 @@ public class ActionDeniedController implements IAuditConstants {
 	}
 	
 	private List<Integer> getProfiles( User user ) {
-		AuthPrincipal principal = AonUtil.getAuthPrincipal();
-		Integer applicationUser = AdminUtil.getApplicationUser(DomainManager.getCurrentDomain(), user.getId(), principal.getApplicationId());
-		if (applicationUser == null ) {
-			applicationUser = AdminUtil.getApplicationUser(principal, DomainManager.getCurrentDomain());
-		}
-		List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
-		if ( (profiles != null) && (!profiles.isEmpty()) ) {
-			return profiles;
+		Integer applicationUser = AdminUtil.getApplicationUser(AonUtil.getAuthPrincipal());
+		if ( applicationUser != null ) {
+			List<Integer> profiles = AdminUtil.getProfiles(applicationUser);
+			if ( (profiles != null) && (!profiles.isEmpty()) ) {
+				return profiles;
+			}
 		}
 		return null;
 	}

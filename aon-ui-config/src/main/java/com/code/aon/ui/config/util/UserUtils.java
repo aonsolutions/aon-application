@@ -48,18 +48,9 @@ public class UserUtils {
 	private User resolveUser() {
 		AuthPrincipal principal = AonUtil.getAuthPrincipal();
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(User.class.getName());
-		String q = "SELECT u FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
-		if (principal.getDomainId() != null) {
-			q = q + " AND u.domain = " + principal.getDomainId();
-		}
-		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-		List<?> queryList = query.list();
-		Iterator<?> iterator = queryList.iterator();
-		if (iterator.hasNext()) {
-			User user = (User) iterator.next();
-			return user;
-		}
-        return null;		
+		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery("SELECT u FROM User u  WHERE u.id = ?");
+		query.setInteger(0, principal.getUserId());
+		return (User) query.uniqueResult();
 	}
 
 	public static UserUtils getInstance() {

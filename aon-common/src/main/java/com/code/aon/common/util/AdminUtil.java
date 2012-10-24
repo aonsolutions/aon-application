@@ -4,12 +4,12 @@ import java.security.MessageDigest;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class AdminUtil {
@@ -30,7 +30,7 @@ public class AdminUtil {
 		return (Integer) query.uniqueResult();
 	}
 		
-	public static Integer getApplicationUser( Integer domain, Integer user, Integer application ) {
+	private static Integer getApplicationUser( Integer domain, Integer user, Integer application ) {
 		Integer domainApplication = getDomainApplication(domain, application);
 		if ( domainApplication != null ) {
 			Query query = getQuery("SELECT id FROM ApplicationUser au WHERE au.active = true and au.domainApplication = ? and au.user = ?");
@@ -40,10 +40,11 @@ public class AdminUtil {
 		return null;
 	}
 	
-	public static Integer getApplicationUser( AuthPrincipal principal, Integer domain ) {
-		Integer applicationUser = getApplicationUser(domain, principal.getUserId(), principal.getApplicationId());
-		if ( (applicationUser == null) && (! ObjectUtils.equals(domain, principal.getDomainId())) ) {
-			applicationUser = getApplicationUser(principal.getDomainId(), principal.getUserId(), principal.getApplicationId());
+	public static Integer getApplicationUser( AuthPrincipal principal ) {
+		Integer applicationUser = getApplicationUser(DomainManager.getCurrentDomain(), principal.getUserId(), principal.getApplicationId());
+		if (applicationUser == null ) {
+			Integer userDomain = getUserDomain(principal.getUserId());
+			applicationUser = getApplicationUser(userDomain, principal.getUserId(), principal.getApplicationId());
 		}
 		return applicationUser;
 	}
@@ -72,6 +73,12 @@ public class AdminUtil {
 		}        		
 		return shaPassword;
 	}	
+
+	public static Integer getUserDomain( Integer user ) {
+		Query query = getQuery("SELECT domain FROM User u WHERE u.id = ?");
+		query.setInteger(0, user);
+		return (Integer) query.uniqueResult();		
+	}
 	
 	public static String getUserPassword( Integer user ) {
 		Query query = getQuery("SELECT password FROM User u WHERE u.id = ?");

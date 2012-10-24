@@ -202,7 +202,7 @@ public class Util {
 		return domainId;
 	}	
 	
-	public User getUser( Integer domainId, String userName ) {
+	private User getUser( Integer domainId, String userName ) {
 		QueryRunner run = new QueryRunner();
 		try {
 			LOGGER.debug( "Get user {} in domain {}", userName, domainId );
@@ -215,6 +215,14 @@ public class Util {
 		}		
 		return null;
 	}
+	
+	public User getUser( Domain domain, String userName ) {
+		User user = getUser(domain.getId(), userName );
+		if ( (user == null) && (domain.getParent() != null) ) {
+			user = getUser(domain.getParent(), userName );
+		}
+		return user;
+	}	
 
 	public Integer getApplicationId( String applicationName ) {
 		QueryRunner run = new QueryRunner();
