@@ -17,6 +17,8 @@ public enum SaleInvoiceTemplate implements IResourceable {
 	
 	GTA("saleInvoiceGta"),
 	
+	HOTEL("saleInvoiceHotel")
+	
 	;      
 	
     private static final String BASE_NAME = "com.code.aon.company.i18n.messages";

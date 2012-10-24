@@ -21,10 +21,14 @@ import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.company.enumeration.SaleInvoiceTemplate;
+import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CompanyCollectionsController {
@@ -69,12 +73,22 @@ public class CompanyCollectionsController {
 	public List<SelectItem> getSaleInvoiceTemplates() {
 		if (saleInvoiceTemplates == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(ConfigConstants.DOMAIN_SWITCHER);
+			DomainType type = ds.getType();
 			saleInvoiceTemplates = new LinkedList<SelectItem>();
 			SaleInvoiceTemplate[] st = SaleInvoiceTemplate.values();
 			for (SaleInvoiceTemplate c : st) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c, name);
-				saleInvoiceTemplates.add(item);
+				boolean skip = false;
+				if ( (c == SaleInvoiceTemplate.GTA) && (type != DomainType.GARAGE) ) {
+					skip = true;
+				} else if ( (c == SaleInvoiceTemplate.HOTEL) && (type != DomainType.HOTEL) ) {
+					skip = true;
+				}
+				if (! skip ) {
+					String name = c.getName(locale);
+					SelectItem item = new SelectItem(c, name);
+					saleInvoiceTemplates.add(item);					
+				}
 			}
 		}
 		return saleInvoiceTemplates;
