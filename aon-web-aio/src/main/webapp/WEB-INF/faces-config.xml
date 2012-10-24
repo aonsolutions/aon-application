@@ -143,6 +143,10 @@
 			<from-outcome>menu_academy</from-outcome>
 			<to-view-id>/facelet/menu/academy.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_hotel</from-outcome>
+			<to-view-id>/facelet/menu/hotel.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 	
    	<!-- ************************************************** -->

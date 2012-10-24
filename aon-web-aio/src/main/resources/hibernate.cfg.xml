@@ -85,7 +85,11 @@
 
 		<!-- AON-ASSET Mapping files --> 
 		<mapping class="com.code.aon.asset.Asset"/>
+		<mapping class="com.code.aon.asset.AssetFeature"/>
 		<mapping class="com.code.aon.asset.AssetActivity"/>
+		<mapping class="com.code.aon.asset.AssetType"/>
+		<mapping class="com.code.aon.asset.AssetInterval"/>
+		<mapping class="com.code.aon.asset.Feature"/>
 
 		<!-- AON-AUDIT Mapping files -->
 		<mapping class="com.code.aon.audit.Action"/>
@@ -282,6 +286,24 @@
 		<mapping class="com.esferalia.aon.payroll.SystemData"/>
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
+
+		<!-- AON-PMS Mapping files -->	
+		<mapping class="com.esferalia.aon.pms.FinancePos"/>
+		<mapping class="com.esferalia.aon.pms.Hotel"/>
+		<mapping class="com.esferalia.aon.pms.Pos"/>
+		<mapping class="com.esferalia.aon.pms.PosShift"/>
+		<mapping class="com.esferalia.aon.pms.PosShiftCount"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservation"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationDivert"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationGuest"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoom"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationRoomDetail"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationService"/>
+		<mapping class="com.esferalia.aon.pms.ProjectReservationServiceDetail"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestGuest"/>
+		<mapping class="com.esferalia.aon.pms.ReservationRequestRoom"/>
+		<mapping class="com.esferalia.aon.pms.Room"/>
 
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>

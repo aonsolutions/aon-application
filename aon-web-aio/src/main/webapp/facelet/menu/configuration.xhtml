@@ -61,6 +61,18 @@
 											value="#{companyBundle.company_data_module}">
 										</aon:commandLink>
 									</aon:div>
+									<c:if test="#{domainSwitcher.type == 'HOTEL'}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="hotel" 
+												action="hotel_list" 
+												value="#{pmsBundle.pms_hotel_module}" />
+										</aon:div>								
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="department" 
+												action="department_grid" 
+												value="#{companyBundle.company_department_module}" />
+										</aon:div>
+									</c:if>																	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="mailAccountEnterprise"
 											action="mailAccount_list-enterprise"

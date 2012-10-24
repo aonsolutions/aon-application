@@ -6,6 +6,7 @@ import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_ABSENC
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_COURSE;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_LOAN;
 import static com.code.aon.ui.customer.controller.ICustomerConstants.SHOW_PERSON;
+import static com.code.aon.ui.product.controller.IItemConstants.SHOW_SALES_PRICE;
 import static com.code.aon.ui.tas.controller.ITasConstants.SHOW_TAS_DATA;
 
 import java.awt.image.BufferedImage;
@@ -68,6 +69,7 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.groupware.controller.NoteController;
+import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.purchase.controller.IPurchaseConstants;
 import com.code.aon.ui.sales.controller.ISalesConstants;
 import com.code.aon.ui.util.AonUtil;
@@ -103,6 +105,7 @@ public class DesktopController {
 			initTask();
 			initGarage();
 			initAcademy();
+			initHotel();
 	    } catch (ManagerBeanException e) {
 	    	e.printStackTrace();
 	    	LOGGER.error( e.getMessage(), e );
@@ -373,6 +376,13 @@ public class DesktopController {
 			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_LOAN, Boolean.TRUE);
 			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_COURSE, Boolean.TRUE);
 			AonUtil.setBeanValue(ICustomerConstants.CUSTOMER_CONTROLLER_NAME, SHOW_PERSON, Boolean.TRUE);
+		}
+	}
+
+	private void initHotel() {
+		ActionDeniedController adc = (ActionDeniedController) AonUtil.getRegisteredBean(ACTION_DENIED_CONTROLLER_NAME);
+		if (! adc.isDeniedModule(Module.HOTEL.getName()) ) {
+			AonUtil.setBeanValue(IItemConstants.PRODUCT, SHOW_SALES_PRICE, Boolean.TRUE);
 		}
 	}
 	

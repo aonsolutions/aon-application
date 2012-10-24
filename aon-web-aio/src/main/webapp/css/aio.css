@@ -247,3 +247,19 @@
 	padding-right:2em;
 }  
  
+.pms-invoiced-cell {
+	background-color: #3D9E07;
+	display: block;
+}
+.pms-active-cell {
+	background-color: #FFA54F;
+	display: block;
+}
+.pms-blocked-cell {
+	background-color: #808080;
+	display: block;
+}
+.pms-available-cell {
+	background-color: #FFFFFF;
+	display: block;
+}

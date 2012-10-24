@@ -2648,6 +2648,9 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-save{
 	background:transparent url(images/aon-main-menu/aon-icon-save.png) no-repeat scroll center left;
 }
+.aon-icon-calc{
+	background:transparent url(images/aon-icon/aon-icon-calc.png) scroll left center no-repeat;	
+ }
 .aon-subTable-column{
 	padding-left: 10px; 
 	border: none; 
