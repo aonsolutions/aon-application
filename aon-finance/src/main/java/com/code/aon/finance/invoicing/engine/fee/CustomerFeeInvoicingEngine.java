@@ -217,14 +217,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			CustomerFee customerFee = (CustomerFee)ito;
 			if (!previousCustomerId.equals(customerFee.getInvoicingCustomer().getId())) {
 				if (invoice != null) {
-					invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
-					invoiceDetail.getInvoice().setUpdateEnabled(true);
-					BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
-
-					invoice = (Invoice)getHibernateSession().merge(invoice);
+					if (!isReadOnly()) {
+						invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);	
+						invoiceDetail.getInvoice().setUpdateEnabled(true);
+						BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
+						invoice = (Invoice)getHibernateSession().merge(invoice);
+					}
 					getInvoicingDAO().createFinances(invoice, null);
-
-					if (getInvoicingDAO().getCollection().size() % 10 == 0) {
+					
+					if (!isReadOnly() && getInvoicingDAO().getCollection().size() % 10 == 0) {
 						getHibernateSession().flush();
 						getHibernateSession().clear();
 					}
@@ -242,7 +243,9 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			invoiceDetail = createInvoiceDetail(customerFee, invoice, ++detailLine, params);
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 
-			customerFee = (CustomerFee)getHibernateSession().merge(customerFee);
+			if (!isReadOnly()) {
+				customerFee = (CustomerFee)getHibernateSession().merge(customerFee);
+			}
 			getInvoicingDAO().updateSource(customerFee);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
 			
@@ -253,17 +256,23 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 
 		if (invoice != null) {
-			invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
-			invoiceDetail.getInvoice().setUpdateEnabled(true);
-			BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
-
-			invoice = (Invoice)getHibernateSession().merge(invoice);
+			if (!isReadOnly()) {
+				invoiceDetail = (InvoiceDetail)getHibernateSession().merge(invoiceDetail);
+				invoiceDetail.getInvoice().setUpdateEnabled(true);
+				BeanManager.getManagerBean(InvoiceDetail.class).update(invoiceDetail);
+				invoice = (Invoice)getHibernateSession().merge(invoice);
+			}
 			getInvoicingDAO().createFinances(invoice, null);
-
-			getHibernateSession().flush();
-			getHibernateSession().clear();
+			if (!isReadOnly()) {
+				getHibernateSession().flush();
+				getHibernateSession().clear();
+			}
 		}
 		getInvoicingFeedBack().setCurrentRow(size);
+	}
+
+	private boolean isReadOnly() {
+		return (getInvoicingDAO() instanceof CustomerFeePreInvoicingDAO);
 	}
 
 	private Invoice createInvoice(CustomerFee customerFee, int number, InvoicingParameters params) throws ManagerBeanException {
