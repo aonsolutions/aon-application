@@ -62,14 +62,16 @@
 					action="menu_accounting" immediate="true"
 					styleClass="aon-top-menu-item" />
 			</c:if>
+		</c:if>
 			
-			<c:if test="#{aonRole.fiscal}">
-				<aon:commandLink id="fiscal"
-					value="#{bundle.aon_module_fiscal}"
-					action="menu_fiscal" immediate="true"
-					styleClass="aon-top-menu-item" />
-			</c:if>
-				
+		<c:if test="#{aonRole.fiscal}">
+			<aon:commandLink id="fiscal"
+				value="#{bundle.aon_module_fiscal}"
+				action="menu_fiscal" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+		
+		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 			<aon:commandLink id="payroll"
 				value="#{bundle.aon_module_payroll}"
 				action="menu_payroll" immediate="true"

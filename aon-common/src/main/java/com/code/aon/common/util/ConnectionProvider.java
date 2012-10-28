@@ -15,6 +15,8 @@ import org.hibernate.cfg.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
+
 public class ConnectionProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionProvider.class.getName());
@@ -94,8 +96,9 @@ public class ConnectionProvider {
      * 
      * @param properties the properties
      * @return the connection
+     * @throws AonException 
      */
-    public static Connection getConnection( Properties properties ) {
+    public static Connection getConnection( Properties properties ) throws AonException {
     	Connection connection = null;
     	try {
     		String driver = (String) properties.get(Environment.DRIVER);
@@ -105,7 +108,9 @@ public class ConnectionProvider {
 			String password = properties.getProperty(Environment.PASS);			
 			connection = DriverManager.getConnection(url, user, password);
     	} catch ( Throwable th ) {
-    		LOGGER.error( "Error creating connection: " + properties );
+    		String m = "Error creating connection: " + properties;
+    		LOGGER.error( m );
+			throw new AonException(m,th); 
     	}
     	return connection;
     }

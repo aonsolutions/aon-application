@@ -34,7 +34,7 @@ public class AonExporter extends GenericExporter{
 		while (iterator.hasNext()) {
 			Property property = (Property)iterator.next();
 
-			// En este pnto se evalúa si la propiedad es un ManyToOne, si la clase
+			// En este punto se evalúa si la propiedad es un ManyToOne, si la clase
 			// del pojo devuelto por la propiedad, es un pojo generado, se sustituye 
 			// por la clase a sobreescribir el los proyectos entity.
 			Value value = property.getValue();
@@ -312,6 +312,8 @@ public class AonExporter extends GenericExporter{
 		map.put("InvoicingGroupDetail","com.code.aon.finance.InvoicingGroupDetail");
 
 		//AON-FISCAL  	
+		map.put("FiscalBatch","com.code.aon.fiscal.FiscalBatch");
+		map.put("FiscalBatchDetail","com.code.aon.fiscal.FiscalBatchDetail");
 		map.put("Mod347","com.code.aon.fiscal.Mod347");
 		map.put("Mod347Detail","com.code.aon.fiscal.Mod347Detail");
 		map.put("Mod349","com.code.aon.fiscal.Mod349");

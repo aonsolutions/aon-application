@@ -47,6 +47,7 @@ public class Declaration {
 	private Map<String,Breakdown> outputVat = new TreeMap<String, Breakdown>();
 	private Map<String,Breakdown> surcharge = new TreeMap<String, Breakdown>();
 	private Map<String,Breakdown> intracommunitary = new TreeMap<String, Breakdown>();
+	private Map<String,Breakdown> invPasive = new TreeMap<String, Breakdown>();
 	
 	private double baseIntracommunitary;
 	private double quotaIntracommunitary;
@@ -391,6 +392,12 @@ public class Declaration {
 	}
 	public void setIntracommunitary(Map<String, Breakdown> intracommunitary) {
 		this.intracommunitary = intracommunitary;
+	}
+	public Map<String, Breakdown> getInvPasive() {
+		return invPasive;
+	}
+	public void setInvPasive(Map<String, Breakdown> invPasive) {
+		this.invPasive = invPasive;
 	}
 	public double getBaseIntracommunitary() {
 		return baseIntracommunitary;

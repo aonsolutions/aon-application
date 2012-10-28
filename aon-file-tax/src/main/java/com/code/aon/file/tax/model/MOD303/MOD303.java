@@ -22,7 +22,7 @@ public class MOD303 {
 			MOD303FactoryManager factoryManger = MOD303FactoryManager.getInstance();
 			IMOD303Factory factory = factoryManger.getFactory(format);
 			if (factory == null) {
-				throw new IllegalArgumentException("No se encontró un formateador váalido para " + format);
+				throw new IllegalArgumentException("No se encontró un formateador válido para " + format);
 			}
 			exceptions.addAll( factory.createDocument(declarations, writer ) );
 		} catch (Exception ex) {

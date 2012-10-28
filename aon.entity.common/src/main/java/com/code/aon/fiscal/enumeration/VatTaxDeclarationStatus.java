@@ -12,7 +12,8 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum VatTaxDeclarationStatus implements IResourceable {
 	
 	PENDING,
-	GENERATED;
+	GENERATED,
+	BATCHED;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";

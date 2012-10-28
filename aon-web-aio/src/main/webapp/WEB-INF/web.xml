@@ -202,15 +202,21 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
-	<!--
 	<context-param> <description> When a page is requested, what interval 
 		in seconds should the compiler check for changes. If you don't want the compiler 
 		to check for changes once the page is compiled, then use a value of -1. Setting 
 		a low refresh period helps during development to be able to edit pages in 
 		a running application. </description> <param-name>facelets.REFRESH_PERIOD</param-name> 
-		<param-value>-1</param-value>
+		<param-value>0</param-value>
 	</context-param>
-	-->
+	<!-- Set the project stage to "Development", "UnitTest", "SystemTest", or "Production". -->
+	<!-- An optional parameter that makes troubleshooting errors much easier. -->
+	<!-- You should remove this context parameter before deploying to production! -->
+	<context-param>
+	    <param-name>javax.faces.PROJECT_STAGE</param-name>
+	    <param-value>Development</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>

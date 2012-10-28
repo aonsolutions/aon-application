@@ -7,6 +7,10 @@ import java.util.Properties;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.cfg.Environment;
+
+import com.code.aon.common.AonException;
 import com.code.aon.common.util.ConnectionProvider;
 import com.code.aon.dbutils.AonSQLException;
 import com.code.aon.master.VersionManager;
@@ -17,19 +21,38 @@ public class DatabaseUptodate {
 
 	private String currentVersion;
 	private boolean updatable;
+	private boolean connectionAvailable;
+	private String connectionErrorMessage;
 	private VersionManager versionManager;
 	
 	public DatabaseUptodate() {
 		versionManager = new VersionManager();		
-		setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);		
+		try {
+			setUpdatable(versionManager.getAvailableUpdateScripts(getCurrentVersion()) != null);
+			connectionAvailable = true;
+		} catch (AonException e) {
+			connectionAvailable = false;
+			connectionErrorMessage = e.getMessage()
+				+ (e.getCause()==null?"": (". " + e.getCause().getMessage()));
+			if (StringUtils.contains(connectionErrorMessage,Environment.PASS)) {
+				int i = StringUtils.indexOf(connectionErrorMessage, Environment.PASS);
+				i = i + Environment.PASS.length();
+				int x = StringUtils.indexOf(connectionErrorMessage, ",", i);
+				connectionErrorMessage =
+						StringUtils.substring(connectionErrorMessage, 0, i+2)
+						+ "*********"
+						+ StringUtils.substring(connectionErrorMessage, x-1);
+						
+			}
+		}		
 	}
 	
-	private Connection getConnection() {
+	private Connection getConnection() throws AonException {
 		Properties properties = DataSourceUtil.getDBProperties();
 		return ConnectionProvider.getConnection(properties);
 	}
 	
-	public String getCurrentVersion() {
+	public String getCurrentVersion() throws AonException {
 		if (currentVersion == null) {
 			Connection connection = null;
 			try {
@@ -37,6 +60,7 @@ public class DatabaseUptodate {
 				setCurrentVersion( versionManager.getDatabaseVersion(connection) );
 			} catch (AonSQLException e) {
 				AonUtil.addErrorMessage("Imposible conseguir el número de versión");
+				throw new AonException(e.getMessage(),e);
 			} finally {
 				if (connection != null) {
 					try {
@@ -68,6 +92,10 @@ public class DatabaseUptodate {
 			String msg = "Se produjeron errores al actualizar la base de datos. \n Detalle: " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
+		} catch (AonException e) {
+			String msg = "Se produjeron errores al actualizar la base de datos. \n Detalle: " + e.getMessage();
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		} finally {
 			if (connection != null) {
 				try {
@@ -81,4 +109,14 @@ public class DatabaseUptodate {
 	public boolean isUptodate() {
 		return updatable;
 	}
+
+	public boolean isConnectionAvailable() {
+		return connectionAvailable;
+	}
+
+	public String getConnectionErrorMessage() {
+		return connectionErrorMessage;
+	}
+	
+	
 }

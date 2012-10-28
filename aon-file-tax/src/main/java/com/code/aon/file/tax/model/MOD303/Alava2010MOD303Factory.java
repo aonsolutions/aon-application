@@ -202,6 +202,14 @@ public class Alava2010MOD303Factory implements IMOD303Factory {
 				addClave(mod,++k,bd.getPercent());
 				addClave(mod,++k,bd.getQuota());
 			}
+			bd = declaration.getInvPasive().get(percents[i]);
+			if (bd != null) {
+				int k = keys[i];
+				addClave(mod,k,bd.getTaxableBase());
+				addClave(mod,++k,bd.getPercent());
+				addClave(mod,++k,bd.getQuota());
+			}
+			
 		}
 		
 		addClave(mod,28,declaration.getOutputTotal());

@@ -22,12 +22,15 @@
 	</head>
 
 	<body id="aon-body" onload="loadInnerWindow();">
-		<c:if test="#{dbUptodate.uptodate}">
+		<c:if test="#{dbUptodate.uptodate and dbUptodate.connectionAvailable}">
 			<ui:include src="/com/code/aon/ui/dbutils/facelet/uptodate/uptodatePanel.xhtml" />
 		</c:if>	
-		<c:if test="#{!dbUptodate.uptodate}">
+		<c:if test="#{!dbUptodate.uptodate and dbUptodate.connectionAvailable}">
 			<ui:include src="/com/code/aon/ui/resources/facelet/login/templates/loginContent.xhtml" />
 		</c:if>	
+		<c:if test="#{!dbUptodate.connectionAvailable}">
+			<ui:include src="/com/code/aon/ui/dbutils/facelet/uptodate/connectionError.xhtml" />
+		</c:if>
 	</body>
   
 </f:view>

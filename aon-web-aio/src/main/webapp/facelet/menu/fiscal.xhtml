@@ -19,256 +19,274 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_fiscal_vat_tax_statement"
+						<aon:panelGrid id="group_fiscal_fiscal_batch"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-product aon-direct-access-panel">
+							headerClass="aon-icon-renameFolder aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_module}"/>
+								<aon:outputText value="#{fiscalBundle.fiscal_batch_module}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="vatTax" 
-										action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
-										value="#{fiscalBundle.fiscal_model_303_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="#{fiscalBundle.fiscal_model_310_391_module}" />
+									<aon:commandLink id="fiscalBatch" 
+										action="fiscalBatch_search" actionListener="#{fiscalBatch.onEditSearch}"
+										value="#{fiscalBundle.fiscal_batch_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_fiscal_retention_tax_statement"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-product aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_retention_tax_module}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="#{fiscalBundle.fiscal_model_110_111_190_module}" />
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<aon:panelGrid id="group_fiscal_vat_tax_statement"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-product aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_module}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="vatTax" 
+											action="vatTax_search" actionListener="#{vatTax.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_303_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="#{fiscalBundle.fiscal_model_310_391_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="renting" 
-										action="renting_search" actionListener="#{renting.onEditSearch}"
-										value="#{fiscalBundle.fiscal_model_115_180_module}" />
+							</aon:panelGrid>
+	
+							<aon:panelGrid id="group_fiscal_retention_tax_statement"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-product aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_retention_tax_module}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="#{fiscalBundle.fiscal_model_110_111_190_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="renting" 
+											action="renting_search" actionListener="#{renting.onEditSearch}"
+											value="#{fiscalBundle.fiscal_model_115_180_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="#{fiscalBundle.fiscal_model_123_193_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="#{fiscalBundle.fiscal_model_184_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="#{fiscalBundle.fiscal_model_123_193_module}" />
+							</aon:panelGrid>	
+							<aon:panelGrid id="group_fiscal_information_statement"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-product aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_information_statement}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod_340_report" 
+											action="model340_search" actionListener="#{model340.onReset}"
+											value="#{fiscalBundle.fiscal_model_340_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod347_report" 
+											action="mod347_list" actionListener="#{mod347.onEditSearch}"
+											value="#{fiscalBundle.fiscal_mod347_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="mod349_report" 
+											action="mod349_list" actionListener="#{mod349.onEditSearch}" 
+											value="#{fiscalBundle.fiscal_model_349_module}" />
+									</aon:div>																
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="#{fiscalBundle.fiscal_model_184_module}" />
+							</aon:panelGrid>
+							<aon:panelGrid id="group_fiscal_sociedades"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-product aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_corporation_module}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="#{fiscalBundle.fiscal_model_200_module}"/>
+									</aon:div>																
 								</aon:div>
-							</aon:div>
-						</aon:panelGrid>	
-						<aon:panelGrid id="group_fiscal_information_statement"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-product aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_information_statement}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod_340_report" 
-										action="model340_search" actionListener="#{model340.onReset}"
-										value="#{fiscalBundle.fiscal_model_340_module}" />
+							</aon:panelGrid>
+							<aon:panelGrid id="group_fiscal_reports"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-payroll aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{accountingBundle.menu_reports_annual}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_template"
+											action="reportAttach_form"
+											actionListener="#{reportAttach.onSearch}"
+											value="#{accountingBundle.accounting_reports_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="report_launcher"
+											action="reports_launcher"
+											actionListener="#{reportsLauncher.onReset}"
+											value="#{accountingBundle.accounting_reports_launcher_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<a4j:commandLink ajaxSingle="true" immediate="true"
+											onclick="alert('#{appBundle.aio_not_yet}');return false;" 
+											value="Memoria normalizada" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod347_report" 
-										action="mod347_list" actionListener="#{mod347.onEditSearch}"
-										value="#{fiscalBundle.fiscal_mod347_module}" />
+							</aon:panelGrid>
+	
+							<aon:panelGrid id="group_fiscal_mercantile_registry"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-registradores aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_mercantile_registry}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accountingBook_report"
+											action="accountingBook_search"
+											actionListener="#{accountingBook.onReset}"
+											value="#{accountingBundle.accounting_book_module}" />
+									</aon:div>
+	
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="annualFinancialStatements_report"
+											action="annualFinancialStatements_search"
+											actionListener="#{annualFinancialStatements.onReset}"
+											value="#{accountingBundle.accounting_annual_financial_statements_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mod349_report" 
-										action="mod349_list" actionListener="#{mod349.onEditSearch}" 
-										value="#{fiscalBundle.fiscal_model_349_module}" />
-								</aon:div>																
-							</aon:div>
-						</aon:panelGrid>
-						<aon:panelGrid id="group_fiscal_sociedades"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-product aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_corporation_module}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="#{fiscalBundle.fiscal_model_200_module}"/>
-								</aon:div>																
-							</aon:div>
-						</aon:panelGrid>
-						<aon:panelGrid id="group_fiscal_reports"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-payroll aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{accountingBundle.menu_reports_annual}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="report_template"
-										action="reportAttach_form"
-										actionListener="#{reportAttach.onSearch}"
-										value="#{accountingBundle.accounting_reports_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="report_launcher"
-										action="reports_launcher"
-										actionListener="#{reportsLauncher.onReset}"
-										value="#{accountingBundle.accounting_reports_launcher_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<a4j:commandLink ajaxSingle="true" immediate="true"
-										onclick="alert('#{appBundle.aio_not_yet}');return false;" 
-										value="Memoria normalizada" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_fiscal_mercantile_registry"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-registradores aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_mercantile_registry}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountingBook_report"
-										action="accountingBook_search"
-										actionListener="#{accountingBook.onReset}"
-										value="#{accountingBundle.accounting_book_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="annualFinancialStatements_report"
-										action="annualFinancialStatements_search"
-										actionListener="#{annualFinancialStatements.onReset}"
-										value="#{accountingBundle.accounting_annual_financial_statements_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
 					</aon:panelGroup>
 					
 					<aon:panelGroup>
 						
-						<aon:panelGrid id="group_fiscal_configuration"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_configuration}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accPeriod-fiscal" 
-										action="accPeriod-fiscal"
-										actionListener="#{accPeriod.onSearch}"
-										value="#{accountingBundle.accounting_period_module}" />
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+							<aon:panelGrid id="group_fiscal_configuration"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-config aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_configuration}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod-fiscal" 
+											action="accPeriod-fiscal"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{accountingBundle.accounting_period_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="defaultParams-fiscal" 
+											action="accountingDefaultParams-fiscal"
+											actionListener="#{accAppParams.onLoad}"
+											value="#{accountingBundle.accounting_default_params_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="fiscalParams" action="fiscalParams"
+											actionListener="#{fiscalParams.onLoad}"
+											value="#{fiscalBundle.fiscal_parameters_module}" />
+									</aon:div>								
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="defaultParams-fiscal" 
-										action="accountingDefaultParams-fiscal"
-										actionListener="#{accAppParams.onLoad}"
-										value="#{accountingBundle.accounting_default_params_module}" />
+							</aon:panelGrid>
+	
+							<aon:panelGrid id="group_fiscal_accounting_entry_generation"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_accounting_entry_generation}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="saleInvoiceRecorder-fiscal"
+											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											actionListener="#{saleInvoiceRecorder.onEditSearch}"
+											action="saleInvoiceRecorder_search-fiscal" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchaseInvoiceRecorder-fiscal"
+											value="#{financeBundle.finance_purchase_invoice_recording_module}"
+											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
+											action="purchaseInvoiceRecorder_search-fiscal" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseInvoiceRecorder-fiscal"
+											value="#{financeBundle.finance_expense_invoice_recording_module}"
+											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+											action="expenseInvoiceRecorder_search-fiscal" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="undeductibleInvoiceRecorder-fiscal"
+											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+											action="undeductibleInvoiceRecorder_search-fiscal" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeTrackingEntry-accounting"
+											action="account_finance_tracking_entry-accounting"
+											actionListener="#{financeTrackingEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
+									</aon:div>								
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="fiscalParams" action="fiscalParams"
-										actionListener="#{fiscalParams.onLoad}"
-										value="#{fiscalBundle.fiscal_parameters_module}" />
-								</aon:div>								
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_fiscal_accounting_entry_generation"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-account-entry aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_accounting_entry_generation}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="saleInvoiceRecorder-fiscal"
-										value="#{financeBundle.finance_sale_invoice_recording_module}"
-										actionListener="#{saleInvoiceRecorder.onEditSearch}"
-										action="saleInvoiceRecorder_search-fiscal" />
+							</aon:panelGrid>
+	
+							<aon:panelGrid id="group_data_sync"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-refresh aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_data_sync}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account_exporter"
+											action="account_exporter"
+											value="#{accountBundle.account_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="account_importer"
+											action="account_importer"
+											actionListener="#{accountImporter.onInitialize}"
+											value="#{accountBundle.account_importer_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="balance_exporter"
+											action="balance_exporter"
+											value="#{accountingBundle.accounting_balance_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="balance_importer"
+											action="balance_importer"
+											actionListener="#{balanceImporter.onInitialize}"
+											value="#{accountingBundle.accounting_balance_importer_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortization_exporter"
+											action="amortization_exporter"
+											value="#{accountingBundle.accounting_amortizationType_exporter_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="amortization_importer"
+											action="amortization_importer"
+											actionListener="#{amortizationTypeImporter.onInitialize}"
+											value="#{accountingBundle.accounting_amortizationType_importer_module}" />
+									</aon:div>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="purchaseInvoiceRecorder-fiscal"
-										value="#{financeBundle.finance_purchase_invoice_recording_module}"
-										actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
-										action="purchaseInvoiceRecorder_search-fiscal" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="expenseInvoiceRecorder-fiscal"
-										value="#{financeBundle.finance_expense_invoice_recording_module}"
-										actionListener="#{expenseInvoiceRecorder.onEditSearch}"
-										action="expenseInvoiceRecorder_search-fiscal" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="undeductibleInvoiceRecorder-fiscal"
-										value="#{financeBundle.finance_undeductible_invoice_recording_module}"
-										actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
-										action="undeductibleInvoiceRecorder_search-fiscal" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="financeTrackingEntry-accounting"
-										action="account_finance_tracking_entry-accounting"
-										actionListener="#{financeTrackingEntry.onReset}"
-										value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
-								</aon:div>								
-							</aon:div>
-						</aon:panelGrid>
-
-						<aon:panelGrid id="group_data_sync"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-refresh aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_data_sync}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account_exporter"
-										action="account_exporter"
-										value="#{accountBundle.account_exporter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="account_importer"
-										action="account_importer"
-										actionListener="#{accountImporter.onInitialize}"
-										value="#{accountBundle.account_importer_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="balance_exporter"
-										action="balance_exporter"
-										value="#{accountingBundle.accounting_balance_exporter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="balance_importer"
-										action="balance_importer"
-										actionListener="#{balanceImporter.onInitialize}"
-										value="#{accountingBundle.accounting_balance_importer_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization_exporter"
-										action="amortization_exporter"
-										value="#{accountingBundle.accounting_amortizationType_exporter_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="amortization_importer"
-										action="amortization_importer"
-										actionListener="#{amortizationTypeImporter.onInitialize}"
-										value="#{accountingBundle.accounting_amortizationType_importer_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-
+							</aon:panelGrid>
+						</c:if>
 					</aon:panelGroup>
 
 				</h:panelGrid>

@@ -21,7 +21,7 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// A3=ADQUISIONES INTRACOMUNITARIAS
 	A3	("A3"	,true	,true	,true	,false	,false	,false	,false	,null,null),
 	// A4=INVERSION DE SUJETO PASIVO
-	A4	("A4"	,false	,false	,true	,false	,false	,false	,false	,null,null),
+	A4	("A4"	,true	,true	,true	,false	,false	,false	,false	,null,null),
 	// A5=MODIFICACION BASES Y CUOTAS
 	A5	("A5"	,false	,false	,true	,false	,false	,false	,false	,null,null),
 	// AT=TOTAL DEVENGADO

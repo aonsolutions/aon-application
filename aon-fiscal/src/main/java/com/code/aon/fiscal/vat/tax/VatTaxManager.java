@@ -205,9 +205,7 @@ public class VatTaxManager {
 		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(7)];
 		boolean investment = rs.getBoolean(8);
 
-		
 		if (invoiceType == InvoiceType.SALES) {
-			List<VatTaxKeyEx> list = new LinkedList<VatTaxKeyEx>();
 			if (transaction == InvoiceTransactionType.NATIONAL) {
 				if (rectification) {
 					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5,percent)};	
@@ -261,17 +259,11 @@ public class VatTaxManager {
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				//TODO	A la espera de saber si los gastos pueden ser Inversiones
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4)};
-//				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4)};
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4,percent)};
 			}
 			
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4)};
-				//TODO	A la espera de saber si los gastos pueden ser Inversiones					
-//				return investment?
-//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
-//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4,percent)};
 			}
 			
 		}

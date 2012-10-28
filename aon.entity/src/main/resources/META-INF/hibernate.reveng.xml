@@ -40,6 +40,11 @@
 	<!--  PAYROLL -->
 	<table-filter match-name="salary_data" exclude="true" />
 	
+	
+	<!--  ***************** -->
+	<!--  MAPPING DE TABLAS -->
+	<!--  ***************** -->
+	
 	<table name="absence">
 		<column name="evaluation" type="int"/>
 		<column name="comments" type="text" />
@@ -548,6 +553,19 @@
 
 	<table name="finance_tracking">
 		<column name="type" type="com.code.aon.finance.enumeration.FinanceTrackingType"/>
+	</table>
+
+	<table name="fs_batch" class="com.esferalia.aon.entity.master.FiscalBatch">
+		<column name="administration" type="com.code.aon.config.enumeration.Administration"/>
+		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
+		<column name="year" type="java.lang.Integer"/>
+		<column name="comments" type="text"/>
+		<column name="type" type="com.code.aon.fiscal.enumeration.FiscalBatchType"/>
+	</table>
+
+	<table name="fs_batch_detail" class="com.esferalia.aon.entity.master.FiscalBatchDetail">
+		<column name="period" type="com.code.aon.fiscal.enumeration.Period"/>		
+		<column name="year" type="java.lang.Integer"/>
 	</table>
 
 	<table name="fs_mod347" class="com.esferalia.aon.entity.master.Mod347">

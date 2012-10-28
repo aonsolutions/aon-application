@@ -1,7 +1,7 @@
 package com.code.aon.registry;
 
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -139,9 +139,10 @@ public class Registry extends RegistryDB implements IRegistry{
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_REGISTRY_ID), getId());
 		criteria.addEqualExpression(rAddressBean.getFieldName(IEntityAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-		Iterator<ITransferObject> iter = rAddressBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAddress)iter.next(); 
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = rAddressBean.getList(criteria);
+		if (list != null && !list.isEmpty()){
+			return (RegistryAddress) list .get(0); 
 		}
 		return null;
 	}
@@ -176,9 +177,10 @@ public class Registry extends RegistryDB implements IRegistry{
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
-		Iterator<ITransferObject> iter = rMediaBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryMedia)iter.next();
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = rMediaBean.getList(criteria);
+		if (list != null && !list.isEmpty()){
+			return (RegistryMedia) list.get(0);
 		}
 		return null;
 	}
@@ -188,9 +190,10 @@ public class Registry extends RegistryDB implements IRegistry{
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IEntityAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), getId());
-		Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryPayMethod)iter.next(); 
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = rPayMethodBean.getList(criteria);
+		if (list != null && !list.isEmpty()){
+			return (RegistryPayMethod) list.get(0); 
 		}
 		return null;
 	}
@@ -201,10 +204,11 @@ public class Registry extends RegistryDB implements IRegistry{
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
 		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.FIXED_PHONE);
-		Iterator<ITransferObject> iter = rMediaBean.getList(criteria).iterator();
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = rMediaBean.getList(criteria);
 		String phones = "";
-		while(iter.hasNext()){
-			RegistryMedia media = (RegistryMedia)iter.next();
+		for (ITransferObject to : list) {
+			RegistryMedia media = (RegistryMedia) to;
 			phones += media.getValue()+", ";
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);

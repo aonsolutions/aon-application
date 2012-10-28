@@ -31,24 +31,21 @@ import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
-import com.code.aon.ui.company.controller.CompanyController;
-import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class MOD303Writer {
 	
-	private Company company;
-
-	public Company getCompany() {
-		if (company == null) {
-			CompanyController companyController = (CompanyController) AonUtil.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-			setCompany( companyController.obtainCompany() );
+	private Company getCompany(int domain) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Company.class);
+		Criteria c  = new Criteria();
+		c.addEqualExpression("Company.domain", domain);
+		c.setSkipDomainFilter(true);
+		List<ITransferObject> list = bean.getList(c);
+		if (list != null && list.size() > 0 ){
+			return (Company) list.get(0);
 		}
-		return company;
-	}
-	public void setCompany(Company company) {
-		this.company = company;
+		throw new ManagerBeanException("No puedo encontrar 'Company' para el dominio " + domain);
 	}
 
 	public FileOutput createMOD303(List<VatTaxDeclaration> vatTaxDeclarations,MOD303Format format) throws ManagerBeanException {
@@ -79,8 +76,8 @@ public class MOD303Writer {
 				declaration.setCcc4(ba.getAccount());
 				declaration.setBankName(vatTaxDeclaration.getRegistryBank().getBank().getName());
 			}
-			
-			declaration.setDocument(getCompany().getDocument());
+			Company company = getCompany(vatTaxDeclaration.getDomain());
+			declaration.setDocument(company.getDocument());
 			declaration.setStartPeriod(0);
 			declaration.setEndPeriod(0);
 			VatTax vatTax = vatTaxDeclaration.getVatTax(); 
@@ -89,14 +86,14 @@ public class MOD303Writer {
 			declaration.setStartPeriod(Integer.parseInt( startDate));
 			String endDate = formatter.format(vatTax.getPeriod().getDueDate(year));
 			declaration.setEndPeriod(Integer.parseInt( endDate));
-			declaration.setName(getCompany().getName());
-			RegistryMedia rm =getCompany().getPhone(); 
-			declaration.setTelephone(rm!=null?rm.getValue():null);
-			rm =getCompany().getFax();
-			declaration.setFax(rm!=null?rm.getValue():null);
-			rm =getCompany().getEmail();
-			declaration.setEmail(rm!=null?rm.getValue():null);
-			RegistryAddress address = getCompany().getDefaultAddress();
+			declaration.setName(company.getName());
+			RegistryMedia rm =company.getPhone(); 
+			declaration.setTelephone((rm!=null && StringUtils.isNotBlank(rm.getValue()))?rm.getValue():"0");
+			rm =company.getFax();
+			declaration.setFax((rm != null && StringUtils.isNotBlank(rm.getValue()))?rm.getValue():"0");
+			rm =company.getEmail();
+			declaration.setEmail((rm!=null)?rm.getValue():"");
+			RegistryAddress address = company.getDefaultAddress();
 			declaration.setAddress( address.getAddress() );
 			declaration.setAddressNumber(0);
 			if (StringUtils.isNotEmpty(address.getNumber())){
@@ -149,6 +146,7 @@ public class MOD303Writer {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_VAT_TAX_ID), vatTax.getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.VAT_TAX_DETAIL_KEY));
+		criteria.setSkipDomainFilter(true);
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			VatTaxDetail detail = (VatTaxDetail) to;
@@ -173,8 +171,9 @@ public class MOD303Writer {
 			declaration.setBaseIntracommunitary( CommonUtil.round(declaration.getBaseIntracommunitary() +taxableBase,2));
 			declaration.setQuotaIntracommunitary( CommonUtil.round(declaration.getQuotaIntracommunitary() +quota,2));
 		} else if (key == VatTaxKey.A4) {
-			declaration.setBaseInvPasive( taxableBase );
-			declaration.setQuotaInvPasive( quota );
+			declaration.getInvPasive().put(mapKey, bd);
+			declaration.setBaseInvPasive( CommonUtil.round(declaration.getBaseInvPasive() +taxableBase,2) );
+			declaration.setQuotaInvPasive( CommonUtil.round(declaration.getQuotaInvPasive() +quota,2) );
 		} else if (key == VatTaxKey.A5) {
 			declaration.setBaseModifications( taxableBase );
 			declaration.setQuotaModifications( quota );
@@ -230,7 +229,7 @@ public class MOD303Writer {
 			double d = declaration.getNonTaxableTotal();
 			declaration.setNonTaxableTotal( d + taxableBase );
 		} else if (key == VatTaxKey.CP ) {
-			if (percent != 4 && percent != 8 && percent != 18) {
+			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
 			declaration.getInnerAssetPurchases().put(mapKey, bd);
@@ -241,7 +240,7 @@ public class MOD303Writer {
 			declaration.setQuotaTotalAddInfo( CommonUtil.round(declaration.getQuotaTotalAddInfo() +quota,2));
 			declaration.setDeductibleQuotaTotalAddInfo( CommonUtil.round(declaration.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
 		} else if (key == VatTaxKey.GT ) {
-			if (percent != 4 && percent != 8 && percent != 18) {
+			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
 			declaration.getExpenses().put(mapKey, bd);
@@ -252,7 +251,7 @@ public class MOD303Writer {
 			declaration.setQuotaTotalAddInfo( CommonUtil.round(declaration.getQuotaTotalAddInfo() +quota,2));
 			declaration.setDeductibleQuotaTotalAddInfo( CommonUtil.round(declaration.getDeductibleQuotaTotalAddInfo() +deductiblequota,2));
 		} else if (key == VatTaxKey.BI ) {
-			if (percent != 4 && percent != 8 && percent != 18) {
+			if (percent != 4 && percent != 10 && percent != 21) {
 				mapKey = "?";
 			}
 			declaration.getInvestmentAsset().put(mapKey, bd);
@@ -271,6 +270,7 @@ public class MOD303Writer {
 		IManagerBean bean = BeanManager.getManagerBean(VatTaxDeclaration.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
+		criteria.setSkipDomainFilter(true);
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			VatTaxDeclaration d = (VatTaxDeclaration) to;

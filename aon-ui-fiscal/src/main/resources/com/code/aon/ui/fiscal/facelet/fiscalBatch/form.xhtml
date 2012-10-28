@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="mod347Form">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_batch_module}" />
+				<ui:param name="controller" value="#{fiscalBatch}" />
+				
+				<ui:param name="skipSaveButton" value="#{fiscalBatch.to.generated}" />
+				<ui:param name="skipRemoveButton" value="#{fiscalBatch.to.generated}" />
+
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="fiscalBatch_close"
+						value="#{bundle.aon_close}"
+						actionListener="#{fiscalBatch.onClose}"
+						rendered="#{!fiscalBatch.new and !fiscalBatch.to.generated}"
+						styleClass="aon-finding-toolbar-item aon-icon-lock"
+						onclick="if (!confirm('#{bundle.aon_close}?')) return false;"/>
+						
+					<aon:commandButton id="fiscalBatch_reopen"
+						value="#{fiscalBundle.fiscal_reopen}"
+						actionListener="#{fiscalBatch.onReopen}"
+						rendered="#{!fiscalBatch.new and fiscalBatch.to.generated}"
+						styleClass="aon-finding-toolbar-item aon-icon-unlock"
+						onclick="if (!confirm('#{fiscalBundle.fiscal_reopen}?')) return false;"/>
+				</ui:define>
+				
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="8" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-80
+								  ,aon-panelGrid-even aon-width-150
+								  ,aon-panelGrid-odd aon-width-80
+								  ,aon-panelGrid-even aon-width-100
+								  ,aon-panelGrid-odd aon-width-80
+								  ,aon-panelGrid-even aon-width-100
+								  ,aon-panelGrid-odd aon-width-80	
+								  ,aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="FiscalBatch_date" value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="FiscalBatch_date"
+						value="#{fiscalBatch.to.date}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						disabled="#{!fiscalBatch.new}"
+						popupDateFormat="#{bundle.aon_date_pattern}" />
+					
+					<aon:outputLabel for="FiscalBatch_type" value="#{fiscalBundle.fiscal_model}" />
+					<aon:selectOneMenu id="FiscalBatch_type" value="#{fiscalBatch.to.type}" 
+						required="true" disabled="#{!fiscalBatch.new}">
+						<f:selectItems value="#{fiscalCollections.fiscalBatchTypes}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="FiscalBatch_administration" value="#{fiscalBundle.fiscal_administration}" />
+					<aon:selectOneMenu id="FiscalBatch_administration" value="#{fiscalBatch.to.administration}" 
+						required="true" disabled="#{!fiscalBatch.new}">
+						<f:selectItems value="#{configCollections.administrations}" />
+					</aon:selectOneMenu>
+
+					<c:if test="#{fiscalBatch.new or !fiscalBatch.to.generated}">
+						<aon:outputText value="&#160;"/>
+						<aon:outputText value="&#160;"/>
+					</c:if>
+					
+					<c:if test="#{!fiscalBatch.new and fiscalBatch.to.generated}">
+						<aon:outputLabel for="FiscalBatch_issueDate" value="#{fiscalBundle.fiscal_batch_issue_date}" />
+						<aon:selectInputDate id="FiscalBatch_issueDate"
+							value="#{fiscalBatch.to.issueDate}" required="true"
+							timeZone="#{timeZoneController.timeZone}"
+							disabled="#{!fiscalBatch.new}"
+							popupDateFormat="#{bundle.aon_date_pattern}" />
+					</c:if>
+
+					<c:if test="#{!aonRole.confidentiality}">
+						<aon:outputText value="&#160;"/>
+						<aon:outputText value="&#160;"/>
+					</c:if>
+					
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputText value="&#160;"/>
+						<aon:div>
+							<aon:selectBooleanCheckbox id="FiscalBatch_securityLevel"
+								disabled="#{!fiscalBatch.new}"
+								value="#{fiscalBatch.to.confidential}" />
+							<aon:outputLabel for="FiscalBatch_securityLevel" styleClass="aon-italic"
+								value="#{bundle.aon_confidential}"/>
+							<aon:outputText styleClass="aon-icon aon-icon-confidential"
+								style="margin-left: 5px; margin-bottom: 3px;"
+								value="&#160;&#160;" title="#{bundle.aon_confidential}" />
+						</aon:div>
+					</c:if>
+
+					<aon:outputLabel for="FiscalBatch_year" value="#{bundle.aon_year}" />
+					<aon:inputText id="FiscalBatch_year" size="5" value="#{fiscalBatch.to.year}" 
+						disabled="#{!fiscalBatch.new}" required="true"/>
+
+					<aon:outputLabel for="FiscalBatch_period" value="#{bundle.aon_period}" />
+					<aon:selectOneMenu id="FiscalBatch_period" value="#{fiscalBatch.to.period}" 
+						disabled="#{!fiscalBatch.new}" required="true">
+						<f:selectItems value="#{fiscalCollections.periods}" />
+					</aon:selectOneMenu>
+					
+					<c:if test="#{fiscalBatch.new or !fiscalBatch.to.generated}">
+						<aon:outputText value="&#160;"/>
+						<aon:outputText value="&#160;"/>
+					</c:if>
+					
+					<c:if test="#{!fiscalBatch.new and fiscalBatch.to.generated}">
+						<aon:outputText value="&#160;"/>
+						<aon:htmlCommandLink target="_blank"
+							title="#{financeBundle.finance_download_disk}"
+							value="#{financeBundle.finance_download_disk}"
+							style="border-width: 0px 0px 0px 0px;"
+							actionListener="#{fiscalBatch.onDownloadDisk}"
+							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+					</c:if>
+				</aon:panelGrid>
+				
+				<aon:panelGrid columns="2" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-100
+								  ,aon-panelGrid-even aon-width-auto">
+					<aon:outputLabel for="FiscalBatch_comments" value="#{bundle.aon_comment}" />
+					<aon:inputTextarea id="FiscalBatch_comments" cols="80" rows="2" value="#{fiscalBatch.to.comments}"/>
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div id="fiscalBatchPanelTabSet" >
+				<c:if test="#{!fiscalBatch.new}">
+					<aon:panelTabSet>
+						<c:if test="#{!fiscalBatch.to.generated}">
+							<c:if test="#{fiscalBatch.pending.rowCount > 0}" >
+								<aon:panelTab id="fiscalBatchPendingTab" label="#{fiscalBundle.fiscal_not_included_declarations}">
+									<ui:include src="/com/code/aon/ui/fiscal/facelet/fiscalBatch/pendingList.xhtml" />
+								</aon:panelTab>
+							</c:if>
+						</c:if>
+	
+						<c:if test="#{fiscalBatch.details.rowCount > 0}" >
+							<aon:panelTab id="fiscalDetailsTab" label="#{fiscalBundle.fiscal_included_declarations}">
+									<ui:include src="/com/code/aon/ui/fiscal/facelet/fiscalBatch/detailsList.xhtml" />
+							</aon:panelTab>
+						</c:if>
+						
+					</aon:panelTabSet>
+				</c:if>
+			</aon:div>
+			
+		</aon:form>
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+	</ui:define>
+
+</ui:composition>

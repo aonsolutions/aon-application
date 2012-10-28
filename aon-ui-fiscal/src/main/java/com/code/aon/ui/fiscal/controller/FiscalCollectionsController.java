@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.file.tax.model.MOD340.MOD340Format;
 import com.code.aon.file.tax.model.MOD347.MOD347Format;
+import com.code.aon.fiscal.enumeration.FiscalBatchType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Mod347Type;
 import com.code.aon.fiscal.enumeration.Mod349Type;
@@ -46,6 +47,8 @@ public class FiscalCollectionsController {
 
 	private List<SelectItem> mod340Formats;
 	
+	private List<SelectItem> fiscalBatchTypes;
+
 	public List<SelectItem> getRentingStatuses() {
 		if (rentingStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -175,6 +178,19 @@ public class FiscalCollectionsController {
 		return mod340Formats;
 	}
 	
+	public List<SelectItem> getFiscalBatchTypes() {
+		if (fiscalBatchTypes == null) {
+			fiscalBatchTypes = new LinkedList<SelectItem>();
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			for (FiscalBatchType type:FiscalBatchType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				fiscalBatchTypes.add(item);
+			}
+		}
+		return fiscalBatchTypes;
+	}
+
 	public List<SelectItem> getMod347Formats() {
 		if (mod347Formats == null) {
 			mod347Formats = new LinkedList<SelectItem>();

@@ -494,6 +494,100 @@
 		</managed-property>		
 	</managed-bean>
 
+	<!-- **************** FISCAL BATCH  *************** -->
+	<managed-bean>
+		<managed-bean-name>fiscalBatch</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.FiscalBatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fiscalBatch</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalBatch_year desc,FiscalBatch_period desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{fiscalBatchControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>fiscalBatchControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.event.FiscalBatchControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+<!-- 
+	<value>#{fiscalBatchDetailListener}</value>
+	
+	
+	<managed-bean>
+		<managed-bean-name>fiscalBatchDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>fiscalBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FiscalBatchDetail_fiscalBatch_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>fiscalBatchDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.fiscal.controller.FiscalBatchDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.fiscal.FiscalBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fiscalBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>fiscalBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FiscalBatchDetail_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>fiscalBatch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+ -->
 	<!-- ================================================ -->
 	<!-- =================== NAVIGATION ================= -->
 	<!-- ================================================ -->
@@ -637,6 +731,23 @@
 			<to-view-id>/com/code/aon/ui/fiscal/facelet/vatTaxSummaryReport/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
+
+	<!-- =================== FISCAL BATCH ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>fiscalBatch_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/fiscalBatch/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fiscalBatch_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/fiscalBatch/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fiscalBatch_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/fiscal/facelet/fiscalBatch/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	<!-- =================== PROFESSIONAL RETENTION ================= -->
 	<navigation-rule>
 		<navigation-case>
