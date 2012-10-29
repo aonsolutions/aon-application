@@ -21,8 +21,8 @@ CREATE TABLE `fs_batch` (
   PRIMARY KEY (`id`),
   KEY `IDX_FS_BATCH_DOMAIN` (`domain`),
   CONSTRAINT `FK_FS_BATCH_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lotes de declaraciones / Impuestos'
-;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Lotes de declaraciones / Impuestos';
+
 CREATE TABLE `fs_batch_detail` (
   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
@@ -41,8 +41,8 @@ CREATE TABLE `fs_batch_detail` (
   KEY `IDX_FS_BATCH_DETAIL_FS_BATCH` (`fs_batch`),
   CONSTRAINT `FK_FS_BATCH_DETAIL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_FS_BATCH_DETAIL_FS_BATCH` FOREIGN KEY (`fs_batch`) REFERENCES `fs_batch` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los lotes de declaraciones / impuestos' 
-;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de los lotes de declaraciones / impuestos';
+
 
 UPDATE `db_version` SET `version_number` = '7.1.11';
 
