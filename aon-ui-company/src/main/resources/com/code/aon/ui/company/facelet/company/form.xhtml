@@ -132,14 +132,20 @@
 												<aon:selectBooleanCheckbox id="Company_print_record_data"
 													value="#{company.printRecordData}" />
 											</aon:panelGrid>
-											<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams and !company.customReportTemplate}">
+											<c:if test="#{aonConfiguration.bean.company.showSaleInvoiceReportParams}">
 												<aon:panelGrid columns="2" style="width:100%">
 													<aon:outputLabel for="Company_invoice_template"
 														value="#{companyBundle.company_saleInvoice_template}" />
-													<aon:selectOneMenu id="Company_invoice_template"
-														value="#{company.saleInvoiceTemplate}" >
-														<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
-													</aon:selectOneMenu>
+													<c:if test="#{!company.customReportTemplate}">
+														<aon:selectOneMenu id="Company_invoice_template"
+															value="#{company.saleInvoiceTemplate}" >
+																<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+														</aon:selectOneMenu>
+													</c:if>
+													<c:if test="#{company.customReportTemplate}">
+														<aon:outputText id="Company_invoice_template"
+															value="#{companyBundle.company_custom_template}" />
+													</c:if>
 														
 													<aon:outputLabel for="Company_print_logo"
 														value="#{companyBundle.company_print_logo}" />
