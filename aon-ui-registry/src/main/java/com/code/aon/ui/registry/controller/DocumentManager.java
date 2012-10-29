@@ -112,7 +112,7 @@ public class DocumentManager {
 		} catch ( Throwable th ) {
 			LOGGER.error( "Error calculating free space", th);
 		}
-        return usedSpace;
+        return (usedSpace != null) ? usedSpace : 0L;
 	}
 	
 	public long getFreeSpace() {
