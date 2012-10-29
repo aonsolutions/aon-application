@@ -762,9 +762,10 @@ public class CompanyParentController extends BasicController implements ICompany
 		ApplicationParameter invoiceTemplateParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
 		if( invoiceTemplateParam!=null && SaleInvoiceTemplate.getEnumByValue(invoiceTemplateParam.getValue())!=SaleInvoiceTemplate.DEFAULT ){
 			setCustomReportTemplate(false);
+		} else {
+			ApplicationParameter customInvoiceReportKey = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
+			setCustomReportTemplate(customInvoiceReportKey != null);
 		}
-		ApplicationParameter customInvoiceReportKey = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
-		setCustomReportTemplate(customInvoiceReportKey != null);
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(ApplicationParameter appParam) {
