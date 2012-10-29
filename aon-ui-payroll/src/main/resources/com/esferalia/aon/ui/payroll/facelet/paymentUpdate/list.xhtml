@@ -10,11 +10,12 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form>
+		<aon:form id="paymentUpdate_list">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_payment_update_module}" />
 				<ui:param name="controller" value="#{paymentUpdate}" />
 				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipSearchButton" value="true" />
 
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="paymentUpdate-save"
@@ -23,13 +24,6 @@
 						onclick="if (!confirm('#{bundle.aon_accept_confirm}')) return false;"
 						actionListener="#{paymentUpdate.onSave}" />
 						
-					<aon:outputText styleClass="aon-margin-left aon-margin-right" 
-						value="#{payrollBundle.payroll_contract_variables}:" />
-					<aon:selectOneMenu value="#{paymentUpdate.selectedVariable}" >
-						<f:selectItem itemLabel=" - " itemValue="#{null}"  />
-						<f:selectItems value="#{paymentUpdate.availableVariables}"  />
-					</aon:selectOneMenu>
-					
 					<aon:commandButton id="paymentUpdate-refresh"
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						value="#{payrollBundle.payroll_refresh}"
@@ -37,62 +31,60 @@
 						actionListener="#{paymentUpdate.onSearch}" />
 				</ui:define>
 			</ui:decorate>
+			
+			<!--  
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="6" styleClass="aon-margin-bottom" width="100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150
-								,aon-panelGrid-even aon-width-auto
-								,aon-panelGrid-odd aon-width-150
-								,aon-panelGrid-even aon-width-150">
-				
-					<aon:outputText value="#{companyBundle.company_enterprise}" />
-					<aon:outputText value="#{paymentUpdate.enterprise.registry.fullName}" />
-				
-					<aon:outputText value="#{companyBundle.company_workplace}" />
-					<aon:outputText value="#{paymentUpdate.workPlace.description}" />
-
-					<aon:outputText value="#{bundle.aon_date}"/>
-					<aon:div>
-						<aon:outputText value="#{paymentUpdate.month}" />
-						<aon:outputText value="&#160;/&#160;" />
-						<aon:outputText value="#{paymentUpdate.year}" />
+				<aon:panelCollapsible>
+					
+					<f:facet name="header" >
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>			
+					</f:facet>
+					
+					
+				</aon:panelCollapsible>
+					<aon:div styleClass="aon-panelGrid-search">
+						<aon:panelGrid columns="2" >
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/search_content.xhtml" />
+						</aon:panelGrid>
 					</aon:div>
-				</aon:panelGrid>
-
+			</aon:div>
+			-->
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
+					
+					<aon:panelGrid columns="2" id="paymentUpdateSearch">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/search_content.xhtml" />
+					</aon:panelGrid>
+					
+				</aon:div>		
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				
 				<aon:dataTable id="paymentUpdateData" styleClass="aon-width-auto" rendered="#{paymentUpdate.model.rowCount > 0}"
 					value="#{paymentUpdate.model}" var="to">
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_employee_name}" />	
-						</f:facet>
-						<aon:commandLink immediate="#{true}" 
-							styleClass="aon-dataTable-link"
-							actionListener="#{paymentUpdate.onSalaryDraft}"
-							title="#{payrollBundle.payroll_salaryDraft_module}"
-							action="salaryDraft_form">
-							<aon:outputText value="#{to.contract.person.fullName}" />
-						</aon:commandLink>
-					</aon:column>
 					
-					<aon:column	
-						styleClass="aon-editDataTable-numberColumn aon-width-100">
-						<f:facet name="header">
-							<aon:outputText value="#{paymentUpdate.selectedVariable}" />
-						</f:facet>
-						
-						<aon:outputText value="&#160;" rendered="#{to.map[paymentUpdate.selectedVariable] == null}" />
-						
-						<aon:outputText 
-							rendered="#{to.map[paymentUpdate.selectedVariable] != null and to.map[paymentUpdate.selectedVariable].readOnly}"
-							value="#{to.map[paymentUpdate.selectedVariable].expression}" />
-						
-						<aon:inputText required="true"
-							rendered="#{to.map[paymentUpdate.selectedVariable] != null and !to.map[paymentUpdate.selectedVariable].readOnly}"
-							value="#{to.map[paymentUpdate.selectedVariable].expression}" size="10"/>
-
-					</aon:column>					
-	
+					<c:if test="#{paymentUpdate.employeeView}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/list_employee.xhtml" />
+					</c:if>
+					
+					<c:if test="#{paymentUpdate.variableView}">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentUpdate/list_variable.xhtml" />
+					</c:if>
+					
 				</aon:dataTable>
+				
 			</aon:div>
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		
 	</ui:define>
 </ui:composition>

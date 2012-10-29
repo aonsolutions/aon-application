@@ -36,7 +36,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 public class PayrollUtils {
 	
 	/**
-	 * Calculate the salary of the entire month of the param date
+	 * Calculate the salary of the complete month of the param date
 	 * 
 	 * @param contract
 	 * @param date

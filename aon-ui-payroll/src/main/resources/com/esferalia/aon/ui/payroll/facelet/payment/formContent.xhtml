@@ -215,7 +215,9 @@
 	
 	<c:if test="#{!skipResult}">
 		<aon:outputText value="#{payrollBundle.payroll_result}" />
-		<aon:panelGrid id="resultPanel" columns="4">
+		<aon:panelGrid id="resultPanel" columns="4"
+			columnClasses="aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder, 
+			aon-panelGrid-even aon-noborder, aon-panelGrid-even aon-noborder" >
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}"
 				title="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" 
 				style="color:#{(controller.result!=null)?('black'):('red')};" >
