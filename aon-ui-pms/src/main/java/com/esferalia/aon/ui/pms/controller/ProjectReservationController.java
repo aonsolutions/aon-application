@@ -483,15 +483,20 @@ public class ProjectReservationController extends BasicController implements IPm
 	    	getReservationUtils().removeProjectReservationRoomDetails(reservationRoom, false, null);
 		}
 
+		boolean cancelOk = true;
+		if (StringUtils.isNotEmpty(reservation.getCrsCode())) {
+			ReservationRequestManager requestManager = new ReservationRequestManager();
+			cancelOk = requestManager.processBookingCancelRequest(reservation);
+
+			DateFormat dateFormat = new SimpleDateFormat(AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, "aon_timestamp_pattern"));
+			reservation.setRemarks((cancelOk ? "OK" : "ERROR") + " CANCEL CRS: " + dateFormat.format(new Date()) + "\n" + reservation.getRemarks());
+		}
+
 		if (isConfirmNoShow()) {
 			reservation.setCheckStatus(ReservationCheckStatus.NO_SHOW);
 		}
-		reservation.setStatus(ReservationStatus.CANCELLED);
+		reservation.setStatus(cancelOk ? ReservationStatus.CANCELLED : ReservationStatus.BLOCKED);
 		accept(event);
-		if (reservation.isCrs() && StringUtils.isNotEmpty(reservation.getCrsCode())) {
-			ReservationRequestManager requestManager = new ReservationRequestManager();
-			requestManager.processBookingCancelRequest(reservation);
-		}
 
 		IController reservationRoomController = (IController)AonUtil.getRegisteredBean(IPmsConstants.RESERVATION_ROOM_CONTROLLER_NAME);
     	reservationRoomController.onSearch(event);

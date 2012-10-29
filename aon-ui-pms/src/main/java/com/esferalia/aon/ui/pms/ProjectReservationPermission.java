@@ -156,12 +156,12 @@ public class ProjectReservationPermission {
 	public boolean isCancelAllowed() throws ManagerBeanException {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleAdmin()) || ((isRoleConfig() || isRoleCommercial()) && isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isActive() && reservation.isNoCheck();
+		return roleAllowed && (reservation.isActive() || reservation.isBlocked()) && (reservation.isNoCheck() || reservation.isNoShow());
 	}
 
 	public boolean isDivertAllowed() throws ManagerBeanException {
 		Date now = new Date();
-		return !reservation.isCancelled() && !isCheckOutDay(now) && !isAfterCheckOut(now) && !getReservationUtils().isPendingDivert(reservation.getId());
+		return !reservation.isCancelled() && !reservation.isNoShow() && !isCheckOutDay(now) && !isAfterCheckOut(now) && !isPendingDivertVisible();
 	}
 
 	public boolean isBlockAllowed() {
@@ -173,7 +173,7 @@ public class ProjectReservationPermission {
 	public boolean isUnBlockAllowed() {
 		Date now = new Date();
 		boolean roleAllowed = (isRoleAdmin()) || ((isRoleConfig() || isRoleCommercial()) && isBeforeCheckIn(now)) || (isRoleFinance() && isAfterCheckOut(now));
-		return roleAllowed && reservation.isBlocked();
+		return roleAllowed && reservation.isBlocked() && !reservation.isNoShow();
 	}
 
 	public boolean isUndoCheckStatusAllowed() throws ManagerBeanException {
