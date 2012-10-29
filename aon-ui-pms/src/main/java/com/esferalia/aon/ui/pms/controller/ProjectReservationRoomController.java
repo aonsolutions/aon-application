@@ -230,7 +230,8 @@ public class ProjectReservationRoomController extends LinesController {
 			serviceItemList.add(serviceItem);
 
 			int roomCount = reservationService.getProjectReservation().getRoomCount();
-			if ((isNew() && roomCount == 0) || (!isNew() && (roomCount == 1 || reservationService.getProjectReservationRoom().equals(reservationRoom.getId())))) {
+			int serviceRoom = (reservationService.getProjectReservationRoom() == null) ? 0 : reservationService.getProjectReservationRoom().intValue();
+			if ((isNew() && roomCount == 0) || (!isNew() && (roomCount == 1 || serviceRoom == reservationRoom.getId().intValue()))) {
 				services[servicesList.indexOf(reservationService)] = reservationService.getId();
 			}
 		}
