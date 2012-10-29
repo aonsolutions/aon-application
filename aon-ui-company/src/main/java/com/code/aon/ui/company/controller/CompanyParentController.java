@@ -759,8 +759,12 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 	
 	public void searchCustomReportTemplate() throws ManagerBeanException {
-		ApplicationParameter appParam = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
-		setCustomReportTemplate(appParam != null);
+		ApplicationParameter invoiceTemplateParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
+		if( invoiceTemplateParam!=null && SaleInvoiceTemplate.getEnumByValue(invoiceTemplateParam.getValue())!=SaleInvoiceTemplate.DEFAULT ){
+			setCustomReportTemplate(false);
+		}
+		ApplicationParameter customInvoiceReportKey = obtainApplicationParameter(SALE_INVOICE_REPORT_KEY_PARAM);
+		setCustomReportTemplate(customInvoiceReportKey != null);
 	}
 
 	private ReportPrintOption getReportPrintOptionValue(ApplicationParameter appParam) {
