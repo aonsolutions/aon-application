@@ -1335,10 +1335,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 									<bottomPen lineWidth="0.0" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
+								<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 									<font isBold="false" pdfFontName="Helvetica"/>
 								</textElement>
-								<textFieldExpression><![CDATA[" €"]]></textFieldExpression>
+								<textFieldExpression><![CDATA["&euro;"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -2384,10 +2384,10 @@ $V{hotel}.getEmail():$V{email}.getValue()]]></textFieldExpression>
 									<bottomPen lineWidth="0.0" lineColor="#000000"/>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
-								<textElement textAlignment="Right" verticalAlignment="Middle">
+								<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression><![CDATA["€"]]></textFieldExpression>
+								<textFieldExpression><![CDATA["&euro;"]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
