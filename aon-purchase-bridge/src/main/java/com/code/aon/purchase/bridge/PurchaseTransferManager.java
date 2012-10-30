@@ -126,9 +126,9 @@ public class PurchaseTransferManager {
 		} else if( purchaseDetail.getPendingQuantity() < 0 && purchaseDetail.getTransfered() > 0 ){
 			purchaseDetail.setTransfered(0);
 		}
-		if( purchaseDetail.getTransfered()!=0 ){
+		if( purchaseDetail.getTransfered()!=0 && !detailChecks.contains(purchaseDetail)){
 			detailChecks.add(purchaseDetail);
-		} else {
+		} else if( purchaseDetail.getTransfered()==0 && detailChecks.contains(purchaseDetail)){
 			detailChecks.remove(purchaseDetail);
 		}
 	}
