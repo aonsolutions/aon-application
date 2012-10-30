@@ -1,7 +1,12 @@
 package com.code.aon.ui.academy.controller;
 
+import java.sql.Connection;
+
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +14,7 @@ import com.code.aon.academy.CourseInstructor;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ui.form.LinesController;
 
@@ -66,9 +72,31 @@ public class CourseInstructorController extends LinesController {
 		}
 	}
 
+	private void ensureInstructor( TaskHolder taskHolder ) {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+		Connection connection = HibernateUtil.getSQLConnection(sessionFactoryName);
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			Long count  = (Long) run.query( connection,
+				    "SELECT count(registry) FROM instructor WHERE registry =?", h, taskHolder.getId());
+			if ( count == 0 ) {
+				LOGGER.error( "Creating instructor for task holder {}", taskHolder.getId() );
+				 int inserts = run.update( connection,
+						 "INSERT INTO instructor VALUES (?,null,0,1)", taskHolder.getId() );
+				 if ( inserts == 0 ) {
+					 LOGGER.error( "Error creating instructor for task holder {}", taskHolder.getId() );
+				 }
+			}
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}			
+	}
+	
 	@Override
 	public void accept(ActionEvent event) {
 		CourseInstructor ci = (CourseInstructor) getTo();
+		ensureInstructor(taskHolder);
 		ci.setEmployee(getTaskHolder().getId());
 		super.accept(event);
 	}	
