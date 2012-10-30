@@ -14,15 +14,10 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{pmsBundle.pms_posOpening_module}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="save" value="#{bundle.aon_save}"
+					<aon:commandButton id="save" value="#{(posOpening.posShift.id!=null)?(bundle.aon_save):(bundle.aon_accept)}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{posOpening.onAccept}"
 						accesskey="#{bundle.aon_key_save}" />
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						rendered="#{posOpening.posShift.id!=null}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						actionListener="#{posOpening.onReset}"
-						accesskey="#{bundle.aon_key_reset}" />
 				</ui:define>
 			</ui:decorate>
 

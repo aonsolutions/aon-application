@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.pms.controller;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -16,6 +18,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
+import com.code.aon.config.User;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.pms.Hotel;
@@ -87,8 +90,30 @@ public class PosOpeningController {
 			}
 		}
 	}
+	
+	private boolean isUserInOpenedPos() throws ManagerBeanException {
+		User user = UserUtils.getInstance().getLoggedUser();
+		String sqlSelect = "SELECT count(user)"
+			+ " FROM pos_shift"  
+			+ " WHERE "+DomainManager.getSQLWhereClause("domain")
+			+ " AND user = "+user.getId() 
+			+ " AND end_time is null";
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		Query sqlQuery = session.createSQLQuery(sqlSelect);
+		List<?> list = sqlQuery.list();
+		Object o = list.isEmpty()?null:list.get(0);
+		if( o!=null && NumberUtils.isNumber(o.toString()) && ((BigInteger)o).equals(BigInteger.ZERO) ){
+			return false;
+		}
+		return true;
+	}
 
-	public void onInit( ActionEvent event ){
+	public void onInit( ActionEvent event ) throws ManagerBeanException{
+		if( isUserInOpenedPos() ){
+			String msg = "No se puede abrir ninguna caja. (El usuario ya tiene una caja abierta)";
+			AonUtil.addErrorMessage( msg );
+			throw new AbortProcessingException( msg );
+		}
 		CashCalculatorController controller = (CashCalculatorController) AonUtil.getRegisteredBean(IPmsConstants.CASH_CALCULATOR_CONTROLLER_NAME);
 		controller.init();
 		setCalculator(controller);
@@ -129,7 +154,7 @@ public class PosOpeningController {
 			throw new AbortProcessingException(msg, e);
 		}
 	}
-	public void onReset( ActionEvent event ){
+	public void onReset( ActionEvent event ) throws ManagerBeanException{
 		onInit(event);
 	}
 	
