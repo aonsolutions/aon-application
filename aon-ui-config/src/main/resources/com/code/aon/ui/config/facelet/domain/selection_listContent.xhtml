@@ -29,17 +29,18 @@
 			<ui:param name="controller" value="#{domainSwitcher}" />
 			<ui:param name="rows" value="#{domainSwitcherRows}" />
 			<ui:param name="skipFocusFirst" value="true" />
-			<!-- 
-			<ui:param name="skipSelectButton" value="true" />
-			-->
 			<ui:define name="columns">
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-<!-- 				
-					<f:facet name="header">
-						<aon:outputLabel value="#{companyBundle.company_enterprise}" />
-					</f:facet>
- -->
 					<aon:outputText value="#{to.description}" />
+				</aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+					<aon:div onmouseover="disableRowSelector();"
+						onmouseup="disableRowSelector();"
+						onmouseout="enableRowSelector();" >
+						<aon:outputLink target="_blank" value="http://#{to.name}" >
+							<aon:outputText value="http://#{to.name}" />
+					    </aon:outputLink>
+					</aon:div>
 				</aon:column>
 			</ui:define>
 		</ui:decorate>

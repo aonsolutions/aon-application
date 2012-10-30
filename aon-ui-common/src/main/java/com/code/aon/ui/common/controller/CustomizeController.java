@@ -174,7 +174,7 @@ public class CustomizeController {
 			String value = (String) run.query( connection, "SELECT value FROM app_param WHERE domain = ? and name = ?", h, domainId, AON_CUSTOMIZE_ID);
 			if (! StringUtils.isEmpty(value) ) {
 				Integer id = NumberUtils.toInt(value);
-				Long count = (Long) run.query( connection, "SELECT count(id) FROM registry WHERE domain = ? and id = ?", h, domainId, id);
+				Long count = (Long) run.query( connection, "SELECT count(id) FROM registry WHERE id = ?", h, id);
 				if ( count > 0 ) {
 					return id;
 				}
@@ -183,6 +183,17 @@ public class CustomizeController {
 			LOGGER.error(e.getMessage(), e);
 		}		
 		return null;		
+	}
+
+	private Integer getCompanyDomain( Connection connection ) {
+		QueryRunner run = new QueryRunner();
+		try {
+			ResultSetHandler<Object> h = new ScalarHandler();
+			return (Integer) run.query( connection, "SELECT domain FROM registry WHERE id = ?", h, this.companyId);
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+		return this.domainId;		
 	}
 	
 	private void updateApplicationTitle( Connection connection ) {
@@ -272,6 +283,7 @@ public class CustomizeController {
 	private void loadValues( Connection connection ) {
 		this.companyId = getCompanyId(connection);
 		if ( this.companyId != null ) {
+			this.domainId = getCompanyDomain(connection);
 			updateApplicationTitle(connection);
 			updateSupportTelephone(connection);
 			updateSupportEmail(connection);

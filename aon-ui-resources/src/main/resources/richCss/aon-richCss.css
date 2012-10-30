@@ -1612,9 +1612,9 @@ color:#000;
 	text-decoration: underline;
 }
 .aon-header-domain{
-	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll left center no-repeat;
+	background:transparent url(images/aon-icon/aon-icon-switch.png) scroll right center no-repeat;
 	cursor:pointer;
-	padding:2px 6px 1px 18px;
+	padding:2px 20px 1px 6px;
 	text-decoration: underline;
 }
 .aon-header-domain-blue{
@@ -1629,7 +1629,7 @@ color:#000;
 .aon-header-additionalInfo{
 	background:#3d3d47 url(images/aon-header/aon-header-additionalInfo.png) scroll left top repeat-x;
 	color:#f2f2f2;
-	padding:3px 1em 3px 1.5em;
+	padding:3px 1em 3px 6px;
 	font-size:0.9em;
 	overflow:auto;
 }

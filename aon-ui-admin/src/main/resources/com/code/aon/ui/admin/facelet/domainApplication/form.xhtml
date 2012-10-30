@@ -16,7 +16,6 @@
 				<ui:param name="controller" value="#{domainApplication}" />
 				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipSaveButton" value="#{domainApplication.new and !adminMain.termsOfServiceAccepted}" />
-				<ui:param name="skipResetButton" value="#{!adminMain.config.showDomainApplicationReset}" />
 				<ui:param name="removeConfirmMessage" value="#{adminBundle.admin_domain_application_remove_confirm}" />
 			</ui:include>
 

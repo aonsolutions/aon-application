@@ -4,6 +4,7 @@ import static com.code.aon.ui.admin.controller.IAdminConstants.ADMIN_CONTROLLER_
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_AIO_APPLICATION;
 import static com.code.aon.ui.admin.controller.IAdminConstants.AON_PLATFORM;
 import static com.code.aon.ui.admin.controller.IAdminConstants.BUNDLE_NAME;
+import static com.code.aon.ui.admin.controller.IAdminConstants.DOMAIN_NAME_DUPLICATED;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
@@ -11,7 +12,11 @@ import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTR
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.ValidatorException;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -230,6 +235,19 @@ public class DomainController extends BasicController {
 			}
 		}
 
+	}	
+
+	public void domainNameCheck(FacesContext context, UIComponent component, Object value) throws ManagerBeanException {
+		String name = (String) value;
+		if (! StringUtils.equals(name, getDomain().getName()) ) {
+			Criteria criteria = new Criteria();
+			criteria.setSkipDomainFilter(true);
+			criteria.addEqualExpression(getFieldName(IEntityAlias.DOMAIN_NAME), name);
+			if ( getManagerBean().getCount(criteria) > 0 ) {
+				String message = AonUtil.getMessage(BUNDLE_NAME, DOMAIN_NAME_DUPLICATED, name);
+				throw new ValidatorException(new FacesMessage(message));
+			}			
+		}
 	}	
 	
 }

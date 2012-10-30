@@ -40,6 +40,7 @@ public interface IAdminConstants {
 	String NEED_MAIL_ACCOUNT = "admin_need_mail_account";
 	String NEW_PASSWORD_ERROR = "admin_new_passwd_error";
 	String USER_DUPLICATED = "admin_user_duplicated_login";
+	String DOMAIN_NAME_DUPLICATED = "admin_domain_duplicated_name";
 	
 	String EMPLOYEE_PORTAL = "admin_employee_portal";
 	String AON_PLATFORM = "admin_aon_plataform";

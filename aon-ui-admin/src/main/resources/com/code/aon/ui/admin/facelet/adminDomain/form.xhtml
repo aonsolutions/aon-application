@@ -31,12 +31,20 @@
 					<aon:inputText id="Domain_description" required="true"
 						size="90" maxlength="128" value="#{adminDomain.to.description}" />				
 
-					<aon:outputText value="#{adminBundle.admin_domain_url}" />
-					<aon:outputLink target="_blank" value="http://#{adminDomain.to.name}" >
-						<aon:outputText value="http://#{adminDomain.to.name}" />
-				    </aon:outputLink>				
+					<aon:outputLabel for="Domain_name"
+						value="#{adminBundle.admin_domain_url}" />
+					<c:if test="#{!aonRole.sysAdmin}">
+						<aon:outputLink id="Domain_name" target="_blank" value="http://#{adminDomain.to.name}" >
+							<aon:outputText value="http://#{adminDomain.to.name}" />
+					    </aon:outputLink>
+					</c:if>
+					<c:if test="#{aonRole.sysAdmin}">
+						<aon:inputText id="Domain_name" required="true"
+							validator="#{adminDomain.domainNameCheck}"
+							size="64" maxlength="64" value="#{adminDomain.to.name}" />				
+					</c:if>					   				
 
-					<c:if test="#{adminMain.config.showDomainActive}" >
+					<c:if test="#{aonRole.sysAdmin}" >
 						<aon:outputLabel for="Domain_active"
 							value="#{bundle.aon_active}" />
 						<aon:selectBooleanCheckbox id="Domain_active"
@@ -87,7 +95,6 @@
 				</aon:div>
 				<aon:panelGrid columns="2" >
 					<aon:outputLabel for="Domain_maxDefinedUsers"
-						validator="#{adminDomain.numberOfUsersCheck}"
 						value="#{adminBundle.admin_domain_maxDefinedUsers}" />
 					<aon:div>
 						<aon:inputText id="Domain_maxDefinedUsers" required="true"

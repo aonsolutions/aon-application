@@ -39,10 +39,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	private static final String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.config.properties";
 	
-	private static final String NORMAL_PROPERTIES = PROPERTIES_PATH + "normal.properties";
-	
-	private static final String SYS_ADMIN_PROPERTIES = PROPERTIES_PATH + "sysAdmin.properties";
-	
 	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-admin/config.properties" );
 
 	private String _user;
@@ -51,8 +47,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	private Properties properties;
 	
-	private Properties config;
-	
 	private ManagerLogger logger;
 	
 	private boolean termsOfServiceAccepted;
@@ -60,7 +54,6 @@ public class AdminMainController implements IAdminConstants {
 	public AdminMainController() {
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
-		this.config = PropertiesUtil.loadProperties(NORMAL_PROPERTIES);
 	}
 	
 	public void onInit( ActionEvent event ) {
@@ -72,10 +65,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	public Properties getProperties() {
 		return properties;
-	}
-	
-	public Properties getConfig() {
-		return config;
 	}
 	
 	public ManagerLogger getLogger() {
@@ -126,7 +115,6 @@ public class AdminMainController implements IAdminConstants {
 	
 	private void initSysAdmin( ActionEvent event ) {
 		AonUtil.getRoleManager().setSysAdmin();
-		this.config = PropertiesUtil.loadProperties(SYS_ADMIN_PROPERTIES);
 		MailConfigController mailConfig = (MailConfigController) AonUtil.getRegisteredBean(BEAN_MAIL_CONFIG);
 		mailConfig.setSystemAccountEditable(true);
 	}
