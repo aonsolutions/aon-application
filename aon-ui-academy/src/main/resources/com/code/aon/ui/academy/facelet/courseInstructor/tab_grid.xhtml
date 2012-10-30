@@ -15,17 +15,17 @@
 					<aon:outputLabel for="CourseInstructor_taskHolder"
 						value="#{academyBundle.academy_teacher}" />
 				</f:facet>
-				<aon:outputText value="#{controller.instructorName}" rendered="#{formList}" />
+				<aon:outputText value="#{to.taskHolder.registry.fullName}" rendered="#{formList}" />
 				<aon:selectOneMenu id="CourseInstructor_taskHolder"
 					required="true" rendered="#{formEdit}"
-					value="#{controller.taskHolder}" >
+					value="#{controller.to.taskHolder}" >
 					<f:selectItem itemLabel="-" value="#{null}" />		
 					<f:selectItems value="#{groupWareCollections.taskHolders}" />
 				</aon:selectOneMenu>					
 				<f:facet name="footer">
 					<aon:selectOneMenu id="CourseInstructor_taskHolder-New"
 						required="true" rendered="#{formNew}"
-						value="#{controller.taskHolder}" >
+						value="#{controller.to.taskHolder}" >
 						<f:selectItem itemLabel="-" value="#{null}" />		
 						<f:selectItems value="#{groupWareCollections.taskHolders}" />
 					</aon:selectOneMenu>					

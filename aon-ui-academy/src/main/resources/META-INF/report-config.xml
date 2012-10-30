@@ -177,17 +177,4 @@
 		</params>
 	</report>
 	
-	<!--  *********  Instructor  ********* -->
-	<report id="instructorCourse" description="Instructor Course report">
-		<template path="/com/code/aon/ui/academy/report/instructorCourse.jasper" />
-		<collection provider="#{instructorCourse}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="employee" value="#{employee.getEmployee}" />
-			<param id="instructorWeeklyHours" value="#{instructorCourse.getWeeklyHoursCollection}" />
-		</params>
-	</report>
-	
-	
 </report-config>

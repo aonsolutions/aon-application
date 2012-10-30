@@ -57,11 +57,10 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(courseInstructorBean.getFieldName(IEntityAlias.COURSE_INSTRUCTOR_COURSE_ID), course.getId());
-		Iterator iter = courseInstructorBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			int id = ((CourseInstructor) iter.next()).getEmployee();
-			IManagerBean thBean = BeanManager.getManagerBean(CourseInstructor.class);
-			return (TaskHolder) thBean.get(id);
+		List<ITransferObject> list = courseInstructorBean.getList(criteria);
+		if (! list.isEmpty() ) {
+			CourseInstructor ci = (CourseInstructor) list.get(0);
+			return ci.getTaskHolder();
 		}
 		return null;
 	}

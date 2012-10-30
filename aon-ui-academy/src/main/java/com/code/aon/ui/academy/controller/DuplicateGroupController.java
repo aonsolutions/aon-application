@@ -155,7 +155,7 @@ public class DuplicateGroupController extends GroupSelectionController {
 				CourseInstructor courseInstructor = (CourseInstructor) to;
 				CourseInstructor newCourseInstructor = new CourseInstructor();
 				newCourseInstructor.setCourse(newCourse);
-				newCourseInstructor.setEmployee(courseInstructor.getEmployee());
+				newCourseInstructor.setTaskHolder(courseInstructor.getTaskHolder());
 				newCourseInstructor.setType(courseInstructor.getType());
 				courseInstructorBean.insert(newCourseInstructor);
 			}
