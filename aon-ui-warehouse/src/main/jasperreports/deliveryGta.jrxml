@@ -292,7 +292,7 @@
 				<reportElement key="subreport-1" positionType="Float" x="0" y="135" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{deliveryDetailPrinter}.getCollection($F{id}))]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{nestedReports}.get("deliveryDetail")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("deliveryDetailGta")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-35" x="274" y="25" width="246" height="15"/>
