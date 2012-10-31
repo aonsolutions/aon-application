@@ -65,7 +65,7 @@
 							disabled="#{!aonRole.sysAdmin}" value="#{adminDomain.to.subDomainSuffix}" />
 					</c:if>
 
-					<c:if test="#{domainSwitcher.childDomain}" >
+					<c:if test="#{domainSwitcher.childDomain and (!aonRole.sysAdmin)}" >
 						<aon:outputLabel for="Domain_parentDomain"
 							value="#{adminBundle.admin_domain_parent}" />
 						<aon:inputText id="Domain_parentDomain" size="60" disabled="true"
@@ -73,6 +73,13 @@
 					</c:if>			
 					
 					<c:if test="#{aonRole.sysAdmin}">
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
+							<ui:param name="lookupLabel" value="#{adminBundle.admin_domain_parent}" />
+							<ui:param name="lookupSuffix" value="-Parent" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.parentDomainFilter}" />
+						</ui:include>					
+
 						<aon:outputLabel for="Domain_type"
 							value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="Domain_type" 
@@ -82,8 +89,15 @@
 
 						<aon:outputLabel for="Domain_oem"
 							value="#{bundle.aon_oem}" />
-						<aon:selectBooleanCheckbox id="Domain_oem"
-							value="#{adminDomain.OEM}" />								
+						<aon:div>
+							<aon:selectBooleanCheckbox id="Domain_oem"
+								value="#{adminDomain.OEM}" />
+							<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{adminDomain.OEMDomain}" />
+								<ui:param name="lookupSuffix" value="-OEM" />
+								<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
+							</ui:include>
+						</aon:div>								
 					</c:if>
 					
 				</aon:panelGrid>
@@ -152,5 +166,6 @@
 								
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{domainLookup}" />
 	</ui:define>
 </ui:composition>

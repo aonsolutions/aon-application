@@ -2,7 +2,6 @@ package com.code.aon.ui.common.controller;
 
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_COLOR;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_ID;
-import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_OEM;
 import static com.code.aon.ui.common.ICommonConstants.AON_CUSTOMIZE_TITLE;
 import static com.code.aon.ui.common.ICommonConstants.FAVICON_NAME;
 import static com.code.aon.ui.common.ICommonConstants.HEADER_LOGO_NAME;
@@ -69,8 +68,6 @@ public class CustomizeController {
 	private static final String FONT_STYLE_DEFAULT = "black";
 	
 	private Integer domainId;
-	
-	private boolean oem;
 	
 	private String applicationVersion;
 	
@@ -267,8 +264,8 @@ public class CustomizeController {
 			if ( connection != null ) {
 				this.domainId = DataSourceUtil.getDomain(connection, AonUtil.getServerName(), AonUtil.isSkipLdap() );
 				if (this.domainId != null) {
-					this.oem = StringUtils.equals(getValue(connection, AON_CUSTOMIZE_OEM), Boolean.TRUE.toString());
-					if ( this.oem ) {
+					this.companyId = getCompanyId(connection);
+					if ( this.companyId != null ) {
 						loadValues(connection);	
 					}
 				}
@@ -281,21 +278,18 @@ public class CustomizeController {
 	}
 	
 	private void loadValues( Connection connection ) {
-		this.companyId = getCompanyId(connection);
-		if ( this.companyId != null ) {
-			this.domainId = getCompanyDomain(connection);
-			updateApplicationTitle(connection);
-			updateSupportTelephone(connection);
-			updateSupportEmail(connection);
-			updateFontStyle(connection);
-			this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
-			this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
-			this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
-			this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, TOOLBAR_LOGO_NAME), this.toolbarLogo);
-			this.statusStartStyle = getStatusStyle(connection, STATUS_START_NAME, this.statusStartStyle);
-			this.statusStopStyle = getStatusStyle(connection, STATUS_STOP_NAME, this.statusStopStyle);
-			this.statusFailedStyle = getStatusStyle(connection, STATUS_FAILED_NAME, this.statusFailedStyle);
-		}		
+		this.domainId = getCompanyDomain(connection);
+		updateApplicationTitle(connection);
+		updateSupportTelephone(connection);
+		updateSupportEmail(connection);
+		updateFontStyle(connection);
+		this.favicon = StringUtils.defaultIfEmpty(getImageRef(connection, FAVICON_NAME), this.favicon);
+		this.loginLogo = StringUtils.defaultIfEmpty(getImageRef(connection, LOGIN_LOGO_NAME), this.loginLogo);
+		this.headerLogo = StringUtils.defaultIfEmpty(getImageRef(connection, HEADER_LOGO_NAME), this.headerLogo);
+		this.toolbarLogo = StringUtils.defaultIfEmpty(getImageRef(connection, TOOLBAR_LOGO_NAME), this.toolbarLogo);
+		this.statusStartStyle = getStatusStyle(connection, STATUS_START_NAME, this.statusStartStyle);
+		this.statusStopStyle = getStatusStyle(connection, STATUS_STOP_NAME, this.statusStopStyle);
+		this.statusFailedStyle = getStatusStyle(connection, STATUS_FAILED_NAME, this.statusFailedStyle);
 	}
 	
 	public String getApplicationVersion() {
@@ -343,7 +337,7 @@ public class CustomizeController {
 	}
 
 	public boolean isCustomized() {
-		return this.oem;
+		return this.companyId != null;
 	}
 
 	public String getFontStyle() {

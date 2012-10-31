@@ -6,7 +6,7 @@
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{domainLookup}" />
-		<ui:param name="lookupLabel" value="#{companyBundle.company_enterprise}" />
+		<aon:valueParam name="lookupLabel" default="#{companyBundle.company_enterprise}" />
 		<ui:param name="searchButtonTitle" value="#{companyBundle.company_enterprise_selection}" />
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.description} (#{lto.name})"/>
