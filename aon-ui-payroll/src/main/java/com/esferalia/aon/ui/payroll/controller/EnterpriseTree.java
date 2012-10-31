@@ -491,6 +491,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		this.showContractHeader = this.personInfo.hasMedias();
 		this.showContractHeader |= selectSalaries(event, this.contract);
 		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onEditSearch(event);
 		c.select(event, this.contract);
 		c.onShowVariables(event);
 	}	
