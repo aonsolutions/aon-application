@@ -309,13 +309,13 @@
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDown")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDownGta")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="0" y="152" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, true))]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{nestedReports}.get("invoiceDetailGta")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-35" x="274" y="25" width="246" height="15"/>
