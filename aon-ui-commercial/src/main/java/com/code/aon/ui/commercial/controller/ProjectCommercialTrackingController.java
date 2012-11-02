@@ -40,6 +40,7 @@ public class ProjectCommercialTrackingController extends BasicController {
 		ProjectCommercial project = (ProjectCommercial) projectController.getTo();
 		CommercialTracking ct = (CommercialTracking) ctBean.getTo();
 		ct.setProject(project);
+		ct.setSeller(project.getSeller());
 		ctBean.setBackAction(NAVIGATION_PROJECT_COMMERCIAL_FORM);
 		ctBean.setBackActionListener(PROJECT_COMMERCIAL_TRACKING_CONTROLLER_NAME + ".onBackToProject");
 	}
