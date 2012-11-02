@@ -14,7 +14,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Seller_status" value="#{bundle.aon_status}" />
-	<aon:selectOneRadio id="Seller_status" required="true" value="#{controller.to.status}">
+	<aon:selectOneRadio id="Seller_status" value="#{controller.to.status}">
 		<f:selectItems value="#{sellerCollections.sellerStatuses}" />
 	</aon:selectOneRadio>
 
