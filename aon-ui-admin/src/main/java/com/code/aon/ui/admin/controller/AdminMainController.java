@@ -58,9 +58,9 @@ public class AdminMainController implements IAdminConstants {
 	
 	public void onInit( ActionEvent event ) {
 		initDomain(event);
-		// if ( AonUtil.getRoleManager().isSysAdmin() ) {
+		if ( AonUtil.getRoleManager().isSysAdmin() ) {
 			initSysAdmin(event);			
-		// }
+		}
 	}
 	
 	public Properties getProperties() {

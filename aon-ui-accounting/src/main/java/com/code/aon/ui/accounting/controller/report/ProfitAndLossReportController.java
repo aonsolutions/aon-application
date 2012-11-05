@@ -10,7 +10,6 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
@@ -370,12 +369,16 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		this.grossMarginList = grossMarginList;
 	}
 	
-	public void onPeriodChanged(ValueChangeEvent event) {
+	public void onPeriodChanged(ActionEvent event) {
 		try {
-			Period period = (Period) event.getNewValue();
+			Period period = getParameters().getPeriod();
 			if (period == null && getParameters().getFromDate() == null) {
 				Date first = getAccountingUtil().getFirstPeriodInitialDate();
 				getParameters().setFromDate(first);
+				getParameters().setToDate(null);
+			} else {
+				getParameters().setFromDate(period.getInitiationDate());
+				getParameters().setToDate(period.getDeadline());
 			}
 			boolean excludeOperating = getParameters().isExcludeOperatingEntry();
 			if (period != null) {
@@ -386,7 +389,6 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 				}	
 			}
 			getParameters().setExcludeOperatingEntry(excludeOperating);
-			
 		} catch (ManagerBeanException e) {
 			// Nothing.
 		}
