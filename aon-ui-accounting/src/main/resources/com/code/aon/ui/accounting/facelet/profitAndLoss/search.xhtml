@@ -40,11 +40,12 @@
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu ajaxSingle="true"
-						reRender="AccountEntryDetail_accountEntry_entryDate-From,SearchButton,SearchWarning,Account_exclude_operating" 
-						valueChangeListener="#{profitAndLossReport.onPeriodChanged}"
-						id="AccountEntryDetail_accountEntry_accountPeriod"
+					<aon:selectOneMenu id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{profitAndLossReport.parameters.period}">
+						<a4j:support event="onchange"
+							actionListener="#{profitAndLossReport.onPeriodChanged}" 
+							reRender="AccountEntryDetail_accountEntry_entryDate-From,profitAndLossReport-search,SearchWarning,Account_exclude_operating"
+							ajaxSingle="true" />
 						<f:selectItem itemLabel="-" itemValue="" />
 						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 					</aon:selectOneMenu>
@@ -60,8 +61,8 @@
 							value="#{profitAndLossReport.parameters.fromDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="profitAndLossReport-search,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="profitAndLossReport-search,SearchWarning" ajaxSingle="true" />
 						</aon:selectInputDate>
 
 						<aon:outputLabel
@@ -73,8 +74,8 @@
 							value="#{profitAndLossReport.parameters.toDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="oninputchange" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
-							<a4j:support event="onchanged" reRender="SearchButton,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="oninputchange" reRender="profitAndLossReport-search,SearchWarning" ajaxSingle="true" />
+							<a4j:support event="onchanged" reRender="profitAndLossReport-search,SearchWarning" ajaxSingle="true" />
 						</aon:selectInputDate>
 
 					</aon:panelGrid>
