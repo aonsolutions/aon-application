@@ -27,9 +27,22 @@
 				<aon:panelGrid columns="2">
 				
 					<aon:outputLabel for="Domain_description"
-						value="#{bundle.aon_name}" />
+						value="#{adminBundle.admin_domain_displayName}" />
 					<aon:inputText id="Domain_description" required="true"
-						size="90" maxlength="128" value="#{adminDomain.to.description}" />				
+							size="90" maxlength="128" value="#{adminDomain.to.description}" />
+							
+					<aon:outputLabel for="Domain_type"
+						value="#{adminBundle.admin_domain_type}" />
+					<c:if test="#{!aonRole.sysAdmin}">
+						<aon:inputText id="Domain_type" size="60" disabled="true"
+							value="#{adminDomain.to.type}" />
+					</c:if>
+					<c:if test="#{aonRole.sysAdmin}">						
+						<aon:selectOneMenu id="Domain_type" 
+							value="#{adminDomain.to.type}">
+							<f:selectItems value="#{adminCollections.domainTypes}" />
+						</aon:selectOneMenu>		
+					</c:if>						
 
 					<aon:outputLabel for="Domain_name"
 						value="#{adminBundle.admin_domain_url}" />
@@ -44,13 +57,6 @@
 							size="64" maxlength="64" value="#{adminDomain.to.name}" />				
 					</c:if>					   				
 
-					<c:if test="#{aonRole.sysAdmin}" >
-						<aon:outputLabel for="Domain_active"
-							value="#{bundle.aon_active}" />
-						<aon:selectBooleanCheckbox id="Domain_active"
-							value="#{adminDomain.to.active}" />								
-					</c:if>				
-
 					<aon:outputLabel for="DomainApplication_auditLevel"
 						value="#{auditBundle.audit_audit_level}" />
 					<aon:selectOneMenu id="DomainApplication_auditLevel" 
@@ -58,21 +64,12 @@
 						<f:selectItems value="#{auditCollections.auditLevels}" />
 					</aon:selectOneMenu>	
 
-					<c:if test="#{domainSwitcher.domainManagementAvailable}" >
-						<aon:outputLabel for="Domain_subDomainSuffix"
-							value="#{adminBundle.admin_domain_subDomainSuffix}" />
-						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="64"
-							disabled="#{!aonRole.sysAdmin}" value="#{adminDomain.to.subDomainSuffix}" />
-					</c:if>
+					<c:if test="#{aonRole.sysAdmin}" >
+						<aon:outputLabel for="Domain_active"
+							value="#{bundle.aon_active}" />
+						<aon:selectBooleanCheckbox id="Domain_active"
+							value="#{adminDomain.to.active}" />								
 
-					<c:if test="#{domainSwitcher.childDomain and (!aonRole.sysAdmin)}" >
-						<aon:outputLabel for="Domain_parentDomain"
-							value="#{adminBundle.admin_domain_parent}" />
-						<aon:inputText id="Domain_parentDomain" size="60" disabled="true"
-							value="#{adminDomain.to.parent.name}" />
-					</c:if>			
-					
-					<c:if test="#{aonRole.sysAdmin}">
 						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{adminDomain.to.parent}" />
 							<ui:param name="lookupLabel" value="#{adminBundle.admin_domain_parent}" />
@@ -80,24 +77,18 @@
 							<ui:param name="lookupControllerListener" value="#{adminDomain.parentDomainFilter}" />
 						</ui:include>					
 
-						<aon:outputLabel for="Domain_type"
-							value="#{bundle.aon_type}" />
-						<aon:selectOneMenu id="Domain_type" 
-							value="#{adminDomain.to.type}">
-							<f:selectItems value="#{adminCollections.domainTypes}" />
-						</aon:selectOneMenu>		
-
 						<aon:outputLabel for="Domain_oem"
 							value="#{bundle.aon_oem}" />
-						<aon:div>
-							<aon:selectBooleanCheckbox id="Domain_oem"
-								value="#{adminDomain.OEM}" />
-							<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{adminDomain.OEMDomain}" />
-								<ui:param name="lookupSuffix" value="-OEM" />
-								<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
-							</ui:include>
-						</aon:div>								
+						<aon:selectBooleanCheckbox id="Domain_oem"
+							value="#{adminDomain.OEM}" />
+
+						<ui:include src="/com/code/aon/ui/config/facelet/domain/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{adminDomain.OEMDomain}" />
+							<ui:param name="lookupLabel" value="#{bundle.aon_oem_template}" />							
+							<ui:param name="lookupSuffix" value="-OEM" />
+							<ui:param name="lookupControllerListener" value="#{adminDomain.OEMDomainFilter}" />
+						</ui:include>
+								
 					</c:if>
 					
 				</aon:panelGrid>
