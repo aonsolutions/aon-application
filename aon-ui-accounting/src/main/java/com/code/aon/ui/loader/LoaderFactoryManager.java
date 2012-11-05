@@ -11,6 +11,7 @@ import com.code.aon.ui.loader.factory.CustomerLoaderFactory;
 import com.code.aon.ui.loader.factory.FinanceLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceDetailLoaderFactory;
 import com.code.aon.ui.loader.factory.InvoiceLoaderFactory;
+import com.code.aon.ui.loader.factory.ItemLoaderFactory;
 import com.code.aon.ui.loader.factory.SupplierLoaderFactory;
 import com.code.aon.ui.loader.factory.TargetLoaderFactory;
 import com.code.aon.ui.loader.pojo.ILoadedPojo;
@@ -32,6 +33,7 @@ public class LoaderFactoryManager {
 		factories.add( new FinanceLoaderFactory(engine));
 		factories.add( new AccountEntryLoaderFactory(engine));
 		factories.add( new AccountEntryDetailLoaderFactory(engine));
+		factories.add( new ItemLoaderFactory(engine));
 	}
 	
 	public List<ILoaderFactory<ILoadedPojo>> getFactories() {

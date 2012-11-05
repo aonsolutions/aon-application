@@ -20,6 +20,8 @@ public interface ILoaderFactory<E extends ILoadedPojo> {
 	String ASI = "ASI";	// Asientos - AccountEntry
 	String APU = "APU";	// Apuntes - AccountEntryDetail
 	
+	String ITEM = "ITEM";	// Item - Artículos
+	
 	public boolean accept( String key);
 	public boolean accept(Class<? extends ILoadedPojo> clazz);
 

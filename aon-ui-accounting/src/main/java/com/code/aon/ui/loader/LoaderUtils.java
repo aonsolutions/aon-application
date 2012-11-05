@@ -15,7 +15,11 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
+import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.PayMethodType;
+import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.product.Brand;
+import com.code.aon.product.ProductCategory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Segment;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -145,4 +149,61 @@ public class LoaderUtils {
 		return null;
 	}
 
+	public Brand ensureBrand(String marca) throws ManagerBeanException {
+		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(brandBean.getFieldName( IEntityAlias.BRAND_NAME) , marca);
+		List<ITransferObject> list = brandBean.getList(c);
+		if (list != null && list.size() > 0) {
+			return (Brand) list.get(0);	
+		} 
+		if (StringUtils.isNotBlank(marca)) {
+			Brand brand = new Brand();
+			brand.setName(marca);
+			return (Brand) brandBean.insert(brand);
+		}
+		return null;
+	}
+
+	public ProductCategory ensureProductCategory(String categoria) throws ManagerBeanException {
+		IManagerBean brandBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(brandBean.getFieldName( IEntityAlias.PRODUCT_CATEGORY_NAME) , categoria);
+		List<ITransferObject> list = brandBean.getList(c);
+		if (list != null && list.size() > 0) {
+			return (ProductCategory) list.get(0);	
+		} 
+		if (StringUtils.isNotBlank(categoria)) {
+			ProductCategory pCategory = new ProductCategory();
+			pCategory.setName(categoria);
+			return (ProductCategory) brandBean.insert(pCategory);
+		}
+		return null;
+	}
+
+	public Tax ensureRetention(Double porcIva) throws ManagerBeanException {
+		return ensureTax(porcIva,TaxType.RETENTION);
+	}
+	public Tax ensureVat(Double porcIva) throws ManagerBeanException {
+		return ensureTax(porcIva,TaxType.VAT);
+	}
+	public Tax ensureTax(Double perc,TaxType type) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Tax.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName( IEntityAlias.TAX_TYPE) , type);
+		c.addEqualExpression(bean.getFieldName( IEntityAlias.TAX_PERCENTAGE) , perc);
+		List<ITransferObject> list = bean.getList(c);
+		if (list != null && list.size() > 0) {
+			return (Tax) list.get(0);	
+		} 
+		if (perc != null) {
+			Tax tax = new Tax();
+			tax.setType(type);
+			tax.setPercentage(perc);
+			tax.setName(type + " " + perc );
+			return (Tax) bean.insert(tax);
+		}
+		return null;
+	}
+	
 }
