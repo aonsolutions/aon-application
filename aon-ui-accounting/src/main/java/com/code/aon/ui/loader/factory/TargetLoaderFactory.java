@@ -146,7 +146,7 @@ public class TargetLoaderFactory extends RegistryLoaderFactory implements ILoade
 			insertRegistryMedia(target.getRegistry(),MediaType.FAX,loaded.getFax());
 		}
 		if (StringUtils.isNotBlank(loaded.getEmail())) {
-			insertRegistryMedia(target.getRegistry(),MediaType.EMAIL,loaded.getEmail());
+			insertRegistryMedia(target.getRegistry(),MediaType.EMAIL,loaded.getEmail(),false,true,false);
 		}
 		if (StringUtils.isNotBlank(loaded.getWeb())) {
 			insertRegistryMedia(target.getRegistry(),MediaType.WEB,loaded.getWeb());

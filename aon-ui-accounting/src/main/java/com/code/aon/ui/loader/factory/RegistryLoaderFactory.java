@@ -89,10 +89,16 @@ public class RegistryLoaderFactory {
 	}
 
 	public void insertRegistryMedia(Registry registry, MediaType type, String value) throws ManagerBeanException {
+		insertRegistryMedia(registry, type, value,false,false,false);	
+	}
+	public void insertRegistryMedia(Registry registry, MediaType type, String value,boolean administrative,boolean commercial, boolean technical) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		RegistryMedia rmedia = new RegistryMedia();
 		rmedia.setRegistry(registry);
 		rmedia.setMediaType(type);
+		rmedia.setAdministrative(administrative);
+		rmedia.setCommercial(commercial);
+		rmedia.setTechnical(technical);
 		rmedia.setValue(value);
 		bean.insert(rmedia);		
 	}
