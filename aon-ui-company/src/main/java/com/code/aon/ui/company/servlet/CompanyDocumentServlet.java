@@ -126,10 +126,9 @@ public class CompanyDocumentServlet extends HttpServlet {
 				if ( configuration != null ) {
 					factory = configuration.buildSessionFactory();
 					StatelessSession session = factory.openStatelessSession();
-					Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
 					Criteria criteria = session.createCriteria(RegistryAttachment.class);
-					criteria.add(Restrictions.eq("domain", domainId));
 					if ( companyLogo ) {
+						Integer domainId = DataSourceUtil.getDomain(session.connection(), req.getServerName(), skipLdap);
 						Integer companyId = getCompanyId(session, domainId);
 						criteria.add(Restrictions.eq("registry.id", companyId));
 						criteria.add(Restrictions.eq("registryAttachmentType", RegistryAttachmentType.LOGO));
