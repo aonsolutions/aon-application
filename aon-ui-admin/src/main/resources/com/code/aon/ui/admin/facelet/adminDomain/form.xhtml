@@ -108,7 +108,10 @@
 						</aon:inputText>
 						<aon:outputFormat styleClass="aon-margin-left" value="#{adminBundle.admin_active_users}">
 							<f:param value="#{domainUser.numberOfActiveUsers}" />
-						</aon:outputFormat>							
+						</aon:outputFormat>
+						<aon:goToButton controller="#{domainUser}"
+							actionListener="#{domainUser.onSearch}"	
+							action="domainUser_list" rendered="true" />						
 					</aon:div>
 				
 					<c:if test="#{!domainSwitcher.childDomain}" >

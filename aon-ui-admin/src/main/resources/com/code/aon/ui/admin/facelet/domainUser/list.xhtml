@@ -10,11 +10,21 @@
 
 		<aon:form id="domainUserList">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{adminBundle.admin_users} (#{adminDomain.to.name})" />
 				<ui:param name="controller" value="#{domainUser}" />
 				<ui:param name="skipResetButton" value="#{domainUser.skipUserReset}" />
-			</ui:include>
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}"
+						rendered="#{domainUser.backAction != null}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						actionListener="#{domainUser.onBackActionListener}"
+						action="#{domainUser.backAction}"
+						accesskey="#{bundle.aon_key_cancel}" />				
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

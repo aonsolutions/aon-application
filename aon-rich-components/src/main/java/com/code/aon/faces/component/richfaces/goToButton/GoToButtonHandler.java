@@ -55,7 +55,7 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		controllerTag = getRequiredAttribute(CONTROLLER);
 		propertyIdTag  = getAttribute(PROPERTY_ID);
 		if ( propertyIdTag  == null ) {
-			propertyTag = getRequiredAttribute(PROPERTY);
+			propertyTag = getAttribute(PROPERTY);
 		}
 	}
 	

@@ -80,8 +80,6 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		controller.setBackAction(backAction);
-		controller.setBackActionListener(backActionListener);
 		if ( actionListener != null ) {
 			actionListener.invoke(ctx.getELContext(), new Object[] {event} );
 		} else {
@@ -93,6 +91,8 @@ public class GoToActionListener implements ActionListener, StateHolder {
 				throw new AbortProcessingException(e);
 			}			
 		}
+		controller.setBackAction(backAction);
+		controller.setBackActionListener(backActionListener);
 	}
 
     public Object saveState(FacesContext context) {
