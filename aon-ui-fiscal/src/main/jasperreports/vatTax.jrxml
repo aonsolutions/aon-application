@@ -451,10 +451,10 @@
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="10">
+		<band height="12">
 			<printWhenExpression><![CDATA[$F{key}.isTotal() || $F{key}.isSubtotal()]]></printWhenExpression>
 			<textField>
-				<reportElement x="0" y="0" width="336" height="10"/>
+				<reportElement x="0" y="0" width="336" height="12"/>
 				<box leftPadding="5">
 					<pen lineColor="#A8A8A8"/>
 					<topPen lineColor="#A8A8A8"/>
@@ -468,7 +468,7 @@
 				<textFieldExpression><![CDATA[$F{descriptionDisabled}?"":$F{key}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="460" y="0" width="75" height="10"/>
+				<reportElement x="460" y="0" width="75" height="12"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
@@ -478,7 +478,7 @@
 				<textFieldExpression><![CDATA[$F{quota}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="388" y="0" width="72" height="10"/>
+				<reportElement x="388" y="0" width="72" height="12"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
@@ -488,7 +488,7 @@
 				<textFieldExpression><![CDATA[$F{taxableBase}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="336" y="0" width="52" height="10"/>
+				<reportElement x="336" y="0" width="52" height="12"/>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
