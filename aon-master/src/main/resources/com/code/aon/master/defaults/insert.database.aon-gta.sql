@@ -181,7 +181,8 @@ INSERT IGNORE INTO `model` VALUES
   (112,@Domain,59,'XC90');
 
 INSERT INTO `app_param` (`domain`, `name`, `value`) VALUES 
-  (@Domain,'AON_TAS_PRIVATE_CODE_REQUIRED','false');
+  (@Domain,'AON_TAS_PRIVATE_CODE_REQUIRED','false'),
+  (@Domain,'AON_DELIVERY_TEMPLATE_PARAM','deliveryGta');
 
 COMMIT;
 
