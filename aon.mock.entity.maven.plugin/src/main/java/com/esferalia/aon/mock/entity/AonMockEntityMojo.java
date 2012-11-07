@@ -176,6 +176,8 @@ public class AonMockEntityMojo extends AbstractMojo {
 					File file  = new File(dir, "hibernate.cfg.xml");
 					FileWriter output = new FileWriter(file);
 					tpl.process(additionalContext, output);			
+					output.flush();
+					output.close();
 				}
 			}
 			catch(Exception e) {
