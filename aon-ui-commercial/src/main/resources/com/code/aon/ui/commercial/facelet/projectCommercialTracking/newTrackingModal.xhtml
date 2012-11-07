@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showNewTrackingWindow">
+		<c:if test="#{showNewTrackingWindow}">
+			<rich:modalPanel id="newTrackingModalPanel"
+				minWidth="700" minHeight="500" zindex="90"
+				showWhenRendered="#{showNewTrackingWindow}" >
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{commercialBundle.commercial_tracking_module}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="close-button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onCancelTracking}"
+							reRender="showNewTrackingWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{showNewTrackingWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="newTrackingForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+									
+										<h:panelGrid columns="2" cellspacing="0" cellpadding="0"
+											columnClasses="aon-finding-subtitle, aon-finding-toolbar">
+								
+											<aon:div styleClass="aon-finding-subtitle-internal">
+												<aon:outputText value="#{bundle.aon_reset} " />			
+											</aon:div>
+											
+											<aon:div styleClass="aon-finding-toolbar-item-group">
+												<aon:commandButton id="commercialTracking-save"
+													value="#{bundle.aon_save}"
+													reRender="aonContent"
+													actionListener="#{controller.onAcceptTracking}"
+													styleClass="aon-finding-toolbar-item aon-icon-accept"
+													accesskey="#{bundle.aon_key_save}">
+													<rich:componentControl for="newTrackingModalPanel"
+														event="onclick" operation="hide"/>																					
+													<f:setPropertyActionListener
+														target="#{showNewTrackingWindow}"
+														value="#{false}" />
+												</aon:commandButton>
+												<aon:commandButton id="commercialTracking-cancel"
+													value="#{bundle.aon_cancel}"
+													reRender="showNewTrackingWindow"
+													actionListener="#{controller.onCancelTracking}"
+													immediate="true"
+													styleClass="aon-finding-toolbar-item aon-icon-cancel">
+													<f:setPropertyActionListener
+														target="#{showNewTrackingWindow}"
+														value="#{false}" />
+												</aon:commandButton>		
+											</aon:div>
+										</h:panelGrid>
+									
+									</aon:div>
+									<aon:div styleClass="aon-scroll-area">
+
+										<ui:include src="/com/code/aon/ui/commercial/facelet/commercialTracking/formContent.xhtml">
+											<ui:param name="skipProjectData" value="#{true}" />
+										</ui:include>
+										
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+			
+				<aon:lookupButtonPopup lookup="#{offerLookup}" />
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

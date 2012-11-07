@@ -9,6 +9,25 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ProjectCommercialController extends BasicController {
 
+	private String selectedTab;
+	private boolean showNewTrackingWindow;
+
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+
+	public boolean isShowNewTrackingWindow() {
+		return showNewTrackingWindow;
+	}
+
+	public void setShowNewTrackingWindow(boolean value) {
+		this.showNewTrackingWindow = value;
+	}
+
 	public void onProjectHistory(ActionEvent event) {
 		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
 		statController.setProject(((ProjectCommercial)this.getTo()).getProject());

@@ -1,5 +1,7 @@
 package com.code.aon.project;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -16,6 +18,10 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 
 	private Integer size;
 
+	public ProjectAttachment() {
+		setAttachDate(new Date());
+	}
+
 	@Formula("LENGTH(data)")
 	public Integer getSize() {
 		return size;
@@ -29,5 +35,5 @@ public class ProjectAttachment extends ProjectAttachmentDB implements IAttachmen
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}	
-	
+
 }

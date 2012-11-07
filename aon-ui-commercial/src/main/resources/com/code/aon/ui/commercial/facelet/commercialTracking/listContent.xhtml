@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120"
@@ -40,8 +41,11 @@
 			<aon:outputText value="#{bundle.aon_comment}" />
 		</f:facet>
 		<aon:outputText value="#{to.comments}" >
-			<aon:abbreviateConverter maxWidth="80" />
+			<aon:abbreviateConverter maxWidth="60" />
 		</aon:outputText>
+		<rich:toolTip rendered="#{!empty to.comments}">
+			<aon:outputText value="#{to.comments}" />
+		</rich:toolTip>
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-textColumn"

@@ -38,19 +38,28 @@
 
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-form-group" rendered="#{!projectCommercial.new}">
-					<aon:div styleClass="aon-form-group-title">
-						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="projectCommercialTrackingData" value="#{commercialBundle.commercial_tracking_module}" />
-						</aon:div>
-					</aon:div>
-					<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />
-				</aon:div>
-						
+				<c:if test="#{!projectCommercial.new}">
+					<aon:panelTabSet id="projectCommercialTab" selectedTab="#{projectCommercial.selectedTab}">
+						<aon:panelTab id="tracking" label="#{commercialBundle.commercial_tracking_module}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />
+						</aon:panelTab>
+
+						<aon:panelTab id="documents" label="#{bundle.aon_documents}">
+							<ui:include	src="/com/code/aon/ui/project/facelet/projectAttachment/tab_grid.xhtml" >
+								<ui:param name="controller" value="#{projectCommercialAttach}" />
+							</ui:include>
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+
+		<ui:include	src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/newTrackingModal.xhtml">
+			<ui:param name="controller" value="#{projectCommercialTracking}" />
+			<ui:param name="showNewTrackingWindow" value="#{projectCommercial.showNewTrackingWindow}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>
 

@@ -44,7 +44,16 @@ public class ProjectCommercialTrackingController extends BasicController {
 		ctBean.setBackAction(NAVIGATION_PROJECT_COMMERCIAL_FORM);
 		ctBean.setBackActionListener(PROJECT_COMMERCIAL_TRACKING_CONTROLLER_NAME + ".onBackToProject");
 	}
-	
+
+	public void onAcceptTracking(ActionEvent event) {
+		getCommercialTracking().onAccept(event);
+		onSearch(event);
+	}
+
+	public void onCancelTracking(ActionEvent event) {
+		getCommercialTracking().onCancel(event);
+	}
+
 	public void onBackToProject( ActionEvent event ) {
 		BasicController ct = getCommercialTracking();
 		ct.onBack(event);
