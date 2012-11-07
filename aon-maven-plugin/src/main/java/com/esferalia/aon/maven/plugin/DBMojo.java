@@ -19,23 +19,17 @@ package com.esferalia.aon.maven.plugin;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.StringTokenizer;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -54,10 +48,13 @@ import com.code.aon.master.VersionManager;
  *
  * @goal 	generate-db
  * @phase	generate-sources	
- * @requiresDependencyResolution 
+ * @requiresDependencyResolution
+ * @threadSafe
+ *  
  */
 public class DBMojo extends AbstractMojo {
 	
+	private static final Object LOCK = new Object();
 	
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -174,67 +171,66 @@ public class DBMojo extends AbstractMojo {
     
 
     @Override
-	public void execute() 
-    	throws MojoExecutionException, MojoFailureException {
-    	
-    	validateParameters();
-    	
-    	Connection connection = null;
-        try {
-        
-        	connection = getConnection(null);
-	        dropDataBase( connection , dbName );
-	        VersionManager versionManager = new VersionManager();
-	        versionManager.createDatabase(connection, dbName);
-	        connection.close();
-			connection = getConnection(dbName);
-	        versionManager.uptodateDatabase(connection);
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		synchronized( LOCK) {
+	    	validateParameters();
+	    	
+	    	Connection connection = null;
+	        try {
 	        
-	        DatabaseMetaData dbMetaData = connection.getMetaData(); 
-			DBContext dbContext = new DBContext(dbMetaData);
-			
-			dbContext.put(packageVariable, targetPackage);
-			dbContext.put(tablesVariable, dbContext.getTables(getTables()) );
-
-			String templateArr [] = getTemplates();
-			for (String  template : templateArr) {
-
-		    	Writer writer = null;
-		    	Reader reader = null;
-
-		    	try {
-					reader = getAsReader(template);
-					writer = new FileWriter(getOuputFile(template));
-					Velocity.evaluate(dbContext, writer, "DBContext", reader);
-	        	}
-	        	finally {
-	        		if ( reader != null ) 
-	        			reader.close();
-	        		if ( writer != null ) 
-	        			writer.close();
-	        	}
-			}
-	        
-	        if ( project != null )
-	        {
-	            project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
-	        }
-			
-		} catch ( IOException e ) {
-			throw new MojoExecutionException( e.getMessage(), e );
-		} catch ( SQLException e ) {
-			throw new MojoExecutionException( e.getMessage(), e );
-		} catch ( AonSQLException e ) {
-			throw new MojoExecutionException( e.getMessage(), e );
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
+	        	connection = getConnection(null);
+		        dropDataBase( connection , dbName );
+		        VersionManager versionManager = new VersionManager();
+		        versionManager.createDatabase(connection, dbName);
+		        connection.close();
+				connection = getConnection(dbName);
+		        versionManager.uptodateDatabase(connection);
+		        
+		        DatabaseMetaData dbMetaData = connection.getMetaData(); 
+				DBContext dbContext = new DBContext(dbMetaData);
+				
+				dbContext.put(packageVariable, targetPackage);
+				dbContext.put(tablesVariable, dbContext.getTables(getTables()) );
+	
+				String templateArr [] = getTemplates();
+				for (String  template : templateArr) {
+	
+			    	Writer writer = null;
+			    	Reader reader = null;
+	
+			    	try {
+						reader = getAsReader(template);
+						writer = new FileWriter(getOuputFile(template));
+						Velocity.evaluate(dbContext, writer, "DBContext", reader);
+		        	}
+		        	finally {
+		        		if ( reader != null ) 
+		        			reader.close();
+		        		if ( writer != null ) 
+		        			writer.close();
+		        	}
+				}
+		        
+		        if ( project != null )
+		        {
+		            project.addCompileSourceRoot( outputDirectory.getAbsolutePath() );
+		        }
+				
+			} catch ( IOException e ) {
+				throw new MojoExecutionException( e.getMessage(), e );
+			} catch ( SQLException e ) {
+				throw new MojoExecutionException( e.getMessage(), e );
+			} catch ( AonSQLException e ) {
+				throw new MojoExecutionException( e.getMessage(), e );
+			} finally {
+				if ( connection != null ) {
+					try {
+						connection.close();
+					} catch (SQLException e) {
+					}
 				}
 			}
 		}
-		
 	}
     
     private String [] getTables() {

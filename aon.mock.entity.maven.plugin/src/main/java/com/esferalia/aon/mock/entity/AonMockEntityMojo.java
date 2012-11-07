@@ -53,9 +53,12 @@ import freemarker.template.Template;
  * @phase generate-sources
  * @requiresDependencyResolution compile+runtime
  * @requiresProject
+ * @threadSafe
  * 
  */
 public class AonMockEntityMojo extends AbstractMojo {
+	
+	private static final Object LOCK = new Object();
 	
 	/**
 	 * The Maven Project Object
@@ -130,52 +133,54 @@ public class AonMockEntityMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		try {
-			Collection<String> classes = AonExporter.map.values();
-			for (String clazz:classes) {
-				Map<String, Object> additionalContext = new HashMap<String, Object>();
-				String aonPackage = ClassUtils.getPackageName(clazz);
-				String aonEntity = ClassUtils.getShortClassName(clazz);
-				String generatedEntity = aonEntity + AonExporter.CLASS_SUFFIX;
-				additionalContext.put("aonPackage", aonPackage);
-				additionalContext.put("aonEntity", aonEntity);
-				additionalContext.put("generatedPackage", AonExporter.ENTITY_PACKAGE);
-				if ("EnterpriseUser".equals(aonEntity)) {
-					generatedEntity = "UserDB";
+		synchronized( LOCK) {
+			try {
+				Collection<String> classes = AonExporter.map.values();
+				for (String clazz:classes) {
+					Map<String, Object> additionalContext = new HashMap<String, Object>();
+					String aonPackage = ClassUtils.getPackageName(clazz);
+					String aonEntity = ClassUtils.getShortClassName(clazz);
+					String generatedEntity = aonEntity + AonExporter.CLASS_SUFFIX;
+					additionalContext.put("aonPackage", aonPackage);
+					additionalContext.put("aonEntity", aonEntity);
+					additionalContext.put("generatedPackage", AonExporter.ENTITY_PACKAGE);
+					if ("EnterpriseUser".equals(aonEntity)) {
+						generatedEntity = "UserDB";
+					}
+					additionalContext.put("generatedEntity", generatedEntity);	
+					additionalContext.put("date", new Date().toString());
+					String tableAnnotation =  getTableAnnotation(generatedEntity);
+					boolean hasUniqueConstraint = StringUtils.contains(tableAnnotation,"UniqueConstraint");
+					additionalContext.put("table",StringUtils.defaultIfEmpty(tableAnnotation, ""));
+					additionalContext.put("hasUniqueConstraint",hasUniqueConstraint);
+					Configuration cfg = new Configuration();
+					cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
+					Template tpl = cfg.getTemplate("aon/Pojo.ftl");
+					File packageDir = new File(getOutputDir(), aonPackage.replace('.', '/'));
+					packageDir.mkdirs();
+					File file  = new File(packageDir, aonEntity + ".java");
+					FileWriter output = new FileWriter(file);
+					getLog().info(" Processing mock entity ..: " + aonPackage + "." + aonEntity + ".java");
+					tpl.process(additionalContext, output);
+					output.flush();
+					output.close();
 				}
-				additionalContext.put("generatedEntity", generatedEntity);	
-				additionalContext.put("date", new Date().toString());
-				String tableAnnotation =  getTableAnnotation(generatedEntity);
-				boolean hasUniqueConstraint = StringUtils.contains(tableAnnotation,"UniqueConstraint");
-				additionalContext.put("table",StringUtils.defaultIfEmpty(tableAnnotation, ""));
-				additionalContext.put("hasUniqueConstraint",hasUniqueConstraint);
-				Configuration cfg = new Configuration();
-				cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
-				Template tpl = cfg.getTemplate("aon/Pojo.ftl");
-				File packageDir = new File(getOutputDir(), aonPackage.replace('.', '/'));
-				packageDir.mkdirs();
-				File file  = new File(packageDir, aonEntity + ".java");
-				FileWriter output = new FileWriter(file);
-				getLog().info(" Processing mock entity ..: " + aonPackage + "." + aonEntity + ".java");
-				tpl.process(additionalContext, output);
-				output.flush();
-				output.close();
+				if (isGenerateHibernateCfg()) {
+					Map<String, Object> additionalContext = new HashMap<String, Object>();
+					additionalContext.put("pojos", classes);
+					Configuration cfg = new Configuration();
+					cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
+					Template tpl = cfg.getTemplate("aon/hibernate.cfg.xml.ftl");
+					File dir = new File(getResourcesOutputDir());
+					dir.mkdirs();
+					File file  = new File(dir, "hibernate.cfg.xml");
+					FileWriter output = new FileWriter(file);
+					tpl.process(additionalContext, output);			
+				}
 			}
-			if (isGenerateHibernateCfg()) {
-				Map<String, Object> additionalContext = new HashMap<String, Object>();
-				additionalContext.put("pojos", classes);
-				Configuration cfg = new Configuration();
-				cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
-				Template tpl = cfg.getTemplate("aon/hibernate.cfg.xml.ftl");
-				File dir = new File(getResourcesOutputDir());
-				dir.mkdirs();
-				File file  = new File(dir, "hibernate.cfg.xml");
-				FileWriter output = new FileWriter(file);
-				tpl.process(additionalContext, output);			
-			}
-		}
-		catch(Exception e) {
-			throw new MojoExecutionException(e.getMessage(),e);
+			catch(Exception e) {
+				throw new MojoExecutionException(e.getMessage(),e);
+			}		
 		}		
 	}
 
@@ -201,9 +206,9 @@ public class AonMockEntityMojo extends AbstractMojo {
 				Object ann = clazz.getAnnotation(Table.class);
 				table = ann.toString();
 			} catch (ClassNotFoundException e) {
-				getLog().warn(e);
+				getLog().warn(e.getMessage());
 			} catch (NotFoundException e) {
-				getLog().warn(e);
+				getLog().warn(e.getMessage());
 			}
 			
 		}

@@ -42,9 +42,13 @@ import freemarker.template.Template;
  * @phase generate-resources
  * @requiresDependencyResolution compile+runtime
  * @requiresProject
+ * @threadSafe
  * 
  */
 public class AonHibernateCFGMojo extends AbstractMojo {
+	
+		
+	private static final Object LOCK = new Object();
 	
 	/**
 	 * The Maven Project Object
@@ -104,23 +108,25 @@ public class AonHibernateCFGMojo extends AbstractMojo {
 	}
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		try {
-			Collection<String> classes = AonExporter.map.values();
-			Map<String, Object> additionalContext = new HashMap<String, Object>();
-			additionalContext.put("pojos", classes);
-			Configuration cfg = new Configuration();
-			File templateFile = new File(getTemplate()); 
-			cfg.setTemplateLoader(new FileTemplateLoader(templateFile.getParentFile()));
-			Template tpl = cfg.getTemplate(templateFile.getName());
-			File dir = new File(getOutputDir());
-			dir.mkdirs();
-			File file  = new File(dir, "hibernate.cfg.xml");
-			FileWriter output = new FileWriter(file);
-			tpl.process(additionalContext, output);			
+		synchronized (LOCK) {
+			try {
+				Collection<String> classes = AonExporter.map.values();
+				Map<String, Object> additionalContext = new HashMap<String, Object>();
+				additionalContext.put("pojos", classes);
+				Configuration cfg = new Configuration();
+				File templateFile = new File(getTemplate()); 
+				cfg.setTemplateLoader(new FileTemplateLoader(templateFile.getParentFile()));
+				Template tpl = cfg.getTemplate(templateFile.getName());
+				File dir = new File(getOutputDir());
+				dir.mkdirs();
+				File file  = new File(dir, "hibernate.cfg.xml");
+				FileWriter output = new FileWriter(file);
+				tpl.process(additionalContext, output);			
+			}
+			catch(Exception e) {
+				throw new MojoExecutionException(e.getMessage(),e);
+			}		
 		}
-		catch(Exception e) {
-			throw new MojoExecutionException(e.getMessage(),e);
-		}		
 	}
 
 }

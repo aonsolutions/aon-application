@@ -12,12 +12,11 @@
   	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jasperreports-maven-plugin</artifactId>
+				<groupId>${jasperreportsMavenPluginGroup}</groupId>
+				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
 				<version>${jasperreportsMavenPluginVersion}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/purchase/report</outputDirectory>
-					<xmlValidation>true</xmlValidation>
 					<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 				</configuration>
 				<executions>
@@ -28,23 +27,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>${jasperReportsArtifact}</artifactId>
-						<version>${jasperReportsVersion}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-jcl</artifactId>
-						<version>1.5.11</version>
-					</dependency>
-                                        <dependency>
-                                                <groupId>com.code.aon</groupId>
-                                                <artifactId>aon.purchase</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
- 				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

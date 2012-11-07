@@ -8,10 +8,12 @@ import java.util.Properties;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.cfg.reveng.AssociationInfo;
 import org.hibernate.cfg.reveng.DelegatingReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.ReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.TableIdentifier;
 import org.hibernate.mapping.Column;
+import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.MetaAttribute;
 
 import com.code.aon.common.ITransferObject;
@@ -38,14 +40,13 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		}
 		return className;
 	}
-
+	
 	@SuppressWarnings("rawtypes")
 	@Override
 	public String foreignKeyToEntityName(String keyname,
 			TableIdentifier fromTable, List fromColumnNames,
 			TableIdentifier referencedTable, List referencedColumnNames,
 			boolean uniqueReference) {
-		
 		String entityName = super.foreignKeyToEntityName(keyname, fromTable, fromColumnNames,
 				referencedTable, referencedColumnNames, uniqueReference);
 		if (StringUtils.endsWith(entityName, CLASS_SUFFIX)) {

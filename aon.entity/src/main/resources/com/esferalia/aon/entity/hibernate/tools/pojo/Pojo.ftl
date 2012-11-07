@@ -1,4 +1,4 @@
-// AON-ENTITY ${date} - ${version}
+// AON-ENTITY Nov 6, 2012 12:29:06 PM - 3.2.2.GA
 ${pojo.getPackageDeclaration()}
 <#assign classbody>
 <#include "PojoTypeDeclaration.ftl"/> {

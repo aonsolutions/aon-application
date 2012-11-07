@@ -13,8 +13,8 @@
   	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jasperreports-maven-plugin</artifactId>
+				<groupId>${jasperreportsMavenPluginGroup}</groupId>
+				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
 				<version>${jasperreportsMavenPluginVersion}</version>
 				<executions>
 					<execution>
@@ -26,7 +26,6 @@
 						<configuration>
 							<sourceDirectory>src/main/jasperreports/contract</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/contract</outputDirectory>
-							<xmlValidation>true</xmlValidation>
 							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
@@ -39,7 +38,6 @@
 						<configuration>
 							<sourceDirectory>src/main/jasperreports/enterprise</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/enterprise</outputDirectory>
-							<xmlValidation>true</xmlValidation>
 							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
@@ -52,23 +50,10 @@
 						<configuration>
 							<sourceDirectory>src/main/jasperreports/person</sourceDirectory>
 							<outputDirectory>${project.build.directory}/classes/com/esferalia/tgc/ui/payroll/report/person</outputDirectory>
-							<xmlValidation>true</xmlValidation>
 							<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>${jasperReportsArtifact}</artifactId>
-						<version>${jasperReportsVersion}</version>
-					</dependency>
-                                        <dependency>
-                                                <groupId>com.esferalia.aon</groupId>
-                                                <artifactId>aon.ui.payroll</artifactId>
-                                                <version>${project.version}</version>
-                                        </dependency>
- 				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

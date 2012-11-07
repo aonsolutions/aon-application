@@ -13,12 +13,11 @@
   	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jasperreports-maven-plugin</artifactId>
+				<groupId>${jasperreportsMavenPluginGroup}</groupId>
+				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
 				<version>${jasperreportsMavenPluginVersion}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/account/report</outputDirectory>
-					<xmlValidation>true</xmlValidation>
 					<compiler>${jasperreportsMavenPluginCompiler}</compiler>
 				</configuration>
 				<executions>
@@ -29,18 +28,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>${jasperReportsArtifact}</artifactId>
-						<version>${jasperReportsVersion}</version>
-					</dependency>
-					<dependency>
-						<groupId>com.code.aon</groupId>
-						<artifactId>aon.company</artifactId>
-						<version>${project.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>

@@ -42,10 +42,13 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
  * @phase process-sources
  * @requiresDependencyResolution compile+runtime
  * @requiresProject
+ * @threadSafe
  * 
  */
 public class AliasMojo extends AbstractMojo {
 	
+	private static final Object LOCK = new Object();
+
 	private static final String ENTITY_PACKAGE = "com.esferalia.aon.entity.master."; 
 	private static final String MESSAGING_PACKAGE = "com.code.aon.messaging.";
 
@@ -147,51 +150,53 @@ public class AliasMojo extends AbstractMojo {
 	
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
-		try {
-			getLog().info("Source Folder Directory ..: " + getOutputDir());
-			File packageDir = new File(getOutputDir(), getTargetPackage().replace('.', '/'));
-			packageDir.mkdirs();
-			
-			getLog().info("Source Package Directory ..: " + packageDir);
-			File file  = new File(packageDir, getTargetName() + ".java");
-			getLog().info("Alias Class file ..: " + file);
-			
-			// Lista de Entidades que todavia están en los proyectos aon.
-			// Sirve basicamente para mostrar los imports en la clase generada.
-			List<String> aonClasses = new LinkedList<String>();
-
-			// Lista de Entidades que alimentarán a  todavia están en los proyectos aon.			
-			List<String> entityClasses = new LinkedList<String>();
-			
-			HibernateUtil.getSessionFactory(sessionFactoryName);
-			Map<?,ClassMetadata> map = HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName()).getAllClassMetadata();
-			for (ClassMetadata cmd : map.values()) {
-				String entityName = cmd.getEntityName();
-				if (!entityName.startsWith(ENTITY_PACKAGE) &&
-					!entityName.startsWith(MESSAGING_PACKAGE) &&
-					!entityClasses.contains(entityName)) {
-					entityClasses.add(cmd.getEntityName());
-					aonClasses.add(cmd.getEntityName());
-					getLog().info(" Entity Class Found ..: " + cmd.getEntityName());
+		synchronized (LOCK) {
+			String sessionFactoryName = HibernateUtil.getSessionFactoryName();
+			try {
+				getLog().info("Source Folder Directory ..: " + getOutputDir());
+				File packageDir = new File(getOutputDir(), getTargetPackage().replace('.', '/'));
+				packageDir.mkdirs();
+				
+				getLog().info("Source Package Directory ..: " + packageDir);
+				File file  = new File(packageDir, getTargetName() + ".java");
+				getLog().info("Alias Class file ..: " + file);
+				
+				// Lista de Entidades que todavia están en los proyectos aon.
+				// Sirve basicamente para mostrar los imports en la clase generada.
+				List<String> aonClasses = new LinkedList<String>();
+	
+				// Lista de Entidades que alimentarán a  todavia están en los proyectos aon.			
+				List<String> entityClasses = new LinkedList<String>();
+				
+				HibernateUtil.getSessionFactory(sessionFactoryName);
+				Map<?,ClassMetadata> map = HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName()).getAllClassMetadata();
+				for (ClassMetadata cmd : map.values()) {
+					String entityName = cmd.getEntityName();
+					if (!entityName.startsWith(ENTITY_PACKAGE) &&
+						!entityName.startsWith(MESSAGING_PACKAGE) &&
+						!entityClasses.contains(entityName)) {
+						entityClasses.add(cmd.getEntityName());
+						aonClasses.add(cmd.getEntityName());
+						getLog().info(" Entity Class Found ..: " + cmd.getEntityName());
+					}
 				}
+				Collections.sort(entityClasses);
+				AliasWriter writer = new AliasWriter(getTargetPackage());
+				String[] entityClassesToArray= entityClasses.toArray (new String [entityClasses.size ()]);
+				writer.write(entityClassesToArray, file);
+				getLog().info("---------------");
+				getLog().info("Alias generados");
+				getLog().info("---------------");
+	
+			} catch (IOException e) {
+				getLog().error(e);
+				throw new MojoExecutionException(e.getMessage(), e);
+			} catch (MappingException e) {
+				getLog().error(e);
+				throw new MojoExecutionException(e.getMessage(), e);
+			} finally {
+				HibernateUtil.closeSession(sessionFactoryName);
 			}
-			Collections.sort(entityClasses);
-			AliasWriter writer = new AliasWriter(getTargetPackage());
-			String[] entityClassesToArray= entityClasses.toArray (new String [entityClasses.size ()]);
-			writer.write(entityClassesToArray, file);
-			getLog().info("---------------");
-			getLog().info("Alias generados");
-			getLog().info("---------------");
-
-		} catch (IOException e) {
-			getLog().error(e);
-			throw new MojoExecutionException(e.getMessage(), e);
-		} catch (MappingException e) {
-			getLog().error(e);
-			throw new MojoExecutionException(e.getMessage(), e);
-		} finally {
-			HibernateUtil.closeSession(sessionFactoryName);
 		}
 	}
 }

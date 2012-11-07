@@ -13,9 +13,11 @@
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<jasperReportsArtifact>jasperreports-javaflow</jasperReportsArtifact>
 		<jasperReportsVersion>4.5.1</jasperReportsVersion>
-		<jasperreportsMavenPluginVersion>1.0-beta-3</jasperreportsMavenPluginVersion>
+        <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
+        <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
+		<jasperreportsMavenPluginVersion>${project.version}</jasperreportsMavenPluginVersion>
 		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
-        	<maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
+        <maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
 
 	<modules>
@@ -470,7 +472,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.7</version>
 				<executions>
 					<execution>
 						<id>add-source</id>

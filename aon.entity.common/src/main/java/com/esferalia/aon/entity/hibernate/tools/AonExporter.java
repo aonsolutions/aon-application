@@ -1,5 +1,6 @@
 package com.esferalia.aon.entity.hibernate.tools;
 
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.MappingException;
 import org.hibernate.mapping.Collection;
 import org.hibernate.mapping.Column;
-import org.hibernate.mapping.ManyToOne;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.ToOne;
 import org.hibernate.mapping.Value;
@@ -38,8 +38,8 @@ public class AonExporter extends GenericExporter{
 			// del pojo devuelto por la propiedad, es un pojo generado, se sustituye 
 			// por la clase a sobreescribir el los proyectos entity.
 			Value value = property.getValue();
-			if (value instanceof org.hibernate.mapping.ManyToOne) {
-				ManyToOne v = (ManyToOne) value;
+			if (value instanceof org.hibernate.mapping.ToOne) {
+				ToOne v = (ToOne) value;
 				if (v.getReferencedEntityName().startsWith(ENTITY_PACKAGE)) {
 					String aonEntity = getAonEntity(v.getReferencedEntityName());
 					if (aonEntity != null) {
@@ -543,5 +543,5 @@ public class AonExporter extends GenericExporter{
 		map.put("WarehouseTransferDetail","com.code.aon.warehouse.WarehouseTransferDetail");
 		
 	}
-		
+
 }

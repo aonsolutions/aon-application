@@ -1,16 +1,18 @@
 <#if ejb3>
 <#if pojo.hasIdentifierProperty()>
 <#if property.equals(clazz.identifierProperty)>
-${pojo.generateAnnIdGenerator()}
-<#if hasRegistryPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="registry_id")
+<#if hasRegistryPrimaryKeyJoinColumn>    @${pojo.importType("javax.persistence.Id")} 
+	@javax.persistence.GeneratedValue(generator="registry_id")
 	@org.hibernate.annotations.GenericGenerator(name="registry_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="registry")})
-</#if>
-<#if hasProjectPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="project_id")
+<#elseif hasProjectPrimaryKeyJoinColumn>    @${pojo.importType("javax.persistence.Id")} 
+	@javax.persistence.GeneratedValue(generator="project_id")
 	@org.hibernate.annotations.GenericGenerator(name="project_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="project")})
-</#if>
-<#if hasAssetPrimaryKeyJoinColumn>	@javax.persistence.GeneratedValue(generator="asset_id")
+<#elseif hasAssetPrimaryKeyJoinColumn>    @${pojo.importType("javax.persistence.Id")} 
+	@javax.persistence.GeneratedValue(generator="asset_id")
 	@org.hibernate.annotations.GenericGenerator(name="asset_id", strategy="foreign", parameters = {@org.hibernate.annotations.Parameter(name="property", value="asset")})
-</#if>
+<#else>
+${pojo.generateAnnIdGenerator()}
+	</#if>
 </#if>
 </#if>
 <#if property.getName()=="product" && pojo.getDeclarationName()=="ItemDB">	@${pojo.importType("javax.persistence.ManyToOne")}
