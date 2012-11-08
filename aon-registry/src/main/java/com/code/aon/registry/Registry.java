@@ -213,5 +213,21 @@ public class Registry extends RegistryDB implements IRegistry{
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);
 	}
+
+	@Transient 
+	public String getCellulars() throws ManagerBeanException{
+		IManagerBean rMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_REGISTRY_ID), getId());
+		criteria.addEqualExpression(rMediaBean.getFieldName(IEntityAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
+		criteria.setSkipDomainFilter(true);
+		List<ITransferObject> list = rMediaBean.getList(criteria);
+		String phones = "";
+		for (ITransferObject to : list) {
+			RegistryMedia media = (RegistryMedia) to;
+			phones += media.getValue()+", ";
+		}
+		return (phones=="")?"":phones.substring(0, phones.length()-2);
+	}
 	
 }
