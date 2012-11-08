@@ -196,6 +196,7 @@ public class AliasMojo extends AbstractMojo {
 				throw new MojoExecutionException(e.getMessage(), e);
 			} finally {
 				HibernateUtil.closeSession(sessionFactoryName);
+				System.gc();
 			}
 		}
 	}
