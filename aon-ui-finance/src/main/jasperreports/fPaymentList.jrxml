@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="64"/>
+	<property name="ireport.y" value="97"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -165,7 +165,7 @@
 					</jr:table>
 				</componentElement>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="24" y="2" width="413" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="24" y="2" width="468" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,7 +176,7 @@
 					<textFieldExpression><![CDATA["Muy Sres. nuestros:"]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="24" y="32" width="413" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="24" y="32" width="468" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -187,7 +187,7 @@
 					<textFieldExpression><![CDATA["Correspondiente a los conceptos abajo indicados."]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="24" y="17" width="241" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="24" y="17" width="250" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -195,10 +195,10 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA["Adjunto les remitimos el pagaré con vencimiento" ]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Adjunto les remitimos el pagaré con vencimiento"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="265" y="17" width="79" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="274" y="17" width="70" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="0">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -206,7 +206,7 @@
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{dueDate} ]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-5" x="344" y="17" width="26" height="15" isRemoveLineWhenBlank="true"/>
@@ -246,7 +246,7 @@
 		<groupFooter>
 			<band height="185" splitType="Stretch">
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="155" y="53" width="90" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="155" y="59" width="90" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -257,7 +257,7 @@
 					<textFieldExpression><![CDATA[$F{dueDate}]]></textFieldExpression>
 				</textField>
 				<textField pattern="###0.00;-###0.00" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="402" y="53" width="90" height="15" isRemoveLineWhenBlank="true"/>
+					<reportElement key="textField-5" x="402" y="57" width="90" height="15" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -268,19 +268,19 @@
 					<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="196" y="123" width="90" height="15" isRemoveLineWhenBlank="true"/>
-					<box leftPadding="0" rightPadding="2">
+					<reportElement key="textField-5" x="161" y="123" width="90" height="15" isRemoveLineWhenBlank="true"/>
+					<box topPadding="0" leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement verticalAlignment="Middle"/>
+					<textElement verticalAlignment="Top"/>
 					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="161" y="90" width="374" height="30" isRemoveLineWhenBlank="true"/>
-					<box topPadding="2" leftPadding="0" rightPadding="2">
+					<reportElement key="textField-5" x="161" y="97" width="374" height="26" isRemoveLineWhenBlank="true"/>
+					<box topPadding="0" leftPadding="0" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -290,14 +290,14 @@
 					<textFieldExpression><![CDATA["#"+$P{PrintUtil}.numberToText($F{amount})+"#"]]></textFieldExpression>
 				</textField>
 				<textField pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-5" x="138" y="72" width="397" height="15" isRemoveLineWhenBlank="true"/>
-					<box leftPadding="0" rightPadding="2">
+					<reportElement key="textField-5" x="120" y="82" width="415" height="15" isRemoveLineWhenBlank="true"/>
+					<box leftPadding="0" bottomPadding="1" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement verticalAlignment="Middle"/>
+					<textElement verticalAlignment="Bottom"/>
 					<textFieldExpression><![CDATA[$F{registry}.getFullName()]]></textFieldExpression>
 				</textField>
 			</band>
