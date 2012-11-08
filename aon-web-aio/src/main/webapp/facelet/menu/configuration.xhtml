@@ -200,6 +200,13 @@
 												<aon:actionListener method="#{domainApplication.onSearch}" />
 											</aon:commandLink>						
 										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="domains"
+												action="domains"
+												actionListener="#{domains.onSearch}"
+												value="#{configBundle.config_domains}" >
+											</aon:commandLink>						
+										</aon:div>
 									</c:if>									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="profiles"

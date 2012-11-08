@@ -41,6 +41,15 @@ public abstract class AbstractDomainSwitcher implements IDomainSwitcher {
 	public boolean isDomainManagementAvailable() {
 		return domainManagementAvailable;
 	}
+	
+	public void setDomainManagementAvailable(boolean domainManagementAvailable) {
+		this.domainManagementAvailable = domainManagementAvailable;
+	}
+
+	public void setParentDomain(boolean parentDomain) {
+		this.parentDomain = parentDomain;
+	}
+
 	@Override
 	public boolean isParentDomain() {
 		return parentDomain;

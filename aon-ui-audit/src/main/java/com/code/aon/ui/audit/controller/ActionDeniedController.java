@@ -61,8 +61,13 @@ public class ActionDeniedController implements IAuditConstants {
 	
 	private final static String ENTERPRISE_CATEGORY = "enterprise";
 	private final static String CONFIGURATION_CATEGORY = "configuration";
-	
+
 	private final static String[] SKIP_CATEGORIES = new String[]{ENTERPRISE_CATEGORY,CONFIGURATION_CATEGORY};
+	
+	private final static String GROUP_CONFIG_COMPANY = "group_config_company";
+	private final static String GROUP_CONFIG_SECURITY = "group_configuration_security";
+	
+	private final static String[] CONFIG_GROUPS = new String[]{GROUP_CONFIG_COMPANY,GROUP_CONFIG_SECURITY};
 	
 	private Map<String,ApplicationOption> deniedActionsMap;
 	
@@ -502,6 +507,24 @@ public class ActionDeniedController implements IAuditConstants {
 
 	public FakeMap getSkip() {
 		return skipManagedBean;
+	}
+	
+	public void enableOnlyConfig() {
+		this.deniedActionsMap.clear();
+		this.deniedActionsMap.clear();
+		for( ApplicationCategory category : getOptionController().getCategories() ) {
+			if ( CONFIGURATION_CATEGORY.equals(category.getAlias()) ) {
+				for( OptionGroup group : category.getGroups() ) {
+					if (! ArrayUtils.contains(CONFIG_GROUPS, group.getId()) ) {
+						for( ApplicationOption option : group.getOptions() ) {
+							this.deniedActionsMap.put(option.getAction(), option);
+						}
+					}
+				}				
+			} else if (! ENTERPRISE_CATEGORY.equals(category.getAlias()) ) {
+				this.deniedModulesMap.put(category.getAlias(), category);	
+			}
+		}
 	}
 	
 	public class FakeMap extends AbstractMap<String,Boolean> {

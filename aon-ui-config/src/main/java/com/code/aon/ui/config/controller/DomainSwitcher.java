@@ -119,7 +119,10 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	}
 	
 	public boolean isParentDomainUserInChildDomain() {
-		return DomainManager.isParentDomainUserInChildDomain();
+		if (! isParentDomain() ) {
+			return DomainManager.isParentDomainUserInChildDomain();
+		}
+		return false;
 	}
 
 	public DataModel getModel() {

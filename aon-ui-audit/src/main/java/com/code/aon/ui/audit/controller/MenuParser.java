@@ -238,6 +238,7 @@ public class MenuParser {
 			String id = getId(panelGrid);
 			if ( id != null ) {
 				if (! controller.getGroupMap().containsKey(id) ) {
+					this.group.setId(id);
 					controller.getGroupMap().put( id, this.group );
 				} else {
 					LOGGER.error( "Duplicated id for option group {}", panelGrid );
