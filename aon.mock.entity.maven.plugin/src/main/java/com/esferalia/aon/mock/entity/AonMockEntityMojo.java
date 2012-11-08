@@ -182,7 +182,10 @@ public class AonMockEntityMojo extends AbstractMojo {
 			}
 			catch(Exception e) {
 				throw new MojoExecutionException(e.getMessage(),e);
-			}		
+			} finally {
+				System.gc();
+			}
+			
 		}		
 	}
 
