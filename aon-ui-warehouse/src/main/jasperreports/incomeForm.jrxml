@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="income" pageWidth="595" pageHeight="842" columnWidth="537" leftMargin="29" rightMargin="29" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -63,6 +63,7 @@
 	<field name="supplier" class="com.code.aon.supplier.Supplier"/>
 	<field name="referenceCode" class="java.lang.String"/>
 	<field name="project" class="com.code.aon.project.Project"/>
+	<field name="comments" class="java.lang.String"/>
 	<variable name="currentIncome" class="com.code.aon.warehouse.Income">
 		<variableExpression><![CDATA[(com.code.aon.warehouse.Income)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -598,7 +599,7 @@
 				<textFieldExpression><![CDATA[$F{project}.getName()]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement key="finances" positionType="Float" x="37" y="189" width="481" height="25"/>
+				<reportElement key="finances" positionType="Float" x="37" y="199" width="481" height="25"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="tax">
 						<datasetParameter name="PriceStrategy">
@@ -676,6 +677,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_vat}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["taxPercent"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
@@ -1016,7 +1035,7 @@
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement key="detail" positionType="Float" x="3" y="152" width="515" height="25"/>
+				<reportElement key="detail" positionType="Float" x="3" y="162" width="515" height="25"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="detail">
 						<datasetParameter name="PriceStrategy">
@@ -1040,6 +1059,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_code}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["itemSupplierCode"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
@@ -1307,6 +1344,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["description"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -1340,6 +1395,24 @@
 								</textElement>
 								<textFieldExpression><![CDATA[$R{aon_quantity}]]></textFieldExpression>
 							</textField>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["quantity"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 							<genericElement>
 								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
 									<property name="controlParameter" value="true"/>
@@ -1591,6 +1664,24 @@
 									<valueExpression><![CDATA["Middle"]]></valueExpression>
 								</genericElementParameter>
 							</genericElement>
+							<genericElement>
+								<reportElement mode="Transparent" x="0" y="0" width="0" height="12">
+									<property name="controlParameter" value="true"/>
+								</reportElement>
+								<genericElementType namespace="http://jasperreports.sourceforge.net/jasperreports" name="sort"/>
+								<genericElementParameter name="sortColumnName">
+									<valueExpression><![CDATA["price"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortColumnType">
+									<valueExpression><![CDATA["Field"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerHorizontalAlign">
+									<valueExpression><![CDATA["Right"]]></valueExpression>
+								</genericElementParameter>
+								<genericElementParameter name="sortHandlerVerticalAlign">
+									<valueExpression><![CDATA["Middle"]]></valueExpression>
+								</genericElementParameter>
+							</genericElement>
 						</jr:columnHeader>
 						<jr:detailCell height="12" rowSpan="1">
 							<box>
@@ -1668,6 +1759,38 @@
 					</jr:column>
 				</jr:table>
 			</componentElement>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-54" positionType="Float" mode="Transparent" x="2" y="140" width="68" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{aon_comments} + ":"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-53" positionType="Float" mode="Transparent" x="70" y="140" width="466" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
+					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comments}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
