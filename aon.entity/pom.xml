@@ -16,7 +16,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4</version>
 				<configuration>
 					<includes>
 						<include>META-INF/**</include>
@@ -168,20 +168,13 @@
 					<outputDir>${project.build.directory}/generated-sources/entity</outputDir>
 					<generateHibernateCfg>false</generateHibernateCfg>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.esferalia.aon</groupId>
-						<artifactId>aon.entity.common</artifactId>
-						<version>${project.version}</version>
-						<scope>runtime</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-						<version>3.15.0-GA</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
