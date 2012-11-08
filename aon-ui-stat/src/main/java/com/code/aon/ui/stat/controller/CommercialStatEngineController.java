@@ -26,6 +26,7 @@ import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -34,6 +35,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
@@ -42,9 +44,11 @@ import com.code.aon.ql.ProjectionList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
+import com.code.aon.seller.enumeration.SellerStatus;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -949,8 +953,9 @@ public class CommercialStatEngineController {
 
 	public void onSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
-		List<ITransferObject> list;
-		list = sellerBean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(sellerBean.getFieldName(IEntityAlias.SELLER_STATUS), SellerStatus.ACTIVE);
+		List<ITransferObject> list = sellerBean.getList(criteria);
 		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Seller inv = (Seller) to;
@@ -986,8 +991,10 @@ public class CommercialStatEngineController {
 
 	public void onTargetSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
-		List<ITransferObject> list;
-		list = targetBean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(targetBean.getFieldName(IEntityAlias.TARGET_STATUS), TargetStatus.ACTIVE);
+		UserUtils.getInstance().addScopeFilterToCriteria(criteria, targetBean.getFieldName(IEntityAlias.TARGET_SCOPE_ID));
+		List<ITransferObject> list = targetBean.getList(criteria);
 		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Target tg = (Target) to;
@@ -1024,8 +1031,9 @@ public class CommercialStatEngineController {
 
 	public void onProductSummary(ActionEvent e) throws ManagerBeanException {
 		IManagerBean productBean = BeanManager.getManagerBean(Product.class);
-		List<ITransferObject> list;
-		list = productBean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(productBean.getFieldName(IEntityAlias.PRODUCT_STATUS), ProductStatus.ACTIVE);
+		List<ITransferObject> list = productBean.getList(criteria);
 		summary = new LinkedList<ControlSummary>();
 		for (ITransferObject to : list) {
 			Product pro = (Product) to;

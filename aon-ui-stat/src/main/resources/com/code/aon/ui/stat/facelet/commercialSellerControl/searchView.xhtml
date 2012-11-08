@@ -34,29 +34,28 @@
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
 
+			<c:if test="#{commercialStat.controlType==0}">
+				<aon:methodParam name="searchActionListener"
+					value="#{commercialStat.onSummary}" type="actionListener" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==1}">
+				<aon:methodParam name="searchActionListener"
+					value="#{commercialStat.onTargetSummary}" type="actionListener" />
+			</c:if>
+			<c:if test="#{commercialStat.controlType==2}">
+				<aon:methodParam name="searchActionListener"
+					value="#{commercialStat.onProductSummary}" type="actionListener" />
+			</c:if>
+			
+			<c:if test="#{commercialStat.controlType==3}">
+				<aon:methodParam name="searchActionListener"
+					value="#{commercialStat.onCategorySummary}" type="actionListener" />
+			</c:if>
+			<aon:methodParam name="searchAction" value="commercial_seller_view" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
-					<c:if test="#{commercialStat.controlType==0}">
-						<aon:methodParam name="searchActionListener"
-							value="#{commercialStat.onSummary}" type="actionListener" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==1}">
-						<aon:methodParam name="searchActionListener"
-							value="#{commercialStat.onTargetSummary}" type="actionListener" />
-					</c:if>
-					<c:if test="#{commercialStat.controlType==2}">
-						<aon:methodParam name="searchActionListener"
-							value="#{commercialStat.onProductSummary}" type="actionListener" />
-					</c:if>
-					
-					<c:if test="#{commercialStat.controlType==3}">
-						<aon:methodParam name="searchActionListener"
-							value="#{commercialStat.onCategorySummary}" type="actionListener" />
-					</c:if>
-
-					<aon:methodParam name="searchAction" value="commercial_seller_view" />
 
 					<aon:outputLabel for="entryDate-From"
 						value="#{bundle.aon_date_from}" />
@@ -77,13 +76,10 @@
 						value="#{statBundle.aon_zero_lines}" />
 					<aon:selectBooleanCheckbox id="zeroLines"
 						value="#{commercialStat.showZeroLines}">
-						<!--  <f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>-->
 					</aon:selectBooleanCheckbox>
 
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 	</ui:define>
 </ui:composition>
