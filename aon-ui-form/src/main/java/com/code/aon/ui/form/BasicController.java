@@ -343,8 +343,11 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @return Object
 	 */
-	protected Object getSelectedTO() {
-		return this.model.getRowData();
+	public Object getSelectedTO() {
+		if ( this.model.isRowAvailable() ) {
+			return this.model.getRowData();	
+		}
+		return null;
 	}
 
 	/**

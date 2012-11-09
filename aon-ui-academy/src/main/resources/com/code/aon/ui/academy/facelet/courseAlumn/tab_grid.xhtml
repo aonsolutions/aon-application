@@ -73,7 +73,15 @@
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
+
 		</ui:define>
+
+		<ui:define name="endFormListContent">
+			<aon:goToButton controller="#{customer}"
+				onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+				property="#{controller.selectedTO.customer}" rendered="true" />
+		</ui:define>
+
 	</ui:decorate>
 
 </ui:composition>

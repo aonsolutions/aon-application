@@ -64,6 +64,13 @@
 				</aon:column>
 				
 			</ui:define>
+			
+			<ui:define name="endFormListContent">
+				<aon:goToButton controller="#{course}"
+					onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+					property="#{controller.selectedTO.course}" rendered="true" />
+			</ui:define>
+			
 		</ui:decorate>
 	</aon:div>
 	
