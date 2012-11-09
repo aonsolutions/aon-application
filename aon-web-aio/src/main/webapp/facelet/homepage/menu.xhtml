@@ -8,7 +8,24 @@
 	<ui:define name="menuContent">
 		<aon:graphicImage style="margin-left: 6px;margin-right: 4px;"
 			value="#{customize.toolbarLogo}" />			
-			
+					
+		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<aon:commandLink id="garage"
+				value="#{bundle.aon_module_garage}"
+				action="menu_garage" immediate="true"
+				styleClass="aon-top-menu-item" />
+	
+			<aon:commandLink id="academy"
+				value="#{bundle.aon_module_academy}"
+				action="menu_academy" immediate="true"
+				styleClass="aon-top-menu-item" />
+
+			<aon:commandLink id="hotel"
+				value="#{bundle.aon_module_hotel}"
+				action="menu_hotel" immediate="true"
+				styleClass="aon-top-menu-item" />
+		</c:if>
+
 		<c:if test="#{domainSwitcher.domainManagementAvailable}">
 			<c:if test="#{aonRole.admin}">
 				<aon:commandLink id="enterprise"
@@ -82,23 +99,6 @@
 			<aon:commandLink id="document"
 				value="#{bundle.aon_module_document}"
 				action="menu_document" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
-		
-		<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-			<aon:commandLink id="garage"
-				value="#{bundle.aon_module_garage}"
-				action="menu_garage" immediate="true"
-				styleClass="aon-top-menu-item" />
-	
-			<aon:commandLink id="academy"
-				value="#{bundle.aon_module_academy}"
-				action="menu_academy" immediate="true"
-				styleClass="aon-top-menu-item" />
-
-			<aon:commandLink id="hotel"
-				value="#{bundle.aon_module_hotel}"
-				action="menu_hotel" immediate="true"
 				styleClass="aon-top-menu-item" />
 		</c:if>
 		
