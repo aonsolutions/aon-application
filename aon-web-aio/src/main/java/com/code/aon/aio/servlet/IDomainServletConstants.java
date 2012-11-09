@@ -3,8 +3,7 @@ package com.code.aon.aio.servlet;
 public interface IDomainServletConstants {
 
 	// DEPLOYED.XML CONSTANTS
-	String DEPLOYED_XML = "/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";
-	//String DEPLOYED_XML = "/mnt/iNetServer.x86_64/var/lib/jbossas/server/default/conf/aon.workspace/deployed.xml";
+	String DEPLOYED_XML = "/etc/tomcat6/aon.workspace/deployed.xml";
 	String DEPLOYED_NAME_ATTR = "name";
 	String DEPLOYED_VALUE_ATTR = "value";
 	String DEPLOYED_OPTION_TAG = "option";
