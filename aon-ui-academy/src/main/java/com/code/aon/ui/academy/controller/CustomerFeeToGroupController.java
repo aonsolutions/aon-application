@@ -123,7 +123,8 @@ public class CustomerFeeToGroupController extends GroupSelectionController {
 			if (! StringUtils.isBlank(item.getDetail()) ) {
 				description += " " + item.getDetail();
 			}
-			fee.setDescription( description );
+			fee.setDescription(description);
+			fee.setPrice(item.getPrice());
 		}
 	}	
 	
