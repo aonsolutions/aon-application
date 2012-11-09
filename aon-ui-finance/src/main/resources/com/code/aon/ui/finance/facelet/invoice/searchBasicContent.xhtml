@@ -67,14 +67,22 @@
 			styleClass="aon-form-date-label aon-margin-right" value="R-" />
 		<aon:outputLabel for="Invoice_series-Document" rendered="#{searchController.undeductible}"
 			styleClass="aon-form-date-label aon-margin-right" value="G-" />
+
+		<aon:inputText id="Invoice_referenceCode-Document"
+			valueChangeListener="#{controller.addExpression}"
+			rendered="#{searchController.sales}"
+			size="20" maxlength="25" />
 		<aon:inputText id="Invoice_series-Document"
 			onblur="toUpperCase(this);"
 			valueChangeListener="#{controller.addExpression}"
+			rendered="#{!searchController.sales}" 
 			size="5" maxlength="5" />
 		<aon:outputLabel for="Invoice_number-Document"
-			styleClass="aon-form-date-label aon-margin-right" value="-" />
+			styleClass="aon-form-date-label aon-margin-right" value="-"
+			rendered="#{!searchController.sales}"  />
 		<aon:inputText id="Invoice_number-Document"
 			valueChangeListener="#{controller.addExpression}"
+			rendered="#{!searchController.sales}" 
 			size="6" />
 	</aon:div>
 
