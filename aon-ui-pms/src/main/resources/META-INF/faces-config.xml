@@ -1347,6 +1347,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{reservationSearch}</value>
+				<value>#{reservationScopeListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>

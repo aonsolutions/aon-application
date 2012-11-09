@@ -80,9 +80,9 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{projectCommercialSearch}</value>
+				<value>#{projectCommercialScopeListener}</value>
 				<value>#{projectCommercialTrackingListener}</value>
 				<value>#{projectCommercialAttachChildListener}</value>
-				<value>#{projectCommercialScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -94,6 +94,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectCommercialScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>ProjectCommercial_target_scope_id</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<managed-bean>
 		<managed-bean-name>projectCommercialTrackingListener</managed-bean-name>
@@ -134,16 +144,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>projectCommercialScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>ProjectCommercial_target_scope_id</value>
-		</managed-property>
-	</managed-bean>	
 	
 	<!-- ************ PROJECT COMMERCIAL TRACKING ************** -->
 	<managed-bean>
@@ -260,18 +260,10 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{commercialTrackingListener}</value>
 				<value>#{commercialTrackingSearch}</value>
+				<value>#{commercialTrackingListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>commercialTrackingListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.event.CommercialTrackingListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -280,6 +272,14 @@
 			com.code.aon.ui.commercial.event.CommercialTrackingSearchListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>commercialTrackingListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommercialTrackingListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ COMMERCIAL TERM ************** -->
@@ -2074,6 +2074,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{projectCommercialSearch}</value>
+				<value>#{projectCommercialScopeListener}</value>
 			</list-entries>
 		</managed-property>						
 	</managed-bean>	
