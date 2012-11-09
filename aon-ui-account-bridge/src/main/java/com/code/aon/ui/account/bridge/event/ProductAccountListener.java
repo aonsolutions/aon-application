@@ -1,6 +1,6 @@
 package com.code.aon.ui.account.bridge.event;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,9 +35,9 @@ public class ProductAccountListener extends ControllerAdapter {
 			IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), item.getProduct().getId());
-			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				ProductAccount productAccount = (ProductAccount)iterator.next();
+			List<ITransferObject> list = productAccountBean.getList(criteria);
+			for (ITransferObject to: list) {
+				ProductAccount productAccount = (ProductAccount) to;
 				if (ProductAccountType.SALES.equals(productAccount.getType())) {
 					item.getProduct().setSalesAccount(productAccount.getAccount());
 				} else if (ProductAccountType.PURCHASE.equals(productAccount.getType())) {
@@ -139,9 +139,9 @@ public class ProductAccountListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
 			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), type);
-			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				ProductAccount productAccount = (ProductAccount)iterator.next();
+			List<ITransferObject> list = productAccountBean.getList(criteria);
+			if (list != null && list.size() > 0) {
+				ProductAccount productAccount = (ProductAccount) list.get(0);
 				productAccount.setAccount(account);
 				productAccountBean.update(productAccount);
 			} else {
@@ -159,9 +159,9 @@ public class ProductAccountListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_PRODUCT_ID), product.getId());
 			criteria.addEqualExpression(productAccountBean.getFieldName(IEntityAlias.PRODUCT_ACCOUNT_TYPE), type);
-			Iterator<ITransferObject> iterator = productAccountBean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				ProductAccount productAccount = (ProductAccount)iterator.next();
+			List<ITransferObject> list = productAccountBean.getList(criteria);
+			for (ITransferObject to : list) {
+				ProductAccount productAccount = (ProductAccount) to;
 				productAccountBean.remove(productAccount);
 			}
 		} catch (ManagerBeanException e) {

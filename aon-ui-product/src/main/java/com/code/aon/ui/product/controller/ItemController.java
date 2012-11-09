@@ -3,6 +3,7 @@ package com.code.aon.ui.product.controller;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.account.Account;
 import com.code.aon.product.Item;
 import com.code.aon.product.pricing.ItemPricesManager;
 import com.code.aon.ui.form.BasicController;
@@ -103,6 +104,18 @@ public class ItemController extends BasicController {
 		ProductStatEngineController controller =(ProductStatEngineController)AonUtil.getRegisteredBean("productStat");
 		controller.setItem((Item)this.getTo());
 		controller.getProductData();
+	}
+	
+	@Override
+	public void accept(ActionEvent event) {
+		boolean newItem = isNew();
+		super.accept(event);
+		if (newItem) {
+			Item item = (Item) getTo();
+			item.getProduct().setSalesAccount(new Account());
+			item.getProduct().setPurchaseAccount(new Account());
+		}
+		
 	}
 
 }

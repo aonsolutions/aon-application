@@ -1,7 +1,6 @@
 package com.code.aon.ui.product.util;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,8 +30,7 @@ public class ItemCompanyTaxProvider {
      * 
      * @return the tax list
      */
-    @SuppressWarnings("unchecked")
-    public List getTaxList(ITransferObject to) {
+    public List<Tax> getTaxList(ITransferObject to) {
         Item item = (Item)to;
         List<Tax> l = new LinkedList<Tax>();
 
@@ -45,16 +43,13 @@ public class ItemCompanyTaxProvider {
      * 
      * @return true, if a surcharge has to be applied to the company.
      */
-    @SuppressWarnings("unchecked")
     public boolean isSurcharge() {
         IManagerBean companyBean;
         try {
             companyBean = BeanManager.getManagerBean(Company.class);
-
-            List list = companyBean.getList(null);
-            Iterator iter = list.iterator();
-            if (iter.hasNext()) {
-                return ((Company) iter.next()).isSurcharge();
+            List<ITransferObject> list = companyBean.getList(null);
+            if ( list != null && list.size() > 0) {
+            	return ((Company) list.get(0)).isSurcharge();
             }
         } catch (ManagerBeanException e) {
             LOGGER.error("Error obtaining is surcharged", e);
@@ -70,8 +65,7 @@ public class ItemCompanyTaxProvider {
      * 
      * @return the tax list
      */
-    @SuppressWarnings("unchecked")
-	public List getTaxList(ITransferObject to, Date date) {
+ 	public List<Tax> getTaxList(ITransferObject to, Date date) {
 		return getTaxList(to);
 	}
 }
