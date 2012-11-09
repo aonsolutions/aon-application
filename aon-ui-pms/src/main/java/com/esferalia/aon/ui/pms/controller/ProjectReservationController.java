@@ -258,7 +258,7 @@ public class ProjectReservationController extends BasicController implements IPm
 	}
 
 	@Override
-	protected Object getSelectedTO() {
+	public Object getSelectedTO() {
 		try {
 			return getManagerBean().get(((ProjectReservation)this.model.getRowData()).getId());
 		} catch (ManagerBeanException ex) {
