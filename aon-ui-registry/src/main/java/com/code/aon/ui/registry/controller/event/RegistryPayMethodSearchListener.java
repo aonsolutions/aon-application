@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
 import com.code.aon.ql.Criteria;
@@ -15,22 +17,21 @@ public class RegistryPayMethodSearchListener extends RegistrySearchListener {
 
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
-	private List<PayMethod> payMethods;
+	private PayMethod[] payMethods;
 	
-	public List<PayMethod> getPayMethods() {
+	public PayMethod[] getPayMethods() {
 		if (payMethods == null) {
-			payMethods = new LinkedList<PayMethod>();
-			payMethods.add(EMPTY_PAYMETHOD);
+			payMethods = new PayMethod[]{EMPTY_PAYMETHOD};
 		}
-		return payMethods;
+		return payMethods;		
 	}
 
-	public void setPayMethods(List<PayMethod> payMethods) {
+	public void setPayMethods(PayMethod[] payMethods) {
 		this.payMethods = payMethods;
 	}
 	
 	public int getPayMethodsSize() {
-		return this.payMethods.size();
+		return ArrayUtils.getLength(payMethods);
 	}	
 
 	public List<Integer> getPayMethodsIds() {
@@ -49,8 +50,7 @@ public class RegistryPayMethodSearchListener extends RegistrySearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setPayMethods(new LinkedList<PayMethod>());
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
 		super.init();
 	}
 	
@@ -62,16 +62,16 @@ public class RegistryPayMethodSearchListener extends RegistrySearchListener {
 	}
 	
 	public void onAddPayMethod(ActionEvent event) {
-		getPayMethods().add(EMPTY_PAYMETHOD);
+		this.payMethods = (PayMethod[]) ArrayUtils.add(this.payMethods, EMPTY_PAYMETHOD);
 	}
 	
 	public void onRemovePayMethod(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getPayMethods().remove(index);
-		if (getPayMethods().isEmpty()) {
-			getPayMethods().add(EMPTY_PAYMETHOD);
-		}
+		this.payMethods = (PayMethod[]) ArrayUtils.remove(this.payMethods, index);
+		if ( ArrayUtils.isEmpty(this.payMethods) ) {
+			setPayMethods(new PayMethod[]{EMPTY_PAYMETHOD});
+		}		
 	}
 	
 }

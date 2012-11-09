@@ -8,12 +8,12 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.Segment;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 
@@ -21,13 +21,15 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	
 	private static final GeoZone EMPTY_GEOZONE = new GeoZone();
 	
+	private static final Segment EMPTY_SEGMENT = new Segment();
+	
 	private String preffix;
 
 	private List<MediaType> mediaTypes;
 	
 	private GeoZone[] geoZones;
 	
-	private List<String> segments;
+	private Segment[] segments;
 	
 	public List<MediaType> getMediaTypes() {
 		if (mediaTypes == null) {
@@ -74,27 +76,30 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		return EMPTY_GEOZONE;
 	}
 	
-	public List<String> getSegments() {
+	public Segment[] getSegments() {
 		if (segments == null) {
-			segments = new LinkedList<String>();
-			segments.add(null);
+			segments = new Segment[]{EMPTY_SEGMENT};
 		}
 		return segments;
 	}
 
-	public void setSegments(List<String> segments) {
+	public void setSegments(Segment[] segments) {
 		this.segments = segments;
 	}
 	
 	public int getSegmentsSize() {
-		return this.segments.size();
+		return ArrayUtils.getLength(segments);
 	}	
 
+	public Segment getEmptySegment() {
+		return EMPTY_SEGMENT;
+	}
+	
 	public List<Integer> getSegmentsIds() {
 		List<Integer> ids = new LinkedList<Integer>();
-		for(String segment : getSegments()) {
-			if (!StringUtils.isBlank(segment)) {
-				ids.add(Integer.valueOf(segment));
+		for(Segment segment : getSegments()) {
+			if ((segment != null) && (segment.getId() != null)) {
+				ids.add(segment.getId());
 			}
 		}
 		return ids;
@@ -105,8 +110,7 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 		setMediaTypes(new LinkedList<MediaType>());
 		getMediaTypes().add(null);
 		setGeoZones(new GeoZone[]{EMPTY_GEOZONE});
-		setSegments(new LinkedList<String>());
-		getSegments().add(null);
+		setSegments(new Segment[]{EMPTY_SEGMENT});
 	}
 	
 	public String getPreffix() throws ManagerBeanException {
@@ -158,15 +162,15 @@ public class RegistrySearchListener extends ControllerSearchListenerEx {
 	}	
 	
 	public void onAddSegment(ActionEvent event) {
-		getSegments().add(null);
+		this.segments = (Segment[]) ArrayUtils.add(this.segments, EMPTY_SEGMENT);
 	}
 	
 	public void onRemoveSegment(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
 		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
-		getSegments().remove(index);
-		if (getSegments().isEmpty()) {
-			getSegments().add(null);
+		this.segments = (Segment[]) ArrayUtils.remove(this.segments, index);
+		if ( ArrayUtils.isEmpty(this.segments) ) {
+			setSegments(new Segment[]{EMPTY_SEGMENT});
 		}
 	}
 	
