@@ -544,6 +544,7 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 			line = reader.readLine();
 		}
+		reader.close();
 	}
 
 	private RegistryBank importAeb43Header(String line) throws ManagerBeanException {
@@ -600,6 +601,7 @@ public class BankStatementController extends BasicController implements IFinance
 			importCsvData(line, lotNumber);
 			line = reader.readLine();
 		}
+		reader.close();
 	}
 
 	private BankStatement importCsvData(String line, int lotNumber) throws ManagerBeanException {
