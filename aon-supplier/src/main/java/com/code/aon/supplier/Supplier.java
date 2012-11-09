@@ -14,6 +14,7 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.supplier.enumeration.SupplierStatus;
 import com.esferalia.aon.entity.master.SupplierDB;
 
 @Entity
@@ -23,6 +24,11 @@ public class Supplier extends SupplierDB implements ITaxInfo, IScopable, IRegist
 	private static final long serialVersionUID = 1L;
 
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
+
+	public Supplier() {
+    	setTransaction(InvoiceTransactionType.NATIONAL);
+    	setStatus(SupplierStatus.ACTIVE);
+	}
 
 	@Transient
 	public boolean isSurcharge() {

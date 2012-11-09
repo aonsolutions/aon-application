@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAttachment;
@@ -23,6 +24,11 @@ public class Customer extends CustomerDB implements ITaxInfo,IScopable,IRegistry
 	private static final long serialVersionUID = 1L;
 
     private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
+
+    public Customer() {
+    	setTransaction(InvoiceTransactionType.NATIONAL);
+    	setStatus(CustomerStatus.ACTIVE);
+    }
 
 	@Transient
 	public boolean isTaxFree() {

@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 
+import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
@@ -30,7 +31,12 @@ public class Target extends TargetDB implements ITaxInfo, IRegistry, IScopable {
 	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	private Set<TargetProfile> profiles = new HashSet<TargetProfile>();
-	
+
+	public Target() {
+    	setTransaction(InvoiceTransactionType.NATIONAL);
+    	setStatus(TargetStatus.ACTIVE);
+	}
+
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
 	public Set<TargetItem> getItems() {
 		return items;
