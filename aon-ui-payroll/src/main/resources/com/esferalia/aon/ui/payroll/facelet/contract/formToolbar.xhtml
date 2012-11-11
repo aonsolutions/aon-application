@@ -12,24 +12,30 @@
 			<ui:param name="controller" value="#{contract}" />
 			<ui:param name="skipSaveButton" value="true" />
 			<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
-			<ui:define name="beforeSpinToolbarContent">
-				<aon:commandButton 
+			<ui:param name="showMoreMenu" value="#{!contract.new}" />
+			<ui:define name="moreMenuContent">
+				<aon:menuItem 
 					value="#{payrollBundle.payroll_contractCalendarEvent}"
-					styleClass="aon-finding-toolbar-item aon-icon-daily-tracking"
+					iconClass="aon-icon-daily-tracking"
 					rendered="#{!contract.new}"
 					action="contractCalendarEvent_form" />
-				
-				<aon:commandButton id="contrata"
+				<aon:menuItem id="contrata"
 					value="#{payrollBundle.payroll_contract_contrataData}"
 					action="contrata_form" 
 					rendered="#{!contract.new}"
 					actionListener="#{contract.onShowContrataData}"
-					styleClass="aon-finding-toolbar-item aon-icon-contrata" >
+					iconClass="aon-icon-contrata" >
 					<f:setPropertyActionListener
 						target="#{contract.contrataBackAction}" value="contract_form" />
-				</aon:commandButton>
-				
-					
+				</aon:menuItem>
+				<aon:menuItem id="pdf-edition" 
+					action="contractPdfEdition_form"
+					value="EDITAR PDF"
+					actionListener="#{contract.onContractDocumentShow}"
+					iconClass="aon-icon-pdf" >
+					<f:setPropertyActionListener
+						target="#{contract.contractPdfBackAction}" value="contract_form" />
+				</aon:menuItem>
 			</ui:define>
 		</ui:decorate>
 	</c:if>

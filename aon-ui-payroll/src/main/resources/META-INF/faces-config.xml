@@ -359,6 +359,13 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ CONTRACT PDF EDITION ************** -->
+	<managed-bean>
+		<managed-bean-name>contractPdf</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractPdfController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ CONTRACT LEAVE ************** -->
 	<managed-bean>
 		<managed-bean-name>contractLeave</managed-bean-name>
@@ -2891,6 +2898,10 @@
 		<navigation-case>
 			<from-outcome>contrata_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractPdfEdition_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/pdfEdition/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 		<!-- =================== IrpfResult ========================== -->

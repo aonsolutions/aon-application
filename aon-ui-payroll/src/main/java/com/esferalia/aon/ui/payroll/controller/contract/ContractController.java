@@ -38,6 +38,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -47,7 +48,6 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
-import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -84,6 +84,8 @@ public class ContractController extends BasicController implements IVariablesHan
 	private ContractContrataHandler contrataHandler;
 	
 	private String contrataBackAction;
+
+	private String contractPdfBackAction;
 	
 	private ContractParams params;
 	
@@ -131,6 +133,15 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setContrataBackAction(String contrataBackAction) {
 		this.contrataBackAction = contrataBackAction;
+	}
+	public String contractPdfBackAction() {
+		return contractPdfBackAction;
+	}
+	public String getContractPdfBackAction() {
+		return contractPdfBackAction;
+	}
+	public void setContractPdfBackAction(String contractPdfBackAction) {
+		this.contractPdfBackAction = contractPdfBackAction;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -643,6 +654,12 @@ public class ContractController extends BasicController implements IVariablesHan
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}				
+	}
+	
+	public void onContractDocumentShow( ActionEvent event ) {
+		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
+		controller.initialize((Contract) this.getTo(), getContractPdfBackAction());
+		controller.onContractDocumentShow(event);
 	}
 	
 	public List<SelectItem> getAgreementLevelCategories(){
