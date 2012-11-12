@@ -1,7 +1,5 @@
 package com.code.aon.ui.marketing.controller;
 
-import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -9,10 +7,14 @@ import java.util.Set;
 
 import javax.faces.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
@@ -26,6 +28,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignActionTargetController extends LinesController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignActionTargetController.class.getName());
 
 	private Criteria previousCriteria;
 	
@@ -124,15 +128,55 @@ public class CampaignActionTargetController extends LinesController {
 	}	
 
 	public int getCount() throws ManagerBeanException {
-		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
-		if ( controller.getModel().isRowAvailable() ) {
-			MarketingAction action = (MarketingAction) controller.getModel().getRowData();
+		if ( getMasterController().getModel().isRowAvailable() ) {
+			MarketingAction action = (MarketingAction) getMasterController().getModel().getRowData();
 			Criteria criteria = new Criteria();
 			String alias = getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID);
 			criteria.addEqualExpression(alias, action.getId());
 			return getManagerBean().getCount(criteria);
 		}
 		return 0;
+	}	
+	
+	private int getCount( ActionTargetStatus status ) {
+		Criteria criteria = new Criteria();
+		try {
+			MarketingAction action = (MarketingAction) getMasterController().getTo();
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), action.getId());
+			criteria.addEqualExpression(getFieldName(IEntityAlias.ACTION_TARGET_STATUS), status);
+			return getManagerBean().getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		return 0;
+	}	
+
+	public int getPendingCount() {
+		return getCount(ActionTargetStatus.PENDING);
+	}	
+
+	public int getAbsentCount() {
+		return getCount(ActionTargetStatus.ABSENT);
+	}	
+
+	public int getIncorrectCount() {
+		return getCount(ActionTargetStatus.INCORRECT);
+	}	
+
+	public int getTryAgainCount() {
+		return getCount(ActionTargetStatus.TRY_AGAIN);
+	}	
+
+	public int getCancelCount() {
+		return getCount(ActionTargetStatus.CANCEL);
+	}	
+
+	public int getFinishedCount() {
+		return getCount(ActionTargetStatus.FINISHED);
+	}	
+
+	public int getSentCount() {
+		return getCount(ActionTargetStatus.SENT);
 	}	
 	
 }
