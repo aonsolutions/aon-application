@@ -36,14 +36,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>smsCommunication</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.SMSCommunicationController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	
 	<!-- ************ SURVEY ************** -->
 	<managed-bean>
@@ -715,10 +707,6 @@
 		<navigation-case>
 			<from-outcome>communicationCenter_email</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/email.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>communicationCenter_sms</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/sms.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>communicationCenter_mail</from-outcome>
