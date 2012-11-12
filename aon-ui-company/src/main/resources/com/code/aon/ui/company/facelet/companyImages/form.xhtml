@@ -158,7 +158,15 @@
 													requestDelay="1500" reRender="imagePanelGrid"
 													actionListener="#{companyImages.onChangeHeight}" />
 											</rich:inputNumberSlider>
-										</c:if>										
+										</c:if>					
+										
+										<c:if test="#{!companyImages.new}" >
+											<aon:outputText value="#{bundle.aon_document_download_url}" />
+											<aon:outputLink target="_blank" value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" >
+												<aon:outputText value="#{domainSwitcher.domainURL}#{companyImages.to.downloadURL}" />
+										    </aon:outputLink>
+										</c:if>
+															
 									</aon:panelGrid>
 								</aon:div>
 							</aon:panel>			

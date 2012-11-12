@@ -53,8 +53,8 @@
 
 					<c:if test="#{!corporateIdentityAttach.new}" >
 						<aon:outputText value="#{bundle.aon_document_download_url}" />
-						<aon:outputLink target="_blank" value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
-							<aon:outputText value="#{corporateIdentityAttach.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
+						<aon:outputLink target="_blank" value="#{domainSwitcher.domainURL}#{corporateIdentityAttach.to.downloadURL}" >
+							<aon:outputText value="#{domainSwitcher.domainURL}#{corporateIdentityAttach.to.downloadURL}" />
 					    </aon:outputLink>
 					</c:if>
 			

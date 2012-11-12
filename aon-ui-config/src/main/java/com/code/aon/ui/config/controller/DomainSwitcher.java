@@ -19,6 +19,9 @@ import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.domain.AbstractDomainSwitcher;
 import com.code.aon.common.domain.DomainEvent;
@@ -39,6 +42,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	private String domainName;
 	private String filter;
 	private String modelFilter;
+	private String domainURL;
 	
 	public DomainSwitcher() {
 		try {
@@ -247,5 +251,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher {
 	public DomainType getType() {
 		return DomainType.values()[this.type];
 	}
+	
+	public String getDomainURL() throws ManagerBeanException {
+		if ( domainURL == null ) {
+			IManagerBean bean = BeanManager.getManagerBean(Domain.class);
+			Domain domain = (Domain) bean.get(getDomainId());
+			String path = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+			domainURL = "http://" + domain.getName() + path;
+		}
+		return domainURL;
+	}	
 		
 }
