@@ -1,10 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
-import com.esferalia.aon.file.payroll.contract.model.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSTRABAJADORTYPE;
+import java.io.IOException;
+
+import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.lowagie.text.pdf.PdfReader;
 
 
 
@@ -13,51 +14,121 @@ public class ModelPE177 extends AbstractContractModel {
 	/*
 	 * Contract page 1
 	 */
-	final static String PE151_TC2_100 = "tipocontrato_100";
-	final static String PE151_TC2_150 = "tipocontrato_150";
-//	final static String PE151_ = "Texto65";
-//	final static String PE151_ = "Texto66";
-//	final static String PE151_ = "Texto67";
-//	final static String PE151_ = "Casilla de verificación78464";
-//	final static String PE151_ = "Casilla de verificación71016430";
-//	final static String PE151_ = "profetraba";
-//	final static String PE151_ = "catetraba";
-//	final static String PE151_ = "funciontraba";
-//	final static String PE151_ = "calletrab";
-//	final static String PE151_ = "fechaini";
-//	final static String PE151_ = "horasjorna1";
-//	final static String PE151_ = "horainicio";
-//	final static String PE151_ = "horafin";
+	final static String PE177_FULL_TIME = "sel_jorn1";
+	final static String PE177_PARTIAL_TIME = "sel_jorn2";
+	final static String PE177_TC2_401 = "tipocontrato_401";
+	final static String PE177_TC2_402 = "tipocontrato_402";
+	final static String PE177_TC2_410 = "tipocontrato_410";
+	final static String PE177_TC2_501 = "tipocontrato_501";
+	final static String PE177_TC2_502 = "tipocontrato_502";
+	final static String PE177_TC2_510 = "tipocontrato_510";
+	final static String PE177_TC2_540 = "tipocontrato_540";
+//	nomreptra
+//	dnireptra
+//	calireptra
+//	profetraba
+//	catetraba
+//	calletrab
+//	horasjorna1
+//	horainicio
+//	horafin
+//	horasjorna2
+//	tipojorntp1
+//	tipojorntp2
+//	tipojorntp3
+//	tipojorntp4
+//	sel_jorn21
+//	sel_jorn22
+//	sel_jorn23
+//	horatraba1
+//	horatraba2
+//	fechaini
+//	fechafin
+//	peridoprue
+//	in_ccolec
 	
 	/*
 	 * Contract page 2
 	 */
-	final static String PE151_SALARY = "retribu";
-//	final static String PE151_ = "perioretri";
-//	final static String PE151_ = "concepsala";
-//	final static String PE151_ = "vacaciones";
-//	final static String PE151_ = "Casilla de verificación7";
-//	final static String PE151_ = "Casilla de verificación8";
-//	final static String PE151_ = "Casilla de verificación11";
-//	final static String PE151_ = "Casilla de verificación9";
-//	final static String PE151_ = "Casilla de verificación10";
-//	final static String PE151_ = "Casilla de verificación13";
-//	final static String PE151_ = "Casilla de verificación12";
-//	final static String PE151_ = "Casilla de verificación14";
-//	final static String PE151_ = "Casilla de verificación15";
-//	final static String PE151_ = "Casilla de verificación16";
-//	final static String PE151_ = "convcole";
-//	final static String PE151_ = "oecomu";
-//	final static String PE151_ = "T25";
-//	final static String PE151_ = "munifirma";
-//	final static String PE151_ = "diafirma";
-//	final static String PE151_ = "mesfirma";
-//	final static String PE151_ = "añofirma";
-	public static final Object MODEL_NAME = "";
+//	retribu
+//	perioretri
+//	concepsala
+//	vacaciones
+//	in_causa1
+//	causaobra
+//	in_causa2
+//	causaobra1
+//	causaobra2
+//	in_causa3
+//	nomtrasus
+//	in_causa31
+//	in_causa32
+//	in_causa33
+//	in_causa34
+//	in_causa35
+//	in_causa36
+//	violengen
+//	violengenA
+//	violengenB
+//	puestotra
+//	reducjorn
+//	reducsalario
+//	convcole
+//	oecomu
+//	clausadici
+//	munifirma
+//	diafirma
+//	mesfirma
+//	añofirma
+	
+	public final static String MODEL_NAME = "PE177";
+	
+	public ModelPE177(){
+		super.modelName = MODEL_NAME;
+	}
 	
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{
 		// TODO
+		try {
+			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
+			
+			readPdfFields(reader);
+			
+			if(code == ContractCode.C401){
+				getPdfFieldsMap().get(PE177_FULL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_401).setValue("true");
+			} else if(code == ContractCode.C402){
+				getPdfFieldsMap().get(PE177_FULL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_402).setValue("true");
+			} else if(code == ContractCode.C410){
+				getPdfFieldsMap().get(PE177_FULL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_410).setValue("true");
+			} else if(code == ContractCode.C501){
+				getPdfFieldsMap().get(PE177_PARTIAL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_501).setValue("true");
+			} else if(code == ContractCode.C502){
+				getPdfFieldsMap().get(PE177_PARTIAL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_502).setValue("true");
+			} else if(code == ContractCode.C510){
+				getPdfFieldsMap().get(PE177_PARTIAL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_510).setValue("true");
+			} else if(code == ContractCode.C540){
+				getPdfFieldsMap().get(PE177_PARTIAL_TIME).setValue("true");
+				getPdfFieldsMap().get(PE177_TC2_540).setValue("true");
+			} else {
+				throw new UnsupportedContractModelException("El modelo de contrato seleccionado es incorrecto");
+			}
+			
+			super.loadPdfCommonFields(contract);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

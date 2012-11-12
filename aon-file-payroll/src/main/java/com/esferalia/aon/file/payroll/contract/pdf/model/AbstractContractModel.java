@@ -280,85 +280,109 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 		reader.close();
 	}
 	
-	public void loadPdfCommonFields(Contract contract) throws UnsupportedContractModelException, ManagerBeanException{
+	private void setPdfFieldValue(String name, String value){
+		try {
+			getPdfFieldsMap().get(name).setValue(value);
+		} catch (NullPointerException npe) {
+			// do nothing
+		}
+	}
+	
+	public void loadPdfCommonFields(Contract contract) throws ManagerBeanException{
 		/* 
 		 * Contract enterprise fields
 		 */
-		getPdfFieldsMap().get(ENTERPRISE_CIF).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
-		getPdfFieldsMap().get(ENTERPRISE_DIR_STAFF_NAME).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_DIR_STAFF_NIF).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_DIR_STAFF_CHARGE).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_NAME).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
-		getPdfFieldsMap().get(ENTERPRISE_ADDRESS).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
-		getPdfFieldsMap().get(ENTERPRISE_COUNTRY).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
-		getPdfFieldsMap().get(ENTERPRISE_COUNTRY_CODE1).setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(0,1));
-		getPdfFieldsMap().get(ENTERPRISE_COUNTRY_CODE2).setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(1,2));
-		getPdfFieldsMap().get(ENTERPRISE_COUNTRY_CODE3).setValue(String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,3));
-		getPdfFieldsMap().get(ENTERPRISE_TOWN).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
-		getPdfFieldsMap().get(ENTERPRISE_TOWN_CODE1).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_TOWN_CODE2).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_TOWN_CODE3).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_TOWN_CODE4).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_TOWN_CODE5).setValue(null);
-		getPdfFieldsMap().get(ENTERPRISE_ZIP1).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(0, 1));
-		getPdfFieldsMap().get(ENTERPRISE_ZIP2).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(1, 2));
-		getPdfFieldsMap().get(ENTERPRISE_ZIP3).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(2, 3));
-		getPdfFieldsMap().get(ENTERPRISE_ZIP4).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(3, 4));
-		getPdfFieldsMap().get(ENTERPRISE_ZIP5).setValue(contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(4, 5));
+		setPdfFieldValue(ENTERPRISE_CIF,contract.getWorkPlace().getEnterprise().getRegistry().getDocument());
+		setPdfFieldValue(ENTERPRISE_DIR_STAFF_NAME,null);
+		setPdfFieldValue(ENTERPRISE_DIR_STAFF_NIF,null);
+		setPdfFieldValue(ENTERPRISE_DIR_STAFF_CHARGE,null);
+		setPdfFieldValue(ENTERPRISE_NAME,contract.getWorkPlace().getEnterprise().getRegistry().getFullName());
+		setPdfFieldValue(ENTERPRISE_ADDRESS,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getFullAddress());
+		setPdfFieldValue(ENTERPRISE_COUNTRY,contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getName(Locale.getDefault()));
+		try {	
+			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE1,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(0,1));
+			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE2,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(1,2));
+			setPdfFieldValue(ENTERPRISE_COUNTRY_CODE3,String.valueOf(contract.getWorkPlace().getEnterprise().getRegistry().getNationality().getIsoNum()).substring(2,3));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		}
+		setPdfFieldValue(ENTERPRISE_TOWN,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getCity());
+		setPdfFieldValue(ENTERPRISE_TOWN_CODE1,null);
+		setPdfFieldValue(ENTERPRISE_TOWN_CODE2,null);
+		setPdfFieldValue(ENTERPRISE_TOWN_CODE3,null);
+		setPdfFieldValue(ENTERPRISE_TOWN_CODE4,null);
+		setPdfFieldValue(ENTERPRISE_TOWN_CODE5,null);
+		try {	
+			setPdfFieldValue(ENTERPRISE_ZIP1,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(0, 1));
+			setPdfFieldValue(ENTERPRISE_ZIP2,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(1, 2));
+			setPdfFieldValue(ENTERPRISE_ZIP3,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(2, 3));
+			setPdfFieldValue(ENTERPRISE_ZIP4,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(3, 4));
+			setPdfFieldValue(ENTERPRISE_ZIP5,contract.getWorkPlace().getEnterprise().getRegistry().getDefaultAddress().getZip().substring(4, 5));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		}
 		/* 
 		 * Contract ccc fields
 		 */
-		getPdfFieldsMap().get(CCC_REG1).setValue(null);
-		getPdfFieldsMap().get(CCC_REG2).setValue(null);
-		getPdfFieldsMap().get(CCC_REG3).setValue(null);
-		getPdfFieldsMap().get(CCC_REG4).setValue(null);
-		getPdfFieldsMap().get(CCC_PROV1).setValue(null);
-		getPdfFieldsMap().get(CCC_PROV2).setValue(null);
-		getPdfFieldsMap().get(CCC_NISS).setValue(contract.getEnterpriseCCC().getCcc());
-		getPdfFieldsMap().get(CCC_CONTROL_DIGIT1).setValue(null);
-		getPdfFieldsMap().get(CCC_CONTROL_DIGIT2).setValue(null);
-		getPdfFieldsMap().get(CCC_ACTIVITY).setValue(contract.getEnterpriseCCC().getActivity().getDescription());
-		getPdfFieldsMap().get(CCC_ACTIVITY_CODE1).setValue(null);
-		getPdfFieldsMap().get(CCC_ACTIVITY_CODE2).setValue(null);
+		setPdfFieldValue(CCC_REG1,null);
+		setPdfFieldValue(CCC_REG2,null);
+		setPdfFieldValue(CCC_REG3,null);
+		setPdfFieldValue(CCC_REG4,null);
+		setPdfFieldValue(CCC_PROV1,null);
+		setPdfFieldValue(CCC_PROV2,null);
+		setPdfFieldValue(CCC_NISS,contract.getEnterpriseCCC().getCcc());
+		setPdfFieldValue(CCC_CONTROL_DIGIT1,null);
+		setPdfFieldValue(CCC_CONTROL_DIGIT2,null);
+		setPdfFieldValue(CCC_ACTIVITY,contract.getEnterpriseCCC().getActivity().getDescription());
+		setPdfFieldValue(CCC_ACTIVITY_CODE1,null);
+		setPdfFieldValue(CCC_ACTIVITY_CODE2,null);
 		/* 
 		 * Contract workplace fields
 		 */
-		getPdfFieldsMap().get(WORKPLACE_COUNTRY).setValue(null);
-		getPdfFieldsMap().get(WORKPLACE_COUNTRY_CODE1).setValue(null);
-		getPdfFieldsMap().get(WORKPLACE_COUNTRY_CODE2).setValue(null);
-		getPdfFieldsMap().get(WORKPLACE_COUNTRY_CODE3).setValue(null);
-		getPdfFieldsMap().get(WORKPLACE_TOWN).setValue(contract.getWorkPlace().getAddress().getCity());
-		getPdfFieldsMap().get(WORKPLACE_TOWN_CODE1).setValue(contract.getWorkPlace().getAddress().getZip().substring(0, 1));
-		getPdfFieldsMap().get(WORKPLACE_TOWN_CODE2).setValue(contract.getWorkPlace().getAddress().getZip().substring(1, 2));
-		getPdfFieldsMap().get(WORKPLACE_TOWN_CODE3).setValue(contract.getWorkPlace().getAddress().getZip().substring(2, 3));
-		getPdfFieldsMap().get(WORKPLACE_TOWN_CODE4).setValue(contract.getWorkPlace().getAddress().getZip().substring(3, 4));
-		getPdfFieldsMap().get(WORKPLACE_TOWN_CODE5).setValue(contract.getWorkPlace().getAddress().getZip().substring(4, 5));
+		setPdfFieldValue(WORKPLACE_COUNTRY,null);
+		setPdfFieldValue(WORKPLACE_COUNTRY_CODE1,null);
+		setPdfFieldValue(WORKPLACE_COUNTRY_CODE2,null);
+		setPdfFieldValue(WORKPLACE_COUNTRY_CODE3,null);
+		setPdfFieldValue(WORKPLACE_TOWN,contract.getWorkPlace().getAddress().getCity());
+		try {
+			setPdfFieldValue(WORKPLACE_TOWN_CODE1,contract.getWorkPlace().getAddress().getZip().substring(0, 1));
+			setPdfFieldValue(WORKPLACE_TOWN_CODE2,contract.getWorkPlace().getAddress().getZip().substring(1, 2));
+			setPdfFieldValue(WORKPLACE_TOWN_CODE3,contract.getWorkPlace().getAddress().getZip().substring(2, 3));
+			setPdfFieldValue(WORKPLACE_TOWN_CODE4,contract.getWorkPlace().getAddress().getZip().substring(3, 4));
+			setPdfFieldValue(WORKPLACE_TOWN_CODE5,contract.getWorkPlace().getAddress().getZip().substring(4, 5));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		}
 		/*
 		 * Contract employee fields
 		 */
-		getPdfFieldsMap().get(EMPLOYEE_NAME).setValue(contract.getPerson().getFullName());
-		getPdfFieldsMap().get(EMPLOYEE_NIF).setValue(contract.getPerson().getRegistry().getDocument());
-		getPdfFieldsMap().get(EMPLOYEE_BIRTH_DATE).setValue(contract.getPerson().getBirthDate().toString());
-		getPdfFieldsMap().get(EMPLOYEE_NSS).setValue(contract.getPerson().getSocialSecurityNumber());
-		getPdfFieldsMap().get(EMPLOYEE_FORMATION_CODE1).setValue(null);
-		getPdfFieldsMap().get(EMPLOYEE_FORMATION_CODE2).setValue(null);
-		getPdfFieldsMap().get(EMPLOYEE_COUNTRY_CODE1).setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));
-		getPdfFieldsMap().get(EMPLOYEE_COUNTRY_CODE2).setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(1,2));
-		getPdfFieldsMap().get(EMPLOYEE_COUNTRY_CODE3).setValue(String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,3));
-		getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN).setValue(contract.getPerson().getRegistry().getDefaultAddress().getCity());
-		if(contract.getPerson().getRegistry().getDefaultAddress()!=null 
-				&& contract.getPerson().getRegistry().getDefaultAddress().getId()!=null
-				&& contract.getPerson().getRegistry().getDefaultAddress().getZip().length()>=5){
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN_CODE1).setValue(contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(0, 1));
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN_CODE2).setValue(contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(1, 2));
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN_CODE3).setValue(contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(2, 3));
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN_CODE4).setValue(contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(3, 4));
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_TOWN_CODE5).setValue(contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(4, 5));
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY).setValue(null);
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY_CODE1).setValue(null);
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY_CODE2).setValue(null);
-			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY_CODE3).setValue(null);
+		setPdfFieldValue(EMPLOYEE_NAME,contract.getPerson().getFullName());
+		setPdfFieldValue(EMPLOYEE_NIF,contract.getPerson().getRegistry().getDocument());
+		setPdfFieldValue(EMPLOYEE_BIRTH_DATE,contract.getPerson().getBirthDate().toString());
+		setPdfFieldValue(EMPLOYEE_NSS,contract.getPerson().getSocialSecurityNumber());
+		setPdfFieldValue(EMPLOYEE_FORMATION_CODE1,null);
+		setPdfFieldValue(EMPLOYEE_FORMATION_CODE2,null);
+		try {
+			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE1,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(0,1));
+			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE2,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(1,2));
+			setPdfFieldValue(EMPLOYEE_COUNTRY_CODE3,String.valueOf(contract.getPerson().getRegistry().getNationality().getIsoNum()).substring(2,3));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
 		}
+		setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN,contract.getPerson().getRegistry().getDefaultAddress().getCity());
+		try {
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE1,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(0, 1));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE2,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(1, 2));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE3,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(2, 3));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE4,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(3, 4));
+			setPdfFieldValue(EMPLOYEE_ADDRESS_TOWN_CODE5,contract.getPerson().getRegistry().getDefaultAddress().getZip().substring(4, 5));
+		} catch (StringIndexOutOfBoundsException aie) {
+			// do nothing
+		}
+		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY,null);
+		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE1,null);
+		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE2,null);
+		setPdfFieldValue(EMPLOYEE_ADDRESS_COUNTRY_CODE3,null);
 	}
 	
 	/*

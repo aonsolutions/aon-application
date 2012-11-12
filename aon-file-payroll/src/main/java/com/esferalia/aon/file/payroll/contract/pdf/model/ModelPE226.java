@@ -53,7 +53,12 @@ public class ModelPE226 extends AbstractContractModel {
 //	final static String PE151_ = "diafirma";
 //	final static String PE151_ = "mesfirma";
 //	final static String PE151_ = "añofirma";
-	public static final Object MODEL_NAME = "";
+
+	public final static String MODEL_NAME = "PE226";
+	
+	public ModelPE226(){
+		super.modelName = MODEL_NAME;
+	}
 	
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{

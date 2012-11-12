@@ -94,9 +94,6 @@ public class ModelPE170 extends AbstractContractModel {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-//		} catch (DocumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

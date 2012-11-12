@@ -257,6 +257,7 @@ public class ContractPdfController {
 			}
 			
 			setCode(ContractCode.getContractCodeByValue(tc2));
+			setContractModel(null);
 			
 			// TODO EN DESARROLLO, solo se contempla cuando el TC2 es 100
 			if(getCode()==ContractCode.C100){
@@ -280,10 +281,50 @@ public class ContractPdfController {
 //					}
 //				}
 			} else {
-				setCode(null);
-				setContractType(null);
-				setContractOption(null);
+//				setCode(null);
+//				setContractType(null);
+//				setContractOption(null);
 			}
+//			for(int i=0; i<ContractType.PE151.getCodes().length && getContractModel()==null; i++){
+//				if(getCode()==ContractType.PE151.getCodes()[i]){
+//					setContractModel(ContractType.PE151.getModel());
+//				}
+//			}
+			for(int i=0; i<ContractType.PE170.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE170.getCodes()[i]){
+					setContractModel(ContractType.PE170.getModel());
+				}
+			}
+			for(int i=0; i<ContractType.PE176.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE176.getCodes()[i]){
+					setContractModel(ContractType.PE176.getModel());
+				}
+			}
+			for(int i=0; i<ContractType.PE177_WORK_SERVICE.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE177_WORK_SERVICE.getCodes()[i]){
+					setContractModel(ContractType.PE177_WORK_SERVICE.getModel());
+				}
+			}
+			for(int i=0; i<ContractType.PE179.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE179.getCodes()[i]){
+					setContractModel(ContractType.PE179.getModel());
+				}
+			}
+			for(int i=0; i<ContractType.PE183.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE183.getCodes()[i]){
+					setContractModel(ContractType.PE183.getModel());
+				}
+			}
+			for(int i=0; i<ContractType.PE187.getCodes().length && getContractModel()==null; i++){
+				if(getCode()==ContractType.PE187.getCodes()[i]){
+					setContractModel(ContractType.PE187.getModel());
+				}
+			}
+//			for(int i=0; i<ContractType.PE226.getCodes().length && getContractModel()==null; i++){
+//				if(getCode()==ContractType.PE226.getCodes()[i]){
+//					setContractModel(ContractType.PE226.getModel());
+//				}
+//			}
 		}
 	}
 	
@@ -298,16 +339,12 @@ public class ContractPdfController {
 
 			beforeDocumentShow();
 			
-//			ModelPE170.MODEL_NAME
-			setContractModel(ContractType.PE170.getModel());
-			
-//			if(getContractModel()==null){
-//				String msg = "Modelo de contrato no reconocido.";
-//				LOGGER.error(msg);
-//				AonUtil.addErrorMessage(msg);
-//				throw new AbortProcessingException(msg);
-//			}
-			
+			if(getContractModel()==null){
+				String msg = "Modelo de contrato no reconocido.";
+				LOGGER.error(msg);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
 			
 			
 			setZoomFactor(2);

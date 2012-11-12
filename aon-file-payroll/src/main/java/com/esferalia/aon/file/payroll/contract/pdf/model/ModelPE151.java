@@ -14,7 +14,6 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 
 public class ModelPE151 extends AbstractContractModel {
 	
-	public final static String MODEL_NAME = "PE151";
 	
 	/*
 	 * Contract page 1
@@ -60,8 +59,7 @@ public class ModelPE151 extends AbstractContractModel {
 //	final static String PE151_ = "mesfirma";
 //	final static String PE151_ = "añofirma";
 	
-	private CONTRATO100TYPE _100;
-	private CONTRATO150TYPE _150;
+	public final static String MODEL_NAME = "PE151";
 	
 	public ModelPE151(){
 		super.modelName = MODEL_NAME;

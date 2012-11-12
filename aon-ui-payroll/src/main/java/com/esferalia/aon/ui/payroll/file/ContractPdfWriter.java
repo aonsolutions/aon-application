@@ -78,7 +78,8 @@ public class ContractPdfWriter {
 	
 	public void loadPdf(ContractModel model, Contract contract) throws IOException, UnsupportedContractModelException {
 		ContractPdfFactory factory = new ContractPdfFactory();
-		pdfModel = factory.createContractModel(ModelPE170.MODEL_NAME);
+		pdfModel = factory.createContractModel(model.toString());
+//		pdfModel = factory.createContractModel(ModelPE170.MODEL_NAME);
 //		CONTRATO100TYPE type = new CONTRATO100TYPE();
 			
 //		ContractCode code = ContractCode.C100;

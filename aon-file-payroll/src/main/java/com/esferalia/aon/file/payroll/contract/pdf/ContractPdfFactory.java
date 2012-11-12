@@ -7,18 +7,12 @@ import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE176;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE177;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE179;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE183;
+import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE187;
 import com.esferalia.aon.file.payroll.contract.pdf.model.ModelPE226;
 
 
 public class ContractPdfFactory {
 	
-	
-//	private final static String PE170_MODEL = "PE170";
-//	private final static String PE176_MODEL = "PE176";
-//	private final static String PE177_MODEL = "PE177";
-//	private final static String PE179_MODEL = "PE179";
-//	private final static String PE183_MODEL = "PE183";
-//	private final static String PE226_MODEL = "PE226";
 	
 	public IContractPdfModel createContractModel(String model) {
 		if (model.equals(ModelPE151.MODEL_NAME)) {
@@ -33,6 +27,8 @@ public class ContractPdfFactory {
 			return new ModelPE179();
 		} else if (model.equals(ModelPE183.MODEL_NAME)) {
 			return new ModelPE183();
+		} else if (model.equals(ModelPE187.MODEL_NAME)) {
+			return new ModelPE187();
 		} else if (model.equals(ModelPE226.MODEL_NAME)) {
 			return new ModelPE226();
 		}
