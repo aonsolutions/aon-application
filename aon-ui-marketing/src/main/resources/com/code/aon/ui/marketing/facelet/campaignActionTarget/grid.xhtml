@@ -17,7 +17,10 @@
 					</f:facet>
 					<aon:outputText value="#{to.target.registry.fullName}"
 						rendered="#{formList}" />
-						
+					<aon:goToButton controller="#{target}"
+						onmouseover="disableRowSelector();" rendered="#{formList}"
+						oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+						property="#{controller.selectedTO.target}" />						
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{controller.to.target}" />
 						<ui:param name="idRequired" value="#{true}" />
@@ -37,13 +40,14 @@
 					</f:facet>	
 				</aon:column>
 				
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 					<f:facet name="header">
 						<aon:outputLabel for="ActionTarget_comments"
 							value="#{marketingBundle.marketing_comments}" />
 					</f:facet>				
-					<aon:outputText value="#{to.comments}"
-						rendered="#{formList}" />
+					<aon:outputText value="#{to.comments}" rendered="#{formList}" >
+						<aon:abbreviateConverter maxWidth="40" />
+					</aon:outputText>						
 					<aon:inputTextarea id="ActionTarget_comments"
 						value="#{controller.to.comments}"
 						rows="2" cols="30" rendered="#{formEdit}" />					
@@ -74,7 +78,7 @@
 				</aon:column>		
 				
 				<aon:column alias="ActionTarget.user&lt;name"
-					styleClass="aon-editDataTable-textColumn">
+					styleClass="aon-editDataTable-textColumn aon-width-200">
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_login_user}" />
 					</f:facet>				

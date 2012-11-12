@@ -1,5 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -119,6 +121,18 @@ public class CampaignActionTargetController extends LinesController {
 			initializeModel();
 			checkAll(null);
 		}
+	}	
+
+	public int getCount() throws ManagerBeanException {
+		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+		if ( controller.getModel().isRowAvailable() ) {
+			MarketingAction action = (MarketingAction) controller.getModel().getRowData();
+			Criteria criteria = new Criteria();
+			String alias = getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID);
+			criteria.addEqualExpression(alias, action.getId());
+			return getManagerBean().getCount(criteria);
+		}
+		return 0;
 	}	
 	
 }

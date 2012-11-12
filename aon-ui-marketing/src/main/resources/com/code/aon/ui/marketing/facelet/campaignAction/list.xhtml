@@ -61,6 +61,13 @@
 					<aon:outputText value="#{to.survey.description}"/>
 				</aon:column>
 	
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-140">
+					<f:facet name="header">
+						<aon:outputText value="#{target.bundle.commercial_target_module}" />
+					</f:facet>
+					<aon:outputText value="#{campaignActionTarget.count}"/>
+				</aon:column>
+	
 			</ui:define>
 			
 		</ui:decorate>	
