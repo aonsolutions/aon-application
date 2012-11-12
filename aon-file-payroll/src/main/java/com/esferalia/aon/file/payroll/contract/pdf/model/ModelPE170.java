@@ -1,17 +1,11 @@
 package com.esferalia.aon.file.payroll.contract.pdf.model;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
 
 import com.code.aon.common.ManagerBeanException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 
 
 
@@ -78,62 +72,14 @@ public class ModelPE170 extends AbstractContractModel {
 		super.modelName = MODEL_NAME;
 	}
 	
-	
-//	@Override
-//	public byte[] buildPdf() {
-//		try {
-//			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
-//			setContractWidth((double)reader.getPageSize(1).getWidth());
-//			setContractHeight((double)reader.getPageSize(1).getHeight());
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-//			PdfStamper stamp = new PdfStamper(reader, baos);
-//			AcroFields form = stamp.getAcroFields();
-//			
-//			
-//			String checkValue = null;
-//			for (Iterator<?> it = getPdfFields().iterator(); it.hasNext();) {
-////				key = (String) it.next();
-////				ContractPdfField field = getPdfFieldsMap().get(key);
-//				ContractPdfField field = (ContractPdfField) it.next();
-//				if(field.getType()==AcroFields.FIELD_TYPE_CHECKBOX){
-//					if(checkValue==null){
-//						checkValue = form.getAppearanceStates(field.getLabel())[0];
-//					}
-//					form.setField(field.getLabel(), field.getValue().equals("true")?checkValue:"");
-//				} else {
-//					form.setField(field.getLabel(), field.getValue());
-//				}
-//			}
-////    		stamp.setFormFlattening(true);
-//			stamp.setFormFlattening(false);
-//			stamp.close();
-//			reader.close();
-//			return baos.toByteArray();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (DocumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
 	@Override
 	public void loadPdfFields(ContractCode code, Contract contract) throws UnsupportedContractModelException{
 		// TODO 
 		
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
-			setContractWidth((double)reader.getPageSize(1).getWidth());
-			setContractHeight((double)reader.getPageSize(1).getHeight());
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-//			PdfStamper stamp = new PdfStamper(reader, baos);
-//			AcroFields form = stamp.getAcroFields();
-			
 			
 			readPdfFields(reader);
-
 			
 			if(code == ContractCode.C100){
 				getPdfFieldsMap().get(PE170_TC2_100).setValue("true");
@@ -145,26 +91,6 @@ public class ModelPE170 extends AbstractContractModel {
 			
 			super.loadPdfCommonFields(contract);
 			
-			
-//			String checkValue = null;
-//			String key = null;
-//			for (Iterator<?> it = getPdfFieldsMap().keySet().iterator(); it.hasNext();) {
-//				key = (String) it.next();
-//				ContractPdfField field = getPdfFieldsMap().get(key);
-//				if(field.getType()==AcroFields.FIELD_TYPE_CHECKBOX){
-//					if(checkValue==null){
-//						checkValue = form.getAppearanceStates(field.getLabel())[0];
-//					}
-//					form.setField(field.getLabel(), field.getValue().equals("true")?checkValue:"");
-//				} else {
-//					form.setField(field.getLabel(), field.getValue());
-//				}
-//			}
-////	    	stamp.setFormFlattening(true);
-//			stamp.setFormFlattening(false);
-//			stamp.close();
-//			reader.close();
-//	    	return baos.toByteArray();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,10 +101,6 @@ public class ModelPE170 extends AbstractContractModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		return null;
-		
-		
 	}
 	
 }

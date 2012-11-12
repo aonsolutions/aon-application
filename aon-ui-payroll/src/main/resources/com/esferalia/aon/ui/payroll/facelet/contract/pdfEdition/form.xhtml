@@ -55,7 +55,6 @@
 					</aon:div>
 
 					<aon:div>
-						<!--  
 						<rich:inputNumberSlider maxValue="4" step="1"
 							value="#{contractPdf.zoomFactor}"
 							showArrows="true" width="150"
@@ -67,9 +66,9 @@
 				            decreaseClass="aon-icon-zoom-decrease"
 				            increaseClass="aon-icon-zoom-increase"
 				            >
-				            <a4j:support event="onchange" reRender="contractDetail"/>
+				            <a4j:support event="onchange" reRender="contractDetail"
+				            	actionListener="#{contractPdf.onChangeZoomFactor}" />
 				       </rich:inputNumberSlider>
-						-->
 					</aon:div>
 
 				</h:panelGrid>

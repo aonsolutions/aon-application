@@ -1,9 +1,9 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.Classpath;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -34,10 +35,7 @@ import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.ContractPdfWriter;
-import com.esferalia.aon.ui.payroll.utils.ContractPdfHandler;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.AcroFields;
-import com.lowagie.text.pdf.PdfReader;
+import com.esferalia.aon.ui.payroll.utils.PdfToImage;
 
 public class ContractPdfController {
 	
@@ -47,9 +45,9 @@ public class ContractPdfController {
 	private static final double FACTOR_4X = 1.8;
 
 	private Integer contractPage;
-	private Integer contractWidth;
-	private Integer contractHeight;
-	private int numberOfContractPages;
+//	private Integer contractWidth;
+//	private Integer contractHeight;
+//	private int numberOfContractPages;
 	private int zoomFactor;
 	
 	public Integer getContractPage() {
@@ -86,24 +84,24 @@ public class ContractPdfController {
 //		return getFactorizedValue(contractWidth);
 	}
 	
-	public void setContractWidth(Integer contractWidth) {
-		this.contractWidth = contractWidth;
-	}
+//	public void setContractWidth(Integer contractWidth) {
+//		this.contractWidth = contractWidth;
+//	}
 	
 	public Integer getContractHeight() {
 		return getFactorizedValue(getContractPdfWriter().getContractHeight());
 //		return getFactorizedValue(contractHeight);
 	}
 	
-	public void setContractHeight(Integer contractHeight) {
-		this.contractHeight = contractHeight;
-	}
+//	public void setContractHeight(Integer contractHeight) {
+//		this.contractHeight = contractHeight;
+//	}
 	public int getNumberOfContractPages() {
-		return numberOfContractPages;
+		return getContractPdfWriter().getNumberOfContractPages();
 	}
-	public void setNumberOfContractPages(int numberOfContractPages) {
-		this.numberOfContractPages = numberOfContractPages;
-	}
+//	public void setNumberOfContractPages(int numberOfContractPages) {
+//		this.numberOfContractPages = numberOfContractPages;
+//	}
 	
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPdfController.class.getName());
@@ -262,25 +260,25 @@ public class ContractPdfController {
 			
 			// TODO EN DESARROLLO, solo se contempla cuando el TC2 es 100
 			if(getCode()==ContractCode.C100){
-				for (ContractOption contractOption:ContractOption.values()) {
-					for (ContractType contractType:contractOption.getTypes()) {
-						for (ContractCode c : contractType.getCodes()) {
-							if(contractType==ContractType.PE170){
-								setContractType(contractType);
-							}
-							if(contractOption==ContractOption.INDEFINITE){
-								setContractOption(contractOption);
-							}
-//							if( c.equals(getCode()) ){
+//				for (ContractOption contractOption:ContractOption.values()) {
+//					for (ContractType contractType:contractOption.getTypes()) {
+//						for (ContractCode c : contractType.getCodes()) {
+//							if(contractType==ContractType.PE170){
 //								setContractType(contractType);
-//								if(contractOption==ContractOption.INDEFINITE){
-//									setContractOption(contractOption);
-//								}
-//								break;
 //							}
-						}
-					}
-				}
+//							if(contractOption==ContractOption.INDEFINITE){
+//								setContractOption(contractOption);
+//							}
+////							if( c.equals(getCode()) ){
+////								setContractType(contractType);
+////								if(contractOption==ContractOption.INDEFINITE){
+////									setContractOption(contractOption);
+////								}
+////								break;
+////							}
+//						}
+//					}
+//				}
 			} else {
 				setCode(null);
 				setContractType(null);
@@ -300,12 +298,17 @@ public class ContractPdfController {
 
 			beforeDocumentShow();
 			
-			if(getContractModel()==null){
-				String msg = "Modelo de contrato no reconocido.";
-				LOGGER.error(msg);
-				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
-			}
+//			ModelPE170.MODEL_NAME
+			setContractModel(ContractType.PE170.getModel());
+			
+//			if(getContractModel()==null){
+//				String msg = "Modelo de contrato no reconocido.";
+//				LOGGER.error(msg);
+//				AonUtil.addErrorMessage(msg);
+//				throw new AbortProcessingException(msg);
+//			}
+			
+			
 			
 			setZoomFactor(2);
 //			readPdfFields(getContractPdfDraft().getData(),getContractModel());
@@ -317,6 +320,13 @@ public class ContractPdfController {
 				getContractPdfWriter().loadPdf(getContractPdfDraft());
 			}
 			setContractPage(1);
+			
+			
+//			final String SCHEMA = getContractModel()+".pdf"; 
+//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, SCHEMA);
+//			PdfToImage.create(urls[0], getContractPage(), getContractWidth().intValue(), getContractHeight().intValue());
+			createPdfThumbnail();
 
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -329,11 +339,28 @@ public class ContractPdfController {
 		}
 	}
 	
-	public void onNextContractPage( ActionEvent event ) {
-		setContractPage(getContractPage()+1);
+	private void createPdfThumbnail() throws IOException{
+		final String SCHEMA = getContractModel()+".pdf"; 
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, SCHEMA);
+		PdfToImage.create(urls[0], getContractPage(), getContractWidth().intValue(), getContractHeight().intValue());
 	}
-	public void onFirstContractPage( ActionEvent event ) {
+	
+	public void onChangeZoomFactor( ActionEvent event ) throws IOException {
+		createPdfThumbnail();
+		
+		for(ContractPdfField field: getContractPdfWriter().getContractPdfFields()){
+			field.setZoomFactor(getZoomFactor());
+		}
+		
+	}
+	public void onNextContractPage( ActionEvent event ) throws IOException {
+		setContractPage(getContractPage()+1);
+		createPdfThumbnail();
+	}
+	public void onFirstContractPage( ActionEvent event ) throws IOException {
 		setContractPage(1);
+		createPdfThumbnail();
 	}
 	public boolean isLastContractPage() {
 		return getContractPage().equals(getNumberOfContractPages());
@@ -363,79 +390,5 @@ public class ContractPdfController {
 			throw new AbortProcessingException(e);
 		}
 	}
-	
-//	public void readPdfFields(byte[] pdf, ContractModel model) throws IOException{
-//		if(pdf==null){
-//			if(model==null){
-//				throw new AbortProcessingException("El modelo no se ha cargado correctamente o no existe");
-//			}
-//			readPdfFields(new PdfReader(getContractPdfWriter().getContractModelUrl(model+".pdf")));
-//		} else {
-//			readPdfFields(new PdfReader(pdf)); 
-//		}
-//	}
-	
-//	public void readPdfFields(ContractModel model) throws IOException{
-//		if(model==null){
-//			String msg = "El modelo no se ha cargado correctamente o no existe";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg);
-//		}
-//		readPdfFields(new PdfReader(getContractPdfWriter().getContractModelUrl(model+".pdf")));
-//	}
-	
-//	private void readPdfFields(PdfReader reader) throws IOException{
-//		
-//		setContractWidth((int)reader.getPageSize(1).getWidth());
-//		setContractHeight((int)reader.getPageSize(1).getHeight());
-//		
-//		setNumberOfContractPages(reader.getNumberOfPages());
-//		AcroFields form = reader.getAcroFields();
-//		HashMap<?,?> fields = form.getFields();
-//		String key;
-//		ContractPdfField field;
-//		for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
-//			key = (String) it.next();
-//			field = new ContractPdfField();
-//			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
-//					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
-//					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
-//			} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
-//					field.setType(AcroFields.FIELD_TYPE_TEXT);
-//					field.setValue(form.getField(key));
-//			} else {
-//				field.setType(AcroFields.FIELD_TYPE_NONE);;
-//			}
-//			Float f = form.getFieldPositions(key)[0];
-//			field.setPage(f.intValue());
-//			field.setLabel(key);
-//			field.setBottomCoordinates(getBottomCoordinates(form, key));
-//			field.setLeftCoordinates(getLeftCoordinates(form, key));
-//			field.setWidth(getInputTextWidth(form, key));
-//			field.setHeight(getInputTextHeight(form, key));
-//			field.setZoomFactor(getZoomFactor());
-//			if(field.getType()!=null){
-//				getContractPdfWriter().getContractPdfFields().add(field);
-//			}
-//		}
-//		reader.close();
-//	}
-	
-	/*
-	 * [page, llx, lly, urx, ury]
-	 */
-//	private String getBottomCoordinates(AcroFields form, String key){
-//		return Float.toString(form.getFieldPositions(key)[2]);
-//	}
-//	private String getLeftCoordinates(AcroFields form, String key){
-//		return Float.toString(form.getFieldPositions(key)[1]);
-//	}
-//	private String getInputTextWidth(AcroFields form, String key){
-//		Float f = form.getFieldPositions(key)[3]-form.getFieldPositions(key)[1];
-//		return String.valueOf(f.intValue());
-//	}
-//	private String getInputTextHeight(AcroFields form, String key){
-//		return Float.toString(form.getFieldPositions(key)[4]-form.getFieldPositions(key)[2]);
-//	}
 	
 }

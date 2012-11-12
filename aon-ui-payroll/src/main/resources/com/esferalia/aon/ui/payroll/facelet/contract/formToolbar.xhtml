@@ -31,10 +31,10 @@
 				<aon:menuItem id="pdf-edition" 
 					action="contractPdfEdition_form"
 					value="EDITAR PDF"
-					actionListener="#{contract.onContractDocumentShow}"
 					iconClass="aon-icon-pdf" >
 					<f:setPropertyActionListener
 						target="#{contract.contractPdfBackAction}" value="contract_form" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
 				</aon:menuItem>
 			</ui:define>
 		</ui:decorate>

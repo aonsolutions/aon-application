@@ -44,7 +44,8 @@ public class ImageServlet extends HttpServlet implements IPayrollConstants{
 		final String SCHEMA = model+".pdf"; 
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		URL[] urls = Classpath.search(cl, MODEL_PATH, SCHEMA);
-		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), width.intValue(), height.intValue());
+//		BufferedImage pic = PdfToImage.create(urls[0], Integer.parseInt(page), width.intValue(), height.intValue());
+		BufferedImage pic = PdfToImage.getImage();
 		byte[] buffer = ImageUtil.getImage(pic,MimeType.MIME_PNG.getExtension());
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);

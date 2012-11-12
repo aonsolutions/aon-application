@@ -69,13 +69,13 @@
 					<f:setPropertyActionListener
 						target="#{contract.contrataBackAction}" value="contract_formTree" />
 				</aon:commandButton>
-				<aon:commandButton id="pdf" 
+				<aon:commandButton id="pdf-edition" 
 					action="contractPdfEdition_form"
 					value="EDITAR PDF"
-					actionListener="#{contract.onContractDocumentShow}"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 					<f:setPropertyActionListener
 						target="#{contract.contractPdfBackAction}" value="contract_formTree" />
+					<aon:actionListener method="#{contract.onContractDocumentShow}" />
 				</aon:commandButton>
 			</ui:define>				
 		

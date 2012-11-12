@@ -34,7 +34,14 @@ public class PdfToImage {
 //		}
 //		return img;
 //	}
-	public static BufferedImage create(URL url, int pageNumber, int width, int height){
+	
+	private static BufferedImage pdfImage;
+	
+	public static BufferedImage getImage(){
+		return pdfImage;
+	}
+	
+	public static void create(URL url, int pageNumber, int width, int height){
 		PDDocument document = null;
 		BufferedImage image = null;
 		try {
@@ -50,7 +57,7 @@ public class PdfToImage {
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 		} 
-		return image;
+		pdfImage = image;
 	}
 	
 	public static ByteBuffer getAsByteArray(URL url) throws IOException {

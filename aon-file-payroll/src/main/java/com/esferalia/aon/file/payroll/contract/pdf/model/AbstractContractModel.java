@@ -6,18 +6,11 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.Classpath;
-import com.esferalia.aon.file.payroll.contract.model.DATOSEMPRESATYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSGENERALESCONTRATOTYPE;
-import com.esferalia.aon.file.payroll.contract.model.DATOSTRABAJADORTYPE;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -108,19 +101,18 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 	private final String EMPLOYEE_ADDRESS_COUNTRY_CODE2 = "codpaisdomtr2";
 	private final String EMPLOYEE_ADDRESS_COUNTRY_CODE3 = "codpaisdomtr3";
 	
-	protected String modelName;
+
+	private final String MODELS_PATH = "com/esferalia/aon/file/payroll/contract/pdf/";
 	
-//	private List<ContractPdfField> pdfFields;
+	private Double contractWidth;
+	private Double contractHeight;
+	private Integer numberOfContractPages;
+	private Map<String, ContractPdfField> pdfFieldsMap;
+	protected String modelName;
 	
 	public Collection<ContractPdfField> getPdfFields() {
 		return getPdfFieldsMap().values();
 	}
-
-//	public void setPdfFields(List<ContractPdfField> pdfFields) {
-//		this.pdfFields = pdfFields;
-//	}
-
-	private Map<String, ContractPdfField> pdfFieldsMap;
 	
 	public Map<String, ContractPdfField> getPdfFieldsMap() {
 		if(pdfFieldsMap==null){
@@ -132,13 +124,6 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 	public void setPdfFieldsMap(Map<String, ContractPdfField> pdfFieldsMap) {
 		this.pdfFieldsMap = pdfFieldsMap;
 	}
-	
-	private final String MODELS_PATH = "com/esferalia/aon/file/payroll/contract/pdf/";
-	
-	
-	
-	private Double contractWidth;
-	private Double contractHeight;
 	
 	@Override
 	public Double getContractWidth() {
@@ -158,12 +143,23 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 		this.contractHeight = contractHeight;
 	}
 
-//	public abstract byte[] buildPdf();
+	@Override
+	public Integer getNumberOfContractPages() {
+		return numberOfContractPages;
+	}
+	
+	public void setNumberOfContractPages(Integer numberOfContractPages) {
+		this.numberOfContractPages = numberOfContractPages;
+	}
+
 	public byte[] buildPdf() {
 		try {
 			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
+			
 			setContractWidth((double)reader.getPageSize(1).getWidth());
 			setContractHeight((double)reader.getPageSize(1).getHeight());
+			setNumberOfContractPages(reader.getNumberOfPages());
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 			PdfStamper stamp = new PdfStamper(reader, baos);
 			AcroFields form = stamp.getAcroFields();
@@ -203,11 +199,9 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 	public void loadPdfFields(ContractAttachment contractPdfDraft) {
 		try {
 			PdfReader reader = new PdfReader(contractPdfDraft.getData());
-	//		setContractWidth((int)reader.getPageSize(1).getWidth());
-	//		setContractHeight((int)reader.getPageSize(1).getHeight());
-	//		numberOfContractPages = reader.getNumberOfPages();
 			setContractWidth((double)reader.getPageSize(1).getWidth());
 			setContractHeight((double)reader.getPageSize(1).getHeight());
+			setNumberOfContractPages(reader.getNumberOfPages());
 			
 			AcroFields form = reader.getAcroFields();
 			HashMap<?,?> fields = form.getFields();
@@ -234,7 +228,6 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 				field.setHeight(getInputTextHeight(form, key));
 				field.setZoomFactor(2);
 				if(field.getType()!=null){
-//					getContractPdfFields().add(field);
 					getPdfFieldsMap().put(key, field);
 				}
 			}
@@ -245,6 +238,47 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 		}
 	}
 	
+	protected URL getContractModelUrl(String file) throws IOException {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		URL[] urls = Classpath.search(cl, MODELS_PATH, file);
+		return urls[0];
+	}
+	
+	protected void readPdfFields(PdfReader reader) throws IOException{
+		setContractWidth((double)reader.getPageSize(1).getWidth());
+		setContractHeight((double)reader.getPageSize(1).getHeight());
+		setNumberOfContractPages(reader.getNumberOfPages());
+		
+		AcroFields form = reader.getAcroFields();
+		HashMap<?,?> fields = form.getFields();
+		String key;
+		ContractPdfField field;
+		for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
+			key = (String) it.next();
+			field = new ContractPdfField();
+			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
+					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
+					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
+			} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
+					field.setType(AcroFields.FIELD_TYPE_TEXT);
+					field.setValue(form.getField(key));
+			} else {
+				field.setType(AcroFields.FIELD_TYPE_NONE);;
+			}
+			Float f = form.getFieldPositions(key)[0];
+			field.setPage(f.intValue());
+			field.setLabel(key);
+			field.setBottomCoordinates(getBottomCoordinates(form, key));
+			field.setLeftCoordinates(getLeftCoordinates(form, key));
+			field.setWidth(getInputTextWidth(form, key));
+			field.setHeight(getInputTextHeight(form, key));
+			field.setZoomFactor(2);
+			if(field.getType()!=null){
+				getPdfFieldsMap().put(key, field);
+			}
+		}
+		reader.close();
+	}
 	
 	public void loadPdfCommonFields(Contract contract) throws UnsupportedContractModelException, ManagerBeanException{
 		/* 
@@ -325,111 +359,6 @@ public abstract class AbstractContractModel implements IContractPdfModel {
 			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY_CODE2).setValue(null);
 			getPdfFieldsMap().get(EMPLOYEE_ADDRESS_COUNTRY_CODE3).setValue(null);
 		}
-	}
-	
-//	@Override
-//	public void buildPdfCommon(Object contractDocument) throws UnsupportedContractModelException{
-//		try {
-//			PdfReader reader = new PdfReader(getContractModelUrl(modelName+".pdf"));
-//			setContractWidth((double)reader.getPageSize(1).getWidth());
-//			setContractHeight((double)reader.getPageSize(1).getHeight());
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-//			PdfStamper stamp = new PdfStamper(reader, baos);
-//			AcroFields form = stamp.getAcroFields();
-//			String checkValue = null;
-//			for(ContractPdfField field: getPdfFields()){
-//				if(field.getType()==AcroFields.FIELD_TYPE_CHECKBOX){
-//					if(checkValue==null){
-//						checkValue = form.getAppearanceStates(field.getLabel())[0];
-//					}
-//					form.setField(field.getLabel(), field.getValue().equals("true")?checkValue:"");
-//				} else {
-//					form.setField(field.getLabel(), field.getValue());
-//				}
-//			}
-////	    	stamp.setFormFlattening(true);
-//			stamp.setFormFlattening(false);
-//			stamp.close();
-//			reader.close();
-////	    	return baos.toByteArray();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (DocumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
-	protected URL getContractModelUrl(String file) throws IOException {
-//		if(getContractModelUrl()==null){
-			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, MODELS_PATH, file);
-//			contractModelUrl = urls[0];
-//		}
-//		return contractModelUrl;
-		return urls[0];
-	}
-	
-//	public void readPdfFields(byte[] pdf, ContractModel model) throws IOException{
-//		if(pdf==null){
-//			if(model==null){
-//				throw new FileNotFoundException("El modelo no se ha cargado correctamente o no existe");
-//			}
-//			readPdfFields(new PdfReader(getContractModelUrl(model+".pdf")));
-//		} else {
-//			readPdfFields(new PdfReader(pdf)); 
-//		}
-//	}
-//	
-//	public void readPdfFields(ContractModel model) throws IOException{
-//		if(model==null){
-//			String msg = "El modelo no se ha cargado correctamente o no existe";
-//			throw new FileNotFoundException(msg);
-//		}
-//		readPdfFields(new PdfReader(getContractModelUrl(model+".pdf")));
-//	}
-//	
-	protected void readPdfFields(PdfReader reader) throws IOException{
-		
-//		setContractWidth((int)reader.getPageSize(1).getWidth());
-//		setContractHeight((int)reader.getPageSize(1).getHeight());
-//		
-//		numberOfContractPages = reader.getNumberOfPages();
-		
-		
-//		setPdfFieldsMap(new HashMap<String, ContractPdfField>());
-		
-		
-		AcroFields form = reader.getAcroFields();
-		HashMap<?,?> fields = form.getFields();
-		String key;
-		ContractPdfField field;
-		for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
-			key = (String) it.next();
-			field = new ContractPdfField();
-			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){
-					field.setType(AcroFields.FIELD_TYPE_CHECKBOX);
-					field.setValue(form.getField(key).equals(form.getAppearanceStates(key)[0])?"true":"false");
-			} else if(form.getFieldType(key)==AcroFields.FIELD_TYPE_TEXT){
-					field.setType(AcroFields.FIELD_TYPE_TEXT);
-					field.setValue(form.getField(key));
-			} else {
-				field.setType(AcroFields.FIELD_TYPE_NONE);;
-			}
-			Float f = form.getFieldPositions(key)[0];
-			field.setPage(f.intValue());
-			field.setLabel(key);
-			field.setBottomCoordinates(getBottomCoordinates(form, key));
-			field.setLeftCoordinates(getLeftCoordinates(form, key));
-			field.setWidth(getInputTextWidth(form, key));
-			field.setHeight(getInputTextHeight(form, key));
-			field.setZoomFactor(2);
-			if(field.getType()!=null){
-				getPdfFieldsMap().put(key, field);
-			}
-		}
-		reader.close();
 	}
 	
 	/*
