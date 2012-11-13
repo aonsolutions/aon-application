@@ -28,7 +28,7 @@
 			<plugin>
 				<groupId>${jasperreportsMavenPluginGroup}</groupId>
 				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>${project.version}</version>
 				<executions>
 					<execution>
 						<id>SALE INVOICE</id>

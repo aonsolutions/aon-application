@@ -15,7 +15,7 @@
 			<plugin>
 				<groupId>${jasperreportsMavenPluginGroup}</groupId>
 				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>${project.version}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/esferalia/aon/ui/calendar/report</outputDirectory>
 					<compiler>${jasperreportsMavenPluginCompiler}</compiler>

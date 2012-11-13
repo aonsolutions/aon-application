@@ -14,7 +14,7 @@
 			<plugin>
 				<groupId>${jasperreportsMavenPluginGroup}</groupId>
 				<artifactId>${jasperreportsMavenPluginArtifact}</artifactId>
-				<version>${jasperreportsMavenPluginVersion}</version>
+				<version>${project.version}</version>
 				<configuration>
 					<outputDirectory>${project.build.directory}/classes/com/code/aon/ui/sales/report</outputDirectory>
 					<compiler>${jasperreportsMavenPluginCompiler}</compiler>
