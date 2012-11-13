@@ -43,8 +43,7 @@ public class AdminUtil {
 	public static Integer getApplicationUser( AuthPrincipal principal ) {
 		Integer applicationUser = getApplicationUser(DomainManager.getCurrentDomain(), principal.getUserId(), principal.getApplicationId());
 		if (applicationUser == null ) {
-			Integer userDomain = getUserDomain(principal.getUserId());
-			applicationUser = getApplicationUser(userDomain, principal.getUserId(), principal.getApplicationId());
+			applicationUser = getApplicationUser(principal.getUserDomainId(), principal.getUserId(), principal.getApplicationId());
 		}
 		return applicationUser;
 	}
@@ -73,12 +72,6 @@ public class AdminUtil {
 		}        		
 		return shaPassword;
 	}	
-
-	public static Integer getUserDomain( Integer user ) {
-		Query query = getQuery("SELECT domain FROM User u WHERE u.id = ?");
-		query.setInteger(0, user);
-		return (Integer) query.uniqueResult();		
-	}
 	
 	public static String getUserPassword( Integer user ) {
 		Query query = getQuery("SELECT password FROM User u WHERE u.id = ?");

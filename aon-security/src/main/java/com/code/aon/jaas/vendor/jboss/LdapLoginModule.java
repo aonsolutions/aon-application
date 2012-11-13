@@ -112,6 +112,7 @@ public class LdapLoginModule extends JBossLoginModule {
 				User user = dbUtil.getUser(domainId, principal.getShortName());
 				if ( user != null ) {
 					principal.setUserId(user.getId());
+					principal.setUserDomainId(user.getDomain());
 				} else {
 					LOGGER.error("User {} not found in domain {}", principal.getShortName(), domainId);
 				}

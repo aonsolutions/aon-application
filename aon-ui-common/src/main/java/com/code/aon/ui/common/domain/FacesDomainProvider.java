@@ -20,7 +20,7 @@ public class FacesDomainProvider implements IDomainProvider {
 	
 	@Override
 	public Integer getUserDomain() {
-		return AonUtil.getAuthPrincipal().getDomainId();
+		return AonUtil.getAuthPrincipal().getUserDomainId();
 	}
 
 	@Override

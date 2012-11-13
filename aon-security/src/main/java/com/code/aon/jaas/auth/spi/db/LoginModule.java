@@ -110,7 +110,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				throw new AuthenticationLoginException( "aon_login_application_not_found", applicationName );
 			}
 			principal.setApplicationId(applicationId);
-			User user = dbUtil.getUser(domain.getId(), principal.getShortName());
+			User user = dbUtil.getUser(domain, principal.getShortName());
 			if ( user == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_1", principal.getShortName() );
 			}
@@ -118,6 +118,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 				throw new AuthenticationLoginException( "aon_login_user_inactive", principal.getShortName() );	
 			}
 			principal.setUserId(user.getId());
+			principal.setUserDomainId(user.getDomain());
 			DomainApplication da = dbUtil.getDomainApplication(user.getDomain(), applicationId );
 			if ( da == null ) {
 				throw new AuthenticationLoginException( "aon_login_application_not_registered", applicationName );
