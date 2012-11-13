@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +7,8 @@ import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.accounting.AmortizationType;
 import com.code.aon.accounting.AutoConcept;
@@ -24,7 +25,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.AdminUtil;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -76,9 +79,9 @@ public class AccountingCollectionsController {
 	private List<SelectItem> getPeriods(Criteria criteria) throws ManagerBeanException {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-		Iterator<?> iter = periodBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Period period = (Period) iter.next();
+		List<ITransferObject> list = periodBean.getList(criteria);
+		for (ITransferObject to : list) {
+			Period period = (Period) to;
 			SelectItem item = new SelectItem(period, period.getName());
 			accountPeriods.add(item);
 		}
@@ -168,9 +171,9 @@ public class AccountingCollectionsController {
 			IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 			Criteria criteria = new Criteria();
 			criteria.addOrder(conceptBean.getFieldName(IEntityAlias.AUTO_CONCEPT_DESCRIPTION), false);
-			Iterator<?> iter = conceptBean.getList(criteria).iterator();
-			while (iter.hasNext()) {
-				AutoConcept concept = (AutoConcept) iter.next();
+			List<ITransferObject> list = conceptBean.getList(criteria);
+			for (ITransferObject to : list) {
+				AutoConcept concept = (AutoConcept) to;
 				SelectItem item = new SelectItem(concept, concept.getDescription());
 				autoConcepts.add(item);
 			}
@@ -264,9 +267,9 @@ public class AccountingCollectionsController {
 	public List<SelectItem> getLoans() throws ManagerBeanException {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
-		Iterator<?> iter = loanBean.getList(null).iterator();
-		while (iter.hasNext()) {
-			Loan loan = (Loan) iter.next();
+		List<ITransferObject> list = loanBean.getList(null);
+		for (ITransferObject to : list) {
+			Loan loan = (Loan) to;
 			SelectItem item = new SelectItem(loan, loan.getDescription());
 			loans.add(item);
 		}
@@ -278,9 +281,9 @@ public class AccountingCollectionsController {
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanBean.getFieldName(IEntityAlias.LOAN_STATUS), LoanStatus.ACTIVE);
-		Iterator<?> iter = loanBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Loan loan = (Loan) iter.next();
+		List<ITransferObject> list = loanBean.getList(criteria);
+		for (ITransferObject to : list) {
+			Loan loan = (Loan) to;
 			SelectItem item = new SelectItem(loan, loan.getDescription());
 			loans.add(item);
 		}
@@ -302,9 +305,9 @@ public class AccountingCollectionsController {
 	public List<SelectItem> getAmortizationTypes() throws ManagerBeanException {
 		List<SelectItem> ats = new LinkedList<SelectItem>();
 		IManagerBean atBean = BeanManager.getManagerBean(AmortizationType.class);
-		Iterator<?> iter = atBean.getList(null).iterator();
-		while (iter.hasNext()) {
-			AmortizationType at = (AmortizationType) iter.next();
+		List<ITransferObject> list = atBean.getList(null);
+		for (ITransferObject to : list) {
+			AmortizationType at = (AmortizationType) to;
 			SelectItem item = new SelectItem(at, at.getDescription());
 			ats.add(item);
 		}
@@ -346,11 +349,21 @@ public class AccountingCollectionsController {
 		List<SelectItem> balances = new LinkedList<SelectItem>();
 		IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 		Criteria c = new Criteria();
+
+		String alias = balanceBean.getFieldName(IEntityAlias.BALANCE_DOMAIN);
+		addParentDomainExpression(c,alias);
+		Integer domainId = DomainManager.getCurrentDomain();
+		
 		c.addEqualExpression(balanceBean.getFieldName(IEntityAlias.BALANCE_TYPE), balanceType);
-		Iterator<?> iter = balanceBean.getList(c).iterator();
-		while (iter.hasNext()) {
-			Balance b = (Balance) iter.next();
-			SelectItem item = new SelectItem(b, b.getName());
+		c.addOrder(alias, true);
+		List<ITransferObject> list = balanceBean.getList(c);
+		for (ITransferObject to : list) {
+			Balance b = (Balance) to;
+			String prefix = ""; 
+			if (!ObjectUtils.equals(domainId, b.getDomain())) {
+				prefix = " + ";	
+			}
+			SelectItem item = new SelectItem(b, prefix + b.getName());
 			balances.add(item);
 		}
 		return balances;
@@ -405,9 +418,9 @@ public class AccountingCollectionsController {
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
-		Iterator<?> iter = bean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			RegistryAttachment ra = (RegistryAttachment) iter.next();
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to : list) {
+			RegistryAttachment ra = (RegistryAttachment) to;
 			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
 			reportTemplates.add(item);
 		}
@@ -423,9 +436,9 @@ public class AccountingCollectionsController {
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
-		Iterator<?> iter = bean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			RegistryAttachment ra = (RegistryAttachment) iter.next();
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to : list) {
+			RegistryAttachment ra = (RegistryAttachment) to;
 			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
 			reportTemplates.add(item);
 		}
@@ -440,25 +453,24 @@ public class AccountingCollectionsController {
 		Expression e2 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPENING);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2));
 		criteria.addOrder(getPeriodIdAlias(), false);
-		Iterator<?> iter = periodBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Period period = (Period) iter.next();
+		List<ITransferObject> list = periodBean.getList(criteria);
+		for (ITransferObject to : list) {
+			Period period = (Period) to;
 			SelectItem item = new SelectItem(period.getId(), period.getName());
 			accountPeriods.add(item);
 		}
 		return accountPeriods;
 	}
-	// ********************************************************
-	/*
-	 * public List<SelectItem> getEnabledAccountPeriods() throws
-	 * ManagerBeanException { return getEnabledAccountPeriods(true); } public
-	 * List<SelectItem> getActiveAccountPeriods() throws ManagerBeanException {
-	 * return getActiveAccountPeriods(true); } public List<SelectItem>
-	 * getActiveAccountPeriodKeys() throws ManagerBeanException { return
-	 * getActiveAccountPeriods(false); } public List<SelectItem>
-	 * getAllAccountPeriodKeys() throws ManagerBeanException { return
-	 * getAllAccountPeriods(false); } public List<SelectItem>
-	 * getAllAccountPeriods() throws ManagerBeanException { return
-	 * getAllAccountPeriods(true); }
-	 */
+
+	private void addParentDomainExpression(Criteria criteria, String alias) {
+		criteria.setSkipDomainFilter(true);
+		Integer domainId = DomainManager.getCurrentDomain();
+		Expression domainExpression = ExpressionUtilities.getEqualExpression(alias, domainId);
+    	Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+    	if ( parentDomainId != null ) {
+    		Expression parentDomainExpression = ExpressionUtilities.getEqualExpression(alias, parentDomainId);
+    		domainExpression = ExpressionUtilities.getOrExpression(domainExpression, parentDomainExpression);	
+    	}
+    	criteria.addExpression(domainExpression);
+	}
 }

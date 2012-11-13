@@ -156,9 +156,9 @@ public class BalanceManager {
 	private void dumpTable(Balance balance) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(BalanceDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID),
-				balance.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.BALANCE_DETAIL_BALANCE_ID),balance.getId());
 		criteria.addOrder(bean.getFieldName(IEntityAlias.BALANCE_DETAIL_SORT_KEY));
+		criteria.setSkipDomainFilter(true);
 		List<ITransferObject> balanceDetailList = bean.getList(criteria);
 		list = new LinkedList<BalanceItem>();
 		for (ITransferObject to : balanceDetailList) {
