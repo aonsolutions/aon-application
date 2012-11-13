@@ -15,7 +15,7 @@
 		<jasperReportsVersion>4.5.1</jasperReportsVersion>
         <jasperreportsMavenPluginGroup>com.esferalia.aon</jasperreportsMavenPluginGroup>
         <jasperreportsMavenPluginArtifact>aon-maven-plugin</jasperreportsMavenPluginArtifact>
-		<jasperreportsMavenPluginVersion>${project.version}</jasperreportsMavenPluginVersion>
+		<jasperreportsMavenPluginVersion>7.2-SNAPSHOT</jasperreportsMavenPluginVersion>
 		<jasperreportsMavenPluginCompiler>net.sf.jasperreports.engine.design.JRJavacCompiler</jasperreportsMavenPluginCompiler>
         <maven-build-utils.activationProfiles>perform-stats</maven-build-utils.activationProfiles>
 	</properties>
