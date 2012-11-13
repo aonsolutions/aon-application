@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>7.2-SNAPSHOT</version>
+		<version>7.2</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
@@ -70,18 +70,8 @@
 				</executions>
 				<configuration>
                     <hibernatetool destdir="target/generated-sources/entity">
-                        <jdbcconfiguration 
-                            configurationfile="src/main/resources/META-INF/hibernate.cfg.xml"
-                            packagename="com.esferalia.aon.entity.master"
-       						revengfile="src/main/resources/META-INF/hibernate.reveng.xml"
-    					    reversestrategy="com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy"
-                            detectmanytomany="false"
-                        />
-                        <hbmtemplate 
-    						exporterclass="com.esferalia.aon.entity.hibernate.tools.AonExporter"
-    						templatepath="src/main/resources/com/esferalia/aon/entity/hibernate/tools"
-    						template="pojo/Pojo.ftl"
-    						filepattern="{package-name}/{class-name}.java">
+                        <jdbcconfiguration configurationfile="src/main/resources/META-INF/hibernate.cfg.xml" packagename="com.esferalia.aon.entity.master" revengfile="src/main/resources/META-INF/hibernate.reveng.xml" reversestrategy="com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy" detectmanytomany="false" />
+                        <hbmtemplate exporterclass="com.esferalia.aon.entity.hibernate.tools.AonExporter" templatepath="src/main/resources/com/esferalia/aon/entity/hibernate/tools" template="pojo/Pojo.ftl" filepattern="{package-name}/{class-name}.java">
     						<property key="jdk5" value="true" />
 							<property key="ejb3" value="true" />
 							<property key="drop" value="true" />
