@@ -1,12 +1,10 @@
 package com.code.aon.ui.common.controller;
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -92,18 +90,20 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
            		companyName = user.getAsString(ORGANIZATION_NAME_ATTRIBUTE);
            	}    	
     	} else {
-    		this.userName = principal.getShortName();
-    		
-    		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.config.User");
-    		String q = "SELECT name FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
-    		if (principal.getDomainId() != null) {
-    			q = q + " AND u.domain = " + principal.getDomainId();
+    		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName("com.code.aon.config.User")); 
+    		if ( principal.getUserId() != null ) {
+    			Query query = session.createQuery("SELECT name FROM User u WHERE u.id = ?");
+    			query.setInteger(0, principal.getUserId());
+    			this.userName = (String) query.uniqueResult();
+    		} else {
+        		String q = "SELECT name FROM User u  WHERE u.login = '" + principal.getShortName() + "'";
+        		if (principal.getDomainId() != null) {
+        			q = q + " AND u.domain = " + principal.getDomainId();
+        		}
+    			this.userName = (String) session.createQuery(q).uniqueResult();
     		}
-    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-    		List<?> queryList = query.list();
-    		Iterator<?> iterator = queryList.iterator();
-    		if (iterator.hasNext()) {
-    			this.userName = (String) iterator.next();
+    		if ( StringUtils.isEmpty(this.userName) ) {
+        		this.userName = principal.getShortName();	
     		}
     	}
        	Entry domain = getAonDomain( principal );
@@ -117,13 +117,9 @@ public class LoggedUser implements ILdapConstants, IAonObjectClasses {
        	} else {
     		if (principal.getDomainId() != null) {
 	    		String sessionFactoryName = HibernateUtil.getSessionFactoryName("com.code.aon.company.Company");
-	    		String q = "SELECT name FROM Company c  WHERE c.domain = "  + principal.getDomainId();
+	    		String q = "SELECT name FROM Company c  WHERE c.domain = ?";
 	    		Query query = HibernateUtil.getSession(sessionFactoryName).createQuery(q);
-	    		List<?> queryList = query.list();
-	    		Iterator<?> iterator = queryList.iterator();
-	    		if (iterator.hasNext()) {
-	    			this.companyName = (String) iterator.next();
-	    		}
+    			this.companyName = (String) query.setInteger(0, principal.getDomainId()).uniqueResult();
     		}
        	}
     }
