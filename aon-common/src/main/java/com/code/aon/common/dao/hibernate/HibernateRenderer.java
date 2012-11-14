@@ -582,10 +582,12 @@ public class HibernateRenderer implements CriterionVisitor {
 	
 	private Object hibernateStringToObject( Type type, String value ) throws Exception {
 		Object result = value;
-		if (type instanceof IdentifierType) {
-			result = ((IdentifierType) type).stringToObject(value);
-		} else if (type instanceof NullableType) {
-			result = ((NullableType) type).fromStringValue(value);
+		if ( type.getReturnedClass() != String.class ) {
+			if (type instanceof IdentifierType) {
+				result = ((IdentifierType) type).stringToObject(value);
+			} else if (type instanceof NullableType) {
+				result = ((NullableType) type).fromStringValue(value);
+			}			
 		}
 		return result;
 	}

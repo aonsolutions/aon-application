@@ -745,21 +745,25 @@ public class BasicController extends AbstractPojoController implements IControll
 		ce.setData( "%" + ce.getData().toString() + "%" );
 	}
 
+	public void addExpression( Criteria criteria, String id, String value ) throws ManagerBeanException {
+		String fieldName = resolveAlias(id); 
+		try {
+			Expression exp = ExpressionUtilities.getExpression(value, fieldName);
+			if ( isOnlyTextExpression(exp, fieldName) ) {
+				updateTextExpression(exp);
+			}
+			criteria.addExpression(exp);
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		}
+	}
+	
 	@Override
 	public void addExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			String value = event.getNewValue().toString();
 			if (! StringUtils.isBlank(value) ) {
-				String fieldName = resolveAlias(event.getComponent().getId()); 
-				try {
-					Expression exp = ExpressionUtilities.getExpression(value, fieldName);
-					if ( isOnlyTextExpression(exp, fieldName) ) {
-						updateTextExpression(exp);
-					}
-					criteria.addExpression(exp);
-				} catch (ExpressionException e) {
-					throw new ManagerBeanException(e.getMessage(), e);
-				}
+				addExpression(criteria, event.getComponent().getId(), value);
 			}
 		}
 	}

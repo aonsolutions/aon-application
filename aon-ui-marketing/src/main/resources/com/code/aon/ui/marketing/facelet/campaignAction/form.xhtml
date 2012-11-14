@@ -129,7 +129,16 @@
 							action="campaignActionTarget_import"
 							actionListener="#{campaignActionTarget.onStartImport}"
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance" />
+						<aon:commandButton id="searchClear"
+							value="#{bundle.aon_clear}"
+							reRender="campaignActionTargetSearchDiv,campaignActionTargetDataDiv"
+							actionListener="#{campaignActionTargetSearch.onClearSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" >
+							<aon:actionListener method="#{campaignActionTargetSearch.onFilter}" />
+						</aon:commandButton>							
 					</aon:div>
+									
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/filterContent.xhtml" />									
 									
 					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/grid.xhtml" >
 						<ui:param name="showSurveyColumn" value="#{campaignAction.to.mediaType == 'PHONE'}" />
@@ -143,6 +152,7 @@
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>
 </ui:composition>
 
