@@ -182,9 +182,8 @@ public class ContractPdfController {
 		return getContractPdfDraft()==null||getContractPdfDraft().getId()==null;
 	}
 	
-	public void initialize(Contract contract, String backAction) {
+	public void initialize(Contract contract) {
 		setContract(contract);
-		setBackAction(backAction);
 		contractDataMap = null;
 		contractPdfDraft = null;
 	}
@@ -395,9 +394,12 @@ public class ContractPdfController {
 		setContractPage(getContractPage()+1);
 		createPdfThumbnail();
 	}
-	public void onFirstContractPage( ActionEvent event ) throws IOException {
-		setContractPage(1);
+	public void onPreviousContractPage( ActionEvent event ) throws IOException {
+		setContractPage(getContractPage()-1);
 		createPdfThumbnail();
+	}
+	public boolean isFirstContractPage() {
+		return getContractPage().equals(1);
 	}
 	public boolean isLastContractPage() {
 		return getContractPage().equals(getNumberOfContractPages());

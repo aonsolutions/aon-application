@@ -84,8 +84,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	private ContractContrataHandler contrataHandler;
 	
 	private String contrataBackAction;
-
-	private String contractPdfBackAction;
 	
 	private ContractParams params;
 	
@@ -133,15 +131,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setContrataBackAction(String contrataBackAction) {
 		this.contrataBackAction = contrataBackAction;
-	}
-	public String contractPdfBackAction() {
-		return contractPdfBackAction;
-	}
-	public String getContractPdfBackAction() {
-		return contractPdfBackAction;
-	}
-	public void setContractPdfBackAction(String contractPdfBackAction) {
-		this.contractPdfBackAction = contractPdfBackAction;
 	}
 	public Agreement getAgreement() {
 		return agreement;
@@ -264,7 +253,7 @@ public class ContractController extends BasicController implements IVariablesHan
 		}						
 	}
 	public void onShowDocuments( ActionEvent event ) {
-
+		
 	}
 
 	public void onShowContrataData(ActionEvent event){
@@ -628,7 +617,6 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		SettleController controller = (SettleController) AonUtil.getRegisteredBean(IPayrollConstants.SETTLE_CONTROLLER_NAME);
 		controller.onSelectContract(event);
-		controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
 	}
 	
 	public void onShowContractLeave( ActionEvent event ) {
@@ -658,7 +646,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	
 	public void onContractDocumentShow( ActionEvent event ) {
 		ContractPdfController controller = (ContractPdfController) AonUtil.getRegisteredBean("contractPdf");
-		controller.initialize((Contract) this.getTo(), getContractPdfBackAction());
+		controller.initialize((Contract) this.getTo());
 		controller.onContractDocumentShow(event);
 	}
 	

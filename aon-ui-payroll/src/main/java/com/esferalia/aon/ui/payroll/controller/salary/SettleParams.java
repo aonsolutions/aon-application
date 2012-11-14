@@ -2,8 +2,11 @@ package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.util.Date;
 
+import javax.faces.event.AbortProcessingException;
+
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.enumeration.DismissCause;
 import com.esferalia.aon.salary.ISalary;
@@ -50,6 +53,8 @@ public class SettleParams {
 			vacationDayAmount = CommonUtil.round(salary.getCommonBase()/30);
 		} catch (SalaryException e) {
 			// como tratar esto?
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 	

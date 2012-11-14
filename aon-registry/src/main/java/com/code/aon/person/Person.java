@@ -1,11 +1,14 @@
 package com.code.aon.person;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.IRegistry;
@@ -44,5 +47,14 @@ public class Person extends PersonDB implements IRegistry {
 	public void setFullName(String value) {
 		// Necesario para que no falle en los lookup
 	}
+
+	@Transient
+	public Integer getAge() {
+		if(getBirthDate()!=null){
+			return (int) (CommonUtil.getDaysBetweenDates(getBirthDate(), new Date(), true) / 365);
+		}
+		return null;
+	}
+	
 
 }

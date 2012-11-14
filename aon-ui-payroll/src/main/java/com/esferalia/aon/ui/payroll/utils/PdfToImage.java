@@ -48,7 +48,7 @@ public class PdfToImage {
 			document = PDDocument.load(url);
 			PDPage page = (PDPage) document.getPrintable(pageNumber-1);
 //			Double resolution = width/8.1;
-			Double resolution = height/11.55;
+			Double resolution = height/11.66;
 //			image = page.convertToImage();
 			image = page.convertToImage(BufferedImage.TYPE_INT_RGB, resolution.intValue() );
 //			image = page.convertToImage(BufferedImage.TYPE_BYTE_GRAY, resolution.intValue() );

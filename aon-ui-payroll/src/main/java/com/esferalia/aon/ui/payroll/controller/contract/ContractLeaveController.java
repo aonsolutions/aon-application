@@ -48,6 +48,7 @@ public class ContractLeaveController extends BasicController {
 	private DataModel leaveModel;
 	private Integer selectedLeaveIndex;
 	private boolean treeOutcome;
+	private boolean contractEditable;
 
 	public boolean isTreeOutcome() {
 		return treeOutcome;
@@ -56,6 +57,12 @@ public class ContractLeaveController extends BasicController {
 		this.treeOutcome = treeOutcome;
 	}
 	
+	public boolean isContractEditable() {
+		return contractEditable;
+	}
+	public void setContractEditable(boolean contractEditable) {
+		this.contractEditable = contractEditable;
+	}
 	public PayrollUtils getUtils() {
 		if(utils==null){
 			utils = new PayrollUtils();
@@ -399,22 +406,6 @@ public class ContractLeaveController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 		}
 		return false;
-	}
-	
-	@Override
-	public String backAction() {
-		if(isTreeOutcome()){
-			return IPayrollConstants.CONTRACT_FORM_TREE;
-		}
-		return super.backAction();
-	}
-	
-	@Override
-	public String getBackAction() {
-		if(isTreeOutcome()){
-			return IPayrollConstants.CONTRACT_FORM_TREE;
-		}
-		return super.getBackAction();
 	}
 	
 	@Override

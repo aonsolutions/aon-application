@@ -69,6 +69,12 @@
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
 			</aon:selectInputDate>
+			<aon:div style="display:inline;">
+				<aon:outputText value="&#160;(" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value="#{controller.to.age}" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value="&#160;#{bundle.aon_years}" rendered="#{controller.to.age!=null}"/>
+				<aon:outputText value=")" rendered="#{controller.to.age!=null}"/>
+			</aon:div>
 			<aon:outputText value="#{registryBundle.registry_nationality}" styleClass="aon-margin-left aon-italic"/>
 			<aon:selectOneMenu id="Person_nationality" value="#{controller.to.registry.nationality}"
 				styleClass="aon-margin-left">

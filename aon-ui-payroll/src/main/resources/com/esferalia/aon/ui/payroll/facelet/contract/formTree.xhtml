@@ -36,23 +36,29 @@
 					styleClass="aon-finding-toolbar-item aon-icon-daily-tracking"
 					action="contractCalendarEvent_form" >
 					<f:setPropertyActionListener
-						target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
-					<f:setPropertyActionListener
 						target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					<f:setPropertyActionListener
+						target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
 				</aon:commandButton>													
 				<aon:commandButton id="contract_leave"
 					value="#{payrollBundle.payroll_contractLeave_module}"
 					action="contractLeave_form"
 					styleClass="aon-finding-toolbar-item aon-icon-copy">
-					<aon:actionListener method="#{contract.onShowContractLeave}" />
 					<f:setPropertyActionListener
 						target="#{contractLeave.treeOutcome}" value="#{true}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.contractEditable}" value="#{false}" />
+					<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<f:setPropertyActionListener
+						target="#{contractLeave.backAction}" value="contract_formTree" />
 				</aon:commandButton>
 				<aon:commandButton id="settle"
 					value="#{payrollBundle.payroll_settle_module}"
 					action="settle_form"
 					rendered="#{contract.to.endDate==null}"
 					styleClass="aon-finding-toolbar-item aon-icon-black-list">
+					<f:setPropertyActionListener
+						target="#{settle.backAction}" value="contract_formTree" />
 					<aon:actionListener method="#{contract.onShowSettle}" />
 				</aon:commandButton>
 				<aon:commandButton id="IRPF-calculator"
@@ -60,6 +66,8 @@
 					action="irpfData_form"
 					styleClass="aon-finding-toolbar-item aon-icon-aeat">
 					<aon:actionListener method="#{contract.onShowIrpfData}" />
+					<f:setPropertyActionListener
+						target="#{irpfData.backAction}" value="contract_formTree" />
 				</aon:commandButton>
 				<aon:commandButton id="contrata"
 					value="#{payrollBundle.payroll_contract_contrataData}"
@@ -74,7 +82,7 @@
 					value="EDITAR PDF"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" >
 					<f:setPropertyActionListener
-						target="#{contract.contractPdfBackAction}" value="contract_formTree" />
+						target="#{contractPdf.backAction}" value="contract_formTree" />
 					<aon:actionListener method="#{contract.onContractDocumentShow}" />
 				</aon:commandButton>
 			</ui:define>				

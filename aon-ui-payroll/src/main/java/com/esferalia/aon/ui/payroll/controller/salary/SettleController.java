@@ -86,7 +86,10 @@ public class SettleController {
 	
 	public void onSelectContract(ActionEvent event){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-		controller.onSelect(event);
+		if(controller.getTo()==null || ((Contract) controller.getTo()).getId()==null){
+			controller.onSelect(event);
+			setBackAction(null);
+		}
 		initializeParams();
 		initializeConcepts();
 	}
@@ -151,7 +154,7 @@ public class SettleController {
 					}
 				}
 			} else {
-				String msg = "No esta definidos los conceptos para los finiquitos.";
+				String msg = "No se han definido los conceptos de finiquito.";
 				LOGGER.error(">>>> initializeConcepts ",msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);

@@ -33,7 +33,7 @@ public class EnterpriseTreeData {
 	
 	public static final String SALARY_DRAFT_ICON = "/images/aon-icon/aon-icon-edit.png";
 	
-	public static final String DOCUMENT_ICON = "/images/aon-icon/aon-icon-file.png";
+	public static final String DOCUMENT_ICON = "/images/aon-icon/aon-icon-attach-file.png";
 	
 	public static final String AEAT_ICON = "/images/aon-icon/aon-aeat.png";
 

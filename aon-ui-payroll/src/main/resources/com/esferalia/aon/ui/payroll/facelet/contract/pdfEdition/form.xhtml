@@ -15,7 +15,7 @@
 
 		<aon:div id="contractDetail">
 			<aon:div styleClass="aon-toolbar" >
-				<h:panelGrid columns="3" style="border: 0;" cellpadding="3" >
+				<h:panelGrid columns="5" style="border: 0;" cellpadding="5" >
 					<aon:div>
 						<aon:commandButton id="contract-save"
 							value="#{bundle.aon_save}"
@@ -28,15 +28,16 @@
 							action="#{contractPdf.backAction}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 					</aon:div>
+					
+					<aon:outputText styleClass="aon-margin-left" value="#{payrollBundle.payroll_contract_page}:" />
 					<aon:div styleClass="aon-spin-control" >
-						<aon:outputText value="#{payrollBundle.payroll_contract_page}" />
 						<aon:div styleClass="aon-spin-control-element"> 
 							<aon:commandButton id="contractDetail-prev"  
 								ajaxSingle="true" requestDelay="100" eventsQueue="aon_spin"
-								disabled="#{!contractPdf.lastContractPage}"
+								disabled="#{contractPdf.firstContractPage}"
 								reRender="contractDetail"
-								styleClass="aon-dataScroller-button #{!contractPdf.lastContractPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
-								actionListener="#{contractPdf.onFirstContractPage}" />
+								styleClass="aon-dataScroller-button #{contractPdf.firstContractPage?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}"
+								actionListener="#{contractPdf.onPreviousContractPage}" />
 						</aon:div>
 						<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
 							<aon:outputFormat value="#{bundle.aon_spin_result}">
@@ -54,6 +55,7 @@
 						</aon:div>
 					</aon:div>
 
+					<aon:outputText value="#{payrollBundle.payroll_size}:" />
 					<aon:div>
 						<rich:inputNumberSlider maxValue="4" step="1"
 							value="#{contractPdf.zoomFactor}"
@@ -76,30 +78,31 @@
 			
 			<aon:div styleClass="aon-scroll-area" 
 				style="height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px; border: #000000 1px solid; margin-left: 10px;">
-				<aon:div styleClass="contractModalContent"
-					style="position: absolute; left: 30; right: 30; margin: auto; background: grey url(#{contractPdf.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px;">
+			<aon:div styleClass="contractModalContent"
+				style="position: absolute; left: 30; right: 30; margin: auto; background: white url(#{contractPdf.imageUrl}) top left no-repeat; border:#ffffff 1px solid; height:#{contractPdf.contractHeight}px; width:#{contractPdf.contractWidth}px;">
+				
+				<c:forEach items="#{contractPdf.contractPdfWriter.contractPdfFields}" var="field" >
+					<c:if test="#{field.text}">
+						<aon:inputText 
+							title="#{field.label}"
+							rendered="#{field.page==contractPdf.contractPage}"
+							style="background-color:transparent; border: #E0ECF8 2px solid; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
+							value="#{field.value}" size="#{field.width}"
+							maxlength="16" />
+					</c:if>
+					<c:if test="#{field.check}">
+						<aon:selectBooleanCheckbox 
+							title="#{field.label}"
+							rendered="#{field.page==contractPdf.contractPage}"
+							style="background-color:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates-2}px; left:#{field.scaledLeftCoordinates}px; "
+							value="#{field.booleanValue}" >
+						</aon:selectBooleanCheckbox>
+					</c:if>
+				</c:forEach>
 					
-					<c:forEach items="#{contractPdf.contractPdfWriter.contractPdfFields}" var="field" >
-						<c:if test="#{field.text}">
-							<aon:inputText 
-								title="#{field.label}"
-								rendered="#{field.page==contractPdf.contractPage}"
-								style="background:#E0ECF8; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;width:#{field.scaledWidth}px; "
-								value="#{field.value}" size="#{field.width}"
-								maxlength="16" />
-						</c:if>
-						<c:if test="#{field.check}">
-							<aon:selectBooleanCheckbox 
-								title="#{field.label}"
-								rendered="#{field.page==contractPdf.contractPage}"
-								style="background-color:transparent; border:none; position:absolute; bottom:#{field.scaledBottomCoordinates}px; left:#{field.scaledLeftCoordinates}px;"
-								value="#{field.booleanValue}" >
-							</aon:selectBooleanCheckbox>
-						</c:if>
-					</c:forEach>
-		
-				</aon:div>
 			</aon:div>
+			</aon:div>
+			 
 		</aon:div>
 
 		</aon:form>		

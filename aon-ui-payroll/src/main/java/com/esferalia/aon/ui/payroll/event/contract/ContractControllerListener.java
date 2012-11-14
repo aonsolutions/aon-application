@@ -45,6 +45,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
+		controller.onShowVariables(null);
 		searchAgreement();
 	}
 	
