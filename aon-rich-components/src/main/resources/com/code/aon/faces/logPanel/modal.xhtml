@@ -11,8 +11,9 @@
 
     <a4j:region>
         <h:form>
-            <a4j:poll id="logPanel_poll" interval="2000" enabled="#{logPanel.activePoll}" 
-				reRender="logPanel_poll,logPanel_content"/>
+            <a4j:poll id="logPanel_poll" interval="10000" enabled="#{logPanel.activePoll}"
+            	status="aonStatus" actionListener="#{logPanel.onDoNothig}"
+            	reRender="logPanel_poll,logPanel_content"/>
         </h:form>
     </a4j:region>
 	<aon:form>

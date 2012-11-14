@@ -86,4 +86,7 @@ public class LogPanelController implements ILogger {
 		reset();
 	}	
 
+	public void onDoNothig(ActionEvent event){
+	}
+
 }
