@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -70,11 +71,19 @@
 				</h:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;margin-top:2px;"
-					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even">
+					columnClasses="aon-panelGrid-odd aon-width-200,aon-panelGrid-even">
 					<aon:outputLabel for="Amortization_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputText id="Amortization_comments"
-						value="#{amortization.to.comments}" size="145" />
+						value="#{amortization.to.comments}" size="120" />
+						
+					<aon:outputText value="#{accountingBundle.accounting_amortization_linked_invoices}" />
+					<aon:div>
+						<rich:dataList value="#{amortization.invoices}" var="inv">
+							<aon:outputText value="#{inv.invoice.documentNumber}" />
+						</rich:dataList>
+					</aon:div>
+					
 				</aon:panelGrid>
 
 				<aon:panelTabSet id="amortizationTab" selectedTab="#{amortization.selectedTab}" rendered="#{!amortization.new}">

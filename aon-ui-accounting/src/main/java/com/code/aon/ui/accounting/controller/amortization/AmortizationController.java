@@ -243,7 +243,7 @@ public class AmortizationController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_AMORTIZATION_ID), am.getId());
-			List<ITransferObject> list = bean.getList(criteria,0,0);
+			List<ITransferObject> list = bean.getList(criteria);
 			setInvoices(new ListDataModel( list ));
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo determinar las facturas vinculadas. [" + e.getMessage() + "]";
