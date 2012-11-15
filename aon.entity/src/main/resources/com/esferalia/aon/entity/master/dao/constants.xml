@@ -104,6 +104,10 @@
 		<alias names="id,project_id,target_id,seller_id,comments,source,status,statusDate,probability,project_name,project_alias,project_date,project_commercial,target_scope_id"/>
 		<hibernate names="id,project.id,target.id,seller.id,comments,source,status,statusDate,probability,project.name,project.alias,project.date,project.commercial,target.scope.id"/>
 	</bean>
+	<bean class="com.code.aon.commercial.CommercialTracking" sqlName="commercial_tracking">
+		<alias names="activity_id,allDay,comments,date,domain,endDate,id,location,next_id,offer_id,project_id,seller_id,status,project_target_scope_id"/>
+		<hibernate names="activity.id,allDay,comments,date,domain,endDate,id,location,next.id,offer.id,project.id,seller.id,status,project.target.scope.id"/>
+	</bean>
 
 	<!-- ** AON COMPANY **************************************************** -->
 	<bean class="com.code.aon.company.Company" sqlName="company">

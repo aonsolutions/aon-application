@@ -43,6 +43,12 @@
 						<f:validateLength  maximum="64"/>
 					</aon:inputTextarea>
 					
+					<aon:outputLabel for="Survey_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Survey_scope_id" value="#{survey.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Survey_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Survey_active" 

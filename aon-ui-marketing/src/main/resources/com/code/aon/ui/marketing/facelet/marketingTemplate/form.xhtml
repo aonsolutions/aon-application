@@ -57,6 +57,12 @@
 					<aon:selectBooleanCheckbox id="Template_appendSignature" required="true"
 						value="#{marketingTemplate.to.appendSignature}" />
 								
+					<aon:outputLabel for="Template_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Template_scope_id" value="#{marketingTemplate.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+								
 					<aon:outputLabel for="Template_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Template_active" required="true"
