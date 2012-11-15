@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -79,9 +80,22 @@
 						
 					<aon:outputText value="#{accountingBundle.accounting_amortization_linked_invoices}" />
 					<aon:div>
-						<rich:dataList value="#{amortization.invoices}" var="inv">
-							<aon:outputText value="#{inv.invoice.documentNumber}" />
-						</rich:dataList>
+						<a4j:repeat value="#{amortization.invoices}" var="inv">
+							<aon:commandLink id="showAmortizationInvoice" 
+								value="&#160;"
+								disabled="#{amortization.invoiceNavigationDisabled}"
+								action="#{amortization.showInvoice}">
+								<aon:outputText value="[" styleClass="aon-margin-left"/>
+								<aon:outputText value="#{inv.invoice.type}"/>
+								<aon:outputText value="-"/>
+								<aon:outputText value="#{inv.invoice.documentNumber}"/>
+								<aon:outputText value="]"/>
+								<f:setPropertyActionListener 
+									target="#{amortization.invoiceId}"
+									value="#{inv.invoice.id}" />
+									
+							</aon:commandLink>
+						</a4j:repeat>
 					</aon:div>
 					
 				</aon:panelGrid>
