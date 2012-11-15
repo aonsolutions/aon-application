@@ -204,6 +204,7 @@ public class CommercialTrackingController extends BasicController {
 		Alarm alarm = (Alarm) controller.getTo();
 		alarm.setSource(AlarmSource.COMMERCIAL_TRACKING);
 		alarm.setSourceId(ct.getId());
+		alarm.setDescription(ct.getComments());
 	}
 	
 }
