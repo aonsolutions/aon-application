@@ -47,7 +47,6 @@ public class SummaryProvider {
 		return null;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public SummaryCollection getSummaryCollection(SummaryProviderParameters params, boolean withPreviousBalance) throws ManagerBeanException {
 		if (params.getFromDate() == null && (params.getPeriod() == null || params.getPeriod().getId() == null)) {
 			throw new ManagerBeanException("Se necesita una fecha de inicio para el cálculo de saldos.");
@@ -382,7 +381,6 @@ public class SummaryProvider {
 		return buf.toString();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private PreparedStatement prepareAcumStmt(String sessionName, SummaryProviderParameters params, boolean forPrevious) throws SQLException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("SELECT SUM(aed.debit) debit,SUM(aed.credit) credit");

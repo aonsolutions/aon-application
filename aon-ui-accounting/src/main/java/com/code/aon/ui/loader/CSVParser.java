@@ -51,6 +51,7 @@ public class CSVParser {
 				System.out.println(s);
 			}
 		}
+		reader.close();
 	}
 
 }

@@ -10,5 +10,10 @@ import com.esferalia.aon.entity.master.DomainDB;
 public class Domain extends DomainDB {
 	
 	private static final long serialVersionUID = 1L;
-	
+
+	public Domain() {
+		super();
+		setActive(true);
+    }
+
 } 

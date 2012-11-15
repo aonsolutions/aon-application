@@ -188,6 +188,7 @@ public class AonExporter extends GenericExporter{
 		map.put("AccountHelper","com.code.aon.accounting.AccountHelper");
 		map.put("Amortization","com.code.aon.accounting.Amortization");
 		map.put("AmortizationDetail","com.code.aon.accounting.AmortizationDetail");
+		map.put("AmortizationInvoice","com.code.aon.accounting.AmortizationInvoice");
 		map.put("AmortizationType","com.code.aon.accounting.AmortizationType");
 		map.put("AutoConcept","com.code.aon.accounting.AutoConcept");
 		map.put("Balance","com.code.aon.accounting.Balance");

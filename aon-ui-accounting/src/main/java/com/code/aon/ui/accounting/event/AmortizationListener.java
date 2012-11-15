@@ -19,6 +19,14 @@ public class AmortizationListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		AmortizationController ac = (AmortizationController) event.getController();
 		ac.onCalculate(null);
+		ac.resetInvoices();
 	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		AmortizationController ac = (AmortizationController) event.getController();
+		ac.resetInvoices();
+	}
+	
 	
 }

@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IAttachment;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -27,11 +29,10 @@ public class InvoiceSignerController extends BasicController implements IFinance
 	
 	private Set<Integer> checks = new HashSet<Integer>();
 
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while(iter.hasNext()){
-			Invoice invoice = (Invoice)iter.next();
+		List<ITransferObject> list = this.getManagerBean().getList(this.getCriteria());
+		for (ITransferObject to : list ){
+			Invoice invoice = (Invoice) to;
 			checks.add( invoice.getId() );
 		}
 	}

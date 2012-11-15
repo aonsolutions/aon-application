@@ -6,6 +6,7 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_CON
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -24,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
+import com.code.aon.accounting.Amortization;
+import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
@@ -100,7 +103,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private String rectificationCause;
 	private FinanceEmailUtil emailController;
 	private double totalInvoiceAmount;
-
+	private boolean showAmortizationWindow;
+	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
 	}
@@ -290,6 +294,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowDetailProjectWindow(boolean value) {
 		this.showDetailProjectWindow = value;
+	}
+
+	public boolean isShowAmortizationWindow() {
+		return showAmortizationWindow;
+	}
+
+	public void setShowAmortizationWindow(boolean value) {
+		this.showAmortizationWindow = value;
 	}
 
 	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
@@ -563,11 +575,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY);
 			throw new AbortProcessingException(message);
 		}
-
+		Invoice invoice = getInvoice();
+		if (invoice.isInvestment() && !isAmortizationForm()) {
+			String message = AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY);
+			throw new AbortProcessingException(message);
+		}
+		
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
-		Invoice invoice = getInvoice();
 		try {
 			HibernateUtil.setBeginTransaction(false);
 			HibernateUtil.setCloseSession(false);
@@ -868,6 +884,107 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		invoice.setUpdateEnabled(false);
 		
 		super.accept(event);
+	}
+
+	public boolean isAmortizationForm () {
+		if (!isNew() && getInvoice().isInvestment()) { 
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), getInvoice().getId() );
+				List<ITransferObject> list = bean.getList(c);
+				return (list != null && list.size() > 0);
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+				LOGGER.error("Imposible averiguar si la factura tiene ficha de amortización");
+			}
+		}
+		return false;
+	}
+	
+	public void onShowAmortizationPanel(ActionEvent event) {
+		setShowAmortizationWindow(true);
+		
+		IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+		controller.onReset(event);
+		Invoice invoice = getInvoice();
+		Amortization amortization = (Amortization) controller.getTo();
+		amortization.setAmount(invoice.getTaxableBase());
+		amortization.setConfidential(invoice.isConfidential());
+		amortization.setInitialDate(invoice.getIssueDate());
+		
+	}
+	
+	public void acceptAmortization(ActionEvent event) {
+
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
+		try {
+			HibernateUtil.setBeginTransaction(false);
+			HibernateUtil.setCloseSession(false);
+			HibernateUtil.beginTransaction(sessionName);
+			
+			IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+			((BasicController) controller).accept(event);
+			Amortization amortization = (Amortization) controller.getTo();
+			Invoice invoice = getInvoice();
+			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+			AmortizationInvoice ai = new AmortizationInvoice();
+			ai.setAmortization(amortization);
+			ai.setInvoice(invoice);
+			bean.insert(ai);
+			
+			HibernateUtil.commitTransaction(sessionName);
+		} catch (Exception e) {
+			try {
+				HibernateUtil.rollbackTransaction(sessionName);
+			} catch (DAOException daoe) {
+				String msg = "Unable to rollback transaction!";
+				LOGGER.error(msg, e);
+			}
+			LOGGER.error(e.getMessage(), e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		} finally {
+			HibernateUtil.closeSession(sessionName);
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
+		}
+	}
+	
+	public String showAmortization() {
+		try {
+			IController controller = (IController) AonUtil.getRegisteredBean(IFinanceConstants.AMORTIZATION_CONTROLLER_NAME);
+			controller.onEditSearch(null);
+			Criteria criteria = controller.getCriteria();
+		
+			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), getInvoice().getId() );
+			List<ITransferObject> list = bean.getList(c);
+			List<Integer> ids = new ArrayList<Integer>();
+			for (ITransferObject to : list) {
+				AmortizationInvoice ai = (AmortizationInvoice) to;
+				ids.add(ai.getAmortization().getId());
+			}
+			String alias = controller.getFieldName(IEntityAlias.AMORTIZATION_ID);
+			criteria.addInExpression(alias, ids);
+			controller.onSearch(null);
+			String backAction = IFinanceConstants.AMORTIZATION_LIST_VIEW; 
+			if (controller.getModel().getRowCount() == 1) {
+				controller.getModel().setRowIndex(0);
+				controller.onSelect(null);
+				backAction = IFinanceConstants.AMORTIZATION_FORM_VIEW;
+			} 
+			((BasicController) controller).setBackAction(getBeanName() + "_form");
+			return backAction;
+		} catch (ManagerBeanException e) {
+			String message = "Imposible navegar a la ficha de amortización";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}
+		
 	}
 	
 }

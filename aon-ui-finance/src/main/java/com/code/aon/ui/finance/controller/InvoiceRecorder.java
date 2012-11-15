@@ -15,6 +15,7 @@ import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
+import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -41,6 +42,7 @@ public class InvoiceRecorder implements ITransferObject {
 
 	private static final String FINANCE_BUNDLE = "financeBundle";
 	private static final String FINANCE_INACCURACY_MSG = "finance_unable_record_inaccuracy_error";
+	private static final String FINANCE_NO_AMORTIZATION_MSG = "finance_unable_record_no_amortization_error";
 	
 	private Invoice invoice;
 	private boolean checked;
@@ -172,11 +174,17 @@ public class InvoiceRecorder implements ITransferObject {
 		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_INACCURACY_MSG);
 		addMessage(msg);
 	}
-
+	public void addFinanceNoAmortizationForm() {
+		String msg = AonUtil.getMessage(FINANCE_BUNDLE, FINANCE_NO_AMORTIZATION_MSG);
+		addMessage(msg);
+	}
+	
 	private void refreshFlags() {
 		try {
 			setMessages(null);
+			setRecordable(true);
 			checkFinanceInaccuracyPresent();
+			checkInvestmentAmortizationFormPresent();
 			InvoiceType type = getInvoice().getType();
 
 			if ( getInvoice().isWithholding()) {
@@ -270,7 +278,6 @@ public class InvoiceRecorder implements ITransferObject {
 	}
 
 	private void checkFinanceInaccuracyPresent() throws ManagerBeanException {
-		setRecordable(true);
 		double invoiceTotal = getInvoiceTotal();
 		double financeTotal = getFinanceTotal(getInvoice());
 		boolean ok = InvoiceStatus.PENDING.equals(getInvoice().getStatus()) && (financeTotal == 0 || invoiceTotal == financeTotal);
@@ -282,10 +289,27 @@ public class InvoiceRecorder implements ITransferObject {
 			addMessage("Factura sin Vencimientos.");			
 		}
 	}
+	private void checkInvestmentAmortizationFormPresent() throws ManagerBeanException {
+		InvoiceType type = getInvoice().getType();
+		if (type != InvoiceType.SALES && getInvoice().isInvestment() && !hasAmortizationLinked()) {
+			
+			setRecordable(false);
+			addFinanceNoAmortizationForm();
+		}
+	}
+
+	private boolean hasAmortizationLinked() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+		Criteria c = new Criteria();
+		c.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), getInvoice().getId() );
+		List<ITransferObject> list = bean.getList(c);
+		return (list != null && list.size() > 0);
+	}
 
 	private double getInvoiceTotal(Invoice invoice) {
 		return getPriceStrategy().getTotalPrice(invoice,invoice);
 	}
+	
 	public double getInvoiceTotal() {
 		if (invoiceTotal == null || isRefresh()) {
 			setInvoiceTotal( getInvoiceTotal(getInvoice()));

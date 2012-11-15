@@ -1,14 +1,10 @@
 package com.code.aon.ui.finance.controller;
 
-import static com.code.aon.finance.enumeration.InvoiceAttachmentType.INVOICE;
-import static com.code.aon.finance.enumeration.InvoiceAttachmentType.RECEIPT;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceAttachmentType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.ProgressionInvoicingFeedBack;
@@ -113,9 +108,9 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
 		criteria.addOrder(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_LINE));
-		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
+		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
+		for (ITransferObject to : list ) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail) to;
 			IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
 			if (!invoicedIncomeList.contains(incomeDetail.getIncome())) {
 				invoicedIncomeList.add(incomeDetail.getIncome());
@@ -141,9 +136,9 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 	}
 
 	public void onIncomeTransfer(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = getIncomeTransferManager().getInvoicedIncomeList().iterator();
-		while (iterator.hasNext()) {
-			Income income = (Income)iterator.next();
+		List<ITransferObject> list = getIncomeTransferManager().getInvoicedIncomeList();
+		for (ITransferObject to : list ) {
+			Income income = (Income) to;
 			if (!getIncomeTransferManager().getCheckedIncome().contains(income)) {
 				removeInvoicedIncome(income);
 			}
@@ -183,6 +178,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 				invoiceDetailBean.remove(invoiceDetail);
 			}
 		}
+		iterator = null;
 	}
 	
 	@Override
@@ -217,5 +213,6 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 	public SignerController getSignerController() {
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.PURCHASE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
+	
 	
 }

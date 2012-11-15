@@ -152,12 +152,12 @@ public class FinancePaymentPrintController implements ICollectionProvider, IFina
 	}
 	
 	@Override
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		return getCheckedFinances();
 	}
 
 	@Override
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	

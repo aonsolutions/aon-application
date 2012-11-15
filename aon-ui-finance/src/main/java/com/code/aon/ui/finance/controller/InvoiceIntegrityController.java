@@ -165,10 +165,8 @@ public class InvoiceIntegrityController {
 	@SuppressWarnings("unchecked")
 	private void checkAll(boolean check) {
 		List<BreakDown> list =  (List<BreakDown>) getBreakDownModel().getWrappedData();
-		int i = 0;
 		for (BreakDown b : list) {
 			b.setChecked(check);
-			i++;
 		}
 	}
 	

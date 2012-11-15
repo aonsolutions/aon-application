@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.fbatch.print;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,13 +20,12 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FBatchPrinter.class.getName());
 	
 	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		List<ReportFinanceBatch> reportFBatchList = new LinkedList<ReportFinanceBatch>();
 		try {
 			FBatchController fBatchController = (FBatchController)FormUtil.getController(FINANCE_BATCH_CONTROLLER_NAME);
-			Iterator iter = ((List)fBatchController.getModel().getWrappedData()).iterator();
-			while(iter.hasNext()){
-				FinanceBatch fBatch = (FinanceBatch)iter.next();
+			List<FinanceBatch> list= (List<FinanceBatch>) fBatchController.getModel().getWrappedData();
+			for (FinanceBatch fBatch : list ){
 				ReportFinanceBatch rFBatch = new ReportFinanceBatch();
 				rFBatch.setFinanceBatch(fBatch);
 				reportFBatchList.add(rFBatch);
@@ -38,9 +36,8 @@ public class FBatchPrinter implements ICollectionProvider, IFinanceConstants {
 		return reportFBatchList;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 	

@@ -20,15 +20,10 @@
 		<sql-type jdbc-type="DOUBLE" hibernate-type="double" not-null="false"/>
 	</type-mapping>
 
-	<!--  **************** -->
-	<!--  TABLAS DE ACADEMY -->
-	<!--  **************** -->
-	<table-filter match-name="customer_segment" exclude="true" />
-	<table-filter match-name="instructor" exclude="true" />
-
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
 	<!--  ************** -->
+	<table-filter match-name="instructor" exclude="true" />
 	<table-filter match-name="project_dossier" exclude="true" />
 	<table-filter match-name="workactivity" exclude="true" />
 	<table-filter match-name="enterprise_agreement" exclude="true" />
@@ -464,7 +459,6 @@
 	</table>
 
 	<table name="domain">
-		<meta attribute="aon-constructor">this.active = true;</meta>
 		<column name="type" type="com.code.aon.config.enumeration.DomainType" />
 		<foreign-key constraint-name="FK_DOMAIN_PARENT">
 			<many-to-one property="parent" />

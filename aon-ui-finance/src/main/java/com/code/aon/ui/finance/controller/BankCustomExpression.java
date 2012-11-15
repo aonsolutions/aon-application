@@ -20,7 +20,7 @@ public class BankCustomExpression implements CustomExpression {
 		return Double.class.getName();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object evaluate(Map fields, Map variables, Map parameters) {
 		CashFlowReport to = (CashFlowReport) fields.get("to");

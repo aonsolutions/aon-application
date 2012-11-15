@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<aon:panelGroup id="investmentContainer">
+		<c:if test="#{invoiceController.new}">
+			<aon:selectBooleanCheckbox id="Invoice_investment"
+				value="#{invoiceController.to.investment}"/>
+			<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+				value="#{financeBundle.finance_invoice_investment}"/>
+		</c:if>
+	
+		
+		<c:if test="#{!invoiceController.new}">
+			<c:if test="#{!invoiceController.amortizationForm}">
+				<c:if test="#{!invoiceController.readOnly}">
+					<aon:selectBooleanCheckbox id="Invoice_investment"
+						reRender="investmentContainer"
+						value="#{invoiceController.to.investment}"/>
+					<c:if test="#{!invoiceController.to.investment}">
+						<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+							value="#{financeBundle.finance_invoice_investment}"/>
+					</c:if>
+				</c:if>
+			</c:if>
+			
+			<c:if test="#{!aonRole.accountingOperator and invoiceController.to.investment}">
+				<aon:outputText styleClass="aon-italic aon-margin-right aon-margin-left"
+					value="#{financeBundle.finance_invoice_investment}"/>
+			</c:if>
+			
+			<c:if test="#{aonRole.accountingOperator}">
+				<c:if test="#{invoiceController.to.investment}">
+					<aon:commandLink id="linkAmortization" 
+						value="#{financeBundle.finance_invoice_investment}" 
+					 	title="#{financeBundle.finance_create_amortization}" 
+					 	alt="#{financeBundle.finance_create_amortization}"
+						rendered="#{!invoiceController.amortizationForm}"
+						actionListener="#{invoiceController.onShowAmortizationPanel}"
+						styleClass="aon-icon-errorwarning aon-italic aon-margin-right"
+						style="padding-left: 16px;padding-top: 2px; color: red; "
+						reRender="amortizationWindow">
+					</aon:commandLink>
+					
+					<aon:commandLink id="viewAmortization"
+					 	value="#{financeBundle.finance_invoice_investment}"
+					 	title="#{financeBundle.finance_show_amortization}" 
+					 	alt="#{financeBundle.finance_show_amortization}"
+						rendered="#{invoiceController.amortizationForm}"
+						action="#{invoiceController.showAmortization}"
+						styleClass="aon-button-goto aon-italic aon-margin-right"
+						style="padding-left: 16px;padding-top: 2px;">
+					</aon:commandLink>
+				</c:if>
+			</c:if>									
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

@@ -125,7 +125,6 @@ public class VatManager {
 		return criteria;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public boolean validateVAT(VatManagerParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;

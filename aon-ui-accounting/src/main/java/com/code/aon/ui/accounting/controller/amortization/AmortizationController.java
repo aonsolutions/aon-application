@@ -6,15 +6,19 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
+import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -25,6 +29,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AmortizationController extends BasicController {
 
+	private DataModel invoices;
+	
 	private boolean salePanelVisible;
 	private String selectedTab;
 
@@ -215,6 +221,34 @@ public class AmortizationController extends BasicController {
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo sincronizar una cuenta contable. [" + e.getMessage() + "]";
 			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}		
+	}
+	
+	public DataModel getInvoices() {
+		if (invoices == null) {
+			resetInvoices();
+		}
+		return invoices;
+	}
+	
+	public void setInvoices(DataModel invoices) {
+		this.invoices = invoices;
+	}
+	
+	public void resetInvoices() {
+		setInvoices(null);
+		try {
+			Amortization am = (Amortization) getTo();
+			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_AMORTIZATION_ID), am.getId());
+			List<ITransferObject> list = bean.getList(criteria,0,0);
+			setInvoices(new ListDataModel( list ));
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo determinar las facturas vinculadas. [" + e.getMessage() + "]";
+			AonUtil.addErrorMessage(msg);
+			setInvoices(new ListDataModel( ));
 			throw new AbortProcessingException(msg, e);
 		}		
 	}

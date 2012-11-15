@@ -154,13 +154,10 @@
 									rendered="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" />
 							</aon:div>
 							<aon:div>
-								<aon:selectBooleanCheckbox id="Invoice_investment"
-									value="#{expenseInvoice.to.investment}" 
-									rendered="#{!expenseInvoice.readOnly}" />
-								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-									value="#{financeBundle.finance_invoice_investment}"
-									rendered="#{!expenseInvoice.readOnly or expenseInvoice.to.investment}" />
-
+								<ui:include src="/com/code/aon/ui/finance/facelet/invoice/investment.xhtml">
+									<ui:param name="invoiceController" value="#{expenseInvoice}" />
+								</ui:include>
+								
 								<c:if test="#{aonRole.confidentiality}">
 									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
 										value="#{expenseInvoice.to.confidential}"
@@ -493,6 +490,9 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalFiscalInfo.xhtml">
 			<ui:param name="invoiceController" value="#{expenseInvoice}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAmortization.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 		</ui:include>
 	</ui:define>
 </ui:composition>

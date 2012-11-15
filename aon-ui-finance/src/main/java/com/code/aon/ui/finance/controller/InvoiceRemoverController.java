@@ -2,6 +2,7 @@ package com.code.aon.ui.finance.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.IProgression;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
@@ -33,12 +35,10 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 	private Long progressionCurrentValue = -1L;
 	private boolean progressionEnabled = false;
 
-
-	@SuppressWarnings("unchecked")
 	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while(iter.hasNext()){
-			Invoice invoice = (Invoice)iter.next();
+		List<ITransferObject> list = this.getManagerBean().getList(this.getCriteria()); 
+		for (ITransferObject to : list ){
+			Invoice invoice = (Invoice) to;
 			if(isRemovable(invoice)){
 				if (!checks.contains( invoice )) {
 					checks.add( invoice );

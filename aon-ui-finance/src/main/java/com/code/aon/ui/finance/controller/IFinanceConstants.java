@@ -84,4 +84,7 @@ public interface IFinanceConstants {
 	String INCOME_FORM_NAME = "income_form";
 	String INCOME_CONTROLLER_NAME = "income";
 
+	String AMORTIZATION_CONTROLLER_NAME = "amortization";
+	String AMORTIZATION_LIST_VIEW  = "amortization_list";
+	String AMORTIZATION_FORM_VIEW = "amortization_form";
 }

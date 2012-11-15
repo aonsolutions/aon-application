@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class FinanceFractionController implements IFinanceConstants {
 		FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 		targetFinance = (Finance)financeController.getTo();
 
-		List list = (List)getModel().getWrappedData();
+		List<Finance> list = (List<Finance>) getModel().getWrappedData();
 		Finance finance = initializeFinance(targetFinance.getAmount(), targetFinance.getExpenses());
 		finance.setId(targetFinance.getId());
 		list.add(finance);
@@ -132,8 +131,8 @@ public class FinanceFractionController implements IFinanceConstants {
 		double amount = targetFinance.getTotalAmount();
 		try{
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			List list = (List)getModel().getWrappedData();
-			Finance finance = (Finance) list.get(0);
+			List<Finance> list = (List<Finance>) getModel().getWrappedData();
+			Finance finance = list.get(0);
 			targetFinance.setAmount(finance.getAmount());
 			targetFinance.setBank((targetFinance.getBank().getId() == null) ? null : targetFinance.getBank());
 			targetFinance.setInvoice((targetFinance.getInvoice().getId() == null) ? null : targetFinance.getInvoice());
@@ -156,21 +155,18 @@ public class FinanceFractionController implements IFinanceConstants {
 				FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 			}
 
-			initializeFinanceControllerList(((List)getModel().getWrappedData()));
+			initializeFinanceControllerList(((List<Finance>)getModel().getWrappedData()));
 		} catch (AonException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void initializeFinanceControllerList(List list) throws ManagerBeanException {
+	private void initializeFinanceControllerList(List<Finance> list) throws ManagerBeanException {
 		try {
 			FinanceController financeController = (FinanceController)FormUtil.getController(FINANCE_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			Iterator iterator = list.iterator();
-			while (iterator.hasNext()) {
-				Finance finance = (Finance)iterator.next();
+			for (Finance finance : list) {
 				criteria.addOrExpression(financeController.getFieldName(IEntityAlias.FINANCE_ID), finance.getId().toString());
 			}
 			financeController.onEditSearch(null);
@@ -202,16 +198,17 @@ public class FinanceFractionController implements IFinanceConstants {
 
 	@SuppressWarnings("unchecked")
 	private void onAddFraction(ActionEvent event) {
-		((LinkedList)getModel().getWrappedData()).add(this.currentFinance);
+		((List<Finance>) getModel().getWrappedData()).add(this.currentFinance);
 		this.currentFinance = null;
 		this.setNew(false);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void onUpdateFraction(ActionEvent event){
-		int i = ((LinkedList)getModel().getWrappedData()).indexOf(this.currentFinance);
-		((LinkedList)getModel().getWrappedData()).remove(i);
-		((LinkedList)getModel().getWrappedData()).add(i, this.currentFinance);
+		List<Finance> list = ((List<Finance>)getModel().getWrappedData());
+		int i = list.indexOf(this.currentFinance);
+		list.remove(i);
+		list.add(i, this.currentFinance);
 		this.currentFinance = null;
 	}
 
@@ -222,7 +219,7 @@ public class FinanceFractionController implements IFinanceConstants {
 	
 	@SuppressWarnings("unchecked")
 	public void onRemove(ActionEvent event){
-		((LinkedList)getModel().getWrappedData()).remove(this.currentFinance);
+		((List<Finance>)getModel().getWrappedData()).remove(this.currentFinance);
 		this.currentFinance = null;
 		this.setNew(false);
 	}
@@ -238,9 +235,8 @@ public class FinanceFractionController implements IFinanceConstants {
 	@SuppressWarnings("unchecked")
 	private double obtainPendingAmount() {
 		double pending = targetFinance.getTotalAmount();
-		Iterator iterator = ((List)getModel().getWrappedData()).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
+		List<Finance> list = (List<Finance>) getModel().getWrappedData();
+		for (Finance finance : list) {
 			pending = CommonUtil.round(pending - finance.getTotalAmount());
 		}
 		return CommonUtil.round(pending);

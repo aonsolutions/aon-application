@@ -12,6 +12,7 @@ public interface IFinanceMessages {
 	String INVALID_INVOICING_GROUP_DETAIL_PARENT_KEY = "finance_invalid_invoicing_group_detail_parent";
 	String INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY = "finance_invalid_invoicing_group_detail_child";
 	String UNABLE_RECORD_INACCURACY_ERROR_KEY = "finance_unable_record_inaccuracy_error";
+	String UNABLE_RECORD_NO_AMORTIZATION_ERROR_KEY = "finance_unable_record_no_amortization_error";
 	String PAYMENT_INVALID_AMOUNT_ERROR = "finance_payment_invalid_amount_error";
 	String PAYMENT_NOT_MATCH_AMOUNT_ERROR = "finance_payment_not_match_amount_error";
 	String PAYMENT_PAY_METHOD_UNDEFINED_ERROR = "finance_payment_pay_method_undefined_error";
@@ -46,6 +47,8 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_OFFER = "finance_invoice_offer";
 	String FINANCE_INVOICE_SALES = "finance_invoice_sales";
 	String FINANCE_INVOICE_DELIVERY = "finance_invoice_delivery";
+
+	
 	
 }
 

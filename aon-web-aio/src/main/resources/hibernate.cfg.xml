@@ -53,6 +53,7 @@
 		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
+		<mapping class="com.code.aon.accounting.AmortizationInvoice"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>

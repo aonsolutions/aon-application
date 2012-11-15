@@ -14,13 +14,11 @@ public class FeePrintController extends BasicController {
 	
 	private List<?> orderedList;
 	
-	@SuppressWarnings("unchecked")
-	public List getOrderedList() {
+	public List<?> getOrderedList() {
 		return orderedList;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setOrderedList(List orderedList) {
+	public void setOrderedList(List<?> orderedList) {
 		this.orderedList = orderedList;
 	}
 	
