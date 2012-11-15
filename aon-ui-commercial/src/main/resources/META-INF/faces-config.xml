@@ -262,10 +262,21 @@
 				</value-class>
 				<value>#{commercialTrackingSearch}</value>
 				<value>#{commercialTrackingListener}</value>
+				<value>#{commercialTrackingScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>commercialTrackingScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>CommercialTracking_project_target_scope_id</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<managed-bean>
 		<managed-bean-name>commercialTrackingSearch</managed-bean-name>
 		<managed-bean-class>
