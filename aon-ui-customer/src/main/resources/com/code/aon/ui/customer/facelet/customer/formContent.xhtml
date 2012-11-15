@@ -24,9 +24,9 @@
 
 	<c:if test="#{aonConfiguration.bean.customer.showTaxInfoData}">
 		<aon:outputLabel for="Customer_transaction" value="#{customerBundle.customer_transaction_type}" />
-		<aon:selectOneRadio id="Customer_transaction" value="#{controller.to.transaction}">
+		<aon:selectOneMenu id="Customer_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
-		</aon:selectOneRadio>
+		</aon:selectOneMenu>
 
 		<aon:outputText value="#{customerBundle.customer_taxes}" />
 		<aon:div>

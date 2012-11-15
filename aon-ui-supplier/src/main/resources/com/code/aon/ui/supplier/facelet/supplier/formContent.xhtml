@@ -21,9 +21,9 @@
 
 	<c:if test="#{aonConfiguration.bean.supplier.showTaxInfoData}">
 		<aon:outputLabel for="Supplier_transaction" value="#{supplierBundle.supplier_transaction_type}" />
-		<aon:selectOneRadio id="Supplier_transaction" value="#{controller.to.transaction}">
+		<aon:selectOneMenu id="Supplier_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
-		</aon:selectOneRadio>
+		</aon:selectOneMenu>
 
 		<aon:outputLabel for="Supplier_withholding" value="#{bundle.aon_retention}" />
 		<aon:selectBooleanCheckbox id="Supplier_withholding" 

@@ -21,9 +21,9 @@
 
 	<c:if test="#{aonConfiguration.bean.creditor.showTaxInfoData}">
 		<aon:outputLabel for="Creditor_transaction" value="#{financeBundle.creditor_transaction_type}" />
-		<aon:selectOneRadio id="Creditor_transaction" value="#{controller.to.transaction}">
+		<aon:selectOneMenu id="Creditor_transaction" value="#{controller.to.transaction}">
 			<f:selectItems value="#{configCollections.invoiceTransactionTypes}" />
-		</aon:selectOneRadio>
+		</aon:selectOneMenu>
 
 		<aon:outputLabel for="Creditor_withholding"	value="#{bundle.aon_retention}" />
 		<aon:selectBooleanCheckbox id="Creditor_withholding"

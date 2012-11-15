@@ -21,8 +21,11 @@ public enum InvoiceTransactionType implements IResourceable {
 	EXTRACOMMUNITY,
 	
 	/** CANARIAS, CEUTA Y MELILLA. */
-	CAN_CEU_MEL;
+	CAN_CEU_MEL,
 
+	/** OTHER_ISP. */
+	OTHER_ISP;
+	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.config.i18n.messages";
     
