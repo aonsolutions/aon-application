@@ -10,6 +10,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.esferalia.aon.entity.master.CourseDB;
 
@@ -44,7 +45,13 @@ public class Course extends CourseDB {
 	
 	@Transient
 	public Integer getAlumnCount(){
-		return getAlumns().size();
+		int count = 0;
+		for(CourseAlumn alumn: getAlumns()){
+			if(alumn.getStatus()==CourseAlumnStatus.ACTIVE){
+				count++;
+			}
+		}
+		return count;
 	}
     
 
