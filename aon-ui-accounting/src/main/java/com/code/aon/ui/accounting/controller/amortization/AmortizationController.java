@@ -1,15 +1,19 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.richfaces.model.impl.ListDataModel;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
@@ -36,17 +40,27 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class AmortizationController extends BasicController {
 
+	private DataModel investmentInvoices;
+	private List<Invoice> checkedInvestmentInvoices;
 	private List<ITransferObject> invoices;
 	private Integer invoiceId;
 	
 	private boolean salePanelVisible;
 	private String selectedTab;
+	
+	private boolean addInvoicePanelVisible;
 
 	public boolean isSalePanelVisible() {
 		return salePanelVisible;
 	}
 	public void setSalePanelVisible(boolean salePanelVisible) {
 		this.salePanelVisible = salePanelVisible;
+	}
+	public boolean isAddInvoicePanelVisible() {
+		return addInvoicePanelVisible;
+	}
+	public void setAddInvoicePanelVisible(boolean addInvoicePanelVisible) {
+		this.addInvoicePanelVisible = addInvoicePanelVisible;
 	}
 	public String getSelectedTab() {
 		return selectedTab;
@@ -251,6 +265,7 @@ public class AmortizationController extends BasicController {
 	}
 	
 	public void resetInvoices() {
+		setInvestmentInvoices(null);
 		setInvoices(null);
 		try {
 			Amortization am = (Amortization) getTo();
@@ -270,22 +285,26 @@ public class AmortizationController extends BasicController {
 		return ( getBackAction() != null);
 	}
 	
+	private AmortizationInvoice getAmortizationInvoice(Integer id) {
+		for (ITransferObject to :  getInvoices() ) {
+			AmortizationInvoice inv = (AmortizationInvoice) to;
+			if (ObjectUtils.equals(getInvoiceId(), inv.getId())) {
+				return inv;
+			}
+		}
+		return null;
+	}
+	
 	public String showInvoice() {
 		try {
 			String invoiceViewer = null;
-			Invoice invoice = null;
-			for (ITransferObject to :  getInvoices() ) {
-				AmortizationInvoice inv = (AmortizationInvoice) to;
-				if (ObjectUtils.equals(getInvoiceId(), inv.getInvoice().getId())) {
-					invoice = inv.getInvoice();
-					break;
-				}
-			}
-			if (invoice == null) {
+			AmortizationInvoice ai = getAmortizationInvoice(getInvoiceId());
+			if (ai == null) {
 				String message = "Imposible encontrar laa factura entre las listadas.";
 				AonUtil.addErrorMessage(message);
 				throw new AbortProcessingException(message);
 			}
+			Invoice invoice = ai.getInvoice();
 			String invoiceControllerName = "";
 			if (invoice.getType() == InvoiceType.SALES) {
 				invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
@@ -308,6 +327,75 @@ public class AmortizationController extends BasicController {
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);
 		}
+	}
+	
+	public void onRemoveInvoice(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+			ITransferObject to = bean.get(getInvoiceId());
+			bean.remove(to);
+			resetInvoices();
+		} catch (ManagerBeanException e) {
+			String message = "No se pudo borrar el vínculo entre la ficha de amortización y la factura.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
+		}
+	}
+
+	public void setInvestmentInvoices(DataModel model) {
+		investmentInvoices = model;
+		setCheckedInvestmentInvoices(null);
+	}
+	
+	public DataModel getInvestmentInvoices() {
+		try {
+			if (investmentInvoices == null) {
+				IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
+				Criteria criteria = new Criteria();
+				Amortization am = (Amortization) getTo();
+				Date startDate = am.getInitialDate();
+				Calendar c = Calendar.getInstance();
+				c.setTime(startDate);
+				c.set(Calendar.DAY_OF_MONTH, 1);
+				c.set(Calendar.MONTH, 0);
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE), c.getTime());
+				List<InvoiceType> types = new LinkedList<InvoiceType>();
+				types.add(InvoiceType.EXPENSES);
+				types.add(InvoiceType.PURCHASE);
+				criteria.addInExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), types);
+				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_INVESTMENT), true);
+				List<ITransferObject> list = bean.getList(criteria);
+				setInvestmentInvoices(new ListDataModel(list));
+			}
+			return investmentInvoices;
+		} catch (ManagerBeanException e) {
+			String message = "No se pudo mostrar las facturas de inversión.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
+		}
+	}
+	public List<Invoice> getCheckedInvestmentInvoices() {
+		return checkedInvestmentInvoices;
+	}
+	public void setCheckedInvestmentInvoices(List<Invoice> checkedInvestmentInvoices) {
+		this.checkedInvestmentInvoices = checkedInvestmentInvoices;
+	}
+	public boolean isCheckedInvestmentInvoice() {
+		Invoice invoice = (Invoice) getInvestmentInvoices().getRowData();
+		return (getCheckedInvestmentInvoices().contains(invoice));
+	}
+	public void setCheckedInvestmentInvoice(boolean checked) {
+		Invoice invoice = (Invoice) getInvestmentInvoices().getRowData();
+		if (checked) {
+			getCheckedInvestmentInvoices().remove(invoice);	
+		} else {
+			getCheckedInvestmentInvoices().add(invoice);
+		}
+	}
+	public void onAddInvoice(ActionEvent event) {
+		//TODO add
+		setInvestmentInvoices(null);
+		setCheckedInvestmentInvoices(null);		
 	}
 	
 }

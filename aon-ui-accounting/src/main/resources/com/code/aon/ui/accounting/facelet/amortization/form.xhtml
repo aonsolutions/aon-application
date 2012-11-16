@@ -92,10 +92,26 @@
 								<aon:outputText value="]"/>
 								<f:setPropertyActionListener 
 									target="#{amortization.invoiceId}"
-									value="#{inv.invoice.id}" />
-									
+									value="#{inv.id}" />
 							</aon:commandLink>
+							<aon:commandButton id="removeAmortizationInvoice" 
+								value="&#160;"
+								styleClass="aon-icon-removed aon-noborder"
+								rendered="#{!inv.invoice.recorded}"
+								onclick="if (!confirm('#{bundle.aon_remove}?')){ return false;}">
+								<f:setPropertyActionListener 
+									target="#{amortization.invoiceId}"
+									value="#{inv.id}" />
+								<aon:actionListener method="#{amortization.onRemoveInvoice}" />
+							</aon:commandButton>
 						</a4j:repeat>
+						<aon:commandButton id="addAmortizationInvoice" 
+							value="&#160;"
+							styleClass="aon-icon-reset aon-noborder"
+							rendered="#{!inv.invoice.recorded}"
+ 							reRender="addInvoicePanelWindow">
+						<f:setPropertyActionListener target="#{amortization.addInvoicePanelVisible}" value="#{true}" />
+						</aon:commandButton>
 					</aon:div>
 					
 				</aon:panelGrid>
@@ -110,7 +126,10 @@
 				</aon:panelTabSet>
 			</aon:div>
 		</aon:form>
+		
 		<ui:include src="modalSale.xhtml" />
+		<ui:include src="modalAddInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
 	</ui:define>
 </ui:composition>
