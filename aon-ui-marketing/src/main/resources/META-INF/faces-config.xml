@@ -149,6 +149,15 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/survey/listBasic.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{surveyScopeListener}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>	
 
 	<!--  **** SURVEY QUESTION **** -->
@@ -645,6 +654,13 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/marketingTemplate/listBasic.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{marketingTemplateScopeListener}</value>
+			</list-entries>
+		</managed-property>								
 	</managed-bean>	
 	
 	<!-- =================== Survey ================= -->	

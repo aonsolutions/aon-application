@@ -442,6 +442,54 @@
 		</managed-property>				
 	</managed-bean>
 
+	<!-- ************ DOCUMENT LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>documentLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>documentLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>RegistryAttachment_category&lt;name,RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>RegistryAttachment_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAttachment_registryAttachmentType</key>
+					<value>#{registryCollections.registryAttachmentTypes[3].value}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/listBasic.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/registry/facelet/corporateIdentity/searchBasicContent.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{corporateIdentityAttachScopeListener}</value>
+				<value>#{corporateIdentitySearch}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ======================= NAVIGATION ========================== -->
 	<navigation-rule>
 		<navigation-case>

@@ -28,10 +28,11 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateDocuments" 
 										action="corporateIdentityAttach_list" immediate="true"
+										actionListener="#{corporateIdentityAttach.onEditSearch}"
 										value="#{bundle.aon_documents}">
 										<f:setPropertyActionListener value="#{false}"
 											target="#{corporateIdentityAttach.massiveUpload}"  />			
-										<aon:actionListener method="#{corporateIdentityAttach.onCancel}" />																		
+										<aon:actionListener method="#{corporateIdentityAttach.onSearch}" />																		
 									</aon:commandLink>
 								</aon:div>							
 								<aon:div styleClass="aon-direct-access-list-element">

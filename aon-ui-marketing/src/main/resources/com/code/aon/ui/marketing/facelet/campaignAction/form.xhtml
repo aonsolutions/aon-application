@@ -37,7 +37,7 @@
 					<aon:panelGrid columns="2">
 						<aon:outputLabel for="Action_id"
 							rendered="#{!campaignAction.new}" value="#{bundle.aon_id}" />
-						<aon:inputText id="Action_id" value="#{campaignAction.to.id}"
+						<aon:inputText id="Action_id" value="#{campaignAction.to.id}" required="true"
 							rendered="#{!campaignAction.new}" size="15" disabled="true" />
 							
 						<aon:outputLabel for="Action_description"
