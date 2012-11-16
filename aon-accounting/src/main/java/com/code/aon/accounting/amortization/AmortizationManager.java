@@ -238,7 +238,7 @@ public class AmortizationManager {
 		all.setAccountEntry(entry);
 		all.setAccount(allocation);
 		all.setBalancingAccount(accumulated);
-		String concept = "Amort. F: " + a.getId()+ " - " + a.getFixedAssetAccount().getDescription() + ")";
+		String concept = "Amort. - " + a.getFixedAssetAccount().getDescription();
 		concept = StringUtils.abbreviate(concept, 32);
 		all.setConcept(concept);
 		all.setLine(0);

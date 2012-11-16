@@ -987,4 +987,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		
 	}
 	
+	public boolean isAmoritizationNavigationDisabled() {
+		return ( getBackAction() != null);
+	}
+	
 }

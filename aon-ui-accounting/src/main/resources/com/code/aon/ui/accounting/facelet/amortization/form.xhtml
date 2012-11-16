@@ -80,9 +80,19 @@
 						
 					<aon:outputText value="#{accountingBundle.accounting_amortization_linked_invoices}" />
 					<aon:div>
+						<aon:commandButton id="addAmortizationInvoice" 
+							value="&#160;"
+							styleClass="aon-icon-reset aon-noborder"
+							rendered="#{!inv.invoice.recorded}"
+ 							reRender="addInvoicePanelWindow">
+							<f:setPropertyActionListener target="#{amortization.addInvoicePanelVisible}" value="#{true}" />
+						</aon:commandButton>
+
 						<a4j:repeat value="#{amortization.invoices}" var="inv">
 							<aon:commandLink id="showAmortizationInvoice" 
-								value="&#160;"
+								alt="#{bundle.aon_remove}"
+								title="#{bundle.aon_remove}"
+								value="&#160;" style="white-space: nowrap;"
 								disabled="#{amortization.invoiceNavigationDisabled}"
 								action="#{amortization.showInvoice}">
 								<aon:outputText value="[" styleClass="aon-margin-left"/>
@@ -94,10 +104,12 @@
 									target="#{amortization.invoiceId}"
 									value="#{inv.id}" />
 							</aon:commandLink>
-							<aon:commandButton id="removeAmortizationInvoice" 
-								value="&#160;"
-								styleClass="aon-icon-removed aon-noborder"
+<!-- 								
 								rendered="#{!inv.invoice.recorded}"
+ -->
+							<aon:commandButton id="removeAmortizationInvoice" 
+								value="&#160;" style="margin-left: 2px;"
+								styleClass="aon-icon-wrong aon-noborder"
 								onclick="if (!confirm('#{bundle.aon_remove}?')){ return false;}">
 								<f:setPropertyActionListener 
 									target="#{amortization.invoiceId}"
@@ -105,13 +117,6 @@
 								<aon:actionListener method="#{amortization.onRemoveInvoice}" />
 							</aon:commandButton>
 						</a4j:repeat>
-						<aon:commandButton id="addAmortizationInvoice" 
-							value="&#160;"
-							styleClass="aon-icon-reset aon-noborder"
-							rendered="#{!inv.invoice.recorded}"
- 							reRender="addInvoicePanelWindow">
-						<f:setPropertyActionListener target="#{amortization.addInvoicePanelVisible}" value="#{true}" />
-						</aon:commandButton>
 					</aon:div>
 					
 				</aon:panelGrid>

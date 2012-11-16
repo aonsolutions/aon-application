@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.controller.amortization;
 
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -9,11 +11,11 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.richfaces.model.impl.ListDataModel;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.Amortization;
@@ -267,6 +269,7 @@ public class AmortizationController extends BasicController {
 	public void resetInvoices() {
 		setInvestmentInvoices(null);
 		setInvoices(null);
+		setCheckedInvestmentInvoices(null);
 		try {
 			Amortization am = (Amortization) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
@@ -350,6 +353,7 @@ public class AmortizationController extends BasicController {
 	public DataModel getInvestmentInvoices() {
 		try {
 			if (investmentInvoices == null) {
+				IManagerBean aiBean = BeanManager.getManagerBean(AmortizationInvoice.class);
 				IManagerBean bean = BeanManager.getManagerBean(Invoice.class);
 				Criteria criteria = new Criteria();
 				Amortization am = (Amortization) getTo();
@@ -365,16 +369,29 @@ public class AmortizationController extends BasicController {
 				criteria.addInExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), types);
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_INVESTMENT), true);
 				List<ITransferObject> list = bean.getList(criteria);
-				setInvestmentInvoices(new ListDataModel(list));
+				List<Invoice> invoices = new LinkedList<Invoice>();
+				for (ITransferObject to : list) {
+					Invoice i = (Invoice) to;
+					Criteria crit = new Criteria();
+					crit.addEqualExpression(aiBean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), i.getId());
+					int count = aiBean.getCount(crit);
+					if (count == 0) {
+						invoices.add(i);
+					}
+				}
+				setInvestmentInvoices(new ListDataModel(invoices));
 			}
 			return investmentInvoices;
 		} catch (ManagerBeanException e) {
-			String message = "No se pudo mostrar las facturas de inversión.";
+			String message = "No se pudieron mostrar las facturas de inversión.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message,e);
 		}
 	}
 	public List<Invoice> getCheckedInvestmentInvoices() {
+		if (checkedInvestmentInvoices == null) {
+			checkedInvestmentInvoices = new ArrayList<Invoice>();
+		}
 		return checkedInvestmentInvoices;
 	}
 	public void setCheckedInvestmentInvoices(List<Invoice> checkedInvestmentInvoices) {
@@ -387,15 +404,29 @@ public class AmortizationController extends BasicController {
 	public void setCheckedInvestmentInvoice(boolean checked) {
 		Invoice invoice = (Invoice) getInvestmentInvoices().getRowData();
 		if (checked) {
-			getCheckedInvestmentInvoices().remove(invoice);	
+			getCheckedInvestmentInvoices().add(invoice);	
 		} else {
-			getCheckedInvestmentInvoices().add(invoice);
+			getCheckedInvestmentInvoices().remove(invoice);
 		}
 	}
+	
 	public void onAddInvoice(ActionEvent event) {
-		//TODO add
-		setInvestmentInvoices(null);
-		setCheckedInvestmentInvoices(null);		
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+			Amortization am = (Amortization) getTo();		
+			for (Invoice invoice : checkedInvestmentInvoices) {
+				AmortizationInvoice ai = new AmortizationInvoice();
+				ai.setAmortization(am);
+				ai.setInvoice(invoice);
+				ai.setSales(invoice.isSales());
+				bean.insert(ai);
+			}
+		} catch (ManagerBeanException e) {
+			String message = "No se pudieron vincular las facturas de inversión.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message,e);
+		}
+		resetInvoices();
 	}
 	
 }
