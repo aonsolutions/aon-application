@@ -262,6 +262,12 @@
 											actionListener="#{accountImporter.onInitialize}"
 											value="#{accountBundle.account_importer_module}" />
 									</aon:div>
+<!--
+	****************************************************
+	Al subir la definicion de balances al dominio padre, 
+	ya no tiene sentido importar y exportar los	balances 
+	de esta forma, en un futuro se eliminaran
+	****************************************************  									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="balance_exporter"
 											action="balance_exporter"
@@ -273,6 +279,9 @@
 											actionListener="#{balanceImporter.onInitialize}"
 											value="#{accountingBundle.accounting_balance_importer_module}" />
 									</aon:div>
+	****************************************************
+	****************************************************
+ -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="amortization_exporter"
 											action="amortization_exporter"

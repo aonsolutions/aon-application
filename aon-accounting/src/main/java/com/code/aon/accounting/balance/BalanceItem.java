@@ -27,7 +27,7 @@ public class BalanceItem implements Serializable{
 	}
 
 	public String getNotes() {
-		return notes;
+		return notes==null?getDetail().getNotes():notes;
 	}
 	public void setNotes(String notes) {
 		this.notes = notes;

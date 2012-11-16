@@ -9,20 +9,9 @@
 
 	<aon:div style="margin-top: 10px;">
 		<aon:editDataTable id="balanceDetailData" rendered="#{!balance.new}"
-			value="#{balanceDetail.model}" var="to" rows="1000"
-			columnClasses="aon-editDataTable-iconColumn
-				,aon-editDataTable-iconColumn aon-width-40
-				,aon-editDataTable-textColumn aon-width-100
-				,aon-editDataTable-textColumn aon-width-400
-				,aon-editDataTable-textColumn aon-width-auto
-				,aon-editDataTable-iconColumn aon-width-60
-				,aon-editDataTable-iconColumn aon-width-60
-				,aon-editDataTable-iconColumn aon-width-60
-				,aon-editDataTable-iconColumn aon-width-60
-				,aon-editDataTable-iconColumn aon-width-60
-				,aon-editDataTable-buttonsColumn">
+			value="#{balanceDetail.model}" var="to" rows="1000">
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
@@ -45,7 +34,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-iconColumn">
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-40">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
@@ -76,8 +65,7 @@
 				</f:facet>
 			</aon:column>
 
-
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputText value="#{accountingBundle.accounting_balance_cdg}" />
 				</f:facet>
@@ -93,7 +81,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-400">
 				<f:facet name="header">
 					<aon:outputText
 						value="#{accountingBundle.accounting_balance_detail_desc}" />
@@ -113,7 +101,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
 					<aon:outputText
 						value="#{accountingBundle.accounting_balance_detail_accounts}" />
@@ -132,7 +120,23 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+				<f:facet name="header">
+					<aon:outputText value="#{accountingBundle.accounting_balance_sheet_notes}" />
+				</f:facet>
+				<aon:outputText value="#{to.notes}"
+					rendered="#{to!=balanceDetail.to}">
+					<aon:abbreviateConverter maxWidth="50" />
+				</aon:outputText>
+				<aon:inputText  rendered="#{to==balanceDetail.to}" 
+					value="#{balanceDetail.to.notes}" maxlength="100"  />
+				<f:facet name="footer">
+					<aon:inputText rendered="#{balanceDetail.new}" 
+						value="#{balanceDetail.to.notes}" maxlength="100"  />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputText
@@ -156,7 +160,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputText
@@ -180,8 +184,7 @@
 				</f:facet>
 			</aon:column>
 
-
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputText
@@ -205,9 +208,7 @@
 				</f:facet>
 			</aon:column>
 
-
-
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputText
@@ -231,7 +232,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn aon-width-60">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputText
@@ -255,7 +256,7 @@
 				</f:facet>
 			</aon:column>
  
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-buttonsColumn">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
