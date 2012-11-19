@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showSalaryExpenseWindow">
 		<c:if test="#{salaryExpense.showSalaryExpenseWindow}">
 			<rich:modalPanel id="expenseModalPanel" 
-				height="150" width="300" resizeable="false" 
+				height="170" width="400" resizeable="false" 
 				rendered="#{salaryExpense.showSalaryExpenseWindow}"
 				showWhenRendered="true" >
 				<f:facet name="header">
@@ -75,14 +75,31 @@
 									</aon:commandButton>	
 								</aon:div>
 								
-								<aon:div styleClass="salaryExpenseModalContent" >
+								<aon:div id="modalContent" styleClass="salaryExpenseModalContent" >
+								
+									<aon:div id="incomplete-salary-warning" rendered="#{!salaryExpense.allSalaryCalculated}"
+										styleClass="aon-margin-top aon-margin-bottom aon-border aon-padding" >
+										
+										<aon:outputText styleClass="aon-icon-errorwarning"
+											value="&#160;&#160;&#160;&#160;&#160;&#160;&#160;" />
+										<aon:outputText styleClass="aon-bold"
+											style="color:red;"
+											value="#{payrollBundle.payroll_enterprise_salaryCost_incomplete}" />
+										<br />
+										<aon:outputFormat styleClass="aon-margin-top" 
+											value="#{payrollBundle.payroll_enterprise_salaryCost}">
+											<f:param value="#{salaryExpense.activeEmployeeCount - salaryExpense.salaryCount}" />
+											<f:param value="#{salaryExpense.activeEmployeeCount}" />
+										</aon:outputFormat>
+									</aon:div>
 									
-									<aon:panelGrid columns="4" >
+									<aon:panelGrid columns="4" styleClass="aon-width-all" >
 										<aon:outputLabel for="Calendar_month"
 											value="#{calendarBundle.aon_calendar_month}" />
 										<aon:selectOneMenu id="Calendar_month"
 											value="#{salaryExpense.month}" >
 											<f:selectItems value="#{commonCollections.months}" />
+											<a4j:support event="onchange" reRender="modalContent" />
 										</aon:selectOneMenu>
 						
 										<aon:outputLabel value="#{bundle.aon_year}" />
@@ -91,8 +108,10 @@
 											enableManualInput="true" step="1"
 											ignoreDupResponses="true"
 											cycled="false"  style="width:5px;height:5px;" >
+											<a4j:support event="onchange" reRender="modalContent" />
 										</rich:inputNumberSpinner>
 									</aon:panelGrid>
+									
 								</aon:div>
 									
 							</aon:div>

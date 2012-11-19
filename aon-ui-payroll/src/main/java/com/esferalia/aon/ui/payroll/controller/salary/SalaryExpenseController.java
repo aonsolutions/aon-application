@@ -21,14 +21,18 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
@@ -135,6 +139,7 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 			criteria.addOrder(bean.getFieldName(IEntityAlias.SALARY_EMPLOYEE_NAME));
 			setList(new LinkedList<ISalary>());
+			
 			for( ITransferObject to : bean.getList(criteria) ) {
 				Salary s = (Salary) to;
 				getList().add(s);
@@ -142,6 +147,62 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		}
 	}
 	
+	public boolean isAllSalaryCalculated() throws ManagerBeanException{
+		countActiveEmployee();
+		countCalculatedSalary();
+		return getActiveEmployeeCount().equals(getSalaryCount());
+	}
+	
+	
+	private Integer activeEmployeeCount;
+	private Integer salaryCount;
+	
+	public Integer getActiveEmployeeCount() {
+		return activeEmployeeCount;
+	}
+
+	public void setActiveEmployeeCount(Integer activeEmployeeCount) {
+		this.activeEmployeeCount = activeEmployeeCount;
+	}
+
+	public Integer getSalaryCount() {
+		return salaryCount;
+	}
+
+	public void setSalaryCount(Integer salaryCount) {
+		this.salaryCount = salaryCount;
+	}
+
+	private void countActiveEmployee() throws ManagerBeanException {
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		Enterprise enterprise = (Enterprise) controller.getTo();
+		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), enterprise.getId());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_START_DATE), getStartDate());
+		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDate());
+		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		setActiveEmployeeCount(bean.getCount(criteria));
+	}
+
+	private void countCalculatedSalary() throws ManagerBeanException {
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		Enterprise enterprise = (Enterprise) controller.getTo();
+		Criteria criteria = new Criteria();
+		
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+		criteria.addEqualExpression(alias, enterprise.getId());
+		alias = bean.getFieldName(IEntityAlias.SALARY_TYPE);
+		criteria.addEqualExpression(alias, SalaryType.SALARY);
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
+		criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
+		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
+		criteria.addLessThanOrEqualExpression(alias, getEndDate());
+		setSalaryCount(bean.getCount(criteria));
+	}
+
 	/*
 	 *  COLLECTION PARA EL JASPERREPORT
 	 */
