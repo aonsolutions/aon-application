@@ -171,6 +171,10 @@
 		<mapping class="com.code.aon.groupware.TaskHolder"/>
 		<mapping class="com.code.aon.groupware.TaskHolderWorkgroup"/>
 
+		<!-- AON-MARKETING Mapping files -->  
+		<mapping class="com.code.aon.marketing.Survey"/>
+		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
+
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
 		<mapping class="com.code.aon.project.Project"/>
