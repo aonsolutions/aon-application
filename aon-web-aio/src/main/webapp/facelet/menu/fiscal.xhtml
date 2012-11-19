@@ -148,7 +148,48 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
+						</c:if>
+					</aon:panelGroup>
+					
+					<aon:panelGroup>
+						
+						<aon:panelGrid id="group_fiscal_configuration"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-config aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_configuration}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="accPeriod-fiscal" 
+											action="accPeriod-fiscal"
+											actionListener="#{accPeriod.onSearch}"
+											value="#{accountingBundle.accounting_period_module}" />
+									</aon:div>
+								</c:if>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accounting_balance-fiscal" 
+										action="balance_list-accounting"
+										value="#{accountingBundle.accounting_balance_menu}" />
+								</aon:div>
+								<c:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="defaultParams-fiscal" 
+											action="accountingDefaultParams-fiscal"
+											actionListener="#{accAppParams.onLoad}"
+											value="#{accountingBundle.accounting_default_params_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="fiscalParams" action="fiscalParams"
+											actionListener="#{fiscalParams.onLoad}"
+											value="#{fiscalBundle.fiscal_parameters_module}" />
+									</aon:div>
+								</c:if>								
+							</aon:div>
+						</aon:panelGrid>
 	
+						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
 							<aon:panelGrid id="group_fiscal_mercantile_registry"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-registradores aon-direct-access-panel">
@@ -171,39 +212,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
-					</aon:panelGroup>
-					
-					<aon:panelGroup>
-						
-						<c:if test="#{!domainSwitcher.domainManagementAvailable}">
-							<aon:panelGrid id="group_fiscal_configuration"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-config aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_configuration}"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accPeriod-fiscal" 
-											action="accPeriod-fiscal"
-											actionListener="#{accPeriod.onSearch}"
-											value="#{accountingBundle.accounting_period_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="defaultParams-fiscal" 
-											action="accountingDefaultParams-fiscal"
-											actionListener="#{accAppParams.onLoad}"
-											value="#{accountingBundle.accounting_default_params_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="fiscalParams" action="fiscalParams"
-											actionListener="#{fiscalParams.onLoad}"
-											value="#{fiscalBundle.fiscal_parameters_module}" />
-									</aon:div>								
-								</aon:div>
-							</aon:panelGrid>
-	
+
 							<aon:panelGrid id="group_fiscal_accounting_entry_generation"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-account-entry aon-direct-access-panel">

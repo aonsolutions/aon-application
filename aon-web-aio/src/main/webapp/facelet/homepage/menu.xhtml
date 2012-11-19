@@ -72,14 +72,15 @@
 				value="#{bundle.aon_module_groupware}"
 				action="menu_groupware" immediate="true"
 				styleClass="aon-top-menu-item" />
+
+			<c:if test="#{aonRole.accountingOperator}">
+				<aon:commandLink id="accounting"
+					value="#{bundle.aon_module_accounting}"
+					action="menu_accounting" immediate="true"
+					styleClass="aon-top-menu-item" />
+			</c:if>
 		</c:if>
 			
-		<c:if test="#{aonRole.accountingOperator}">
-			<aon:commandLink id="accounting"
-				value="#{bundle.aon_module_accounting}"
-				action="menu_accounting" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</c:if>
 
 		<c:if test="#{aonRole.fiscal}">
 			<aon:commandLink id="fiscal"
