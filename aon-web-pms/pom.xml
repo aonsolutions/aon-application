@@ -41,6 +41,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.marketing</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>			
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.asset</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
