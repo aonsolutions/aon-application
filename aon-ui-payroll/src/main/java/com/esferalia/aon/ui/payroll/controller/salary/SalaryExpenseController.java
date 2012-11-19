@@ -35,6 +35,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 
 public class SalaryExpenseController implements Serializable, ICollectionProvider{
 
@@ -47,6 +48,24 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	private Integer year;
 	private List<ISalary> list;
 	private boolean expenseDraft;
+	private Integer activeEmployeeCount;
+	private Integer salaryCount;
+	
+	public Integer getActiveEmployeeCount() {
+		return activeEmployeeCount;
+	}
+
+	public void setActiveEmployeeCount(Integer activeEmployeeCount) {
+		this.activeEmployeeCount = activeEmployeeCount;
+	}
+
+	public Integer getSalaryCount() {
+		return salaryCount;
+	}
+
+	public void setSalaryCount(Integer salaryCount) {
+		this.salaryCount = salaryCount;
+	}
 	
 	public boolean isShowSalaryExpenseWindow() {
 		return showSalaryExpenseWindow;
@@ -152,28 +171,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		countCalculatedSalary();
 		return getActiveEmployeeCount().equals(getSalaryCount());
 	}
-	
-	
-	private Integer activeEmployeeCount;
-	private Integer salaryCount;
-	
-	public Integer getActiveEmployeeCount() {
-		return activeEmployeeCount;
-	}
 
-	public void setActiveEmployeeCount(Integer activeEmployeeCount) {
-		this.activeEmployeeCount = activeEmployeeCount;
-	}
-
-	public Integer getSalaryCount() {
-		return salaryCount;
-	}
-
-	public void setSalaryCount(Integer salaryCount) {
-		this.salaryCount = salaryCount;
-	}
-
-	private void countActiveEmployee() throws ManagerBeanException {
+	private List<ITransferObject> getActiveEmployees() throws ManagerBeanException {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
@@ -183,24 +182,46 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDate());
 		Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_END_DATE));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		setActiveEmployeeCount(bean.getCount(criteria));
+		return bean.getList(criteria);
+	}
+	private void countActiveEmployee() throws ManagerBeanException {
+		setActiveEmployeeCount(getActiveEmployees().size());
 	}
 
-	private void countCalculatedSalary() throws ManagerBeanException {
+	private List<ITransferObject> getCalculatedSalaries() throws ManagerBeanException {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		Criteria criteria = new Criteria();
-		
 		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-		String alias = bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-		criteria.addEqualExpression(alias, enterprise.getId());
-		alias = bean.getFieldName(IEntityAlias.SALARY_TYPE);
-		criteria.addEqualExpression(alias, SalaryType.SALARY);
-		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
-		criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
-		alias = bean.getFieldName(IEntityAlias.SALARY_END_DATE);
-		criteria.addLessThanOrEqualExpression(alias, getEndDate());
-		setSalaryCount(bean.getCount(criteria));
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_TYPE), SalaryType.SALARY);
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getStartDate());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), getEndDate());
+		return bean.getList(criteria);
+	}
+	private void countCalculatedSalary() throws ManagerBeanException {
+		setSalaryCount(getCalculatedSalaries().size());
+	}
+	
+	public void launchRemainingSalaries(ActionEvent event) throws ManagerBeanException{
+		List<ITransferObject> employeeList = getActiveEmployees();
+		List<ITransferObject> salaryList = getCalculatedSalaries();
+		for(ITransferObject to: salaryList){
+			Salary salary = (Salary) to;
+			employeeList.remove(salary.getContract());
+		}
+		PayrollUtils utils = new PayrollUtils();
+		for(ITransferObject to: employeeList){
+			Contract contract = (Contract) to;
+			Salary salary = (Salary) utils.calculateSalary(contract, getStartDate(), getEndDate());
+			if(salary!=null){
+				salary.setContract(contract);
+				IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+				bean.insert((ITransferObject) salary);
+			} else {
+				AonUtil.addErrorMessage("No se ha podido calcular la nomina de "+contract.getPerson().getFullName());
+			}
+		}
 	}
 
 	/*
