@@ -708,6 +708,14 @@
 					<value>669000000</value>
 				</map-entry>
 				<map-entry>
+					<key>ACC_DEFAULT_ASSET_LOST_ACC</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_ASSET_PROFIT_ACC</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
 					<key>ACC_DEFAULT_VAT_PERCENT</key>
 					<value>[NULL]</value>
 				</map-entry>

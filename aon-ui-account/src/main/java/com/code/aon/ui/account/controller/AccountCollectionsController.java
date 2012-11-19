@@ -350,4 +350,32 @@ public class AccountCollectionsController {
 		return getFinancialExpensesAccounts(false);
 	}
 	
+	private List<SelectItem> getAssetLostAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "67*");
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getAssetLostAccounts() throws ManagerBeanException, ExpressionException {
+		return getAssetLostAccounts(true);
+	}
+	public List<SelectItem> getAssetLostAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getAssetLostAccounts(false);
+	}
+	
+	private List<SelectItem> getAssetProfitAccounts(boolean pojo) throws ManagerBeanException, ExpressionException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "77*");
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		return getAccounts(criteria,pojo);
+	}
+	public List<SelectItem> getAssetProfitAccounts() throws ManagerBeanException, ExpressionException {
+		return getAssetProfitAccounts(true);
+	}
+	public List<SelectItem> getAssetProfitAccountsIds() throws ManagerBeanException, ExpressionException {
+		return getAssetProfitAccounts(false);
+	}
+	
 }

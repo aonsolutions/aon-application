@@ -36,10 +36,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
-/**
- * @author tyrion
- *
- */
 public class AmortizationController extends BasicController {
 
 	private DataModel investmentInvoices;
@@ -366,8 +362,13 @@ public class AmortizationController extends BasicController {
 				List<InvoiceType> types = new LinkedList<InvoiceType>();
 				types.add(InvoiceType.EXPENSES);
 				types.add(InvoiceType.PURCHASE);
+				if (am.getDeadline() != null) {
+					types.add(InvoiceType.SALES);
+				}
 				criteria.addInExpression(bean.getFieldName(IEntityAlias.INVOICE_TYPE), types);
 				criteria.addEqualExpression(bean.getFieldName(IEntityAlias.INVOICE_INVESTMENT), true);
+				criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_TYPE));
+				criteria.addOrder(bean.getFieldName(IEntityAlias.INVOICE_ISSUE_DATE));
 				List<ITransferObject> list = bean.getList(criteria);
 				List<Invoice> invoices = new LinkedList<Invoice>();
 				for (ITransferObject to : list) {

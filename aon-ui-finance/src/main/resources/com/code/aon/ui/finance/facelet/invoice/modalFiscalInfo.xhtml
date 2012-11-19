@@ -81,15 +81,13 @@
 												<aon:outputLabel for="Invoice_service" value="#{financeBundle.finance_service_invoice}" />
 											</aon:div>
 											
-											<c:if test="#{!invoiceController.to.sales}">
-												<aon:outputText value="&#160;" />
-												<aon:div>
-													<aon:selectBooleanCheckbox id="Invoice_investment"
-														value="#{invoiceController.to.investment}"/>
-													<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
-														value="#{financeBundle.finance_invoice_investment}"/>
-												</aon:div>
-											</c:if>
+											<aon:outputText value="&#160;" />
+											<aon:div>
+												<aon:selectBooleanCheckbox id="Invoice_investment"
+													value="#{invoiceController.to.investment}"/>
+												<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+													value="#{financeBundle.finance_invoice_investment}"/>
+											</aon:div>
 										</aon:panelGrid>
 											
 										<aon:panel>

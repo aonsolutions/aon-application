@@ -197,7 +197,7 @@ public class InvoiceRecorder implements ITransferObject {
 				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 				addMessage("Factura de tipo " + getInvoice().getTransaction().getName(locale));
 			}
-			if ( type != InvoiceType.SALES && getInvoice().isInvestment()) {
+			if ( getInvoice().isInvestment() ) {
 				addMessage("Factura marcada como inversión.");
 			}
 			if (!isDateEquals()) {
@@ -290,9 +290,7 @@ public class InvoiceRecorder implements ITransferObject {
 		}
 	}
 	private void checkInvestmentAmortizationFormPresent() throws ManagerBeanException {
-		InvoiceType type = getInvoice().getType();
-		if (type != InvoiceType.SALES && getInvoice().isInvestment() && !hasAmortizationLinked()) {
-			
+		if (getInvoice().isInvestment() && !hasAmortizationLinked()) {
 			setRecordable(false);
 			addFinanceNoAmortizationForm();
 		}

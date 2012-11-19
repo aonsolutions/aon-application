@@ -18,6 +18,7 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationInvoice;
 import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.Period;
@@ -190,8 +191,12 @@ public class AccountEntryInvoiceWriter {
 
 	private Map<Account, Double> obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
 		Map<Account, Double> basesPerAccount = new HashMap<Account, Double>();
-		if (!invoice.isSales() && invoice.isInvestment()) {
-			fillBasesPerAccountFromAmortization(invoice,basesPerAccount);
+		if (invoice.isInvestment()) {
+			if (!invoice.isSales()) {
+				fillPurchaseBasesPerAccountFromAmortization(invoice,basesPerAccount);	
+			} else {
+				fillSaleBasesPerAccountFromAmortization(invoice,basesPerAccount);
+			}
 		} else {
 			fillBasesPerAccountFromInvoiceDetail(invoice,basesPerAccount);
 		}
@@ -245,16 +250,52 @@ public class AccountEntryInvoiceWriter {
 		}
 	}
 	
-	private void fillBasesPerAccountFromAmortization(Invoice invoice,Map<Account, Double> basesPerAccount) throws ManagerBeanException {
+	private void fillPurchaseBasesPerAccountFromAmortization(Invoice invoice,Map<Account, Double> basesPerAccount) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), invoice.getId());
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), false );
 		List<ITransferObject> list = bean.getList(criteria);
-		// TODO De momento solo se puede vincular una factura a una ficha de amortizacion.
+		// De momento solo se puede vincular una ficha de amortizacion a una factura.
 		if (list != null && list.size() > 0 ) {
 			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
 			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), invoice.getTaxableBase() );		
+		}
+	}
+	
+	private void fillSaleBasesPerAccountFromAmortization(Invoice invoice,Map<Account, Double> basesPerAccount) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AmortizationInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.AMORTIZATION_INVOICE_SALES), true );
+		List<ITransferObject> list = bean.getList(criteria);
+		// De momento solo se puede vincular una factura a una ficha de amortizacion.
+		if (list != null && list.size() > 0 ) {
+			AmortizationInvoice ai = (AmortizationInvoice) list.get(0);
+			double amount = ai.getAmortization().getAmount();
+			basesPerAccount.put(ai.getAmortization().getFixedAssetAccount(), amount );
+			
+			IManagerBean detailBean = BeanManager.getManagerBean(AmortizationDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), ai.getAmortization().getId());
+			criteria.addOrder(detailBean.getFieldName(IEntityAlias.AMORTIZATION_DETAIL_FROM_DATE), false );
+			list = detailBean.getList(criteria);
+			double accumulated = 0.0;
+			if (list != null && list.size() > 0 ) {
+				AmortizationDetail ad = (AmortizationDetail) list.get(0);
+				accumulated = ad.getAccumulated();
+				basesPerAccount.put(ai.getAmortization().getAccumulatedAccount(), CommonUtil.round(accumulated*(-1),2) );	
+			}
+			double profitLoss = CommonUtil.round((invoice.getTaxableBase() + accumulated) - amount,2);
+			Account pl = null;
+			if (profitLoss != 0.0) {
+				if (profitLoss > 0) {
+					pl = obtainDefaultAccount(DefaultAccounts.ASSET_PROFIT_ACCOUNT);
+				} else {
+					pl = obtainDefaultAccount(DefaultAccounts.ASSET_LOST_ACCOUNT);
+				}
+				basesPerAccount.put(pl , profitLoss);
+			}
 		}
 	}
 	
@@ -286,43 +327,35 @@ public class AccountEntryInvoiceWriter {
 
 	private Account obtainSalesDefaultAccount() throws ManagerBeanException {
 		if (salesDefaultAccount == null) {
-			IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamsBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.SALES_ACCOUNT);
-			List<ITransferObject> list = appParamsBean.getList(criteria);
-			if (list != null && list.size() > 0) {
-				ApplicationParameter param = (ApplicationParameter) list.get(0);
-				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				try {
-					Integer accountId = Integer.parseInt(param.getValue());	
-					salesDefaultAccount = (Account) accountBean.get(accountId);
-				} catch (NumberFormatException e) {
-					throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
-				}
-			}
+			salesDefaultAccount = obtainDefaultAccount(DefaultAccounts.SALES_ACCOUNT);
 		}
 		if (salesDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
 		}
 		return salesDefaultAccount;
 	}
+	
+	private Account obtainDefaultAccount(String paramName) throws ManagerBeanException {
+		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamsBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), paramName);
+		List<ITransferObject> list = appParamsBean.getList(criteria);
+		if (list != null && list.size() > 0) {
+			ApplicationParameter param = (ApplicationParameter) list.get(0);
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			try {
+				Integer accountId = Integer.parseInt(param.getValue());	
+				return (Account) accountBean.get(accountId);
+			} catch (NumberFormatException e) {
+				throw new ManagerBeanException("Revise el valor de la cuenta contable en los Parámetros Contables.");
+			}
+		}
+		return null;
+	}
 
 	private Account obtainPurchaseDefaultAccount() throws ManagerBeanException {
 		if (purchaseDefaultAccount == null) {
-			IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(appParamsBean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.PURCHASE_ACCOUNT);
-			List<ITransferObject> list = appParamsBean.getList(criteria);
-			if (list != null && list.size() > 0) {
-				ApplicationParameter param = (ApplicationParameter) list.get(0);
-				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				try {
-					Integer accountId = Integer.parseInt(param.getValue());	
-					purchaseDefaultAccount = (Account) accountBean.get(accountId);
-				} catch (NumberFormatException e) {
-					throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
-				}
-			}
+			purchaseDefaultAccount = obtainDefaultAccount(DefaultAccounts.PURCHASE_ACCOUNT);
 		}
 		if (purchaseDefaultAccount == null) {
 			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
