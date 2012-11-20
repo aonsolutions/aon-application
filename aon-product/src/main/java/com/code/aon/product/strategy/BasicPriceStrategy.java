@@ -140,10 +140,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		return CommonUtil.round(taxableBase);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
+	@Override
+	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti, boolean ignoreTaxFree) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if (!iti.isTaxFree()) {
+		if (ignoreTaxFree || !iti.isTaxFree()) {
 			Iterator<ITransferObject> iter = icc.getDetailList().iterator();
 			Map<Integer, TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
 			while (iter.hasNext()) {
@@ -189,6 +189,11 @@ public class BasicPriceStrategy implements IPriceStrategy {
 			}
 		}
 		return taxBreakDowns;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
+		return getTaxBreakDowns(icc,iti,false);
 	}
 
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {

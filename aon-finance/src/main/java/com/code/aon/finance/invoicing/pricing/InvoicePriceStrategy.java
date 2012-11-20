@@ -38,9 +38,9 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 	}
 
 	@Override
-	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
+	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc,ITaxInfo iti, boolean ignoreTaxFree) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if (!iti.isTaxFree()) {
+		if (ignoreTaxFree || !iti.isTaxFree()) {
 			Map<TaxKey, TaxBreakDown> map = new HashMap<TaxKey, TaxBreakDown>();
 			for (Object obj : icc.getDetailList()) {
 				InvoiceDetail invoiceDetail = (InvoiceDetail)obj;
@@ -77,6 +77,11 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 			}
 		}
 		return taxBreakDowns;
+	}
+	
+	@Override
+	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
+		return getTaxBreakDowns(icc, iti,false);
 	}
 
 	protected void setTaxBreakDownAddInfo(TaxBreakDown breakDown, InvoiceDetail invoiceDetail) {

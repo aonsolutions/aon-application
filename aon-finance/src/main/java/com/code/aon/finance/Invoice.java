@@ -254,6 +254,10 @@ public class Invoice extends InvoiceDB implements IHeaderObject, ICalculableCont
 		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
 	}
 	@Transient
+	public boolean isOtherISP() {
+		return getTransaction() == InvoiceTransactionType.OTHER_ISP;
+	}
+	@Transient
 	public boolean isNoRectification() {
 		return (getRectificationType() == RectificationType.NONE);
 	}

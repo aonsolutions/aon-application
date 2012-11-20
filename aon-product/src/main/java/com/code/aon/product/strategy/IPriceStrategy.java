@@ -18,6 +18,8 @@ public interface IPriceStrategy {
 	
 	public double getTaxableBase(ICalculableContainer icc);
 	
+	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti, boolean ignoreTaxFree);
+	
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti);
 
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti);

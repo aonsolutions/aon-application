@@ -31,6 +31,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -150,9 +151,10 @@ public class AccountEntryInvoiceWriter {
 		}
 
 		double total = getPriceStrategy().getTotalPrice(invoice, invoice);
-		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
+		boolean ignoreTaxFree = !invoice.isSales() && (invoice.isIntracommunity() || invoice.isOtherISP());
+		List<TaxBreakDown> taxBreakDownList = getPriceStrategy().getTaxBreakDowns(invoice, invoice, true);
 		Map<Account, Double> retentionQuotas = obtainRetentionQuotasPerAccount(taxBreakDownList, invoice);
-		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice);
+		Map<Account, Double> taxQuotas = obtainTaxQuotasPerAccount(taxBreakDownList, invoice, ignoreTaxFree);
 		Map<Account, Double> bases = obtainBasesPerAccount(invoice);
 		List<AccountEntryDetail> details = insertEntryDetails(entry, account, 
 					obtainConcept(invoice, total), invoice.getDocumentNumber(), 
@@ -172,18 +174,23 @@ public class AccountEntryInvoiceWriter {
 		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
 			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), new Double(taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota()));
-				insertInvoiceTaxAccount(invoice, taxBreakDown);
+				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
 			}
 		}
 		return recordingTo.getTaxQuotaAccountMap();
 	}
 
-	private Map<Account, Double> obtainTaxQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice) throws ManagerBeanException {
+	private Map<Account, Double> obtainTaxQuotasPerAccount(List<TaxBreakDown> taxBreakDownList, Invoice invoice, boolean ignoreTaxFree) throws ManagerBeanException {
 		TaxRecordingTo recordingTo = new TaxRecordingTo();
 		for (TaxBreakDown taxBreakDown : taxBreakDownList ) {
 			if (!taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
-				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), new Double(taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota()));
-				insertInvoiceTaxAccount(invoice, taxBreakDown);
+				double amount = taxBreakDown.getTaxQuota()+taxBreakDown.getSurchargeQuota();
+				recordingTo.addTaxQuotaAccount(taxBreakDown.getAccount(), new Double(amount));
+				insertInvoiceTaxAccount(invoice, taxBreakDown, false);
+				if (ignoreTaxFree) {
+					recordingTo.addTaxQuotaAccount(taxBreakDown.getBalancingAccount(), new Double(amount * (-1)));
+					insertInvoiceTaxAccount(invoice, taxBreakDown, true);
+				}
 			}
 		}
 		return recordingTo.getTaxQuotaAccountMap();
@@ -307,7 +314,7 @@ public class AccountEntryInvoiceWriter {
 		invoiceDetailAccountBean.insert(invoiceDetailAccount);
 	}
 
-	private void insertInvoiceTaxAccount(Invoice invoice, TaxBreakDown taxBreakDown) throws ManagerBeanException {
+	private void insertInvoiceTaxAccount(Invoice invoice, TaxBreakDown taxBreakDown, boolean balancingAccount) throws ManagerBeanException {
 		IManagerBean invoiceTaxAccountBean = BeanManager.getManagerBean(InvoiceTaxAccount.class);
 		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 		Criteria criteria = new Criteria();
@@ -320,7 +327,7 @@ public class AccountEntryInvoiceWriter {
 			InvoiceTax invoiceTax = (InvoiceTax) to;
 			InvoiceTaxAccount invoiceTaxAccount = new InvoiceTaxAccount();
 			invoiceTaxAccount.setInvoiceTax(invoiceTax);
-			invoiceTaxAccount.setAccount(taxBreakDown.getAccount());
+			invoiceTaxAccount.setAccount(balancingAccount?taxBreakDown.getBalancingAccount():taxBreakDown.getAccount());
 			invoiceTaxAccountBean.insert(invoiceTaxAccount);
 		}
 	}
