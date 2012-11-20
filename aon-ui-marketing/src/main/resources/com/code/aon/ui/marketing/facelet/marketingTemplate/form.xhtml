@@ -31,7 +31,7 @@
 
 					<aon:outputLabel for="Template_id"
 						rendered="#{!marketingTemplate.new}" value="#{bundle.aon_id}" />
-					<aon:inputText id="Template_id" value="#{marketingTemplate.to.id}"
+					<aon:inputText id="Template_id" value="#{marketingTemplate.to.id}" required="true"
 						rendered="#{!marketingTemplate.new}" size="15" disabled="true" />
 
 					<aon:outputLabel for="Template_name"
@@ -52,22 +52,27 @@
 						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				
+					<aon:outputLabel for="Template_scope_id"
+						value="#{bundle.aon_scope}" />
+					<aon:selectOneMenu id="Template_scope_id" required="true"
+						value="#{marketingTemplate.to.scope}">
+						<f:selectItems value="#{configCollections.currentUserScopes}" />
+					</aon:selectOneMenu>
+								
 					<aon:outputLabel for="Template_appendSignature"
 						value="#{marketingBundle.marketing_template_append_signature}" />
 					<aon:selectBooleanCheckbox id="Template_appendSignature" required="true"
 						value="#{marketingTemplate.to.appendSignature}" />
-								
-					<aon:outputLabel for="Template_scope_id"
-						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Template_scope_id" value="#{marketingTemplate.to.scope}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</aon:selectOneMenu>
 								
 					<aon:outputLabel for="Template_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Template_active" required="true"
 						value="#{marketingTemplate.to.active}" />
 
+					<ui:include src="/com/code/aon/ui/registry/facelet/corporateIdentity/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{marketingTemplate.to.registryAttachment}" />
+					</ui:include>
+				
 					<aon:outputLabel for="Template_data"
 						value="#{marketingBundle.marketing_template}" />
 					<aon:inputRichText id="Template_data" required="true"
@@ -82,6 +87,7 @@
 			</aon:div>
 		</aon:form>	
 
+		<aon:lookupButtonPopup lookup="#{documentLookup}" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
 	</ui:define>

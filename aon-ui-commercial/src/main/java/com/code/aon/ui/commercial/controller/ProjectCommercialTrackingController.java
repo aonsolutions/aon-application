@@ -21,8 +21,8 @@ import com.code.aon.ui.util.AonUtil;
  */
 public class ProjectCommercialTrackingController extends BasicController {
 	
-	private BasicController getCommercialTracking()  {
-		return (BasicController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
+	private CommercialTrackingController getCommercialTracking()  {
+		return (CommercialTrackingController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
 	}
 	
 	public void onSelectTracking( ActionEvent event ) throws ManagerBeanException {	
@@ -46,6 +46,8 @@ public class ProjectCommercialTrackingController extends BasicController {
 	}
 
 	public void onAcceptTracking(ActionEvent event) {
+		BasicController projectController = (BasicController) AonUtil.getRegisteredBean(PROJECT_COMMERCIAL_CONTROLLER_NAME);
+		getCommercialTracking().setSurveyReturnAction(projectController.formAction());		
 		getCommercialTracking().onAccept(event);
 		onSearch(event);
 	}

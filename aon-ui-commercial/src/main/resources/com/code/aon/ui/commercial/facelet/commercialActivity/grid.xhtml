@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -25,9 +26,10 @@
 
 					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{commercialActivity}" />
-						<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
 						<ui:define name="columns">
-							<aon:column>
+						
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60"
+								alias="CommercialActivity.id">
 								<f:facet name="header">
 									<aon:outputText
 										value="#{bundle.aon_id}" />
@@ -38,7 +40,8 @@
 								</f:facet>
 							</aon:column>
 	
-							<aon:column>
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								alias="CommercialActivity.name">
 								<f:facet name="header">
 									<aon:outputLabel for="CommercialActivity_name"
 										value="#{bundle.aon_name}" />
@@ -47,19 +50,63 @@
 									rendered="#{formList}" />
 								<aon:inputText id="CommercialActivity_name" required="true"
 									rendered="#{formEdit}" size="32"
-									value="#{commercialActivity.to.name}" maxlength="32" />
+									value="#{controller.to.name}" maxlength="32" />
 								<f:facet name="footer">
 									<aon:inputText id="CommercialActivity_name-New" required="true"
 										rendered="#{formNew}" size="32"
-										value="#{commercialActivity.to.name}" maxlength="32" />
+										value="#{controller.to.name}" maxlength="32" />
 								</f:facet>
 							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-140"
+								alias="CommercialActivity.probability">
+								<f:facet name="header">
+									<aon:outputLabel for="CommercialActivity_probability"
+										value="#{commercialBundle.commercial_project_probability}" />
+								</f:facet>
+								<aon:outputText value="#{to.probability}"
+									rendered="#{formList}" />
+								<rich:inputNumberSlider id="CommercialActivity_probability"
+									value="#{controller.to.probability}" rendered="#{formEdit}"
+									minValue="0" maxValue="100" step="1"/>											
+								<f:facet name="footer">
+									<rich:inputNumberSlider id="CommercialActivity_probability-New"
+										value="#{controller.to.probability}" rendered="#{formNew}"
+										minValue="0" maxValue="100" step="1"/>											
+								</f:facet>
+							</aon:column>
+
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-300"
+								alias="CommercialActivity.survey.description">
+								<f:facet name="header">
+									<aon:outputLabel for="Survey_id"
+										value="#{marketingBundle.marketing_survey}" />
+								</f:facet>
+								<aon:outputText value="#{to.survey.description}" rendered="#{formList}" />
+								<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{controller.to.survey}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupRendered" value="#{formEdit}" />
+									<ui:param name="lookupInputSuggestSize" value="30"/>
+								</ui:include>
+								<f:facet name="footer" >
+									<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{controller.to.survey}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupRendered" value="#{formNew}" />
+										<ui:param name="lookupInputSuggestSize" value="30"/>
+										<ui:param name="lookupSuffix" value="-New" />
+									</ui:include>
+								</f:facet>	
+							</aon:column>
+							
 						</ui:define>
 					</ui:decorate>
 
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 	</ui:define>
 
 </ui:composition>

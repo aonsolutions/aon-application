@@ -12,6 +12,7 @@ public interface ICommercialConstants {
 	String NAVIGATION_COMMERCIAL_TRACKING_FORM = "commercialTracking_form";
 	String NAVIGATION_TARGET_FORM = "target_form";
 	String NAVIGATION_PROJECT_COMMERCIAL_FORM = "projectCommercial_form";
+	String NAVIGATION_COMMUNICATION_CENTER_RESPONSE = "communicationCenter_response";
 
 	// ************************************************************
 	// BEAN

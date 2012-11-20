@@ -3,6 +3,9 @@ package com.code.aon.ui.commercial.event;
 import java.util.List;
 
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.ProjectCommercial;
+import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -20,6 +23,8 @@ import com.esferalia.aon.entity.IEntityAlias;
  */
 public class CommercialTrackingListener extends ControllerAdapter {
 
+	private boolean closed;
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
@@ -45,6 +50,8 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			controller.setNext( ct.getNext() );
 			boolean check = (ct.getOffer().getId() !=null); 
 			controller.setOfferChecked(check);
+			controller.setLaunchSurvey(false);
+			updateClosed(controller);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -56,6 +63,9 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
 		try {		
 			updateNextAction(controller);
+			updateProbability(controller);
+			controller.setLaunchSurvey(isLaunchSurvey(controller));
+			updateClosed(controller);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -67,6 +77,10 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
 		try {		
 			updateNextAction(controller);
+			if (! this.closed ) {
+				controller.setLaunchSurvey(isLaunchSurvey(controller));
+			}
+			updateClosed(controller);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}
@@ -78,16 +92,24 @@ public class CommercialTrackingListener extends ControllerAdapter {
 	}
 
 	private void updateNextAction( CommercialTrackingController controller ) throws ManagerBeanException {
+		CommercialTracking ct = (CommercialTracking) controller.getTo();		
 		if ( controller.isNextAction() ) {
-			CommercialTracking ct = (CommercialTracking) controller.getTo();
 			CommercialTracking next = controller.getNext();
 			ct.setNext( next );
 			next.setSeller( ct.getSeller() );	
 			next.setProject( ct.getProject() );
 			controller.getManagerBean().insertOrUpdate(next);
 		} else {
-			CommercialTracking ct = (CommercialTracking) controller.getTo();
 			ct.setNext(null);
+		}	
+	}
+
+	private void updateProbability( CommercialTrackingController controller ) throws ManagerBeanException {
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
+		Integer probability = ct.getActivity().getProbability();
+		if ( (probability != null) && (probability > 0) ) {
+			ct.getProject().setProbability(probability);
+			BeanManager.getManagerBean(ProjectCommercial.class).update(ct.getProject());
 		}
 	}
 	
@@ -102,5 +124,17 @@ public class CommercialTrackingListener extends ControllerAdapter {
 		}
 		controller.setPrevious( previous );
 	}
+	
+	private void updateClosed( CommercialTrackingController controller ) {
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
+		this.closed = ct.getStatus() == CommercialTrackingStatus.CLOSED; 
+	}
+	
+	private boolean isLaunchSurvey( CommercialTrackingController controller ) {
+		CommercialTracking ct = (CommercialTracking) controller.getTo();
+		return (ct.getStatus() == CommercialTrackingStatus.CLOSED) &&
+			(ct.getActivity().getSurvey() != null) && (ct.getActivity().getSurvey().getId() != null);		
+	}
+	
 	
 }

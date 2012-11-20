@@ -51,6 +51,26 @@ public class CommercialTrackingController extends BasicController {
 	
 	private IControllerListener offerFilter;
 	
+	private boolean launchSurvey;
+	
+	private String surveyReturnAction;
+	
+	public boolean isLaunchSurvey() {
+		return launchSurvey;
+	}
+
+	public void setLaunchSurvey(boolean launchSurvey) {
+		this.launchSurvey = launchSurvey;
+	}
+	
+	public String getSurveyReturnAction() {
+		return surveyReturnAction;	
+	}
+
+	public void setSurveyReturnAction(String surveyReturnAction) {
+		this.surveyReturnAction = surveyReturnAction;
+	}
+
 	public boolean isOfferChecked() {
 		return offerChecked;
 	}
@@ -206,5 +226,27 @@ public class CommercialTrackingController extends BasicController {
 		alarm.setSourceId(ct.getId());
 		alarm.setDescription(ct.getComments());
 	}
+	
+	@Override
+	public void accept(ActionEvent event) {
+		super.accept(event);
+		if ( isLaunchSurvey() ) {
+			AonUtil.actionListener("#{communicationCenter.onStartSurveyFromProject}", event);
+		}		
+	}
+	
+	public void accepAndSurvey(ActionEvent event) {
+		setSurveyReturnAction(formAction());
+		accept(event);
+	}
+	
+	public String saveAction() {
+		boolean launchNow = isLaunchSurvey();
+		setLaunchSurvey(false);		
+		if ( launchNow ) {
+			return ICommercialConstants.NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
+		}
+		return getSurveyReturnAction();
+	}	
 	
 }

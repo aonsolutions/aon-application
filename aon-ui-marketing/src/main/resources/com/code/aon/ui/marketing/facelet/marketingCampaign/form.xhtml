@@ -26,7 +26,7 @@
 
 					<aon:outputLabel for="Campaign_id"
 						rendered="#{!marketingCampaign.new}" value="#{bundle.aon_id}" />
-					<aon:inputText id="Campaign_id" value="#{marketingCampaign.to.id}"
+					<aon:inputText id="Campaign_id" value="#{marketingCampaign.to.id}" required="true"
 						rendered="#{!marketingCampaign.new}" size="15" disabled="true" />
 
 					<aon:outputLabel for="Campaign_text"
@@ -38,7 +38,8 @@
 					
 					<aon:outputLabel for="Campaign_scope_id"
 						value="#{bundle.aon_scope}" />
-					<aon:selectOneMenu id="Campaign_scope_id" value="#{marketingCampaign.to.scope}">
+					<aon:selectOneMenu id="Campaign_scope_id" required="true"
+						value="#{marketingCampaign.to.scope}">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 

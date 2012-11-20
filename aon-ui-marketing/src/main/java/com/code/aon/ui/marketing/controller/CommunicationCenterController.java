@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.COMMERCIAL_TRACKING_CONTROLLER_NAME;
 import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Question;
 import com.code.aon.commercial.QuestionValue;
 import com.code.aon.commercial.Target;
@@ -54,6 +56,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
@@ -89,6 +92,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private SurveyResponseDetail response;
 	
 	private SurveyQuestion surveyQuestion;
+	
+	private String finishedAction;
 	
 	private String nextQuestionAction;
 	
@@ -303,6 +308,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setActionTarget(null);
 		setPendingTargets(0);
 		setNumberOfTargetsInEmail(1);
+		setFinishedAction(NAVIGATION_COMMUNICATION_CENTER);
 	}
 	
 	public Question getQuestion() {
@@ -327,7 +333,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	public void onStartSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		this.surveyResponse = new SurveyResponse();
-		if ( this.action.getId() != null ) {
+		if ( (this.action != null) && (this.action.getId() != null) ) {
 			this.surveyResponse.setAction( this.action );
 		}
 		this.surveyResponse.setSurvey( this.survey );
@@ -337,8 +343,10 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.surveyResponse.setUser( user );
 		IManagerBean surveyResponseBean = BeanManager.getManagerBean(SurveyResponse.class);
 		surveyResponseBean.insert( surveyResponse );
-		getActionTarget().setSurveyResponse(this.surveyResponse);
-		updateActionTarget(false);
+		if ( getActionTarget() != null ) {
+			getActionTarget().setSurveyResponse(this.surveyResponse);
+			updateActionTarget(false);
+		}
 		updateSurveyQuestion( getFirstSurveyQuestion() );
 		this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
 	}
@@ -349,9 +357,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 		if ( surveyQuestion != null ) {
 			updateSurveyQuestion( surveyQuestion );			
 		} else {
-			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
-			getActionTarget().setStatus(ActionTargetStatus.FINISHED);
-			updateActionTarget(false);
+			this.nextQuestionAction = finishedAction();
+			if ( getActionTarget() != null ) {
+				getActionTarget().setStatus(ActionTargetStatus.FINISHED);
+				updateActionTarget(false);				
+			}
 		}
 	}
 	
@@ -377,11 +387,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	private void updateActionTarget( boolean resetUser ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		if ( resetUser ) {
-			getActionTarget().setUser(null);
+		if ( getActionTarget() != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+			if ( resetUser ) {
+				getActionTarget().setUser(null);
+			}
+			bean.update(getActionTarget());			
 		}
-		bean.update(getActionTarget());
 	}
 	
 	private void updateTargetProfile() throws ManagerBeanException {
@@ -822,6 +834,26 @@ public class CommunicationCenterController implements IMarketingConstants {
 
 	public void setNumberOfTargetsInEmail(int numberOfTargetsInEmail) {
 		this.numberOfTargetsInEmail = numberOfTargetsInEmail;
+	}
+
+	public String finishedAction() {
+		return finishedAction;
+	}
+
+	public void setFinishedAction(String finishedAction) {
+		this.finishedAction = finishedAction;
+	}
+
+	public void onStartSurveyFromProject( ActionEvent event ) throws ManagerBeanException {
+		CommercialTrackingController ctc = (CommercialTrackingController) AonUtil.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
+		CommercialTracking ct = (CommercialTracking) ctc.getTo();
+		setDate(new Date());
+		setSurvey(ct.getActivity().getSurvey());
+		setTarget(ct.getProject().getTarget());
+		setAction(null);
+		setActionTarget(null);
+		setFinishedAction(ctc.getSurveyReturnAction());
+		onStartSurveyResponse(event);
 	}
 	
 }
