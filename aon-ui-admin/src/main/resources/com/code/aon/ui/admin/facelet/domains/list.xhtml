@@ -14,7 +14,8 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{configBundle.config_domains}" />
-				<ui:param name="controller" value="#{domains}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<!--  aon-region-body -->

@@ -58,26 +58,6 @@
 			com.code.aon.ui.admin.controller.DomainsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.Domain</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>domains</value>
-		</managed-property>								
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Domain_description</value>
-		</managed-property>
 	</managed-bean>	
 
 	<!-- ************* DOMAIN ***************** -->
