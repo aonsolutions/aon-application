@@ -1,12 +1,13 @@
 package com.code.aon.ui.academy.model;
 
+import com.code.aon.academy.Mark;
 import com.code.aon.customer.Customer;
 
 public class AlumnMarks {
 
 	private Customer customer;
 	
-	private Object[] values;
+	private Mark[] values;
 
 	/**
 	 * @return the customer
@@ -22,11 +23,11 @@ public class AlumnMarks {
 		this.customer = customer;
 	}
 
-	public Object[] getValues() {
+	public Mark[] getValues() {
 		return values;
 	}
 
-	public void setValues(Object[] values) {
+	public void setValues(Mark[] values) {
 		this.values = values;
 	}
 	

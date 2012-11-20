@@ -113,15 +113,12 @@ public class CourseMarkController {
     }
 
     public void onAccept(ActionEvent event) throws ManagerBeanException {
-    	Object[] marks = getTo().getValues();
-    	Mark mark;
     	IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
-    	for (int i = 0; i < marks.length; i++){
-    		mark = (Mark)marks[i];
-    		if (mark.getId()==null){
-    			markBean.insert(mark);
-    		}else{
-    			markBean.update(mark);
+    	for ( Mark mark : getTo().getValues() ) {
+    		if ( mark.getMark() != null ) {
+    			markBean.insertOrUpdate(mark);
+    		} else if (mark.getId()!=null){
+        		markBean.remove(mark);    			
     		}
     	}
     	resetTo();
@@ -131,6 +128,17 @@ public class CourseMarkController {
     	resetTo();
     }
 
+	public void onRemove(ActionEvent event) throws ManagerBeanException {
+    	IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
+    	for ( Mark mark : getTo().getValues() ) {
+    		if (mark.getId()!=null){
+    			markBean.remove(mark);
+    			mark.setMark(null);
+    		}
+    	}
+		resetTo();
+	}
+    
     private void resetTo() {
         this.to = null;
     }
@@ -235,8 +243,8 @@ public class CourseMarkController {
 		this.model = new ListDataModel(alumnMarksList);
     }
 
-    private Object[] obtainOrderedValues(Map<Integer, Mark> markMap) {
-    	Object[] array = new Object[academicSkills.size()];
+    private Mark[] obtainOrderedValues(Map<Integer, Mark> markMap) {
+    	Mark[] array = new Mark[academicSkills.size()];
     	for(int i = 0; i<academicSkills.size();i++){
     		CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)academicSkills.get(i);
     		array[i] = markMap.get(courseAcademicSkill.getId());
