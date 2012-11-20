@@ -49,6 +49,7 @@ public class BalanceManager {
 	private static final String PIPE = "|";
 	private static final String ASTERISK = "*";
 	private static final String QUESTION_MARK = "?";
+	private static final String PERCENT = "%";
 	private static final String COMMA = ",";
 	private static final String HTTP = "http://www.";
 	private static final String DOTCOM = ".com";
@@ -218,6 +219,12 @@ public class BalanceManager {
 		for (String token:tokens) {
 			token = token.trim();
 			if (StringUtils.isNotBlank(token)) {
+				String[] tks = StringUtils.split(token,PERCENT);
+				String percent = null; 
+				if (tks.length>1) {
+					percent = tks[0]; 
+					token = tks[1];
+				}
 				String t = token;
 				boolean negative = false;
 				if (token.startsWith(OPEN_BRACKET) && token.endsWith(CLOSE_BRACKET)) {
@@ -227,6 +234,17 @@ public class BalanceManager {
 				BalanceItem bi = searchItem( t );
 				if (!bi.isResolved()) {
 					resolveItem(bi,parameters,previous);	
+				}
+				if (percent != null) {
+					try {
+						BalanceItem bi2 = new BalanceItem();
+						double p = Double.parseDouble(percent);
+						bi2.setAmount( CommonUtil.round(bi.getAmount() * p / 100,2 ));  
+						bi2.setPreviousAmount( CommonUtil.round(bi.getPreviousAmount() * p / 100,2 ));
+						bi = bi2;
+					} catch (NumberFormatException e ) {
+						// Nothing
+					}
 				}
 				if (negative) {
 					item.subtract(bi);	
