@@ -14,6 +14,25 @@
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
+			<!-- Para poder acceder a las variables del build. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon.mock.entity.maven.plugin</artifactId>
@@ -26,6 +45,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<buildNumber>${buildNumber}</buildNumber>
+				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>com.esferalia.aon</groupId>

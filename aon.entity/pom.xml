@@ -12,15 +12,6 @@
 	<name>AON ENTITY</name>
 	<description>AON ENTITY</description>
 	<build>
-    	<resources>
-        	<resource>
-            	<directory>src/main/resources/META-INF</directory>
-            	<filtering>true</filtering>
-				<includes>
-                	<include>hibernate.cfg.xml</include>
-            	</includes>            	
-        	</resource>
-    	</resources>
 		<plugins>
 			<!-- Se ignoran las entidades mock generadas para la compilacion -->
 			<plugin>

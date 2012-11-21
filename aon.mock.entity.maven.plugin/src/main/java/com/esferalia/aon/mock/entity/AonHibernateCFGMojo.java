@@ -75,6 +75,8 @@ public class AonHibernateCFGMojo extends AbstractMojo {
 	 * @parameter default-value="${project.basedir}/templates/hibernate.cfg.xml.ftl"
 	 */
 	private String template;
+	
+	private String buildNumber;
 
 	public MavenProject getProject() {
 		return project;
@@ -113,6 +115,7 @@ public class AonHibernateCFGMojo extends AbstractMojo {
 				Collection<String> classes = AonExporter.map.values();
 				Map<String, Object> additionalContext = new HashMap<String, Object>();
 				additionalContext.put("pojos", classes);
+				additionalContext.put("buildNumber", buildNumber);
 				Configuration cfg = new Configuration();
 				File templateFile = new File(getTemplate()); 
 				cfg.setTemplateLoader(new FileTemplateLoader(templateFile.getParentFile()));

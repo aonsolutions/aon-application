@@ -87,6 +87,11 @@ public class AonMockEntityMojo extends AbstractMojo {
 	private boolean generateHibernateCfg;
 
 	/**
+	 * @parameter 
+	 */
+	private String buildNumber;
+
+	/**
 	 * @parameter default-value="${project.build.directory}/classes"
 	 */
 	private String resourcesOutputDir;
@@ -143,6 +148,7 @@ public class AonMockEntityMojo extends AbstractMojo {
 					String generatedEntity = aonEntity + AonExporter.CLASS_SUFFIX;
 					additionalContext.put("aonPackage", aonPackage);
 					additionalContext.put("aonEntity", aonEntity);
+					additionalContext.put("buildNumber", buildNumber);
 					additionalContext.put("generatedPackage", AonExporter.ENTITY_PACKAGE);
 					if ("EnterpriseUser".equals(aonEntity)) {
 						generatedEntity = "UserDB";
@@ -167,6 +173,7 @@ public class AonMockEntityMojo extends AbstractMojo {
 				}
 				if (isGenerateHibernateCfg()) {
 					Map<String, Object> additionalContext = new HashMap<String, Object>();
+					additionalContext.put("buildNumber", buildNumber);
 					additionalContext.put("pojos", classes);
 					Configuration cfg = new Configuration();
 					cfg.setTemplateLoader(new ClassTemplateLoader(this.getClass(),"/"));
