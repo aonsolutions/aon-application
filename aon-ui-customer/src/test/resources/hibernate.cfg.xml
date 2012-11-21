@@ -5,7 +5,7 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.url">jdbc:mysql://volga:3306/aon_reveng?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://127.0.0.1:3306/aon_reveng?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>

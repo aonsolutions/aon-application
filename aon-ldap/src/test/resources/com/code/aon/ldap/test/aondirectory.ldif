@@ -248,7 +248,7 @@ objectClass: aonDBConnection
 objectClass: top
 cn: aon_master
 driverClassName: org.gjt.mm.mysql.Driver
-labeledURI: jdbc:mysql://volga:3306/aon-esferalia-com
+labeledURI: jdbc:mysql://127.0.0.1:3306/aon-esferalia-com
 uid: dbuser
 userPassword:: c2VydWJkMjAwMA==
 
@@ -1216,7 +1216,7 @@ objectClass: aonDBConnection
 objectClass: top
 cn: audit_master
 driverClassName: org.gjt.mm.mysql.Driver
-labeledURI: jdbc:mysql://volga:3306/aon-esferalia-com
+labeledURI: jdbc:mysql://127.0.0.1:3306/aon-esferalia-com
 uid: dbuser
 userPassword:: c2VydWJkMjAwMA==
 
@@ -5368,7 +5368,7 @@ objectClass: aonDBConnection
 objectClass: top
 cn: cms_master
 driverClassName: org.gjt.mm.mysql.Driver
-labeledURI: jdbc:mysql://volga:3306/cms-esferalia-com
+labeledURI: jdbc:mysql://127.0.0.1:3306/cms-esferalia-com
 uid: dbuser
 userPassword:: c2VydWJkMjAwMA==
 

@@ -107,7 +107,7 @@ public class DBMojo extends AbstractMojo {
     /**
      * Host to connect to.
      * 
-     * @parameter default-value="volga"
+     * @parameter default-value="127.0.0.1"
      */
     private String dbHost ;
 	

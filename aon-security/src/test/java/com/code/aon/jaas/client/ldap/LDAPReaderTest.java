@@ -28,7 +28,7 @@ public class LDAPReaderTest {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(LDAPReaderTest.class);
 	
-	private static final String HOST = "volga";
+	private static final String HOST = "127.0.0.1";
 	
 	private static final String BASE_DN = "o=aondirectory";
 	
