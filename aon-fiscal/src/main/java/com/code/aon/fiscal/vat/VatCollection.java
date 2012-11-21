@@ -195,9 +195,12 @@ public class VatCollection {
 					stmt.append(" AND it.surcharge > 0");
 				} else if (params.getVatReportType() == VatReportType.INTRACOMMUNITY) {
 					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.INTRACOMMUNITY.ordinal());
-				}
-				else if (params.getVatReportType() == VatReportType.EXTRACOMMUNITY) {
+				} else if (params.getVatReportType() == VatReportType.EXTRACOMMUNITY) {
 					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.EXTRACOMMUNITY.ordinal());
+				} else if (params.getVatReportType() == VatReportType.CAN_CEU_MEL) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.CAN_CEU_MEL.ordinal());
+				} else if (params.getVatReportType() == VatReportType.OTHER_ISP) {
+					stmt.append(" AND i.transaction = "+ InvoiceTransactionType.OTHER_ISP.ordinal());
 				}				
 			}
 			if (params.getSecurityLevel() != null) {

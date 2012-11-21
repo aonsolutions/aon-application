@@ -37,13 +37,13 @@ public class VatTypeBreakdown  {
 	public Map<VatReportType, VatReportTypeBreakdown> getMap() {
 		if (map== null) {
 			map = new HashMap<VatReportType, VatReportTypeBreakdown>();
-			map.put(VatReportType.GENERAL, new VatReportTypeBreakdown(VatReportType.GENERAL));
-			map.put(VatReportType.SURCHARGE, new VatReportTypeBreakdown(VatReportType.SURCHARGE));
-			map.put(VatReportType.INTRACOMMUNITY, new VatReportTypeBreakdown(VatReportType.INTRACOMMUNITY));
-			map.put(VatReportType.EXTRACOMMUNITY, new VatReportTypeBreakdown(VatReportType.EXTRACOMMUNITY));
+			for (VatReportType type : VatReportType.values()) {
+				map.put(type, new VatReportTypeBreakdown(type));	
+			}
 		}
 		return map;
 	}
+	
 	public void setMap(Map<VatReportType, VatReportTypeBreakdown> map) {
 		this.map = map;
 	}

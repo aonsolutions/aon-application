@@ -27,8 +27,8 @@ public class Mod349Manager {
 	private static final String NAME_ALIAS = "name";
 	private static final String COUNTRY_ALIAS = "country";
 	private static final String AMOUNT_ALIAS = "amount";
-	private static final String RECTIFICATION_TYPE_ALIAS = "rectification_type";
-	private static final String RECTIFICATION_INVOICE_ALIAS = "rectification_invoice";
+//	private static final String RECTIFICATION_TYPE_ALIAS = "rectification_type";
+//	private static final String RECTIFICATION_INVOICE_ALIAS = "rectification_invoice";
 	
 	public Mod349 generateDetails(Mod349Parameters params) throws ManagerBeanException {
 		PreparedStatement declaredPs = null; 

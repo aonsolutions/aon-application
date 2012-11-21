@@ -57,15 +57,12 @@ public class Vat {
 	}
 
 	public VatReportType getReportType() {
-		if (transactionType == InvoiceTransactionType.INTRACOMMUNITY) {
-			return VatReportType.INTRACOMMUNITY;
-		} 
-		if (transactionType == InvoiceTransactionType.EXTRACOMMUNITY) {
-			return VatReportType.EXTRACOMMUNITY;
+		for (VatReportType type : VatReportType.values()) {
+			if (type.accept(transactionType)) {
+				return type;
+			}
 		}
-		if (transactionType == InvoiceTransactionType.CAN_CEU_MEL) {
-			return VatReportType.CAN_CEU_MEL;
-		}
+		// By default
 		return VatReportType.GENERAL;
 	}
 

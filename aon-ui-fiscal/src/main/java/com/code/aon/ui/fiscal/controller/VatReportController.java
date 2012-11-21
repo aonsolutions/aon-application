@@ -24,6 +24,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatReportType;
@@ -334,6 +335,10 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 				buf.append(VatReportType.INTRACOMMUNITY.getName(locale));	
 			} else if (params.getVatReportType() == VatReportType.EXTRACOMMUNITY) {
 				buf.append(VatReportType.EXTRACOMMUNITY.getName(locale));	
+			} else if (params.getVatReportType() == VatReportType.OTHER_ISP) {
+				buf.append(VatReportType.OTHER_ISP.getName(locale));	
+			} else if (params.getVatReportType() == VatReportType.CAN_CEU_MEL) {
+				buf.append(VatReportType.CAN_CEU_MEL.getName(locale));	
 			}
 			buf.append(" ");
 			buf.append(percent);
@@ -386,6 +391,10 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 	public VatReportType getCanCeuMel() {
 		return VatReportType.CAN_CEU_MEL;
 	}
+	public VatReportType getOtherISP() {
+		return VatReportType.OTHER_ISP;
+	}
+		
 	public Double getGeneralPercent() {
 		return GENERAL_PERCENT;
 	}
