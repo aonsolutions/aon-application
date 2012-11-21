@@ -321,11 +321,14 @@
 										action="regenerateAccount"
 										value="#{accountingBundle.accounting_regenerate_account_module}" />
 								</aon:div>
+<!-- 								
+	OPCION PELIGROSA
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="regenerateVat"
 										action="regenerateVat" actionListener="#{vatRegenerator.onEditSearch}"
 										value="#{accountingBundle.accounting_regenerate_vat_module}" />
 								</aon:div>
+ -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountCheck" action="check_form"
 										actionListener="#{accountCheck.onInitialize}"
@@ -363,6 +366,47 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+						
+							<aon:panelGrid id="group_accounting_accounting_entry_generation"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-account-entry aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{fiscalBundle.fiscal_accounting_entry_generation}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="saleInvoiceRecorder-accounting"
+											value="#{financeBundle.finance_sale_invoice_recording_module}"
+											actionListener="#{saleInvoiceRecorder.onEditSearch}"
+											action="saleInvoiceRecorder_search-accounting" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="purchaseInvoiceRecorder-accounting"
+											value="#{financeBundle.finance_purchase_invoice_recording_module}"
+											actionListener="#{purchaseInvoiceRecorder.onEditSearch}"
+											action="purchaseInvoiceRecorder_search-accounting" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="expenseInvoiceRecorder-accounting"
+											value="#{financeBundle.finance_expense_invoice_recording_module}"
+											actionListener="#{expenseInvoiceRecorder.onEditSearch}"
+											action="expenseInvoiceRecorder_search-accounting" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="undeductibleInvoiceRecorder-accounting"
+											value="#{financeBundle.finance_undeductible_invoice_recording_module}"
+											actionListener="#{undeductibleInvoiceRecorder.onEditSearch}"
+											action="undeductibleInvoiceRecorder_search-accounting" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="financeTrackingEntry-accounting"
+											action="account_finance_tracking_entry-accounting"
+											actionListener="#{financeTrackingEntry.onReset}"
+											value="#{accountingBundle.accounting_entry_finance_tracking_module}" />
+									</aon:div>								
+								</aon:div>
+							</aon:panelGrid>
+						
 					</aon:panelGroup>
 				</h:panelGrid>
 			</aon:div>
