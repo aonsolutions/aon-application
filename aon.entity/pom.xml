@@ -12,7 +12,17 @@
 	<name>AON ENTITY</name>
 	<description>AON ENTITY</description>
 	<build>
+    	<resources>
+        	<resource>
+            	<directory>src/main/resources/META-INF</directory>
+            	<filtering>true</filtering>
+				<includes>
+                	<include>hibernate.cfg.xml</include>
+            	</includes>            	
+        	</resource>
+    	</resources>
 		<plugins>
+			<!-- Se ignoran las entidades mock generadas para la compilacion -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -34,6 +44,26 @@
 					</archive>
 				</configuration>
 			</plugin>
+			
+			<!-- Para poder acceder a las variables del build. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+			
 			<!-- Para añadir la carpeta de los fuentes generados como source folder. -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -56,6 +86,50 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- Para crear la base de datos utilizada por hibernate-tools. -->
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-maven-plugin</artifactId>
+			    <version>${project.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>create-db</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<dbName>aon_reveng_${buildNumber}</dbName>
+				</configuration>
+			</plugin>
+
+			<!-- Para generar el fichero de configuracion de hibernate, puesto que la base de datos es variable. -->
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-maven-plugin</artifactId>
+			    <version>${project.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>create-hibernate-configuration-file</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<destDir>${basedir}/target/generated-sources/reveng/hibernate_reveng.properties</destDir>
+					<properties>
+						<param>hibernate.dialect=org.hibernate.dialect.MySQLInnoDBDialect</param>
+						<param>hibernate.connection.url=jdbc:mysql://127.0.0.1:3306/aon_reveng_${buildNumber}?autoReconnect=true</param>
+						<param>hibernate.connection.driver_class=org.gjt.mm.mysql.Driver</param>
+						<param>hibernate.connection.username=dbuser</param>
+						<param>hibernate.connection.password=serubd2000</param>
+						<param>hibernate.default_catalog=aon_reveng_${buildNumber}</param>
+					</properties>
+				</configuration>
+			</plugin>
+			
+			<!-- Para levantar los entities mediate el proceso de reven de hibernate tools -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>hibernate3-maven-plugin</artifactId>
@@ -70,51 +144,27 @@
 				</executions>
 				<configuration>
                     <hibernatetool destdir="target/generated-sources/entity">
-                        <jdbcconfiguration configurationfile="src/main/resources/META-INF/hibernate.cfg.xml" packagename="com.esferalia.aon.entity.master" revengfile="src/main/resources/META-INF/hibernate.reveng.xml" reversestrategy="com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy" detectmanytomany="false" />
-                        <hbmtemplate exporterclass="com.esferalia.aon.entity.hibernate.tools.AonExporter" templatepath="src/main/resources/com/esferalia/aon/entity/hibernate/tools" template="pojo/Pojo.ftl" filepattern="{package-name}/{class-name}.java">
+                        <jdbcconfiguration 
+                        	propertyfile="target/generated-sources/reveng/hibernate_reveng.properties" 
+                        	packagename="com.esferalia.aon.entity.master" 
+                        	revengfile="src/main/resources/META-INF/hibernate.reveng.xml" 
+                        	reversestrategy="com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy" 
+                        	detectmanytomany="false" />
+
+                        <hbmtemplate
+                        	exporterclass="com.esferalia.aon.entity.hibernate.tools.AonExporter" 
+                        	templatepath="src/main/resources/com/esferalia/aon/entity/hibernate/tools" 
+                        	template="pojo/Pojo.ftl" 
+                        	filepattern="{package-name}/{class-name}.java">
+                        	
     						<property key="jdk5" value="true" />
 							<property key="ejb3" value="true" />
 							<property key="drop" value="true" />
 							<property key="format" value="true" />
+							
                         </hbmtemplate>
                     </hibernatetool> 
 				</configuration>
-<!--
-
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>hbmtemplate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<components>
-						<component>
-							<name>hbmtemplate</name>
-							<outputDirectory>/target/generated-sources/entity</outputDirectory>
-							<implementation>jdbcconfiguration</implementation>
-						</component>
-					</components>
-					<componentProperties>
-						<packagename>com.esferalia.aon.entity.master</packagename>
-						<reversestrategy>com.esferalia.aon.entity.hibernate.tools.AonReverseEngineeringStrategy</reversestrategy>
-						<revengfile>/src/main/resources/META-INF/hibernate.reveng.xml</revengfile>
-						<jdk5>true</jdk5>
-						<ejb3>true</ejb3>
-						<drop>true</drop>
-						<format>true</format>
-						<detectmanytomany>false</detectmanytomany>
-						<configurationfile>/src/main/resources/META-INF/hibernate.cfg.xml</configurationfile>
-						<exporterclass>com.esferalia.aon.entity.hibernate.tools.AonExporter</exporterclass>
-						<template>pojo/Pojo.ftl</template>
-						<templatepath>/src/main/resources/com/esferalia/aon/entity/hibernate/tools</templatepath>
-						<filepattern>{package-name}/{class-name}.java</filepattern>
-					</componentProperties>
-				</configuration>
--->
 				<dependencies>
 					<dependency>
 						<groupId>com.esferalia.aon</groupId>
@@ -142,6 +192,10 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			
+			<!-- Para que compile, se generan las entidades en su paquetaje correcto,
+				 estas clases no se incluyen en el JAR, puesto que estan en los respectivos
+				 proyectos.			 -->
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon.mock.entity.maven.plugin</artifactId>
