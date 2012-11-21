@@ -28,7 +28,8 @@
 					<ui:param name="controller" value="#{surveyResponse}" />
 					<ui:define name="columns">
 					
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="SurveyResponse.survey.description" >
 							<f:facet name="header">
 								<aon:outputText value="#{marketingBundle.marketing_survey}" />
 							</f:facet>
@@ -37,7 +38,8 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="SurveyResponse.action.campaign.description" >
 							<f:facet name="header">
 								<aon:outputText value="#{marketingBundle.marketing_campaign_action}" />
 							</f:facet>
@@ -46,14 +48,16 @@
 							</aon:outputText>
 						</aon:column>
 	
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="SurveyResponse.target.registry.name" >
 							<f:facet name="header">
 								<aon:outputText value="#{target.bundle.commercial_target}" />
 							</f:facet>
 							<aon:outputText value="#{to.target.registry.fullName}"/>
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="SurveyResponse.date" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -63,7 +67,8 @@
 							</aon:outputText>					
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="SurveyResponse.user.name" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_login_user}" />
 							</f:facet>

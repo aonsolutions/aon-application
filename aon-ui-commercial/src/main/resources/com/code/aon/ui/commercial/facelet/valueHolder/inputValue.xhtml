@@ -4,8 +4,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:valueParam name="inputId" default="#{controller.pojoShortName}_value" />
-
 	<c:if test="#{valueHolder.question.type == 'TEXT'}" >
 		<aon:inputTextarea id="#{inputId}"
 			value="#{valueHolder.text}"

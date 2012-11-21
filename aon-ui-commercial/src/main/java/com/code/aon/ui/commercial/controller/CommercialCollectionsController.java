@@ -8,8 +8,12 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Commission;
+import com.code.aon.commercial.Question;
+import com.code.aon.commercial.QuestionValue;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailCommissionStatus;
@@ -320,6 +324,20 @@ public class CommercialCollectionsController {
 			}
 		}
 		return questionTypes;
+	}	
+
+	public static List<SelectItem> getQuestionValues( Question question ) throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), question.getId());
+		for( ITransferObject to : bean.getList(criteria) ) {
+			QuestionValue questionValue = (QuestionValue) to;
+			Object value = questionValue.getValue( question.getType() );
+			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
+			list.add(item);
+		}
+		return list;
 	}	
 	
 }

@@ -7,7 +7,6 @@ import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +54,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
@@ -421,7 +420,6 @@ public class CommunicationCenterController implements IMarketingConstants {
 				updateResponseValue();
 			}
 			this.response.setSurveyResponse( this.surveyResponse );
-			this.response.setQuestion( getQuestion() );
 			IManagerBean bean = BeanManager.getManagerBean(SurveyResponseDetail.class);		
 			bean.insert( this.response );
 			if (! this.response.isNotFilled() ) {
@@ -431,23 +429,14 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
-		this.questionValues.clear();
-		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
-		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			QuestionValue questionValue = (QuestionValue) iter.next();
-			Object value = questionValue.getValue( sq.getQuestion().getType() );
-			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
-			this.questionValues.add(item);
-		}	
+		questionValues = CommercialCollectionsController.getQuestionValues(sq.getQuestion());
 		this.questionValueId = null;
 	}
 	
 	private void updateSurveyQuestion( SurveyQuestion sq ) throws ManagerBeanException {
 		this.surveyQuestion = sq;
 		this.response = new SurveyResponseDetail();
+		this.response.setQuestion(sq.getQuestion());
 		refreshQuestionValues( this.surveyQuestion );
 	}
 

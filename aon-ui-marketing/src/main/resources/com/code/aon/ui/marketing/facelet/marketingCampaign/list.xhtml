@@ -27,28 +27,32 @@
 					<ui:param name="controller" value="#{marketingCampaign}" />
 					<ui:define name="columns">
 						
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
+							alias="MarketingCampaign.id" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
 							<aon:outputText value="#{to.id}"/>
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="MarketingCampaign.description" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}"/>
 						</aon:column>
 
-	 					<aon:column styleClass="aon-editDataTable-textColumn">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="MarketingCampaign.scope.description" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_scope}" />
 							</f:facet>
 							<aon:outputText value="#{to.scope.description}"/>
 						</aon:column>
 	
-	 					<aon:column styleClass="aon-editDataTable-iconColumn">
+	 					<aon:column styleClass="aon-editDataTable-iconColumn"
+	 						alias="MarketingCampaign.active" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_active}" />
 							</f:facet>

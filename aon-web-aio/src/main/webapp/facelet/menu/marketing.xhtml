@@ -68,8 +68,10 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="question"
-											action="question_list" actionListener="#{question.onSearch}"
-											value="#{commercialBundle.commercial_question_module}" />
+											action="question_list" actionListener="#{question.onEditSearch}"
+											value="#{commercialBundle.commercial_question_module}" >
+											<aon:actionListener method="#{question.onSearch}" />
+										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="surveyResponse"
@@ -78,13 +80,17 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="survey"
-											action="survey_list" actionListener="#{survey.onSearch}" 
-											value="#{marketingBundle.marketing_survey_module}" />
+											action="survey_list" actionListener="#{survey.onEditSearch}" 
+											value="#{marketingBundle.marketing_survey_module}" >
+											<aon:actionListener method="#{survey.onSearch}" />
+										</aon:commandLink>
 									</aon:div>								
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="marketingTemplate"
-											action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
-											value="#{marketingBundle.marketing_template_module}" />
+											action="marketingTemplate_list" actionListener="#{marketingTemplate.onEditSearch}" 
+											value="#{marketingBundle.marketing_template_module}" >
+											<aon:actionListener method="#{marketingTemplate.onSearch}" />
+										</aon:commandLink>
 									</aon:div>								
 								</aon:div>
 							</aon:panelGrid>

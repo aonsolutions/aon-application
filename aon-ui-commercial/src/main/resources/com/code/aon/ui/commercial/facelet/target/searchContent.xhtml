@@ -178,30 +178,22 @@
 					<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{targetSearch.question}" />
 						<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
+						<ui:param name="lookupReRender" value="targetProfileValueId" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{targetSearch.questionChanged}" type="lookupChangeListener" />														
 					</ui:include>
 					
 					<aon:div styleClass="aon-padding-top">				
 						<aon:outputText value="#{bundle.aon_value}" />
 					</aon:div>
-					<aon:div>
-						<aon:div styleClass="aon-padding-top">
-							<aon:outputLabel for="Target_profiles_date-From" styleClass="aon-form-date-label"
-								value="#{bundle.aon_date_from}:" />
-							<aon:selectInputDate id="Target_profiles_date-From"
-								valueChangeListener="#{target.addGreaterThanOrEqualExpression}" 
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-							</aon:selectInputDate>
-				
-							<aon:outputLabel for="Target_profiles_date-To" styleClass="aon-form-date-label"
-								value="#{bundle.aon_date_to}:" />
-							<aon:selectInputDate id="Target_profiles_date-To"
-								valueChangeListener="#{target.addLessThanOrEqualExpression}"
-								popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
-							</aon:selectInputDate>
-						</aon:div>
-						<aon:div styleClass="aon-padding-top">
-							<aon:inputText id="Target_profiles_text" size="60"
-								value="#{targetSearch.questionText}" />													
+					<aon:div id="targetProfileValueId">
+						<aon:div rendered="#{targetSearch.questionResolved}">
+							<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValueEx.xhtml" >
+								<ui:param name="inputId" value="TargetProfile_value" />
+								<ui:param name="valueHolder" value="#{targetSearch.questionValue}" />
+								<ui:param name="questionValueId" value="#{targetSearch.questionValueId}" />
+								<ui:param name="questionValues" value="#{targetSearch.questionValues}" />
+							</ui:include>
 						</aon:div>								
 					</aon:div>
 				</aon:panelGrid>

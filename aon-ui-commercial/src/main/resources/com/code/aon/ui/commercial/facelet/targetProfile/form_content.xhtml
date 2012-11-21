@@ -10,23 +10,24 @@
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
 	
-	<aon:outputLabel for="Question_id" value="#{commercialBundle.commercial_question}" />
 	<ui:include src="/com/code/aon/ui/commercial/facelet/question/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{controller.to.question}" />
 		<ui:param name="idRequired" value="#{true}" />
-		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="lookupRendered" value="#{controller.new}" />
 		<ui:param name="lookupReRender" value="#{questionReRender}" />
 		<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
+		<aon:methodParam name="lookupChangeListener"
+			value="#{controller.questionChanged}" type="lookupChangeListener" />		
 	</ui:include>
 
 	<aon:outputLabel for="TargetProfile_value-New"
 		value="#{commercialBundle.commercial_response}" />
 	<aon:div id="TargetProfile_response-New">
 		<aon:div layout="none">
-			<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml" >
+			<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValueEx.xhtml" >
 				<ui:param name="inputId" value="TargetProfile_value-New" />
 				<ui:param name="valueHolder" value="#{controller.to}" />
+				<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+				<ui:param name="questionValues" value="#{controller.questionValues}" />
 			</ui:include>
 		</aon:div>
 	</aon:div>

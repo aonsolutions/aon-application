@@ -285,6 +285,10 @@
 			<value>surveyResponse</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>SurveyResponse_survey_description</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -370,6 +374,10 @@
 			<property-name>beanName</property-name>
 			<value>marketingCampaign</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MarketingCampaign_description</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>

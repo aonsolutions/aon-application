@@ -11,7 +11,8 @@
 			
 			<ui:define name="columns">
 
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-120">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-120"
+					alias="TargetProfile.lastUpdate" >
 					<f:facet name="header">
 						<aon:outputLabel for="TargetProfile_lastUpdate" value="#{commercialBundle.commercial_target_profile_lastUpdate}" />
 					</f:facet>
@@ -44,11 +45,13 @@
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" value="TargetProfile_response-New" />
 							<ui:param name="lookupControllerListener" value="#{target.questionListener}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{targetProfile.questionChanged}" type="lookupChangeListener" />														
 						</ui:include>
 					</f:facet>
 				</aon:column>
 				
-				<aon:column styleClass="aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
 					<f:facet name="header">
 						<aon:outputLabel for="TargetProfile_value"
 							value="#{commercialBundle.commercial_response}" />
@@ -59,17 +62,21 @@
 						</ui:include>
 					</aon:div>
 					<aon:div layout="none" rendered="#{formEdit}">
-						<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml" >
+						<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValueEx.xhtml" >
 							<ui:param name="inputId" value="TargetProfile_value" />
 							<ui:param name="valueHolder" value="#{controller.to}" />
+							<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+							<ui:param name="questionValues" value="#{controller.questionValues}" />
 						</ui:include>
 					</aon:div>			
 					<f:facet name="footer">
 						<aon:div id="TargetProfile_response-New">
 							<aon:div layout="none" rendered="#{formNew}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValue.xhtml" >
+								<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValueEx.xhtml" >
 									<ui:param name="inputId" value="TargetProfile_value-New" />
 									<ui:param name="valueHolder" value="#{controller.to}" />
+									<ui:param name="questionValueId" value="#{controller.questionValueId}" />
+									<ui:param name="questionValues" value="#{controller.questionValues}" />
 								</ui:include>
 							</aon:div>
 						</aon:div>

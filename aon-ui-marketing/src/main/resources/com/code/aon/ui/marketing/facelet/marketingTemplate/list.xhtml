@@ -29,7 +29,8 @@
 							src="/com/code/aon/ui/marketing/facelet/marketingTemplate/listBasic.xhtml" />
 		
 
-	 					<aon:column styleClass="aon-editDataTable-iconColumn">
+	 					<aon:column styleClass="aon-editDataTable-iconColumn"
+	 						alias="Template.appendSignature" >
 							<f:facet name="header">
 								<aon:outputText value="#{marketingBundle.marketing_template_append_signature}" />
 							</f:facet>
@@ -37,7 +38,8 @@
 								styleClass="#{(to.appendSignature)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-iconColumn">
+						<aon:column styleClass="aon-editDataTable-iconColumn"
+							alias="Template.active" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_active}" />
 							</f:facet>

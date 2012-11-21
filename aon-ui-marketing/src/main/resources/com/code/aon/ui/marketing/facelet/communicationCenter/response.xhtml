@@ -96,39 +96,13 @@
 						
 						<c:if test="#{communicationCenter.question.type != 'INFO'}" >
 							<aon:outputLabel for="CommunicationCenter_response_value"
-								value="#{commercialBundle.commercial_response}" />
-							<c:if test="#{! (empty communicationCenter.questionValues)}" >
-								<aon:selectOneMenu id="CommunicationCenter_response_value"
-									required="true" value="#{communicationCenter.questionValueId}">
-									<f:selectItems value="#{communicationCenter.questionValues}" />
-								</aon:selectOneMenu>
-							</c:if>
-							<c:if test="#{empty communicationCenter.questionValues}" >
-								<c:if test="#{communicationCenter.question.type == 'TEXT'}" >
-									<aon:inputTextarea id="CommunicationCenter_response_value"
-										value="#{communicationCenter.response.text}"
-										required="true" cols="60" rows="4" >
-										<f:validateLength maximum="1024"/>
-									</aon:inputTextarea>										
-								</c:if>
-								<c:if test="#{communicationCenter.question.type == 'NUMBER'}" >
-									<aon:inputText id="CommunicationCenter_response_value"
-										value="#{communicationCenter.response.number}"
-										required="true" size="45" maxlength="64" />
-								</c:if>
-								<c:if test="#{communicationCenter.question.type == 'BOOLEAN'}" >								
-									<aon:selectBooleanCheckbox id="CommunicationCenter_response_value"
-										value="#{communicationCenter.response.boolean}"
-										required="true" />
-								</c:if>
-								<c:if test="#{communicationCenter.question.type == 'DATE'}" >
-									<aon:selectInputDate id="CommunicationCenter_response_value"
-										value="#{communicationCenter.response.date}"
-										required="true" timeZone="#{timeZoneController.timeZone}"
-										renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-									</aon:selectInputDate>
-								</c:if>										
-							</c:if>
+								value="#{commercialBundle.commercial_response}" />							
+							<ui:include src="/com/code/aon/ui/commercial/facelet/valueHolder/inputValueEx.xhtml" >
+								<ui:param name="inputId" value="CommunicationCenter_response_value" />
+								<ui:param name="valueHolder" value="#{communicationCenter.response}" />
+								<ui:param name="questionValueId" value="#{communicationCenter.questionValueId}" />
+								<ui:param name="questionValues" value="#{communicationCenter.questionValues}" />
+							</ui:include>
 						</c:if>
 	
 					</aon:panelGrid>

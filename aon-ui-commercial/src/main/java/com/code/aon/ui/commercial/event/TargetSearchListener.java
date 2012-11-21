@@ -1,23 +1,27 @@
 package com.code.aon.ui.commercial.event;
 
 
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Question;
+import com.code.aon.commercial.QuestionValue;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.registry.controller.event.RegistrySearchListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -35,9 +39,29 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	private String userName;
 
 	private Question question;
-
-	private String questionText;
 	
+	private QuestionValue questionValue;
+	
+	private List<SelectItem> questionValues;
+	
+	private Integer questionValueId;
+	
+	public Integer getQuestionValueId() {
+		return questionValueId;
+	}
+
+	public void setQuestionValueId(Integer questionValueId) {
+		this.questionValueId = questionValueId;
+	}
+
+	public List<SelectItem> getQuestionValues() {
+		return questionValues;
+	}
+	
+	public void setQuestionValues(List<SelectItem> questionValues) {
+		this.questionValues = questionValues;
+	}
+
 	public Question getQuestion() {
 		return question;
 	}
@@ -45,15 +69,19 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	public void setQuestion(Question question) {
 		this.question = question;
 	}
+
+	public boolean isQuestionResolved() {
+		return (getQuestion() != null) && (getQuestion().getId() != null);
+	}
 	
-	public String getQuestionText() {
-		return questionText;
+	public QuestionValue getQuestionValue() {
+		return questionValue;
 	}
 
-	public void setQuestionText(String questionText) {
-		this.questionText = questionText;
+	public void setQuestionValue(QuestionValue questionValue) {
+		this.questionValue = questionValue;
 	}
-		
+
 	public TargetStatus[] getTargetStatuses() {
 		return targetStatuses;
 	}
@@ -86,6 +114,24 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		this.trackingStatuses = trackingStatuses;
 	}
 	
+	public void questionChanged( LookupChangeEvent event ) throws ManagerBeanException {
+		Question question = (Question) event.getNewValue();
+		if ( event.getNewValue() != null ) {
+			QuestionValue qv = new QuestionValue();
+			qv.setQuestion(question);
+			setQuestionValue( qv );
+			questionValues = CommercialCollectionsController.getQuestionValues(question);
+		} else {
+			resetQuestionValue();
+		}
+	}
+	
+	private void resetQuestionValue() {
+		setQuestionValue(null);
+		setQuestionValueId(null);
+		setQuestionValues(null);		
+	}
+	
 	@Deprecated
 	public String getUserName() {
 		return userName;
@@ -106,10 +152,25 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setSeller( (Seller) sellerBean.createNewTo() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
-		setQuestionText(null);
 		IManagerBean questionBean = BeanManager.getManagerBean(Question.class);
 		setQuestion( (Question) questionBean.createNewTo() );		
+		resetQuestionValue();
 		super.init();
+	}
+	
+	private void completeCriteria( Criteria criteria, QuestionValue qv ) {
+		switch ( qv.getQuestion().getType() ) {
+			case BOOLEAN:
+			case NUMBER:
+				criteria.addEqualExpression("Target.profiles.number", qv.getNumber());
+				break;
+			case DATE:
+				criteria.addEqualExpression("Target.profiles.date", qv.getDate());
+				break;
+			case TEXT:
+				criteria.addEqualExpression("Target.profiles.text", qv.getText());
+				break;
+		}		
 	}
 	
 	@Override
@@ -130,20 +191,18 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
-		if ( (getQuestion() != null) && (getQuestion().getId() != null) ) {
-			criteria.addEqualExpression("Target.profiles.question.id", getQuestion().getId());			
-		}
-		if (! StringUtils.isEmpty(getQuestionText()) ) {
-			Expression expText = ExpressionUtilities.getExpression(getQuestionText(), "Target.profiles.text");
-			Expression expNumber = null;
-			try {
-				expNumber = ExpressionUtilities.getExpression(getQuestionText(), "Target.profiles.number");
-			} catch (ExpressionException ee ) {
-				criteria.addExpression( expText );
+		if ( isQuestionResolved() ) {
+			criteria.addEqualExpression("Target.profiles.question.id", getQuestion().getId());	
+			if ( getQuestionValueId() != null ) {
+				IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+				QuestionValue qv = (QuestionValue) bean.get(getQuestionValueId());
+				if ( qv != null ) {
+					completeCriteria(criteria, qv);
+				}
+			} else if (! getQuestionValue().isNotFilled() ) {
+				completeCriteria(criteria, getQuestionValue());
 			}
-			criteria.addExpression( ExpressionUtilities.getOrExpression(expText, expNumber) );
 		}
-
 		
 		// ?????????
 		if (! StringUtils.isEmpty(getUserName()) ){					

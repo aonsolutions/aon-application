@@ -7,11 +7,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.commercial.QuestionValue;
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -19,6 +16,7 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.entity.IEntityAlias;
 
@@ -59,17 +57,7 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	}
 
 	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
-		questionValues = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
-		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			QuestionValue questionValue = (QuestionValue) iter.next();
-			Object value = questionValue.getValue( sq.getQuestion().getType() );
-			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
-			this.questionValues.add(item);
-		}	
+		questionValues = CommercialCollectionsController.getQuestionValues(sq.getQuestion());
 	}
 	
 	public boolean isShowSurveyWorkflowWindow() {
