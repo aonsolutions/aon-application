@@ -21,7 +21,8 @@
 						<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
 						<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
 					</aon:selectOneMenu>
-				</c:if>									
+				</c:if>					
+				<ui:insert name="additionalTargetSearchContent"/>				
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 					

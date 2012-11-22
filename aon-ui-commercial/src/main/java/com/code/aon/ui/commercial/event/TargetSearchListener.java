@@ -16,8 +16,14 @@ import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.MarketingAction;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -46,6 +52,16 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 	
 	private Integer questionValueId;
 	
+	private MarketingAction action;
+	
+	public MarketingAction getAction() {
+		return action;
+	}
+
+	public void setAction(MarketingAction action) {
+		this.action = action;
+	}
+
 	public Integer getQuestionValueId() {
 		return questionValueId;
 	}
@@ -152,8 +168,8 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setSeller( (Seller) sellerBean.createNewTo() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
-		IManagerBean questionBean = BeanManager.getManagerBean(Question.class);
-		setQuestion( (Question) questionBean.createNewTo() );		
+		setAction( (MarketingAction) BeanManager.getManagerBean(MarketingAction.class).createNewTo() );
+		setQuestion( (Question) BeanManager.getManagerBean(Question.class).createNewTo() );		
 		resetQuestionValue();
 		super.init();
 	}
@@ -173,6 +189,17 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		}		
 	}
 	
+	public void addActionSubQuery(MarketingAction action, Criteria criteria) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);			
+		Criteria subCriteria = new Criteria();
+		subCriteria.addEqualExpression(bean.getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID), action.getId());
+		String idAlias = bean.getFieldName(IEntityAlias.ACTION_TARGET_TARGET_ID);
+		ProjectionList pl = new ProjectionList( Projection.property(idAlias) );
+		Expression exp = ExpressionUtilities.getSubQueryExpression(ActionTarget.class, subCriteria, pl);
+		criteria.addInExpression(getFieldName(IEntityAlias.TARGET_ID), exp);			
+	}
+	
+	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getTargetStatuses())) {
@@ -191,6 +218,10 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 			String status = getController().resolveAlias("Target_trackings_status");
 			addEnumToCriteria( criteria, status, getTrackingStatuses() );
 		}
+		if ( (getAction() != null) && (getAction().getId() != null) ) {
+			addActionSubQuery(getAction(), criteria);			
+		}
+		
 		if ( isQuestionResolved() ) {
 			criteria.addEqualExpression("Target.profiles.question.id", getQuestion().getId());	
 			if ( getQuestionValueId() != null ) {

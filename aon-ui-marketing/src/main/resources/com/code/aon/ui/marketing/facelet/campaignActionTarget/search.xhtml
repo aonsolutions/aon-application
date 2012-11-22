@@ -22,15 +22,24 @@
 					<aon:methodParam name="searchActionListener" value="#{target.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="campaignActionTarget_list" />
 
-					<ui:include src="/com/code/aon/ui/commercial/facelet/target/searchContent.xhtml">
+					<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/searchContent.xhtml">
 						<ui:param name="controller" value="#{target}"/>
-					</ui:include>
+						<ui:define name="additionalTargetSearchContent">
+
+							<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{targetSearch.action}" />
+								<ui:param name="lookupControllerListener" value="#{campaignActionTarget.actionFilter}" />
+							</ui:include>					
+
+						</ui:define>
+					</ui:decorate>
 					
 				</ui:define>
 			</ui:decorate>
 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />			
-		<aon:lookupButtonPopup lookup="#{questionLookup}" />	
+		<aon:lookupButtonPopup lookup="#{questionLookup}" />
+		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />	
 	</ui:define>
 </ui:composition>

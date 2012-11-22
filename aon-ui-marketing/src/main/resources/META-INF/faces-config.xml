@@ -741,10 +741,6 @@
 			<from-outcome>campaignActionTarget_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignActionTarget/list.xhtml</to-view-id>
 		</navigation-case>
-		<navigation-case>
-			<from-outcome>campaignActionTarget_import</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/campaignActionTarget/import.xhtml</to-view-id>
-		</navigation-case>
 	</navigation-rule>				
 
 	<!-- =================== Communication Center ================= -->	

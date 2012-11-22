@@ -80,7 +80,7 @@
 						</c:if>
 					</aon:panelGrid>
 
-					<aon:panelGrid columns="2" styleClass="aon-margin-left"
+					<aon:panelGrid columns="2" styleClass="aon-margin-left" rendered="#{!campaignAction.new}"
 						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
 						<aon:outputText value="#{marketingCollections.actionTargetStatuses[0].label}" />
 						<aon:inputText value="#{campaignActionTarget.pendingCount}"
@@ -125,10 +125,6 @@
 							action="campaignActionTarget_search"
 							actionListener="#{target.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-new" />
-						<aon:commandButton value="#{marketingBundle.marketing_action_import}"
-							action="campaignActionTarget_import"
-							actionListener="#{campaignActionTarget.onStartImport}"
-							styleClass="aon-finding-toolbar-item aon-icon-file-entrance" />
 						<aon:commandButton id="searchClear"
 							value="#{bundle.aon_clear}"
 							reRender="campaignActionTargetSearchDiv,campaignActionTargetDataDiv"

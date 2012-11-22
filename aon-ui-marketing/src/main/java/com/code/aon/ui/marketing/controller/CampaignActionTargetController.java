@@ -1,7 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
-import java.io.Serializable;
-import java.util.Collection;
+import static com.code.aon.ui.marketing.controller.IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME;
+
 import java.util.List;
 import java.util.Set;
 
@@ -20,22 +20,21 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.TargetController;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 
 public class CampaignActionTargetController extends LinesController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignActionTargetController.class.getName());
-
-	private Criteria previousCriteria;
 	
-	private MarketingAction action;
-	
-	private boolean actionSelected;
+	private IControllerListener actionFilter;
 	
 	@SuppressWarnings("unchecked")
 	private List<Integer> getCurrentTargets() throws ManagerBeanException {
@@ -63,69 +62,6 @@ public class CampaignActionTargetController extends LinesController {
 		}
 		initializeModel();
 	}
-	
-	public void onStartImport( ActionEvent event ) throws ManagerBeanException {
-		this.previousCriteria = getCriteria();
-		this.action = new MarketingAction();
-		this.actionSelected = false;
-	}
-
-	public void onImport( ActionEvent event ) throws ManagerBeanException {
-		IController actionController = FormUtil.getController(IMarketingConstants.CAMPAIGN_ACTION_CONTROLLER_NAME);
-		MarketingAction action = (MarketingAction) actionController.getTo();
-
-		setCriteria(this.previousCriteria);
-		Collection<Integer> currentTargets = getCurrentTargets();
-		Collection<Serializable> actionTargetIds = getCheckList();
-		for( Serializable id : actionTargetIds ) {
-			Target target = ((ActionTarget) getManagerBean().get(id)).getTarget();
-			if (! currentTargets.contains(target.getId()) ) {
-				ActionTarget at = new ActionTarget();
-				at.setAction( action );
-				at.setTarget( target );
-				getManagerBean().insert( at );
-			}
-		}
-		initializeModel();
-	}
-	
-	public void onCancelImport( ActionEvent event ) throws ManagerBeanException {
-		setCriteria(this.previousCriteria);
-		initializeModel();
-	}
-
-	public boolean isActionSelected() {
-		return actionSelected;
-	}
-
-	public void setActionSelected(boolean actionSelected) {
-		this.actionSelected = actionSelected;
-	}
-
-	public void setAction(MarketingAction action) {
-		this.action = action;
-	}
-	
-	public MarketingAction getAction() {
-		return action;
-	}
-
-	protected Integer getId( Object o ) {
-		return ((ActionTarget) o).getId();
-	}
-
-	public void onActionLookupChange(LookupChangeEvent event) throws ManagerBeanException {
-		this.actionSelected = (event.getNewValue() != null);	
-		if (this.actionSelected) {
-			clearCriteria();
-			Criteria criteria = getCriteria();
-			String alias = getFieldName(IEntityAlias.ACTION_TARGET_ACTION_ID);
-			MarketingAction action = (MarketingAction) event.getNewValue();
-			criteria.addEqualExpression(alias, action.getId());
-			initializeModel();
-			checkAll(null);
-		}
-	}	
 
 	public int getCount() throws ManagerBeanException {
 		if ( getMasterController().getModel().isRowAvailable() ) {
@@ -178,5 +114,26 @@ public class CampaignActionTargetController extends LinesController {
 	public int getSentCount() {
 		return getCount(ActionTargetStatus.SENT);
 	}	
+	
+	public IControllerListener getActionFilter() {
+		if ( this.actionFilter == null ) {
+			this.actionFilter = new ControllerAdapter() {
+				@Override
+				public void beforeModelInitialized(ControllerEvent event)
+						throws ControllerListenerException {
+					IController controller = event.getController();
+					try {					
+						IController actionController = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+						MarketingAction action = (MarketingAction) actionController.getTo();
+						String alias = controller.getFieldName(IEntityAlias.MARKETING_ACTION_ID);
+						controller.getCriteria().addNotEqualExpression(alias, action.getId());
+					} catch (ManagerBeanException e) {
+						LOGGER.error("Error filtering action", e);
+					}
+				}
+			};
+		}
+		return this.actionFilter;
+	}
 	
 }
