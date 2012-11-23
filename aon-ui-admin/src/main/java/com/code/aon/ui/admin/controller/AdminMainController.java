@@ -24,6 +24,8 @@ import com.code.aon.common.util.AdminUtil;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.admin.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.ContactDBController;
@@ -171,10 +173,19 @@ public class AdminMainController implements IAdminConstants {
 		initContact(user);
 	}
 
-	public static void removeLines( Class<? extends ITransferObject> _class, String alias, Serializable id ) throws ManagerBeanException {
+	public static void removeLines( Class<? extends ITransferObject> _class, Serializable id, String ... aliases ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(_class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(alias), id);
+		Expression exp = null;
+		for( String alias : aliases ) {
+			if ( exp == null ) {
+				exp = ExpressionUtilities.getEqualExpression(bean.getFieldName(alias), id);
+			} else {
+				Expression exp1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(alias), id);
+				exp = ExpressionUtilities.getOrExpression(exp, exp1);
+			}
+		}
+		criteria.addExpression(exp);
 		for( ITransferObject to : bean.getList(criteria) ) {
 			bean.remove(to);
 		}	

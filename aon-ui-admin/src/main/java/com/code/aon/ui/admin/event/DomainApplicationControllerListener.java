@@ -87,7 +87,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter {
 		try {		
 			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
 			dausc.removeApplicationUsers( APPLICATION_USER_DOMAIN_APPLICATION_ID, da.getId() );
-			AdminMainController.removeLines(DomainApplicationModule.class, DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID, da.getId());
+			AdminMainController.removeLines(DomainApplicationModule.class, da.getId(), DOMAIN_APPLICATION_MODULE_DOMAIN_APPLICATION_ID);
 			removeProfiles(da);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
@@ -102,8 +102,8 @@ public class DomainApplicationControllerListener extends ControllerAdapter {
 		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.PROFILE_APPLICATION_ID), da.getApplication().getId());
 		for( ITransferObject to : bean.getList(criteria) ) {
 			Serializable id = bean.getId(to);
-			AdminMainController.removeLines(ProfileRole.class, PROFILE_ROLE_PROFILE_ID, id);
-			AdminMainController.removeLines(ProfileModuleDenied.class, PROFILE_MODULE_DENIED_PROFILE_ID, id);
+			AdminMainController.removeLines(ProfileRole.class, id, PROFILE_ROLE_PROFILE_ID);
+			AdminMainController.removeLines(ProfileModuleDenied.class, id, PROFILE_MODULE_DENIED_PROFILE_ID);
 			bean.remove( to );
 		}	
 	}    

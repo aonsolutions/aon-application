@@ -13,10 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.ActionDenied;
+import com.code.aon.audit.ActionEntry;
+import com.code.aon.audit.ActionFavorite;
+import com.code.aon.audit.Session;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
+import com.code.aon.groupware.Alarm;
+import com.code.aon.groupware.Favorite;
+import com.code.aon.groupware.FavoriteCategory;
+import com.code.aon.groupware.Note;
+import com.code.aon.groupware.Notice;
 import com.code.aon.ui.admin.controller.AdminMainController;
 import com.code.aon.ui.admin.controller.DomainApplicationUserController;
 import com.code.aon.ui.admin.controller.DomainUserController;
@@ -82,16 +90,25 @@ public class DomainUserControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		Serializable id = ((User) event.getController().getTo()).getId();
+		DomainUserController duc = (DomainUserController) event.getController();
+		Serializable id = ((User) duc.getTo()).getId();
 		try {		
 			DomainApplicationUserController dausc = (DomainApplicationUserController) AonUtil.getRegisteredBean(APPLICATION_USER_CONTROLLER_NAME);
 			dausc.removeApplicationUsers( IEntityAlias.APPLICATION_USER_USER_ID, id );
-			AdminMainController.removeLines(UserScope.class, IEntityAlias.USER_SCOPE_USER_ID, id);
-			AdminMainController.removeLines(UserWorkGroup.class, IEntityAlias.USER_WORK_GROUP_USER_ID, id);
-			AdminMainController.removeLines(ActionDenied.class, IEntityAlias.ACTION_DENIED_USER_ID, id);
-			AdminMainController.removeLines(Contact.class, IEntityAlias.CONTACT_USER_ID, id);
-			AdminMainController.removeLines(MailAccount.class, IEntityAlias.MAIL_ACCOUNT_USER_ID, id);
-			AdminMainController.removeLines(Signature.class, IEntityAlias.SIGNATURE_USER_ID, id);
+			AdminMainController.removeLines(UserScope.class, id, IEntityAlias.USER_SCOPE_USER_ID);
+			AdminMainController.removeLines(UserWorkGroup.class, id, IEntityAlias.USER_WORK_GROUP_USER_ID);
+			AdminMainController.removeLines(ActionDenied.class, id, IEntityAlias.ACTION_DENIED_USER_ID);
+			AdminMainController.removeLines(ActionFavorite.class, id, IEntityAlias.ACTION_FAVORITE_USER_ID);
+			AdminMainController.removeLines(Contact.class, id, IEntityAlias.CONTACT_USER_ID);
+			AdminMainController.removeLines(MailAccount.class, id, IEntityAlias.MAIL_ACCOUNT_USER_ID);
+			AdminMainController.removeLines(Signature.class, id, IEntityAlias.SIGNATURE_USER_ID);
+			AdminMainController.removeLines(ActionEntry.class, id, IEntityAlias.ACTION_ENTRY_SESSION_USER_ID);
+			AdminMainController.removeLines(Session.class, id, IEntityAlias.SESSION_USER_ID);
+			AdminMainController.removeLines(Alarm.class, id, IEntityAlias.ALARM_USER_ID);
+			AdminMainController.removeLines(Favorite.class, id, IEntityAlias.FAVORITE_USER_ID);
+			AdminMainController.removeLines(FavoriteCategory.class, id, IEntityAlias.FAVORITE_CATEGORY_USER_ID);
+			AdminMainController.removeLines(Note.class, id, IEntityAlias.NOTE_OWNER_ID);
+			AdminMainController.removeLines(Notice.class, id, IEntityAlias.NOTICE_SENDER_ID, IEntityAlias.NOTICE_RECIPIENT_ID);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
