@@ -45,6 +45,7 @@
 		value="#{registryBundle.registry_geozone}" />
 	<aon:selectOneMenu id="#{pojoName}_address_geozone"
 		value="#{registryAddress.geozone}">
+		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{geozoneCollections.geoTrees}" />
 	</aon:selectOneMenu>
 			

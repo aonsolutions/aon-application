@@ -53,6 +53,7 @@
 				<aon:outputLabel for="RegistryAddress_geozone" value="#{registryBundle.registry_geozone}" styleClass="aon-italic aon-margin-left"/>
 				<aon:selectOneMenu id="RegistryAddress_geozone#{sufix}"	styleClass="aon-margin-left aon-form-input-text"
 					value="#{controller.to.geozone}">
+					<f:selectItem itemLabel="-" value="#{null}" />
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>
 			</aon:div>
