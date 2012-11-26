@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting;
 
+
 public interface IAccountingConstants {
 	
 	// COMMON

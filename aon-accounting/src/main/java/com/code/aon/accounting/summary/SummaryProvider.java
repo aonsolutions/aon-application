@@ -355,6 +355,10 @@ public class SummaryProvider {
 			buf.append(" AND ");
 			buf.append(params.getAccountSQLExpression("a.code"));
 		}
+		if (params.hasAccountCostCenters()) {
+			buf.append(" AND ");
+			buf.append(params.getAccountCostCenterSQLExpression("a.cost_center"));
+		}		
 		if (params.isTotalExpensesSummary()) {
 			buf.append(" AND a.code >= '610' AND  a.code < '7'");
 		}
@@ -445,4 +449,5 @@ public class SummaryProvider {
 		
 		return sc;
 	}
+	
 }

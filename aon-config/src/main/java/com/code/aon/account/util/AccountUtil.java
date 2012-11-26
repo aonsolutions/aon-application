@@ -13,6 +13,8 @@ import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountUtil {
 	
+	public static final String NO_COST_CENTER_ACCOUNT = "Cuentas sin centro de costo";
+
 	public String obtainNextAccountId(String prefix) throws ManagerBeanException, ExpressionException{
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();

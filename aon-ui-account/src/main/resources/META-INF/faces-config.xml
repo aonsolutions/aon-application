@@ -91,6 +91,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       		<key>Account_entryEnabled</key>
       		<value>true</value>
       	</map-entry>
+      	<map-entry>
+      		<key>Account_active</key>
+      		<value>true</value>
+      	</map-entry>
       </map-entries>
     </managed-property>
 	<managed-property>

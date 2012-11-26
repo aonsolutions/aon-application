@@ -3,6 +3,8 @@ package com.code.aon.account.event;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -46,6 +48,9 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	to.setLevel(level);
     	to.setEntryEnabled(level==5);
     	checkParent(to);
+    	if (StringUtils.isBlank( to.getCostCenter())) {
+    		to.setCostCenter(null);
+    	}
     }
 	
     @Override
@@ -53,6 +58,9 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	Account to = (Account)evt.getTo();
     	checkValidLength(to);
     	checkParent(to);
+    	if (StringUtils.isBlank( to.getCostCenter())) {
+    		to.setCostCenter(null);
+    	}
 	}
 
 	private void checkValidLength(Account account) throws ManagerBeanVetoListenerException {

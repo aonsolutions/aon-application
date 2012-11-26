@@ -29,9 +29,9 @@ public class CreateDB {
 		
 	}
 	
-	private static class IllegalArgumentsException
-		extends RuntimeException
-	{
+	private static class IllegalArgumentsException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
 		
 	}
 	

@@ -12,6 +12,10 @@ public class Account extends AccountDB {
 	
 	private static final long serialVersionUID = 1L;
 	
+	public Account() {
+		setActive(true);
+	}
+	
 	@Transient
 	public String getFullDescription() {
 		return (getCode() + " " + getDescription());

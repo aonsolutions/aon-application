@@ -384,6 +384,7 @@ CREATE TABLE `account` (
   `entryEnabled` tinyint(2) default '0' COMMENT 'Indica si la Cuenta permite o no Apuntes',
   `level` tinyint(2) NOT NULL default '0' COMMENT 'Nivel de la Cuenta',
   `active` tinyint(1) NOT NULL default '1' COMMENT 'Indica si la Cuenta esta activo o no',
+  `cost_center` char(32) collate latin1_spanish_ci default NULL COMMENT 'Centro de Costo',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `IDX_UNQ_ACCOUNT_DOMAIN_CODE` (`domain`,`code`),
   KEY `IDX_ACCOUNT_DOMAIN` (`domain`),

@@ -20,6 +20,11 @@
 	<aon:inputText id="Account_alias" size="30"
 		valueChangeListener="#{controller.addExpression}" />
 
+	<aon:outputLabel for="Account_costCenter"
+		value="#{accountBundle.account_cost_center}" />
+	<aon:inputText id="Account_costCenter" size="20"
+		valueChangeListener="#{controller.addExpression}" />
+
 	<aon:outputLabel for="Account_entryEnabled"
 		value="#{accountBundle.account_entryEnabled}" />
 	<aon:selectOneMenu id="Account_entryEnabled"

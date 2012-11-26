@@ -1,29 +1,32 @@
 package com.code.aon.ui.account.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.IAccountConstants;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.esferalia.aon.entity.IEntityAlias;
+import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.entity.IEntityAlias;
 
 public class AccountCollectionsController {
-
+	
 	private List<SelectItem> getAccounts(Criteria criteria, boolean pojo) throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-		Iterator<?> iter = accountBean.getList(criteria).iterator();
-		while (iter.hasNext()) {
-			Account account = (Account) iter.next();
+		List<ITransferObject> accounts = accountBean.getList(criteria); 
+		for (ITransferObject to : accounts ) {
+			Account account = (Account) to;
 			SelectItem item = new SelectItem(pojo?account:account.getId(), account.getFullDescription());
 			list.add(item);
 		}
@@ -34,8 +37,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "70*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getSalesAccounts() throws ManagerBeanException, ExpressionException {
@@ -51,8 +54,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "60*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getPurchaseAccounts() throws ManagerBeanException, ExpressionException {
@@ -67,8 +70,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "570*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getCashAccounts() throws ManagerBeanException, ExpressionException {
@@ -81,14 +84,12 @@ public class AccountCollectionsController {
 
 	private List<SelectItem> getExpensesAccounts(boolean pojo) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-		Expression expression1 = ExpressionUtilities.getLikeExpression(accountBean
-				.getFieldName(IEntityAlias.ACCOUNT_CODE), "62%");
-		Expression expression2 = ExpressionUtilities.getLikeExpression(accountBean
-				.getFieldName(IEntityAlias.ACCOUNT_CODE), "66%");
+		Expression expression1 = ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "62%");
+		Expression expression2 = ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "66%");
 		Criteria criteria = new Criteria();
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expression1, expression2));
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getExpensesAccounts() throws ManagerBeanException {
@@ -103,8 +104,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "477*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getChargedVatAccounts() throws ManagerBeanException, ExpressionException {
@@ -119,8 +120,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "472*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getPaidVatAccounts() throws ManagerBeanException, ExpressionException {
@@ -135,8 +136,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "473*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getPaidRetentionAccounts() throws ManagerBeanException, ExpressionException {
@@ -151,8 +152,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "4751*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getChargedRetentionAccounts() throws ManagerBeanException, ExpressionException {
@@ -167,8 +168,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "640*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getSalaryAccounts() throws ManagerBeanException, ExpressionException {
@@ -184,8 +185,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "629*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getSalaryAllowanceAccounts() throws ManagerBeanException, ExpressionException {
@@ -200,8 +201,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "641*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getSalaryCompensationAccounts() throws ManagerBeanException, ExpressionException {
@@ -215,8 +216,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "465*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getPendingSalaryAccounts() throws ManagerBeanException, ExpressionException {
@@ -232,8 +233,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "476*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getSocialInsuranceAccounts() throws ManagerBeanException, ExpressionException {
@@ -248,8 +249,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "642*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getEnterpriseSocialInsuranceAccounts() throws ManagerBeanException, ExpressionException {
@@ -265,6 +266,7 @@ public class AccountCollectionsController {
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "20*|21*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL), new Integer(4));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getFixedAssetAccounts() throws ManagerBeanException, ExpressionException {
@@ -279,6 +281,7 @@ public class AccountCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "20*|21*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getFixedAssetAccountsExtended() throws ManagerBeanException, ExpressionException {
@@ -294,6 +297,7 @@ public class AccountCollectionsController {
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "280*|281*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL), new Integer(4));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getAccumulatedDepreciationAccounts() throws ManagerBeanException, ExpressionException {
@@ -310,6 +314,7 @@ public class AccountCollectionsController {
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "680*|681*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(false));
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL), new Integer(4));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getAmortizationAllocationAccounts() throws ManagerBeanException, ExpressionException {
@@ -323,8 +328,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "662*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getDebtInterestAccounts() throws ManagerBeanException, ExpressionException {
@@ -339,8 +344,8 @@ public class AccountCollectionsController {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "669*");
-		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),
-				new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getFinancialExpensesAccounts() throws ManagerBeanException, ExpressionException {
@@ -355,6 +360,7 @@ public class AccountCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "67*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getAssetLostAccounts() throws ManagerBeanException, ExpressionException {
@@ -369,6 +375,7 @@ public class AccountCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "77*");
 		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED),new Boolean(true));
+		criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ACTIVE),new Boolean(true));
 		return getAccounts(criteria,pojo);
 	}
 	public List<SelectItem> getAssetProfitAccounts() throws ManagerBeanException, ExpressionException {
@@ -378,4 +385,25 @@ public class AccountCollectionsController {
 		return getAssetProfitAccounts(false);
 	}
 	
+	public List<SelectItem> getCostCenters() {
+		 try {
+			IManagerBean bean = BeanManager.getManagerBean(ApplicationParameter.class);
+			String alias = bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_NAME);
+	        Criteria criteria = new Criteria();
+	        Expression exp = ExpressionUtilities.getLikeExpression(alias, IAccountConstants.COST_CENTER_LIKE_PREFIX); 
+    		criteria.addExpression(exp);		
+	        criteria.addOrder(bean.getFieldName(IEntityAlias.APPLICATION_PARAMETER_VALUE));
+			List<SelectItem> list = new LinkedList<SelectItem>();
+			List<ITransferObject> costCenters = bean.getList(criteria); 
+			for (ITransferObject to : costCenters ) {
+				ApplicationParameter app = (ApplicationParameter) to;
+				SelectItem item = new SelectItem(app.getValue(), app.getValue());
+				list.add(item);
+			}
+			return list;
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Imposible recuperar los centros de costo.");
+			return new LinkedList<SelectItem>();
+		}
+	}
 }

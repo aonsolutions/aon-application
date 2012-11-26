@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
@@ -80,6 +81,26 @@
 
 					</aon:panelGrid>
 
+					<c:if test="#{profitAndLossReport.anyAccountCostCenterAvailable}">
+						<aon:outputLabel for="Account_CostCenter"
+								value="#{accountBundle.account_cost_center}" />
+				 		<rich:listShuttle sourceValue="#{profitAndLossReport.accountCostCenters}"
+				            targetValue="#{profitAndLossReport.parameters.accountCostCenters}" 
+				            var="costCenters" listsHeight="100"
+				            sourceListWidth="250" targetListWidth="250" 
+				            sourceCaptionLabel="Centros de Costo Disponibles"
+				            targetCaptionLabel="Centros de Costo Seleccionados"
+				            orderControlsVisible="false"
+							copyAllControlLabel="#{bundle.aon_copyAll}"
+	                        copyControlLabel="#{bundle.aon_copy}"
+	                        removeControlLabel="#{bundle.aon_remove}"
+	                        removeAllControlLabel="#{bundle.aon_removeAll}"> 
+				            <rich:column>
+				                <h:outputText value="#{costCenters}"></h:outputText>
+				            </rich:column>
+				        </rich:listShuttle>
+					</c:if>
+        
 					<c:if test="#{aonRole.confidentiality}">
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_securityLevel"

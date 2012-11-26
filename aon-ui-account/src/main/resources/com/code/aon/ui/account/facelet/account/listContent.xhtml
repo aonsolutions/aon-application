@@ -22,4 +22,12 @@
 		<aon:outputText value="#{to.description}" />
 	</aon:column>
 
+	<aon:column alias="Account.costCenter"
+		styleClass="aon-editDataTable-textColumn aon-width-100">
+		<f:facet name="header">
+			<aon:outputText value="#{accountBundle.account_cost_center}" />
+		</f:facet>
+		<aon:outputText value="#{to.costCenter}"/>
+	</aon:column>
+
 </ui:composition>

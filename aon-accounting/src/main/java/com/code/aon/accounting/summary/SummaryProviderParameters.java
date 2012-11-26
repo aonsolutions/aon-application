@@ -3,13 +3,17 @@ package com.code.aon.accounting.summary;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.sql.SqlRenderer;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -21,6 +25,7 @@ public class SummaryProviderParameters implements Cloneable{
 	private static final String SEMICOLON = "; ";
 	private static final String EMPTY = "";
 	private static final Date START_DATE = new Date(0);
+	
 	/**
 	 * Literal AON-QL válido ej: 430*|400*
 	 */
@@ -29,6 +34,8 @@ public class SummaryProviderParameters implements Cloneable{
 	private String accountDescription;
 
 	private String accountAlias;
+
+	private List<String> accountCostCenters;
 
 	/**
 	 * TRUE si se desea que se devuelva los acumulados de los nivees inferiores,
@@ -98,6 +105,7 @@ public class SummaryProviderParameters implements Cloneable{
 		setAccountExpression(null);
 		setAccountDescription(null);
 		setAccountAlias(null);
+		setAccountCostCenters(null);
 		setLowerLevelVisible(false);
 		setNoTouchedAccountVisible(false);
 		setAccountLevel(4);
@@ -143,6 +151,14 @@ public class SummaryProviderParameters implements Cloneable{
 
 	public void setAccountAlias(String accountAlias) {
 		this.accountAlias = accountAlias;
+	}
+	
+	public List<String> getAccountCostCenters() {
+		return accountCostCenters;
+	}
+
+	public void setAccountCostCenters(List<String> accountCostCenters) {
+		this.accountCostCenters = accountCostCenters;
 	}
 
 	public boolean isLowerLevelVisible() {
@@ -346,6 +362,13 @@ public class SummaryProviderParameters implements Cloneable{
 	public SummaryProviderParameters clone() throws CloneNotSupportedException {
 		SummaryProviderParameters cloned = new SummaryProviderParameters();
 		cloned.setAccountAlias(getAccountAlias());
+		if (getAccountCostCenters() != null) {
+			List<String> list = new LinkedList<String>();
+			for (String costCenter : getAccountCostCenters()) {
+				list.add(costCenter);
+			}
+			cloned.setAccountCostCenters(list);	
+		}
 		cloned.setAccountDescription(getAccountDescription());
 		cloned.setAccountExpression(getAccountExpression());
 		cloned.setAccountLevel(getAccountLevel());
@@ -407,6 +430,38 @@ public class SummaryProviderParameters implements Cloneable{
 			ExpressionUtilities.getExpression(getAccountExpression(), ident);
 			Criteria c = new Criteria();
 			c.addExpression(ExpressionUtilities.getExpression(getAccountExpression(), ident));
+			StringWriter out = new StringWriter();
+			SqlRenderer renderer = new SqlRenderer(out);
+			c.accept(renderer);
+			return out.toString();
+		}
+		return null;
+	}
+
+	public boolean hasAccountCostCenters() throws ExpressionException {
+		return (getAccountCostCenters() != null && getAccountCostCenters().size() > 0);
+	}
+
+	public Object getAccountCostCenterSQLExpression(String ident) throws ExpressionException {
+		if (getAccountCostCenters() != null && getAccountCostCenters().size() > 0) {
+			Criteria c = new Criteria();
+			Expression orExp = null;
+			for (String costCenter : getAccountCostCenters() ) {
+				Expression exp = null;
+				if (AccountUtil.NO_COST_CENTER_ACCOUNT.equals(costCenter)) {
+					exp = ExpressionUtilities.getNullExpression(ident);
+				} else {
+					exp = ExpressionUtilities.getEqualExpression(ident,costCenter);
+				}
+				if (orExp == null) {
+					orExp = exp;
+				} else {
+					orExp = ExpressionUtilities.getOrExpression(orExp, exp);
+				}
+			}
+			if (orExp != null) {
+				c.addExpression(orExp);	
+			}
 			StringWriter out = new StringWriter();
 			SqlRenderer renderer = new SqlRenderer(out);
 			c.accept(renderer);

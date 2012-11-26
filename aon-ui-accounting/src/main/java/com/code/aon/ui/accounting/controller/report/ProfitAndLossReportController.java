@@ -10,11 +10,14 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.account.IAccountConstants;
+import com.code.aon.account.util.AccountUtil;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.summary.Summary;
@@ -26,6 +29,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ui.account.controller.AccountCollectionsController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -394,6 +398,30 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		}
 	}
 
+	public boolean isAnyAccountCostCenterAvailable() {
+		List<String> list = getAccountCostCenters(); 	
+		return  (list != null && list.size() > 0);  
+	}
+
+	public List<String> getAccountCostCenters() {
+		AccountCollectionsController acc = (AccountCollectionsController) 
+				AonUtil.getRegisteredBean(IAccountConstants.ACCOUNT_COLLECTIONS_CONTROLLER_NAME);
+		List<SelectItem> cc = acc.getCostCenters();
+		if (cc != null && cc.size() > 0) {
+			List<String> costCenters = new LinkedList<String>();
+			costCenters.add(AccountUtil.NO_COST_CENTER_ACCOUNT);
+			for (SelectItem si : cc) {
+				costCenters.add( (String) si.getValue() );	
+			}
+			return costCenters;
+		}
+		return null;
+	}
+
+	public void setAccountCostCenters(List<String> list) {
+		// Nothing
+	}
+		
 	public boolean isDateValid() {
 		if (getParameters().getPeriod() != null) {
 			return true;
@@ -409,26 +437,4 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		return true;
 	}
 	
-	
-	
-	
-	
-//	8.800,70	
-//	Reparaciones y conservación.	2.737,64	
-//	Servicios de profesionales independientes.	7.566,77	
-//	Transportes.	23,24	
-//	Primas de seguros.	398,06	
-//	6260	Servicios bancarios y similares.	1.306,90	
-//	6270	Publicidad, propaganda y relaciones públicas.	2.683,00	
-//	6280	Suministro ELECTRICO	3.296,49	
-//	6281	Suministros de TELEFONIA	2.186,11	
-//	6282	Suministros de INTERNET	118,92	
-//	6283	Suministro de AGUA	28,32	
-//	6290	Otros gastos/servicios.	211,72	
-//	6292	Gastos por Viajes y desplazamientos	2.153,22	
-//	6400	Sueldos y Salarios.	37.986,05	
-//	6420	Seguridad Social a cargo de la empresa.	9.854,30	
-//	6623	Intereses de deudas con entidades de crédito	846,53	
-//	TOTAL GASTOS	80.197,97	
-//	RESULTADO ( Pérdidas )	11.953,54		
 }

@@ -104,13 +104,14 @@
 			<aon:div id="accountData" styleClass="aon-scroll-area">
 
 				<aon:div style="margin-bottom:0.75em;">
-					<aon:panelGrid columns="6" style="width:100%;"
+					<aon:panelGrid columns="7" style="width:100%;"
 						columnClasses="
 						 aon-panelGrid-odd aon-width-100
 						,aon-panelGrid-even aon-width-100
 						,aon-panelGrid-odd aon-width-100
 						,aon-panelGrid-even aon-width-100
 						,aon-panelGrid-odd aon-width-100
+						,aon-panelGrid-even aon-width-100
 						,aon-panelGrid-even aon-width-auto">
 					
 						<aon:outputLabel value="#{accountingBundle.accounting_period}" />
@@ -130,6 +131,11 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" 
 								timeZone="#{timeZoneController.timeZone}"/>
 						</aon:outputText>
+
+						<aon:panelGroup>
+							<aon:outputText  value="#{profitAndLossReport.parameters.accountCostCenters}"
+								rendered="#{!empty profitAndLossReport.parameters.accountCostCenters}"/>
+						</aon:panelGroup>
 					</aon:panelGrid>
 				</aon:div>
 
